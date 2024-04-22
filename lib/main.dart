@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'view/screens/auth/view/signup.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/screen/Signup/signup.dart';
-void main() {
-  runApp( MyApp());
-}
+
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return const GetMaterialApp(
       title: 'flutter_application_1',
       home: SignupScreen(),
     );

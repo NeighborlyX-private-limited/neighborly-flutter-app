@@ -1,19 +1,20 @@
-//import 'dart:html';
+import 'dart:developer';
 
-import 'package:flutter_application_1/screen/Signup/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../auth/view/signup.dart';
+
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   @override
   Widget build(BuildContext context) {
@@ -22,28 +23,28 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           TextButton(
             onPressed: () async {
-              final SharedPreferences? prefs = await _prefs;
-              prefs?.clear();
-              Get.offAll(SignupScreen());
+              final SharedPreferences prefs = await _prefs;
+              prefs.clear();
+              Get.offAll(const SignupScreen());
             },
-            child: Text(
+            child: const Text(
               'logout',
               style: TextStyle(color: Colors.white),
             ),
           ),
         ],
       ),
-      body:  Column(
-          children: [
-            Text('Welcome home'),
-            TextButton(
-              onPressed: () async {
-                final SharedPreferences? prefs = await _prefs;
-                print(prefs?.get("token"));
-              },
-              child: Text("print token"),
-            )
-          ],
+      body: Column(
+        children: [
+          const Text('Welcome home'),
+          TextButton(
+            onPressed: () async {
+              final SharedPreferences prefs = await _prefs;
+              log("${prefs.get("token")}");
+            },
+            child: const Text("print token"),
+          )
+        ],
       ),
     );
   }

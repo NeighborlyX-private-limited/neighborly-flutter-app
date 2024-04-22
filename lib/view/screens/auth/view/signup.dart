@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_application_1/controllers/login_controller.dart';
-import 'package:flutter_application_1/controllers/signup_controller.dart';
 import 'package:get/get.dart';
-import 'package:flutter_application_1/Widget/input_fields.dart';
-import 'package:flutter_application_1/Widget/submit_button.dart';
+
+import '../controller/login_controller.dart';
+import '../controller/signup_controller.dart';
+import '../widgets/login_widgets.dart';
 
 class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
+
   @override
   State<SignupScreen> createState() => _SignupState();
 }
 
 class _SignupState extends State<SignupScreen> {
-  RegisterationController registrationController =
-      Get.put(RegisterationController());
+  RegistrationController registrationController =
+      Get.put(RegistrationController());
 
   LoginController loginController = Get.put(LoginController());
 
@@ -23,46 +25,42 @@ class _SignupState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-
-          padding: EdgeInsets.all(36),
-          child:   Obx(
-              () => Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+        padding: const EdgeInsets.all(36),
+        child: Obx(
+          () => Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const SizedBox(height: 30),
+              const Text(
+                'Neighbourly',
+                style: TextStyle(
+                  fontSize: 30,
+                  color: Colors.black,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 30),
-                  Container(
-                    child: Text(
-                      'Neighbourly',
-                      style: TextStyle(
-                        fontSize: 30,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      MaterialButton(
-                        color: !isLogin.value ? Colors.white : Colors.amber,
-                        onPressed: () {
-                          isLogin.value = true;
-                        },
-                        child: Text('Register/Login'),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  isLogin.value ? loginWidget() : registerWidget()
+                  MaterialButton(
+                    color: !isLogin.value ? Colors.white : Colors.amber,
+                    onPressed: () {
+                      isLogin.value = true;
+                    },
+                    child: const Text('Register/Login'),
+                  )
                 ],
               ),
-            ),
+              const SizedBox(height: 20),
+              isLogin.value
+                  ? LoginWidgets.loginWidget(loginController)
+                  : LoginWidgets.registerWidget(registrationController)
+            ],
           ),
-
+        ),
       ),
     );
   }
-
 }

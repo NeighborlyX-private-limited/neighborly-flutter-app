@@ -1,25 +1,30 @@
+import 'package:flutter/cupertino.dart';
+
+import '../../../../custom_widgets/input_fields.dart';
+import '../../../../custom_widgets/submit_button.dart';
+import '../controller/login_controller.dart';
+import '../controller/signup_controller.dart';
+
 class LoginWidgets {
-  static Widget registerWidget() {
+  static Widget registerWidget(RegistrationController registrationController) {
     return Column(
       children: [
-// InputTextFieldWidget(registerationController.nameController, "name"),
+// InputTextFieldWidget(registrationController.nameController, "name"),
 // SizedBox(
 //   height: 20,
 // ),
         InputTextFieldWidget(
-          registerationController.emailController,
+          registrationController.emailController,
           'email address',
         ),
-        // InputTextFieldWidget
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         InputTextFieldWidget(
-          registerationController.passwordController,
+          registrationController.passwordController,
           'password',
         ),
-        // InputTextFieldWidget
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         SubmitButton(
-          onPressed: () => registerationController.registerwithEmail(),
+          onPressed: () => registrationController.registerWithEmail(),
           title: 'Register',
         )
         // SubmitButton
@@ -27,24 +32,22 @@ class LoginWidgets {
     );
   }
 
-  static Widget loginWidget() {
+  static Widget loginWidget(LoginController loginController) {
     return Column(
       children: [
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         InputTextFieldWidget(
           loginController.emailController,
           'email address',
         ),
-        // InputTextFieldWidget
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         InputTextFieldWidget(
           loginController.passwordController,
           'password',
         ),
-        // InputTextFieldWidget
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         SubmitButton(
-          onPressed: () => loginController.loginwithEmail(),
+          onPressed: () => loginController.loginWithEmail(),
           title: 'Login',
         )
         // SubmitButton
