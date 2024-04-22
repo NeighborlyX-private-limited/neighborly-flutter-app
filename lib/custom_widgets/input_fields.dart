@@ -8,7 +8,7 @@ class InputTextFieldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 46,
       child: TextField(
         controller: textEditingController,
