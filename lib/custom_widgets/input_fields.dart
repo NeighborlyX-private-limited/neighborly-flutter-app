@@ -1,30 +1,39 @@
 import 'package:flutter/material.dart';
 
-class InputTextFieldWidget extends StatelessWidget {
-  final TextEditingController textEditingController;
+class MyTextField extends StatelessWidget {
+  final controller;
   final String hintText;
+  final bool obscureText;
 
-  const InputTextFieldWidget(this.textEditingController, this.hintText, {super.key});
+  const MyTextField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    required this.obscureText,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 46,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      //padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
-        controller: textEditingController,
+        controller: controller,
+        obscureText: obscureText,
         decoration: InputDecoration(
-          alignLabelWithHint: true,
-          focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.black),
-          ),
-          filled: true,
-          fillColor: Colors.white54,
-          hintText: hintText,
-          hintStyle: const TextStyle(color: Colors.grey),
-          contentPadding: const EdgeInsets.only(bottom: 15),
-          focusColor: Colors.white60,
-        ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color:  Colors.white ),
+              borderRadius: BorderRadius.circular(90.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey.shade400),
+            ),
+            fillColor: Colors.grey.shade200,
+            filled: true,
+            hintText: hintText,
+            hintStyle: TextStyle(color: Colors.grey[500])),
       ),
     );
   }
 }
+

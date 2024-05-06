@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 //import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
@@ -11,41 +12,33 @@ import '../../dashboard/view/home.dart';
 
 import 'package:dio/dio.dart';
 
-class LoginController extends GetxController {
+class RegisterController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
 
-  Future<void> login() async {
+  Future<void> register() async {
     final email = emailController.text;
     final password = passwordController.text;
+    final confirmPassword = confirmPasswordController.text;
 
     try {
       final response = await Dio().post(
-        'http://localhost:5000/user/login',
-        data: {'userId': email, 'password': password},
+        'http://localhost:5000/user/register',
+        data: {'email': email, 'password': password, 'confirm_password': confirmPassword},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      final data = response.data;
       if (response.statusCode == 200) {
-        final token = data['token'];
-        final userName = data['username']; 
-        await saveToken(token);
-        // Handle successful login
-        Get.offNamed('/home');
+        Get.offNamed('/login');
       } else {
-        // Handle login failure
-        print("galat hai");
+        // Handle registration failure
+        print("ye sahi nahi");
         throw jsonDecode(response.data)["Message"] ?? "Unknown Error occurred";
       }
     } catch (e) {
       // Handle Dio error
       print(e.toString());
     }
-  }
-
-  Future<void> saveToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
   }
 }

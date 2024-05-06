@@ -2,63 +2,57 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import '../controller/login_controller.dart';
-import '../controller/signup_controller.dart';
-import '../widgets/login_widgets.dart';
+//import '../controller/login_controller.dart';
+import '../controller/register_controller.dart';
+//import '../widgets/login_widgets.dart';
+import 'package:flutter_application_1/services/app_routes.dart';
+import 'package:flutter_application_1/custom_widgets/input_fields.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
 
-  @override
-  State<SignupScreen> createState() => _SignupState();
-}
 
-class _SignupState extends State<SignupScreen> {
-  RegistrationController registrationController =
-      Get.put(RegistrationController());
-
-  LoginController loginController = Get.put(LoginController());
-
-  var isLogin = false.obs;
+class RegisterScreen extends StatelessWidget {
+  final RegisterController controller = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(36),
-        child: Obx(
-          () => Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 30),
-              const Text(
-                'Neighbourly',
-                style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.black,
-                  fontWeight: FontWeight.w400,
-                ),
+      backgroundColor: Colors.grey[300],
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 70),
+                    child: FlutterLogo(
+                      size: 40,
+                    ),
+                  ),
+            MyTextField(
+                controller: controller.emailController,
+                hintText: 'Email',
+                obscureText: false,
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  MaterialButton(
-                    color: !isLogin.value ? Colors.white : Colors.amber,
-                    onPressed: () {
-                      isLogin.value = true;
-                    },
-                    child: const Text('Register/Login'),
-                  )
-                ],
+              MyTextField(
+                controller: controller.passwordController,
+                hintText: 'Password',
+                obscureText: true,
               ),
-              const SizedBox(height: 20),
-              isLogin.value
-                  ? LoginWidgets.loginWidget(loginController)
-                  : LoginWidgets.registerWidget(registrationController)
-            ],
-          ),
+              MyTextField(
+                controller: controller.confirmPasswordController,
+                hintText: 'Confirm Password',
+                obscureText: true,
+              ),
+            //TextField(controller: controller.emailController, decoration: InputDecoration(labelText: 'Email')),
+            //TextField(controller: controller.passwordController, decoration: InputDecoration(labelText: 'Password'), obscureText: true),
+            //TextField(controller: controller.confirmPasswordController, decoration: InputDecoration(labelText: 'Confirm Password'), obscureText: true),
+            ElevatedButton(onPressed: controller.register, child: Text('Register')),
+            TextButton(
+              onPressed: () {
+                Get.toNamed(AppRoutes.login);
+              },
+              child: Text('Login'),
+            ),
+          ],
         ),
       ),
     );
