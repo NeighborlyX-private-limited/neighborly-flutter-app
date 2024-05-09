@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/services/app_routes.dart';
 import '../controller/login_controller.dart';
+import 'package:flutter_application_1/custom_widgets/input_fields.dart';
 
 
 class LoginScreen extends StatelessWidget {
@@ -21,19 +22,14 @@ class LoginScreen extends StatelessWidget {
                       size: 40,
                     ),
                   ),
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: TextField(controller:  controller.emailController, 
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(90.0),),
-                      labelText: 'Email',),),),
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-              child: TextField(controller: controller.passwordController, 
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(90.0),),labelText: 'Password'), obscureText: true),),
+            MyTextField(
+                controller: controller.emailController,
+                hintText: 'Email',
+                obscureText: false,),
+            MyTextField(
+                controller: controller.passwordController,
+                hintText: 'Password',
+                obscureText: true,),
             Container(
               height: 80,
               padding: const EdgeInsets.all(20),

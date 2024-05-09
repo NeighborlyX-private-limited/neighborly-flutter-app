@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:js';
 //import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
@@ -15,13 +16,63 @@ class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+// @override
+//   void onInit() {
+//     super.onInit();
+//     checkLogin();
+//   }
+
+//   Future<void> login() async {
+//     final email = emailController.text;
+//     final password = passwordController.text;
+
+//     try {
+//       final response = await Dio().post(
+//         'http://3.88.42.34/api/user/login',
+//         data: {'email': email, 'password': password},
+//         options: Options(headers: {'Content-Type': 'application/json'}),
+//       );
+
+//       final data = response.data;
+//       if (response.statusCode == 200) {
+//         final token = data['token'];
+//         await saveToken(token);
+//         Get.offNamed('/home');
+//       } else {
+//         // Handle login failure
+//         Get.snackbar('Login Failed', 'Invalid email or password',
+//             snackPosition: SnackPosition.BOTTOM);
+//         print('Login failed');
+//       }
+//     } catch (e) {
+//       // Handle Dio error
+//       print("nahi chal raha");
+//       print('Error: $e');
+//     }
+//   }
+
+//   Future<void> saveToken(String token) async {
+//     final prefs = await SharedPreferences.getInstance();
+//     await prefs.setString('token', token);
+//     await prefs.setBool('isLoggedIn', true);
+//   }
+
+//   Future<void> checkLogin() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+//     if (isLoggedIn) {
+//       Get.offNamed('/home');
+//     }
+//   }
+// }
+
   Future<void> login() async {
     final email = emailController.text;
     final password = passwordController.text;
 
     try {
       final response = await Dio().post(
-        'http://localhost:5000/user/login',
+        'http://3.88.42.34/api/user/login',
         data: {'userId': email, 'password': password},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -35,7 +86,7 @@ class LoginController extends GetxController {
         Get.offNamed('/home');
       } else {
         // Handle login failure
-        print("galat hai");
+        //print("galat hai");
         throw jsonDecode(response.data)["Message"] ?? "Unknown Error occurred";
       }
     } catch (e) {
@@ -48,4 +99,5 @@ class LoginController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('token', token);
   }
+
 }

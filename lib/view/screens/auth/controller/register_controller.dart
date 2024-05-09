@@ -24,7 +24,7 @@ class RegisterController extends GetxController {
 
     try {
       final response = await Dio().post(
-        'http://localhost:5000/user/register',
+        'http://3.88.42.34/api/user/register',
         data: {'email': email, 'password': password, 'confirm_password': confirmPassword},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
@@ -33,7 +33,7 @@ class RegisterController extends GetxController {
         Get.offNamed('/login');
       } else {
         // Handle registration failure
-        print("ye sahi nahi");
+        //print("ye sahi nahi");
         throw jsonDecode(response.data)["Message"] ?? "Unknown Error occurred";
       }
     } catch (e) {
