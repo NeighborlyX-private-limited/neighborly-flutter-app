@@ -39,7 +39,7 @@ class LoginScreen extends StatelessWidget {
             child: const Text('Login')),),
             TextButton(
               onPressed: () {
-                Get.toNamed(AppRoutes.register);
+                Get.toNamed(AppRoutes.reg);
               },
               child: Text('Register'),
             ),

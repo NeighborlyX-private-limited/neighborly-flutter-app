@@ -1,5 +1,5 @@
 import 'dart:convert';
-//import 'dart:js';
+import 'dart:js';
 //import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
@@ -64,6 +64,11 @@ class LoginController extends GetxController {
       Get.offNamed('/home');
     }
   }
+  // Future<void> logout() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   await prefs.setBool('isLoggedIn', false);
+  //   Get.offNamed('/login');
+  // }
 }
 
 //   Future<void> login() async {
