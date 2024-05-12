@@ -11,16 +11,21 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Colors.grey[300],
+       backgroundColor: Colors.white,
+       appBar: AppBar(title: Container(
+          height: 50,
+          child: Image.asset('assets/images/neighborly_logo.jpg'),
+        ),
+        centerTitle: true,),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children:<Widget>[
             Container(
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 70),
-                    child: FlutterLogo(
-                      size: 40,
-                    ),
+                    width: 200,
+                    height: 200,
+                    child: Image.asset('assets/images/neighborly_logo.jpg')
                   ),
             MyTextField(
                 controller: controller.emailController,

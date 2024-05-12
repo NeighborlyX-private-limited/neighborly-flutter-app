@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../auth/view/signup.dart';
+import '../../auth/view/signup_using_email.dart';
 import 'package:flutter_application_1/view/screens/auth/controller/login_controller.dart';
 
 

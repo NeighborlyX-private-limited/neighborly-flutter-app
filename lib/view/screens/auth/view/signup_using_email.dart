@@ -17,6 +17,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
+      appBar: AppBar(title: Text('Register')),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
