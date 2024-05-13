@@ -33,6 +33,7 @@ class SubmitButton extends StatelessWidget {
               spreadRadius: 1,
             ),
           ],
+          color: bgColor,
         ),
         child: ElevatedButton(
           style: ButtonStyle(
@@ -42,7 +43,7 @@ class SubmitButton extends StatelessWidget {
                 side: BorderSide.none,
               ),
             ),
-            backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF000000)),
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.transparent),
           ),
           onPressed: onPressed,
           child:iconImagePath!=null 
@@ -51,8 +52,8 @@ class SubmitButton extends StatelessWidget {
             children: [
               Image.asset(
                 iconImagePath!,
-                width: 2,
-                height: 2,
+                width: 24,
+                height: 24,
               ),
             const SizedBox(
               width: 11,

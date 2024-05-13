@@ -46,6 +46,7 @@ class RegScreen extends StatelessWidget {
             },
             iconImagePath: 'assets/images/continue_with_google_logo.png',
           title: "Continue with Google",
+          bgColor: Colors.black,
           textStyle: const TextStyle(
                 fontSize: 16,
                 color: Colors.white,
@@ -60,9 +61,10 @@ class RegScreen extends StatelessWidget {
             },
             iconImagePath: 'assets/images/continue_with_email_logo.png',
           title: "Continue with Email",
+          bgColor: Colors.white,
           textStyle: const TextStyle(
                 fontSize: 16,
-                color: Colors.white,
+                color: Colors.black,
               ),
         ),
       //   Padding(
