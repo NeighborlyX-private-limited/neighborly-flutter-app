@@ -19,11 +19,12 @@ class RegScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const Divider(),
             const SizedBox(
-              height: 50,
+              height: 40,
             ), 
             Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
               child:Container(
               child: const Center( 
               child: Text(
@@ -37,50 +38,53 @@ class RegScreen extends StatelessWidget {
             )
             ),
             const SizedBox(
-              height: 70,
+              height: 40,
             ),
             SubmitButton(
             onPressed: () {
               Get.toNamed(AppRoutes.register);
             },
-            icon: const Icon(Icons.play_arrow),
+            iconImagePath: 'assets/images/continue_with_google_logo.png',
           title: "Continue with Google",
-        ),
-        // const SizedBox(
-        //   height: 20,
-        // ),
-        Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        child:Container(
-          width: double.maxFinite,
-          height: 48,
-        child: CustomButton(
-          icon: const Icon(Icons.play_arrow),
-          title: "Continue with  Email",
-          bgColor: Colors.black,
           textStyle: const TextStyle(
                 fontSize: 16,
                 color: Colors.white,
               ),
-          onPressed: (){
-            Get.toNamed(AppRoutes.register);
-          }),
         ),
+        const SizedBox(
+          height: 8,
         ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     // Login using Google
-            //   },
-            //   child: Text('Login using Google'),
-            // ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Get.toNamed(AppRoutes.register);
-            //   },
-            //   child: Text('Login with Email'),
-            // ),
+        SubmitButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.register);
+            },
+            iconImagePath: 'assets/images/continue_with_email_logo.png',
+          title: "Continue with Email",
+          textStyle: const TextStyle(
+                fontSize: 16,
+                color: Colors.white,
+              ),
+        ),
+      //   Padding(
+      // padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+      //   child:Container(
+      //     width: double.maxFinite,
+      //     height: 48,
+      //   child: CustomButton(
+      //     icon: const Icon(Icons.play_arrow),
+      //     title: "Continue with  Email",
+      //     bgColor: Colors.black,
+      //     textStyle: const TextStyle(
+      //           fontSize: 16,
+      //           color: Colors.white,
+      //         ),
+      //     onPressed: (){
+      //       Get.toNamed(AppRoutes.register);
+      //     }),
+      //   ),
+      //   ),
             const SizedBox(
-              height: 10,
+              height: 24,
             ),
             const Row(
               children:[
@@ -97,8 +101,11 @@ class RegScreen extends StatelessWidget {
                     )),
                     ]
                     ),
+            const SizedBox(
+              height: 24,
+            ),
             Container(
-              padding: EdgeInsets.all(10),
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
               child: const TextField( 
                 decoration: InputDecoration(
                   hintText: 'Enter Phone Number',
@@ -106,12 +113,47 @@ class RegScreen extends StatelessWidget {
                 ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Send OTP logic
-              },
-              child: Text('Send OTP'),
+            const SizedBox(
+              height: 12,
             ),
+             SubmitButton(
+            onPressed: () {
+              Get.toNamed(AppRoutes.reg);
+            },
+          title: "Continue",
+          bgColor: const Color.fromRGBO(61, 61, 61, 1),
+          textStyle: const TextStyle(
+                fontSize: 16,
+                color: Color.fromRGBO(204, 204, 204, 1),
+              ),
+        ),
+            // ElevatedButton(
+            //   onPressed: () {
+            //     // Send OTP logic
+            //   },
+            //   child: Text('Send OTP'),
+            // ),
+            const SizedBox(
+              height: 32,
+            ),
+             Padding(
+              padding:  const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child:Container(
+              child:  Center( 
+              child: RichText(
+                textAlign: TextAlign.left,
+                text: const TextSpan(
+                  text: '\nBy clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
+                style: TextStyle(
+                fontSize: 14,
+                color: Color.fromRGBO(102, 102, 102, 1),
+              ),
+              )
+              )
+              )
+              )
+              ),
+
           ],
         ),
       );

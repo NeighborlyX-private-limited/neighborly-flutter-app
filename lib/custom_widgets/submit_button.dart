@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 class SubmitButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String title;
-  final Icon? icon;
+  final String? iconImagePath;
   final Color? bgColor;
   final TextStyle? textStyle;
 
   const SubmitButton({
-    super.key,
+    Key? key,
     required this.title,
-    this.icon,
+    this.iconImagePath,
     this.bgColor = Colors.white,
     this.textStyle,
     required this.onPressed
-    });
+    }) :super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
       child: Container(
         height: 48,
         width: double.maxFinite,
@@ -38,26 +38,32 @@ class SubmitButton extends StatelessWidget {
           style: ButtonStyle(
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(40),
                 side: BorderSide.none,
               ),
             ),
             backgroundColor: MaterialStateProperty.all<Color>(Color(0xFF000000)),
           ),
           onPressed: onPressed,
-          child:icon!=null ? Row(
+          child:iconImagePath!=null 
+          ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-            icon!,
+              Image.asset(
+                iconImagePath!,
+                width: 2,
+                height: 2,
+              ),
             const SizedBox(
               width: 11,
             ),
               Text(
               title,
-              style: const TextStyle(
-                fontSize: 18,
-                color: Colors.white,
-              ),
+              style: textStyle,
+              // const TextStyle(
+              //   fontSize: 18,
+              //   color: Colors.white,
+              // ),
               )
             ],
           )
