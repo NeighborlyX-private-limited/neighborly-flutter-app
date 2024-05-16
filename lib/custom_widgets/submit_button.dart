@@ -61,19 +61,12 @@ class SubmitButton extends StatelessWidget {
               Text(
               title,
               style: textStyle,
-              // const TextStyle(
-              //   fontSize: 18,
-              //   color: Colors.white,
-              // ),
               )
             ],
           )
           :Text(
           title,
-          style: const TextStyle(
-            fontSize: 24,
-            color: Colors.white,
-          ),
+          style: textStyle,
           ),
         ),
     )

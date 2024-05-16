@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/custom_widgets/custom_outlined_button.dart';
+import 'package:flutter_application_1/custom_widgets/custom_appbar.dart';
 import 'package:flutter_application_1/custom_widgets/submit_button.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/services/app_routes.dart';
@@ -8,14 +8,21 @@ class RegScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Container(
+      appBar: CustomAppBar(
+        titleWidget: Container(
           height: 50,
           child: Image.asset('assets/images/neighborly_logo.jpg'),
         ),
-        centerTitle: true,
       ),
-      body: Column(
+      // AppBar(
+      //   title: Container(
+      //     height: 50,
+      //     child: Image.asset('assets/images/neighborly_logo.jpg'),
+      //   ),
+      //   centerTitle: true,
+      // ),
+      body:SingleChildScrollView( 
+      child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -24,7 +31,7 @@ class RegScreen extends StatelessWidget {
               height: 40,
             ), 
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
               child:Container(
               child: const Center( 
               child: Text(
@@ -32,6 +39,8 @@ class RegScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 45,
                 color: Colors.black,
+                fontFamily: 'Roboto',//'Jacquard',
+                fontWeight: FontWeight.w600,
               ),
               )
               )
@@ -49,6 +58,8 @@ class RegScreen extends StatelessWidget {
           bgColor: Colors.black,
           textStyle: const TextStyle(
                 fontSize: 16,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w500,
                 color: Colors.white,
               ),
         ),
@@ -64,6 +75,8 @@ class RegScreen extends StatelessWidget {
           bgColor: Colors.white,
           textStyle: const TextStyle(
                 fontSize: 16,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
         ),
@@ -108,10 +121,12 @@ class RegScreen extends StatelessWidget {
             ),
             Container(
               padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: const TextField( 
+              child:  TextField( 
                 decoration: InputDecoration(
                   hintText: 'Enter Phone Number',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
                 ),
               ),
             ),
@@ -126,6 +141,8 @@ class RegScreen extends StatelessWidget {
           bgColor: const Color.fromRGBO(61, 61, 61, 1),
           textStyle: const TextStyle(
                 fontSize: 16,
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w500,
                 color: Color.fromRGBO(204, 204, 204, 1),
               ),
         ),
@@ -147,6 +164,7 @@ class RegScreen extends StatelessWidget {
                 text: const TextSpan(
                   text: '\nBy clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
                 style: TextStyle(
+                fontFamily: 'Roboto',
                 fontSize: 14,
                 color: Color.fromRGBO(102, 102, 102, 1),
               ),
@@ -158,6 +176,7 @@ class RegScreen extends StatelessWidget {
 
           ],
         ),
-      );
+      )
+    );
   }
 }

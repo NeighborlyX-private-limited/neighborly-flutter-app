@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       
       title: 'flutter_application_1',
-      initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.login,
+      initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.reg,
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }

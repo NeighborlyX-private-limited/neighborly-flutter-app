@@ -24,7 +24,7 @@ class RegisterController extends GetxController {
 
     try {
       final response = await Dio().post(
-        'http://3.88.42.34/api/user/register',
+        'http://3.87.94.1/api/user/register',
         data: {'email': email, 'password': password, 'confirm_password': confirmPassword},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );

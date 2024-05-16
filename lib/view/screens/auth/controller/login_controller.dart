@@ -26,7 +26,7 @@ class LoginController extends GetxController {
 
     try {
       final response = await Dio().post(
-        'http://3.88.42.34/api/user/login',
+        'http://3.87.94.1/api/user/login',
         data: {'userId': email, 'password': password},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
