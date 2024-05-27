@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/api_endpoints.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../dashboard/view/home.dart';
+
 
 import 'package:dio/dio.dart';
 
@@ -37,12 +37,13 @@ class LoginController extends GetxController {
         final userName = data['username']; 
         await saveToken(token);
         Get.offNamed('/home');
-      } else {
+      } else {print ("galat");
         Get.snackbar('Login Failed', 'Invalid email or password',
             snackPosition: SnackPosition.BOTTOM);
         throw jsonDecode(response.data)["Message"] ?? "Unknown Error occurred";
       }
     } catch (e) {
+      print("nahi");
       print(e.toString());
     }
   }
@@ -62,12 +63,13 @@ class LoginController extends GetxController {
       Get.offNamed('/home');
     }
   }
+}
   // Future<void> logout() async {
   //   final prefs = await SharedPreferences.getInstance();
   //   await prefs.setBool('isLoggedIn', false);
   //   Get.offNamed('/login');
   // }
-}
+
 
 //   Future<void> login() async {
 //     final email = emailController.text;

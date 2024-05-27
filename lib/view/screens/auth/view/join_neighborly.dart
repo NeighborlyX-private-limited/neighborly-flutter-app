@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/custom_widgets/custom_appbar.dart';
 import 'package:flutter_application_1/custom_widgets/submit_button.dart';
+import 'package:flutter_application_1/view/screens/auth/controller/google_login_controller.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/services/app_routes.dart';
 
@@ -49,14 +50,12 @@ class RegScreen extends StatelessWidget {
             const SizedBox(
               height: 40,
             ),
-            SubmitButton(
-            onPressed: () {
-              Get.toNamed(AppRoutes.register);
-            },
+            const SubmitButton(
+            onPressed: signInWithGoogle,
             iconImagePath: 'assets/images/continue_with_google_logo.png',
           title: "Continue with Google",
           bgColor: Colors.black,
-          textStyle: const TextStyle(
+          textStyle: TextStyle(
                 fontSize: 16,
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w500,
