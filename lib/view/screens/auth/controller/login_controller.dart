@@ -1,12 +1,10 @@
 import 'dart:convert';
 //import 'dart:js';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/api_endpoints.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 import 'package:dio/dio.dart';
 
@@ -14,7 +12,7 @@ class LoginController extends GetxController {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-@override
+  @override
   void onInit() {
     super.onInit();
     checkLogin();
@@ -34,10 +32,11 @@ class LoginController extends GetxController {
       final data = response.data;
       if (response.statusCode == 200) {
         final token = data['token'];
-        final userName = data['username']; 
+        final userName = data['username'];
         await saveToken(token);
         Get.offNamed('/home');
-      } else {print ("galat");
+      } else {
+        print("galat");
         Get.snackbar('Login Failed', 'Invalid email or password',
             snackPosition: SnackPosition.BOTTOM);
         throw jsonDecode(response.data)["Message"] ?? "Unknown Error occurred";
@@ -47,8 +46,6 @@ class LoginController extends GetxController {
       print(e.toString());
     }
   }
-
-  
 
   Future<void> saveToken(String token) async {
     final prefs = await SharedPreferences.getInstance();

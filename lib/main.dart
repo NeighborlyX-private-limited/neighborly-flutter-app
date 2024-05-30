@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/services/routes.dart';
+import 'package:flutter_application_1/view/screens/auth/view/splash.dart';
 import 'package:get/get.dart';
 import 'package:flutter_application_1/services/app_routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +10,7 @@ void main() async {
   final prefs = await SharedPreferences.getInstance();
   final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-  runApp(MyApp(isLoggedIn: isLoggedIn));
+  runApp(MyApp(isLoggedIn: isLoggedIn ?? false));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,10 +21,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      
       title: 'flutter_application_1',
-      initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.reg,
+      initialRoute: AppRoutes.splash,
+      //initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.reg,
       onGenerateRoute: AppRouter.onGenerateRoute,
+      initialBinding: BindingsBuilder((){
+        Get.put(isLoggedIn);
+      }
+      ),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_application_1/view/screens/auth/view/login_using_email.d
 import 'package:flutter_application_1/view/screens/auth/controller/register_controller.dart';
 import 'package:flutter_application_1/view/screens/auth/view/join_neighborly.dart';
 import 'package:flutter_application_1/view/screens/auth/view/signup_using_email.dart';
+import 'package:flutter_application_1/view/screens/auth/view/splash.dart';
 import 'package:flutter_application_1/view/screens/dashboard/view/home.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +13,8 @@ import 'package:get/get.dart';
 class AppRouter {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case AppRoutes.splash:
+        return GetPageRoute(page: () => SplashScreen());
       case AppRoutes.login:
         return GetPageRoute(page: () => LoginScreen(), binding: BindingsBuilder(() => Get.lazyPut(() => LoginController())));
       case AppRoutes.register:
