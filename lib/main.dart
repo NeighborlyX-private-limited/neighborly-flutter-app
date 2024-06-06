@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/routes/routes.dart';
+import 'dependency_injection.dart' as di;
 
 void main() {
+  di.init();
   runApp(const MyApp());
 }
 

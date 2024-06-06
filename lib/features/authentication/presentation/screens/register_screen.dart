@@ -21,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: InkWell(
           child: const Icon(
             Icons.arrow_back_ios,
@@ -42,81 +43,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Join Neighborly',
-              style: onboardingHeading1Style,
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            RegisterWidget(
-              image: Image.asset('assets/google_icon.png'),
-              title: 'Continue with Google',
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            RegisterWidget(
-              image: Image.asset('assets/email_icon.png'),
-              title: 'Continue with Email',
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const OrDividerWidget(),
-            const SizedBox(
-              height: 20,
-            ),
-            TextField(
-              controller: _controller,
-              decoration: const InputDecoration(
-                labelText: 'Enter Phone number',
-                border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Join Neighborly',
+                style: onboardingHeading1Style,
               ),
-            ),
-            const SizedBox(
-              height: 15,
-            ),
-            ButtonContainerWidget(
-              color: AppColors.primaryColor,
-              text: 'Continue',
-              isFilled: true,
-              onTapListener: () {
-                // context.push("/loginScreen");
-              },
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            RichText(
-              text: TextSpan(
-                text:
-                    'By clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
-                style: const TextStyle(
-                  color: Color(0xFF666666),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  height: 1.3,
+              const SizedBox(
+                height: 40,
+              ),
+              RegisterOption(
+                image: Image.asset('assets/google_icon.png'),
+                title: 'Continue with Google',
+                onTap: () {
+                  context.push("/registerWithEmailScreen");
+                },
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              RegisterOption(
+                image: Image.asset('assets/email_icon.png'),
+                title: 'Continue with Email',
+                onTap: () {
+                  context.push("/registerWithEmailScreen");
+                },
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              const OrDividerWidget(),
+              const SizedBox(
+                height: 20,
+              ),
+              TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  labelText: 'Enter Phone number',
+                  border: OutlineInputBorder(),
                 ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: 'Terms of Service',
-                    style: TextStyle(
-                      fontSize: 15,
-                      height: 1.3,
-                      color: Colors.grey[700],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
               ),
-            ),
-          ],
+              const SizedBox(
+                height: 15,
+              ),
+              ButtonContainerWidget(
+                color: AppColors.primaryColor,
+                text: 'Continue',
+                isFilled: true,
+                onTapListener: () {
+                  // context.push("/loginScreen");
+                },
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              RichText(
+                text: TextSpan(
+                  text:
+                      'By clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
+                  style: const TextStyle(
+                    color: Color(0xFF666666),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    height: 1.3,
+                  ),
+                  children: <TextSpan>[
+                    TextSpan(
+                      text: 'Terms of Service',
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.3,
+                        color: Colors.grey[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     ));

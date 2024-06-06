@@ -17,7 +17,7 @@ abstract class AuthRepository {
     required String otp,
   });
 
-  Future<Either<Failure, String>> sendOtp({required String email});
+  Future<Either<Failure, String>> resendOtp({required String email});
   Future<Either<Failure, void>> logout(
       // {
       // required UserEntity userEntity,
