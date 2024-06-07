@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_with_email_bloc/register_with_email_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
 
 class RegisterWithEmailScreen extends StatefulWidget {
   const RegisterWithEmailScreen({super.key});
@@ -13,10 +17,40 @@ class RegisterWithEmailScreen extends StatefulWidget {
 }
 
 class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  bool isActive = false;
+  late bool isEmailFilled = false;
+  late bool isPasswordFilled = false;
+  late bool isConfirmPasswordFilled = false;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
+
+  @override
+  void initState() {
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+  }
+
+  bool checkIsActive() {
+    if (isEmailFilled &&
+        isPasswordFilled &&
+        isConfirmPasswordFilled &&
+        _passwordController.text == _confirmPasswordController.text) {
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -67,44 +101,82 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 style: onboardingBodyStyle,
               ),
               const SizedBox(
-                height: 20,
+                height: 25,
               ),
-              TextField(
+              TextFieldWidget(
                 controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Phone number',
-                  border: OutlineInputBorder(),
-                ),
+                lableText: 'Enter Email Address',
+                isPassword: false,
+                onChanged: (value) {
+                  setState(() {
+                    isEmailFilled = _emailController.text.isNotEmpty;
+                  });
+                },
               ),
               const SizedBox(
-                height: 8,
+                height: 12,
               ),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Phone number',
-                  border: OutlineInputBorder(),
-                ),
+              TextFieldWidget(
+                onChanged: (value) {
+                  setState(() {
+                    isPasswordFilled = _passwordController.text.isNotEmpty;
+                  });
+                },
+                controller: _passwordController,
+                lableText: 'Password',
+                isPassword: true,
               ),
               const SizedBox(
-                height: 8,
+                height: 12,
               ),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Phone number',
-                  border: OutlineInputBorder(),
-                ),
+              TextFieldWidget(
+                onChanged: (value) {
+                  setState(() {
+                    isConfirmPasswordFilled =
+                        _confirmPasswordController.text.isNotEmpty;
+                  });
+                },
+                controller: _confirmPasswordController,
+                isPassword: true,
+                lableText: 'Re-Password',
               ),
               const SizedBox(
                 height: 45,
               ),
-              ButtonContainerWidget(
-                color: AppColors.primaryColor,
-                text: 'Continue',
-                isFilled: true,
-                onTapListener: () {
-                  // context.push("/loginScreen");
+              BlocConsumer<RegisterWithEmailBloc, RegisterWithEmailState>(
+                listener: (BuildContext context, RegisterWithEmailState state) {
+                  if (state is RegisterFailureState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
+                  } else if (state is RegisterSuccessState) {
+                    BlocProvider.of<ResendOtpBloc>(context).add(
+                      ResendOTPButtonPressedEvent(
+                        email: _emailController.text,
+                      ),
+                    );
+                    context.push('/otp/${_emailController.text}/true');
+                  }
+                },
+                builder: (context, state) {
+                  if (state is RegisterLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ButtonContainerWidget(
+                      isActive: checkIsActive(),
+                      color: AppColors.primaryColor,
+                      text: 'Sign Up',
+                      isFilled: true,
+                      onTapListener: () {
+                        BlocProvider.of<RegisterWithEmailBloc>(context).add(
+                          RegisterButtonPressedEvent(
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          ),
+                        );
+                      });
                 },
               ),
             ],

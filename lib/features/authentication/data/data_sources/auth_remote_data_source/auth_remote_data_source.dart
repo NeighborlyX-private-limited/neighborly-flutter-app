@@ -11,10 +11,11 @@ abstract class AuthRemoteDataSource {
     required String password,
   });
 
-  Future<AuthResponseModel> verifyOtp({
+  Future<String> verifyOtp({
     required String email,
     required String otp,
   });
 
-  Future<AuthResponseModel> resendOtp({required String email});
+  Future<String> resendOtp({required String email});
+  Future<String> forgotPassword({required String email});
 }

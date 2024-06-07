@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
 
 class LoginWithEmailScreen extends StatefulWidget {
   const LoginWithEmailScreen({super.key});
@@ -12,8 +15,34 @@ class LoginWithEmailScreen extends StatefulWidget {
 }
 
 class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  bool isActive = false;
+  late bool isEmailFilled = false;
+  late bool isPasswordFilled = false;
+
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
+
+  bool checkIsActive() {
+    if (isEmailFilled && isPasswordFilled) {
+      return true;
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,45 +94,81 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 style: onboardingBodyStyle,
               ),
               const SizedBox(
-                height: 20,
+                height: 25,
               ),
-              TextField(
+              TextFieldWidget(
                 controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Phone number',
-                  border: OutlineInputBorder(),
-                ),
+                lableText: 'Enter Email Address',
+                isPassword: false,
+                onChanged: (value) {
+                  setState(() {
+                    isEmailFilled = _emailController.text.isNotEmpty;
+                  });
+                },
               ),
               const SizedBox(
-                height: 8,
+                height: 12,
               ),
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Phone number',
-                  border: OutlineInputBorder(),
-                ),
+              TextFieldWidget(
+                onChanged: (value) {
+                  setState(() {
+                    isPasswordFilled = _passwordController.text.isNotEmpty;
+                  });
+                },
+                controller: _passwordController,
+                lableText: 'Password',
+                isPassword: true,
               ),
               const SizedBox(
                 height: 45,
               ),
-              ButtonContainerWidget(
-                color: AppColors.primaryColor,
-                text: 'Log in',
-                isFilled: true,
-                onTapListener: () {
-                  // context.push("/loginScreen");
+              BlocConsumer<LoginWithEmailBloc, LoginWithEmailState>(
+                listener: (BuildContext context, LoginWithEmailState state) {
+                  if (state is LoginFailureState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
+                  } else if (state is LoginSuccessState) {
+                    bool isEmailVerified = state.authResponseEntity.isVerified;
+                    isEmailVerified
+                        ? context.push('/homescreen')
+                        : context.push('/otp/${_emailController.text}/true');
+                  }
+                },
+                builder: (context, state) {
+                  if (state is LoginLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ButtonContainerWidget(
+                    isActive: checkIsActive(),
+                    color: AppColors.primaryColor,
+                    text: 'Log in',
+                    isFilled: true,
+                    onTapListener: () {
+                      BlocProvider.of<LoginWithEmailBloc>(context).add(
+                        LoginButtonPressedEvent(
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
               const SizedBox(
-                height: 5,
+                height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'Forgot your password?',
-                    style: onboardingBody2Style,
+                  InkWell(
+                    onTap: () => context.push('/forgot-password'),
+                    child: Text(
+                      'Forgot your password?',
+                      style: onboardingBody2Style,
+                    ),
                   )
                 ],
               )

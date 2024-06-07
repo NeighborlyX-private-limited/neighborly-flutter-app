@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -12,7 +16,21 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  final TextEditingController _emailController = TextEditingController();
+  late bool isEmailFilled = false;
+  late TextEditingController _emailController;
+  @override
+  void initState() {
+    _emailController = TextEditingController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -65,22 +83,51 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(
                 height: 20,
               ),
-              TextField(
+              TextFieldWidget(
                 controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Phone number',
-                  border: OutlineInputBorder(),
-                ),
+                lableText: 'Enter Email Address',
+                isPassword: false,
+                onChanged: (value) {
+                  setState(() {
+                    isEmailFilled = _emailController.text.isNotEmpty;
+                  });
+                },
               ),
               const SizedBox(
                 height: 45,
               ),
-              ButtonContainerWidget(
-                color: AppColors.primaryColor,
-                text: 'Send',
-                isFilled: true,
-                onTapListener: () {
-                  // context.push("/loginScreen");
+              BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
+                listener: (BuildContext context, ForgotPasswordState state) {
+                  if (state is ForgotPasswordFailureState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
+                  } else if (state is ForgotPasswordSuccessState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.message)),
+                    );
+                    context.push('/otp/${_emailController.text}/false');
+                  }
+                },
+                builder: (context, state) {
+                  if (state is ForgotPasswordLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ButtonContainerWidget(
+                    isActive: isEmailFilled,
+                    color: AppColors.primaryColor,
+                    text: 'Send',
+                    isFilled: true,
+                    onTapListener: () {
+                      BlocProvider.of<ForgotPasswordBloc>(context).add(
+                        ForgotPasswordButtonPressedEvent(
+                          email: _emailController.text,
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             ],

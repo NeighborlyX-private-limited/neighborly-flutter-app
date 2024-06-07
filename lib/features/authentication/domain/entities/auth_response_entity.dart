@@ -4,13 +4,13 @@ class AuthResponseEntity extends Equatable {
   final String id;
   final String username;
   final String token;
-  
+  final bool isVerified;
 
   const AuthResponseEntity({
     required this.id,
+    required this.isVerified,
     required this.username,
     required this.token,
-    
   });
 
   @override
@@ -18,5 +18,6 @@ class AuthResponseEntity extends Equatable {
         id,
         username,
         token,
-  ];
+        isVerified,
+      ];
 }

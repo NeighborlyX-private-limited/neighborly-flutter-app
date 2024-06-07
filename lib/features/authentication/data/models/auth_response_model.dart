@@ -2,13 +2,17 @@ import 'package:neighborly_flutter_app/features/authentication/domain/entities/a
 
 class AuthResponseModel extends AuthResponseEntity {
   const AuthResponseModel(
-      {required super.id, required super.username, required super.token});
+      {required super.id,
+      required super.username,
+      required super.token,
+      required super.isVerified});
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
     return AuthResponseModel(
       id: json['user']['_id'],
       username: json['user']['username'],
       token: json['token'],
+      isVerified: json['user']['isVerified'],
     );
   }
 
@@ -17,6 +21,7 @@ class AuthResponseModel extends AuthResponseEntity {
       'id': id,
       'username': username,
       'token': token,
+      'isVerified': isVerified,
     };
   }
 }

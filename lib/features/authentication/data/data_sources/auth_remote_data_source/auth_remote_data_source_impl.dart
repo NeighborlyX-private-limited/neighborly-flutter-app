@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:neighborly_flutter_app/core/constants/constants.dart';
 import 'package:neighborly_flutter_app/core/error/exception.dart';
 
 import 'package:neighborly_flutter_app/features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
@@ -11,14 +12,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<AuthResponseModel> loginWithEmail({required String email, required String password}) async {
+  Future<AuthResponseModel> loginWithEmail(
+      {required String email, required String password}) async {
+    String url = '$kBaseUrl/authentication/login';
     final response = await client.post(
-      Uri.parse('https://neighborly-api.herokuapp.com/api/v1/auth/login'),
+      Uri.parse(url),
       headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json',
       },
       body: jsonEncode(<String, String>{
-        'email': email,
+        'userId': email,
         'password': password,
       }),
     );
@@ -26,16 +29,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200) {
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      throw const ServerException();
+      throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
 
   @override
-  Future<AuthResponseModel> resendOtp({required String email}) async {
+  Future<String> resendOtp({required String email}) async {
+    String url = '$kBaseUrl/authentication/send-otp';
     final response = await client.post(
-      Uri.parse('https://neighborly-api.herokuapp.com/api/v1/auth/resend-otp'),
+      Uri.parse(url),
       headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json',
       },
       body: jsonEncode(<String, String>{
         'email': email,
@@ -43,38 +47,40 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      return AuthResponseModel.fromJson(jsonDecode(response.body));
+      return jsonDecode(response.body)['msg'];
     } else {
-      throw const ServerException();
+      throw ServerException(message: jsonDecode(response.body)['error']);
     }
   }
 
   @override
-  Future<AuthResponseModel> signupWithEmail({required String email, required String password}) async {
+  Future<AuthResponseModel> signupWithEmail(
+      {required String email, required String password}) async {
+    String url = '$kBaseUrl/authentication/register';
     final response = await client.post(
-      Uri.parse('https://neighborly-api.herokuapp.com/api/v1/auth/signup'),
+      Uri.parse(url),
       headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json',
       },
       body: jsonEncode(<String, String>{
-        'email': email,
         'password': password,
+        'email': email,
       }),
     );
-
     if (response.statusCode == 200) {
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      throw const ServerException();
+      throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
 
   @override
-  Future<AuthResponseModel> verifyOtp({required String email, required String otp}) async {
+  Future<String> verifyOtp({required String email, required String otp}) async {
+    String url = '$kBaseUrl/authentication/verify-otp';
     final response = await client.post(
-      Uri.parse('https://neighborly-api.herokuapp.com/api/v1/auth/verify-otp'),
+      Uri.parse(url),
       headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+        'Content-Type': 'application/json',
       },
       body: jsonEncode(<String, String>{
         'email': email,
@@ -83,13 +89,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      return AuthResponseModel.fromJson(jsonDecode(response.body));
+      return jsonDecode(response.body)['message'];
     } else {
-      throw const ServerException();
+      throw ServerException(message: jsonDecode(response.body)['error']);
     }
   }
 
-  
+  @override
+  Future<String> forgotPassword({required String email}) async {
+    String url = '$kBaseUrl/authentication/forgot-password';
+    final response = await client.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+      }),
+    );
 
-  
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['msg'];
+    } else {
+      throw ServerException(message: jsonDecode(response.body)['error']);
+    }
+  }
 }

@@ -6,4 +6,8 @@ class RouteConstants {
       'registerWithEmailScreen';
   static const String loginWithEmailScreenRouteName =
       'loginWithEmailScreenName';
+  static const String otpRouteName = 'otp';
+  static const String forgotPasswordRouteName = 'forgotPassword';
+  static const String homeScreenRouteName = 'homeScreen';
 }
+

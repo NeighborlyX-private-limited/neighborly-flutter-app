@@ -18,6 +18,8 @@ abstract class AuthRepository {
   });
 
   Future<Either<Failure, String>> resendOtp({required String email});
+  Future<Either<Failure, String>> forgotPassword({required String email});
+
   Future<Either<Failure, void>> logout(
       // {
       // required UserEntity userEntity,

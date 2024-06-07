@@ -5,6 +5,7 @@ import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/or_divider_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/register_option.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -80,12 +81,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(
                 height: 20,
               ),
-              TextField(
+              TextFieldWidget(
+                inputType: TextInputType.phone,
+                onChanged: (value) {
+                  // setState(() {
+                  //   isConfirmPasswordFilled =
+                  //       _confirmPasswordController.text.isNotEmpty;
+                  // });
+                },
                 controller: _controller,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Phone number',
-                  border: OutlineInputBorder(),
-                ),
+                isPassword: false,
+                lableText: 'Enter Phone Number',
               ),
               const SizedBox(
                 height: 15,
