@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/features/home/widgets/option_card.dart';
-import 'package:neighborly_flutter_app/features/home/widgets/reaction_widget.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/option_card.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 
 class Post2Widget extends StatelessWidget {
   const Post2Widget({super.key});

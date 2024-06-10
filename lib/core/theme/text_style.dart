@@ -24,3 +24,21 @@ var onboardingBody2Style = GoogleFonts.roboto(
   fontSize: 16,
   fontWeight: FontWeight.w600,
 );
+
+var whiteNormalTextStyle = GoogleFonts.roboto(
+  color: Colors.white,
+  fontSize: 16,
+  fontWeight: FontWeight.w500,
+);
+
+var blackNormalTextStyle = GoogleFonts.roboto(
+  color: Colors.black,
+  fontSize: 16,
+  fontWeight: FontWeight.w500,
+);
+
+var mediumTextStyleBlack = GoogleFonts.roboto(
+  color: const Color(0xff0A0A0A),
+  fontSize: 14,
+  fontWeight: FontWeight.w500,
+);

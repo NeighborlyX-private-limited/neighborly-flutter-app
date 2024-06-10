@@ -10,9 +10,9 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/widg
 
 class OtpScreen extends StatefulWidget {
   final String data;
-  final bool isForVerification;
+  final String verificationFor;
   const OtpScreen(
-      {super.key, required this.data, required this.isForVerification});
+      {super.key, required this.data, required this.verificationFor});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -110,9 +110,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.message)),
                     );
-                    if (widget.isForVerification) {
+                    if (widget.verificationFor == 'email-verify') {
                       context.push('/homescreen');
-                    } else {
+                    } else if (widget.verificationFor == 'forgot-password') {
                       context.push('/newPassword/${widget.data}');
                     }
                   }
@@ -131,7 +131,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     onTapListener: () {
                       BlocProvider.of<OtpBloc>(context).add(
                         OtpSubmitted(
-                            otp: _otpController.text, email: widget.data),
+                            otp: _otpController.text,
+                            email: widget.data,
+                            verificationFor: widget.verificationFor),
                       );
                     },
                   );

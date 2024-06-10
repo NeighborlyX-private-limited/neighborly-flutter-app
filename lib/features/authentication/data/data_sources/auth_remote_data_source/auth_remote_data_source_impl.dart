@@ -75,7 +75,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<String> verifyOtp({required String email, required String otp}) async {
+  Future<String> verifyOtp(
+      {required String email,
+      required String otp,
+      required String verificationFor}) async {
     String url = '$kBaseUrl/authentication/verify-otp';
     final response = await client.post(
       Uri.parse(url),
@@ -85,6 +88,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: jsonEncode(<String, String>{
         'email': email,
         'otp': otp,
+        "verificationFor": verificationFor,
       }),
     );
 

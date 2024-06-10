@@ -9,5 +9,6 @@ class RouteConstants {
   static const String otpRouteName = 'otp';
   static const String forgotPasswordRouteName = 'forgotPassword';
   static const String homeScreenRouteName = 'homeScreen';
+  static const String uploadPostScreenRouteName = 'uploadPostScreen';
+  static const String postDetailScreenRouteName = 'postDetailScreen';
 }
-

@@ -85,6 +85,26 @@ class ReactionWidget extends StatelessWidget {
         Row(
           children: [
             Image.asset(
+              'assets/react7.png',
+              width: 24,
+              height: 24,
+            ),
+            const SizedBox(
+              width: 3,
+            ),
+            Text(
+              '02',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            )
+          ],
+        ),
+        Row(
+          children: [
+            Image.asset(
               'assets/react4.png',
               width: 24,
               height: 24,

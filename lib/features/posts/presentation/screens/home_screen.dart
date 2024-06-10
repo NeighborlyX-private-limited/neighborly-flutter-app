@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/features/home/widgets/bottom_navbar.dart';
-import 'package:neighborly_flutter_app/features/home/widgets/post2_widget.dart';
-import 'package:neighborly_flutter_app/features/home/widgets/post3_widget.dart';
-import 'package:neighborly_flutter_app/features/home/widgets/post_widget.dart';
-
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post2_widget.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post3_widget.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -65,7 +63,6 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              BottomNavBar()
             ],
           )),
     );

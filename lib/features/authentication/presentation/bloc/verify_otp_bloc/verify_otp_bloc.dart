@@ -19,6 +19,7 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     final result = await _verifyOtpUseCase.call(
       event.email,
       event.otp,
+      event.verificationFor,
     );
 
     result.fold(

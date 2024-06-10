@@ -8,7 +8,10 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/scre
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/otp_screen.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/register_screen.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/register_with_email_screen.dart';
-import 'package:neighborly_flutter_app/features/home/screens/home_screen.dart';
+import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
+import 'package:neighborly_flutter_app/features/upload_post/presentation/screens/create_post_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -17,13 +20,13 @@ final GoRouter router = GoRouter(
     initialLocation: '/',
     navigatorKey: _rootNavigatorKey,
     routes: <RouteBase>[
-      GoRoute(
-        path: '/',
-        name: RouteConstants.onboardingScreenRouteName,
-        builder: (BuildContext context, GoRouterState state) {
-          return const OnBoardingScreen();
-        },
-      ),
+      // GoRoute(
+      //   path: '/',
+      //   name: RouteConstants.onboardingScreenRouteName,
+      //   builder: (BuildContext context, GoRouterState state) {
+      //     return const OnBoardingScreen();
+      //   },
+      // ),
       GoRoute(
         path: '/registerScreen',
         name: RouteConstants.reisterScreenRouteName,
@@ -53,13 +56,13 @@ final GoRouter router = GoRouter(
         },
       ),
       GoRoute(
-        path: '/otp/:data/:isForVerification',
+        path: '/otp/:data/:verificationFor',
         name: RouteConstants.otpRouteName,
         builder: (BuildContext context, GoRouterState state) {
           final String data = state.pathParameters['data']!;
-          final bool isForVerification =
-              state.pathParameters['isForVerification'] == 'true';
-          return OtpScreen(data: data, isForVerification: isForVerification);
+          final String verificationFor =
+              state.pathParameters['verificationFor']!;
+          return OtpScreen(data: data, verificationFor: verificationFor);
         },
       ),
       GoRoute(
@@ -70,10 +73,24 @@ final GoRouter router = GoRouter(
         },
       ),
       GoRoute(
-        path: '/homescreen',
+        path: '/',
         name: RouteConstants.homeScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
-          return const HomeScreen();
+          return MainPage();
+        },
+      ),
+      GoRoute(
+        path: '/post-detail',
+        name: RouteConstants.postDetailScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const PostDetailScreen();
+        },
+      ),
+      GoRoute(
+        path: '/upload-post',
+        name: RouteConstants.uploadPostScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const CreatePostScreen();
         },
       ),
     ]);

@@ -14,6 +14,7 @@ abstract class AuthRemoteDataSource {
   Future<String> verifyOtp({
     required String email,
     required String otp,
+    required String verificationFor,
   });
 
   Future<String> resendOtp({required String email});
