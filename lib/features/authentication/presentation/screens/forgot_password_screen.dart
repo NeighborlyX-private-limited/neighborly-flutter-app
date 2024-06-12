@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
 
@@ -106,7 +105,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.message)),
                     );
-                    context.push('/otp/${_emailController.text}/false');
+                    context
+                        .push('/otp/${_emailController.text}/forgot-password');
                   }
                 },
                 builder: (context, state) {

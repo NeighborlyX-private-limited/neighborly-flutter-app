@@ -31,7 +31,7 @@ class OnBoardingScreen extends StatelessWidget {
             Text(
               'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
               textAlign: TextAlign.center,
-              style: onboardingBody1Style,
+              style: blackonboardingBody1Style,
             ),
             Expanded(child: Container()),
             ButtonContainerWidget(

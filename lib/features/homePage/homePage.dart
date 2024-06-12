@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
 import 'package:neighborly_flutter_app/features/upload_post/presentation/screens/create_post_screen.dart';
-import 'package:neighborly_flutter_app/features/upload_post/presentation/widgets/post_button_widget.dart';
 
 class MainPage extends StatefulWidget {
-  MainPage({super.key});
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();

@@ -7,8 +7,19 @@ var onboardingHeading1Style = GoogleFonts.roboto(
   fontWeight: FontWeight.w600,
 );
 
-var onboardingBody1Style = GoogleFonts.roboto(
-  color: Colors.black,
+var onboardingHeading2Style = GoogleFonts.roboto(
+  color: const Color(0xff0A0A0A),
+  fontSize: 20,
+  fontWeight: FontWeight.w500,
+);
+
+var blackonboardingBody1Style = GoogleFonts.roboto(
+  color: const Color(0xff0A0A0A),
+  fontSize: 16,
+  fontWeight: FontWeight.w400,
+);
+var redOnboardingBody1Style = GoogleFonts.roboto(
+  color: Colors.red,
   fontSize: 16,
   fontWeight: FontWeight.w400,
 );

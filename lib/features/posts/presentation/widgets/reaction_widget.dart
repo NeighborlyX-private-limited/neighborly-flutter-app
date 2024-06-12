@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
 
 class ReactionWidget extends StatelessWidget {
+  final PostEntity post;
+
   final bool second;
   final bool third;
-  const ReactionWidget({super.key, required this.second, required this.third});
+  const ReactionWidget(
+      {super.key,
+      required this.second,
+      required this.third,
+      required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +34,7 @@ class ReactionWidget extends StatelessWidget {
               width: 3,
             ),
             Text(
-              '09',
+              post.cheers.toString(),
               style: TextStyle(
                 color: Colors.grey[900],
                 fontSize: 12,
@@ -53,7 +60,7 @@ class ReactionWidget extends StatelessWidget {
               width: 3,
             ),
             Text(
-              '04',
+              post.bools.toString(),
               style: TextStyle(
                 color: Colors.grey[600],
                 fontSize: 12,

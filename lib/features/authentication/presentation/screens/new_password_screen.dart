@@ -1,20 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
 
 class NewPasswordScreen extends StatefulWidget {
-  const NewPasswordScreen({super.key});
+  final String data;
+  const NewPasswordScreen({super.key, required this.data});
 
   @override
   State<NewPasswordScreen> createState() => _NewPasswordScreenState();
 }
 
 class _NewPasswordScreenState extends State<NewPasswordScreen> {
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  bool isActive = false;
+
+  late bool isPasswordFilled = false;
+  late bool isConfirmPasswordFilled = false;
+
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
+
+  @override
+  void initState() {
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+  }
+
+  bool checkIsActive() {
+    if (isPasswordFilled &&
+        isConfirmPasswordFilled &&
+        _passwordController.text == _confirmPasswordController.text) {
+      return true;
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -67,32 +100,67 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               const SizedBox(
                 height: 20,
               ),
-              TextField(
+              TextFieldWidget(
+                onChanged: (value) {
+                  setState(() {
+                    isPasswordFilled = _passwordController.text.isNotEmpty;
+                  });
+                },
                 controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
+                lableText: 'Password',
+                isPassword: true,
               ),
               const SizedBox(
                 height: 8,
               ),
-              TextField(
+              TextFieldWidget(
+                onChanged: (value) {
+                  setState(() {
+                    isConfirmPasswordFilled =
+                        _confirmPasswordController.text.isNotEmpty;
+                  });
+                },
                 controller: _confirmPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Confirm Password',
-                  border: OutlineInputBorder(),
-                ),
+                isPassword: true,
+                lableText: 'Confirm Password',
               ),
               const SizedBox(
                 height: 45,
               ),
-              ButtonContainerWidget(
-                color: AppColors.primaryColor,
-                text: 'Set new password',
-                isFilled: true,
-                onTapListener: () {
-                  // context.push("/loginScreen");
+              BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
+                listener: (context, state) {
+                  if (state is ChangePasswordFailureState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
+                  } else if (state is ChangePasswordSuccessState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.message)),
+                    );
+                    context.push('/loginScreen');
+                  }
+                },
+                builder: (context, state) {
+                  if (state is ChangePasswordLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ButtonContainerWidget(
+                    isActive: checkIsActive(),
+                    color: AppColors.primaryColor,
+                    text: 'Set new password',
+                    isFilled: true,
+                    onTapListener: () {
+                      BlocProvider.of<ChangePasswordBloc>(context).add(
+                        ChangePasswordButtonPressedEvent(
+                          email: widget.data,
+                          newPassword: _passwordController.text,
+                          flag: false,
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             ],

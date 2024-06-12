@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/google_authentication_bloc/google_authentication_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/or_divider_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/register_option.dart';
@@ -61,7 +63,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 image: Image.asset('assets/google_icon.png'),
                 title: 'Continue with Google',
                 onTap: () {
-                  context.push("/registerWithEmailScreen");
+                  print('button clicked');
+                  BlocProvider.of<GoogleAuthenticationBloc>(context)
+                      .add(GoogleAuthenticationButtonPressedEvent(context: context));
                 },
               ),
               const SizedBox(

@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
+
 import 'package:neighborly_flutter_app/features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
 import 'package:neighborly_flutter_app/features/authentication/domain/entities/auth_response_entity.dart';
 import 'package:neighborly_flutter_app/features/authentication/domain/repositories/auth_repository.dart';
@@ -21,6 +23,7 @@ class AuthRepositoryImpl implements AuthRepository {
       try {
         final result = await remoteDataSource.loginWithEmail(
             email: email, password: password);
+
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -98,6 +101,25 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.forgotPassword(email: email);
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, dynamic>> googleAuthentication(
+      BuildContext context) async {
+    if (await networkInfo.isConnected) {
+      try {
+        print('GoogleAuthenticationButtonPressedEvent in repository');
+        final result = await remoteDataSource.googleAuthentication(context);
+        print('GoogleAuthenticationButtonPressedEvent success');
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

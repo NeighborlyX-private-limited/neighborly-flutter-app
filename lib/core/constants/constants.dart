@@ -1,1 +1,1 @@
-const kBaseUrl = "http://34.207.25.173/api";
+const kBaseUrl = "https://neighborly.in/api";

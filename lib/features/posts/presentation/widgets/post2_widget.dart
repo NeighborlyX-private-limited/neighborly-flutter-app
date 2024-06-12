@@ -102,10 +102,10 @@ class Post2Widget extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            const ReactionWidget(
-              second: false,
-              third: false,
-            )
+            // const ReactionWidget(
+            //   second: false,
+            //   third: false,
+            // )
           ],
         ));
   }

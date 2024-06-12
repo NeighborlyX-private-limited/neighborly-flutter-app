@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 
 class PostDetailScreen extends StatefulWidget {
-  const PostDetailScreen({super.key});
+  final PostEntity postEntity;
+  const PostDetailScreen({super.key, required this.postEntity});
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -23,7 +26,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               size: 15,
             ),
             onTap: () {
-              // context.pop();
+              context.pop();
             },
           ),
           centerTitle: true,
@@ -66,9 +69,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               const SizedBox(
                                 width: 12,
                               ),
-                              const Text(
-                                'Oleg Ivanov',
-                                style: TextStyle(
+                              Text(
+                                widget.postEntity.userName,
+                                style: const TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 14,
                                 ),
@@ -85,7 +88,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         height: 10,
                       ),
                       Text(
-                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+                        widget.postEntity.content,
                         style: TextStyle(
                           color: Colors.grey[800],
                           fontSize: 15,
@@ -106,9 +109,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       const SizedBox(
                         height: 20,
                       ),
-                      const ReactionWidget(
+                      ReactionWidget(
                         second: true,
                         third: true,
+                        post: widget.postEntity,
                       ),
                       const SizedBox(
                         height: 10,

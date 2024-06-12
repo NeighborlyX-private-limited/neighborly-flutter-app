@@ -83,18 +83,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      Image.asset('assets/add_location.png'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Add Location',
-                        style: mediumTextStyleBlack,
-                      ),
-                    ],
-                  ),
+                  // Row(
+                  //   children: [
+                  //     Image.asset('assets/add_location.png'),
+                  //     const SizedBox(
+                  //       width: 10,
+                  //     ),
+                  //     Text(
+                  //       'Add Location',
+                  //       style: mediumTextStyleBlack,
+                  //     ),
+                  //   ],
+                  // ),
                   Row(
                     children: [
                       Image.asset('assets/create_an_event.png'),

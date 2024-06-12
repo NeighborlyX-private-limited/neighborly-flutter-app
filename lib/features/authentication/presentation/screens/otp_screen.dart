@@ -111,7 +111,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       SnackBar(content: Text(state.message)),
                     );
                     if (widget.verificationFor == 'email-verify') {
-                      context.push('/homescreen');
+                      context.go('/homescreen');
                     } else if (widget.verificationFor == 'forgot-password') {
                       context.push('/newPassword/${widget.data}');
                     }
@@ -160,6 +160,12 @@ class _OtpScreenState extends State<OtpScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),
                       );
+                      print('widget.data ${widget.data}');
+                      if (widget.verificationFor == 'email-verify') {
+                        context.go('/homescreen');
+                      } else if (widget.verificationFor == 'forgot-password') {
+                        context.push('/changePassword/${widget.data}');
+                      }
                     }
                   },
                   builder: (context, state) {
