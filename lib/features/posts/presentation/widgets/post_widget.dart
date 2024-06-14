@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 
@@ -18,6 +19,8 @@ class PostWidget extends StatelessWidget {
     void showReportConfirmationBottomSheet() {
       reportConfirmationBottomSheet(context);
     }
+
+    String? userId = ShardPrefHelper.getUserID();
 
     return InkWell(
       onTap: () {
@@ -93,30 +96,50 @@ class PostWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                InkWell(
-                  onTap: () {
-                    showBottomSheet();
-                  },
-                  child: Icon(
-                    Icons.more_horiz,
-                    size: 30,
-                    color: Colors.grey[500],
-                  ),
-                )
+                userId != post.userId
+                    ? InkWell(
+                        onTap: () {
+                          showBottomSheet();
+                        },
+                        child: Icon(
+                          Icons.more_horiz,
+                          size: 30,
+                          color: Colors.grey[500],
+                        ),
+                      )
+                    : Container()
               ],
             ),
             const SizedBox(
               height: 12,
             ),
-            Text(
-              post.content,
-              textAlign: TextAlign.start,
-              style: TextStyle(
-                color: Colors.grey[800],
-                fontSize: 15,
-                height: 1.3,
-              ),
-            ),
+            post.title != null
+                ? Text(
+                    post.title!,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      color: Colors.grey[900],
+                      fontSize: 16,
+                      height: 1.3,
+                    ),
+                  )
+                : Container(),
+            post.title != null
+                ? const SizedBox(
+                    height: 10,
+                  )
+                : Container(),
+            post.content != null
+                ? Text(
+                    post.content!,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      color: Colors.grey[800],
+                      fontSize: 15,
+                      height: 1.3,
+                    ),
+                  )
+                : Container(),
             post.multimedia != null
                 ? const SizedBox(
                     height: 10,

@@ -4,9 +4,11 @@ import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 
 class PostButtonWidget extends StatelessWidget {
   final bool isActive;
+  
   const PostButtonWidget({
     super.key,
-    this.isActive = false,
+    required this.isActive,
+ 
   });
 
   @override

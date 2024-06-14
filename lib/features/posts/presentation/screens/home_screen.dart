@@ -1,9 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/core/constants/route_constants.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
 
@@ -18,10 +15,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<GetAllPostsBloc>(context)
-        .add(GetAllPostsButtonPressedEvent());
+    var homeState = context.read<GetAllPostsBloc>().state;
+    if (homeState is! GetAllPostsLoadingState) {
+      BlocProvider.of<GetAllPostsBloc>(context)
+          .add(GetAllPostsButtonPressedEvent());
+    }
   }
-  
 
   @override
   Widget build(BuildContext context) {

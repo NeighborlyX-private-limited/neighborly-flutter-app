@@ -4,8 +4,8 @@ class PostModel extends PostEntity {
   const PostModel({
     required super.userId,
     required super.userName,
-    required super.title,
-    required super.content,
+    super.title,
+    super.content,
     required super.createdAt,
     required super.cheers,
     required super.bools,

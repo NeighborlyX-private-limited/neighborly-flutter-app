@@ -8,8 +8,6 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
 import 'package:neighborly_flutter_app/features/authentication/data/models/auth_response_model.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/web_view_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final http.Client client;
@@ -34,10 +32,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+      String userID = jsonDecode(response.body)['user']['_id'];
 
       ShardPrefHelper.setCookie(cookies);
+      ShardPrefHelper.setUserID(userID);
 
       print('Cookies saved: $cookies');
+      print('UserID saved: $userID');
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       throw ServerException(message: jsonDecode(response.body)['message']);
@@ -79,6 +80,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }),
     );
     if (response.statusCode == 200) {
+      // Assuming the response headers contain the Set-Cookie header
+      List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+      String userID = jsonDecode(response.body)['user']['_id'];
+
+      ShardPrefHelper.setCookie(cookies);
+      ShardPrefHelper.setUserID(userID);
+
+      print('Cookies saved: $cookies');
+      print('UserID saved: $userID');
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       throw ServerException(message: jsonDecode(response.body)['message']);

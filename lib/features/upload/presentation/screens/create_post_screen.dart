@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/upload_post/presentation/widgets/post_button_widget.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/widgets/post_button_widget.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -10,6 +10,29 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
+  late TextEditingController _contentController;
+  late bool isActive = false;
+
+  @override
+  void initState() {
+    _contentController = TextEditingController();
+
+    super.initState();
+  }
+
+  bool checkIsActive() {
+    if (isActive) {
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _contentController.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -29,20 +52,28 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           size: 20,
                         ),
                         onTap: () {
-                          // context.pop();
+                          _contentController.clear();
                         },
                       ),
-                      const PostButtonWidget(),
+                      PostButtonWidget(
+                        isActive: checkIsActive(),
+                      ),
                     ],
                   ),
                 ),
-                const Expanded(
+                Expanded(
                   child: Padding(
-                    padding:
-                        EdgeInsets.only(top: 14.0, left: 14.0, right: 14.0),
+                    padding: const EdgeInsets.only(
+                        top: 14.0, left: 14.0, right: 14.0),
                     child: Expanded(
                       child: TextField(
-                        decoration: InputDecoration(
+                        onChanged: (value) {
+                          setState(() {
+                            isActive = _contentController.text.isNotEmpty;
+                          });
+                        },
+                        controller: _contentController,
+                        decoration: const InputDecoration(
                           hintText: 'What\'s on your mind?',
                           border: InputBorder.none,
                           // contentPadding: EdgeInsets.symmetric(
@@ -83,18 +114,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ),
                     ],
                   ),
-                  // Row(
-                  //   children: [
-                  //     Image.asset('assets/add_location.png'),
-                  //     const SizedBox(
-                  //       width: 10,
-                  //     ),
-                  //     Text(
-                  //       'Add Location',
-                  //       style: mediumTextStyleBlack,
-                  //     ),
-                  //   ],
-                  // ),
+                  Row(
+                    children: [
+                      Image.asset('assets/add_location.png'),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Add Location',
+                        style: mediumTextStyleBlack,
+                      ),
+                    ],
+                  ),
                   Row(
                     children: [
                       Image.asset('assets/create_an_event.png'),

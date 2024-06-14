@@ -30,6 +30,12 @@ import 'package:neighborly_flutter_app/features/profile/data/repositories/profil
 import 'package:neighborly_flutter_app/features/profile/domain/repositories/profile_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/change_password_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/upload/data/data_sources/upload_remote_data_source/upload_remote_data_source.dart';
+import 'package:neighborly_flutter_app/features/upload/data/data_sources/upload_remote_data_source/upload_remote_data_source_impl.dart';
+import 'package:neighborly_flutter_app/features/upload/data/repositories/upload_repositories_impl.dart';
+import 'package:neighborly_flutter_app/features/upload/domain/repositories/upload_repositories.dart';
+import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_post_usecase.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -43,6 +49,7 @@ void init() async {
   sl.registerLazySingleton(() => GoogleAuthenticationUsecase(sl()));
   sl.registerLazySingleton(() => ChangePasswordUsecase(sl()));
   sl.registerLazySingleton(() => GetAllPostsUsecase(sl()));
+  sl.registerLazySingleton(() => UploadPostUsecase(sl()));
 
   // register repository
   sl.registerLazySingleton<AuthRepository>(
@@ -51,6 +58,8 @@ void init() async {
       () => ProfileRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<PostRepositories>(
       () => PostRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<UploadRepositories>(
+      () => UploadRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
 
   // register datasource
   sl.registerLazySingleton<AuthRemoteDataSource>(
@@ -59,6 +68,8 @@ void init() async {
       () => ProfileRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton<PostRemoteDataSource>(
       () => PostRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<UploadRemoteDataSource>(
+      () => UploadRemoteDataSourceImpl(client: sl()));
 
   // register bloc
   sl.registerFactory(() => RegisterWithEmailBloc(registerUseCase: sl()));
@@ -70,6 +81,7 @@ void init() async {
       () => GoogleAuthenticationBloc(googleAuthenticationUsecase: sl()));
   sl.registerFactory(() => ChangePasswordBloc(changePasswordUsecase: sl()));
   sl.registerFactory(() => GetAllPostsBloc(getAllPostsUsecase: sl()));
+  sl.registerFactory(() => UploadPostBloc(uploadPostUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

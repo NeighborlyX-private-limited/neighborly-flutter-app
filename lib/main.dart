@@ -10,6 +10,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/bloc
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'dependency_injection.dart' as di;
 
 void main() async {
@@ -50,6 +51,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<GetAllPostsBloc>(
             create: (context) => di.sl<GetAllPostsBloc>(),
+          ),
+          BlocProvider<UploadPostBloc>(
+            create: (context) => di.sl<UploadPostBloc>(),
           ),
         ],
         child: MaterialApp.router(

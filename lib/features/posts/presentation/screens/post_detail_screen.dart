@@ -88,7 +88,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         height: 10,
                       ),
                       Text(
-                        widget.postEntity.content,
+                        // widget.postEntity.content,
+                        'sd',
                         style: TextStyle(
                           color: Colors.grey[800],
                           fontSize: 15,
