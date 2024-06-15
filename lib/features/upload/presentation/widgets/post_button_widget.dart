@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
 
 class PostButtonWidget extends StatelessWidget {
   final bool isActive;
-  
+  final VoidCallback? onTapListener;
   const PostButtonWidget({
     super.key,
     required this.isActive,
- 
+    required this.onTapListener,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: isActive ? () {} : null,
+      onTap: isActive ? onTapListener : null,
       child: Opacity(
         opacity: isActive ? 1 : 0.3,
         child: Container(

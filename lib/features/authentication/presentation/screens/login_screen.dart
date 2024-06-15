@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/or_divider_widget.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/register_option.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/widgets/text_field_widget.dart';
+import '../widgets/button_widget.dart';
+import '../widgets/or_divider_widget.dart';
+import '../widgets/register_option.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -82,6 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 20,
               ),
               TextFieldWidget(
+                border: true,
                 inputType: TextInputType.phone,
                 onChanged: (value) {
                   // setState(() {

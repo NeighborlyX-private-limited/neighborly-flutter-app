@@ -26,8 +26,8 @@ String setInitialLocation() {
 }
 
 final GoRouter router = GoRouter(
-    initialLocation: setInitialLocation(),
-    // initialLocation: '/',
+    // initialLocation: setInitialLocation(),
+    initialLocation: '/',
     navigatorKey: _rootNavigatorKey,
     routes: <RouteBase>[
       GoRoute(

@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/features/authentication/domain/entities/google_auth_entity.dart';
 import 'package:neighborly_flutter_app/features/authentication/domain/usecases/google_authentication_usecase.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart'; // Ensure this import for handling failures
+
 
 part 'google_authentication_event.dart';
 part 'google_authentication_state.dart';
@@ -13,8 +13,8 @@ class GoogleAuthenticationBloc
   final GoogleAuthenticationUsecase _googleAuthenticationUsecase;
 
   GoogleAuthenticationBloc(
-      {required GoogleAuthenticationUsecase googleAuthenticationUsecase})
-      : _googleAuthenticationUsecase = googleAuthenticationUsecase,
+      {required GoogleAuthenticationUsecase googleAuthenticationaUsecase})
+      : _googleAuthenticationUsecase = googleAuthenticationaUsecase,
         super(GoogleAuthenticationInitialState()) {
     on<GoogleAuthenticationButtonPressedEvent>(_onGoogleAuthButtonPressed);
   }
@@ -27,7 +27,7 @@ class GoogleAuthenticationBloc
     // Assuming context is provided or initialized somewhere in your application
     // You need to pass the context from where this event is triggered
     try {
-      final response = await _googleAuthenticationUsecase.call(event.context);
+      final response = await _googleAuthenticationUsecase.call();
 
       response.fold(
           (failure) => emit(GoogleAuthenticationFailureState(

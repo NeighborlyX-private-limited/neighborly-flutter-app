@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import '../theme/colors.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final bool isPassword;
@@ -7,8 +7,10 @@ class TextFieldWidget extends StatefulWidget {
   final TextInputType? inputType;
   final TextEditingController controller;
   final void Function(String) onChanged;
+  final bool border;
   const TextFieldWidget(
       {super.key,
+      required this.border,
       this.isPassword = false,
       required this.lableText,
       required this.controller,
@@ -32,9 +34,11 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         controller: widget.controller,
         decoration: InputDecoration(
           labelText: widget.lableText,
-          border: const OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(8.0)),
-          ),
+          border: widget.border
+              ? const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                )
+              : InputBorder.none,
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10.0),
             borderSide: const BorderSide(

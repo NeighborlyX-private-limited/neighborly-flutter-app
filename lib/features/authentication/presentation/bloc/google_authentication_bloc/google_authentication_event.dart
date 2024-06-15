@@ -8,10 +8,8 @@ abstract class GoogleAuthenticationEvent extends Equatable {
 }
 
 class GoogleAuthenticationButtonPressedEvent extends GoogleAuthenticationEvent {
-  final BuildContext context;
-
-  const GoogleAuthenticationButtonPressedEvent({required this.context});
+  const GoogleAuthenticationButtonPressedEvent();
 
   @override
-  List<Object?> get props => [context];
+  List<Object?> get props => [];
 }

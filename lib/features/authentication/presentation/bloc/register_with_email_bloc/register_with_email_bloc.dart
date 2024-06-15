@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/usecases/signup_with_email_usecase.dart';
+import '../../../domain/usecases/signup_with_email_usecase.dart';
 
 part 'register_with_email_event.dart';
 part 'register_with_email_state.dart';
@@ -19,6 +19,8 @@ class RegisterWithEmailBloc
       final result = await _registerUser.call(
         event.email,
         event.password,
+        event.dob,
+        event.gender,
       );
 
       result.fold(

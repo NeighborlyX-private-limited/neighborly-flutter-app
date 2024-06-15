@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     var homeState = context.read<GetAllPostsBloc>().state;
-    if (homeState is! GetAllPostsLoadingState) {
+    if (homeState is! GetAllPostsSuccessState) {
       BlocProvider.of<GetAllPostsBloc>(context)
           .add(GetAllPostsButtonPressedEvent());
     }

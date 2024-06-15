@@ -16,7 +16,7 @@ class AuthResponseModel extends AuthResponseEntity {
     return AuthResponseModel(
       id: json['user']['_id'],
       username: json['user']['username'],
-      token: json['token'],
+      token: json['refreshToken'],
       isVerified: json['user']['isVerified'],
       email: json['user']['email'],
       // coordinates: json['user']['home_coordinates']['coordinates'],

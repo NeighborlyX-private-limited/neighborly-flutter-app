@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_with_email_bloc/register_with_email_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/widgets/text_field_widget.dart';
+import '../bloc/resend_otp_bloc/resend_otp_bloc.dart';
+import '../bloc/register_with_email_bloc/register_with_email_bloc.dart';
+import '../widgets/button_widget.dart';
+import '../widgets/dob_picker_widget.dart';
 
 class RegisterWithEmailScreen extends StatefulWidget {
   const RegisterWithEmailScreen({super.key});
@@ -21,15 +22,26 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   late bool isEmailFilled = false;
   late bool isPasswordFilled = false;
   late bool isConfirmPasswordFilled = false;
+  late bool isDayFilled = false;
+  late bool isMonthFilled = false;
+  late bool isYearFilled = false;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
+  late TextEditingController _dateController;
+  late TextEditingController _monthController;
+  late TextEditingController _yearController;
+  String _selectedGender = 'male';
 
   @override
   void initState() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
+    _dateController = TextEditingController();
+    _monthController = TextEditingController();
+    _yearController = TextEditingController();
+    // _checkPermissions();
     super.initState();
   }
 
@@ -39,17 +51,62 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _dateController.dispose();
+    _monthController.dispose();
+    _yearController.dispose();
   }
 
   bool checkIsActive() {
     if (isEmailFilled &&
         isPasswordFilled &&
         isConfirmPasswordFilled &&
+        // isDayFilled &&
+        // isMonthFilled &&
+        // isYearFilled &&
         _passwordController.text == _confirmPasswordController.text) {
       return true;
     }
     return false;
   }
+
+  String formatDOB(String day, String month, String year) {
+    return '${int.parse(year)}-${int.parse(month)}-${int.parse(day)}';
+  }
+
+  // String _permissionStatus = 'Unknown';
+  // String _locationData = 'No Data';
+
+  // final LocationService _locationService = LocationService();
+
+  // Future<void> _checkPermissions() async {
+  //   final isGranted = await _locationService.checkLocationPermission();
+  //   setState(() {
+  //     _permissionStatus = isGranted ? 'Granted' : 'Denied';
+  //   });
+  // }
+
+  // Future<void> _requestPermission() async {
+  //   final isGranted = await _locationService.requestLocationPermission();
+  //   setState(() {
+  //     _permissionStatus = isGranted ? 'Granted' : 'Denied';
+  //   });
+
+  //   if (isGranted) {
+  //     _getLocation();
+  //   }
+  // }
+
+  // Future<void> _getLocation() async {
+  //   final locationData = await _locationService.getCurrentLocation();
+  //   setState(() {
+  //     if (locationData != null) {
+  //       _locationData =
+  //           'Lat: ${locationData.latitude}, Long: ${locationData.longitude}';
+  //     } else {
+  //       _locationData = 'Failed to get location';
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -104,6 +161,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 height: 25,
               ),
               TextFieldWidget(
+                border: true,
                 controller: _emailController,
                 lableText: 'Enter Email Address',
                 isPassword: false,
@@ -117,6 +175,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 height: 12,
               ),
               TextFieldWidget(
+                border: true,
                 onChanged: (value) {
                   setState(() {
                     isPasswordFilled = _passwordController.text.isNotEmpty;
@@ -130,6 +189,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 height: 12,
               ),
               TextFieldWidget(
+                border: true,
                 onChanged: (value) {
                   setState(() {
                     isConfirmPasswordFilled =
@@ -141,10 +201,91 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 lableText: 'Re-Password',
               ),
               const SizedBox(
+                height: 25,
+              ),
+              Text(
+                'Your Basic Information',
+                style: onboardingHeading2Style,
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text('Select your Gender', style: blackonboardingBody1Style),
+              const SizedBox(
+                height: 8,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    children: [
+                      Radio<String>(
+                        value: 'Male',
+                        groupValue: _selectedGender,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectedGender = value!;
+                          });
+                        },
+                      ),
+                      const Text('Male'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Radio<String>(
+                        value: 'Female',
+                        groupValue: _selectedGender,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectedGender = value!;
+                          });
+                        },
+                      ),
+                      const Text('Female'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Radio<String>(
+                        value: 'Others',
+                        groupValue: _selectedGender,
+                        onChanged: (String? value) {
+                          setState(() {
+                            _selectedGender = value!;
+                          });
+                        },
+                      ),
+                      const Text('Others'),
+                    ],
+                  ),
+                ],
+              ),
+              const Divider(
+                color: Colors.grey,
+              ),
+              Text('Your Date of Birth', style: blackonboardingBody1Style),
+              const SizedBox(
+                height: 8,
+              ),
+              DOBPickerWidget(
+                  dateController: _dateController,
+                  monthController: _monthController,
+                  yearController: _yearController,
+                  isDayFilled: isDayFilled,
+                  isMonthFilled: isMonthFilled,
+                  isYearFilled: isYearFilled),
+              const SizedBox(
                 height: 45,
               ),
               BlocConsumer<RegisterWithEmailBloc, RegisterWithEmailState>(
                 listener: (BuildContext context, RegisterWithEmailState state) {
+                  if (_dateController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text('Please enter your date of birth')),
+                    );
+                  }
                   if (state is RegisterFailureState) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.error)),
@@ -174,6 +315,9 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                           RegisterButtonPressedEvent(
                             email: _emailController.text,
                             password: _passwordController.text,
+                            dob: formatDOB(_dateController.text,
+                                _monthController.text, _yearController.text),
+                            gender: _selectedGender,
                           ),
                         );
                       });

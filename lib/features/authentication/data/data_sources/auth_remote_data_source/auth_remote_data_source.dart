@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/features/authentication/data/models/auth_response_model.dart';
-import 'package:neighborly_flutter_app/features/authentication/data/models/google_auth_model.dart';
+import '../../models/auth_response_model.dart';
 
 abstract class AuthRemoteDataSource {
   Future<AuthResponseModel> signupWithEmail({
     required String email,
     required String password,
+    required String dob,
+    required String gender,
   });
 
   Future<AuthResponseModel> loginWithEmail({
@@ -19,7 +19,7 @@ abstract class AuthRemoteDataSource {
     required String verificationFor,
   });
 
-  Future<dynamic> googleAuthentication(BuildContext context);
+  Future<dynamic> googleAuthentication();
 
   Future<String> resendOtp({required String email});
   Future<String> forgotPassword({required String email});

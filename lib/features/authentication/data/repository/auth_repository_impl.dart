@@ -1,11 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
 
-import 'package:neighborly_flutter_app/features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/entities/auth_response_entity.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/repositories/auth_repository.dart';
+import '../data_sources/auth_remote_data_source/auth_remote_data_source.dart';
+import '../../domain/entities/auth_response_entity.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
@@ -37,11 +36,14 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, AuthResponseEntity>> signupWithEmail(
-      {required String email, required String password}) async {
+      {required String email,
+      required String password,
+      required String dob,
+      required String gender}) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.signupWithEmail(
-            email: email, password: password);
+            email: email, password: password, dob: dob, gender: gender);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -113,12 +115,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, dynamic>> googleAuthentication(
-      BuildContext context) async {
+  Future<Either<Failure, dynamic>> googleAuthentication() async {
     if (await networkInfo.isConnected) {
       try {
         print('GoogleAuthenticationButtonPressedEvent in repository');
-        final result = await remoteDataSource.googleAuthentication(context);
+        final result = await remoteDataSource.googleAuthentication();
         print('GoogleAuthenticationButtonPressedEvent success');
         return Right(result);
       } on ServerFailure catch (e) {

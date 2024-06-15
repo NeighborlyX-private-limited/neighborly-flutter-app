@@ -1,20 +1,22 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/entities/auth_response_entity.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/entities/google_auth_entity.dart';
+import '../../../../core/error/failures.dart';
+import '../entities/auth_response_entity.dart';
+import '../entities/google_auth_entity.dart';
 
 abstract class AuthRepository {
   Future<Either<Failure, AuthResponseEntity>> signupWithEmail({
     required String email,
     required String password,
+    required String dob,
+    required String gender,
   });
   Future<Either<Failure, AuthResponseEntity>> loginWithEmail({
     required String email,
     required String password,
   });
 
-  Future<Either<Failure, dynamic>> googleAuthentication(BuildContext context);
+  Future<Either<Failure, dynamic>> googleAuthentication();
 
   Future<Either<Failure, String>> verifyOtp({
     required String email,

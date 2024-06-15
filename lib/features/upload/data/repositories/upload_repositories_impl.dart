@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
 
-import 'package:neighborly_flutter_app/features/upload/data/data_sources/upload_remote_data_source/upload_remote_data_source.dart';
-import 'package:neighborly_flutter_app/features/upload/domain/repositories/upload_repositories.dart';
+import '../data_sources/upload_remote_data_source/upload_remote_data_source.dart';
+import '../../domain/repositories/upload_repositories.dart';
 
 class UploadRepositoriesImpl implements UploadRepositories {
   final UploadRemoteDataSource remoteDataSource;
@@ -28,6 +30,22 @@ class UploadRepositoriesImpl implements UploadRepositories {
           multimedia: multimedia,
           location: location,
         );
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadFile({required File file}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.uploadFile(file: file);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

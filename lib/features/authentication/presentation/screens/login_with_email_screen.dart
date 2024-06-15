@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/widgets/text_field_widget.dart';
+import '../bloc/login_with_email_bloc/login_with_email_bloc.dart';
+import '../widgets/button_widget.dart';
 
 class LoginWithEmailScreen extends StatefulWidget {
   const LoginWithEmailScreen({super.key});
@@ -97,6 +97,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 height: 25,
               ),
               TextFieldWidget(
+                border: true,
                 controller: _emailController,
                 lableText: 'Enter Email Address',
                 isPassword: false,
@@ -110,6 +111,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 height: 12,
               ),
               TextFieldWidget(
+                border: true,
                 onChanged: (value) {
                   setState(() {
                     isPasswordFilled = _passwordController.text.isNotEmpty;

@@ -1,5 +1,7 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
+import '../../../../core/error/failures.dart';
 
 abstract class UploadRepositories {
   Future<Either<Failure, void>> uploadPost({
@@ -8,4 +10,5 @@ abstract class UploadRepositories {
     String? multimedia,
     required List<num> location,
   });
+  Future<Either<Failure, String>> uploadFile({required File file});
 }

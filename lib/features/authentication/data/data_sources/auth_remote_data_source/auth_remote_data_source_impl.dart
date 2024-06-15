@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/core/constants/constants.dart';
 import 'package:neighborly_flutter_app/core/error/exception.dart';
+import 'package:neighborly_flutter_app/core/utils/google_auth_helper.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 
-import 'package:neighborly_flutter_app/features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
-import 'package:neighborly_flutter_app/features/authentication/data/models/auth_response_model.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/screens/web_view_screen.dart';
+import 'auth_remote_data_source.dart';
+import '../../models/auth_response_model.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final http.Client client;
@@ -67,7 +66,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<AuthResponseModel> signupWithEmail(
-      {required String email, required String password}) async {
+      {required String email,
+      required String password,
+      required String dob,
+      required String gender}) async {
     String url = '$kBaseUrl/authentication/register';
     final response = await client.post(
       Uri.parse(url),
@@ -77,6 +79,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: jsonEncode(<String, String>{
         'password': password,
         'email': email,
+        'dob': dob,
+        'gender': gender
       }),
     );
     if (response.statusCode == 200) {
@@ -141,31 +145,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<dynamic> googleAuthentication(BuildContext context) async {
-    String url = 'https://neighborly.in/api/authentication/google/oauth';
-    final response = await client.get(
+  Future<dynamic> googleAuthentication() async {
+    String url = '$kBaseUrl/authentication/google/login';
+    var signInResult = await GoogleSignInService.signInWithGoogle();
+    String tokenID = signInResult['idToken'];
+    if (signInResult.containsKey('error')) {
+      print(signInResult['error']);
+      return;
+    }
+    final response = await http.post(
       Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'tokenId': tokenID}),
     );
 
     if (response.statusCode == 200) {
-      print('GoogleAuthenticationButtonPressedEvent in data source');
-      if (response.headers['content-type']?.contains('text/html') ?? false) {
-        // It's HTML, show it in WebView
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WebViewScreen(htmlContent: response.body),
-          ),
-        );
-      } else {
-        // It's JSON, decode it and return
-        dynamic data = jsonDecode(response.body);
-        print(data);
-        return data;
-      }
+      return jsonDecode(response.body);
     } else {
       throw ServerException(
           message: jsonDecode(response.body)['error_description']);

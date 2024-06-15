@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/text_field_widget.dart';
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/widgets/text_field_widget.dart';
+import '../bloc/resend_otp_bloc/resend_otp_bloc.dart';
+import '../bloc/verify_otp_bloc/verify_otp_bloc.dart';
+import '../widgets/button_widget.dart';
 
 class OtpScreen extends StatefulWidget {
   final String data;
@@ -88,6 +88,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 height: 20,
               ),
               TextFieldWidget(
+                border: true,
                 controller: _otpController,
                 lableText: 'Enter OTP',
                 isPassword: false,
