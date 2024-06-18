@@ -8,4 +8,6 @@ abstract class UploadRemoteDataSource {
       required List<num> location});
 
   Future<String> uploadFile({required File file});
+  Future<void> uploadPoll(
+      {required String question, required List<String> options});
 }

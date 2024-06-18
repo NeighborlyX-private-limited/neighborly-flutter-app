@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
@@ -21,6 +22,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   late TextEditingController _option2Controller;
 
   late bool isActive = false;
+  late bool isQuestionFilled = false;
+  late bool isOption1Filled = false;
+  late bool isOption2Filled = false;
+
   late String _condition;
 
   @override
@@ -32,6 +37,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     _option2Controller = TextEditingController();
     _condition = 'post';
     super.initState();
+  }
+
+  bool checkIsPollActive() {
+    if (isQuestionFilled && isOption1Filled && isOption2Filled) {
+      return true;
+    }
+    return false;
   }
 
   bool checkIsActive() {
@@ -80,35 +92,72 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           }
                         },
                       ),
-                      BlocConsumer<UploadPostBloc, UploadPostState>(
-                        listener: (context, state) {
-                          if (state is UploadPostFailureState) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.error)),
-                            );
-                          } else if (state is UploadPostSuccessState) {
-                            context.go('/homescreen');
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state is UploadPostLoadingState) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return PostButtonWidget(
-                            onTapListener: () {
-                              BlocProvider.of<UploadPostBloc>(context).add(
-                                UploadPostPressedEvent(
-                                  content: _contentController.text,
-                                  location: const [0, 0],
-                                ),
-                              );
-                            },
-                            isActive: checkIsActive(),
-                          );
-                        },
-                      ),
+                      _condition == 'Post'
+                          ? BlocConsumer<UploadPostBloc, UploadPostState>(
+                              listener: (context, state) {
+                                if (state is UploadPostFailureState) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(state.error)),
+                                  );
+                                } else if (state is UploadPostSuccessState) {
+                                  context.go('/homescreen');
+                                }
+                              },
+                              builder: (context, state) {
+                                if (state is UploadPostLoadingState) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                return PostButtonWidget(
+                                  onTapListener: () {
+                                    BlocProvider.of<UploadPostBloc>(context)
+                                        .add(
+                                      UploadPostPressedEvent(
+                                        content: _contentController.text,
+                                        location: const [0, 0],
+                                      ),
+                                    );
+                                  },
+                                  isActive: checkIsActive(),
+                                );
+                              },
+                            )
+                          : BlocConsumer<UploadPollBloc, UploadPollState>(
+                              listener: (context, state) {
+                                if (state is UploadPollFailureState) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(state.error)),
+                                  );
+                                } else if (state is UploadPollSuccessState) {
+                                  _quesitonController.clear();
+                                  _option1Controller.clear();
+                                  _option2Controller.clear();
+                                }
+                              },
+                              builder: (context, state) {
+                                if (state is UploadPollLoadingState) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                return PostButtonWidget(
+                                  onTapListener: () {
+                                    BlocProvider.of<UploadPollBloc>(context)
+                                        .add(
+                                      UploadPollPressedEvent(
+                                        question: _quesitonController.text,
+                                        options: [
+                                          _option1Controller.text,
+                                          _option2Controller.text
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  isActive: checkIsPollActive(),
+                                );
+                              },
+                            ),
                     ],
                   ),
                 ),
@@ -155,14 +204,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     hintText: 'What\'s on your mind?',
                                     border: InputBorder.none,
                                   ),
-                                  keyboardType: TextInputType
-                                      .multiline, // Allows for multiline input
-                                  maxLines:
-                                      null, // Allows the TextField to expand vertically
-                                  minLines:
-                                      1, // Sets the minimum number of lines to display
-                                  expands:
-                                      false, // Expands the TextField vertically to fill the parent container
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: null,
+                                  minLines: 1,
+                                  expands: false,
                                 ),
                               ),
                             ],
@@ -182,7 +227,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 child: TextField(
                                   onChanged: (value) {
                                     setState(() {
-                                      isActive =
+                                      isQuestionFilled =
                                           _quesitonController.text.isNotEmpty;
                                     });
                                   },
@@ -207,10 +252,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     TextFieldWidget(
                                       border: true,
                                       onChanged: (value) {
-                                        // setState(() {
-                                        //   isPasswordFilled = _passwordController
-                                        //       .text.isNotEmpty;
-                                        // });
+                                        setState(() {
+                                          isOption1Filled = _option1Controller
+                                              .text.isNotEmpty;
+                                        });
                                       },
                                       controller: _option1Controller,
                                       lableText: 'Option 1',
@@ -221,10 +266,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     TextFieldWidget(
                                       border: true,
                                       onChanged: (value) {
-                                        // setState(() {
-                                        //   isPasswordFilled = _option2Controller
-                                        //       .text.isNotEmpty;
-                                        // });
+                                        setState(() {
+                                          isOption2Filled = _option2Controller
+                                              .text.isNotEmpty;
+                                        });
                                       },
                                       controller: _option2Controller,
                                       lableText: 'Option 2',

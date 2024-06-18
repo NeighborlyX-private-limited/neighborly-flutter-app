@@ -11,4 +11,8 @@ abstract class UploadRepositories {
     required List<num> location,
   });
   Future<Either<Failure, String>> uploadFile({required File file});
+  Future<Either<Failure, void>> uploadPoll({
+    required String question,
+    required List<String> options,
+  });
 }
