@@ -1,13 +1,29 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
-import '../bloc/google_authentication_bloc/google_authentication_bloc.dart';
+import 'package:flutter/foundation.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/or_divider_widget.dart';
 import '../widgets/register_option.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+
+const List<String> scopes = <String>[
+  'email',
+  'https://www.googleapis.com/auth/contacts.readonly',
+];
+
+GoogleSignIn _googleSignIn = GoogleSignIn(
+  // Optional clientId
+  serverClientId:
+      '805628551035-k20h8ab6vdvr8qth03hn0r53hdgh4vo4.apps.googleusercontent.com',
+
+  scopes: scopes,
+);
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,6 +33,79 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  Future<void> _handleSignIn() async {
+    try {
+      await _googleSignIn.signOut();
+      await _googleSignIn.signIn();
+
+      _googleSignIn.signIn().then((result) {
+        result?.authentication.then((googleKey) {
+          final token = googleKey.idToken.toString();
+          log(token);
+          print('Token: ${googleKey.idToken}');
+        });
+      });
+    } catch (error) {
+      print('Sign in error: $error');
+    }
+  }
+
+  GoogleSignInAccount? _currentUser;
+  bool _isAuthorized = false; // has granted permissions?
+  String _contactText = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _googleSignIn.onCurrentUserChanged
+        .listen((GoogleSignInAccount? account) async {
+      setState(() {
+        _currentUser = account;
+      });
+
+      if (account != null) {
+        // Optionally handle authorized scopes
+        bool isAuthorized =
+            kIsWeb ? await _googleSignIn.canAccessScopes(scopes) : true;
+        setState(() {
+          _isAuthorized = isAuthorized;
+        });
+      }
+    });
+    // In the web, _googleSignIn.signInSilently() triggers the One Tap UX.
+    //
+    // It is recommended by Google Identity Services to render both the One Tap UX
+    // and the Google Sign In button together to "reduce friction and improve
+    // sign-in rates" ([docs](https://developers.google.com/identity/gsi/web/guides/display-button#html)).
+    _googleSignIn.signInSilently();
+  }
+
+  // String? _pickFirstNamedContact(Map<String, dynamic> data) {
+  //   final List<dynamic>? connections = data['connections'] as List<dynamic>?;
+  //   final Map<String, dynamic>? contact = connections?.firstWhere(
+  //     (dynamic contact) => (contact as Map<Object?, dynamic>)['names'] != null,
+  //     orElse: () => null,
+  //   ) as Map<String, dynamic>?;
+  //   if (contact != null) {
+  //     final List<dynamic> names = contact['names'] as List<dynamic>;
+  //     final Map<String, dynamic>? name = names.firstWhere(
+  //       (dynamic name) =>
+  //           (name as Map<Object?, dynamic>)['displayName'] != null,
+  //       orElse: () => null,
+  //     ) as Map<String, dynamic>?;
+  //     if (name != null) {
+  //       return name['displayName'] as String?;
+  //     }
+  //   }
+  //   return null;
+  // }
+
+  // This is the on-click handler for the Sign In button that is rendered by Flutter.
+  //
+  // On the web, the on-click handler of the Sign In button is owned by the JS
+  // SDK, so this method can be considered mobile only.
+  // #docregion SignIn
+
   final TextEditingController _controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -64,8 +153,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 title: 'Continue with Google',
                 onTap: () {
                   print('button clicked');
-                  BlocProvider.of<GoogleAuthenticationBloc>(context)
-                      .add(const GoogleAuthenticationButtonPressedEvent());
+                  // BlocProvider.of<GoogleAuthenticationBloc>(context)
+                  //     .add(const GoogleAuthenticationButtonPressedEvent());
+                  _handleSignIn();
                 },
               ),
               const SizedBox(
