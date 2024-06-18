@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 
-import 'package:flutter/material.dart';
-import '../../../../core/widgets/text_field_widget.dart';
-
 class DOBPickerWidget extends StatefulWidget {
   final TextEditingController dateController;
   final TextEditingController monthController;
