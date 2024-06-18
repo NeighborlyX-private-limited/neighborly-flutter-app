@@ -40,4 +40,33 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw ServerException(message: message);
     }
   }
+
+  @override
+  Future<void> reportPost({required String reason, required num postId}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    print('Cookies: $cookieHeader');
+    String url = '$kBaseUrl/wall/report-post';
+    final response = await client.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
+      },
+      body: jsonEncode(<String, dynamic>{
+        'postId': postId,
+        'reason': reason,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
+    }
+  }
 }

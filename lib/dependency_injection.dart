@@ -2,6 +2,8 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/usecases/report_post_usecase.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source_impl.dart';
 import 'features/authentication/data/repository/auth_repository_impl.dart';
@@ -50,6 +52,7 @@ void init() async {
   sl.registerLazySingleton(() => ChangePasswordUsecase(sl()));
   sl.registerLazySingleton(() => GetAllPostsUsecase(sl()));
   sl.registerLazySingleton(() => UploadPostUsecase(sl()));
+  sl.registerLazySingleton(() => ReportPostUsecase(sl()));
 
   // register repository
   sl.registerLazySingleton<AuthRepository>(
@@ -82,6 +85,7 @@ void init() async {
   sl.registerFactory(() => ChangePasswordBloc(changePasswordUsecase: sl()));
   sl.registerFactory(() => GetAllPostsBloc(getAllPostsUsecase: sl()));
   sl.registerFactory(() => UploadPostBloc(uploadPostUsecase: sl()));
+  sl.registerFactory(() => ReportPostBloc(reportPostUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

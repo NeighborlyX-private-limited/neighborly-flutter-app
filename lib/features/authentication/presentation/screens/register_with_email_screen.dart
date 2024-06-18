@@ -9,6 +9,8 @@ import '../bloc/register_with_email_bloc/register_with_email_bloc.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/dob_picker_widget.dart';
 
+
+
 class RegisterWithEmailScreen extends StatefulWidget {
   const RegisterWithEmailScreen({super.key});
 
@@ -33,6 +35,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   late TextEditingController _yearController;
   String _selectedGender = 'male';
 
+
+
   @override
   void initState() {
     _emailController = TextEditingController();
@@ -41,6 +45,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
     _dateController = TextEditingController();
     _monthController = TextEditingController();
     _yearController = TextEditingController();
+    
     // _checkPermissions();
     super.initState();
   }
@@ -107,6 +112,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   //     }
   //   });
   // }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -282,7 +289,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 listener: (BuildContext context, RegisterWithEmailState state) {
                   if (_dateController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
+                      const SnackBar(
                           content: Text('Please enter your date of birth')),
                     );
                   }

@@ -17,12 +17,17 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 List<String>? cookies = ShardPrefHelper.getCookie();
 
+// String setInitialLocation() {
+//   if (cookies == null) {
+//     return '/';
+//   } else {
+//     return '/homescreen';
+//   }
+// }
+
 String setInitialLocation() {
-  if (cookies == null) {
-    return '/';
-  } else {
-    return '/homescreen';
-  }
+  // Check if cookies exist and set the initial location accordingly
+  return (cookies == null || cookies!.isEmpty) ? '/' : '/homescreen';
 }
 
 final GoRouter router = GoRouter(

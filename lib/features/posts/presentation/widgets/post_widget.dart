@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 
 class PostWidget extends StatelessWidget {
@@ -16,15 +18,11 @@ class PostWidget extends StatelessWidget {
       bottomSheet(context);
     }
 
-    void showReportConfirmationBottomSheet() {
-      reportConfirmationBottomSheet(context);
-    }
-
     String? userId = ShardPrefHelper.getUserID();
 
     return InkWell(
       onTap: () {
-        context.push('/post-detail');
+        // context.push('/post-detail');
       },
       child: Container(
         color: Colors.white,
@@ -214,8 +212,8 @@ class PostWidget extends StatelessWidget {
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
-          height: 200,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          height: 240,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -228,12 +226,16 @@ class PostWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(40),
                 ),
               ),
+              const SizedBox(
+                height: 4,
+              ),
               Image.asset('assets/report_confirmation.png'),
               Text(
                 'Thanks for letting us know',
                 style: onboardingHeading2Style,
               ),
               Text(
+                textAlign: TextAlign.center,
                 'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
                 style: blackonboardingBody1Style,
               ),
@@ -245,79 +247,141 @@ class PostWidget extends StatelessWidget {
   }
 
   Future<dynamic> reportReasonBottomSheet(BuildContext context) {
+    void showReportConfirmationBottomSheet() {
+      reportConfirmationBottomSheet(context);
+    }
+
+    List<String> reportReasons = [
+      'Inappropriate content',
+      'Spam',
+      'Harassment or hate speech',
+      'Violence or dangerous organizations',
+      'Intellectual property violation',
+    ];
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: const Color(0xffB8B8B8),
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                  ),
+        return BlocConsumer<ReportPostBloc, ReportPostState>(
+          listener: (context, state) {
+            if (state is ReportPostSuccessState) {
+              Navigator.pop(context);
+              Navigator.pop(context);
+              showReportConfirmationBottomSheet();
+            } else if (state is ReportPostFailureState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error),
                 ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Center(
-                  child: Text(
-                    'Reason to Report',
-                    style: onboardingHeading2Style,
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              );
+            }
+          },
+          builder: (context, state) {
+            return SingleChildScrollView(
+              child: Container(
+                color: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Reason One',
-                      style: blackonboardingBody1Style,
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: const Color(0xffB8B8B8),
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                      ),
                     ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    state is ReportPostLoadingState
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Center(
+                            child: Text(
+                              'Reason to Report',
+                              style: onboardingHeading2Style,
+                            ),
+                          ),
                     const SizedBox(
                       height: 10,
                     ),
-                    Text(
-                      'Reason Two',
-                      style: blackonboardingBody1Style,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Reason Three',
-                      style: blackonboardingBody1Style,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Reason Four',
-                      style: blackonboardingBody1Style,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      'Reason Five',
-                      style: blackonboardingBody1Style,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            context.read<ReportPostBloc>().add(
+                                ReportButtonPressedEvent(
+                                    postId: post.id, reason: reportReasons[0]));
+                          },
+                          child: Text(
+                            reportReasons[0],
+                            style: blackonboardingBody1Style,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            context.read<ReportPostBloc>().add(
+                                ReportButtonPressedEvent(
+                                    postId: post.id, reason: reportReasons[1]));
+                          },
+                          child: Text(
+                            reportReasons[1],
+                            style: blackonboardingBody1Style,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () => context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                  postId: post.id, reason: reportReasons[2])),
+                          child: Text(
+                            reportReasons[2],
+                            style: blackonboardingBody1Style,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () => context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                  postId: post.id, reason: reportReasons[3])),
+                          child: Text(
+                            reportReasons[3],
+                            style: blackonboardingBody1Style,
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () => context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                  postId: post.id, reason: reportReasons[4])),
+                          child: Text(
+                            reportReasons[4],
+                            style: blackonboardingBody1Style,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

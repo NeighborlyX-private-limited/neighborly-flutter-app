@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/material.dart';
 import '../../../../core/error/failures.dart';
 import '../entities/auth_response_entity.dart';
-import '../entities/google_auth_entity.dart';
 
 abstract class AuthRepository {
   Future<Either<Failure, AuthResponseEntity>> signupWithEmail({
