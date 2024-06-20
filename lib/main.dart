@@ -8,6 +8,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/bloc
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_with_email_bloc/register_with_email_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
@@ -62,6 +63,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<UploadPollBloc>(
             create: (context) => di.sl<UploadPollBloc>(),
+          ),
+          BlocProvider<FeedbackBloc>(
+            create: (context) => di.sl<FeedbackBloc>(),
           ),
         ],
         child: MaterialApp.router(

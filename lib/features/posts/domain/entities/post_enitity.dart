@@ -10,16 +10,22 @@ class PostEntity extends Equatable {
   final String createdAt;
   final num cheers;
   final num bools;
+  final String proPic;
+  final String city;
+  final num commentCount;
 
   const PostEntity({
+    required this.city,
     required this.id,
     required this.userId,
     required this.userName,
+    required this.commentCount,
     this.title,
     this.content,
     required this.createdAt,
     required this.cheers,
     required this.bools,
+    required this.proPic,
     this.multimedia, // Made nullable
   });
 
@@ -28,10 +34,13 @@ class PostEntity extends Equatable {
         id,
         userId,
         userName,
+        commentCount,
         title,
         content,
         createdAt,
         cheers,
+        city,
+        proPic,
         bools,
         multimedia, // Nullable in props list
       ];

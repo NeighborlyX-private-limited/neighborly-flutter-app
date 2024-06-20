@@ -2,7 +2,9 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/usecases/feedback_usecase.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/report_post_usecase.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_poll_usecase.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
@@ -56,6 +58,7 @@ void init() async {
   sl.registerLazySingleton(() => UploadPostUsecase(sl()));
   sl.registerLazySingleton(() => ReportPostUsecase(sl()));
   sl.registerLazySingleton(() => UploadPollUsecase(sl()));
+  sl.registerLazySingleton(() => FeedbackUsecase(sl()));
 
   // register repository
   sl.registerLazySingleton<AuthRepository>(
@@ -90,6 +93,7 @@ void init() async {
   sl.registerFactory(() => UploadPostBloc(uploadPostUsecase: sl()));
   sl.registerFactory(() => ReportPostBloc(reportPostUsecase: sl()));
   sl.registerFactory(() => UploadPollBloc(uploadPollUsecase: sl()));
+  sl.registerFactory(() => FeedbackBloc(feedbackUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

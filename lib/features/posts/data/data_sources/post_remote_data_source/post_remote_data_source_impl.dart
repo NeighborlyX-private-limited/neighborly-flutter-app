@@ -21,7 +21,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/wall/fetch-posts';
-    Map<String, dynamic> queryParameters = {'home': 'true'};
+    Map<String, dynamic> queryParameters = {'home': 'false'};
 
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
@@ -36,7 +36,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => PostModel.fromJson(data)).toList();
     } else {
-      final message = jsonDecode(response.body)['message'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
       throw ServerException(message: message);
     }
   }
@@ -59,6 +59,39 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       body: jsonEncode(<String, dynamic>{
         'postId': postId,
         'reason': reason,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return;
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<void> feedback(
+      {required num id,
+      required String feedback,
+      required String type}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    print('Cookies: $cookieHeader');
+    String url = '$kBaseUrl/wall/feedback';
+    final response = await client.put(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
+      },
+      body: jsonEncode(<String, dynamic>{
+        'id': id,
+        'feedback': feedback,
+        'type': type,
       }),
     );
 

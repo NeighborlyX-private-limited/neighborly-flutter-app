@@ -162,8 +162,6 @@ class PostWidget extends StatelessWidget {
               height: 20,
             ),
             ReactionWidget(
-              second: true,
-              third: true,
               post: post,
             )
           ],

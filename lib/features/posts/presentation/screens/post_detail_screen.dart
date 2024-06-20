@@ -111,8 +111,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         height: 20,
                       ),
                       ReactionWidget(
-                        second: true,
-                        third: true,
                         post: widget.postEntity,
                       ),
                       const SizedBox(
