@@ -21,7 +21,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/wall/fetch-posts';
-    Map<String, dynamic> queryParameters = {'home': 'false'};
+    Map<String, dynamic> queryParameters = {'home': 'true'};
 
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
@@ -72,9 +72,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
   @override
   Future<void> feedback(
-      {required num id,
-      required String feedback,
-      required String type}) async {
+      {required num id, required String feedback, required String type}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
@@ -97,6 +95,34 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
     if (response.statusCode == 200) {
       return;
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<PostModel> getPostById({required num id}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    print('Cookies: $cookieHeader');
+    String url = '$kBaseUrl/wall/fetch-posts/$id';
+    Map<String, dynamic> queryParameters = {'home': 'true'};
+    final response = await client.get(
+      Uri.parse(url).replace(queryParameters: queryParameters),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+
+    print('Response Body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      return jsonData.map((data) => PostModel.fromJson(data)).toList()[0];
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
       throw ServerException(message: message);

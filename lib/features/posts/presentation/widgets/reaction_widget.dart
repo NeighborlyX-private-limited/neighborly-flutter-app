@@ -66,7 +66,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         // Cheers button
         InkWell(
           onTap: () {
-            if (isBooled) {
+            if (!isBooled) {
               setState(() {
                 if (isCheered) {
                   // Decrement if it was already cheered
@@ -117,7 +117,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         // Bools button
         InkWell(
           onTap: () {
-            if (isCheered) {
+            if (!isCheered) {
               setState(() {
                 if (isBooled) {
                   // Decrement if it was already booled

@@ -10,7 +10,7 @@ class PostEntity extends Equatable {
   final String createdAt;
   final num cheers;
   final num bools;
-  final String proPic;
+  final String? proPic;
   final String city;
   final num commentCount;
 
@@ -25,7 +25,7 @@ class PostEntity extends Equatable {
     required this.createdAt,
     required this.cheers,
     required this.bools,
-    required this.proPic,
+    this.proPic,
     this.multimedia, // Made nullable
   });
 

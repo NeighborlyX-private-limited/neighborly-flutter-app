@@ -46,13 +46,30 @@ class PostRepositoriesImpl implements PostRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
-  
+
   @override
-  Future<Either<Failure, void>> feedback({required num id, required String feedback, required String type}) async{
+  Future<Either<Failure, void>> feedback(
+      {required num id, required String feedback, required String type}) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.feedback(id: id, feedback: feedback, type: type);
         return const Right(null);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, PostEntity>> getPostById({required num id}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getPostById(id: id);
+        return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
       } catch (e) {

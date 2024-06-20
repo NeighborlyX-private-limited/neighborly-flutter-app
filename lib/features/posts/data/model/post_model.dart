@@ -11,7 +11,7 @@ class PostModel extends PostEntity {
     required super.bools,
     required super.id,
     super.multimedia,
-    required super.proPic,
+    super.proPic,
     required super.city,
     required super.commentCount,
   });

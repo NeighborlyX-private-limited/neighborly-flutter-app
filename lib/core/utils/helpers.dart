@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 String formatTimeDifference(String isoTimestamp) {
   DateTime inputTime = DateTime.parse(isoTimestamp);
   DateTime now = DateTime.now();
@@ -17,4 +19,18 @@ String formatTimeDifference(String isoTimestamp) {
   } else {
     return 'Just now';
   }
+}
+
+String convertDateString(String dateString) {
+  // Parse the input string into a DateTime object
+  DateTime dateTime = DateTime.parse(dateString);
+
+  // Define a DateFormat for the desired output
+  DateFormat formatter = DateFormat('MMM dd, HH:mm a');
+
+  // Convert the DateTime object to the desired string format
+  String formattedDate =
+      formatter.format(dateTime.toLocal()); // Ensure local time
+
+  return formattedDate;
 }

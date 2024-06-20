@@ -12,6 +12,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/scre
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/register_with_email_screen.dart';
 import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -104,14 +105,16 @@ final GoRouter router = GoRouter(
           return const MainPage();
         },
       ),
-      // GoRoute(
-      //   path: '/post-detail/',
-      //   name: RouteConstants.postDetailScreenRouteName,
-      //   builder: (BuildContext context, GoRouterState state) {
-
-      //     return const PostDetailScreen();
-      //   },
-      // ),
+      GoRoute(
+        path: '/post-detail/:postId',
+        name: RouteConstants.postDetailScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          final String postId = state.pathParameters['postId']!;
+          return PostDetailScreen(
+            postId: postId,
+          );
+        },
+      ),
       GoRoute(
         path: '/upload-post',
         name: RouteConstants.uploadPostScreenRouteName,

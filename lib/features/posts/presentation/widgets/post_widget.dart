@@ -22,7 +22,7 @@ class PostWidget extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        // context.push('/post-detail');
+        context.push('/post-detail/${post.id}');
       },
       child: Container(
         color: Colors.white,
@@ -37,16 +37,20 @@ class PostWidget extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.asset(
-                        'assets/first_pro_pic.png',
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                        width: 40,
+                        height: 40,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: post.proPic != null
+                            ? Image.network(
+                                post.proPic!,
+                                fit: BoxFit.contain,
+                              )
+                            : Image.asset(
+                                'assets/second_pro_pic.png',
+                                fit: BoxFit.contain,
+                              )),
                     const SizedBox(
                       width: 12,
                     ),
@@ -84,7 +88,7 @@ class PostWidget extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          'United States',
+                          post.city,
                           style: TextStyle(
                               fontWeight: FontWeight.w400,
                               color: Colors.grey[500],
@@ -117,7 +121,8 @@ class PostWidget extends StatelessWidget {
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       color: Colors.grey[900],
-                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 17,
                       height: 1.3,
                     ),
                   )

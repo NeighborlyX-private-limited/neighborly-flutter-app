@@ -4,6 +4,9 @@ import 'package:neighborly_flutter_app/features/posts/domain/entities/post_eniti
 
 abstract class PostRepositories {
   Future<Either<Failure, List<PostEntity>>> getAllPosts();
+  Future<Either<Failure, PostEntity>> getPostById({
+    required num id,
+  });
   Future<Either<Failure, void>> reportPost(
       {required String reason, required num postId});
   Future<Either<Failure, void>> feedback(
