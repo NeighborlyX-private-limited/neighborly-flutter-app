@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/comment_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 
 class PostDetailScreen extends StatefulWidget {
@@ -26,6 +28,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     // if (homeState is! GetPostByIdSuccessState) {
     BlocProvider.of<GetPostByIdBloc>(context)
         .add(GetPostByIdButtonPressedEvent(postId: int.parse(widget.postId)));
+    BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
+        GetCommentsByPostIdButtonPressedEvent(
+            postId: int.parse(widget.postId)));
     // }
   }
 
@@ -163,82 +168,43 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           const SizedBox(
                             height: 20,
                           ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.asset(
-                                  'assets/first_pro_pic.png',
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 12,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Cameron Williamson',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 4,
-                                    ),
-                                    Text(
-                                      'Simultaneously we had a problem with prisoner drunkenness that we couldn’t figure out. I mean, the ',
-                                      style: TextStyle(
-                                        color: Colors.grey[800],
-                                        fontSize: 15,
-                                        height: 1.3,
-                                      ),
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          '5 hours ago',
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14,
-                                            height: 1.3,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Text(
-                                          'Reply',
-                                          style: TextStyle(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            height: 1.3,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+                          BlocBuilder<GetCommentsByPostIdBloc,
+                              GetCommentsByPostIdState>(
+                            builder: (context, state) {
+                              if (state is GetcommentsByPostIdLoadingState) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              } else if (state
+                                  is GetcommentsByPostIdSuccessState) {
+                                if (state.comments.isEmpty) {
+                                  return const Center(
+                                    child: Text('No comments yet'),
+                                  );
+                                }
+
+                                return ListView.separated(
+                                  itemCount: state.comments.length,
+                                  itemBuilder: (context, index) {
+                                    final comment = state.comments[index];
+                                    return CommentWidget(comment: comment);
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return const Padding(
+                                      padding: EdgeInsets.only(top: 10.0),
+                                    );
+                                  },
+                                );
+                              } else if (state
+                                  is GetcommentsByPostIdFailureState) {
+                                return Center(
+                                  child: Text(state.error),
+                                );
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
                           ),
                         ],
                       ),

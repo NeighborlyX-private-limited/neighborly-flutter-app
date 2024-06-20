@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
 import 'package:neighborly_flutter_app/features/posts/data/data_sources/post_remote_data_source/post_remote_data_source.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/repositories/post_repositories.dart';
 
@@ -69,6 +70,24 @@ class PostRepositoriesImpl implements PostRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getPostById(id: id);
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CommentEntity>>> getCommentsByPostId(
+      {required num postId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result =
+            await remoteDataSource.getCommentsByPostId(postId: postId);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

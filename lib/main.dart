@@ -10,6 +10,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/bloc
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
@@ -70,6 +71,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<GetPostByIdBloc>(
             create: (context) => di.sl<GetPostByIdBloc>(),
+          ),
+          BlocProvider<GetCommentsByPostIdBloc>(
+            create: (context) => di.sl<GetCommentsByPostIdBloc>(),
           ),
         ],
         child: MaterialApp.router(
