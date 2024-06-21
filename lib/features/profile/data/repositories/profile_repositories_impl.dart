@@ -21,14 +21,29 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
       required bool flag}) async {
     if (await networkInfo.isConnected) {
       try {
-        print('Entered in repositories');
         final result = await remoteDataSource.changePassword(
             currentPassword: currentPassword,
             newPassword: newPassword,
             email: email,
             flag: flag);
-        print('Result: $result');
         return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> updateLocation(
+      {required List<num> location}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.updateLocation(location: location);
+        return const Right(null);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
       } catch (e) {

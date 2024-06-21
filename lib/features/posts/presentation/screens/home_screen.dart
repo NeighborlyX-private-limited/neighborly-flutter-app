@@ -61,7 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
           builder: (context, state) {
             if (state is GetAllPostsLoadingState) {
-              return const ShimmerPost();
+              // return const ShimmerPost();
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
             } else if (state is GetAllPostsSuccessState) {
               return ListView.separated(
                 itemCount: state.post.length,

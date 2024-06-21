@@ -22,7 +22,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/wall/fetch-posts';
-    Map<String, dynamic> queryParameters = {'home': 'true'};
+    Map<String, dynamic> queryParameters = {'home': 'false'};
 
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),

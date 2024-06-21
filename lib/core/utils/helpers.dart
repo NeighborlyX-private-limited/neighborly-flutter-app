@@ -62,4 +62,3 @@ String timeAgo(String dateString) {
     return '$years years ago';
   }
 }
-

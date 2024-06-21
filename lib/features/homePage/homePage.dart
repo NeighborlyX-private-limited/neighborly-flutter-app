@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
 
@@ -12,6 +15,8 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _currentIndex = 0;
+  String? _currentAddress;
+  Position? _currentPosition;
 
   late PageController pageController;
 
@@ -19,6 +24,13 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     pageController = PageController();
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Fetch location and update when the page becomes visible
+    _fetchLocationAndUpdate();
   }
 
   @override
@@ -37,63 +49,116 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _fetchLocationAndUpdate() async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) return;
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      setState(() {
+        _currentPosition = position;
+      });
+      print('Location: ${position.latitude}, ${position.longitude}');
+
+      // Dispatch the event to update location
+      BlocProvider.of<UpdateLocationBloc>(context).add(
+        UpdateLocationButtonPressedEvent(
+          location: [position.latitude, position.longitude],
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error getting location: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: const Color(0xFFF5F5FF),
+        bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color(0xFFF5F5FF),
-          bottomNavigationBar: BottomNavigationBar(
-            backgroundColor: const Color(0xFFF5F5FF),
-            currentIndex: _currentIndex,
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: AppColors.primaryColor,
-            unselectedItemColor: Colors.grey,
-            onTap: navigationTapped,
-            items: <BottomNavigationBarItem>[
-              const BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home,
-                ),
-                label: 'Home',
+          currentIndex: _currentIndex,
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: AppColors.primaryColor,
+          unselectedItemColor: Colors.grey,
+          onTap: navigationTapped,
+          items: <BottomNavigationBarItem>[
+            const BottomNavigationBarItem(
+              icon: Icon(
+                Icons.home,
               ),
-              const BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.calendar_month,
-                ),
-                label: 'Events',
+              label: 'Home',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(
+                Icons.calendar_month,
               ),
-              BottomNavigationBarItem(
-                icon: Image.asset(
-                  'assets/add.png',
-                  fit: BoxFit.contain,
-                ),
-                label: '', // Optional: You can leave the label empty
+              label: 'Events',
+            ),
+            BottomNavigationBarItem(
+              icon: Image.asset(
+                'assets/add.png',
+                fit: BoxFit.contain,
               ),
-              const BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.groups,
-                ),
-                label: 'Groups',
+              label: '', // Optional: You can leave the label empty
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(
+                Icons.groups,
               ),
-              const BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person,
-                ),
-                label: 'Profile',
+              label: 'Groups',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(
+                Icons.person,
               ),
-            ],
-          ),
-          body: PageView(
-            controller: pageController,
-            onPageChanged: onPageChanged,
-            children: const <Widget>[
-              HomeScreen(),
-              HomeScreen(),
-              CreatePostScreen(),
-              CreatePostScreen(),
-              CreatePostScreen(),
-            ],
-          )),
+              label: 'Profile',
+            ),
+          ],
+        ),
+        body: PageView(
+          controller: pageController,
+          onPageChanged: onPageChanged,
+          children: const <Widget>[
+            HomeScreen(),
+            HomeScreen(),
+            CreatePostScreen(),
+            CreatePostScreen(),
+            CreatePostScreen(),
+          ],
+        ),
+      ),
     );
   }
 }

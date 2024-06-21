@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
+import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/feedback_usecase.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_comments_by_postid_usecase.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_post_by_id_usecase.dart';
@@ -10,6 +11,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_poll_usecase.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
@@ -65,6 +67,7 @@ void init() async {
   sl.registerLazySingleton(() => FeedbackUsecase(sl()));
   sl.registerLazySingleton(() => GetPostByIdUsecase(sl()));
   sl.registerLazySingleton(() => GetCommentsByPostIdUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateLocationUsecase(sl()));
 
   // register repository
   sl.registerLazySingleton<AuthRepository>(
@@ -103,6 +106,7 @@ void init() async {
   sl.registerFactory(() => GetPostByIdBloc(getPostByIdUsecase: sl()));
   sl.registerFactory(
       () => GetCommentsByPostIdBloc(getCommentsByPostIdUsecase: sl()));
+  sl.registerFactory(() => UpdateLocationBloc(updateLocationUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

@@ -5,4 +5,7 @@ abstract class ProfileRemoteDataSource {
     required String email,
     required bool flag,
   });
+  Future<void> updateLocation({
+    required List<num> location,
+  });
 }

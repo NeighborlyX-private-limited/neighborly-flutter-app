@@ -26,8 +26,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'userId': email,
         'password': password,
       }),
-    );
 
+    );
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
