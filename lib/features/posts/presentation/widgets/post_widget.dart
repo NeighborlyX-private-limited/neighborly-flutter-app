@@ -5,6 +5,8 @@ import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 
@@ -17,8 +19,6 @@ class PostWidget extends StatelessWidget {
     void showBottomSheet() {
       bottomSheet(context);
     }
-
-    String? userId = ShardPrefHelper.getUserID();
 
     return InkWell(
       onTap: () {
@@ -98,18 +98,16 @@ class PostWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                userId != post.userId
-                    ? InkWell(
-                        onTap: () {
-                          showBottomSheet();
-                        },
-                        child: Icon(
-                          Icons.more_horiz,
-                          size: 30,
-                          color: Colors.grey[500],
-                        ),
-                      )
-                    : Container()
+                InkWell(
+                  onTap: () {
+                    showBottomSheet();
+                  },
+                  child: Icon(
+                    Icons.more_horiz,
+                    size: 30,
+                    color: Colors.grey[500],
+                  ),
+                )
               ],
             ),
             const SizedBox(
@@ -183,27 +181,63 @@ class PostWidget extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
+        String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: InkWell(
-            onTap: () {
-              showReportReasonBottomSheet();
-            },
-            child: Row(
-              children: [
-                Image.asset('assets/report_flag.png'),
-                const SizedBox(
-                  width: 10,
+          child: userId != post.userId
+              ? InkWell(
+                  onTap: () {
+                    showReportReasonBottomSheet();
+                  },
+                  child: Row(
+                    children: [
+                      Image.asset('assets/report_flag.png'),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Report',
+                        style: redOnboardingBody1Style,
+                      )
+                    ],
+                  ),
+                )
+              : InkWell(
+                  onTap: () {
+                    context
+                        .read<DeletePostBloc>()
+                        .add(DeletePostButtonPressedEvent(postId: post.id));
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Post Deleted'),
+                      ),
+                    );
+
+                    Future.delayed(const Duration(seconds: 2), () {
+                      BlocProvider.of<GetAllPostsBloc>(context).add(
+                        GetAllPostsButtonPressedEvent(),
+                      );
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Delete Post',
+                        style: redOnboardingBody1Style,
+                      )
+                    ],
+                  ),
                 ),
-                Text(
-                  'Report',
-                  style: redOnboardingBody1Style,
-                ),
-              ],
-            ),
-          ),
         );
       },
     );
