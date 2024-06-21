@@ -146,6 +146,24 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           const SizedBox(
                             height: 10,
                           ),
+                          state.post.multimedia != null
+                              ? Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(4),
+                                      child: Image.network(
+                                        width: double.infinity,
+                                        height: 200,
+                                        state.post.multimedia!,
+                                        fit: BoxFit.cover,
+                                      )),
+                                )
+                              : Container(),
+                          const SizedBox(
+                            height: 10,
+                          ),
                           Text(
                             convertDateString(state.post.createdAt),
                             style: TextStyle(
