@@ -5,7 +5,8 @@ abstract class PostRemoteDataSource {
   Future<List<PostModel>> getAllPosts();
   Future<PostModel> getPostById({required num id});
   Future<void> deletePost({required num id});
-  Future<void> reportPost({required String reason, required num postId});
+  Future<void> reportPost(
+      {required String reason, required String type, required num postId});
   Future<void> feedback(
       {required num id, required String feedback, required String type});
   Future<List<CommentModel>> getCommentsByPostId({required num postId});

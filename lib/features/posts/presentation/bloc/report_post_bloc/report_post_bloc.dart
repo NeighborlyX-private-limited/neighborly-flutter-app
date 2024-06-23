@@ -16,7 +16,7 @@ class ReportPostBloc extends Bloc<ReportPostEvent, ReportPostState> {
       emit(ReportPostLoadingState());
 
       final result = await _reportPostUsecase.call(
-          reason: event.reason, postId: event.postId);
+          reason: event.reason, type: event.type, postId: event.postId);
 
       result.fold(
           (error) => emit(ReportPostFailureState(error: error.toString())),

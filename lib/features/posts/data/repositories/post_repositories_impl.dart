@@ -33,10 +33,13 @@ class PostRepositoriesImpl implements PostRepositories {
 
   @override
   Future<Either<Failure, void>> reportPost(
-      {required String reason, required num postId}) async {
+      {required String reason,
+      required String type,
+      required num postId}) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.reportPost(reason: reason, postId: postId);
+        await remoteDataSource.reportPost(
+            reason: reason, type: type, postId: postId);
         return const Right(null);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

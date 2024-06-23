@@ -12,7 +12,7 @@ abstract class PostRepositories {
     required num id,
   });
   Future<Either<Failure, void>> reportPost(
-      {required String reason, required num postId});
+      {required String reason, required String type, required num postId});
   Future<Either<Failure, void>> feedback(
       {required num id, required String feedback, required String type});
   Future<Either<Failure, List<CommentEntity>>> getCommentsByPostId({

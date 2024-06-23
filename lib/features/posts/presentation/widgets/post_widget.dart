@@ -355,7 +355,9 @@ class PostWidget extends StatelessWidget {
                           onTap: () {
                             context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
-                                    postId: post.id, reason: reportReasons[0]));
+                                    type: 'post',
+                                    postId: post.id,
+                                    reason: reportReasons[0]));
                           },
                           child: Text(
                             reportReasons[0],
@@ -369,7 +371,9 @@ class PostWidget extends StatelessWidget {
                           onTap: () {
                             context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
-                                    postId: post.id, reason: reportReasons[1]));
+                                    type: 'post',
+                                    postId: post.id,
+                                    reason: reportReasons[1]));
                           },
                           child: Text(
                             reportReasons[1],
@@ -382,7 +386,9 @@ class PostWidget extends StatelessWidget {
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
-                                  postId: post.id, reason: reportReasons[2])),
+                                  type: 'post',
+                                  postId: post.id,
+                                  reason: reportReasons[2])),
                           child: Text(
                             reportReasons[2],
                             style: blackonboardingBody1Style,
@@ -394,7 +400,9 @@ class PostWidget extends StatelessWidget {
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
-                                  postId: post.id, reason: reportReasons[3])),
+                                  type: 'post',
+                                  postId: post.id,
+                                  reason: reportReasons[3])),
                           child: Text(
                             reportReasons[3],
                             style: blackonboardingBody1Style,
@@ -406,7 +414,9 @@ class PostWidget extends StatelessWidget {
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
-                                  postId: post.id, reason: reportReasons[4])),
+                                  type: 'post',
+                                  postId: post.id,
+                                  reason: reportReasons[4])),
                           child: Text(
                             reportReasons[4],
                             style: blackonboardingBody1Style,

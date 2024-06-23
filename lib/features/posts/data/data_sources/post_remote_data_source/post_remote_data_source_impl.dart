@@ -43,14 +43,17 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<void> reportPost({required String reason, required num postId}) async {
+  Future<void> reportPost(
+      {required String reason,
+      required String type,
+      required num postId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
     print('Cookies: $cookieHeader');
-    String url = '$kBaseUrl/wall/report-post';
+    String url = '$kBaseUrl/wall/report';
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -58,7 +61,8 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookieHeader,
       },
       body: jsonEncode(<String, dynamic>{
-        'postId': postId,
+        'id': postId,
+        'type': type,
         'reason': reason,
       }),
     );
