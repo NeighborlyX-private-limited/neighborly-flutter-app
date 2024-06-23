@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
@@ -61,10 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
           builder: (context, state) {
             if (state is GetAllPostsLoadingState) {
-              // return const ShimmerPost();
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const PostSheemerWidget();
             } else if (state is GetAllPostsSuccessState) {
               return ListView.separated(
                 itemCount: state.post.length,
@@ -79,6 +77,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               );
             } else if (state is GetAllPostsFailureState) {
+              if (state.error.contains('Invalid Token')) {
+                context.go('/loginScreengin');
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
               return Center(child: Text(state.error));
             } else {
               return const Center(

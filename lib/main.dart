@@ -9,6 +9,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/bloc
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_with_email_bloc/register_with_email_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
@@ -16,6 +17,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comm
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'dependency_injection.dart' as di;
@@ -82,6 +84,12 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<DeletePostBloc>(
             create: (context) => di.sl<DeletePostBloc>(),
+          ),
+          BlocProvider<UploadFileBloc>(
+            create: (context) => di.sl<UploadFileBloc>(),
+          ),
+          BlocProvider<AddCommentBloc>(
+            create: (context) => di.sl<AddCommentBloc>(),
           ),
         ],
         child: MaterialApp.router(

@@ -146,7 +146,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       },
     );
 
-    print('Response Body: ${response.body}');
+    // print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
@@ -164,7 +164,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    print('Cookies: $cookieHeader');
+
     String url = '$kBaseUrl/wall/delete/post/$id';
     final response = await client.delete(
       Uri.parse(url),
@@ -178,6 +178,35 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      return;
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<void> addComment({required num postId, required String text}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    print('Cookies: $cookieHeader');
+    String url = '$kBaseUrl/posts/add-comment';
+    final response = await client.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
+      },
+      body: jsonEncode(<String, dynamic>{
+        'contentid': postId,
+        'text': text,
+      }),
+    );
+
+    if (response.statusCode == 201) {
       return;
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';

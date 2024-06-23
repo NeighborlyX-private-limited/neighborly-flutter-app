@@ -62,3 +62,14 @@ String timeAgo(String dateString) {
     return '$years years ago';
   }
 }
+
+bool isValidEmail(String email) {
+  // Define the regular expression for a valid email address.
+  String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
+
+  // Create a RegExp object with the pattern.
+  RegExp regExp = RegExp(emailPattern);
+
+  // Return whether the email matches the pattern.
+  return regExp.hasMatch(email);
+}

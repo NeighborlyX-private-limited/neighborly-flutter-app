@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -16,8 +17,10 @@ class LoginWithEmailScreen extends StatefulWidget {
 
 class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   bool isActive = false;
-  late bool isEmailFilled = false;
-  late bool isPasswordFilled = false;
+  bool isEmailFilled = false;
+  bool isPasswordFilled = false;
+  bool isEmailValid = true;
+  bool isPasswordWrong = false;
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -107,6 +110,12 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   });
                 },
               ),
+              !isEmailValid
+                  ? const Text(
+                      'Please enter a valid email address',
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : const SizedBox(),
               const SizedBox(
                 height: 12,
               ),
@@ -121,15 +130,23 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 lableText: 'Password',
                 isPassword: true,
               ),
+              isPasswordWrong
+                  ? const Text(
+                      'Wrong password. Try again or click Forgot password to reset it.',
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : const SizedBox(),
               const SizedBox(
                 height: 45,
               ),
               BlocConsumer<LoginWithEmailBloc, LoginWithEmailState>(
                 listener: (BuildContext context, LoginWithEmailState state) {
                   if (state is LoginFailureState) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.error)),
-                    );
+                    if (state.error.contains('Invalid Email or Password')) {
+                      setState(() {
+                        isPasswordWrong = true;
+                      });
+                    }
                   } else if (state is LoginSuccessState) {
                     bool isEmailVerified = state.authResponseEntity.isVerified;
                     isEmailVerified
@@ -149,10 +166,19 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     text: 'Log in',
                     isFilled: true,
                     onTapListener: () {
+                      if (!isValidEmail(_emailController.text.trim())) {
+                        setState(() {
+                          isEmailValid = false;
+                        });
+                        return;
+                      }
+                      setState(() {
+                        isEmailValid = true;
+                      });
                       BlocProvider.of<LoginWithEmailBloc>(context).add(
                         LoginButtonPressedEvent(
-                          email: _emailController.text,
-                          password: _passwordController.text,
+                          email: _emailController.text.trim(),
+                          password: _passwordController.text.trim(),
                         ),
                       );
                     },

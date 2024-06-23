@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
@@ -31,6 +32,7 @@ class _MainPageState extends State<MainPage> {
     super.didChangeDependencies();
     // Fetch location and update when the page becomes visible
     _fetchLocationAndUpdate();
+    ShardPrefHelper.removeImageUrl();
   }
 
   @override

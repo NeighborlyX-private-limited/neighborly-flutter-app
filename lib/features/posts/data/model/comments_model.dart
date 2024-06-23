@@ -23,7 +23,9 @@ class CommentModel extends CommentEntity {
       cheers: json['cheers'],
       bools: json['boos'],
       proPic: json['user_picture'],
-      awardType: json['award_type'],
+      awardType: (json['award_type'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
     );
   }
 

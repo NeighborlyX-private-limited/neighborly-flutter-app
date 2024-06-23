@@ -18,4 +18,8 @@ abstract class PostRepositories {
   Future<Either<Failure, List<CommentEntity>>> getCommentsByPostId({
     required num postId,
   });
+  Future<Either<Failure, void>> addComment({
+    required num postId,
+    required String text,
+  });
 }

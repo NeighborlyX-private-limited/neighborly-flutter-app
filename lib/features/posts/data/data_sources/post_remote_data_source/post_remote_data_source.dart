@@ -9,4 +9,5 @@ abstract class PostRemoteDataSource {
   Future<void> feedback(
       {required num id, required String feedback, required String type});
   Future<List<CommentModel>> getCommentsByPostId({required num postId});
+  Future<void> addComment({required num postId, required String text});
 }

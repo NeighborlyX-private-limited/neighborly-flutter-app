@@ -19,7 +19,10 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  late bool isOtpFilled = false;
+  bool isOtpFilled = false;
+  bool isInvalidOtp = false;
+  bool isExpiredOtp = false;
+
   late TextEditingController _otpController;
 
   @override
@@ -98,6 +101,24 @@ class _OtpScreenState extends State<OtpScreen> {
                   });
                 },
               ),
+              isInvalidOtp
+                  ? const Text(
+                      'The OTP entered is incorrect. Please try again.',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 12,
+                      ),
+                    )
+                  : Container(),
+              isExpiredOtp
+                  ? const Text(
+                      'OTP has expired',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 12,
+                      ),
+                    )
+                  : Container(),
               const SizedBox(
                 height: 45,
               ),
@@ -154,14 +175,24 @@ class _OtpScreenState extends State<OtpScreen> {
                 child: BlocConsumer<ResendOtpBloc, ResendOTPState>(
                   listener: (BuildContext context, ResendOTPState state) {
                     if (state is ResendOTPFailureState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.error)),
-                      );
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   SnackBar(content: Text(state.error)),
+                      // );
+                      if (state.error == 'OTP has expired') {
+                        setState(() {
+                          isExpiredOtp = true;
+                        });
+                      }
+                      if (state.error == 'Invalid OTP') {
+                        setState(() {
+                          isInvalidOtp = true;
+                        });
+                      }
                     } else if (state is ResendOTPSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),
                       );
-                      print('widget.data ${widget.data}');
+
                       if (widget.verificationFor == 'email-verify') {
                         context.go('/homescreen');
                       } else if (widget.verificationFor == 'forgot-password') {
