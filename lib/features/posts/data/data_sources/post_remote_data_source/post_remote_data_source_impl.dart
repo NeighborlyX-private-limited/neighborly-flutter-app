@@ -52,7 +52,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/wall/report';
     final response = await client.post(
       Uri.parse(url),

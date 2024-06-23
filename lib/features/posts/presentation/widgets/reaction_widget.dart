@@ -41,14 +41,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       // Load the state for the current post
       isCheered = prefs.getBool('${widget.post.id}_isCheered') ?? false;
       isBooled = prefs.getBool('${widget.post.id}_isBooled') ?? false;
-
-      // Reflect the persisted states in counts
-      if (isCheered) {
-        cheersCount += 1;
-      }
-      if (isBooled) {
-        boolsCount += 1;
-      }
     });
   }
 
@@ -71,11 +63,17 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                 if (isCheered) {
                   // Decrement if it was already cheered
                   cheersCount -= 1;
+                  isCheered = false;
                 } else {
                   // Increment if it wasn't cheered
                   cheersCount += 1;
+                  isCheered = true;
+                  // Ensure boos is turned off
+                  if (isBooled) {
+                    isBooled = false;
+                    boolsCount -= 1;
+                  }
                 }
-                isCheered = !isCheered; // Toggle the state
               });
               // Save the reaction state
               _saveReactionState();
@@ -122,11 +120,17 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                 if (isBooled) {
                   // Decrement if it was already booled
                   boolsCount -= 1;
+                  isBooled = false;
                 } else {
                   // Increment if it wasn't booled
                   boolsCount += 1;
+                  isBooled = true;
+                  // Ensure cheers is turned off
+                  if (isCheered) {
+                    isCheered = false;
+                    cheersCount -= 1;
+                  }
                 }
-                isBooled = !isBooled; // Toggle the state
               });
               // Save the reaction state
               _saveReactionState();
@@ -142,12 +146,12 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             children: [
               isBooled
                   ? Image.asset(
-                      'assets/react2.png',
+                      'assets/react6.png',
                       width: 24,
                       height: 24,
                     )
                   : Image.asset(
-                      'assets/react6.png',
+                      'assets/react2.png',
                       width: 24,
                       height: 24,
                     ),
@@ -166,6 +170,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           ),
         ),
         // Other reaction buttons
+        // Placeholder for additional reactions
         Row(
           children: [
             Image.asset(
@@ -186,7 +191,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             )
           ],
         ),
-
         Row(
           children: [
             Image.asset(
