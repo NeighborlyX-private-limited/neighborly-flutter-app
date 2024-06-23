@@ -50,6 +50,41 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     await prefs.setBool('${widget.post.id}_isBooled', isBooled);
   }
 
+  void _updateState(String reaction) {
+    setState(() {
+      if (reaction == 'cheer') {
+        if (isCheered) {
+          if (cheersCount > 0) cheersCount -= 1; // Prevent negative count
+          isCheered = false;
+        } else {
+          cheersCount += 1;
+          isCheered = true;
+          if (isBooled) {
+            if (boolsCount > 0) boolsCount -= 1; // Prevent negative count
+            isBooled = false;
+          }
+        }
+      } else if (reaction == 'boo') {
+        if (isBooled) {
+          if (boolsCount > 0) boolsCount -= 1; // Prevent negative count
+          isBooled = false;
+        } else {
+          boolsCount += 1;
+          isBooled = true;
+          if (isCheered) {
+            if (cheersCount > 0) cheersCount -= 1; // Prevent negative count
+            isCheered = false;
+          }
+        }
+      }
+      _saveReactionState(); // Save the reaction state
+    });
+
+    // Log values for debugging
+    print('Cheers: $cheersCount, Boos: $boolsCount');
+    print('Is Cheered: $isCheered, Is Booed: $isBooled');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -59,24 +94,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         InkWell(
           onTap: () {
             if (!isBooled) {
-              setState(() {
-                if (isCheered) {
-                  // Decrement if it was already cheered
-                  cheersCount -= 1;
-                  isCheered = false;
-                } else {
-                  // Increment if it wasn't cheered
-                  cheersCount += 1;
-                  isCheered = true;
-                  // Ensure boos is turned off
-                  if (isBooled) {
-                    isBooled = false;
-                    boolsCount -= 1;
-                  }
-                }
-              });
-              // Save the reaction state
-              _saveReactionState();
+              _updateState('cheer');
 
               // Trigger BLoC event for cheers
               BlocProvider.of<FeedbackBloc>(context).add(
@@ -85,55 +103,50 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               );
             }
           },
-          child: Row(
-            children: [
-              isCheered
-                  ? Image.asset(
-                      'assets/react5.png',
-                      width: 24,
-                      height: 24,
-                    )
-                  : Image.asset(
-                      'assets/react1.png',
-                      width: 24,
-                      height: 24,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 32,
+            width: 56,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                )),
+            child: Center(
+              child: Row(
+                children: [
+                  isCheered
+                      ? Image.asset(
+                          'assets/react5.png',
+                          width: 24,
+                          height: 24,
+                        )
+                      : Image.asset(
+                          'assets/react1.png',
+                          width: 24,
+                          height: 24,
+                        ),
+                  const SizedBox(
+                    width: 3,
+                  ),
+                  Text(
+                    cheersCount.toString(), // Use state variable for count
+                    style: TextStyle(
+                      color: isCheered ? Colors.red : Colors.grey[900],
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
-              const SizedBox(
-                width: 3,
+                  )
+                ],
               ),
-              Text(
-                cheersCount.toString(), // Use state variable for count
-                style: TextStyle(
-                  color: isCheered ? Colors.red : Colors.grey[900],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              )
-            ],
+            ),
           ),
         ),
         // Bools button
         InkWell(
           onTap: () {
             if (!isCheered) {
-              setState(() {
-                if (isBooled) {
-                  // Decrement if it was already booled
-                  boolsCount -= 1;
-                  isBooled = false;
-                } else {
-                  // Increment if it wasn't booled
-                  boolsCount += 1;
-                  isBooled = true;
-                  // Ensure cheers is turned off
-                  if (isCheered) {
-                    isCheered = false;
-                    cheersCount -= 1;
-                  }
-                }
-              });
-              // Save the reaction state
-              _saveReactionState();
+              _updateState('boo');
 
               // Trigger BLoC event for bools
               BlocProvider.of<FeedbackBloc>(context).add(
@@ -142,94 +155,142 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               );
             }
           },
-          child: Row(
-            children: [
-              isBooled
-                  ? Image.asset(
-                      'assets/react6.png',
-                      width: 24,
-                      height: 24,
-                    )
-                  : Image.asset(
-                      'assets/react2.png',
-                      width: 24,
-                      height: 24,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 32,
+            width: 56,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                )),
+            child: Center(
+              child: Row(
+                children: [
+                  isBooled
+                      ? Image.asset(
+                          'assets/react6.png',
+                          width: 24,
+                          height: 24,
+                        )
+                      : Image.asset(
+                          'assets/react2.png',
+                          width: 24,
+                          height: 24,
+                        ),
+                  const SizedBox(
+                    width: 3,
+                  ),
+                  Text(
+                    boolsCount.toString(), // Use state variable for count
+                    style: TextStyle(
+                      color: isBooled ? Colors.blue : Colors.grey[600],
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
-              const SizedBox(
-                width: 3,
+                  )
+                ],
               ),
-              Text(
-                boolsCount.toString(), // Use state variable for count
-                style: TextStyle(
-                  color: isBooled ? Colors.blue : Colors.grey[600],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              )
-            ],
+            ),
           ),
         ),
         // Other reaction buttons
         // Placeholder for additional reactions
-        Row(
-          children: [
-            Image.asset(
-              'assets/react3.png',
-              width: 24,
-              height: 24,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          height: 32,
+          width: 56,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(21),
+              )),
+          child: Center(
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/react3.png',
+                  width: 20,
+                  height: 24,
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  '02',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+              ],
             ),
-            const SizedBox(
-              width: 3,
-            ),
-            Text(
-              '02',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            )
-          ],
+          ),
         ),
-        Row(
-          children: [
-            Image.asset(
-              'assets/react7.png',
-              width: 24,
-              height: 24,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          height: 32,
+          width: 56,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(21),
+              )),
+          child: Center(
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/react7.png',
+                  width: 20,
+                  height: 24,
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  '02',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+              ],
             ),
-            const SizedBox(
-              width: 3,
-            ),
-            Text(
-              '02',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            )
-          ],
+          ),
         ),
-        Row(
-          children: [
-            Image.asset(
-              'assets/react4.png',
-              width: 24,
-              height: 24,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          height: 32,
+          width: 56,
+          decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(21),
+              )),
+          child: Center(
+            child: Row(
+              children: [
+                Image.asset(
+                  'assets/react4.png',
+                  width: 20,
+                  height: 24,
+                ),
+                const SizedBox(
+                  width: 3,
+                ),
+                Text(
+                  '02',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                )
+              ],
             ),
-            const SizedBox(
-              width: 3,
-            ),
-            Text(
-              '02',
-              style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            )
-          ],
+          ),
         )
       ],
     );
