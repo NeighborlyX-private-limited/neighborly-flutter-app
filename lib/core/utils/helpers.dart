@@ -73,3 +73,11 @@ bool isValidEmail(String email) {
   // Return whether the email matches the pattern.
   return regExp.hasMatch(email);
 }
+
+double calculatePercentage(double value, double total) {
+  if (total == 0) {
+    return 0; // Avoid division by zero
+  }
+  double percentage = (value / total) * 100;
+  return double.parse(percentage.toStringAsFixed(1));
+}

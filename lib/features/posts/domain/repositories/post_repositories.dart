@@ -22,4 +22,8 @@ abstract class PostRepositories {
     required num postId,
     required String text,
   });
+  Future<Either<Failure, void>> votePoll({
+    required num pollId,
+    required num optionId,
+  });
 }

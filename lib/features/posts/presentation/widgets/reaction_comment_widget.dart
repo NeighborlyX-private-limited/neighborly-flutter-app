@@ -221,7 +221,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   width: 3,
                 ),
                 Text(
-                  '02',
+                  '${widget.comment.awardType.length}',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 12,
@@ -242,25 +242,10 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                 Radius.circular(21),
               )),
           child: Center(
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/react4.png',
-                  width: 20,
-                  height: 24,
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
-                Text(
-                  '02',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                )
-              ],
+            child: Image.asset(
+              'assets/react4.png',
+              width: 20,
+              height: 24,
             ),
           ),
         )

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/option_entity.dart';
 
 class PostEntity extends Equatable {
   final num id;
@@ -13,9 +14,15 @@ class PostEntity extends Equatable {
   final String? proPic;
   final String city;
   final num commentCount;
+  final String type;
+  final List<dynamic> awardType;
+  final List<OptionEntity>? pollOptions;
 
   const PostEntity({
     required this.city,
+    required this.awardType,
+    required this.pollOptions,
+    required this.type,
     required this.id,
     required this.userId,
     required this.userName,
@@ -34,7 +41,10 @@ class PostEntity extends Equatable {
         id,
         userId,
         userName,
+        pollOptions,
         commentCount,
+        awardType,
+        type,
         title,
         content,
         createdAt,

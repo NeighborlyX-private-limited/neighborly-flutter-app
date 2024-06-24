@@ -1,52 +1,140 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/option_entity.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class OptionCard extends StatelessWidget {
-  final String title;
-  final Color color;
-  final Color titleColor;
-  final String? action;
-  const OptionCard(
-      {super.key,
-      required this.title,
-      required this.color,
-      this.action,
-      required this.titleColor});
+class OptionCard extends StatefulWidget {
+  final OptionEntity option;
+  final double totalVotes;
+  final String pollId; // Add pollId to uniquely identify each poll's options
+
+  const OptionCard({
+    required this.totalVotes,
+    super.key,
+    required this.option,
+    required this.pollId, // Accept pollId as a parameter
+  });
+
+  @override
+  State<OptionCard> createState() => _OptionCardState();
+}
+
+class _OptionCardState extends State<OptionCard> {
+  bool isSelected = false;
+  double filledPercentage = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSelectionState();
+  }
+
+  Future<void> _loadSelectionState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      // Create a unique key using pollId and optionId
+      final key =
+          '${widget.pollId}_option_${widget.option.optionId}_isSelected';
+      isSelected = prefs.getBool(key) ?? false;
+      filledPercentage = isSelected
+          ? calculatePercentage(
+                double.parse(widget.option.votes),
+                widget.totalVotes,
+              ) /
+              100
+          : 0.0;
+    });
+  }
+
+  Future<void> _saveSelectionState() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Create a unique key using pollId and optionId
+    final key = '${widget.pollId}_option_${widget.option.optionId}_isSelected';
+    await prefs.setBool(key, isSelected);
+  }
+
+  void _toggleSelection() {
+    setState(() {
+      isSelected = !isSelected;
+      filledPercentage = isSelected
+          ? calculatePercentage(
+                double.parse(widget.option.votes),
+                widget.totalVotes,
+              ) /
+              100
+          : 0.0;
+      _saveSelectionState(); // Save the selection state
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(4),
-          border: action == null
-              ? Border.all(
-                  color: Colors.grey[300]!,
-                )
-              : null,
-        ),
-        padding: const EdgeInsets.all(8),
-        height: 40,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return InkWell(
+      onTap: () {
+        _toggleSelection();
+        BlocProvider.of<VotePollBloc>(context).add(VotePollButtonPressedEvent(
+            pollId: int.parse(widget.pollId),
+            optionId: widget.option.optionId));
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Stack(
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                color: titleColor,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+            // Background container that animates width based on the selection
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 90, 92, 245),
+                borderRadius: BorderRadius.circular(4),
               ),
+              width: MediaQuery.of(context).size.width * filledPercentage,
+              height: 40,
             ),
-            if (action != null)
-              Text(
-                action!,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
+            // Foreground container for text and styling
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(
+                  color: Colors.grey[300]!,
                 ),
               ),
+              padding: const EdgeInsets.all(8),
+              height: 40,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.option.option,
+                    style: TextStyle(
+                      color: isSelected ? Colors.white : Colors.black,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    '${calculatePercentage(
+                      double.parse(widget.option.votes),
+                      widget.totalVotes,
+                    ).toStringAsFixed(1)}%',
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
-        ));
+        ),
+      ),
+    );
   }
+}
+
+// Helper function to calculate percentage
+double calculatePercentage(double value, double total) {
+  return total == 0 ? 0 : (value / total) * 100;
 }

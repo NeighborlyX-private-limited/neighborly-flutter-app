@@ -9,12 +9,14 @@ import 'package:neighborly_flutter_app/features/posts/domain/usecases/feedback_u
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_comments_by_postid_usecase.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_post_by_id_usecase.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/report_post_usecase.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/usecases/vote_poll_usecase.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_file_usecase.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_poll_usecase.dart';
@@ -77,6 +79,7 @@ void init() async {
   sl.registerLazySingleton(() => DeletePostUsecase(sl()));
   sl.registerLazySingleton(() => UploadFileUsecase(sl()));
   sl.registerLazySingleton(() => AddCommentUsecase(sl()));
+  sl.registerLazySingleton(() => VotePollUsecase(sl()));
 
   // register repository
   sl.registerLazySingleton<AuthRepository>(
@@ -119,6 +122,7 @@ void init() async {
   sl.registerFactory(() => DeletePostBloc(deletePostUsecase: sl()));
   sl.registerFactory(() => UploadFileBloc(uploadFileUsecase: sl()));
   sl.registerFactory(() => AddCommentBloc(addCommentUsecase: sl()));
+  sl.registerFactory(() => VotePollBloc(votePollUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

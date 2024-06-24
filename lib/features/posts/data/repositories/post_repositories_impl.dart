@@ -134,4 +134,21 @@ class PostRepositoriesImpl implements PostRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> votePoll(
+      {required num pollId, required num optionId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.votePoll(pollId: pollId, optionId: optionId);
+        return const Right(null);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
 }

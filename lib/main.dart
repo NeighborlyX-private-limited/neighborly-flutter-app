@@ -16,6 +16,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
@@ -90,6 +91,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<AddCommentBloc>(
             create: (context) => di.sl<AddCommentBloc>(),
+          ),
+          BlocProvider<VotePollBloc>(
+            create: (context) => di.sl<VotePollBloc>(),
           ),
         ],
         child: MaterialApp.router(

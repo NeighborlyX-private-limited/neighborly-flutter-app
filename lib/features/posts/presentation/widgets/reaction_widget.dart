@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -54,30 +55,37 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     setState(() {
       if (reaction == 'cheer') {
         if (isCheered) {
-          if (cheersCount > 0) cheersCount -= 1; // Prevent negative count
+          // User is un-cheering, decrement count
+          if (cheersCount > 0) cheersCount -= 1;
           isCheered = false;
         } else {
+          // User is cheering
           cheersCount += 1;
           isCheered = true;
           if (isBooled) {
-            if (boolsCount > 0) boolsCount -= 1; // Prevent negative count
+            // Reverse boo if it was already booed
+            if (boolsCount > 0) boolsCount -= 1;
             isBooled = false;
           }
         }
       } else if (reaction == 'boo') {
         if (isBooled) {
-          if (boolsCount > 0) boolsCount -= 1; // Prevent negative count
+          // User is un-booing, decrement count
+          if (boolsCount > 0) boolsCount -= 1;
           isBooled = false;
         } else {
+          // User is booing
           boolsCount += 1;
           isBooled = true;
           if (isCheered) {
-            if (cheersCount > 0) cheersCount -= 1; // Prevent negative count
+            // Reverse cheer if it was already cheered
+            if (cheersCount > 0) cheersCount -= 1;
             isCheered = false;
           }
         }
       }
-      _saveReactionState(); // Save the reaction state
+      // Save the new state
+      _saveReactionState();
     });
 
     // Log values for debugging
@@ -93,15 +101,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         // Cheers button
         InkWell(
           onTap: () {
-            if (!isBooled) {
-              _updateState('cheer');
+            _updateState('cheer');
 
-              // Trigger BLoC event for cheers
-              BlocProvider.of<FeedbackBloc>(context).add(
-                FeedbackButtonPressedEvent(
-                    postId: widget.post.id, feedback: 'cheer', type: 'post'),
-              );
-            }
+            // Trigger BLoC event for cheers
+            BlocProvider.of<FeedbackBloc>(context).add(
+              FeedbackButtonPressedEvent(
+                  postId: widget.post.id, feedback: 'cheer', type: 'post'),
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -145,15 +151,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         // Bools button
         InkWell(
           onTap: () {
-            if (!isCheered) {
-              _updateState('boo');
+            _updateState('boo');
 
-              // Trigger BLoC event for bools
-              BlocProvider.of<FeedbackBloc>(context).add(
-                FeedbackButtonPressedEvent(
-                    postId: widget.post.id, feedback: 'boo', type: 'post'),
-              );
-            }
+            // Trigger BLoC event for bools
+            BlocProvider.of<FeedbackBloc>(context).add(
+              FeedbackButtonPressedEvent(
+                  postId: widget.post.id, feedback: 'boo', type: 'post'),
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -217,7 +221,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                   width: 3,
                 ),
                 Text(
-                  '02',
+                  '${widget.post.commentCount}',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 12,
@@ -249,7 +253,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                   width: 3,
                 ),
                 Text(
-                  '02',
+                  '${widget.post.awardType.length}',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 12,
@@ -270,25 +274,10 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                 Radius.circular(21),
               )),
           child: Center(
-            child: Row(
-              children: [
-                Image.asset(
-                  'assets/react4.png',
-                  width: 20,
-                  height: 24,
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
-                Text(
-                  '02',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                )
-              ],
+            child: Image.asset(
+              'assets/react4.png',
+              width: 20,
+              height: 24,
             ),
           ),
         )

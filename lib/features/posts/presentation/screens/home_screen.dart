@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/toggle_button.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,26 +39,26 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFFF5F5FF),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        // title: Padding(
-        //   padding: const EdgeInsets.only(left: 10.0),
-        //   child: Image.asset(
-        //     height: 100,
-        //     width: 90,
-        //     'assets/logo.png',
-        //     fit: BoxFit.contain,
-        //   ),
-        // ),
-        title: CustomSwitchToggle(
-          initialState: false,
-          onChanged: (bool isActive) {
-            print('Switch is now: ${isActive ? "On" : "Off"}');
-          },
-          activeImagePath: 'assets/add.png', // Path to the active image
-          inactiveImagePath: 'assets/alarm.png', // Path to the inactive image
-
-          width: 100.0, // Customize the width
-          height: 50.0, // Customize the height
+        title: Padding(
+          padding: const EdgeInsets.only(left: 10.0),
+          child: Image.asset(
+            height: 100,
+            width: 90,
+            'assets/logo.png',
+            fit: BoxFit.contain,
+          ),
         ),
+        // title: CustomSwitchToggle(
+        //   initialState: false,
+        //   onChanged: (bool isActive) {
+        //     print('Switch is now: ${isActive ? "On" : "Off"}');
+        //   },
+        //   activeImagePath: 'assets/add.png', // Path to the active image
+        //   inactiveImagePath: 'assets/alarm.png', // Path to the inactive image
+
+        //   width: 100.0, // Customize the width
+        //   height: 50.0, // Customize the height
+        // ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -80,7 +80,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: state.post.length,
                 itemBuilder: (context, index) {
                   final post = state.post[index];
-                  return PostWidget(post: post);
+                  if (post.type == 'post') {
+                    return PostWidget(post: post);
+                  } else if (post.type == 'poll') {
+                    return PollWidget(
+                      post: post,
+                    );
+                  }
+                  return const SizedBox();
                 },
                 separatorBuilder: (BuildContext context, int index) {
                   return const Padding(
