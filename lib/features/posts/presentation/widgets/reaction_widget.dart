@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -87,10 +87,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       // Save the new state
       _saveReactionState();
     });
-
-    // Log values for debugging
-    print('Cheers: $cheersCount, Boos: $boolsCount');
-    print('Is Cheered: $isCheered, Is Booed: $isBooled');
   }
 
   @override
@@ -122,13 +118,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               child: Row(
                 children: [
                   isCheered
-                      ? Image.asset(
-                          'assets/react5.png',
+                      ? SvgPicture.asset(
+                          'assets/react5.svg',
                           width: 24,
                           height: 24,
                         )
-                      : Image.asset(
-                          'assets/react1.png',
+                      : SvgPicture.asset(
+                          'assets/react1.svg',
                           width: 24,
                           height: 24,
                         ),
@@ -172,13 +168,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               child: Row(
                 children: [
                   isBooled
-                      ? Image.asset(
-                          'assets/react6.png',
+                      ? SvgPicture.asset(
+                          'assets/react6.svg',
                           width: 24,
                           height: 24,
                         )
-                      : Image.asset(
-                          'assets/react2.png',
+                      : SvgPicture.asset(
+                          'assets/react2.svg',
                           width: 24,
                           height: 24,
                         ),
@@ -212,8 +208,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           child: Center(
             child: Row(
               children: [
-                Image.asset(
-                  'assets/react3.png',
+                SvgPicture.asset(
+                  'assets/react3.svg',
                   width: 20,
                   height: 24,
                 ),
@@ -274,8 +270,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                 Radius.circular(21),
               )),
           child: Center(
-            child: Image.asset(
-              'assets/react4.png',
+            child: SvgPicture.asset(
+              'assets/react4.svg',
               width: 20,
               height: 24,
             ),

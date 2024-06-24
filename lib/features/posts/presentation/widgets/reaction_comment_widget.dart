@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -119,13 +120,13 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
               child: Row(
                 children: [
                   isCheered
-                      ? Image.asset(
-                          'assets/react5.png',
+                      ? SvgPicture.asset(
+                          'assets/react5.svg',
                           width: 24,
                           height: 24,
                         )
-                      : Image.asset(
-                          'assets/react1.png',
+                      : SvgPicture.asset(
+                          'assets/react1.svg',
                           width: 20,
                           height: 24,
                         ),
@@ -173,13 +174,13 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
               child: Row(
                 children: [
                   isBooled
-                      ? Image.asset(
-                          'assets/react6.png',
+                      ? SvgPicture.asset(
+                          'assets/react6.svg',
                           width: 24,
                           height: 24,
                         )
-                      : Image.asset(
-                          'assets/react2.png',
+                      : SvgPicture.asset(
+                          'assets/react2.svg',
                           width: 20,
                           height: 24,
                         ),
@@ -242,8 +243,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                 Radius.circular(21),
               )),
           child: Center(
-            child: Image.asset(
-              'assets/react4.png',
+            child: SvgPicture.asset(
+              'assets/react4.svg',
               width: 20,
               height: 24,
             ),
