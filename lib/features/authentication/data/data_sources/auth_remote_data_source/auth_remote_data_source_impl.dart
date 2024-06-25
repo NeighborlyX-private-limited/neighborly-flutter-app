@@ -26,7 +26,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'userId': email,
         'password': password,
       }),
-
     );
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
@@ -65,11 +64,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<AuthResponseModel> signupWithEmail(
-      {required String email,
-      required String password,
-      required String dob,
-      required String gender}) async {
+  Future<AuthResponseModel> signupWithEmail({
+    required String email,
+    required String password,
+  }) async {
     String url = '$kBaseUrl/authentication/register';
     final response = await client.post(
       Uri.parse(url),
@@ -79,8 +77,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       body: jsonEncode(<String, String>{
         'password': password,
         'email': email,
-        'dob': dob,
-        'gender': gender
       }),
     );
     if (response.statusCode == 200) {

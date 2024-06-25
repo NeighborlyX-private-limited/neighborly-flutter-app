@@ -8,7 +8,6 @@ import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import '../bloc/register_with_email_bloc/register_with_email_bloc.dart';
 import '../widgets/button_widget.dart';
-import '../widgets/dob_picker_widget.dart';
 
 class RegisterWithEmailScreen extends StatefulWidget {
   const RegisterWithEmailScreen({super.key});
@@ -28,6 +27,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   bool isYearFilled = false;
   bool isEmailValid = true;
   bool isPasswordShort = false;
+  bool emailAlreadyExists = false;
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -160,73 +160,79 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                   isPassword: true,
                   lableText: 'Re-Password',
                 ),
-                const SizedBox(height: 25),
-                Text('Your Basic Information', style: onboardingHeading2Style),
-                const SizedBox(height: 10),
-                Text('Select your Gender', style: blackonboardingBody1Style),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        Radio<String>(
-                          value: 'Male',
-                          groupValue: _selectedGender,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedGender = value!;
-                            });
-                          },
-                        ),
-                        const Text('Male'),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Radio<String>(
-                          value: 'Female',
-                          groupValue: _selectedGender,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedGender = value!;
-                            });
-                          },
-                        ),
-                        const Text('Female'),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Radio<String>(
-                          value: 'Others',
-                          groupValue: _selectedGender,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedGender = value!;
-                            });
-                          },
-                        ),
-                        const Text('Others'),
-                      ],
-                    ),
-                  ],
-                ),
-                const Divider(color: Colors.grey),
-                Text('Date of Birth', style: blackonboardingBody1Style),
-                const SizedBox(height: 8),
-                DOBPickerWidget(
-                    dateController: _dateController,
-                    monthController: _monthController,
-                    yearController: _yearController,
-                    isDayFilled: isDayFilled,
-                    isMonthFilled: isMonthFilled,
-                    isYearFilled: isYearFilled),
+                // const SizedBox(height: 25),
+                // Text('Your Basic Information', style: onboardingHeading2Style),
+                // const SizedBox(height: 10),
+                // Text('Select your Gender', style: blackonboardingBody1Style),
+                // const SizedBox(height: 8),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: <Widget>[
+                //     Row(
+                //       children: [
+                //         Radio<String>(
+                //           value: 'Male',
+                //           groupValue: _selectedGender,
+                //           onChanged: (String? value) {
+                //             setState(() {
+                //               _selectedGender = value!;
+                //             });
+                //           },
+                //         ),
+                //         const Text('Male'),
+                //       ],
+                //     ),
+                //     Row(
+                //       children: [
+                //         Radio<String>(
+                //           value: 'Female',
+                //           groupValue: _selectedGender,
+                //           onChanged: (String? value) {
+                //             setState(() {
+                //               _selectedGender = value!;
+                //             });
+                //           },
+                //         ),
+                //         const Text('Female'),
+                //       ],
+                //     ),
+                //     Row(
+                //       children: [
+                //         Radio<String>(
+                //           value: 'Others',
+                //           groupValue: _selectedGender,
+                //           onChanged: (String? value) {
+                //             setState(() {
+                //               _selectedGender = value!;
+                //             });
+                //           },
+                //         ),
+                //         const Text('Others'),
+                //       ],
+                //     ),
+                //   ],
+                // ),
+                // const Divider(color: Colors.grey),
+                // Text('Date of Birth', style: blackonboardingBody1Style),
+                // const SizedBox(height: 8),
+                // DOBPickerWidget(
+                //     dateController: _dateController,
+                //     monthController: _monthController,
+                //     yearController: _yearController,
+                //     isDayFilled: isDayFilled,
+                //     isMonthFilled: isMonthFilled,
+                //     isYearFilled: isYearFilled),
                 const SizedBox(height: 45),
                 BlocConsumer<RegisterWithEmailBloc, RegisterWithEmailState>(
                   listener:
                       (BuildContext context, RegisterWithEmailState state) {
                     if (state is RegisterFailureState) {
+                      if (state.error.contains('already exists.')) {
+                        setState(() {
+                          emailAlreadyExists = true;
+                        });
+                        return;
+                      }
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.error)),
                       );
@@ -270,16 +276,23 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                             RegisterButtonPressedEvent(
                               email: _emailController.text.trim(),
                               password: _passwordController.text.trim(),
-                              dob: formatDOB(
-                                  _dateController.text.trim(),
-                                  _monthController.text.trim(),
-                                  _yearController.text.trim()),
-                              gender: _selectedGender,
+                              // dob: formatDOB(
+                              //     _dateController.text.trim(),
+                              //     _monthController.text.trim(),
+                              //     _yearController.text.trim()),
+                              // gender: _selectedGender,
                             ),
                           );
                         });
                   },
                 ),
+                const SizedBox(height: 15),
+                emailAlreadyExists
+                    ? const Text(
+                        'Email already exists. Please login.',
+                        style: TextStyle(color: Colors.red),
+                      )
+                    : const SizedBox(),
               ],
             ),
           ),

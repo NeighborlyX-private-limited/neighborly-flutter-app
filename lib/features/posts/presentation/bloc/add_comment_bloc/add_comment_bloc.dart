@@ -18,6 +18,7 @@ class AddCommentBloc extends Bloc<AddCommentEvent, AddCommentState> {
       final result = await _addCommentUsecase.call(
         id: event.postId,
         text: event.text,
+        commentId: event.commentId,
       );
 
       result.fold(

@@ -125,9 +125,16 @@ class _OtpScreenState extends State<OtpScreen> {
               BlocConsumer<OtpBloc, OtpState>(
                 listener: (BuildContext context, OtpState state) {
                   if (state is OtpLoadFailure) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.error)),
-                    );
+                    if (state.error == 'OTP has expired') {
+                      setState(() {
+                        isExpiredOtp = true;
+                      });
+                    }
+                    if (state.error.contains('Invalid OTP')) {
+                      setState(() {
+                        isInvalidOtp = true;
+                      });
+                    }
                   } else if (state is OtpLoadSuccess) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.message)),
@@ -175,19 +182,9 @@ class _OtpScreenState extends State<OtpScreen> {
                 child: BlocConsumer<ResendOtpBloc, ResendOTPState>(
                   listener: (BuildContext context, ResendOTPState state) {
                     if (state is ResendOTPFailureState) {
-                      // ScaffoldMessenger.of(context).showSnackBar(
-                      //   SnackBar(content: Text(state.error)),
-                      // );
-                      if (state.error == 'OTP has expired') {
-                        setState(() {
-                          isExpiredOtp = true;
-                        });
-                      }
-                      if (state.error == 'Invalid OTP') {
-                        setState(() {
-                          isInvalidOtp = true;
-                        });
-                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.error)),
+                      );
                     } else if (state is ResendOTPSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),

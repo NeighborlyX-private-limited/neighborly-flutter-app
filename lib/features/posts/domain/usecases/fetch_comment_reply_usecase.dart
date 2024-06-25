@@ -2,19 +2,15 @@ import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/repositories/post_repositories.dart';
 
-class AddCommentUsecase {
+class FetchCommentReplyUsecase {
   final PostRepositories repository;
 
-  AddCommentUsecase(this.repository);
+  FetchCommentReplyUsecase(this.repository);
 
   Future<Either<Failure, void>> call({
-    required num id,
-    required String text,
-    num? commentId,
+    required num commentId,
   }) async {
-    return await repository.addComment(
-      postId: id,
-      text: text,
+    return await repository.fetchCommentReply(
       commentId: commentId,
     );
   }

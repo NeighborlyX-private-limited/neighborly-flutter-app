@@ -4,8 +4,8 @@ abstract class AuthRemoteDataSource {
   Future<AuthResponseModel> signupWithEmail({
     required String email,
     required String password,
-    required String dob,
-    required String gender,
+    // required String dob,
+    // required String gender,
   });
 
   Future<AuthResponseModel> loginWithEmail({

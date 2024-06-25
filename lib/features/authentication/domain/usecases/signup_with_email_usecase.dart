@@ -9,8 +9,12 @@ class SignupWithEmailUsecase {
   SignupWithEmailUsecase(this.repository);
 
   Future<Either<Failure, AuthResponseEntity>> call(
-      String email, String password, String dob, String gender) async {
+    String email,
+    String password,
+  ) async {
     return await repository.signupWithEmail(
-        email: email, password: password, dob: dob, gender: gender);
+      email: email,
+      password: password,
+    );
   }
 }

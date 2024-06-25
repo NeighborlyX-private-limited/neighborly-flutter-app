@@ -19,8 +19,8 @@ class RegisterWithEmailBloc
       final result = await _registerUser.call(
         event.email,
         event.password,
-        event.dob,
-        event.gender,
+        // event.dob,
+        // event.gender,
       );
 
       result.fold(

@@ -21,9 +21,18 @@ abstract class PostRepositories {
   Future<Either<Failure, void>> addComment({
     required num postId,
     required String text,
+    num? commentId,
   });
   Future<Either<Failure, void>> votePoll({
     required num pollId,
     required num optionId,
+  });
+  // Future<Either<Failure, void>> replyComment({
+  //   required num commentId,
+  //   required String text,
+  //   required num postId,
+  // });
+  Future<Either<Failure, void>> fetchCommentReply({
+    required num commentId,
   });
 }

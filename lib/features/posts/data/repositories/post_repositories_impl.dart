@@ -120,10 +120,11 @@ class PostRepositoriesImpl implements PostRepositories {
 
   @override
   Future<Either<Failure, void>> addComment(
-      {required num postId, required String text}) async {
+      {required num postId, required String text, num? commentId}) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.addComment(postId: postId, text: text);
+        await remoteDataSource.addComment(
+            postId: postId, text: text, commentId: commentId);
         return const Right(null);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -151,4 +152,41 @@ class PostRepositoriesImpl implements PostRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> fetchCommentReply(
+      {required num commentId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.fetchCommentReply(commentId: commentId);
+        return const Right(null);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  // @override
+  // Future<Either<Failure, void>> replyComment(
+  //     {required num commentId,
+  //     required String text,
+  //     required num postId}) async {
+  //   if (await networkInfo.isConnected) {
+  //     try {
+  //       await remoteDataSource.replyComment(
+  //           commentId: commentId, text: text, postId: postId);
+  //       return const Right(null);
+  //     } on ServerFailure catch (e) {
+  //       return Left(ServerFailure(message: e.message));
+  //     } catch (e) {
+  //       return Left(ServerFailure(message: '$e'));
+  //     }
+  //   } else {
+  //     return const Left(ServerFailure(message: 'No internet connection'));
+  //   }
+  // }
 }

@@ -189,7 +189,8 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<void> addComment({required num postId, required String text}) async {
+  Future<void> addComment(
+      {required num postId, required String text, num? commentId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
@@ -206,6 +207,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       body: jsonEncode(<String, dynamic>{
         'contentid': postId,
         'text': text,
+        'parentCommentid': commentId,
       }),
     );
 
@@ -245,4 +247,61 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw ServerException(message: message);
     }
   }
+
+  @override
+  Future<void> fetchCommentReply({required num commentId}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/posts/fetch-comment-thread/$commentId';
+    Map<String, dynamic> queryParameters = {'home': 'false'};
+
+    final response = await client.get(
+      Uri.parse(url).replace(queryParameters: queryParameters),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
+    }
+  }
+
+  // @override
+  // Future<void> replyComment(
+  //     {required num commentId,
+  //     required String text,
+  //     required num postId}) async {
+  //   List<String>? cookies = ShardPrefHelper.getCookie();
+  //   if (cookies == null || cookies.isEmpty) {
+  //     throw const ServerException(message: 'No cookies found');
+  //   }
+  //   String cookieHeader = cookies.join('; ');
+
+  //   String url = '$kBaseUrl/posts/add-comment';
+  //   final response = await client.post(
+  //     Uri.parse(url),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json',
+  //       'Cookie': cookieHeader,
+  //     },
+  //     body: jsonEncode(<String, dynamic>{
+  //       'parentCommentid': commentId,
+  //       'contentid': postId,
+  //       'text': text,
+  //     }),
+  //   );
+
+  //   if (response.statusCode == 201) {
+  //     return;
+  //   } else {
+  //     final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+  //     throw ServerException(message: message);
+  //   }
+  // }
 }

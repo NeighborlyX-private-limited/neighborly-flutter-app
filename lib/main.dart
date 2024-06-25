@@ -12,6 +12,7 @@ import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bl
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/fetch_comment_reply_bloc/fetch_comment_reply_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
@@ -94,6 +95,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<VotePollBloc>(
             create: (context) => di.sl<VotePollBloc>(),
+          ),
+          BlocProvider<FetchCommentReplyBloc>(
+            create: (context) => di.sl<FetchCommentReplyBloc>(),
           ),
         ],
         child: MaterialApp.router(

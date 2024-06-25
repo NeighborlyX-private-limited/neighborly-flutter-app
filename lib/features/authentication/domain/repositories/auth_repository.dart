@@ -6,8 +6,8 @@ abstract class AuthRepository {
   Future<Either<Failure, AuthResponseEntity>> signupWithEmail({
     required String email,
     required String password,
-    required String dob,
-    required String gender,
+    // required String dob,
+    // required String gender,
   });
   Future<Either<Failure, AuthResponseEntity>> loginWithEmail({
     required String email,

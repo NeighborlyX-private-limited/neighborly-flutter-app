@@ -35,15 +35,14 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, AuthResponseEntity>> signupWithEmail(
-      {required String email,
-      required String password,
-      required String dob,
-      required String gender}) async {
+  Future<Either<Failure, AuthResponseEntity>> signupWithEmail({
+    required String email,
+    required String password,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.signupWithEmail(
-            email: email, password: password, dob: dob, gender: gender);
+            email: email, password: password,);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
