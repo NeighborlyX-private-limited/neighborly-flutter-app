@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/toggle_button_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +16,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool isHome = true;
+
   @override
   void initState() {
     super.initState();
@@ -21,16 +25,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _fetchPosts() {
-    var homeState = context.read<GetAllPostsBloc>().state;
-    if (homeState is! GetAllPostsSuccessState) {
-      BlocProvider.of<GetAllPostsBloc>(context)
-          .add(GetAllPostsButtonPressedEvent());
-    }
+    BlocProvider.of<GetAllPostsBloc>(context)
+        .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
 
   Future<void> _onRefresh() async {
     BlocProvider.of<GetAllPostsBloc>(context)
-        .add(GetAllPostsButtonPressedEvent());
+        .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
+  }
+
+  void handleToggle(bool value) {
+    setState(() {
+      isHome = value;
+    });
+
+    _fetchPosts(); // Fetch posts based on the new isHome value
   }
 
   @override
@@ -39,32 +48,29 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: const Color(0xFFF5F5FF),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 10.0),
-          child: Image.asset(
-            height: 100,
-            width: 90,
-            'assets/logo.png',
-            fit: BoxFit.contain,
-          ),
+        title: Row(
+          children: [
+            SvgPicture.asset(
+              'assets/logo.svg',
+              width: 30,
+              height: 34,
+            ),
+            const SizedBox(width: 10),
+            CustomToggleSwitch(
+              imagePath1: 'assets/home.svg',
+              imagePath2: 'assets/add.png',
+              onToggle: handleToggle, // Pass the callback function
+            ),
+          ],
         ),
-        // title: CustomSwitchToggle(
-        //   initialState: false,
-        //   onChanged: (bool isActive) {
-        //     print('Switch is now: ${isActive ? "On" : "Off"}');
-        //   },
-        //   activeImagePath: 'assets/add.png', // Path to the active image
-        //   inactiveImagePath: 'assets/alarm.png', // Path to the inactive image
-
-        //   width: 100.0, // Customize the width
-        //   height: 50.0, // Customize the height
-        // ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Image.asset(
               'assets/alarm.png',
               fit: BoxFit.contain,
+              width: 30, // Adjusted to fit within the AppBar
+              height: 30,
             ),
           ),
         ],
@@ -91,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 separatorBuilder: (BuildContext context, int index) {
                   return const Padding(
-                    padding: EdgeInsets.only(top: 10.0),
+                    padding: EdgeInsets.only(bottom: 10.0),
                   );
                 },
               );
@@ -101,6 +107,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
+              }
+              if (state.error.contains('Internal server error')) {
+                return const Center(
+                    child: Text(
+                  'Server Error',
+                  style: TextStyle(color: Colors.red),
+                ));
               }
               return Center(child: Text(state.error));
             } else {

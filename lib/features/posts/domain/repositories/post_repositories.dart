@@ -2,9 +2,12 @@ import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
 
 abstract class PostRepositories {
-  Future<Either<Failure, List<PostEntity>>> getAllPosts();
+  Future<Either<Failure, List<PostEntity>>> getAllPosts({
+    required bool isHome,
+  });
   Future<Either<Failure, PostEntity>> getPostById({
     required num id,
   });
@@ -32,7 +35,7 @@ abstract class PostRepositories {
   //   required String text,
   //   required num postId,
   // });
-  Future<Either<Failure, void>> fetchCommentReply({
+  Future<Either<Failure, List<ReplyEntity>>> fetchCommentReply({
     required num commentId,
   });
 }

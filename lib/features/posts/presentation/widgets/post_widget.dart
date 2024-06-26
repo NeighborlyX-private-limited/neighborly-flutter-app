@@ -216,11 +216,11 @@ class PostWidget extends StatelessWidget {
                       ),
                     );
 
-                    Future.delayed(const Duration(seconds: 2), () {
-                      BlocProvider.of<GetAllPostsBloc>(context).add(
-                        GetAllPostsButtonPressedEvent(),
-                      );
-                    });
+                    // Future.delayed(const Duration(seconds: 2), () {
+                    //   BlocProvider.of<GetAllPostsBloc>(context).add(
+                    //     GetAllPostsButtonPressedEvent(),
+                    //   );
+                    // });
                   },
                   child: Row(
                     children: [

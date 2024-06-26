@@ -4,6 +4,7 @@ import 'package:neighborly_flutter_app/core/network/network_info.dart';
 import 'package:neighborly_flutter_app/features/posts/data/data_sources/post_remote_data_source/post_remote_data_source.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/repositories/post_repositories.dart';
 
 class PostRepositoriesImpl implements PostRepositories {
@@ -16,10 +17,14 @@ class PostRepositoriesImpl implements PostRepositories {
   });
 
   @override
-  Future<Either<Failure, List<PostEntity>>> getAllPosts() async {
+  Future<Either<Failure, List<PostEntity>>> getAllPosts({
+    required bool isHome,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getAllPosts();
+        final result = await remoteDataSource.getAllPosts(
+          isHome: isHome,
+        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -154,12 +159,12 @@ class PostRepositoriesImpl implements PostRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> fetchCommentReply(
+  Future<Either<Failure, List<ReplyEntity>>> fetchCommentReply(
       {required num commentId}) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.fetchCommentReply(commentId: commentId);
-        return const Right(null);
+        final result = await remoteDataSource.fetchCommentReply(commentId: commentId);
+        return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
       } catch (e) {

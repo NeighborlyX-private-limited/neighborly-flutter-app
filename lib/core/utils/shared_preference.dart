@@ -4,6 +4,7 @@ class ShardPrefHelper {
   static late SharedPreferences _preferences;
   static const String _cookie = 'cookies';
   static const String _userID = 'userID';
+  static const String _doubleListKey = 'doubleList';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -26,6 +27,18 @@ class ShardPrefHelper {
   static Future setUserID(String userId) async =>
       await _preferences.setString(_userID, userId);
   static String? getUserID() => _preferences.getString(_userID) ?? '';
+
+  // Save location
+  static Future setLocation(List<double> doubleList) async {
+    List<String> stringList = doubleList.map((e) => e.toString()).toList();
+    return await _preferences.setStringList(_doubleListKey, stringList);
+  }
+
+  // Fetch location
+  static List<double> getLocation() {
+    List<String> stringList = _preferences.getStringList(_doubleListKey) ?? [];
+    return stringList.map((e) => double.tryParse(e) ?? 0.0).toList();
+  }
 
   static Future<bool> clear() async {
     await _preferences.clear();

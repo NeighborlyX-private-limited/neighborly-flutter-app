@@ -7,6 +7,7 @@ import 'package:neighborly_flutter_app/features/posts/data/data_sources/post_rem
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/post_model.dart';
+import 'package:neighborly_flutter_app/features/posts/data/model/reply_model.dart';
 
 class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   final http.Client client;
@@ -14,15 +15,16 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   PostRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<List<PostModel>> getAllPosts() async {
+  Future<List<PostModel>> getAllPosts({
+    required bool isHome,
+  }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/wall/fetch-posts';
-    Map<String, dynamic> queryParameters = {'home': 'false'};
+    Map<String, dynamic> queryParameters = {'home': '$isHome'};
 
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
@@ -30,8 +32,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookieHeader,
       },
     );
-
-    print('Response Body: ${response.body}');
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
@@ -82,7 +82,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/wall/feedback';
     final response = await client.put(
       Uri.parse(url),
@@ -140,7 +139,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/posts/fetch-comments/$postId';
     final response = await client.get(
       Uri.parse(url),
@@ -196,7 +194,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/posts/add-comment';
     final response = await client.post(
       Uri.parse(url),
@@ -226,7 +223,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/posts/send-poll-vote';
     final response = await client.post(
       Uri.parse(url),
@@ -249,7 +245,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<void> fetchCommentReply({required num commentId}) async {
+  Future<List<ReplyModel>> fetchCommentReply({required num commentId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
@@ -257,16 +253,18 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/posts/fetch-comment-thread/$commentId';
-    Map<String, dynamic> queryParameters = {'home': 'false'};
 
     final response = await client.get(
-      Uri.parse(url).replace(queryParameters: queryParameters),
+      Uri.parse(url),
       headers: <String, String>{
         'Cookie': cookieHeader,
       },
     );
-
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      // print('Response Body: ${jsonData}');
+      return jsonData.map((data) => ReplyModel.fromJson(data)).toList();
+    } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
       throw ServerException(message: message);
     }

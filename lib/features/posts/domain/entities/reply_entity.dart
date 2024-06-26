@@ -1,20 +1,38 @@
 import 'package:equatable/equatable.dart';
 
 class ReplyEntity extends Equatable {
-  final num optionId;
-  final String option;
-  final String votes;
+  final num id;
+  final String userId;
+  final String userName;
+  final String text;
+  final List<String> awardType;
+  final String createdAt;
+  final num cheers;
+  final num bools;
+  final String? proPic;
 
   const ReplyEntity({
-    required this.optionId,
-    required this.option,
-    required this.votes,
+    required this.awardType,
+    required this.id,
+    required this.userId,
+    required this.userName,
+    required this.text,
+    required this.createdAt,
+    required this.cheers,
+    required this.bools,
+    this.proPic,
   });
 
   @override
   List<Object?> get props => [
-        option,
-        optionId,
-        votes,
+        id,
+        userId,
+        userName,
+        text,
+        createdAt,
+        cheers,
+        bools,
+        proPic,
+        awardType, // Nullable in props list
       ];
 }

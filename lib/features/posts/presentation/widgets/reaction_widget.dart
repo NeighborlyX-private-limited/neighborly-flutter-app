@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/overlapping_images_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ReactionWidget extends StatefulWidget {
@@ -91,6 +92,23 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   @override
   Widget build(BuildContext context) {
+    String checkStringInList(String str) {
+      switch (str) {
+        case 'Local Legend':
+          return 'assets/Local_Legend.svg';
+        case 'Sunflower':
+          return 'assets/Sunflower.svg';
+        case 'Streetlight':
+          return 'assets/Streetlight.svg';
+        case 'Park Bench':
+          return 'assets/Park_Bench.svg';
+        case 'Map':
+          return 'assets/Map.svg';
+        default:
+          return 'assets/react7.png';
+      }
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -108,7 +126,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             height: 32,
-            width: 56,
+            width: 60,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey[300]!),
                 borderRadius: const BorderRadius.all(
@@ -158,7 +176,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             height: 32,
-            width: 56,
+            width: 60,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey[300]!),
                 borderRadius: const BorderRadius.all(
@@ -199,7 +217,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           height: 32,
-          width: 56,
+          width: 60,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey[300]!),
               borderRadius: const BorderRadius.all(
@@ -231,7 +249,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           height: 32,
-          width: 56,
+          width: 60,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey[300]!),
               borderRadius: const BorderRadius.all(
@@ -240,14 +258,32 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           child: Center(
             child: Row(
               children: [
-                Image.asset(
-                  'assets/react7.png',
-                  width: 20,
-                  height: 24,
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
+                widget.post.awardType.isEmpty
+                    ? Image.asset(
+                        'assets/react7.png',
+                        width: 20,
+                        height: 24,
+                      )
+                    : widget.post.awardType.length == 1
+                        ? SvgPicture.asset(
+                            checkStringInList(widget.post.awardType[0]),
+                            width: 20,
+                            height: 24,
+                          )
+                        : widget.post.awardType.length == 2
+                            ? OverlappingImages(
+                                images: [
+                                  checkStringInList(widget.post.awardType[0]),
+                                  checkStringInList(widget.post.awardType[1]),
+                                ],
+                              )
+                            : OverlappingImages(
+                                images: [
+                                  checkStringInList(widget.post.awardType[0]),
+                                  checkStringInList(widget.post.awardType[1]),
+                                  checkStringInList(widget.post.awardType[2]),
+                                ],
+                              ),
                 Text(
                   '${widget.post.awardType.length}',
                   style: TextStyle(
@@ -263,7 +299,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           height: 32,
-          width: 56,
+          width: 60,
           decoration: BoxDecoration(
               border: Border.all(color: Colors.grey[300]!),
               borderRadius: const BorderRadius.all(

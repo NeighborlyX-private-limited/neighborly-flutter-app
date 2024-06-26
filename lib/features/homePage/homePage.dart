@@ -90,6 +90,7 @@ class _MainPageState extends State<MainPage> {
       setState(() {
         _currentPosition = position;
       });
+      ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location: ${position.latitude}, ${position.longitude}');
 
       // Dispatch the event to update location

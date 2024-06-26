@@ -16,7 +16,9 @@ class GetAllPostsBloc extends Bloc<GetAllPostsEvent, GetAllPostsState> {
         Emitter<GetAllPostsState> emit) async {
       emit(GetAllPostsLoadingState());
 
-      final result = await _getAllPostsUsecase.call();
+      final result = await _getAllPostsUsecase.call(
+        isHome: event.isHome,
+      );
 
       result.fold(
           (error) => emit(GetAllPostsFailureState(error: error.toString())),

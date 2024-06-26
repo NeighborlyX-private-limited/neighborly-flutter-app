@@ -1,8 +1,11 @@
 import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/post_model.dart';
+import 'package:neighborly_flutter_app/features/posts/data/model/reply_model.dart';
 
 abstract class PostRemoteDataSource {
-  Future<List<PostModel>> getAllPosts();
+  Future<List<PostModel>> getAllPosts({
+    required bool isHome,
+  });
   Future<PostModel> getPostById({required num id});
   Future<void> deletePost({required num id});
   Future<void> reportPost(
@@ -13,7 +16,7 @@ abstract class PostRemoteDataSource {
   Future<void> addComment(
       {required num postId, required String text, num? commentId});
   Future<void> votePoll({required num pollId, required num optionId});
-  Future<void> fetchCommentReply({required num commentId});
+  Future<List<ReplyModel>> fetchCommentReply({required num commentId});
   // Future<void> replyComment(
   //     {required num commentId, required String text, required num postId});
 }

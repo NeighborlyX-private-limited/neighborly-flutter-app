@@ -14,7 +14,10 @@ class FetchCommentReplyLoadingState extends FetchCommentReplyState {
 }
 
 class FetchCommentReplySuccessState extends FetchCommentReplyState {
-  FetchCommentReplySuccessState();
+  final List<ReplyEntity> reply;
+  FetchCommentReplySuccessState({
+    required this.reply,
+  });
 }
 
 class FetchCommentReplyFailureState extends FetchCommentReplyState {

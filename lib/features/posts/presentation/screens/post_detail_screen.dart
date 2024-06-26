@@ -17,7 +17,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/react
 class PostDetailScreen extends StatefulWidget {
   final String postId;
 
-  const PostDetailScreen({Key? key, required this.postId}) : super(key: key);
+  const PostDetailScreen({super.key, required this.postId});
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -182,12 +182,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         content: Text('Post Deleted'),
                       ),
                     );
-
-                    Future.delayed(const Duration(seconds: 2), () {
-                      BlocProvider.of<GetAllPostsBloc>(context).add(
-                        GetAllPostsButtonPressedEvent(),
-                      );
-                    });
                   },
                   child: Row(
                     children: [
@@ -488,74 +482,76 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   Widget _buildCommentInputSection() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _commentController,
-              onChanged: (value) {
-                setState(() {
-                  isCommentFilled = _commentController.text.isNotEmpty;
-                });
-              },
-              decoration: const InputDecoration(
-                hintText: 'Add a comment',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(48)),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _commentController,
+                onChanged: (value) {
+                  setState(() {
+                    isCommentFilled = _commentController.text.isNotEmpty;
+                  });
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Add a comment',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(48)),
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          BlocConsumer<AddCommentBloc, AddCommentState>(
-            listener: (context, state) {
-              if (state is AddCommentFailureState) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.error),
+            const SizedBox(width: 10),
+            BlocConsumer<AddCommentBloc, AddCommentState>(
+              listener: (context, state) {
+                if (state is AddCommentFailureState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.error),
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                return InkWell(
+                  onTap: () {
+                    if (isCommentFilled) {
+                      final postId = int.parse(widget.postId);
+                      BlocProvider.of<AddCommentBloc>(context).add(
+                        AddCommentButtonPressedEvent(
+                          postId: postId,
+                          text: _commentController.text,
+                        ),
+                      );
+                      _commentController.clear();
+                      setState(() {
+                        isCommentFilled = false;
+                      });
+                    }
+                  },
+                  child: Opacity(
+                    opacity: isCommentFilled ? 1 : 0.3,
+                    child: Container(
+                      height: 48,
+                      width: 48,
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_upward,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
                   ),
                 );
-              }
-            },
-            builder: (context, state) {
-              return InkWell(
-                onTap: () {
-                  if (isCommentFilled) {
-                    final postId = int.parse(widget.postId);
-                    BlocProvider.of<AddCommentBloc>(context).add(
-                      AddCommentButtonPressedEvent(
-                        postId: postId,
-                        text: _commentController.text,
-                      ),
-                    );
-                    _commentController.clear();
-                    setState(() {
-                      isCommentFilled = false;
-                    });
-                  }
-                },
-                child: Opacity(
-                  opacity: isCommentFilled ? 1 : 0.3,
-                  child: Container(
-                    height: 48,
-                    width: 48,
-                    decoration: const BoxDecoration(
-                      color: Colors.blue,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_upward,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
