@@ -39,7 +39,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
   Future<void> _loadReactionState() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      // Load the state for the current comment
+      // Load the state for the current post
       isCheered =
           prefs.getBool('${widget.comment.commentid}_isCheered') ?? false;
       isBooled = prefs.getBool('${widget.comment.commentid}_isBooled') ?? false;
@@ -56,35 +56,38 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     setState(() {
       if (reaction == 'cheer') {
         if (isCheered) {
-          if (cheersCount > 0) cheersCount -= 1; // Prevent negative count
+          // User is un-cheering, decrement count
+          if (cheersCount > 0) cheersCount -= 1;
           isCheered = false;
         } else {
+          // User is cheering
           cheersCount += 1;
           isCheered = true;
           if (isBooled) {
-            if (boolsCount > 0) boolsCount -= 1; // Prevent negative count
+            // Reverse boo if it was already booed
+            if (boolsCount > 0) boolsCount -= 1;
             isBooled = false;
           }
         }
       } else if (reaction == 'boo') {
         if (isBooled) {
-          if (boolsCount > 0) boolsCount -= 1; // Prevent negative count
+          // User is un-booing, decrement count
+          if (boolsCount > 0) boolsCount -= 1;
           isBooled = false;
         } else {
+          // User is booing
           boolsCount += 1;
           isBooled = true;
           if (isCheered) {
-            if (cheersCount > 0) cheersCount -= 1; // Prevent negative count
+            // Reverse cheer if it was already cheered
+            if (cheersCount > 0) cheersCount -= 1;
             isCheered = false;
           }
         }
       }
-      _saveReactionState(); // Save the reaction state
+      // Save the new state
+      _saveReactionState();
     });
-
-    // Debug prints
-    print('Cheers: $cheersCount, Boos: $boolsCount');
-    print('Is Cheered: $isCheered, Is Booed: $isBooled');
   }
 
   @override
@@ -95,17 +98,15 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
         // Cheers button
         InkWell(
           onTap: () {
-            if (!isBooled) {
-              _updateState('cheer');
+            _updateState('cheer');
 
-              // Trigger BLoC event for cheers
-              BlocProvider.of<FeedbackBloc>(context).add(
-                FeedbackButtonPressedEvent(
-                    postId: widget.comment.commentid,
-                    feedback: 'cheer',
-                    type: 'comment'), // Corrected type to 'comment'
-              );
-            }
+            // Trigger BLoC event for cheers
+            BlocProvider.of<FeedbackBloc>(context).add(
+              FeedbackButtonPressedEvent(
+                  postId: widget.comment.commentid,
+                  feedback: 'cheer',
+                  type: 'comment'), // Corrected type to 'comment'
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -149,17 +150,15 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
         // Bools button
         InkWell(
           onTap: () {
-            if (!isCheered) {
-              _updateState('boo');
+            _updateState('boo');
 
-              // Trigger BLoC event for bools
-              BlocProvider.of<FeedbackBloc>(context).add(
-                FeedbackButtonPressedEvent(
-                    postId: widget.comment.commentid,
-                    feedback: 'boo',
-                    type: 'comment'), // Corrected type to 'comment'
-              );
-            }
+            // Trigger BLoC event for bools
+            BlocProvider.of<FeedbackBloc>(context).add(
+              FeedbackButtonPressedEvent(
+                  postId: widget.comment.commentid,
+                  feedback: 'boo',
+                  type: 'comment'), // Corrected type to 'comment'
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
