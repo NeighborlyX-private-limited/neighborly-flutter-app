@@ -39,7 +39,7 @@ class _OptionCardState extends State<OptionCard> {
       isSelected = prefs.getBool(key) ?? false;
       filledPercentage = isSelected
           ? calculatePercentage(
-                double.parse(widget.option.votes),
+                double.parse(widget.option.votes.toString()),
                 widget.totalVotes,
               ) /
               100
@@ -59,7 +59,7 @@ class _OptionCardState extends State<OptionCard> {
       isSelected = !isSelected;
       filledPercentage = isSelected
           ? calculatePercentage(
-                double.parse(widget.option.votes),
+                double.parse(widget.option.votes.toString()),
                 widget.totalVotes,
               ) /
               100
@@ -115,7 +115,7 @@ class _OptionCardState extends State<OptionCard> {
                   ),
                   Text(
                     '${calculatePercentage(
-                      double.parse(widget.option.votes),
+                      double.parse(widget.option.votes.toString()),
                       widget.totalVotes,
                     ).toStringAsFixed(1)}%',
                     style: const TextStyle(

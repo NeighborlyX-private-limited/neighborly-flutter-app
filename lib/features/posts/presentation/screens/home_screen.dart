@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 10),
             CustomToggleSwitch(
               imagePath1: 'assets/home.svg',
-              imagePath2: 'assets/add.png',
+              imagePath2: 'assets/location.svg',
               onToggle: handleToggle, // Pass the callback function
             ),
           ],

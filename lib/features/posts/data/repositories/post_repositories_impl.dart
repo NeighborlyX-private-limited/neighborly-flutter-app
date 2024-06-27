@@ -163,8 +163,29 @@ class PostRepositoriesImpl implements PostRepositories {
       {required num commentId}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.fetchCommentReply(commentId: commentId);
+        final result =
+            await remoteDataSource.fetchCommentReply(commentId: commentId);
         return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> giveAward(
+      {required num id,
+      required String awardType,
+      required String type}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.giveAward(
+            id: id, awardType: awardType, type: type);
+        return const Right(null);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
       } catch (e) {

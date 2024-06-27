@@ -32,6 +32,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookieHeader,
       },
     );
+    print('response body: ${response.body} ');
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
@@ -264,6 +265,39 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       final List<dynamic> jsonData = jsonDecode(response.body);
       // print('Response Body: ${jsonData}');
       return jsonData.map((data) => ReplyModel.fromJson(data)).toList();
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<void> giveAward(
+      {required num id,
+      required String awardType,
+      required String type}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/wall/give-award';
+    final response = await client.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
+      },
+      body: jsonEncode(<String, dynamic>{
+        'id': id,
+        'awardType': awardType,
+        'type': type,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      return;
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
       throw ServerException(message: message);

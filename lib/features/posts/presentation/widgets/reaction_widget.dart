@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/overlapping_images_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -92,6 +94,10 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   @override
   Widget build(BuildContext context) {
+    void showBottomSheet() {
+      bottomSheet(context);
+    }
+
     String checkStringInList(String str) {
       switch (str) {
         case 'Local Legend':
@@ -246,53 +252,58 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             ),
           ),
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          height: 32,
-          width: 60,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(21),
-              )),
-          child: Center(
-            child: Row(
-              children: [
-                widget.post.awardType.isEmpty
-                    ? Image.asset(
-                        'assets/react7.png',
-                        width: 20,
-                        height: 24,
-                      )
-                    : widget.post.awardType.length == 1
-                        ? SvgPicture.asset(
-                            checkStringInList(widget.post.awardType[0]),
-                            width: 20,
-                            height: 24,
-                          )
-                        : widget.post.awardType.length == 2
-                            ? OverlappingImages(
-                                images: [
-                                  checkStringInList(widget.post.awardType[0]),
-                                  checkStringInList(widget.post.awardType[1]),
-                                ],
-                              )
-                            : OverlappingImages(
-                                images: [
-                                  checkStringInList(widget.post.awardType[0]),
-                                  checkStringInList(widget.post.awardType[1]),
-                                  checkStringInList(widget.post.awardType[2]),
-                                ],
-                              ),
-                Text(
-                  '${widget.post.awardType.length}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                )
-              ],
+        InkWell(
+          onTap: () {
+            showBottomSheet();
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 32,
+            width: 60,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                )),
+            child: Center(
+              child: Row(
+                children: [
+                  widget.post.awardType.isEmpty
+                      ? Image.asset(
+                          'assets/react7.png',
+                          width: 20,
+                          height: 24,
+                        )
+                      : widget.post.awardType.length == 1
+                          ? SvgPicture.asset(
+                              checkStringInList(widget.post.awardType[0]),
+                              width: 20,
+                              height: 24,
+                            )
+                          : widget.post.awardType.length == 2
+                              ? OverlappingImages(
+                                  images: [
+                                    checkStringInList(widget.post.awardType[0]),
+                                    checkStringInList(widget.post.awardType[1]),
+                                  ],
+                                )
+                              : OverlappingImages(
+                                  images: [
+                                    checkStringInList(widget.post.awardType[0]),
+                                    checkStringInList(widget.post.awardType[1]),
+                                    checkStringInList(widget.post.awardType[2]),
+                                  ],
+                                ),
+                  Text(
+                    '${widget.post.awardType.length}',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
         ),
@@ -314,6 +325,277 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           ),
         )
       ],
+    );
+  }
+
+  Future<dynamic> bottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          height: 800,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffB8B8B8),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Center(
+                  child: Text(
+                    'Award this post',
+                    style: onboardingHeading2Style,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                InkWell(
+                  onTap: () {
+                    BlocProvider.of<GiveAwardBloc>(context).add(
+                        GiveAwardButtonPressedEvent(
+                            id: widget.post.id,
+                            awardType: 'Local Legend',
+                            type: 'post'));
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/Local_Legend.svg',
+                        width: 84,
+                        height: 84,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        // Ensures the text wraps within the available space
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Local Legend',
+                              style: greyonboardingBody1Style,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              'Recognizing users who consistently contribute high-quality content.',
+                              style: mediumGreyTextStyleBlack,
+                              softWrap: true, // Enables text wrapping
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    BlocProvider.of<GiveAwardBloc>(context)
+                        .add(GiveAwardButtonPressedEvent(
+                      id: widget.post.id,
+                      awardType: 'Sunflower',
+                      type: 'post',
+                    ));
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/Sunflower.svg',
+                        width: 84,
+                        height: 84,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        // Ensures the text wraps within the available space
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Sunflower',
+                              style: greyonboardingBody1Style,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              'For bringing positivity and cheerfulness to the community.',
+                              style: mediumGreyTextStyleBlack,
+                              softWrap: true, // Enables text wrapping
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    BlocProvider.of<GiveAwardBloc>(context)
+                        .add(GiveAwardButtonPressedEvent(
+                      id: widget.post.id,
+                      awardType: 'Streetlight',
+                      type: 'post',
+                    ));
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/Streetlight.svg',
+                        width: 84,
+                        height: 84,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        // Ensures the text wraps within the available space
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Streetlight',
+                              style: greyonboardingBody1Style,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              'For providing clear guidance and valuable insights.',
+                              style: mediumGreyTextStyleBlack,
+                              softWrap: true, // Enables text wrapping
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    BlocProvider.of<GiveAwardBloc>(context)
+                        .add(GiveAwardButtonPressedEvent(
+                      id: widget.post.id,
+                      awardType: 'Park Bench',
+                      type: 'post',
+                    ));
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/Park_Bench.svg',
+                        width: 84,
+                        height: 84,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        // Ensures the text wraps within the available space
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Park Bench',
+                              style: greyonboardingBody1Style,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              'For offering comforting and supportive posts.',
+                              style: mediumGreyTextStyleBlack,
+                              softWrap: true, // Enables text wrapping
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    BlocProvider.of<GiveAwardBloc>(context)
+                        .add(GiveAwardButtonPressedEvent(
+                      id: widget.post.id,
+                      awardType: 'Map',
+                      type: 'post',
+                    ));
+                    Navigator.pop(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/Map.svg',
+                        width: 84,
+                        height: 84,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Expanded(
+                        // Ensures the text wraps within the available space
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Map',
+                              style: greyonboardingBody1Style,
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              'For creating informative and detailed content.',
+                              style: mediumGreyTextStyleBlack,
+                              softWrap: true, // Enables text wrapping
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

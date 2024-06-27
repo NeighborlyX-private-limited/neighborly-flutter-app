@@ -30,6 +30,11 @@ abstract class PostRepositories {
     required num pollId,
     required num optionId,
   });
+  Future<Either<Failure, void>> giveAward({
+    required num id,
+    required String awardType,
+    required String type,
+  });
   // Future<Either<Failure, void>> replyComment({
   //   required num commentId,
   //   required String text,

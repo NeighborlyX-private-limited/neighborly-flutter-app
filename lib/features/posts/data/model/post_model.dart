@@ -22,40 +22,40 @@ class PostModel extends PostEntity {
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
-      id: json['contentid'],
-      awardType: json['awards'],
-      type: json['type'],
-      userId: json['userid'],
+      id: json['contentid'] as int, // Assuming contentid is always an int
+      awardType: json['awards'] as List<dynamic>,
+      type: json['type'] as String,
+      userId: json['userid'] as String,
       pollOptions: json['pollResults'] != null
           ? (json['pollResults'] as List<dynamic>)
               .map((e) => OptionModel.fromJson(e))
               .toList()
           : null,
-      userName: json['username'],
-      title: json['title'],
-      content: json['body'],
-      createdAt: json['createdat'],
-      cheers: json['cheers'],
-      bools: json['boos'],
-      multimedia: json['multimedia'],
-      proPic: json['userProfilePicture'],
-      city: json['city'],
-      commentCount: json['commentCount'],
+      userName: json['username'] as String,
+      title: json['title'] as String?,
+      content: json['body'] as String?,
+      createdAt: json['createdat'] as String,
+      cheers: json['cheers'] as int,
+      bools: json['boos'] as int,
+      multimedia: json['multimedia'] as String?,
+      proPic: json['userProfilePicture'] as String?,
+      city: json['city'] as String,
+      commentCount: json['commentCount'] as int,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'contentid': id,
       'userId': userId,
       'userName': userName,
       'title': title,
-      'content': content,
+      'body': content,
       'createdAt': createdAt,
       'cheers': cheers,
-      'bools': bools,
+      'boos': bools,
       'multimedia': multimedia,
-      'awardType': awardType,
+      'awards': awardType,
     };
   }
 }

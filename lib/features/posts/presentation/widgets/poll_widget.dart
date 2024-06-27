@@ -15,7 +15,7 @@ class PollWidget extends StatelessWidget {
 
       for (var option in options) {
         // Parse the votes as an integer and add to the total sum.
-        totalVotes += double.parse(option.votes);
+        totalVotes += double.parse(option.votes.toString());
       }
 
       return totalVotes;

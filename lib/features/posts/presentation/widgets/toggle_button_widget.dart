@@ -37,10 +37,10 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
           width: 35,
           height: 35,
         ),
-        Image.asset(
+        SvgPicture.asset(
           widget.imagePath2,
-          width: 30,
-          height: 30,
+          width: 35,
+          height: 35,
         ),
       ],
       onToggle: (index) {

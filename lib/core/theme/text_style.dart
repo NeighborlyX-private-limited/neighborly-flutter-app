@@ -18,6 +18,12 @@ var blackonboardingBody1Style = GoogleFonts.roboto(
   fontSize: 16,
   fontWeight: FontWeight.w400,
 );
+
+var greyonboardingBody1Style = GoogleFonts.roboto(
+  color: const Color(0xff3D3D3D),
+  fontSize: 16,
+  fontWeight: FontWeight.w600,
+);
 var redOnboardingBody1Style = GoogleFonts.roboto(
   color: Colors.red,
   fontSize: 16,
@@ -52,4 +58,10 @@ var mediumTextStyleBlack = GoogleFonts.roboto(
   color: const Color(0xff0A0A0A),
   fontSize: 14,
   fontWeight: FontWeight.w500,
+);
+
+var mediumGreyTextStyleBlack = GoogleFonts.roboto(
+  color: const Color(0xff2E2E2E),
+  fontSize: 14,
+  fontWeight: FontWeight.w400,
 );
