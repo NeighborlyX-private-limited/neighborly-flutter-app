@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:geocoding/geocoding.dart';
 
 String formatTimeDifference(String isoTimestamp) {
   DateTime inputTime = DateTime.parse(isoTimestamp);
@@ -80,4 +81,23 @@ double calculatePercentage(double value, double total) {
   }
   double percentage = (value / total) * 100;
   return double.parse(percentage.toStringAsFixed(1));
+}
+
+Future<String> getAddressFromLatLng(List<double> position) async {
+  try {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position[0], position[1]);
+    Placemark place = placemarks[0];
+
+    // Check for non-null and non-empty subLocality
+    if (place.subLocality != null && place.subLocality!.isNotEmpty) {
+      return place.subLocality!;
+    } else {
+      return '';
+    }
+  } catch (e) {
+    // Handle the error here
+    print('Error: $e');
+    return 'Error occurred: $e';
+  }
 }

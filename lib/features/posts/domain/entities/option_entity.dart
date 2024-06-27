@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class OptionEntity extends Equatable {
   final num optionId;
   final String option;
-  final num votes;
+  final String votes;
 
   const OptionEntity({
     required this.optionId,

@@ -17,18 +17,23 @@ class UploadRepositoriesImpl implements UploadRepositories {
   });
 
   @override
-  Future<Either<Failure, void>> uploadPost(
-      {String? content,
-      String? title,
-      String? multimedia,
-      required List<num> location}) async {
+  Future<Either<Failure, void>> uploadPost({
+    required String title,
+    String? content,
+    required String type,
+    String? multimedia,
+    required List<num> location,
+    required String city,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.uploadPost(
-          content: content,
           title: title,
+          content: content,
+          type: type,
           multimedia: multimedia,
           location: location,
+          city: city,
         );
         return Right(result);
       } on ServerFailure catch (e) {
@@ -56,9 +61,10 @@ class UploadRepositoriesImpl implements UploadRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
-  
+
   @override
-  Future<Either<Failure, void>> uploadPoll({required String question, required List<String> options}) async {
+  Future<Either<Failure, void>> uploadPoll(
+      {required String question, required List<String> options}) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.uploadPoll(

@@ -22,7 +22,7 @@ class PostModel extends PostEntity {
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
-      id: json['contentid'] as int, // Assuming contentid is always an int
+      id: json['contentid'], // Assuming contentid is always an int
       awardType: json['awards'] as List<dynamic>,
       type: json['type'] as String,
       userId: json['userid'] as String,
@@ -35,12 +35,12 @@ class PostModel extends PostEntity {
       title: json['title'] as String?,
       content: json['body'] as String?,
       createdAt: json['createdat'] as String,
-      cheers: json['cheers'] as int,
-      bools: json['boos'] as int,
-      multimedia: json['multimedia'] as String?,
+      cheers: json['cheers'],
+      bools: json['boos'],
+      multimedia: json['multimedia'],
       proPic: json['userProfilePicture'] as String?,
       city: json['city'] as String,
-      commentCount: json['commentCount'] as int,
+      commentCount: json['commentCount'],
     );
   }
 

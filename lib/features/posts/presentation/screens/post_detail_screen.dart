@@ -430,7 +430,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 onTap: () {
                   showBottomSheet();
                 },
-                child: Icon(Icons.more_horiz, color: Colors.grey[500])),
+                child:
+                    Icon(Icons.more_horiz, size: 30, color: Colors.grey[500])),
           ],
         ),
         const SizedBox(height: 10),

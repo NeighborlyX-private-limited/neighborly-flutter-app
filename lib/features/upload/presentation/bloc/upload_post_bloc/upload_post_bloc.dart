@@ -16,10 +16,12 @@ class UploadPostBloc extends Bloc<UploadPostEvent, UploadPostState> {
       emit(UploadPostLoadingState());
 
       final result = await _uploadPostUsecase.call(
-        content: event.content,
-        multimedia: event.multimedia,
-        location: event.location,
-      );
+          title: event.title,
+          content: event.content,
+          type: event.type,
+          multimedia: event.multimedia,
+          city: event.city,
+          location: event.location);
 
       result.fold(
           (error) => emit(UploadPostFailureState(error: error.toString())),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import '../../../../core/theme/text_style.dart';
@@ -112,11 +114,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     child: CircularProgressIndicator());
                               }
                               return PostButtonWidget(
-                                onTapListener: () {
+                                onTapListener: () async {
+                                  List<double> location =
+                                      ShardPrefHelper.getLocation();
+
+                                  List<Placemark> placemarks =
+                                      await placemarkFromCoordinates(
+                                          location[0], location[1]);
+
                                   BlocProvider.of<UploadPostBloc>(context).add(
                                     UploadPostPressedEvent(
+                                      city: placemarks[0].locality ?? '',
                                       content: _contentController.text,
-                                      location: const [0, 0],
+                                      location: location,
+                                      title: _titleController.text,
+                                      type: 'post',
                                     ),
                                   );
                                 },

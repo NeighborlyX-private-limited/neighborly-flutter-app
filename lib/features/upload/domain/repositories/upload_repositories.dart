@@ -5,10 +5,12 @@ import '../../../../core/error/failures.dart';
 
 abstract class UploadRepositories {
   Future<Either<Failure, void>> uploadPost({
-    String? title,
+    required String title,
     String? content,
+    required String type,
     String? multimedia,
     required List<num> location,
+    required String city,
   });
   Future<Either<Failure, String>> uploadFile({required File file});
   Future<Either<Failure, void>> uploadPoll({

@@ -7,15 +7,21 @@ class UploadPostUsecase {
 
   UploadPostUsecase(this.repository);
 
-  Future<Either<Failure, void>> call(
-      {String? content,
-      String? title,
-      String? multimedia,
-      required List<num> location}) async {
+  Future<Either<Failure, void>> call({
+    required String title,
+    String? content,
+    required String type,
+    String? multimedia,
+    required List<num> location,
+    required String city,
+  }) async {
     return await repository.uploadPost(
-        content: content,
-        multimedia: multimedia,
-        location: location,
-        title: title);
+      title: title,
+      content: content,
+      type: type,
+      multimedia: multimedia,
+      location: location,
+      city: city,
+    );
   }
 }

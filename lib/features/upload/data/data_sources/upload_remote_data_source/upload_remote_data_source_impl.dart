@@ -15,10 +15,12 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
 
   @override
   Future<void> uploadPost({
+    required String title,
     String? content,
-    String? title,
+    required String type,
     String? multimedia,
     required List<num> location,
+    required String city,
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -27,23 +29,20 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/create-post';
 
-    final Map<String, String> body = {
-      'title': title ?? '',
-      'content': content ?? '',
-      'location': location.join(','),
-    };
-
-    if (multimedia != null) {
-      body['multimedia'] = multimedia;
-    }
-
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Cookie': cookieHeader,
       },
-      body: jsonEncode(body),
+      body: jsonEncode({
+        'title': title,
+        'content': content,
+        'type': type,
+        'multimedia': multimedia,
+        'location': location,
+        'city': city,
+      }),
     );
 
     if (response.statusCode == 200) {
@@ -84,7 +83,8 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
   }
 
   @override
-  Future<void> uploadPoll({required String question, required List<String> options}) async {
+  Future<void> uploadPoll(
+      {required String question, required List<String> options}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
