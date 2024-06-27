@@ -5,24 +5,23 @@ class OverlappingImages extends StatelessWidget {
   final List<String> images;
 
   const OverlappingImages({
-    super.key,
+    Key? key,
     required this.images,
-  }) : assert(images.length <= 3, 'The widget can accept at most 3 images.');
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Ensure the images list has at most 3 images
     List<String> imagesToShow = images.take(3).toList();
 
-    // Calculate the overlap and width based on container width
-    double containerWidth = 60; // Container width from parent
-    double imageWidth = 20;
-    double overlap =
-        (containerWidth - imageWidth) / 2; // Calculate dynamic overlap
+    // Calculate total width needed based on overlap
+    double imageWidth = 23;
+    double overlap = imageWidth / 2; // Each subsequent image overlaps by half
+    double totalWidth = (imagesToShow.length - 1) * overlap + imageWidth;
 
     return SizedBox(
-      width: containerWidth,
-      height: 32,
+      width: totalWidth,
+      height: 24, // Adjust height as needed
       child: Stack(
         children: List.generate(imagesToShow.length, (index) {
           // Calculate the left offset for overlapping effect
@@ -32,7 +31,7 @@ class OverlappingImages extends StatelessWidget {
             child: SvgPicture.asset(
               imagesToShow[index],
               width: imageWidth,
-              height: 24, // Adjust as needed
+              height: 24, // Adjust height as needed
             ),
           );
         }),

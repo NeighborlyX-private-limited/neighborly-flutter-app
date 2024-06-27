@@ -228,9 +228,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
             showBottomSheet();
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 0),
             height: 32,
-            width: 60,
+            width: 65,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey[300]!),
                 borderRadius: const BorderRadius.all(
@@ -238,12 +238,14 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                 )),
             child: Center(
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   widget.comment.awardType.isEmpty
-                      ? Image.asset(
-                          'assets/react7.png',
+                      ? SvgPicture.asset(
+                          'assets/react7.svg',
                           width: 20,
-                          height: 24,
+                          height: 25,
                         )
                       : widget.comment.awardType.length == 1
                           ? SvgPicture.asset(

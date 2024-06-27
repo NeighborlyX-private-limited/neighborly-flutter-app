@@ -4,9 +4,9 @@ import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
@@ -26,6 +26,11 @@ class PostDetailScreen extends StatefulWidget {
 class _PostDetailScreenState extends State<PostDetailScreen> {
   late TextEditingController _commentController;
   bool isCommentFilled = false;
+  final FocusNode _commentFocusNode =
+      FocusNode(); // Step 1: Create a FocusNode instance
+
+  ReplyEntity?
+      commentToReply; // Define commentToReply to track the comment being replied to
 
   @override
   void initState() {
@@ -37,6 +42,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   @override
   void dispose() {
     _commentController.dispose();
+    _commentFocusNode.dispose(); // Dispose the FocusNode
     super.dispose();
   }
 
@@ -105,6 +111,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   itemCount: commentState.comments.length,
                                   itemBuilder: (context, index) {
                                     return CommentWidget(
+                                        commentFocusNode:
+                                            _commentFocusNode, // Pass FocusNode
                                         comment: commentState.comments[index]);
                                   },
                                   separatorBuilder: (context, index) =>
@@ -483,6 +491,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   Widget _buildCommentInputSection() {
+    bool isReply = commentToReply != null; // Assuming you track this somewhere
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -491,6 +500,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             Expanded(
               child: TextField(
                 controller: _commentController,
+                focusNode:
+                    _commentFocusNode, // Assign the FocusNode to TextField
                 onChanged: (value) {
                   setState(() {
                     isCommentFilled = _commentController.text.isNotEmpty;
@@ -520,15 +531,29 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   onTap: () {
                     if (isCommentFilled) {
                       final postId = int.parse(widget.postId);
-                      BlocProvider.of<AddCommentBloc>(context).add(
-                        AddCommentButtonPressedEvent(
-                          postId: postId,
-                          text: _commentController.text,
-                        ),
-                      );
+
+                        if (isReply) {
+                          // Handle sending reply to comment
+                          BlocProvider.of<AddCommentBloc>(context).add(
+                            AddCommentButtonPressedEvent(
+                              commentId:
+                                  commentToReply!.id, // Use actual comment id
+                              text: _commentController.text, postId: postId,
+                            ),
+                        );
+                      } else {
+                        // Handle sending new comment
+                        BlocProvider.of<AddCommentBloc>(context).add(
+                          AddCommentButtonPressedEvent(
+                            postId: postId,
+                            text: _commentController.text,
+                          ),
+                        );
+                      }
                       _commentController.clear();
                       setState(() {
                         isCommentFilled = false;
+                        commentToReply = null; // Reset reply state
                       });
                     }
                   },

@@ -15,7 +15,7 @@ class ReplyModel extends ReplyEntity {
 
   factory ReplyModel.fromJson(Map<String, dynamic> json) {
     return ReplyModel(
-      id: json['commentid'] as num,
+      id: json['replyid'] as num,
       userId: json['userid'] as String,
       userName: json['username'] as String,
       text: json['text'] as String,

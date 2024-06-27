@@ -9,7 +9,9 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reply
 
 class CommentWidget extends StatefulWidget {
   final CommentEntity comment;
-  const CommentWidget({super.key, required this.comment});
+  final FocusNode commentFocusNode; // Step 1: Define a FocusNode
+  const CommentWidget(
+      {super.key, required this.comment, required this.commentFocusNode});
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -105,13 +107,20 @@ class _CommentWidgetState extends State<CommentWidget> {
                       const SizedBox(
                         width: 10,
                       ),
-                      const Text(
-                        'Reply',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 14,
-                          height: 1.3,
+                      GestureDetector(
+                        // Use GestureDetector for tap handling
+                        onTap: () {
+                          // Request focus for the comment text field
+                          widget.commentFocusNode.requestFocus();
+                        },
+                        child: const Text(
+                          'Reply',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            height: 1.3,
+                          ),
                         ),
                       ),
                     ],
