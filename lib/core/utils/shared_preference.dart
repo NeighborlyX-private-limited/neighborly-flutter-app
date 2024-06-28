@@ -28,6 +28,17 @@ class ShardPrefHelper {
       await _preferences.setString(_userID, userId);
   static String? getUserID() => _preferences.getString(_userID) ?? '';
 
+  // save userProfilePicture
+  static Future setUserProfilePicture(String userProfilePicture) async =>
+      await _preferences.setString('userProfilePicture', userProfilePicture);
+  static String? getUserProfilePicture() =>
+      _preferences.getString('userProfilePicture');
+
+  // save username
+  static Future setUsername(String username) async =>
+      await _preferences.setString('username', username);
+  static String? getUsername() => _preferences.getString('username');
+
   // Save location
   static Future setLocation(List<double> doubleList) async {
     List<String> stringList = doubleList.map((e) => e.toString()).toList();

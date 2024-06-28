@@ -31,12 +31,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
+      String username = jsonDecode(response.body)['user']['username'];
+      String proPic = jsonDecode(response.body)['user']['picture'];
 
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
-
-      print('Cookies saved: $cookies');
-      print('UserID saved: $userID');
+      ShardPrefHelper.setUsername(username);
+      ShardPrefHelper.setUserProfilePicture(proPic);
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       throw ServerException(message: jsonDecode(response.body)['message']);
@@ -83,12 +84,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
+      String username = jsonDecode(response.body)['user']['username'];
+      String proPic = jsonDecode(response.body)['user']['picture'];
 
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
+      ShardPrefHelper.setUsername(username);
+      ShardPrefHelper.setUserProfilePicture(proPic);
 
-      print('Cookies saved: $cookies');
-      print('UserID saved: $userID');
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       throw ServerException(message: jsonDecode(response.body)['message']);

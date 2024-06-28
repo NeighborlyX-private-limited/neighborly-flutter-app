@@ -11,9 +11,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/scre
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/register_screen.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/register_with_email_screen.dart';
 import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/media_preview_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
