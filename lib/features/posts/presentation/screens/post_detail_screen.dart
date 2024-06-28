@@ -11,13 +11,16 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comm
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/comment_widget.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/option_card.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_detail_sheemer.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final String postId;
+  final bool isPost;
 
-  const PostDetailScreen({super.key, required this.postId});
+  const PostDetailScreen(
+      {super.key, required this.postId, required this.isPost});
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -74,7 +77,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             onTap: () => Navigator.of(context).pop(),
           ),
           centerTitle: true,
-          title: const Text('Post'),
+          title: Text(widget.isPost ? 'Post' : 'Poll'),
         ),
         body: RefreshIndicator(
           onRefresh: _onRefresh,
@@ -89,7 +92,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       child: ListView(
                         padding: const EdgeInsets.all(16.0),
                         children: [
-                          _buildPostDetails(postState.post),
+                          widget.isPost
+                              ? _buildPostDetails(postState.post)
+                              : _buildPollWidget(postState),
                           const SizedBox(height: 20),
                           ReactionWidget(post: postState.post),
                           const SizedBox(height: 10),
@@ -145,6 +150,114 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Column _buildPollWidget(GetPostByIdSuccessState postState) {
+    void showBottomSheet() {
+      bottomSheet(context);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              children: [
+                Container(
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    child: postState.post.proPic != null
+                        ? Image.network(
+                            postState.post.proPic!,
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            'assets/second_pro_pic.png',
+                            fit: BoxFit.contain,
+                          )),
+                const SizedBox(
+                  width: 12,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          postState.post.userName,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 14),
+                        ),
+                        const SizedBox(
+                          width: 6,
+                        ),
+                        Container(
+                          width: 4,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey[500],
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 6,
+                        ),
+                        Text(
+                          formatTimeDifference(postState.post.createdAt),
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      postState.post.city,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[500],
+                          fontSize: 14),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            InkWell(
+                onTap: () {
+                  showBottomSheet();
+                },
+                child:
+                    Icon(Icons.more_horiz, size: 30, color: Colors.grey[500])),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Text(
+          '${postState.post.title}',
+          style: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+            color: Colors.grey[800],
+          ),
+        ),
+        const SizedBox(
+          height: 12,
+        ),
+        for (var option in postState.post.pollOptions!)
+          OptionCard(
+            option: option,
+            totalVotes: calculateTotalVotes(postState.post.pollOptions!),
+            pollId: postState.post.id.toString(),
+          ),
+      ],
     );
   }
 
@@ -532,14 +645,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     if (isCommentFilled) {
                       final postId = int.parse(widget.postId);
 
-                        if (isReply) {
-                          // Handle sending reply to comment
-                          BlocProvider.of<AddCommentBloc>(context).add(
-                            AddCommentButtonPressedEvent(
-                              commentId:
-                                  commentToReply!.id, // Use actual comment id
-                              text: _commentController.text, postId: postId,
-                            ),
+                      if (isReply) {
+                        // Handle sending reply to comment
+                        BlocProvider.of<AddCommentBloc>(context).add(
+                          AddCommentButtonPressedEvent(
+                            commentId:
+                                commentToReply!.id, // Use actual comment id
+                            text: _commentController.text, postId: postId,
+                          ),
                         );
                       } else {
                         // Handle sending new comment

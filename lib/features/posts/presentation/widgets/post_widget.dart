@@ -21,7 +21,7 @@ class PostWidget extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        context.push('/post-detail/${post.id}');
+        context.push('/post-detail/${post.id}/${true}');
       },
       child: Container(
         color: Colors.white,

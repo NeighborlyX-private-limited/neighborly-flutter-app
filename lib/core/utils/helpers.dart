@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/option_entity.dart';
 
 String formatTimeDifference(String isoTimestamp) {
   DateTime inputTime = DateTime.parse(isoTimestamp);
@@ -100,4 +101,15 @@ Future<String> getAddressFromLatLng(List<double> position) async {
     print('Error: $e');
     return 'Error occurred: $e';
   }
+}
+
+double calculateTotalVotes(List<OptionEntity> options) {
+  double totalVotes = 0;
+
+  for (var option in options) {
+    // Parse the votes as an integer and add to the total sum.
+    totalVotes += double.parse(option.votes.toString());
+  }
+
+  return totalVotes;
 }

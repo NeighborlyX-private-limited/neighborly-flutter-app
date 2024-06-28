@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/routes/routes.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
@@ -131,6 +132,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                       type: 'post',
                                     ),
                                   );
+                                  _contentController.clear();
+                                  _titleController.clear();
                                 },
                                 isActive: isTitleFilled,
                               );

@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ReactionWidget extends StatefulWidget {
   final PostEntity post;
+  
 
   const ReactionWidget({
     super.key,
