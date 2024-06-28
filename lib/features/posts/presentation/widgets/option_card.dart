@@ -56,6 +56,9 @@ class _OptionCardState extends State<OptionCard> {
 
   void _toggleSelection() {
     setState(() {
+      if (isSelected) {
+        return;
+      }
       isSelected = !isSelected;
       filledPercentage = isSelected
           ? calculatePercentage(

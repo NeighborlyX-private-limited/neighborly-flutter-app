@@ -10,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ReactionWidget extends StatefulWidget {
   final PostEntity post;
-  
 
   const ReactionWidget({
     super.key,
@@ -24,6 +23,7 @@ class ReactionWidget extends StatefulWidget {
 class _ReactionWidgetState extends State<ReactionWidget> {
   bool isCheered = false;
   bool isBooled = false;
+  num awardsCount = 0;
 
   // State variables to track counts
   late num cheersCount;
@@ -95,9 +95,9 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    void showBottomSheet() {
-      bottomSheet(context);
-    }
+    // void showBottomSheet() {
+    //   bottomSheet(context, awardsCount);
+    // }
 
     String checkStringInList(String str) {
       switch (str) {
@@ -115,6 +115,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           return 'assets/react7.png';
       }
     }
+
+    awardsCount = widget.post.awardType.length;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -254,8 +256,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           ),
         ),
         InkWell(
-          onTap: () {
-            showBottomSheet();
+          onTap: () async {
+            final result = await bottomSheet(context, awardsCount);
+            if (result != null) {
+              setState(() {
+                awardsCount = result;
+              });
+            }
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -298,7 +305,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                                   ],
                                 ),
                   Text(
-                    '${widget.post.awardType.length}',
+                    '$awardsCount',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12,
@@ -331,8 +338,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     );
   }
 
-  Future<dynamic> bottomSheet(BuildContext context) {
-    return showModalBottomSheet(
+  Future<num?> bottomSheet(BuildContext context, num awardCount) async {
+    final result = await showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -373,11 +380,16 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                 InkWell(
                   onTap: () {
                     BlocProvider.of<GiveAwardBloc>(context).add(
-                        GiveAwardButtonPressedEvent(
-                            id: widget.post.id,
-                            awardType: 'Local Legend',
-                            type: 'post'));
-                    Navigator.pop(context);
+                      GiveAwardButtonPressedEvent(
+                        id: widget.post.id,
+                        awardType: 'Local Legend',
+                        type: 'post',
+                      ),
+                    );
+
+                    // Return the updated awards count
+                    Navigator.pop(context,
+                        awardCount + 1); // Ensure this increments correctly
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -600,5 +612,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         );
       },
     );
+    return result;
   }
 }

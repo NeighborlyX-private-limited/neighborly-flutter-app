@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
@@ -130,8 +131,8 @@ class _MainPageState extends State<MainPage> {
               label: 'Events',
             ),
             BottomNavigationBarItem(
-              icon: Image.asset(
-                'assets/add.png',
+              icon: SvgPicture.asset(
+                'assets/add.svg',
                 fit: BoxFit.contain,
               ),
               label: '', // Optional: You can leave the label empty

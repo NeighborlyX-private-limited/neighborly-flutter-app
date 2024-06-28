@@ -66,8 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: Image.asset(
-              'assets/alarm.png',
+            child: SvgPicture.asset(
+              'assets/alarm.svg',
               fit: BoxFit.contain,
               width: 30, // Adjusted to fit within the AppBar
               height: 30,
