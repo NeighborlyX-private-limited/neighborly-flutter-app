@@ -23,6 +23,7 @@ class ReactionCommentWidget extends StatefulWidget {
 class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
   bool isCheered = false;
   bool isBooled = false;
+  num awardsCount = 0;
 
   // State variables to track counts
   late num cheersCount;
@@ -34,7 +35,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     // Initialize state variables with initial counts
     cheersCount = widget.comment.cheers;
     boolsCount = widget.comment.bools;
-
+    awardsCount = widget.comment.awardType.length;
     // Load persisted state
     _loadReactionState();
   }
@@ -53,6 +54,13 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('${widget.comment.commentid}_isCheered', isCheered);
     await prefs.setBool('${widget.comment.commentid}_isBooled', isBooled);
+  }
+
+  // remove the reaction from shared preference
+  Future<void> _removeReactionState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('${widget.comment.commentid}_isCheered', false);
+    await prefs.setBool('${widget.comment.commentid}_isBooled', false);
   }
 
   void _updateState(String reaction) {
@@ -95,10 +103,6 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
 
   @override
   Widget build(BuildContext context) {
-    void showBottomSheet() {
-      bottomSheet(context);
-    }
-
     String checkStringInList(String str) {
       switch (str) {
         case 'Local Legend':
@@ -120,112 +124,134 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Cheers button
-        InkWell(
-          onTap: () {
-            _updateState('cheer');
+        BlocConsumer<FeedbackBloc, FeedbackState>(
+          listener: (context, state) {
+            if (state is FeedbackFailureState) {
+              _removeReactionState();
+            }
+          },
+          builder: (context, state) {
+            return InkWell(
+              onTap: () {
+                _updateState('cheer');
 
-            // Trigger BLoC event for cheers
-            BlocProvider.of<FeedbackBloc>(context).add(
-              FeedbackButtonPressedEvent(
-                  postId: widget.comment.commentid,
-                  feedback: 'cheer',
-                  type: 'comment'), // Corrected type to 'comment'
+                // Trigger BLoC event for cheers
+                BlocProvider.of<FeedbackBloc>(context).add(
+                  FeedbackButtonPressedEvent(
+                      postId: widget.comment.commentid,
+                      feedback: 'cheer',
+                      type: 'comment'), // Corrected type to 'comment'
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                height: 32,
+                width: 56,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey[300]!),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(21),
+                    )),
+                child: Center(
+                  child: Row(
+                    children: [
+                      isCheered
+                          ? SvgPicture.asset(
+                              'assets/react5.svg',
+                              width: 24,
+                              height: 24,
+                            )
+                          : SvgPicture.asset(
+                              'assets/react1.svg',
+                              width: 20,
+                              height: 24,
+                            ),
+                      const SizedBox(
+                        width: 3,
+                      ),
+                      Text(
+                        cheersCount.toString(), // Use state variable for count
+                        style: TextStyle(
+                          color: isCheered ? Colors.red : Colors.grey[900],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
             );
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            height: 32,
-            width: 56,
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
-            child: Center(
-              child: Row(
-                children: [
-                  isCheered
-                      ? SvgPicture.asset(
-                          'assets/react5.svg',
-                          width: 24,
-                          height: 24,
-                        )
-                      : SvgPicture.asset(
-                          'assets/react1.svg',
-                          width: 20,
-                          height: 24,
-                        ),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  Text(
-                    cheersCount.toString(), // Use state variable for count
-                    style: TextStyle(
-                      color: isCheered ? Colors.red : Colors.grey[900],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
         ),
         // Bools button
-        InkWell(
-          onTap: () {
-            _updateState('boo');
-
-            // Trigger BLoC event for bools
-            BlocProvider.of<FeedbackBloc>(context).add(
-              FeedbackButtonPressedEvent(
-                  postId: widget.comment.commentid,
-                  feedback: 'boo',
-                  type: 'comment'), // Corrected type to 'comment'
-            );
+        BlocListener<FeedbackBloc, FeedbackState>(
+          listener: (context, state) {
+            if (state is FeedbackFailureState) {
+              _removeReactionState();
+            }
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            height: 32,
-            width: 56,
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
-            child: Center(
-              child: Row(
-                children: [
-                  isBooled
-                      ? SvgPicture.asset(
-                          'assets/react6.svg',
-                          width: 24,
-                          height: 24,
-                        )
-                      : SvgPicture.asset(
-                          'assets/react2.svg',
-                          width: 20,
-                          height: 24,
-                        ),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  Text(
-                    boolsCount.toString(), // Use state variable for count
-                    style: TextStyle(
-                      color: isBooled ? Colors.blue : Colors.grey[600],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+          child: InkWell(
+            onTap: () {
+              _updateState('boo');
+
+              // Trigger BLoC event for bools
+              BlocProvider.of<FeedbackBloc>(context).add(
+                FeedbackButtonPressedEvent(
+                    postId: widget.comment.commentid,
+                    feedback: 'boo',
+                    type: 'comment'), // Corrected type to 'comment'
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              height: 32,
+              width: 56,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(21),
+                  )),
+              child: Center(
+                child: Row(
+                  children: [
+                    isBooled
+                        ? SvgPicture.asset(
+                            'assets/react6.svg',
+                            width: 24,
+                            height: 24,
+                          )
+                        : SvgPicture.asset(
+                            'assets/react2.svg',
+                            width: 20,
+                            height: 24,
+                          ),
+                    const SizedBox(
+                      width: 3,
                     ),
-                  )
-                ],
+                    Text(
+                      boolsCount.toString(), // Use state variable for count
+                      style: TextStyle(
+                        color: isBooled ? Colors.blue : Colors.grey[600],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
         ),
         InkWell(
           onTap: () {
-            showBottomSheet();
+            showBottomSheet().then((value) {
+              if (value != null) {
+                setState(() {
+                  awardsCount = value; // Update state with new awardsCount
+                });
+              }
+            });
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -273,7 +299,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                   ],
                                 ),
                   Text(
-                    '${widget.comment.awardType.length}',
+                    '$awardsCount',
                     style: TextStyle(
                       color: Colors.grey[600],
                       fontSize: 12,
@@ -306,8 +332,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     );
   }
 
-  Future<dynamic> bottomSheet(BuildContext context) {
-    return showModalBottomSheet(
+  Future<num?> showBottomSheet() {
+    return showModalBottomSheet<num>(
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -352,7 +378,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                             id: widget.comment.commentid,
                             awardType: 'Local Legend',
                             type: 'comment'));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -397,7 +423,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                       awardType: 'Sunflower',
                       type: 'comment',
                     ));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -442,7 +468,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                       awardType: 'Streetlight',
                       type: 'comment',
                     ));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -487,7 +513,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                       awardType: 'Park Bench',
                       type: 'comment',
                     ));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -532,7 +558,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                       awardType: 'Map',
                       type: 'comment',
                     ));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,

@@ -35,6 +35,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     // Initialize state variables with initial counts
     cheersCount = widget.post.cheers;
     boolsCount = widget.post.bools;
+    awardsCount = widget.post.awardType.length;
 
     // Load persisted state
     _loadReactionState();
@@ -53,6 +54,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('${widget.post.id}_isCheered', isCheered);
     await prefs.setBool('${widget.post.id}_isBooled', isBooled);
+  }
+
+  // remove the reaction from shared preference
+  Future<void> _removeReactionState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('${widget.post.id}_isCheered', false);
+    await prefs.setBool('${widget.post.id}_isBooled', false);
   }
 
   void _updateState(String reaction) {
@@ -95,9 +103,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    // void showBottomSheet() {
-    //   bottomSheet(context, awardsCount);
-    // }
 
     String checkStringInList(String str) {
       switch (str) {
@@ -116,107 +121,120 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       }
     }
 
-    awardsCount = widget.post.awardType.length;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Cheers button
-        InkWell(
-          onTap: () {
-            _updateState('cheer');
-
-            // Trigger BLoC event for cheers
-            BlocProvider.of<FeedbackBloc>(context).add(
-              FeedbackButtonPressedEvent(
-                  postId: widget.post.id, feedback: 'cheer', type: 'post'),
-            );
+        BlocListener<FeedbackBloc, FeedbackState>(
+          listener: (context, state) {
+            if (state is FeedbackFailureState) {
+              // remove the reaction from shared preference
+              _removeReactionState();
+            }
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            height: 32,
-            width: 60,
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
-            child: Center(
-              child: Row(
-                children: [
-                  isCheered
-                      ? SvgPicture.asset(
-                          'assets/react5.svg',
-                          width: 24,
-                          height: 24,
-                        )
-                      : SvgPicture.asset(
-                          'assets/react1.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  Text(
-                    cheersCount.toString(), // Use state variable for count
-                    style: TextStyle(
-                      color: isCheered ? Colors.red : Colors.grey[900],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+          child: InkWell(
+            onTap: () {
+              _updateState('cheer');
+
+              // Trigger BLoC event for cheers
+              BlocProvider.of<FeedbackBloc>(context).add(
+                FeedbackButtonPressedEvent(
+                    postId: widget.post.id, feedback: 'cheer', type: 'post'),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              height: 32,
+              width: 60,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(21),
+                  )),
+              child: Center(
+                child: Row(
+                  children: [
+                    isCheered
+                        ? SvgPicture.asset(
+                            'assets/react5.svg',
+                            width: 24,
+                            height: 24,
+                          )
+                        : SvgPicture.asset(
+                            'assets/react1.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                    const SizedBox(
+                      width: 3,
                     ),
-                  )
-                ],
+                    Text(
+                      cheersCount.toString(), // Use state variable for count
+                      style: TextStyle(
+                        color: isCheered ? Colors.red : Colors.grey[900],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
         ),
         // Bools button
-        InkWell(
-          onTap: () {
-            _updateState('boo');
-
-            // Trigger BLoC event for bools
-            BlocProvider.of<FeedbackBloc>(context).add(
-              FeedbackButtonPressedEvent(
-                  postId: widget.post.id, feedback: 'boo', type: 'post'),
-            );
+        BlocListener<FeedbackBloc, FeedbackState>(
+          listener: (context, state) {
+            if (state is FeedbackFailureState) {
+              _removeReactionState();
+            }
           },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            height: 32,
-            width: 60,
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
-            child: Center(
-              child: Row(
-                children: [
-                  isBooled
-                      ? SvgPicture.asset(
-                          'assets/react6.svg',
-                          width: 24,
-                          height: 24,
-                        )
-                      : SvgPicture.asset(
-                          'assets/react2.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  Text(
-                    boolsCount.toString(), // Use state variable for count
-                    style: TextStyle(
-                      color: isBooled ? Colors.blue : Colors.grey[600],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+          child: InkWell(
+            onTap: () {
+              _updateState('boo');
+
+              // Trigger BLoC event for bools
+              BlocProvider.of<FeedbackBloc>(context).add(
+                FeedbackButtonPressedEvent(
+                    postId: widget.post.id, feedback: 'boo', type: 'post'),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              height: 32,
+              width: 60,
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey[300]!),
+                  borderRadius: const BorderRadius.all(
+                    Radius.circular(21),
+                  )),
+              child: Center(
+                child: Row(
+                  children: [
+                    isBooled
+                        ? SvgPicture.asset(
+                            'assets/react6.svg',
+                            width: 24,
+                            height: 24,
+                          )
+                        : SvgPicture.asset(
+                            'assets/react2.svg',
+                            width: 24,
+                            height: 24,
+                          ),
+                    const SizedBox(
+                      width: 3,
                     ),
-                  )
-                ],
+                    Text(
+                      boolsCount.toString(), // Use state variable for count
+                      style: TextStyle(
+                        color: isBooled ? Colors.blue : Colors.grey[600],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -256,13 +274,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           ),
         ),
         InkWell(
-          onTap: () async {
-            final result = await bottomSheet(context, awardsCount);
-            if (result != null) {
-              setState(() {
-                awardsCount = result;
-              });
-            }
+          onTap: () {
+            showBottomSheet().then((value) {
+              if (value != null) {
+                setState(() {
+                  awardsCount = value; // Update state with new awardsCount
+                });
+              }
+            });
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -338,8 +357,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     );
   }
 
-  Future<num?> bottomSheet(BuildContext context, num awardCount) async {
-    final result = await showModalBottomSheet(
+  Future<num?> showBottomSheet() {
+    return showModalBottomSheet<num>(
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -387,9 +406,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       ),
                     );
 
-                    // Return the updated awards count
-                    Navigator.pop(context,
-                        awardCount + 1); // Ensure this increments correctly
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -434,7 +451,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       awardType: 'Sunflower',
                       type: 'post',
                     ));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -479,7 +496,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       awardType: 'Streetlight',
                       type: 'post',
                     ));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -524,7 +541,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       awardType: 'Park Bench',
                       type: 'post',
                     ));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -569,7 +586,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       awardType: 'Map',
                       type: 'post',
                     ));
-                    Navigator.pop(context);
+                    Navigator.pop(context, awardsCount + 1);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -612,6 +629,5 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         );
       },
     );
-    return result;
   }
 }

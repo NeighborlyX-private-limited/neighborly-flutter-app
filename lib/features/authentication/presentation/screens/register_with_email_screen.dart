@@ -28,6 +28,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   bool isEmailValid = true;
   bool isPasswordShort = false;
   bool emailAlreadyExists = false;
+  bool noConnection = false;
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -233,16 +234,18 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                         });
                         return;
                       }
+                      if (state.error.contains('internet')) {
+                        setState(() {
+                          noConnection = true;
+                        });
+                        return;
+                      }
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.error)),
                       );
                     } else if (state is RegisterSuccessState) {
-                      BlocProvider.of<ResendOtpBloc>(context).add(
-                        ResendOTPButtonPressedEvent(
-                          email: _emailController.text,
-                        ),
-                      );
-                      context.push('/otp/${_emailController.text}/true');
+                      context
+                          .push('/otp/${_emailController.text}/email-verify');
                     }
                   },
                   builder: (context, state) {
@@ -290,6 +293,12 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 emailAlreadyExists
                     ? const Text(
                         'Email already exists. Please login.',
+                        style: TextStyle(color: Colors.red),
+                      )
+                    : const SizedBox(),
+                noConnection
+                    ? const Text(
+                        'No Internet Connection',
                         style: TextStyle(color: Colors.red),
                       )
                     : const SizedBox(),

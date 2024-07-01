@@ -28,7 +28,11 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     _otpController = TextEditingController();
-
+    BlocProvider.of<ResendOtpBloc>(context).add(
+      ResendOTPButtonPressedEvent(
+        email: widget.data,
+      ),
+    );
     super.initState();
   }
 
@@ -190,11 +194,11 @@ class _OtpScreenState extends State<OtpScreen> {
                         SnackBar(content: Text(state.message)),
                       );
 
-                      if (widget.verificationFor == 'email-verify') {
-                        context.go('/homescreen');
-                      } else if (widget.verificationFor == 'forgot-password') {
-                        context.push('/changePassword/${widget.data}');
-                      }
+                      // if (widget.verificationFor == 'email-verify') {
+                      //   context.go('/homescreen');
+                      // } else if (widget.verificationFor == 'forgot-password') {
+                      //   context.push('/changePassword/${widget.data}');
+                      // }
                     }
                   },
                   builder: (context, state) {

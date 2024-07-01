@@ -25,6 +25,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     pageController = PageController();
+    fetchLocationAndUpdate();
     super.initState();
   }
 
@@ -32,7 +33,7 @@ class _MainPageState extends State<MainPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Fetch location and update when the page becomes visible
-    _fetchLocationAndUpdate();
+    fetchLocationAndUpdate();
     ShardPrefHelper.removeImageUrl();
   }
 
@@ -81,7 +82,7 @@ class _MainPageState extends State<MainPage> {
     return true;
   }
 
-  Future<void> _fetchLocationAndUpdate() async {
+  Future<void> fetchLocationAndUpdate() async {
     final hasPermission = await _handleLocationPermission();
     if (!hasPermission) return;
 

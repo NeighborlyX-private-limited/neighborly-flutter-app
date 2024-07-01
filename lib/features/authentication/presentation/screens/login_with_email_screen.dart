@@ -151,7 +151,8 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     bool isEmailVerified = state.authResponseEntity.isVerified;
                     isEmailVerified
                         ? context.go('/homescreen')
-                        : context.push('/otp/${_emailController.text}/true');
+                        : context
+                            .push('/otp/${_emailController.text}/email-verify');
                   }
                 },
                 builder: (context, state) {

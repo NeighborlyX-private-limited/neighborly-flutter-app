@@ -56,7 +56,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         'Content-Type': 'application/json',
         'Cookie': cookieHeader,
       },
-      body: jsonEncode({'userLocation': location}),
+      body: jsonEncode({'homeLocation': location}),
     );
 
     if (response.statusCode != 200) {

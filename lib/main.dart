@@ -109,7 +109,7 @@ class MyApp extends StatelessWidget {
             fontFamily: 'Roboto',
           ),
           debugShowCheckedModeBanner: false,
-          title: 'Neighborly App',
+          title: 'Neighborly',
           routerConfig: router,
         ));
   }
