@@ -33,11 +33,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String userID = jsonDecode(response.body)['user']['_id'];
       String username = jsonDecode(response.body)['user']['username'];
       String proPic = jsonDecode(response.body)['user']['picture'];
+      List<dynamic> location = jsonDecode(response.body)['user']
+          ['current_coordinates']['coordinates'];
 
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setUserProfilePicture(proPic);
+      ShardPrefHelper.setLocation([location[0], location[1]]);
+      print('Location: ${location[0]}, ${location[1]}');
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       throw ServerException(message: jsonDecode(response.body)['message']);

@@ -51,6 +51,25 @@ class ShardPrefHelper {
     return stringList.map((e) => double.tryParse(e) ?? 0.0).toList();
   }
 
+  // save is cheered
+  static Future setIsCheered(String userId, num postId, bool isLiked) async =>
+      await _preferences.setBool('$userId-${postId}_isCheered', isLiked);
+  static bool? getIsCheered(String userId, String postId) =>
+      _preferences.getBool('$userId-${postId}_isCheered');
+
+  // save is  boo
+  static Future setIsBoo(String userId, num postId, bool isLiked) async =>
+      await _preferences.setBool('$userId-${postId}_isBoo', isLiked);
+  static bool? getIsBoo(String userId, String postId) =>
+      _preferences.getBool('$userId-${postId}_isBoo');
+
+  // save poll vote
+  static Future setPollVote(
+          String userId, String pollId, num voteId, bool vote) async =>
+      await _preferences.setBool('$userId-$pollId-$voteId-_pollVote', vote);
+  static bool? getPollVote(String userId, String pollId, num voteId) =>
+      _preferences.getBool('$userId-$pollId-$voteId-_pollVote');
+
   static Future<bool> clear() async {
     await _preferences.clear();
     return true;

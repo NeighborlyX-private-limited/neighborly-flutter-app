@@ -26,7 +26,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 48,
+      height: 60,
       child: TextField(
         keyboardType: widget.inputType,
         onChanged: widget.onChanged,

@@ -28,7 +28,7 @@ List<String>? cookies = ShardPrefHelper.getCookie();
 
 String setInitialLocation() {
   // Check if cookies exist and set the initial location accordingly
-  return (cookies == null || cookies!.isEmpty) ? '/' : '/homescreen';
+  return (cookies == null || cookies!.isEmpty) ? '/' : '/homescreen/false';
 }
 
 final GoRouter router = GoRouter(
@@ -103,7 +103,7 @@ final GoRouter router = GoRouter(
         builder: (BuildContext context, GoRouterState state) {
           final bool isFirstTime =
               state.pathParameters['isFirstTime'] == 'true';
-          return  MainPage(
+          return MainPage(
             isFirstTime: isFirstTime,
           );
         },

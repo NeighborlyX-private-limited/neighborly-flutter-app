@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/overlapping_images_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ReactionWidget extends StatefulWidget {
   final PostEntity post;
@@ -42,25 +42,29 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   }
 
   Future<void> _loadReactionState() async {
-    final prefs = await SharedPreferences.getInstance();
     setState(() {
       // Load the state for the current post
-      isCheered = prefs.getBool('${widget.post.id}_isCheered') ?? false;
-      isBooled = prefs.getBool('${widget.post.id}_isBooled') ?? false;
+      final userID = ShardPrefHelper.getUserID();
+      isCheered = ShardPrefHelper.getIsCheered(
+              userID!, '${widget.post.id}_isCheered') ??
+          false;
+      isBooled =
+          ShardPrefHelper.getIsBoo(userID, '${widget.post.id}_isBooled') ??
+              false;
     });
   }
 
   Future<void> _saveReactionState() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('${widget.post.id}_isCheered', isCheered);
-    await prefs.setBool('${widget.post.id}_isBooled', isBooled);
+    final userID = ShardPrefHelper.getUserID();
+    ShardPrefHelper.setIsCheered(userID!, widget.post.id, isCheered);
+    ShardPrefHelper.setIsBoo(userID, widget.post.id, isBooled);
   }
 
   // remove the reaction from shared preference
   Future<void> _removeReactionState() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('${widget.post.id}_isCheered', false);
-    await prefs.setBool('${widget.post.id}_isBooled', false);
+    final userID = ShardPrefHelper.getUserID();
+    ShardPrefHelper.setIsCheered(userID!, widget.post.id, false);
+    ShardPrefHelper.setIsBoo(userID, widget.post.id, false);
   }
 
   void _updateState(String reaction) {
@@ -103,7 +107,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   @override
   Widget build(BuildContext context) {
-
     String checkStringInList(String str) {
       switch (str) {
         case 'Local Legend':

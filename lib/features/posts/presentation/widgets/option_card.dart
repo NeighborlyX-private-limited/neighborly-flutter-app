@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/option_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,12 +32,16 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   Future<void> _loadSelectionState() async {
-    final prefs = await SharedPreferences.getInstance();
     setState(() {
       // Create a unique key using pollId and optionId
-      final key =
-          '${widget.pollId}_option_${widget.option.optionId}_isSelected';
-      isSelected = prefs.getBool(key) ?? false;
+      final userID = ShardPrefHelper.getUserID();
+
+      isSelected = ShardPrefHelper.getPollVote(
+            userID!,
+            widget.pollId,
+            widget.option.optionId,
+          ) ??
+          false;
       filledPercentage = isSelected
           ? calculatePercentage(
                 double.parse(widget.option.votes.toString()),
@@ -48,10 +53,11 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   Future<void> _saveSelectionState() async {
-    final prefs = await SharedPreferences.getInstance();
     // Create a unique key using pollId and optionId
-    final key = '${widget.pollId}_option_${widget.option.optionId}_isSelected';
-    await prefs.setBool(key, isSelected);
+    final userID = ShardPrefHelper.getUserID();
+
+    ShardPrefHelper.setPollVote(
+        userID!, widget.pollId, widget.option.optionId, isSelected);
   }
 
   void _toggleSelection() {

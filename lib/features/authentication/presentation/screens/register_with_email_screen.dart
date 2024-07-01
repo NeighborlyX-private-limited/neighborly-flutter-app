@@ -32,14 +32,13 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
-  
 
   @override
   void initState() {
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
-    
+
     super.initState();
   }
 
@@ -48,7 +47,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    
+
     super.dispose();
   }
 
@@ -58,8 +57,6 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
         isConfirmPasswordFilled &&
         _passwordController.text == _confirmPasswordController.text;
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -151,13 +148,12 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                   isPassword: true,
                   lableText: 'Re-Password',
                 ),
-                
                 const SizedBox(height: 45),
                 BlocConsumer<RegisterWithEmailBloc, RegisterWithEmailState>(
                   listener:
                       (BuildContext context, RegisterWithEmailState state) {
                     if (state is RegisterFailureState) {
-                      if (state.error.contains('already exists.')) {
+                      if (state.error.contains('email')) {
                         setState(() {
                           emailAlreadyExists = true;
                         });

@@ -7,7 +7,7 @@ class AuthResponseModel extends AuthResponseEntity {
     required super.token,
     required super.isVerified,
     required super.email,
-    // required super.coordinates,
+    required super.coordinates,
     required super.picture,
     super.findMe = true,
   });
@@ -19,7 +19,7 @@ class AuthResponseModel extends AuthResponseEntity {
       token: json['refreshToken'],
       isVerified: json['user']['isVerified'],
       email: json['user']['email'],
-      // coordinates: json['user']['home_coordinates']['coordinates'],
+      coordinates: json['user']['current_coordinates']['coordinates'],
       picture: json['user']['picture'],
       findMe: json['user']['findMe'],
     );
@@ -32,7 +32,7 @@ class AuthResponseModel extends AuthResponseEntity {
       'token': token,
       'isVerified': isVerified,
       'email': email,
-      // 'coordinates': coordinates,
+      'coordinates': coordinates,
       'picture': picture,
       'findMe': findMe,
     };
