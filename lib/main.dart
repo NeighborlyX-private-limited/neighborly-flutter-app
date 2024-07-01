@@ -20,6 +20,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_awa
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
@@ -102,6 +103,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<GiveAwardBloc>(
             create: (context) => di.sl<GiveAwardBloc>(),
+          ),
+          BlocProvider<GetUserInfoBloc>(
+            create: (context) => di.sl<GetUserInfoBloc>(),
           ),
         ],
         child: MaterialApp.router(

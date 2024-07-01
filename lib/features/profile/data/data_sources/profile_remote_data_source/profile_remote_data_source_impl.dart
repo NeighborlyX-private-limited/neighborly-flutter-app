@@ -63,4 +63,27 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw ServerException(message: jsonDecode(response.body)['error']);
     }
   }
+
+  @override
+  Future<void> getUserInfo({String? gender, String? dob}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    // print('Cookies: $cookieHeader');
+    String url = '$kBaseUrl/user/update-user-info';
+    final response = await client.put(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
+      },
+      body: jsonEncode({'gender': gender, 'dob': dob}),
+    );
+
+    if (response.statusCode != 200) {
+      throw ServerException(message: jsonDecode(response.body)['error']);
+    }
+  }
 }

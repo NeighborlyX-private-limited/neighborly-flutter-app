@@ -106,7 +106,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   SnackBar(content: Text(state.error)),
                                 );
                               } else if (state is UploadPostSuccessState) {
-                                context.go('/homescreen');
+                                // context.go('/homescreen');
                               }
                             },
                             builder: (context, state) {

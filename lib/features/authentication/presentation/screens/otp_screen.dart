@@ -144,7 +144,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       SnackBar(content: Text(state.message)),
                     );
                     if (widget.verificationFor == 'email-verify') {
-                      context.go('/homescreen');
+                      context.go('/homescreen/true');
                     } else if (widget.verificationFor == 'forgot-password') {
                       context.push('/newPassword/${widget.data}');
                     }

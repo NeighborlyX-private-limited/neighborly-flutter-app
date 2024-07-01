@@ -11,4 +11,8 @@ abstract class ProfileRepositories {
   Future<Either<Failure, void>> updateLocation({
     required List<num> location,
   });
+  Future<Either<Failure, void>> getUserInfo({
+    String? gender,
+    String? dob,
+  });
 }

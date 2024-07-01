@@ -3,13 +3,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/dob_picker_widget.dart';
 import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  final bool isFirstTime;
+  const MainPage({super.key, required this.isFirstTime});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -21,11 +24,20 @@ class _MainPageState extends State<MainPage> {
   Position? _currentPosition;
 
   late PageController pageController;
+  late TextEditingController _dateController;
+  late TextEditingController _monthController;
+  late TextEditingController _yearController;
+  String _selectedGender = 'male';
 
   @override
   void initState() {
     pageController = PageController();
     fetchLocationAndUpdate();
+    // showBottomSheet();
+    _dateController = TextEditingController();
+    _monthController = TextEditingController();
+    _yearController = TextEditingController();
+
     super.initState();
   }
 
@@ -41,6 +53,13 @@ class _MainPageState extends State<MainPage> {
   void dispose() {
     pageController.dispose();
     super.dispose();
+    _dateController.dispose();
+    _monthController.dispose();
+    _yearController.dispose();
+  }
+
+  String formatDOB(String day, String month, String year) {
+    return '$year-$month-$day';
   }
 
   void navigationTapped(int index) {
@@ -164,6 +183,115 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> showBottomSheet() {
+    return showModalBottomSheet<num>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          height: 800,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: const Color(0xffB8B8B8),
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                Center(
+                  child: Text(
+                    'Award this post',
+                    style: onboardingHeading2Style,
+                  ),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                const SizedBox(height: 25),
+                Text('One last thing before we get started!!', style: onboardingHeading2Style),
+                const SizedBox(height: 10),
+                Text('Select your Gender', style: blackonboardingBody1Style),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Radio<String>(
+                          value: 'Male',
+                          groupValue: _selectedGender,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selectedGender = value!;
+                            });
+                          },
+                        ),
+                        const Text('Male'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Radio<String>(
+                          value: 'Female',
+                          groupValue: _selectedGender,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selectedGender = value!;
+                            });
+                          },
+                        ),
+                        const Text('Female'),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Radio<String>(
+                          value: 'Others',
+                          groupValue: _selectedGender,
+                          onChanged: (String? value) {
+                            setState(() {
+                              _selectedGender = value!;
+                            });
+                          },
+                        ),
+                        const Text('Others'),
+                      ],
+                    ),
+                  ],
+                ),
+                const Divider(color: Colors.grey),
+                Text('Date of Birth', style: blackonboardingBody1Style),
+                const SizedBox(height: 8),
+                DOBPickerWidget(
+                    dateController: _dateController,
+                    monthController: _monthController,
+                    yearController: _yearController,
+                    isDayFilled: true,
+                    isMonthFilled: true,
+                    isYearFilled: true),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

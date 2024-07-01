@@ -98,10 +98,14 @@ final GoRouter router = GoRouter(
         },
       ),
       GoRoute(
-        path: '/homescreen',
+        path: '/homescreen/:isFirstTime',
         name: RouteConstants.homeScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
-          return const MainPage();
+          final bool isFirstTime =
+              state.pathParameters['isFirstTime'] == 'true';
+          return  MainPage(
+            isFirstTime: isFirstTime,
+          );
         },
       ),
       GoRoute(
