@@ -7,6 +7,8 @@ class TextFieldWidget extends StatefulWidget {
   final TextInputType? inputType;
   final TextEditingController controller;
   final void Function(String) onChanged;
+
+  final FocusNode? focusNode;
   final bool border;
   const TextFieldWidget(
       {super.key,
@@ -14,6 +16,7 @@ class TextFieldWidget extends StatefulWidget {
       this.isPassword = false,
       required this.lableText,
       required this.controller,
+      this.focusNode,
       required this.onChanged,
       this.inputType});
 
@@ -32,6 +35,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         onChanged: widget.onChanged,
         obscureText: widget.isPassword ? _isObscured : false,
         controller: widget.controller,
+        focusNode: widget.focusNode,
         decoration: InputDecoration(
           labelText: widget.lableText,
           border: widget.border

@@ -29,9 +29,7 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_pr
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_file_usecase.dart';
-import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_poll_usecase.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source_impl.dart';
 import 'features/authentication/data/repository/auth_repository_impl.dart';
@@ -81,7 +79,6 @@ void init() async {
   sl.registerLazySingleton(() => GetAllPostsUsecase(sl()));
   sl.registerLazySingleton(() => UploadPostUsecase(sl()));
   sl.registerLazySingleton(() => ReportPostUsecase(sl()));
-  sl.registerLazySingleton(() => UploadPollUsecase(sl()));
   sl.registerLazySingleton(() => FeedbackUsecase(sl()));
   sl.registerLazySingleton(() => GetPostByIdUsecase(sl()));
   sl.registerLazySingleton(() => GetCommentsByPostIdUsecase(sl()));
@@ -128,7 +125,6 @@ void init() async {
   sl.registerFactory(() => GetAllPostsBloc(getAllPostsUsecase: sl()));
   sl.registerFactory(() => UploadPostBloc(uploadPostUsecase: sl()));
   sl.registerFactory(() => ReportPostBloc(reportPostUsecase: sl()));
-  sl.registerFactory(() => UploadPollBloc(uploadPollUsecase: sl()));
   sl.registerFactory(() => FeedbackBloc(feedbackUsecase: sl()));
   sl.registerFactory(() => GetPostByIdBloc(getPostByIdUsecase: sl()));
   sl.registerFactory(

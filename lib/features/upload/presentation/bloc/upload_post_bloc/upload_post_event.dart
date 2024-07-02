@@ -9,6 +9,8 @@ class UploadPostPressedEvent extends UploadPostEvent {
   final String title;
   final String type;
   final String city;
+  final List<dynamic>? options;
+  final bool? allowMultipleVotes;
 
   UploadPostPressedEvent({
     required this.title,
@@ -17,6 +19,8 @@ class UploadPostPressedEvent extends UploadPostEvent {
     this.multimedia,
     required this.location,
     required this.city,
+    this.options,
+    this.allowMultipleVotes,
   });
 
   @override
@@ -26,5 +30,8 @@ class UploadPostPressedEvent extends UploadPostEvent {
         type,
         multimedia,
         location,
+        allowMultipleVotes,
+        city,
+        options,
       ];
 }

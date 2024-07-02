@@ -24,6 +24,8 @@ class UploadRepositoriesImpl implements UploadRepositories {
     String? multimedia,
     required List<num> location,
     required String city,
+    bool? allowMultipleVotes,
+    List<dynamic>? options,
   }) async {
     if (await networkInfo.isConnected) {
       try {
@@ -33,7 +35,9 @@ class UploadRepositoriesImpl implements UploadRepositories {
           type: type,
           multimedia: multimedia,
           location: location,
+          allowMultipleVotes: allowMultipleVotes,
           city: city,
+          options: options,
         );
         return Right(result);
       } on ServerFailure catch (e) {
@@ -51,26 +55,6 @@ class UploadRepositoriesImpl implements UploadRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.uploadFile(file: file);
-        return Right(result);
-      } on ServerFailure catch (e) {
-        return Left(ServerFailure(message: e.message));
-      } catch (e) {
-        return Left(ServerFailure(message: '$e'));
-      }
-    } else {
-      return const Left(ServerFailure(message: 'No internet connection'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, void>> uploadPoll(
-      {required String question, required List<String> options}) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final result = await remoteDataSource.uploadPoll(
-          question: question,
-          options: options,
-        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

@@ -8,9 +8,9 @@ abstract class UploadRemoteDataSource {
     String? multimedia,
     required List<num> location,
     required String city,
+    List<dynamic>? options,
+    bool? allowMultipleVotes,
   });
 
   Future<String> uploadFile({required File file});
-  Future<void> uploadPoll(
-      {required String question, required List<String> options});
 }

@@ -156,7 +156,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                       return;
                     }
                   } else if (state is LoginSuccessState) {
-                    bool isEmailVerified = state.authResponseEntity.isVerified;
+                    bool isEmailVerified = state.authResponseEntity.isVerified!;
                     isEmailVerified
                         ? context.go('/homescreen/false')
                         : context

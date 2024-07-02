@@ -327,9 +327,14 @@ class PollWidget extends StatelessWidget {
                                     postId: post.id,
                                     reason: reportReasons[0]));
                           },
-                          child: Text(
-                            reportReasons[0],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[0],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -343,9 +348,14 @@ class PollWidget extends StatelessWidget {
                                     postId: post.id,
                                     reason: reportReasons[1]));
                           },
-                          child: Text(
-                            reportReasons[1],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[1],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -357,9 +367,14 @@ class PollWidget extends StatelessWidget {
                                   type: 'post',
                                   postId: post.id,
                                   reason: reportReasons[2])),
-                          child: Text(
-                            reportReasons[2],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[2],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -371,9 +386,14 @@ class PollWidget extends StatelessWidget {
                                   type: 'post',
                                   postId: post.id,
                                   reason: reportReasons[3])),
-                          child: Text(
-                            reportReasons[3],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[3],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -385,9 +405,14 @@ class PollWidget extends StatelessWidget {
                                   type: 'post',
                                   postId: post.id,
                                   reason: reportReasons[4])),
-                          child: Text(
-                            reportReasons[4],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[4],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                       ],

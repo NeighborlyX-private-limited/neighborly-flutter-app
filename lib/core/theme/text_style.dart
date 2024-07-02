@@ -60,12 +60,19 @@ var blackNormalTextStyle = GoogleFonts.roboto(
   fontWeight: FontWeight.w500,
 );
 
+var blueNormalTextStyle = GoogleFonts.roboto(
+  color: const Color(0xff635BFF),
+  fontSize: 16,
+  fontWeight: FontWeight.w500,
+  decoration: TextDecoration.underline,
+  decorationColor: const Color(0xff635BFF),
+);
+
 var mediumTextStyleBlack = GoogleFonts.roboto(
   color: const Color(0xff0A0A0A),
   fontSize: 14,
   fontWeight: FontWeight.w500,
 );
-
 var mediumGreyTextStyleBlack = GoogleFonts.roboto(
   color: const Color(0xff2E2E2E),
   fontSize: 14,

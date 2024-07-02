@@ -4,19 +4,29 @@ class AuthResponseEntity extends Equatable {
   final String id;
   final String username;
   final String? token;
-  final bool isVerified;
+  final bool? isVerified;
   final String email;
   final bool? findMe;
-  final List<dynamic> coordinates;
+  final List<dynamic>? coordinates;
   final String picture;
+  final num? awardsCount;
+  final String? bio;
+  final num? postCount;
+  final String? mostProminentAward;
+  final num? karma;
 
   const AuthResponseEntity({
     required this.email,
     this.findMe = true,
-    required this.coordinates,
+    this.coordinates,
+    this.karma,
+    this.mostProminentAward,
+    this.bio,
+    this.postCount,
+    this.awardsCount,
     required this.picture,
     required this.id,
-    required this.isVerified,
+    this.isVerified,
     required this.username,
     this.token,
   });
@@ -27,7 +37,13 @@ class AuthResponseEntity extends Equatable {
         username,
         token,
         isVerified,
+        bio,
+        awardsCount,
+
+        mostProminentAward,
         email,
+        karma,
+        postCount,
         findMe,
         // coordinates,
         picture,

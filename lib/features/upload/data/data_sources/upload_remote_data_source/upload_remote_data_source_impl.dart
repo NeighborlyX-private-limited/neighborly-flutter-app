@@ -21,6 +21,8 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     String? multimedia,
     required List<num> location,
     required String city,
+    List<dynamic>? options,
+    bool? allowMultipleVotes,
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -42,6 +44,8 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
         'multimedia': multimedia,
         'location': location,
         'city': city,
+        'pollOptions': options,
+        'allowMultipleVotes': allowMultipleVotes,
       }),
     );
 
@@ -79,37 +83,6 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       return jsonDecode(responseString)['url'];
     } else {
       throw ServerException(message: jsonDecode(responseString)['message']);
-    }
-  }
-
-  @override
-  Future<void> uploadPoll(
-      {required String question, required List<String> options}) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
-    if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
-    }
-    String cookieHeader = cookies.join('; ');
-    String url = '$kBaseUrl/wall/create-poll';
-
-    final Map<String, dynamic> body = {
-      'question': question,
-      'options': options,
-    };
-
-    final response = await client.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
-      },
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode == 200) {
-      return;
-    } else {
-      throw ServerException(message: jsonDecode(response.body)['error']);
     }
   }
 }

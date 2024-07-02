@@ -21,6 +21,8 @@ class UploadPostBloc extends Bloc<UploadPostEvent, UploadPostState> {
           type: event.type,
           multimedia: event.multimedia,
           city: event.city,
+          allowMultipleVotes: event.allowMultipleVotes,
+          options: event.options,
           location: event.location);
 
       result.fold(

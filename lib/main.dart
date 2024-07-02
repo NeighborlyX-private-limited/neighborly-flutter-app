@@ -24,7 +24,6 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_pr
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'dependency_injection.dart' as di;
 
@@ -72,9 +71,6 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<ReportPostBloc>(
             create: (context) => di.sl<ReportPostBloc>(),
-          ),
-          BlocProvider<UploadPollBloc>(
-            create: (context) => di.sl<UploadPollBloc>(),
           ),
           BlocProvider<FeedbackBloc>(
             create: (context) => di.sl<FeedbackBloc>(),

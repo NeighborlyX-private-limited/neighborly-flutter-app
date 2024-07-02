@@ -553,9 +553,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     postId: int.parse(widget.postId),
                                     reason: reportReasons[0]));
                           },
-                          child: Text(
-                            reportReasons[0],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[0],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -569,9 +574,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     postId: int.parse(widget.postId),
                                     reason: reportReasons[1]));
                           },
-                          child: Text(
-                            reportReasons[1],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[1],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -583,9 +593,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   type: 'post',
                                   postId: int.parse(widget.postId),
                                   reason: reportReasons[2])),
-                          child: Text(
-                            reportReasons[2],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[2],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -597,9 +612,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   type: 'post',
                                   postId: int.parse(widget.postId),
                                   reason: reportReasons[3])),
-                          child: Text(
-                            reportReasons[3],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[3],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(
@@ -611,9 +631,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   postId: int.parse(widget.postId),
                                   type: 'post',
                                   reason: reportReasons[4])),
-                          child: Text(
-                            reportReasons[4],
-                            style: blackonboardingBody1Style,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                reportReasons[4],
+                                style: blackonboardingBody1Style,
+                              ),
+                            ],
                           ),
                         ),
                       ],

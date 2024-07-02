@@ -101,7 +101,7 @@ class _SecurityPageState extends State<SecurityPage> {
                       ),
                       isWrongCurrentPassword
                           ? const Text(
-                              'Wrong current password',
+                              'Wrong password. Try again or click Forgot password to reset it.',
                               style: TextStyle(color: Colors.red),
                             )
                           : const SizedBox(),

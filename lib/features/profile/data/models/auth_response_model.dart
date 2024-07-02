@@ -4,22 +4,26 @@ class AuthResponseModel extends AuthResponseEntity {
   const AuthResponseModel({
     required super.id,
     required super.username,
-    required super.isVerified,
     required super.email,
-    required super.coordinates,
     required super.picture,
-    super.findMe = true,
+    super.awardsCount,
+    super.bio,
+    super.karma,
+    super.mostProminentAward,
+    super.postCount,
   });
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
     return AuthResponseModel(
-      id: json['_id'],
-      username: json['username'],
-      isVerified: json['isVerified'],
-      email: json['email'],
-      coordinates: json['current_coordinates']['coordinates'],
-      picture: json['picture'],
-      findMe: json['findMe'],
+      id: json['user']['userId'],
+      username: json['user']['username'],
+      email: json['user']['email'],
+      picture: json['user']['picture'],
+      awardsCount: json['user']['awardsCount'],
+      bio: json['user']['bio'],
+      karma: json['user']['karma'],
+      mostProminentAward: json['user']['mostProminentAward'],
+      postCount: json['user']['postCount'],
     );
   }
 
@@ -27,12 +31,13 @@ class AuthResponseModel extends AuthResponseEntity {
     return {
       'id': id,
       'username': username,
-      'token': token,
-      'isVerified': isVerified,
       'email': email,
-      'coordinates': coordinates,
       'picture': picture,
-      'findMe': findMe,
+      'awards_count': awardsCount,
+      'bio': bio,
+      'karma': karma,
+      'most_prominent_award': mostProminentAward,
+      'post_count': postCount,
     };
   }
 }

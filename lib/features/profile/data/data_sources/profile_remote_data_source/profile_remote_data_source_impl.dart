@@ -96,7 +96,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
     String cookieHeader = cookies.join('; ');
     // print('Cookies: $cookieHeader');
-    String url = '$kBaseUrl/user/user-info';
+    String url = '$kBaseUrl/profile/user-info';
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{

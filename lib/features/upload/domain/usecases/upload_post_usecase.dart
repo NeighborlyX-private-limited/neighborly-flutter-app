@@ -14,14 +14,18 @@ class UploadPostUsecase {
     String? multimedia,
     required List<num> location,
     required String city,
+    List<dynamic>? options,
+    bool? allowMultipleVotes,
   }) async {
     return await repository.uploadPost(
       title: title,
       content: content,
       type: type,
       multimedia: multimedia,
+      allowMultipleVotes: allowMultipleVotes,
       location: location,
       city: city,
+      options: options,
     );
   }
 }
