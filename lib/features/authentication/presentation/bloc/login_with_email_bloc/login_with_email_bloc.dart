@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/entities/auth_response_entity.dart';
+import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
 import 'package:neighborly_flutter_app/features/authentication/domain/usecases/login_with_email_usecase.dart';
 
 part 'login_with_email_event.dart';

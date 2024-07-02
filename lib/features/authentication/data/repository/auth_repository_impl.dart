@@ -3,7 +3,7 @@ import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
 
 import '../data_sources/auth_remote_data_source/auth_remote_data_source.dart';
-import '../../domain/entities/auth_response_entity.dart';
+import '../../../../core/entities/auth_response_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {

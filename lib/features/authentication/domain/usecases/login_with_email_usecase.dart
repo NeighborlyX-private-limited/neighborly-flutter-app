@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/entities/auth_response_entity.dart';
+import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
 import 'package:neighborly_flutter_app/features/authentication/domain/repositories/auth_repository.dart';
 
 class LoginWithEmailUsecase {
