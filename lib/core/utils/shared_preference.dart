@@ -14,6 +14,7 @@ class ShardPrefHelper {
   static Future setCookie(List<String> cookie) async =>
       await _preferences.setStringList(_cookie, cookie);
   static List<String>? getCookie() => _preferences.getStringList(_cookie) ?? [];
+  static Future removeCookie() async => await _preferences.remove(_cookie);
 
   // save image url
   static Future setImageUrl(String imageUrl) async =>
@@ -34,11 +35,20 @@ class ShardPrefHelper {
       await _preferences.setString('userProfilePicture', userProfilePicture);
   static String? getUserProfilePicture() =>
       _preferences.getString('userProfilePicture');
+  static Future removeUserProfilePicture() async =>
+      await _preferences.remove('userProfilePicture');
 
   // save username
   static Future setUsername(String username) async =>
       await _preferences.setString('username', username);
   static String? getUsername() => _preferences.getString('username');
+  static Future removeUsername() async => await _preferences.remove('username');
+
+  // save email
+  static Future setEmail(String email) async =>
+      await _preferences.setString('email', email);
+  static String? getEmail() => _preferences.getString('email');
+  static Future removeEmail() async => await _preferences.remove('email');
 
   // Save location
   static Future setLocation(List<double> doubleList) async {
@@ -46,11 +56,13 @@ class ShardPrefHelper {
     return await _preferences.setStringList(_doubleListKey, stringList);
   }
 
-  // Fetch location
   static List<double> getLocation() {
     List<String> stringList = _preferences.getStringList(_doubleListKey) ?? [];
     return stringList.map((e) => double.tryParse(e) ?? 0.0).toList();
   }
+
+  static Future removeLocation() async =>
+      await _preferences.remove(_doubleListKey);
 
   // save is cheered
   static Future setIsCheered(String userId, num postId, bool isLiked) async =>

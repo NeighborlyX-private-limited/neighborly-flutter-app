@@ -35,9 +35,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String proPic = jsonDecode(response.body)['user']['picture'];
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
+      String email = jsonDecode(response.body)['user']['email'];
 
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
+      ShardPrefHelper.setEmail(email);
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setLocation([location[0], location[1]]);
@@ -92,9 +94,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String proPic = jsonDecode(response.body)['user']['picture'];
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
+      String email = jsonDecode(response.body)['user']['email'];
 
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
+      ShardPrefHelper.setEmail(email);
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setLocation([location[0], location[1]]);

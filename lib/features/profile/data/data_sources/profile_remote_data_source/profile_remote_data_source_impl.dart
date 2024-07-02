@@ -130,7 +130,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     );
 
     if (response.statusCode != 200) {
-      throw ServerException(message: jsonDecode(response.body)['error']);
+      throw ServerException(message: jsonDecode(response.body)['msg']);
     }
   }
 }

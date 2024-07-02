@@ -40,7 +40,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         leading: InkWell(
           child: const Icon(
             Icons.arrow_back_ios,
-            size: 15,
+            size: 20,
           ),
           onTap: () {
             context.pop();

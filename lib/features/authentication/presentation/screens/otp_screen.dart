@@ -52,7 +52,7 @@ class _OtpScreenState extends State<OtpScreen> {
         leading: InkWell(
           child: const Icon(
             Icons.arrow_back_ios,
-            size: 15,
+            size: 20,
           ),
           onTap: () {
             context.pop();

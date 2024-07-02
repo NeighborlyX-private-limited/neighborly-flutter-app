@@ -23,7 +23,7 @@ class SettingScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         leading: InkWell(
           child: const Icon(Icons.arrow_back_ios, size: 20),
-          onTap: () => Navigator.of(context).pop(),
+          onTap: () => context.pop(),
         ),
         centerTitle: true,
         title: Text(
@@ -116,7 +116,9 @@ class SettingScreen extends StatelessWidget {
               height: 20,
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                context.push('/securityScreen');
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -246,8 +248,13 @@ class SettingScreen extends StatelessWidget {
                           ),
                         );
                       } else if (state is LogoutSuccessState) {
-                        // remove the userId from the shared preferences
+                        // remove the user info from the shared preferences
                         ShardPrefHelper.removeUserID();
+                        ShardPrefHelper.removeCookie();
+                        ShardPrefHelper.removeEmail();
+                        ShardPrefHelper.removeImageUrl();
+                        ShardPrefHelper.removeUserProfilePicture();
+                        ShardPrefHelper.removeUsername();
                         context.go('/loginScreen');
                       }
                     },

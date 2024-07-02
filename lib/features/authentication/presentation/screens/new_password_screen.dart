@@ -58,7 +58,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
         leading: InkWell(
           child: const Icon(
             Icons.arrow_back_ios,
-            size: 15,
+            size: 20,
           ),
           onTap: () {
             context.pop();
@@ -104,7 +104,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 border: true,
                 onChanged: (value) {
                   setState(() {
-                    isPasswordFilled = _passwordController.text.isNotEmpty;
+                    isPasswordFilled =
+                        _passwordController.text.trim().isNotEmpty;
                   });
                 },
                 controller: _passwordController,
@@ -119,7 +120,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 onChanged: (value) {
                   setState(() {
                     isConfirmPasswordFilled =
-                        _confirmPasswordController.text.isNotEmpty;
+                        _confirmPasswordController.text.trim().isNotEmpty;
                   });
                 },
                 controller: _confirmPasswordController,
@@ -157,7 +158,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                       BlocProvider.of<ChangePasswordBloc>(context).add(
                         ChangePasswordButtonPressedEvent(
                           email: widget.data,
-                          newPassword: _passwordController.text,
+                          newPassword: _passwordController.text.trim(),
                           flag: false,
                         ),
                       );

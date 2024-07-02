@@ -21,6 +21,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   bool isPasswordFilled = false;
   bool isEmailValid = true;
   bool isPasswordWrong = false;
+  bool noConnection = false;
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -57,7 +58,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
         leading: InkWell(
           child: const Icon(
             Icons.arrow_back_ios,
-            size: 15,
+            size: 20,
           ),
           onTap: () {
             context.pop();
@@ -146,6 +147,13 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                       setState(() {
                         isPasswordWrong = true;
                       });
+                      return;
+                    }
+                    if (state.error.contains('internet')) {
+                      setState(() {
+                        noConnection = true;
+                      });
+                      return;
                     }
                   } else if (state is LoginSuccessState) {
                     bool isEmailVerified = state.authResponseEntity.isVerified;
@@ -187,7 +195,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 },
               ),
               const SizedBox(
-                height: 10,
+                height: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -200,7 +208,14 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     ),
                   )
                 ],
-              )
+              ),
+              const SizedBox(height: 15),
+              noConnection
+                  ? const Text(
+                      'No Internet Connection',
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : const SizedBox(),
             ],
           ),
         ),
