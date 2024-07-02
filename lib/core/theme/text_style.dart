@@ -42,6 +42,12 @@ var onboardingBody2Style = GoogleFonts.roboto(
   fontWeight: FontWeight.w600,
 );
 
+var onboardingBlackBody2Style = GoogleFonts.roboto(
+  color: const Color(0xff0A0A0A),
+  fontSize: 16,
+  fontWeight: FontWeight.w700,
+);
+
 var whiteNormalTextStyle = GoogleFonts.roboto(
   color: Colors.white,
   fontSize: 16,

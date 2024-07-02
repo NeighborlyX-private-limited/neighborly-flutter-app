@@ -27,6 +27,7 @@ class ShardPrefHelper {
   static Future setUserID(String userId) async =>
       await _preferences.setString(_userID, userId);
   static String? getUserID() => _preferences.getString(_userID) ?? '';
+  static Future removeUserID() async => await _preferences.remove(_userID);
 
   // save userProfilePicture
   static Future setUserProfilePicture(String userProfilePicture) async =>
@@ -65,9 +66,9 @@ class ShardPrefHelper {
 
   // save poll vote
   static Future setPollVote(
-          String userId, String pollId, num voteId, bool vote) async =>
+          String userId, num pollId, num voteId, bool vote) async =>
       await _preferences.setBool('$userId-$pollId-$voteId-_pollVote', vote);
-  static bool? getPollVote(String userId, String pollId, num voteId) =>
+  static bool? getPollVote(String userId, num pollId, num voteId) =>
       _preferences.getBool('$userId-$pollId-$voteId-_pollVote');
 
   static Future<bool> clear() async {

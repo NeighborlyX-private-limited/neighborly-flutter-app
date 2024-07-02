@@ -12,6 +12,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/scre
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/register_with_email_screen.dart';
 import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/setting_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/media_preview_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -32,8 +33,8 @@ String setInitialLocation() {
 }
 
 final GoRouter router = GoRouter(
-    // initialLocation: setInitialLocation(),
-    initialLocation: '/',
+    initialLocation: setInitialLocation(),
+    // initialLocation: '/',
     navigatorKey: _rootNavigatorKey,
     routes: <RouteBase>[
       GoRoute(
@@ -120,16 +121,13 @@ final GoRouter router = GoRouter(
           );
         },
       ),
-      // GoRoute(
-      //   path: '/upload-file/:url',
-      //   name: RouteConstants.uploadFileScreenRouteName,
-      //   builder: (BuildContext context, GoRouterState state) {
-      //     final String url = state.pathParameters['url']!;
-      //     return CreatePostScreen(
-      //       url: url,
-      //     );
-      //   },
-      // ),
+      GoRoute(
+        path: '/settingsScreen',
+        name: RouteConstants.settingsScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const SettingScreen();
+        },
+      ),
       GoRoute(
         path: '/media-preview',
         name: RouteConstants.mediaPreviewScreenRouteName,

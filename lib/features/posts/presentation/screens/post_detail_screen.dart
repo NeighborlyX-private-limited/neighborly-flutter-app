@@ -258,7 +258,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           OptionCard(
             option: option,
             totalVotes: calculateTotalVotes(postState.post.pollOptions!),
-            pollId: postState.post.id.toString(),
+            pollId: postState.post.id,
           ),
       ],
     );

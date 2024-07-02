@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class AuthResponseEntity extends Equatable {
   final String id;
   final String username;
-  final String token;
+  final String? token;
   final bool isVerified;
   final String email;
   final bool? findMe;
@@ -18,7 +18,7 @@ class AuthResponseEntity extends Equatable {
     required this.id,
     required this.isVerified,
     required this.username,
-    required this.token,
+    this.token,
   });
 
   @override

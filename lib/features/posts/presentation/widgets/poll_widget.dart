@@ -128,7 +128,7 @@ class PollWidget extends StatelessWidget {
                 OptionCard(
                   option: option,
                   totalVotes: calculateTotalVotes(post.pollOptions!),
-                  pollId: post.id.toString(),
+                  pollId: post.id,
                 ),
               const SizedBox(
                 height: 20,

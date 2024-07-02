@@ -20,7 +20,9 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_awa
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
@@ -106,6 +108,12 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<GetUserInfoBloc>(
             create: (context) => di.sl<GetUserInfoBloc>(),
+          ),
+          BlocProvider<GetProfileBloc>(
+            create: (context) => di.sl<GetProfileBloc>(),
+          ),
+          BlocProvider<LogoutBloc>(
+            create: (context) => di.sl<LogoutBloc>(),
           ),
         ],
         child: MaterialApp.router(

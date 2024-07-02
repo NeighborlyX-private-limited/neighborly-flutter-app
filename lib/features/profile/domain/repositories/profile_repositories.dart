@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 
 abstract class ProfileRepositories {
@@ -16,5 +17,6 @@ abstract class ProfileRepositories {
     String? dob,
   });
 
-  
+  Future<Either<Failure, AuthResponseEntity>> getProfile();
+  Future<Either<Failure, void>> logout();
 }

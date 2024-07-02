@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/routes/routes.dart';
-import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_poll_bloc/upload_poll_bloc.dart';
 import '../../../../core/theme/text_style.dart';
@@ -126,9 +124,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   BlocProvider.of<UploadPostBloc>(context).add(
                                     UploadPostPressedEvent(
                                       city: placemarks[0].locality ?? '',
-                                      content: _contentController.text,
+                                      content: _contentController.text.trim(),
                                       location: location,
-                                      title: _titleController.text,
+                                      title: _titleController.text.trim(),
                                       type: 'post',
                                     ),
                                   );
@@ -160,10 +158,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 onTapListener: () {
                                   BlocProvider.of<UploadPollBloc>(context).add(
                                     UploadPollPressedEvent(
-                                      question: _quesitonController.text,
+                                      question: _quesitonController.text.trim(),
                                       options: [
-                                        _option1Controller.text,
-                                        _option2Controller.text,
+                                        _option1Controller.text.trim(),
+                                        _option2Controller.text.trim(),
                                       ],
                                     ),
                                   );
@@ -191,7 +189,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       TextField(
                         onChanged: (value) {
                           setState(() {
-                            isTitleFilled = _titleController.text.isNotEmpty;
+                            isTitleFilled =
+                                _titleController.text.trim().isNotEmpty;
                           });
                         },
                         controller: _titleController,
@@ -231,7 +230,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         onChanged: (value) {
                           setState(() {
                             isQuestionFilled =
-                                _quesitonController.text.isNotEmpty;
+                                _quesitonController.text.trim().isNotEmpty;
                           });
                         },
                         controller: _quesitonController,
@@ -249,7 +248,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         onChanged: (value) {
                           setState(() {
                             isOption1Filled =
-                                _option1Controller.text.isNotEmpty;
+                                _option1Controller.text.trim().isNotEmpty;
                           });
                         },
                         controller: _option1Controller,
@@ -261,7 +260,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         onChanged: (value) {
                           setState(() {
                             isOption2Filled =
-                                _option2Controller.text.isNotEmpty;
+                                _option2Controller.text.trim().isNotEmpty;
                           });
                         },
                         controller: _option2Controller,

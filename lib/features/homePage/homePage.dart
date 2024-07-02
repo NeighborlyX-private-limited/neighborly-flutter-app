@@ -8,6 +8,7 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/dob_picker_widget.dart';
 import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
 
 class MainPage extends StatefulWidget {
@@ -179,7 +180,7 @@ class _MainPageState extends State<MainPage> {
             HomeScreen(),
             CreatePostScreen(),
             CreatePostScreen(),
-            CreatePostScreen(),
+            ProfileScreen(),
           ],
         ),
       ),
@@ -226,7 +227,8 @@ class _MainPageState extends State<MainPage> {
                   height: 5,
                 ),
                 const SizedBox(height: 25),
-                Text('One last thing before we get started!!', style: onboardingHeading2Style),
+                Text('One last thing before we get started!!',
+                    style: onboardingHeading2Style),
                 const SizedBox(height: 10),
                 Text('Select your Gender', style: blackonboardingBody1Style),
                 const SizedBox(height: 8),

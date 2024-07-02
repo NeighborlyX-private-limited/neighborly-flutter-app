@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class OptionCard extends StatefulWidget {
   final OptionEntity option;
   final double totalVotes;
-  final String pollId; // Add pollId to uniquely identify each poll's options
+  final num pollId; // Add pollId to uniquely identify each poll's options
 
   const OptionCard({
     required this.totalVotes,
@@ -83,8 +83,7 @@ class _OptionCardState extends State<OptionCard> {
       onTap: () {
         _toggleSelection();
         BlocProvider.of<VotePollBloc>(context).add(VotePollButtonPressedEvent(
-            pollId: int.parse(widget.pollId),
-            optionId: widget.option.optionId));
+            pollId: widget.pollId, optionId: widget.option.optionId));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
