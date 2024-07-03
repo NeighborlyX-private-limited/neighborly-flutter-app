@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
 
 abstract class PostRepositories {

@@ -1,5 +1,5 @@
-import 'package:neighborly_flutter_app/features/posts/data/model/option_model.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/core/models/option_model.dart';
+import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
 
 class PostModel extends PostEntity {
   const PostModel({

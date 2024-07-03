@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/option_entity.dart';
+import 'package:neighborly_flutter_app/core/entities/option_entity.dart';
 
 class PostEntity extends Equatable {
   final num id;

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
+import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
 import 'package:neighborly_flutter_app/features/profile/data/data_sources/profile_remote_data_source/profile_remote_data_source.dart';
@@ -97,6 +98,22 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
       try {
         await remoteDataSource.logout();
         return const Right(null);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PostEntity>>> getMyPosts() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getMyPosts();
+        return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
       } catch (e) {

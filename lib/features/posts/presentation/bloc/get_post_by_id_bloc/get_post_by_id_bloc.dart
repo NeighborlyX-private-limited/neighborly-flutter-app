@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_post_by_id_usecase.dart';
 
 part 'get_post_by_id_event.dart';

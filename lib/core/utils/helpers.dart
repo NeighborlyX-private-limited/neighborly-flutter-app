@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/option_entity.dart';
+import 'package:neighborly_flutter_app/core/entities/option_entity.dart';
 
 String formatTimeDifference(String isoTimestamp) {
   DateTime inputTime = DateTime.parse(isoTimestamp);

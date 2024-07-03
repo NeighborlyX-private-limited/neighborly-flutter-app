@@ -6,7 +6,7 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/data/data_sources/post_remote_data_source/post_remote_data_source.dart';
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
-import 'package:neighborly_flutter_app/features/posts/data/model/post_model.dart';
+import 'package:neighborly_flutter_app/core/models/post_model.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/reply_model.dart';
 
 class PostRemoteDataSourceImpl implements PostRemoteDataSource {
@@ -32,7 +32,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookieHeader,
       },
     );
-    print('response body: ${response.body} ');
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);

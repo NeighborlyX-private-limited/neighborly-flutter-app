@@ -1,3 +1,4 @@
+import 'package:neighborly_flutter_app/core/models/post_model.dart';
 import 'package:neighborly_flutter_app/features/profile/data/models/auth_response_model.dart';
 
 abstract class ProfileRemoteDataSource {
@@ -14,6 +15,7 @@ abstract class ProfileRemoteDataSource {
     String? gender,
     String? dob,
   });
+  Future<List<PostModel>> getMyPosts();
 
   Future<AuthResponseModel> getProfile();
   Future<void> logout();

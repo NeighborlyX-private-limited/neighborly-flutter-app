@@ -1,5 +1,5 @@
 import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
-import 'package:neighborly_flutter_app/features/posts/data/model/post_model.dart';
+import 'package:neighborly_flutter_app/core/models/post_model.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/reply_model.dart';
 
 abstract class PostRemoteDataSource {

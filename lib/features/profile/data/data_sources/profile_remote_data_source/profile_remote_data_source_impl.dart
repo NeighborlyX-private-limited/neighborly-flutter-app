@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:neighborly_flutter_app/core/constants/constants.dart';
 import 'package:neighborly_flutter_app/core/error/exception.dart';
+import 'package:neighborly_flutter_app/core/models/post_model.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/profile/data/data_sources/profile_remote_data_source/profile_remote_data_source.dart';
 import 'package:http/http.dart' as http;
@@ -131,6 +132,34 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
     if (response.statusCode != 200) {
       throw ServerException(message: jsonDecode(response.body)['msg']);
+    }
+  }
+
+  @override
+  Future<List<PostModel>> getMyPosts() async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? userId = ShardPrefHelper.getUserID();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    // print('Cookies: $cookieHeader');
+    String url = '$kBaseUrl/profile/user-content';
+    Map<String, dynamic> queryParameters = {'userId': '$userId'};
+
+    final response = await client.get(
+      Uri.parse(url).replace(queryParameters: queryParameters),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      return jsonData.map((data) => PostModel.fromJson(data)).toList();
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
     }
   }
 }
