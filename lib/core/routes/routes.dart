@@ -12,6 +12,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/scre
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/register_with_email_screen.dart';
 import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/activity_and_stats_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/security_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/setting_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/media_preview_screen.dart';
@@ -141,6 +142,13 @@ final GoRouter router = GoRouter(
         name: RouteConstants.securityScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
           return const SecurityPage();
+        },
+      ),
+      GoRoute(
+        path: '/activityAndStatsScreen',
+        name: RouteConstants.activityAndStatsScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const ActivityAndStatsScreen();
         },
       ),
     ]);

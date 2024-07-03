@@ -16,4 +16,5 @@ class RouteConstants {
   static const String uploadFileScreenRouteName = 'uploadFileScreen';
   static const String settingsScreenRouteName = 'settingsScreen';
   static const String securityScreenRouteName = 'securityScreen';
+  static const String activityAndStatsScreenRouteName = 'activityAndStatsScreen';
 }
