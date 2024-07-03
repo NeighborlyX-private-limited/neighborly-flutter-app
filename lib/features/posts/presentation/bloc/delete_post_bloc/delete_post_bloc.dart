@@ -17,6 +17,7 @@ class DeletePostBloc extends Bloc<DeletePostEvent, DeletePostState> {
 
       final result = await _deletePostUsecase.call(
         id: event.postId,
+        type: event.type,
       );
 
       result.fold(

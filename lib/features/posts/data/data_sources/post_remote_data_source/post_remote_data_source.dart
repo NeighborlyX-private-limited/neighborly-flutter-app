@@ -7,7 +7,7 @@ abstract class PostRemoteDataSource {
     required bool isHome,
   });
   Future<PostModel> getPostById({required num id});
-  Future<void> deletePost({required num id});
+  Future<void> deletePost({required num id, required String type});
   Future<void> reportPost(
       {required String reason, required String type, required num postId});
   Future<void> feedback(

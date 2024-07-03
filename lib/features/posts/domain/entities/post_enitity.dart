@@ -17,12 +17,14 @@ class PostEntity extends Equatable {
   final String type;
   final List<dynamic> awardType;
   final List<OptionEntity>? pollOptions;
+  final bool? allowMultipleVotes;
 
   const PostEntity({
     required this.city,
     required this.awardType,
     required this.pollOptions,
     required this.type,
+    this.allowMultipleVotes,
     required this.id,
     required this.userId,
     required this.userName,
@@ -51,6 +53,7 @@ class PostEntity extends Equatable {
         cheers,
         city,
         proPic,
+        allowMultipleVotes,
         bools,
         multimedia, // Nullable in props list
       ];

@@ -108,10 +108,11 @@ class PostRepositoriesImpl implements PostRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> deletePost({required num id}) async {
+  Future<Either<Failure, void>> deletePost(
+      {required num id, required String type}) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.deletePost(id: id);
+        await remoteDataSource.deletePost(id: id, type: type);
         return const Right(null);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

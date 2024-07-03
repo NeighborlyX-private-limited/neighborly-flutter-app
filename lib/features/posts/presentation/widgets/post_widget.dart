@@ -21,7 +21,7 @@ class PostWidget extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        context.push('/post-detail/${post.id}/${true}');
+        context.push('/post-detail/${post.id}/${true}/${post.userId}');
       },
       child: Container(
         color: Colors.white,
@@ -203,39 +203,52 @@ class PostWidget extends StatelessWidget {
                     ],
                   ),
                 )
-              : InkWell(
-                  onTap: () {
-                    context
-                        .read<DeletePostBloc>()
-                        .add(DeletePostButtonPressedEvent(postId: post.id));
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Post Deleted'),
+              : BlocConsumer<DeletePostBloc, DeletePostState>(
+                  listener: (context, state) {
+                    if (state is DeletePostSuccessState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Post Deleted'),
+                        ),
+                      );
+                      context.pop(context);
+                    } else if (state is DeletePostFailureState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.error),
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is DeletePostLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return InkWell(
+                      onTap: () {
+                        context.read<DeletePostBloc>().add(
+                            DeletePostButtonPressedEvent(
+                                postId: post.id, type: 'post'));
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Delete Post',
+                            style: redOnboardingBody1Style,
+                          )
+                        ],
                       ),
                     );
-
-                    // Future.delayed(const Duration(seconds: 2), () {
-                    //   BlocProvider.of<GetAllPostsBloc>(context).add(
-                    //     GetAllPostsButtonPressedEvent(),
-                    //   );
-                    // });
                   },
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Delete Post',
-                        style: redOnboardingBody1Style,
-                      )
-                    ],
-                  ),
                 ),
         );
       },

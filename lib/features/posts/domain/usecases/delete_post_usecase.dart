@@ -9,9 +9,11 @@ class DeletePostUsecase {
 
   Future<Either<Failure, void>> call({
     required num id,
+    required String type,
   }) async {
     return await repository.deletePost(
       id: id,
+      type: type,
     );
   }
 }

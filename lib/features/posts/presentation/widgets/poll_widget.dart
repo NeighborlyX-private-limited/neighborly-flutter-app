@@ -20,9 +20,11 @@ class PollWidget extends StatelessWidget {
       bottomSheet(context);
     }
 
+    num selectedOptions = 0;
+
     return InkWell(
       onTap: () {
-        context.push('/post-detail/${post.id}/${false}');
+        context.push('/post-detail/${post.id}/${false}/${post.userId}');
       },
       child: Container(
           color: Colors.white,
@@ -121,11 +123,33 @@ class PollWidget extends StatelessWidget {
                   color: Colors.grey[800],
                 ),
               ),
+              post.multimedia != null
+                  ? const SizedBox(
+                      height: 10,
+                    )
+                  : Container(),
+              post.multimedia != null
+                  ? Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: Image.network(
+                            width: double.infinity,
+                            height: 200,
+                            post.multimedia!,
+                            fit: BoxFit.cover,
+                          )),
+                    )
+                  : Container(),
               const SizedBox(
-                height: 12,
+                height: 10,
               ),
               for (var option in post.pollOptions!)
                 OptionCard(
+                  // selectedOptions: selectedOptions,
+                  // isMultipleVotesAllowed: post.allowMultipleVotes!,
                   option: option,
                   totalVotes: calculateTotalVotes(post.pollOptions!),
                   pollId: post.id,
@@ -172,39 +196,52 @@ class PollWidget extends StatelessWidget {
                     ],
                   ),
                 )
-              : InkWell(
-                  onTap: () {
-                    context
-                        .read<DeletePostBloc>()
-                        .add(DeletePostButtonPressedEvent(postId: post.id));
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Post Deleted'),
+              : BlocConsumer<DeletePostBloc, DeletePostState>(
+                  listener: (context, state) {
+                    if (state is DeletePostSuccessState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Poll Deleted'),
+                        ),
+                      );
+                      context.pop(context);
+                    } else if (state is DeletePostFailureState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.error),
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is DeletePostLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return InkWell(
+                      onTap: () {
+                        context.read<DeletePostBloc>().add(
+                            DeletePostButtonPressedEvent(
+                                postId: post.id, type: 'post'));
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Delete Poll',
+                            style: redOnboardingBody1Style,
+                          )
+                        ],
                       ),
                     );
-
-                    // Future.delayed(const Duration(seconds: 2), () {
-                    //   BlocProvider.of<GetAllPostsBloc>(context).add(
-                    //     GetAllPostsButtonPressedEvent(),
-                    //   );
-                    // });
                   },
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Delete Post',
-                        style: redOnboardingBody1Style,
-                      )
-                    ],
-                  ),
                 ),
         );
       },

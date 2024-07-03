@@ -257,6 +257,13 @@ class SettingScreen extends StatelessWidget {
                         ShardPrefHelper.removeImageUrl();
                         ShardPrefHelper.removeUserProfilePicture();
                         ShardPrefHelper.removeUsername();
+                        // print('userId : ${ShardPrefHelper.getUserID()}');
+                        // print('cookie : ${ShardPrefHelper.getCookie()}');
+                        // print('email : ${ShardPrefHelper.getEmail()}');
+                        // print('imageUrl : ${ShardPrefHelper.getImageUrl()}');
+                        // print(
+                        //     'imageUrl : ${ShardPrefHelper.getUserProfilePicture()}');
+                        // print('usename : ${ShardPrefHelper.getUsername()}');
                         context.go('/loginScreen');
                       }
                     },

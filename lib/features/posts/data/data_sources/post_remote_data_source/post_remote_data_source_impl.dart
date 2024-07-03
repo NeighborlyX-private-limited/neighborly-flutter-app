@@ -159,23 +159,23 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<void> deletePost({required num id}) async {
+  Future<void> deletePost({
+    required num id,
+    required String type,
+  }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
 
-    String url = '$kBaseUrl/wall/delete/post/$id';
+    String url = '$kBaseUrl/wall/delete/$type/$id';
     final response = await client.delete(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Cookie': cookieHeader,
       },
-      body: jsonEncode(<String, dynamic>{
-        'postId': id,
-      }),
     );
 
     if (response.statusCode == 200) {

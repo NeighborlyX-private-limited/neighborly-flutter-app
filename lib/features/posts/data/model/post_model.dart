@@ -13,6 +13,7 @@ class PostModel extends PostEntity {
     required super.cheers,
     required super.bools,
     required super.id,
+    super.allowMultipleVotes,
     super.multimedia,
     super.proPic,
     required super.city,
@@ -41,6 +42,7 @@ class PostModel extends PostEntity {
       proPic: json['userProfilePicture'] as String?,
       city: json['city'] as String,
       commentCount: json['commentCount'],
+      allowMultipleVotes: json['allow_multiple_votes'],
     );
   }
 
@@ -52,6 +54,9 @@ class PostModel extends PostEntity {
       'title': title,
       'body': content,
       'createdAt': createdAt,
+      'city': city,
+      'commentCount': commentCount,
+      'type': type,
       'cheers': cheers,
       'boos': bools,
       'multimedia': multimedia,

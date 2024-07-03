@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
@@ -19,9 +20,13 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/react
 class PostDetailScreen extends StatefulWidget {
   final String postId;
   final bool isPost;
+  final String userId;
 
   const PostDetailScreen(
-      {super.key, required this.postId, required this.isPost});
+      {super.key,
+      required this.postId,
+      required this.userId,
+      required this.isPost});
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -32,6 +37,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool isCommentFilled = false;
   final FocusNode _commentFocusNode = FocusNode();
   List<dynamic> comments = [];
+
+  num selectedOptions = 0;
 
   ReplyEntity?
       commentToReply; // Define commentToReply to track the comment being replied to
@@ -251,11 +258,33 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             color: Colors.grey[800],
           ),
         ),
+        postState.post.multimedia != null
+            ? const SizedBox(
+                height: 10,
+              )
+            : Container(),
+        postState.post.multimedia != null
+            ? Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: Image.network(
+                      width: double.infinity,
+                      height: 200,
+                      postState.post.multimedia!,
+                      fit: BoxFit.cover,
+                    )),
+              )
+            : Container(),
         const SizedBox(
-          height: 12,
+          height: 10,
         ),
         for (var option in postState.post.pollOptions!)
           OptionCard(
+            // selectedOptions: selectedOptions,
+            // isMultipleVotesAllowed: postState.post.allowMultipleVotes!,
             option: option,
             totalVotes: calculateTotalVotes(postState.post.pollOptions!),
             pollId: postState.post.id,
@@ -386,7 +415,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           color: Colors.white,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: userId != widget.postId
+          child: userId != widget.userId
               ? InkWell(
                   onTap: () {
                     showReportReasonBottomSheet();
@@ -404,33 +433,57 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ],
                   ),
                 )
-              : InkWell(
-                  onTap: () {
-                    context.read<DeletePostBloc>().add(
-                        DeletePostButtonPressedEvent(
-                            postId: int.parse(widget.postId)));
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Post Deleted'),
+              : BlocConsumer<DeletePostBloc, DeletePostState>(
+                  listener: (context, state) {
+                    if (state is DeletePostSuccessState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              widget.isPost ? 'Post Deleted' : 'Poll Deleted'),
+                        ),
+                      );
+                      context.pop(context);
+                      context.pop(context);
+                    } else if (state is DeletePostFailureState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(state.error),
+                        ),
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is DeletePostLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return InkWell(
+                      onTap: () {
+                        context
+                            .read<DeletePostBloc>()
+                            .add(DeletePostButtonPressedEvent(
+                              postId: int.parse(widget.postId),
+                              type: 'post',
+                            ));
+                      },
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.delete,
+                            color: Colors.red,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'Delete Post',
+                            style: redOnboardingBody1Style,
+                          )
+                        ],
                       ),
                     );
                   },
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.delete,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Delete Post',
-                        style: redOnboardingBody1Style,
-                      )
-                    ],
-                  ),
                 ),
         );
       },

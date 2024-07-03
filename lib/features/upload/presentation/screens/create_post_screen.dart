@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
@@ -386,7 +387,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           bottomSheet: !_isKeyboardVisible
               ? Container(
                   color: Colors.white,
-                  height: 200,
+                  height: 220,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                   child: Column(
@@ -398,7 +399,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         },
                         child: Row(
                           children: [
-                            Image.asset('assets/add_a_photo.png'),
+                            SvgPicture.asset('assets/add_a_photo.svg'),
                             const SizedBox(width: 10),
                             Text('Add a Photo or GIF',
                                 style: mediumTextStyleBlack),
@@ -407,14 +408,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ),
                       Row(
                         children: [
-                          Image.asset('assets/add_location.png'),
+                          SvgPicture.asset('assets/communities.svg'),
+                          const SizedBox(width: 10),
+                          Text('Create Community', style: mediumTextStyleBlack),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset('assets/add_location.svg'),
                           const SizedBox(width: 10),
                           Text('Add Location', style: mediumTextStyleBlack),
                         ],
                       ),
                       Row(
                         children: [
-                          Image.asset('assets/create_an_event.png'),
+                          SvgPicture.asset('assets/create_an_event.svg'),
                           const SizedBox(width: 10),
                           Text('Create an Event', style: mediumTextStyleBlack),
                         ],
@@ -427,7 +435,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         },
                         child: Row(
                           children: [
-                            Image.asset('assets/create_a_poll.png'),
+                            SvgPicture.asset('assets/create_a_poll.svg'),
                             const SizedBox(width: 10),
                             Text('Create a Poll', style: mediumTextStyleBlack),
                           ],
@@ -447,20 +455,43 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         onTap: () {
                           context.push('/media-preview');
                         },
-                        child: Image.asset('assets/add_a_photo.png'),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/add_a_photo.svg'),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 10),
-                      Image.asset('assets/add_location.png'),
-                      const SizedBox(width: 10),
-                      Image.asset('assets/create_an_event.png'),
-                      const SizedBox(width: 10),
+                      Row(
+                        children: [
+                          SvgPicture.asset('assets/communities.svg'),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset('assets/add_location.svg'),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset('assets/create_an_event.svg'),
+                          const SizedBox(width: 10),
+                        ],
+                      ),
                       InkWell(
                         onTap: () {
                           setState(() {
                             _condition = 'poll';
                           });
                         },
-                        child: Image.asset('assets/create_a_poll.png'),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/create_a_poll.svg'),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
                       ),
                     ],
                   ),

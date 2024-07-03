@@ -13,6 +13,7 @@ abstract class PostRepositories {
   });
   Future<Either<Failure, void>> deletePost({
     required num id,
+    required String type,
   });
   Future<Either<Failure, void>> reportPost(
       {required String reason, required String type, required num postId});

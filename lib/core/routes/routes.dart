@@ -112,14 +112,16 @@ final GoRouter router = GoRouter(
         },
       ),
       GoRoute(
-        path: '/post-detail/:postId/:isPost',
+        path: '/post-detail/:postId/:isPost/:userId',
         name: RouteConstants.postDetailScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
           final String postId = state.pathParameters['postId']!;
           final bool isPost = state.pathParameters['isPost'] == 'true';
+          final String userId = state.pathParameters['userId']!;
           return PostDetailScreen(
             postId: postId,
             isPost: isPost,
+            userId: userId,
           );
         },
       ),
