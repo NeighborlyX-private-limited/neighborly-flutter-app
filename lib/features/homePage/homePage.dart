@@ -2,17 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/dob_picker_widget.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
+import 'package:neighborly_flutter_app/features/homePage/widgets/dob_picker_widget.dart';
 import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
 
 class MainPage extends StatefulWidget {
   final bool isFirstTime;
+
   const MainPage({super.key, required this.isFirstTime});
 
   @override
@@ -24,6 +28,10 @@ class _MainPageState extends State<MainPage> {
   String? _currentAddress;
   Position? _currentPosition;
 
+  bool isDayFilled = false;
+  bool isMonthFilled = false;
+  bool isYearFilled = false;
+
   late PageController pageController;
   late TextEditingController _dateController;
   late TextEditingController _monthController;
@@ -34,7 +42,13 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     pageController = PageController();
     fetchLocationAndUpdate();
-    // showBottomSheet();
+
+    if (widget.isFirstTime) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showBottomSheet();
+      });
+    }
+
     _dateController = TextEditingController();
     _monthController = TextEditingController();
     _yearController = TextEditingController();
@@ -45,7 +59,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Fetch location and update when the page becomes visible
     fetchLocationAndUpdate();
     ShardPrefHelper.removeImageUrl();
   }
@@ -115,7 +128,6 @@ class _MainPageState extends State<MainPage> {
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location: ${position.latitude}, ${position.longitude}');
 
-      // Dispatch the event to update location
       BlocProvider.of<UpdateLocationBloc>(context).add(
         UpdateLocationButtonPressedEvent(
           location: [position.latitude, position.longitude],
@@ -156,7 +168,7 @@ class _MainPageState extends State<MainPage> {
                 'assets/add.svg',
                 fit: BoxFit.contain,
               ),
-              label: '', // Optional: You can leave the label empty
+              label: '',
             ),
             const BottomNavigationBarItem(
               icon: Icon(
@@ -191,18 +203,18 @@ class _MainPageState extends State<MainPage> {
     return showModalBottomSheet<num>(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+        return SingleChildScrollView(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
             ),
-          ),
-          height: 800,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
                   child: Container(
@@ -219,18 +231,12 @@ class _MainPageState extends State<MainPage> {
                 ),
                 Center(
                   child: Text(
-                    'Award this post',
+                    'One last thing before we get started!!',
                     style: onboardingHeading2Style,
                   ),
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
                 const SizedBox(height: 25),
-                Text('One last thing before we get started!!',
-                    style: onboardingHeading2Style),
-                const SizedBox(height: 10),
-                Text('Select your Gender', style: blackonboardingBody1Style),
+                Text('1. Select your Gender', style: blackonboardingBody1Style),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -280,7 +286,7 @@ class _MainPageState extends State<MainPage> {
                   ],
                 ),
                 const Divider(color: Colors.grey),
-                Text('Date of Birth', style: blackonboardingBody1Style),
+                Text('2. Date of Birth', style: blackonboardingBody1Style),
                 const SizedBox(height: 8),
                 DOBPickerWidget(
                     dateController: _dateController,
@@ -289,6 +295,70 @@ class _MainPageState extends State<MainPage> {
                     isDayFilled: true,
                     isMonthFilled: true,
                     isYearFilled: true),
+                const SizedBox(height: 45),
+                BlocConsumer<GetUserInfoBloc, GetUserInfoState>(
+                  listener: (BuildContext context, GetUserInfoState state) {
+                    if (state is GetUserInfoFailureState) {
+                      // if (state.error.contains('email')) {
+                      //   setState(() {
+                      //     emailAlreadyExists = true;
+                      //   });
+                      //   return;
+                      // }
+                      // if (state.error.contains('internet')) {
+                      //   setState(() {
+                      //     noConnection = true;
+                      //   });
+                      //   return;
+                      // }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.error)),
+                      );
+                    } else if (state is GetUserInfoSuccessState) {
+                      context.pop();
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state is GetUserInfoLoadingState) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+                    return ButtonContainerWidget(
+                        isActive: true,
+                        color: AppColors.primaryColor,
+                        text: 'Save',
+                        isFilled: true,
+                        onTapListener: () {
+                          // if (!isValidEmail(_emailController.text.trim())) {
+                          //   setState(() {
+                          //     isEmailValid = false;
+                          //   });
+                          //   return;
+                          // }
+                          // if (_passwordController.text.length < 8) {
+                          //   setState(() {
+                          //     isPasswordShort = true;
+                          //   });
+                          //   return;
+                          // }
+                          // setState(() {
+                          //   isEmailValid = true;
+                          // });
+                          BlocProvider.of<GetUserInfoBloc>(context).add(
+                            GetUserInfoButtonPressedEvent(
+                              dob: formatDOB(
+                                  _dateController.text.trim(),
+                                  _monthController.text.trim(),
+                                  _yearController.text.trim()),
+                              gender: _selectedGender,
+                            ),
+                          );
+                          context.pop();
+                        });
+                  },
+                ),
+                const SizedBox(height: 15),
               ],
             ),
           ),

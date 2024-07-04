@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
@@ -48,29 +47,29 @@ class _PostSectionState extends State<PostSection> {
               if (state is GetMyPostsLoadingState) {
                 return const PostSheemerWidget();
               } else if (state is GetMyPostsSuccessState) {
+                if (state.post.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Welcome! Your space is empty.',
+                          style: onboardingHeading2Style,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Text(
+                          'Create your first post',
+                          style: bluemediumTextStyleBlack,
+                        ),
+                      ],
+                    ),
+                  );
+                }
                 return ListView.separated(
                   itemCount: state.post.length,
                   itemBuilder: (context, index) {
-                    if (state.post.isEmpty) {
-                      return Center(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Welcome! Your space is empty.',
-                              style: onboardingHeading2Style,
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Create your first post',
-                              style: bluemediumTextStyleBlack,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
                     final post = state.post[index];
                     if (post.type == 'post') {
                       return PostWidget(post: post);

@@ -7,6 +7,7 @@ import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/posts_section.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/profile_sheemer_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -68,9 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           body: BlocBuilder<GetProfileBloc, GetProfileState>(
             builder: (context, state) {
               if (state is GetProfileLoadingState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const ProfileShimmerWidget();
               } else if (state is GetProfileSuccessState) {
                 return Column(
                   children: [
@@ -148,26 +147,23 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ],
                     ),
                     const SizedBox(height: 15),
-                    Padding(
-                      padding: const EdgeInsets.all(9.0),
-                      child: Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 5, right: 5),
-                          child: TabBar(
-                            indicatorColor: AppColors.primaryColor,
-                            labelColor: AppColors.primaryColor.withOpacity(0.8),
-                            controller: _tabController,
-                            tabs: const [
-                              Tab(text: 'Posts'),
-                              Tab(text: 'Comments'),
-                              Tab(text: 'Communities'),
-                            ],
-                          ),
+                    Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 5, right: 5),
+                        child: TabBar(
+                          indicatorColor: AppColors.primaryColor,
+                          labelColor: AppColors.primaryColor.withOpacity(0.8),
+                          controller: _tabController,
+                          tabs: const [
+                            Tab(text: 'Posts'),
+                            Tab(text: 'Comments'),
+                            Tab(text: 'Communities'),
+                          ],
                         ),
                       ),
                     ),

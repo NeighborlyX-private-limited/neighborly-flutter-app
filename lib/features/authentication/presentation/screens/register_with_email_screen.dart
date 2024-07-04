@@ -21,9 +21,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   bool isEmailFilled = false;
   bool isPasswordFilled = false;
   bool isConfirmPasswordFilled = false;
-  // bool isDayFilled = false;
-  // bool isMonthFilled = false;
-  // bool isYearFilled = false;
+
   bool isEmailValid = true;
   bool isPasswordShort = false;
   bool emailAlreadyExists = false;
@@ -204,11 +202,6 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                             RegisterButtonPressedEvent(
                               email: _emailController.text.trim(),
                               password: _passwordController.text.trim(),
-                              // dob: formatDOB(
-                              //     _dateController.text.trim(),
-                              //     _monthController.text.trim(),
-                              //     _yearController.text.trim()),
-                              // gender: _selectedGender,
                             ),
                           );
                         });

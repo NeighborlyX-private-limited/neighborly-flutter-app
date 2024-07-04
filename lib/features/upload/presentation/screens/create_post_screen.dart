@@ -5,7 +5,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import '../../../../core/theme/text_style.dart';
-import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
 import '../widgets/post_button_widget.dart';
 
