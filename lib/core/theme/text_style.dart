@@ -73,6 +73,12 @@ var mediumTextStyleBlack = GoogleFonts.roboto(
   fontSize: 14,
   fontWeight: FontWeight.w500,
 );
+
+var bluemediumTextStyleBlack = GoogleFonts.roboto(
+  color: const Color(0xff635BFF),
+  fontSize: 14,
+  fontWeight: FontWeight.w500,
+);
 var mediumGreyTextStyleBlack = GoogleFonts.roboto(
   color: const Color(0xff2E2E2E),
   fontSize: 14,

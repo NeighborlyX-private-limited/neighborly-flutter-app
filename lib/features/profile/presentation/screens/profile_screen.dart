@@ -171,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
+
                     Expanded(
                       child: TabBarView(
                         controller: _tabController,

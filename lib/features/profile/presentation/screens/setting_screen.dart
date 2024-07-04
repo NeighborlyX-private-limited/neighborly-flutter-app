@@ -156,8 +156,31 @@ class SettingScreen extends StatelessWidget {
                     width: 10,
                   ),
                   Text(
-                    'Suppot And Feedback',
+                    'Support And Feedback',
                     style: blackonboardingBody1Style,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () {},
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    'assets/delete.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Delete account',
+                    style: redOnboardingBody1Style,
                   ),
                 ],
               ),
