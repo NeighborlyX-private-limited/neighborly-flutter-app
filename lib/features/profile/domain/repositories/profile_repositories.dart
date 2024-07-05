@@ -24,4 +24,5 @@ abstract class ProfileRepositories {
   });
   Future<Either<Failure, AuthResponseEntity>> getProfile();
   Future<Either<Failure, void>> logout();
+  Future<Either<Failure, void>> deleteAccount();
 }

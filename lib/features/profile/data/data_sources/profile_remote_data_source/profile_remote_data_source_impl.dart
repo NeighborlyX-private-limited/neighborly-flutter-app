@@ -185,4 +185,25 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw ServerException(message: jsonDecode(response.body)['error']);
     }
   }
+
+  @override
+  Future<void> deleteAccount() async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrl/profile/delete-account';
+    final response = await client.delete(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw ServerException(message: jsonDecode(response.body)['error']);
+    }
+  }
 }

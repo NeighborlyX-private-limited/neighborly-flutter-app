@@ -139,4 +139,20 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> deleteAccount() async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.deleteAccount();
+        return const Right(null);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
 }

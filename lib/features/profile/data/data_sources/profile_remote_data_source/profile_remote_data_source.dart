@@ -21,4 +21,5 @@ abstract class ProfileRemoteDataSource {
   });
   Future<AuthResponseModel> getProfile();
   Future<void> logout();
+  Future<void> deleteAccount();
 }

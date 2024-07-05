@@ -20,6 +20,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_awa
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
@@ -119,6 +120,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<SendFeedbackBloc>(
             create: (context) => di.sl<SendFeedbackBloc>(),
           ),
+          BlocProvider<DeleteAccountBloc>(
+            create: (context) => di.sl<DeleteAccountBloc>(),
+          ),
         ],
         child: MaterialApp.router(
           theme: ThemeData(
@@ -130,4 +134,3 @@ class MyApp extends StatelessWidget {
         ));
   }
 }
-

@@ -16,6 +16,10 @@ class SettingScreen extends StatelessWidget {
       logoutBottomSheet(context);
     }
 
+    void showdeleteBottomSheet() {
+      deleteBottomSheet(context);
+    }
+
     return SafeArea(
         child: Scaffold(
       backgroundColor: const Color(0xFFF5F5FF),
@@ -168,7 +172,9 @@ class SettingScreen extends StatelessWidget {
               height: 20,
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                showdeleteBottomSheet();
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -294,11 +300,124 @@ class SettingScreen extends StatelessWidget {
                     },
                     builder: (context, state) {
                       if (state is LogoutLoadingState) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Center(child: CircularProgressIndicator()),
+                          ],
+                        );
                       }
                       return ButtonWidget(
                         color: const Color(0xffFD1D1D),
                         text: 'Logout',
+                        textColor: Colors.white,
+                        onTapListener: () {
+                          context.read<LogoutBloc>().add(
+                                LogoutButtonPressedEvent(),
+                              );
+                        },
+                        isActive: true,
+                      );
+                    },
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> deleteBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          height: 160,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(40),
+                ),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              Text(
+                'Are you sure you want to delete your account? This action is irreversible.',
+                style: blackonboardingBody1Style,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ButtonWidget(
+                    color: const Color(0xffF5F5F5),
+                    text: 'Cancel',
+                    textColor: Colors.black,
+                    onTapListener: () {
+                      context.pop();
+                    },
+                    isActive: true,
+                  ),
+                  BlocConsumer<LogoutBloc, LogoutState>(
+                    listener: (context, state) {
+                      if (state is LogoutFailureState) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.error),
+                          ),
+                        );
+                      } else if (state is LogoutSuccessState) {
+                        // remove the user info from the shared preferences
+                        ShardPrefHelper.deleteBooPosts(
+                            ShardPrefHelper.getUserID()!);
+                        ShardPrefHelper.deleteCheeredPosts(
+                            ShardPrefHelper.getUserID()!);
+                        ShardPrefHelper.deltePollVotes(
+                            ShardPrefHelper.getUserID()!);
+
+                        ShardPrefHelper.removeUserID();
+                        ShardPrefHelper.removeCookie();
+                        ShardPrefHelper.removeEmail();
+                        ShardPrefHelper.removeImageUrl();
+                        ShardPrefHelper.removeUserProfilePicture();
+                        ShardPrefHelper.removeUsername();
+
+                        // print('userId : ${ShardPrefHelper.getUserID()}');
+                        // print('cookie : ${ShardPrefHelper.getCookie()}');
+                        // print('email : ${ShardPrefHelper.getEmail()}');
+                        // print('imageUrl : ${ShardPrefHelper.getImageUrl()}');
+                        // print(
+                        //     'imageUrl : ${ShardPrefHelper.getUserProfilePicture()}');
+                        // print('usename : ${ShardPrefHelper.getUsername()}');
+                        context.go('/registerScreen');
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is LogoutLoadingState) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return ButtonWidget(
+                        color: const Color(0xffFD1D1D),
+                        text: 'Delete',
                         textColor: Colors.white,
                         onTapListener: () {
                           context.read<LogoutBloc>().add(

@@ -21,12 +21,14 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/usecases/delete_account_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_posts_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_user_info_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/logout_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/send_feedback_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
@@ -98,6 +100,7 @@ void init() async {
   sl.registerLazySingleton(() => LogoutUsecase(sl()));
   sl.registerLazySingleton(() => GetMyPostsUsecase(sl()));
   sl.registerLazySingleton(() => SendFeedbackUsecase(sl()));
+  sl.registerLazySingleton(() => DeleteAccountUsecase(sl()));
 
   // register repository
   sl.registerLazySingleton<AuthRepository>(
@@ -148,6 +151,7 @@ void init() async {
   sl.registerFactory(() => LogoutBloc(logoutUsecase: sl()));
   sl.registerFactory(() => GetMyPostsBloc(getMyPostsUsecase: sl()));
   sl.registerFactory(() => SendFeedbackBloc(sendFeedbackUsecase: sl()));
+  sl.registerFactory(() => DeleteAccountBloc(deleteAccountUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());
