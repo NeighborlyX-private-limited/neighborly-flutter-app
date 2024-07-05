@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/post_with_comments_sheemer_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/post_with_comments_widget.dart';
 
 class CommentSection extends StatefulWidget {
@@ -49,7 +49,7 @@ class _CommentSectionState extends State<CommentSection> {
           child: BlocBuilder<GetMyCommentsBloc, GetMyCommentsState>(
             builder: (context, state) {
               if (state is GetMyCommentsLoadingState) {
-                return const PostSheemerWidget();
+                return const PostWithCommentsShimmer();
               } else if (state is GetMyCommentsSuccessState) {
                 if (state.post.isEmpty) {
                   return Center(

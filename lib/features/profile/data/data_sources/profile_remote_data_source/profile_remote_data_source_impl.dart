@@ -148,7 +148,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     // print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/profile/user-content';
-    Map<String, dynamic> queryParameters = {'userId': '$userId'};
+    Map<String, dynamic> queryParameters = {'userId': userId};
 
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
@@ -159,6 +159,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
+    
       return jsonData.map((data) => PostModel.fromJson(data)).toList();
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
@@ -252,7 +253,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.body);
+      final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
       return jsonData
           .map((data) => PostWithCommentsModel.fromJson(data))
           .toList();
@@ -280,8 +281,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      print('data source called');
-      print('response.body: ${response.body}');
       return jsonDecode(response.body)['groups'];
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';

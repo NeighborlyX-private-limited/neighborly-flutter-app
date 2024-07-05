@@ -173,7 +173,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Expanded(
                       child: TabBarView(
                         controller: _tabController,
-                        children: const [
+                        children: [
                           PostSection(),
                           CommentSection(),
                           GroupSection(),

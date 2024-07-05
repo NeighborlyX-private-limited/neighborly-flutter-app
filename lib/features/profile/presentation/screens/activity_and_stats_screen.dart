@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 
 class ActivityAndStatsScreen extends StatefulWidget {
   const ActivityAndStatsScreen({super.key});
@@ -11,6 +13,13 @@ class ActivityAndStatsScreen extends StatefulWidget {
 }
 
 class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    BlocProvider.of<GetProfileBloc>(context)
+        .add(GetProfileButtonPressedEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -95,7 +104,19 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                     ],
                                   ),
                                 ),
-                                Text('12', style: onboardingBlackBody2Style),
+                                BlocBuilder<GetProfileBloc, GetProfileState>(
+                                  builder: (context, state) {
+                                    if (state is GetProfileLoadingState) {
+                                      return const CircularProgressIndicator();
+                                    } else if (state
+                                        is GetProfileSuccessState) {
+                                      return Text(
+                                          state.profile.karma.toString(),
+                                          style: onboardingBlackBody2Style);
+                                    }
+                                    return const SizedBox();
+                                  },
+                                ),
                               ],
                             ),
                           ),
@@ -347,7 +368,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 SvgPicture.asset(
-                                  'assets/map.svg',
+                                  'assets/Map.svg',
                                   width: 84,
                                   height: 84,
                                 ),

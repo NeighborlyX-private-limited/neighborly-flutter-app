@@ -255,6 +255,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               )),
           child: Center(
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SvgPicture.asset(
                   'assets/react3.svg',
@@ -264,14 +265,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                 const SizedBox(
                   width: 3,
                 ),
-                Text(
-                  '${widget.post.commentCount}',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                )
+                widget.post.commentCount != null
+                    ? Text('${widget.post.commentCount}',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ))
+                    : const SizedBox(),
               ],
             ),
           ),

@@ -13,7 +13,7 @@ class PostEntity extends Equatable {
   final num bools;
   final String? proPic;
   final String city;
-  final num commentCount;
+  final num? commentCount;
   final String type;
   final List<dynamic> awardType;
   final List<OptionEntity>? pollOptions;

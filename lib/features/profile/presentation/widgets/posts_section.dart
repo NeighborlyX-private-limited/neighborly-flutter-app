@@ -50,6 +50,7 @@ class _PostSectionState extends State<PostSection> {
               if (state is GetMyPostsLoadingState) {
                 return const PostSheemerWidget();
               } else if (state is GetMyPostsSuccessState) {
+                print('getallmyposts: ${state.post}');
                 if (state.post.isEmpty) {
                   return Center(
                     child: Column(

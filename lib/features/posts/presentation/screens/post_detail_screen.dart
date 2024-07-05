@@ -726,7 +726,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             InkWell(
               onTap: () {
-                context.push('/feedbackScreen/${post.userId}');
+                context.push('/userProfileScreen/${post.userId}');
               },
               child: Row(
                 children: [

@@ -6,6 +6,8 @@ import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/comments_section.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/groups_section.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/posts_section.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/profile_sheemer_widget.dart';
 
@@ -62,7 +64,6 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 title: BlocBuilder<GetUserInfoBloc, GetUserInfoState>(
                   builder: (context, state) {
                     if (state is GetUserInfoSuccessState) {
-                      print('userID: ${state.profile.id}.');
                       return Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
@@ -196,11 +197,11 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               PostSection(
                                 userId: widget.userId,
                               ),
-                              Container(
-                                child: const Text('Doctors'),
+                              CommentSection(
+                                userId: widget.userId,
                               ),
-                              Container(
-                                child: const Text('Gallery'),
+                              GroupSection(
+                                userId: widget.userId,
                               ),
                             ],
                           ),
