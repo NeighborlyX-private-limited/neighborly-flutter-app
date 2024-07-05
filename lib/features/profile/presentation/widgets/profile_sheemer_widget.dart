@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProfileShimmerWidget extends StatelessWidget {
@@ -119,7 +118,7 @@ class ProfileShimmerWidget extends StatelessWidget {
                           highlightColor: Colors.grey[100]!,
                           child: Container(
                             width: 40,
-                           height: 40,
+                            height: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.grey[300],

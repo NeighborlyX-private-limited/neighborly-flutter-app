@@ -179,10 +179,28 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
   }
 
   @override
-  Future<Either<Failure, List<PostWithCommentsEntity>>> getMyComments({String? userId}) async {
+  Future<Either<Failure, List<PostWithCommentsEntity>>> getMyComments(
+      {String? userId}) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getMyComments(userId: userId);
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List>> getMyGroups({String? userId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getMyGroups(userId: userId);
+        print('respository called');
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

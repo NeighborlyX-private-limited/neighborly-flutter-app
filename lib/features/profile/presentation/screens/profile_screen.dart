@@ -7,6 +7,7 @@ import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/comments_section.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/groups_section.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/posts_section.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/profile_sheemer_widget.dart';
 
@@ -172,12 +173,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Expanded(
                       child: TabBarView(
                         controller: _tabController,
-                        children: [
-                          const PostSection(),
-                          const CommentSection(),
-                          Container(
-                            child: const Text('Gallery'),
-                          ),
+                        children: const [
+                          PostSection(),
+                          CommentSection(),
+                          GroupSection(),
                         ],
                       ),
                     ),

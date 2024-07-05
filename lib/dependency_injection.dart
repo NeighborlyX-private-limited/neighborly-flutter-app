@@ -23,6 +23,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_p
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/delete_account_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_comments_usecase.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_groups_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_posts_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_gender_and_dob.dart';
@@ -32,6 +33,7 @@ import 'package:neighborly_flutter_app/features/profile/domain/usecases/send_fee
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
@@ -78,6 +80,26 @@ import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart
 final sl = GetIt.instance;
 
 void init() async {
+  // register repository
+  sl.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<ProfileRepositories>(
+      () => ProfileRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<PostRepositories>(
+      () => PostRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<UploadRepositories>(
+      () => UploadRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  // register datasource
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+      () => AuthRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<PostRemoteDataSource>(
+      () => PostRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<UploadRemoteDataSource>(
+      () => UploadRemoteDataSourceImpl(client: sl()));
+
   // register usecase
   sl.registerLazySingleton(() => SignupWithEmailUsecase(sl()));
   sl.registerLazySingleton(() => LoginWithEmailUsecase(sl()));
@@ -107,26 +129,7 @@ void init() async {
   sl.registerLazySingleton(() => DeleteAccountUsecase(sl()));
   sl.registerLazySingleton(() => GetUserInfoUsecase(sl()));
   sl.registerLazySingleton(() => GetMyCommentsUsecase(sl()));
-
-  // register repository
-  sl.registerLazySingleton<AuthRepository>(
-      () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
-  sl.registerLazySingleton<ProfileRepositories>(
-      () => ProfileRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
-  sl.registerLazySingleton<PostRepositories>(
-      () => PostRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
-  sl.registerLazySingleton<UploadRepositories>(
-      () => UploadRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
-
-  // register datasource
-  sl.registerLazySingleton<AuthRemoteDataSource>(
-      () => AuthRemoteDataSourceImpl(client: sl()));
-  sl.registerLazySingleton<ProfileRemoteDataSource>(
-      () => ProfileRemoteDataSourceImpl(client: sl()));
-  sl.registerLazySingleton<PostRemoteDataSource>(
-      () => PostRemoteDataSourceImpl(client: sl()));
-  sl.registerLazySingleton<UploadRemoteDataSource>(
-      () => UploadRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton(() => GetMyGroupUsecase(sl()));
 
   // register bloc
   sl.registerFactory(() => RegisterWithEmailBloc(registerUseCase: sl()));
@@ -160,6 +163,7 @@ void init() async {
   sl.registerFactory(() => DeleteAccountBloc(deleteAccountUsecase: sl()));
   sl.registerFactory(() => GetUserInfoBloc(getUserInfoUsecase: sl()));
   sl.registerFactory(() => GetMyCommentsBloc(getMyCommentsUsecase: sl()));
+  sl.registerFactory(() => GetMyGroupsBloc(getMyGroupsUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

@@ -5,17 +5,17 @@ import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 
-class PostSection extends StatefulWidget {
+class GroupSection extends StatefulWidget {
   final String? userId;
-  const PostSection({super.key, this.userId});
+  const GroupSection({super.key, this.userId});
 
   @override
-  State<PostSection> createState() => _PostSectionState();
+  State<GroupSection> createState() => _GroupSectionState();
 }
 
-class _PostSectionState extends State<PostSection> {
+class _GroupSectionState extends State<GroupSection> {
   @override
   void initState() {
     super.initState();
@@ -23,16 +23,18 @@ class _PostSectionState extends State<PostSection> {
   }
 
   void _fetchPosts() {
-    var postState = context.read<GetMyPostsBloc>().state;
-    if (postState is! GetMyPostsSuccessState) {
-      BlocProvider.of<GetMyPostsBloc>(context).add(GetMyPostsButtonPressedEvent(
+    var postState = context.read<GetMyGroupsBloc>().state;
+    if (postState is! GetMyGroupsSuccessState) {
+      BlocProvider.of<GetMyGroupsBloc>(context)
+          .add(GetMyGroupsButtonPressedEvent(
         userId: widget.userId,
       ));
+      print('bloc called');
     }
   }
 
   Future<void> _onRefresh() async {
-    BlocProvider.of<GetMyPostsBloc>(context).add(GetMyPostsButtonPressedEvent(
+    BlocProvider.of<GetMyGroupsBloc>(context).add(GetMyGroupsButtonPressedEvent(
       userId: widget.userId,
     ));
   }
@@ -45,35 +47,36 @@ class _PostSectionState extends State<PostSection> {
       ),
       child: RefreshIndicator(
           onRefresh: _onRefresh,
-          child: BlocBuilder<GetMyPostsBloc, GetMyPostsState>(
+          child: BlocBuilder<GetMyGroupsBloc, GetMyGroupsState>(
             builder: (context, state) {
-              if (state is GetMyPostsLoadingState) {
+              if (state is GetMyGroupsLoadingState) {
                 return const PostSheemerWidget();
-              } else if (state is GetMyPostsSuccessState) {
-                if (state.post.isEmpty) {
+              } else if (state is GetMyGroupsSuccessState) {
+                if (state.groups.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Welcome! Your space is empty.',
+                          'No Communities joined yet.',
                           style: onboardingHeading2Style,
                         ),
                         const SizedBox(
                           height: 10,
                         ),
                         Text(
-                          'Create your first post',
+                          'Join your first community',
                           style: bluemediumTextStyleBlack,
                         ),
                       ],
                     ),
                   );
                 }
+
                 return ListView.separated(
-                  itemCount: state.post.length,
+                  itemCount: state.groups.length,
                   itemBuilder: (context, index) {
-                    final post = state.post[index];
+                    final post = state.groups[index];
                     if (post.type == 'post') {
                       return PostWidget(post: post);
                     } else if (post.type == 'poll') {
@@ -89,7 +92,7 @@ class _PostSectionState extends State<PostSection> {
                     );
                   },
                 );
-              } else if (state is GetMyPostsFailureState) {
+              } else if (state is GetMyGroupsFailureState) {
                 if (state.error.contains('Invalid Token')) {
                   context.go('/loginScreen');
                   return const Center(

@@ -233,7 +233,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw ServerException(message: jsonDecode(response.body)['error']);
     }
   }
-  
+
   @override
   Future<List<PostWithCommentsModel>> getMyComments({String? userId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
@@ -253,7 +253,36 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
-      return jsonData.map((data) => PostWithCommentsModel.fromJson(data)).toList();
+      return jsonData
+          .map((data) => PostWithCommentsModel.fromJson(data))
+          .toList();
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<List> getMyGroups({String? userId}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrl/profile/user-groups';
+    Map<String, dynamic> queryParameters = {'userId': userId};
+
+    final response = await client.get(
+      Uri.parse(url).replace(queryParameters: queryParameters),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('data source called');
+      print('response.body: ${response.body}');
+      return jsonDecode(response.body)['groups'];
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
       throw ServerException(message: message);

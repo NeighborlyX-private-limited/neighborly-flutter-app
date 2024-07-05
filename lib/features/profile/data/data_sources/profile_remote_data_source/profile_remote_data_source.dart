@@ -22,6 +22,9 @@ abstract class ProfileRemoteDataSource {
   Future<List<PostWithCommentsModel>> getMyComments({
     String? userId,
   });
+  Future<List<dynamic>> getMyGroups({
+    String? userId,
+  });
   Future<void> sendFeedback({
     required String feedback,
   });

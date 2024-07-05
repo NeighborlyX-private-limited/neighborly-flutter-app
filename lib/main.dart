@@ -22,6 +22,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_pol
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
@@ -130,6 +131,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<GetMyCommentsBloc>(
             create: (context) => di.sl<GetMyCommentsBloc>(),
+          ),
+          BlocProvider<GetMyGroupsBloc>(
+            create: (context) => di.sl<GetMyGroupsBloc>(),
           ),
         ],
         child: MaterialApp.router(

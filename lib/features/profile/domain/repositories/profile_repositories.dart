@@ -27,6 +27,9 @@ abstract class ProfileRepositories {
   Future<Either<Failure, List<PostWithCommentsEntity>>> getMyComments({
     String? userId,
   });
+  Future<Either<Failure, List<dynamic>>> getMyGroups({
+    String? userId,
+  });
   Future<Either<Failure, void>> sendFeedback({
     required String feedback,
   });
