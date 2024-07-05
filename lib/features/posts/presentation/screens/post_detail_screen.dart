@@ -177,7 +177,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             InkWell(
               onTap: () {
-                context.push('/feedbackScreen/${postState.post.userId}');
+                context.push('/userProfileScreen/${postState.post.userId}');
               },
               child: Row(
                 children: [
@@ -353,12 +353,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         String propic =
                             ShardPrefHelper.getUserProfilePicture()!;
                         String username = ShardPrefHelper.getUsername()!;
+                        String userId = ShardPrefHelper.getUserID()!;
                         // Handle sending new comment
                         setState(() {
                           comments.insert(
                               0,
                               CommentModel(
-                                userId: 'random',
+                                userId: userId,
                                 userName: username, // Use actual user name
                                 proPic: propic, // Use actual profile picture
                                 text: _commentController.text,

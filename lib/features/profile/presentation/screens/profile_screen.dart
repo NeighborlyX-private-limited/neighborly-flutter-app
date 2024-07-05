@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/comments_section.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/posts_section.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/profile_sheemer_widget.dart';
 
@@ -173,9 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         controller: _tabController,
                         children: [
                           const PostSection(),
-                          Container(
-                            child: const Text('Doctors'),
-                          ),
+                          const CommentSection(),
                           Container(
                             child: const Text('Gallery'),
                           ),

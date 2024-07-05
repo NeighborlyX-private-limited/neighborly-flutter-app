@@ -163,7 +163,7 @@ final GoRouter router = GoRouter(
         },
       ),
       GoRoute(
-        path: '/feedbackScreen/:userId',
+        path: '/userProfileScreen/:userId',
         name: RouteConstants.userProfileScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
           final String userId = state.pathParameters['userId']!;

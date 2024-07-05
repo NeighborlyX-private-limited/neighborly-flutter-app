@@ -1,5 +1,6 @@
 import 'package:neighborly_flutter_app/core/models/post_model.dart';
 import 'package:neighborly_flutter_app/features/profile/data/models/auth_response_model.dart';
+import 'package:neighborly_flutter_app/features/profile/data/models/post_with_comments_model.dart';
 
 abstract class ProfileRemoteDataSource {
   Future<String> changePassword({
@@ -16,6 +17,9 @@ abstract class ProfileRemoteDataSource {
     String? dob,
   });
   Future<List<PostModel>> getMyPosts({
+    String? userId,
+  });
+  Future<List<PostWithCommentsModel>> getMyComments({
     String? userId,
   });
   Future<void> sendFeedback({

@@ -22,6 +22,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_awa
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/delete_account_usecase.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_comments_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_posts_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_gender_and_dob.dart';
@@ -30,6 +31,7 @@ import 'package:neighborly_flutter_app/features/profile/domain/usecases/logout_u
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/send_feedback_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
@@ -104,6 +106,7 @@ void init() async {
   sl.registerLazySingleton(() => SendFeedbackUsecase(sl()));
   sl.registerLazySingleton(() => DeleteAccountUsecase(sl()));
   sl.registerLazySingleton(() => GetUserInfoUsecase(sl()));
+  sl.registerLazySingleton(() => GetMyCommentsUsecase(sl()));
 
   // register repository
   sl.registerLazySingleton<AuthRepository>(
@@ -156,6 +159,7 @@ void init() async {
   sl.registerFactory(() => SendFeedbackBloc(sendFeedbackUsecase: sl()));
   sl.registerFactory(() => DeleteAccountBloc(deleteAccountUsecase: sl()));
   sl.registerFactory(() => GetUserInfoBloc(getUserInfoUsecase: sl()));
+  sl.registerFactory(() => GetMyCommentsBloc(getMyCommentsUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

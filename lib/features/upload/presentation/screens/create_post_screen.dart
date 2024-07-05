@@ -241,7 +241,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                   _optionControllers[index]
                                                       .text
                                                       .trim(),
-                                              "optionId": index + 1,
                                             },
                                           ),
                                           type: 'poll',

@@ -7,6 +7,7 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/profile/data/data_sources/profile_remote_data_source/profile_remote_data_source.dart';
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/features/profile/data/models/auth_response_model.dart';
+import 'package:neighborly_flutter_app/features/profile/data/models/post_with_comments_model.dart';
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final http.Client client;
@@ -58,7 +59,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         'Content-Type': 'application/json',
         'Cookie': cookieHeader,
       },
-      body: jsonEncode({'homeLocation': location}),
+      body: jsonEncode({'userLocation': location}),
     );
 
     if (response.statusCode != 200) {
@@ -230,6 +231,32 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       throw ServerException(message: jsonDecode(response.body)['error']);
+    }
+  }
+  
+  @override
+  Future<List<PostWithCommentsModel>> getMyComments({String? userId}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrl/profile/user-comments';
+    Map<String, dynamic> queryParameters = {'userId': userId};
+
+    final response = await client.get(
+      Uri.parse(url).replace(queryParameters: queryParameters),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      return jsonData.map((data) => PostWithCommentsModel.fromJson(data)).toList();
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
     }
   }
 }

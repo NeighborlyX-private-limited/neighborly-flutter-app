@@ -4,6 +4,7 @@ import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
 import 'package:neighborly_flutter_app/features/profile/data/data_sources/profile_remote_data_source/profile_remote_data_source.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/entities/post_with_comments_entity.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/repositories/profile_repositories.dart';
 
 class ProfileRepositoriesImpl implements ProfileRepositories {
@@ -166,6 +167,22 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getUserInfo(userId: userId);
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PostWithCommentsEntity>>> getMyComments({String? userId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getMyComments(userId: userId);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

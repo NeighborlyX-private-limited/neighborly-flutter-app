@@ -2,20 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/post_with_comments_widget.dart';
 
-class PostSection extends StatefulWidget {
+class CommentSection extends StatefulWidget {
   final String? userId;
-  const PostSection({super.key, this.userId});
+  const CommentSection({super.key, this.userId});
 
   @override
-  State<PostSection> createState() => _PostSectionState();
+  State<CommentSection> createState() => _CommentSectionState();
 }
 
-class _PostSectionState extends State<PostSection> {
+class _CommentSectionState extends State<CommentSection> {
   @override
   void initState() {
     super.initState();
@@ -23,16 +22,18 @@ class _PostSectionState extends State<PostSection> {
   }
 
   void _fetchPosts() {
-    var postState = context.read<GetMyPostsBloc>().state;
-    if (postState is! GetMyPostsSuccessState) {
-      BlocProvider.of<GetMyPostsBloc>(context).add(GetMyPostsButtonPressedEvent(
+    var postState = context.read<GetMyCommentsBloc>().state;
+    if (postState is! GetMyCommentsSuccessState) {
+      BlocProvider.of<GetMyCommentsBloc>(context)
+          .add(GetMyCommentsButtonPressedEvent(
         userId: widget.userId,
       ));
     }
   }
 
   Future<void> _onRefresh() async {
-    BlocProvider.of<GetMyPostsBloc>(context).add(GetMyPostsButtonPressedEvent(
+    BlocProvider.of<GetMyCommentsBloc>(context)
+        .add(GetMyCommentsButtonPressedEvent(
       userId: widget.userId,
     ));
   }
@@ -45,26 +46,26 @@ class _PostSectionState extends State<PostSection> {
       ),
       child: RefreshIndicator(
           onRefresh: _onRefresh,
-          child: BlocBuilder<GetMyPostsBloc, GetMyPostsState>(
+          child: BlocBuilder<GetMyCommentsBloc, GetMyCommentsState>(
             builder: (context, state) {
-              if (state is GetMyPostsLoadingState) {
+              if (state is GetMyCommentsLoadingState) {
                 return const PostSheemerWidget();
-              } else if (state is GetMyPostsSuccessState) {
+              } else if (state is GetMyCommentsSuccessState) {
                 if (state.post.isEmpty) {
                   return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Welcome! Your space is empty.',
+                          'No comments yet.',
                           style: onboardingHeading2Style,
                         ),
                         const SizedBox(
                           height: 10,
                         ),
                         Text(
-                          'Create your first post',
-                          style: bluemediumTextStyleBlack,
+                          'When you comment on photos and polls, your comments will appear here.',
+                          style: mediumTextStyleBlack,
                         ),
                       ],
                     ),
@@ -74,14 +75,10 @@ class _PostSectionState extends State<PostSection> {
                   itemCount: state.post.length,
                   itemBuilder: (context, index) {
                     final post = state.post[index];
-                    if (post.type == 'post') {
-                      return PostWidget(post: post);
-                    } else if (post.type == 'poll') {
-                      return PollWidget(
-                        post: post,
-                      );
-                    }
-                    return const SizedBox();
+
+                    return PostWithCommentsWidget(
+                      post: post,
+                    );
                   },
                   separatorBuilder: (BuildContext context, int index) {
                     return const Padding(
@@ -89,7 +86,7 @@ class _PostSectionState extends State<PostSection> {
                     );
                   },
                 );
-              } else if (state is GetMyPostsFailureState) {
+              } else if (state is GetMyCommentsFailureState) {
                 if (state.error.contains('Invalid Token')) {
                   context.go('/loginScreengin');
                   return const Center(

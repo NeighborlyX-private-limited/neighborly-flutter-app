@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
 import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/entities/post_with_comments_entity.dart';
 
 abstract class ProfileRepositories {
   Future<Either<Failure, String>> changePassword({
@@ -21,6 +22,9 @@ abstract class ProfileRepositories {
     required String userId,
   });
   Future<Either<Failure, List<PostEntity>>> getMyPosts({
+    String? userId,
+  });
+  Future<Either<Failure, List<PostWithCommentsEntity>>> getMyComments({
     String? userId,
   });
   Future<Either<Failure, void>> sendFeedback({
