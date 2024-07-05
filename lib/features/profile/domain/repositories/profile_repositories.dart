@@ -19,7 +19,9 @@ abstract class ProfileRepositories {
   });
 
   Future<Either<Failure, List<PostEntity>>> getMyPosts();
-
+  Future<Either<Failure, void>> sendFeedback({
+    required String feedback,
+  });
   Future<Either<Failure, AuthResponseEntity>> getProfile();
   Future<Either<Failure, void>> logout();
 }

@@ -17,6 +17,7 @@ class RouteConstants {
   static const String settingsScreenRouteName = 'settingsScreen';
   static const String securityScreenRouteName = 'securityScreen';
   static const String postScreenRouteName = 'postScreen';
+  static const String feedbackScreenRouteName =  'feedbackScreen';
   static const String activityAndStatsScreenRouteName =
       'activityAndStatsScreen';
 }

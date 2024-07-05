@@ -123,4 +123,20 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> sendFeedback({required String feedback}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.sendFeedback(feedback: feedback);
+        return const Right(null);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
 }

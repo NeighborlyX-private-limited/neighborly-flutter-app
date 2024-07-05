@@ -25,11 +25,13 @@ import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_p
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_profile_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_user_info_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/logout_usecase.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/usecases/send_feedback_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_file_usecase.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
@@ -95,6 +97,7 @@ void init() async {
   sl.registerLazySingleton(() => GetProfileUsecase(sl()));
   sl.registerLazySingleton(() => LogoutUsecase(sl()));
   sl.registerLazySingleton(() => GetMyPostsUsecase(sl()));
+  sl.registerLazySingleton(() => SendFeedbackUsecase(sl()));
 
   // register repository
   sl.registerLazySingleton<AuthRepository>(
@@ -144,6 +147,7 @@ void init() async {
   sl.registerFactory(() => GetProfileBloc(getProfileUsecase: sl()));
   sl.registerFactory(() => LogoutBloc(logoutUsecase: sl()));
   sl.registerFactory(() => GetMyPostsBloc(getMyPostsUsecase: sl()));
+  sl.registerFactory(() => SendFeedbackBloc(sendFeedbackUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

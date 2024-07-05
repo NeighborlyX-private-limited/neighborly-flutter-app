@@ -16,7 +16,9 @@ abstract class ProfileRemoteDataSource {
     String? dob,
   });
   Future<List<PostModel>> getMyPosts();
-
+  Future<void> sendFeedback({
+    required String feedback,
+  });
   Future<AuthResponseModel> getProfile();
   Future<void> logout();
 }

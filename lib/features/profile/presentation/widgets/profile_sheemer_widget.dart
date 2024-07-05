@@ -119,7 +119,7 @@ class ProfileShimmerWidget extends StatelessWidget {
                           highlightColor: Colors.grey[100]!,
                           child: Container(
                             width: 40,
-                            height: 40,
+                           height: 40,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: Colors.grey[300],
