@@ -24,14 +24,14 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_pol
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/delete_account_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_posts_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_profile_usecase.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_user_info_usecase.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_gender_and_dob.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/logout_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/send_feedback_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_file_usecase.dart';
@@ -95,7 +95,7 @@ void init() async {
   sl.registerLazySingleton(() => VotePollUsecase(sl()));
   sl.registerLazySingleton(() => FetchCommentReplyUsecase(sl()));
   sl.registerLazySingleton(() => GiveAwardUsecase(sl()));
-  sl.registerLazySingleton(() => GetUserInfoUsecase(sl()));
+  sl.registerLazySingleton(() => GetGenderAndDOBUsecase(sl()));
   sl.registerLazySingleton(() => GetProfileUsecase(sl()));
   sl.registerLazySingleton(() => LogoutUsecase(sl()));
   sl.registerLazySingleton(() => GetMyPostsUsecase(sl()));
@@ -146,7 +146,7 @@ void init() async {
   sl.registerFactory(
       () => FetchCommentReplyBloc(fetchCommentReplyUsecase: sl()));
   sl.registerFactory(() => GiveAwardBloc(giveAwardUsecase: sl()));
-  sl.registerFactory(() => GetUserInfoBloc(getUserInfoUsecase: sl()));
+  sl.registerFactory(() => GetGenderAndDOBBloc(getGenderAndDOBUsecase: sl()));
   sl.registerFactory(() => GetProfileBloc(getProfileUsecase: sl()));
   sl.registerFactory(() => LogoutBloc(logoutUsecase: sl()));
   sl.registerFactory(() => GetMyPostsBloc(getMyPostsUsecase: sl()));

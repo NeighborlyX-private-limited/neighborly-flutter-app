@@ -13,7 +13,7 @@ abstract class ProfileRepositories {
   Future<Either<Failure, void>> updateLocation({
     required List<num> location,
   });
-  Future<Either<Failure, void>> getUserInfo({
+  Future<Either<Failure, void>> getGenderAndDOB({
     String? gender,
     String? dob,
   });

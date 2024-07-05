@@ -67,7 +67,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<void> getUserInfo({String? gender, String? dob}) async {
+  Future<void> getGenderAndDOB({String? gender, String? dob}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');

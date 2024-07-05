@@ -5,6 +5,7 @@ import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
 import 'package:neighborly_flutter_app/features/profile/data/data_sources/profile_remote_data_source/profile_remote_data_source.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/repositories/profile_repositories.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_gender_and_dob.dart';
 
 class ProfileRepositoriesImpl implements ProfileRepositories {
   final ProfileRemoteDataSource remoteDataSource;
@@ -57,11 +58,11 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> getUserInfo(
+  Future<Either<Failure, void>> getGenderAndDOB(
       {String? gender, String? dob}) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.getUserInfo(
+        await remoteDataSource.getGenderAndDOB(
           gender: gender,
           dob: dob,
         );

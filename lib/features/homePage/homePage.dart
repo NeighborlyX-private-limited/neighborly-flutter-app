@@ -10,7 +10,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/widg
 import 'package:neighborly_flutter_app/features/homePage/widgets/dob_picker_widget.dart';
 import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/profile_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
 
@@ -296,9 +296,9 @@ class _MainPageState extends State<MainPage> {
                     isMonthFilled: true,
                     isYearFilled: true),
                 const SizedBox(height: 45),
-                BlocConsumer<GetUserInfoBloc, GetUserInfoState>(
-                  listener: (BuildContext context, GetUserInfoState state) {
-                    if (state is GetUserInfoFailureState) {
+                BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
+                  listener: (BuildContext context, GetGenderAndDOBState state) {
+                    if (state is GetGenderAndDOBFailureState) {
                       // if (state.error.contains('email')) {
                       //   setState(() {
                       //     emailAlreadyExists = true;
@@ -314,12 +314,12 @@ class _MainPageState extends State<MainPage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.error)),
                       );
-                    } else if (state is GetUserInfoSuccessState) {
+                    } else if (state is GetGenderAndDOBSuccessState) {
                       context.pop();
                     }
                   },
                   builder: (context, state) {
-                    if (state is GetUserInfoLoadingState) {
+                    if (state is GetGenderAndDOBLoadingState) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
@@ -345,8 +345,8 @@ class _MainPageState extends State<MainPage> {
                           // setState(() {
                           //   isEmailValid = true;
                           // });
-                          BlocProvider.of<GetUserInfoBloc>(context).add(
-                            GetUserInfoButtonPressedEvent(
+                          BlocProvider.of<GetGenderAndDOBBloc>(context).add(
+                            GetGenderAndDOBButtonPressedEvent(
                               dob: formatDOB(
                                   _dateController.text.trim(),
                                   _monthController.text.trim(),

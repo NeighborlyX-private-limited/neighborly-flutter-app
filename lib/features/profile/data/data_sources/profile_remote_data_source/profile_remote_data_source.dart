@@ -11,7 +11,7 @@ abstract class ProfileRemoteDataSource {
   Future<void> updateLocation({
     required List<num> location,
   });
-  Future<void> getUserInfo({
+  Future<void> getGenderAndDOB({
     String? gender,
     String? dob,
   });
