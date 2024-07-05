@@ -15,11 +15,16 @@ abstract class ProfileRemoteDataSource {
     String? gender,
     String? dob,
   });
-  Future<List<PostModel>> getMyPosts();
+  Future<List<PostModel>> getMyPosts({
+    String? userId,
+  });
   Future<void> sendFeedback({
     required String feedback,
   });
   Future<AuthResponseModel> getProfile();
+  Future<AuthResponseModel> getUserInfo({
+    required String userId,
+  });
   Future<void> logout();
   Future<void> deleteAccount();
 }

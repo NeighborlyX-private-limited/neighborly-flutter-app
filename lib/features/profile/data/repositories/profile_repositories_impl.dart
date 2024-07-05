@@ -5,7 +5,6 @@ import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/core/network/network_info.dart';
 import 'package:neighborly_flutter_app/features/profile/data/data_sources/profile_remote_data_source/profile_remote_data_source.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/repositories/profile_repositories.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_gender_and_dob.dart';
 
 class ProfileRepositoriesImpl implements ProfileRepositories {
   final ProfileRemoteDataSource remoteDataSource;
@@ -110,10 +109,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
   }
 
   @override
-  Future<Either<Failure, List<PostEntity>>> getMyPosts() async {
+  Future<Either<Failure, List<PostEntity>>> getMyPosts({
+    String? userId,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getMyPosts();
+        final result = await remoteDataSource.getMyPosts(
+          userId: userId,
+        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -147,6 +150,23 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
       try {
         await remoteDataSource.deleteAccount();
         return const Right(null);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AuthResponseEntity>> getUserInfo(
+      {required String userId}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getUserInfo(userId: userId);
+        return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
       } catch (e) {

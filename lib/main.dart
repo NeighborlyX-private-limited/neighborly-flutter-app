@@ -24,6 +24,7 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
@@ -122,6 +123,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<DeleteAccountBloc>(
             create: (context) => di.sl<DeleteAccountBloc>(),
+          ),
+          BlocProvider<GetUserInfoBloc>(
+            create: (context) => di.sl<GetUserInfoBloc>(),
           ),
         ],
         child: MaterialApp.router(

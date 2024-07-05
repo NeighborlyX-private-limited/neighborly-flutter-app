@@ -17,8 +17,12 @@ abstract class ProfileRepositories {
     String? gender,
     String? dob,
   });
-
-  Future<Either<Failure, List<PostEntity>>> getMyPosts();
+  Future<Either<Failure, AuthResponseEntity>> getUserInfo({
+    required String userId,
+  });
+  Future<Either<Failure, List<PostEntity>>> getMyPosts({
+    String? userId,
+  });
   Future<Either<Failure, void>> sendFeedback({
     required String feedback,
   });

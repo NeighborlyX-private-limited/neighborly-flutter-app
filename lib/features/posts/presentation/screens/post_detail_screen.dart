@@ -82,7 +82,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           backgroundColor: Colors.white,
           leading: InkWell(
             child: const Icon(Icons.arrow_back_ios, size: 15),
-            onTap: () => Navigator.of(context).pop(),
+            onTap: () => context.pop(),
           ),
           centerTitle: true,
           title: Text(widget.isPost ? 'Post' : 'Poll'),
@@ -175,69 +175,74 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: postState.post.proPic != null
-                        ? Image.network(
-                            postState.post.proPic!,
-                            fit: BoxFit.contain,
-                          )
-                        : Image.asset(
-                            'assets/second_pro_pic.png',
-                            fit: BoxFit.contain,
-                          )),
-                const SizedBox(
-                  width: 12,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          postState.post.userName,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 14),
-                        ),
-                        const SizedBox(
-                          width: 6,
-                        ),
-                        Container(
-                          width: 4,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey[500],
+            InkWell(
+              onTap: () {
+                context.push('/feedbackScreen/${postState.post.userId}');
+              },
+              child: Row(
+                children: [
+                  Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: postState.post.proPic != null
+                          ? Image.network(
+                              postState.post.proPic!,
+                              fit: BoxFit.contain,
+                            )
+                          : Image.asset(
+                              'assets/second_pro_pic.png',
+                              fit: BoxFit.contain,
+                            )),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            postState.post.userName,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 14),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 6,
-                        ),
-                        Text(
-                          formatTimeDifference(postState.post.createdAt),
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 14,
+                          const SizedBox(
+                            width: 6,
                           ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      postState.post.city,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w400,
-                          color: Colors.grey[500],
-                          fontSize: 14),
-                    ),
-                  ],
-                ),
-              ],
+                          Container(
+                            width: 4,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          Text(
+                            formatTimeDifference(postState.post.createdAt),
+                            style: TextStyle(
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        postState.post.city,
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.grey[500],
+                            fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
             InkWell(
                 onTap: () {
@@ -718,24 +723,29 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(shape: BoxShape.circle),
-                  child: post.proPic != null
-                      ? Image.network(post.proPic!, fit: BoxFit.contain)
-                      : const Image(
-                          image: AssetImage('assets/second_pro_pic.png'),
-                          fit: BoxFit.contain,
-                        ),
-                ),
-                const SizedBox(width: 12),
-                Text(post.userName,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, fontSize: 14)),
-              ],
+            InkWell(
+              onTap: () {
+                context.push('/feedbackScreen/${post.userId}');
+              },
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(shape: BoxShape.circle),
+                    child: post.proPic != null
+                        ? Image.network(post.proPic!, fit: BoxFit.contain)
+                        : const Image(
+                            image: AssetImage('assets/second_pro_pic.png'),
+                            fit: BoxFit.contain,
+                          ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(post.userName,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600, fontSize: 14)),
+                ],
+              ),
             ),
             InkWell(
                 onTap: () {

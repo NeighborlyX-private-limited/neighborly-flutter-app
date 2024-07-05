@@ -16,7 +16,9 @@ class GetMyPostsBloc extends Bloc<GetMyPostsEvent, GetMyPostsState> {
         Emitter<GetMyPostsState> emit) async {
       emit(GetMyPostsLoadingState());
 
-      final result = await _getMyPostsUsecase.call();
+      final result = await _getMyPostsUsecase.call(
+        userId: event.userId,
+      );
 
       result.fold(
           (error) => emit(GetMyPostsFailureState(error: error.toString())),

@@ -8,7 +8,8 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 
 class PostSection extends StatefulWidget {
-  const PostSection({super.key});
+  final String? userId;
+  const PostSection({super.key, this.userId});
 
   @override
   State<PostSection> createState() => _PostSectionState();

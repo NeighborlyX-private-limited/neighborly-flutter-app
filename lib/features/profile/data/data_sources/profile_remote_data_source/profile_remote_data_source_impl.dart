@@ -98,6 +98,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     // print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/profile/user-info';
+
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
@@ -136,9 +137,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<List<PostModel>> getMyPosts() async {
+  Future<List<PostModel>> getMyPosts({
+    String? userId,
+  }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
-    String? userId = ShardPrefHelper.getUserID();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
@@ -203,6 +205,30 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     );
 
     if (response.statusCode != 200) {
+      throw ServerException(message: jsonDecode(response.body)['error']);
+    }
+  }
+
+  @override
+  Future<AuthResponseModel> getUserInfo({required String userId}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrl/profile/user-info';
+    Map<String, dynamic> queryParameters = {'userId': userId};
+
+    final response = await client.get(
+      Uri.parse(url).replace(queryParameters: queryParameters),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return AuthResponseModel.fromJson(jsonDecode(response.body));
+    } else {
       throw ServerException(message: jsonDecode(response.body)['error']);
     }
   }

@@ -20,4 +20,5 @@ class RouteConstants {
   static const String feedbackScreenRouteName =  'feedbackScreen';
   static const String activityAndStatsScreenRouteName =
       'activityAndStatsScreen';
+  static const String userProfileScreenRouteName = 'userProfileScreen';   
 }
