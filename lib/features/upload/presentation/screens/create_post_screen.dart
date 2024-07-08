@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import '../../../../core/theme/text_style.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
@@ -34,6 +37,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   late FocusNode _titleFocusNode; // Declare the FocusNode
   late FocusNode _contentFocusNode;
   bool _isKeyboardVisible = false; // Track keyboard visibility
+
+  File? _selectedImage; // Store the selected image
 
   @override
   void initState() {
@@ -119,10 +124,25 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+      });
+    }
+  }
+
+  void _removeImage() {
+    setState(() {
+      _selectedImage = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    String? url = ShardPrefHelper.getImageUrl();
-
     return SafeArea(
       child: Scaffold(
           backgroundColor: Colors.white,
@@ -132,7 +152,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               FocusScope.of(context).unfocus();
             },
             child: SingleChildScrollView(
-              // Make content scrollable
               child: Column(
                 children: [
                   Padding(
@@ -147,6 +166,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             if (_condition == 'post') {
                               _titleController.clear();
                               _contentController.clear();
+                              _selectedImage = null; // Clear selected image
                             } else {
                               setState(() {
                                 _condition = 'post';
@@ -162,6 +182,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                       SnackBar(content: Text(state.error)),
                                     );
                                   } else if (state is UploadPostSuccessState) {
+                                    _contentController.clear();
+                                    _titleController.clear();
+                                    _removeImage();
                                     // context.go('/homescreen');
                                   }
                                 },
@@ -187,13 +210,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           city: placemarks[0].locality ?? '',
                                           content:
                                               _contentController.text.trim(),
-                                          location: location,
                                           title: _titleController.text.trim(),
                                           type: 'post',
+                                          multimedia: _selectedImage,
+                                          allowMultipleVotes: false,
                                         ),
                                       );
-                                      _contentController.clear();
-                                      _titleController.clear();
                                     },
                                     isActive: isTitleFilled,
                                   );
@@ -207,6 +229,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     );
                                   } else if (state is UploadPostSuccessState) {
                                     _questionController.clear();
+
+                                    _removeImage();
                                     for (var controller in _optionControllers) {
                                       controller.clear();
                                     }
@@ -232,6 +256,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           .add(
                                         UploadPostPressedEvent(
                                           city: placemarks[0].locality ?? '',
+                                          multimedia: _selectedImage,
                                           title:
                                               _questionController.text.trim(),
                                           options: List.generate(
@@ -244,7 +269,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                             },
                                           ),
                                           type: 'poll',
-                                          location: location,
                                           allowMultipleVotes:
                                               allowMultipleVotes,
                                         ),
@@ -257,13 +281,44 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ],
                     ),
                   ),
-                  if (_condition == 'post')
-                    url == null
-                        ? Container()
-                        : Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.network(url, fit: BoxFit.contain),
+                  if (_selectedImage != null) // Preview selected image
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(16),
+                            ),
+                            child: Image.file(
+                              _selectedImage!,
+                              width: double.infinity,
+                              height: 260,
+                              fit: BoxFit.cover,
+                            ),
                           ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: GestureDetector(
+                              onTap: _removeImage,
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
                   if (_condition == 'post')
                     Padding(
                       padding: const EdgeInsets.only(
@@ -376,7 +431,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ],
                       ),
                     ),
-                  SizedBox(
+                  const SizedBox(
                       height: 200), // Space to accommodate the bottom sheet
                 ],
               ),
@@ -392,9 +447,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       InkWell(
-                        onTap: () {
-                          context.push('/media-preview');
-                        },
+                        onTap: _pickImage,
                         child: Row(
                           children: [
                             SvgPicture.asset('assets/add_a_photo.svg'),
@@ -523,7 +576,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 focusNode: _optionFocusNodes[index], // Attach the FocusNode
                 decoration: InputDecoration(
                   labelText: 'Option ${index + 1}',
-                  border: OutlineInputBorder(),
+                  border: const OutlineInputBorder(),
                 ),
               ),
               if (index >=

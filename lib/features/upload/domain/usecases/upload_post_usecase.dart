@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/repositories/upload_repositories.dart';
@@ -11,11 +13,10 @@ class UploadPostUsecase {
     required String title,
     String? content,
     required String type,
-    String? multimedia,
-    required List<num> location,
+    File? multimedia,
     required String city,
     List<dynamic>? options,
-    bool? allowMultipleVotes,
+    required bool allowMultipleVotes,
   }) async {
     return await repository.uploadPost(
       title: title,
@@ -23,7 +24,6 @@ class UploadPostUsecase {
       type: type,
       multimedia: multimedia,
       allowMultipleVotes: allowMultipleVotes,
-      location: location,
       city: city,
       options: options,
     );

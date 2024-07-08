@@ -4,23 +4,21 @@ abstract class UploadPostEvent extends Equatable {}
 
 class UploadPostPressedEvent extends UploadPostEvent {
   final String? content;
-  final String? multimedia;
-  final List<num> location;
+  final File? multimedia;
   final String title;
   final String type;
   final String city;
   final List<dynamic>? options;
-  final bool? allowMultipleVotes;
+  final bool allowMultipleVotes;
 
   UploadPostPressedEvent({
     required this.title,
     this.content,
     required this.type,
     this.multimedia,
-    required this.location,
     required this.city,
     this.options,
-    this.allowMultipleVotes,
+    required this.allowMultipleVotes,
   });
 
   @override
@@ -29,7 +27,6 @@ class UploadPostPressedEvent extends UploadPostEvent {
         content,
         type,
         multimedia,
-        location,
         allowMultipleVotes,
         city,
         options,

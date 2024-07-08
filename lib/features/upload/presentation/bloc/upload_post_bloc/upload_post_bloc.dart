@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_post_usecase.dart';
@@ -16,14 +18,14 @@ class UploadPostBloc extends Bloc<UploadPostEvent, UploadPostState> {
       emit(UploadPostLoadingState());
 
       final result = await _uploadPostUsecase.call(
-          title: event.title,
-          content: event.content,
-          type: event.type,
-          multimedia: event.multimedia,
-          city: event.city,
-          allowMultipleVotes: event.allowMultipleVotes,
-          options: event.options,
-          location: event.location);
+        title: event.title,
+        content: event.content,
+        type: event.type,
+        multimedia: event.multimedia,
+        city: event.city,
+        allowMultipleVotes: event.allowMultipleVotes,
+        options: event.options,
+      );
 
       result.fold(
           (error) => emit(UploadPostFailureState(error: error.toString())),

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/entities/option_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class OptionCard extends StatefulWidget {
   final OptionEntity option;
@@ -89,7 +88,7 @@ class _OptionCardState extends State<OptionCard> {
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Stack(
           children: [
-            // Background container that animates width based on the selection
+          
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               decoration: BoxDecoration(

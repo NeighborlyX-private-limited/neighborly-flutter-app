@@ -21,11 +21,10 @@ class UploadRepositoriesImpl implements UploadRepositories {
     required String title,
     String? content,
     required String type,
-    String? multimedia,
-    required List<num> location,
+    File? multimedia,
     required String city,
-    bool? allowMultipleVotes,
     List<dynamic>? options,
+    required bool allowMultipleVotes,
   }) async {
     if (await networkInfo.isConnected) {
       try {
@@ -34,7 +33,6 @@ class UploadRepositoriesImpl implements UploadRepositories {
           content: content,
           type: type,
           multimedia: multimedia,
-          location: location,
           allowMultipleVotes: allowMultipleVotes,
           city: city,
           options: options,

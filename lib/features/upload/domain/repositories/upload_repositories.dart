@@ -8,11 +8,10 @@ abstract class UploadRepositories {
     required String title,
     String? content,
     required String type,
-    String? multimedia,
-    required List<num> location,
+    File? multimedia,
     required String city,
     List<dynamic>? options,
-    bool? allowMultipleVotes,
+    required bool allowMultipleVotes,
   });
   Future<Either<Failure, String>> uploadFile({required File file});
 }

@@ -18,12 +18,12 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     required String title,
     String? content,
     required String type,
-    String? multimedia,
-    required List<num> location,
+    File? multimedia,
     required String city,
     List<dynamic>? options,
-    bool? allowMultipleVotes,
+    required bool allowMultipleVotes,
   }) async {
+    // Retrieve cookies
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
@@ -31,28 +31,37 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/create-post';
 
-    final response = await client.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
-      },
-      body: jsonEncode({
-        'title': title,
-        'content': content,
-        'type': type,
-        'multimedia': multimedia,
-        'location': location,
-        'city': city,
-        'pollOptions': options,
-        'allowMultipleVotes': allowMultipleVotes,
-      }),
-    );
+    // Create a multipart request
+    final request = http.MultipartRequest('POST', Uri.parse(url))
+      ..headers['Cookie'] = cookieHeader
+      ..fields['title'] = title
+      ..fields['content'] = content ?? ''
+      ..fields['type'] = type
+      ..fields['city'] = city
+      ..fields['pollOptions'] = jsonEncode(options ?? [])
+      ..fields['allowMultipleVotes'] = allowMultipleVotes.toString();
+
+    // Add multimedia file if available
+    if (multimedia != null) {
+      request.files.add(
+        http.MultipartFile(
+          'file', // Field name for the file
+          multimedia.readAsBytes().asStream(),
+          multimedia.lengthSync(),
+          filename: multimedia.path.split('/').last,
+        ),
+      );
+    }
+
+    // Send the request and handle the response
+    final response = await request.send();
+    final responseString = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
-      return;
+      print('Post uploaded successfully');
     } else {
-      throw ServerException(message: jsonDecode(response.body)['error']);
+      final errorMessage = jsonDecode(responseString)['error'];
+      throw ServerException(message: errorMessage);
     }
   }
 

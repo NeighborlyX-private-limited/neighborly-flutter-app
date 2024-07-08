@@ -367,7 +367,7 @@ class PollWidget extends StatelessWidget {
                           onTap: () {
                             context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
-                                    type: 'post',
+                                    type: 'content',
                                     postId: post.id,
                                     reason: reportReasons[0]));
                           },
@@ -388,7 +388,7 @@ class PollWidget extends StatelessWidget {
                           onTap: () {
                             context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
-                                    type: 'post',
+                                    type: 'content',
                                     postId: post.id,
                                     reason: reportReasons[1]));
                           },
@@ -408,7 +408,7 @@ class PollWidget extends StatelessWidget {
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
-                                  type: 'post',
+                                  type: 'content',
                                   postId: post.id,
                                   reason: reportReasons[2])),
                           child: Row(
@@ -427,7 +427,7 @@ class PollWidget extends StatelessWidget {
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
-                                  type: 'post',
+                                  type: 'content',
                                   postId: post.id,
                                   reason: reportReasons[3])),
                           child: Row(
@@ -446,7 +446,7 @@ class PollWidget extends StatelessWidget {
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
-                                  type: 'post',
+                                  type: 'content',
                                   postId: post.id,
                                   reason: reportReasons[4])),
                           child: Row(
