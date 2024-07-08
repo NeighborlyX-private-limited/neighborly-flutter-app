@@ -7,13 +7,13 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_pol
 class OptionCard extends StatefulWidget {
   final OptionEntity option;
   final double totalVotes;
-  final num pollId; // Add pollId to uniquely identify each poll's options
+  final num pollId;
 
   const OptionCard({
     required this.totalVotes,
     super.key,
     required this.option,
-    required this.pollId, // Accept pollId as a parameter
+    required this.pollId,
   });
 
   @override
@@ -31,10 +31,8 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   Future<void> _loadSelectionState() async {
+    final userID = ShardPrefHelper.getUserID();
     setState(() {
-      // Create a unique key using pollId and optionId
-      final userID = ShardPrefHelper.getUserID();
-
       isSelected = ShardPrefHelper.getPollVote(
             userID!,
             widget.pollId,
@@ -52,9 +50,7 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   Future<void> _saveSelectionState() async {
-    // Create a unique key using pollId and optionId
     final userID = ShardPrefHelper.getUserID();
-
     ShardPrefHelper.setPollVote(
         userID!, widget.pollId, widget.option.optionId, isSelected);
   }
@@ -72,7 +68,7 @@ class _OptionCardState extends State<OptionCard> {
               ) /
               100
           : 0.0;
-      _saveSelectionState(); // Save the selection state
+      _saveSelectionState();
     });
   }
 
@@ -81,18 +77,24 @@ class _OptionCardState extends State<OptionCard> {
     return InkWell(
       onTap: () {
         _toggleSelection();
-        BlocProvider.of<VotePollBloc>(context).add(VotePollButtonPressedEvent(
-            pollId: widget.pollId, optionId: widget.option.optionId));
+        BlocProvider.of<VotePollBloc>(context).add(
+          VotePollButtonPressedEvent(
+            pollId: widget.pollId,
+            optionId: widget.option.optionId,
+          ),
+        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: Stack(
           children: [
-          
+            // Background container that animates width based on the selection
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 90, 92, 245),
+                color: isSelected
+                    ? const Color.fromARGB(255, 90, 92, 245)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(4),
               ),
               width: MediaQuery.of(context).size.width * filledPercentage,

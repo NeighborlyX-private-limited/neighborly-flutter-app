@@ -20,8 +20,6 @@ class PollWidget extends StatelessWidget {
       bottomSheet(context);
     }
 
-    num selectedOptions = 0;
-
     return InkWell(
       onTap: () {
         context.push('/post-detail/${post.id}/${false}/${post.userId}');

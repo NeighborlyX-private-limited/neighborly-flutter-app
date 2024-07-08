@@ -13,6 +13,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/scre
 import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/activity_and_stats_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/communities_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/feedback_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/security_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/setting_screen.dart';
@@ -160,6 +161,13 @@ final GoRouter router = GoRouter(
         name: RouteConstants.feedbackScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
           return const FeedbackScreen();
+        },
+      ),
+      GoRoute(
+        path: '/communitiesScreen',
+        name: RouteConstants.communitiesScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const CommunitiesScreen();
         },
       ),
       GoRoute(

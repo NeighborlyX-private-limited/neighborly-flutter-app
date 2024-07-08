@@ -74,7 +74,9 @@ class SettingScreen extends StatelessWidget {
               height: 20,
             ),
             InkWell(
-              onTap: () {},
+              onTap: () {
+                context.push('/communitiesScreen');
+              },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
