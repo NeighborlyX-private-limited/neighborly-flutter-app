@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
@@ -38,6 +37,23 @@ class _ProfileScreenState extends State<ProfileScreen>
   void _fetchProfile() {
     BlocProvider.of<GetProfileBloc>(context)
         .add(GetProfileButtonPressedEvent());
+  }
+
+  String checkStringInList(String str) {
+    switch (str) {
+      case 'Local Legend':
+        return 'assets/Local_Legend.svg';
+      case 'Sunflower':
+        return 'assets/Sunflower.svg';
+      case 'Streetlight':
+        return 'assets/Streetlight.svg';
+      case 'Park Bench':
+        return 'assets/Park_Bench.svg';
+      case 'Map':
+        return 'assets/Map.svg';
+      default:
+        return 'assets/react7.png';
+    }
   }
 
   @override
@@ -77,24 +93,55 @@ class _ProfileScreenState extends State<ProfileScreen>
                   children: [
                     // Profile image
                     Center(
-                      child: Container(
-                        width: 90,
-                        height: 90,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: Image.network(
-                          state.profile.picture,
-                          fit: BoxFit.contain,
-                        ),
+                      child: Stack(
+                        children: [
+                          ClipOval(
+                            child: Container(
+                              width: 90,
+                              height: 90,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: Image.network(
+                                state.profile.picture,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: Container(
+                              width: 24,
+                              height: 24,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                              ),
+                              child: SvgPicture.asset(
+                                checkStringInList(
+                                    state.profile.mostProminentAward!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+
                     const SizedBox(height: 10),
                     Text(
                       state.profile.username,
                       style: greyonboardingBody1Style,
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 2),
+                    state.profile.mostProminentAward != null
+                        ? Text(
+                            state.profile.mostProminentAward!,
+                            style: mediumGreyTextStyleBlack,
+                          )
+                        : const SizedBox(),
+                    const SizedBox(height: 2),
                     state.profile.bio != null
                         ? Text(
                             state.profile.bio!,
@@ -173,7 +220,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     Expanded(
                       child: TabBarView(
                         controller: _tabController,
-                        children: [
+                        children: const [
                           PostSection(),
                           CommentSection(),
                           GroupSection(),

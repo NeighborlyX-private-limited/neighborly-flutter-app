@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/text_field_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/button_widget.dart';
 
@@ -16,8 +18,8 @@ class SettingScreen extends StatelessWidget {
       logoutBottomSheet(context);
     }
 
-    void showdeleteBottomSheet() {
-      deleteBottomSheet(context);
+    void showVerifyUsernameBottomSheet() {
+      verifyUsernameBottomSheet(context);
     }
 
     return SafeArea(
@@ -175,7 +177,8 @@ class SettingScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                showdeleteBottomSheet();
+                showVerifyUsernameBottomSheet();
+                // showdeleteBottomSheet();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -224,6 +227,125 @@ class SettingScreen extends StatelessWidget {
         ),
       ),
     ));
+  }
+
+  Future<void> verifyUsernameBottomSheet(BuildContext context) {
+    void showDeleteBottomSheet() {
+      deleteBottomSheet(context);
+    }
+
+    TextEditingController _userNameController = TextEditingController();
+    bool isUserNameFilled = false;
+    bool isUsernameWrong = false;
+
+    return showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return DraggableScrollableSheet(
+              expand: false,
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
+                return SingleChildScrollView(
+                  controller: scrollController,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(40),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Center(
+                          child: Text(
+                            'Verify your username.',
+                            style: onboardingHeading2Style,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFieldWidget(
+                          border: true,
+                          onChanged: (value) {
+                            setState(() {
+                              isUserNameFilled =
+                                  _userNameController.text.trim().isNotEmpty;
+                              isUsernameWrong =
+                                  false; // Reset error message on change
+                            });
+                          },
+                          controller: _userNameController,
+                          lableText: 'Enter your username',
+                          isPassword: false,
+                        ),
+                        isUsernameWrong
+                            ? const Text(
+                                'Wrong username',
+                                textAlign: TextAlign.left,
+                                style: TextStyle(color: Colors.red),
+                              )
+                            : const SizedBox(),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ButtonWidget(
+                              color: const Color(0xffF5F5F5),
+                              text: 'Cancel',
+                              textColor: Colors.black,
+                              onTapListener: () {
+                                Navigator.pop(context);
+                              },
+                              isActive: isUserNameFilled,
+                            ),
+                            ButtonWidget(
+                              color: AppColors.primaryColor,
+                              text: 'Verify',
+                              textColor: Colors.white,
+                              onTapListener: () {
+                                String? userName =
+                                    ShardPrefHelper.getUsername();
+
+                                if (_userNameController.text.trim() ==
+                                    userName) {
+                                  Navigator.pop(context);
+                                  showDeleteBottomSheet();
+                                } else {
+                                  setState(() {
+                                    isUsernameWrong = true;
+                                  });
+                                }
+                              },
+                              isActive: isUserNameFilled,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   Future<void> logoutBottomSheet(BuildContext context) {

@@ -41,7 +41,7 @@ class _OptionCardState extends State<OptionCard> {
           false;
       filledPercentage = isSelected
           ? calculatePercentage(
-                double.parse(widget.option.votes.toString()),
+                widget.option.votes,
                 widget.totalVotes,
               ) /
               100
@@ -144,6 +144,6 @@ class _OptionCardState extends State<OptionCard> {
 }
 
 // Helper function to calculate percentage
-double calculatePercentage(double value, double total) {
+double calculatePercentage(num value, num total) {
   return total == 0 ? 0 : (value / total) * 100;
 }
