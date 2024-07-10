@@ -6,6 +6,7 @@ import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
 import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
@@ -37,11 +38,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool isCommentFilled = false;
   final FocusNode _commentFocusNode = FocusNode();
   List<dynamic> comments = [];
-
-  num selectedOptions = 0;
-
-  ReplyEntity?
-      commentToReply; // Define commentToReply to track the comment being replied to
+  dynamic
+      commentToReply; // Union type for storing either CommentEntity or ReplyEntity
 
   @override
   void initState() {
@@ -53,7 +51,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   @override
   void dispose() {
     _commentController.dispose();
-    _commentFocusNode.dispose(); // Dispose the FocusNode
+    _commentFocusNode.dispose();
     super.dispose();
   }
 
@@ -71,6 +69,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         .add(GetPostByIdButtonPressedEvent(postId: postId));
     BlocProvider.of<GetCommentsByPostIdBloc>(context)
         .add(GetCommentsByPostIdButtonPressedEvent(postId: postId));
+  }
+
+  void _handleReplyTap(dynamic commentOrReply) {
+    setState(() {
+      commentToReply = commentOrReply; // Set the comment or reply to reply to
+    });
   }
 
   @override
@@ -126,9 +130,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   itemCount: comments.length,
                                   itemBuilder: (context, index) {
                                     return CommentWidget(
-                                        commentFocusNode:
-                                            _commentFocusNode, // Pass FocusNode
-                                        comment: comments[index]);
+                                      commentFocusNode: _commentFocusNode,
+                                      comment: comments[index],
+                                      onReplyTap: _handleReplyTap,
+                                    );
                                   },
                                   separatorBuilder: (context, index) =>
                                       const SizedBox(height: 10),
@@ -158,6 +163,118 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               }
             },
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCommentInputSection() {
+    bool isReply = commentToReply != null; // Check if it's a reply
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _commentController,
+                focusNode: _commentFocusNode,
+                onChanged: (value) {
+                  setState(() {
+                    isCommentFilled = _commentController.text.isNotEmpty;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText: isReply
+                      ? 'Reply to ${commentToReply is CommentEntity ? commentToReply.userName : (commentToReply as ReplyEntity).userName}'
+                      : 'Add a comment',
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(48)),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            BlocConsumer<AddCommentBloc, AddCommentState>(
+              listener: (context, state) {
+                if (state is AddCommentFailureState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.error),
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                return InkWell(
+                  onTap: () {
+                    if (isCommentFilled) {
+                      final postId = int.parse(widget.postId);
+
+                      if (isReply) {
+                        // Handle sending reply to comment
+                        BlocProvider.of<AddCommentBloc>(context).add(
+                          AddCommentButtonPressedEvent(
+                            commentId: commentToReply
+                                .commentid, // Adjusted for dynamic type
+                            text: _commentController.text,
+                            postId: postId,
+                          ),
+                        );
+                      } else {
+                        String propic =
+                            ShardPrefHelper.getUserProfilePicture()!;
+                        String username = ShardPrefHelper.getUsername()!;
+                        String userId = ShardPrefHelper.getUserID()!;
+                        // Handle sending new comment
+                        setState(() {
+                          comments.insert(
+                              0,
+                              CommentModel(
+                                userId: userId,
+                                userName: username, // Use actual user name
+                                proPic: propic, // Use actual profile picture
+                                text: _commentController.text,
+                                createdAt: DateTime.now().toString(),
+                                awardType: const [],
+                                commentid: 0,
+                                cheers: 0, bools: 0,
+                              ));
+                        });
+                        BlocProvider.of<AddCommentBloc>(context).add(
+                          AddCommentButtonPressedEvent(
+                            postId: postId,
+                            text: _commentController.text,
+                          ),
+                        );
+                      }
+                      _commentController.clear();
+                      setState(() {
+                        isCommentFilled = false;
+                        commentToReply = null; // Reset reply state
+                      });
+                    }
+                  },
+                  child: Opacity(
+                    opacity: isCommentFilled ? 1 : 0.3,
+                    child: Container(
+                      height: 48,
+                      width: 48,
+                      decoration: const BoxDecoration(
+                        color: Colors.blue,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_upward,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -295,116 +412,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             pollId: postState.post.id,
           ),
       ],
-    );
-  }
-
-  Widget _buildCommentInputSection() {
-    bool isReply = commentToReply != null; // Assuming you track this somewhere
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _commentController,
-                focusNode:
-                    _commentFocusNode, // Assign the FocusNode to TextField
-                onChanged: (value) {
-                  setState(() {
-                    isCommentFilled = _commentController.text.isNotEmpty;
-                  });
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Add a comment',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(48)),
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-            BlocConsumer<AddCommentBloc, AddCommentState>(
-              listener: (context, state) {
-                if (state is AddCommentFailureState) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.error),
-                    ),
-                  );
-                }
-              },
-              builder: (context, state) {
-                return InkWell(
-                  onTap: () {
-                    if (isCommentFilled) {
-                      final postId = int.parse(widget.postId);
-
-                      if (isReply) {
-                        // Handle sending reply to comment
-                        BlocProvider.of<AddCommentBloc>(context).add(
-                          AddCommentButtonPressedEvent(
-                            commentId:
-                                commentToReply!.id, // Use actual comment id
-                            text: _commentController.text, postId: postId,
-                          ),
-                        );
-                      } else {
-                        String propic =
-                            ShardPrefHelper.getUserProfilePicture()!;
-                        String username = ShardPrefHelper.getUsername()!;
-                        String userId = ShardPrefHelper.getUserID()!;
-                        // Handle sending new comment
-                        setState(() {
-                          comments.insert(
-                              0,
-                              CommentModel(
-                                userId: userId,
-                                userName: username, // Use actual user name
-                                proPic: propic, // Use actual profile picture
-                                text: _commentController.text,
-                                createdAt: DateTime.now().toString(),
-                                awardType: const [],
-                                commentid: 0,
-                                cheers: 0, bools: 0,
-                              ));
-                        });
-                        BlocProvider.of<AddCommentBloc>(context).add(
-                          AddCommentButtonPressedEvent(
-                            postId: postId,
-                            text: _commentController.text,
-                          ),
-                        );
-                      }
-                      _commentController.clear();
-                      setState(() {
-                        isCommentFilled = false;
-                        commentToReply = null; // Reset reply state
-                      });
-                    }
-                  },
-                  child: Opacity(
-                    opacity: isCommentFilled ? 1 : 0.3,
-                    child: Container(
-                      height: 48,
-                      width: 48,
-                      decoration: const BoxDecoration(
-                        color: Colors.blue,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_upward,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -730,16 +737,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               },
               child: Row(
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: const BoxDecoration(shape: BoxShape.circle),
-                    child: post.proPic != null
-                        ? Image.network(post.proPic!, fit: BoxFit.contain)
-                        : const Image(
-                            image: AssetImage('assets/second_pro_pic.png'),
-                            fit: BoxFit.contain,
-                          ),
+                  ClipOval(
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: post.proPic != null
+                          ? Image.network(post.proPic!, fit: BoxFit.contain)
+                          : const Image(
+                              image: AssetImage('assets/second_pro_pic.png'),
+                              fit: BoxFit.contain,
+                            ),
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Text(post.userName,

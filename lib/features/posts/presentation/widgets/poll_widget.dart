@@ -41,21 +41,23 @@ class PollWidget extends StatelessWidget {
                     },
                     child: Row(
                       children: [
-                        Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: post.proPic != null
-                                ? Image.network(
-                                    post.proPic!,
-                                    fit: BoxFit.contain,
-                                  )
-                                : Image.asset(
-                                    'assets/second_pro_pic.png',
-                                    fit: BoxFit.contain,
-                                  )),
+                        ClipOval(
+                          child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                              ),
+                              child: post.proPic != null
+                                  ? Image.network(
+                                      post.proPic!,
+                                      fit: BoxFit.contain,
+                                    )
+                                  : Image.asset(
+                                      'assets/second_pro_pic.png',
+                                      fit: BoxFit.contain,
+                                    )),
+                        ),
                         const SizedBox(
                           width: 12,
                         ),

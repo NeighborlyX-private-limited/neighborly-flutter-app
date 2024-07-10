@@ -10,8 +10,14 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reply
 class CommentWidget extends StatefulWidget {
   final CommentEntity comment;
   final FocusNode commentFocusNode; // Step 1: Define a FocusNode
-  const CommentWidget(
-      {super.key, required this.comment, required this.commentFocusNode});
+  final Function(dynamic) onReplyTap; // Callback for reply tap
+
+  const CommentWidget({
+    super.key,
+    required this.comment,
+    required this.commentFocusNode,
+    required this.onReplyTap,
+  });
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -20,10 +26,12 @@ class CommentWidget extends StatefulWidget {
 class _CommentWidgetState extends State<CommentWidget> {
   bool _showReplies = false; // To track if replies are shown
   List<ReplyEntity> _replies = []; // To store fetched replies
+  late FetchCommentReplyBloc _fetchCommentReplyBloc;
 
   @override
   void initState() {
     super.initState();
+    _fetchCommentReplyBloc = BlocProvider.of<FetchCommentReplyBloc>(context);
   }
 
   void _fetchReplies() {
@@ -31,7 +39,7 @@ class _CommentWidgetState extends State<CommentWidget> {
       _showReplies = !_showReplies; // Toggle the showReplies state
     });
     if (_showReplies) {
-      BlocProvider.of<FetchCommentReplyBloc>(context).add(
+      _fetchCommentReplyBloc.add(
         FetchCommentReplyButtonPressedEvent(
             commentId: widget.comment.commentid),
       );
@@ -48,21 +56,23 @@ class _CommentWidgetState extends State<CommentWidget> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: screenWidth * 0.1,
-              height: screenWidth * 0.1,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
+            ClipOval(
+              child: Container(
+                width: screenWidth * 0.1,
+                height: screenWidth * 0.1,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                ),
+                child: widget.comment.proPic != null
+                    ? Image.network(
+                        widget.comment.proPic!,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.asset(
+                        'assets/second_pro_pic.png',
+                        fit: BoxFit.cover,
+                      ),
               ),
-              child: widget.comment.proPic != null
-                  ? Image.network(
-                      widget.comment.proPic!,
-                      fit: BoxFit.cover,
-                    )
-                  : Image.asset(
-                      'assets/second_pro_pic.png',
-                      fit: BoxFit.cover,
-                    ),
             ),
             const SizedBox(
               width: 12,
@@ -108,10 +118,11 @@ class _CommentWidgetState extends State<CommentWidget> {
                         width: 10,
                       ),
                       GestureDetector(
-                        // Use GestureDetector for tap handling
                         onTap: () {
-                          // Request focus for the comment text field
-                          widget.commentFocusNode.requestFocus();
+                          widget.onReplyTap(
+                              widget.comment); // Set the comment to reply
+                          widget.commentFocusNode
+                              .requestFocus(); // Request focus for the comment text field
                         },
                         child: const Text(
                           'Reply',
@@ -150,35 +161,44 @@ class _CommentWidgetState extends State<CommentWidget> {
                     height: 10,
                   ),
                   _showReplies
-                      ? BlocListener<FetchCommentReplyBloc,
-                          FetchCommentReplyState>(
-                          listener: (context, state) {
-                            if (state is FetchCommentReplySuccessState) {
-                              setState(() {
-                                _replies = state.reply;
-                              });
-                            } else if (state is FetchCommentReplyFailureState) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(state.error)),
-                              );
-                            }
-                          },
-                          child: _replies.isNotEmpty
-                              ? ListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: _replies.length,
-                                  itemBuilder: (context, index) {
-                                    final reply = _replies[index];
-                                    return ReplyWidget(
-                                      reply: reply,
-                                    );
-                                  },
-                                )
-                              : const Center(
-                                  child: Text('No reply yet'),
-                                ),
-                        )
+                      ? BlocConsumer<FetchCommentReplyBloc,
+                          FetchCommentReplyState>(listener: (context, state) {
+                          if (state is FetchCommentReplySuccessState &&
+                              state.commentId == widget.comment.commentid) {
+                            setState(() {
+                              _replies = state.reply;
+                            });
+                          } else if (state is FetchCommentReplyFailureState &&
+                              state.commentId == widget.comment.commentid) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(state.error)),
+                            );
+                          }
+                        }, builder: (context, state) {
+                          if (state is FetchCommentReplyLoadingState &&
+                              state.commentId == widget.comment.commentid) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return _replies.isNotEmpty
+                                ? ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: _replies.length,
+                                    itemBuilder: (context, index) {
+                                      final reply = _replies[index];
+                                      return ReplyWidget(
+                                        reply: reply,
+                                      );
+                                    },
+                                  )
+                                : const Center(
+                                    child: Text('No reply yet'),
+                                  );
+                          }
+                        })
                       : const SizedBox(),
                 ],
               ),

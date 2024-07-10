@@ -10,17 +10,21 @@ class FetchCommentReplyInitialState extends FetchCommentReplyState {
 }
 
 class FetchCommentReplyLoadingState extends FetchCommentReplyState {
-  FetchCommentReplyLoadingState();
+  final num commentId;
+  FetchCommentReplyLoadingState({required this.commentId});
 }
 
 class FetchCommentReplySuccessState extends FetchCommentReplyState {
   final List<ReplyEntity> reply;
+  final num commentId;
   FetchCommentReplySuccessState({
     required this.reply,
+    required this.commentId,
   });
 }
 
 class FetchCommentReplyFailureState extends FetchCommentReplyState {
   final String error;
-  FetchCommentReplyFailureState({required this.error});
+  final num commentId;
+  FetchCommentReplyFailureState({required this.error, required this.commentId});
 }

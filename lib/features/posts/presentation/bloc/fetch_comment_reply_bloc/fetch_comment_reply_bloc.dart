@@ -17,18 +17,17 @@ class FetchCommentReplyBloc
     on<FetchCommentReplyButtonPressedEvent>(
         (FetchCommentReplyButtonPressedEvent event,
             Emitter<FetchCommentReplyState> emit) async {
-      emit(FetchCommentReplyLoadingState());
+      emit(FetchCommentReplyLoadingState(commentId: event.commentId));
 
       final result = await _fetchCommentReplyUsecase.call(
         commentId: event.commentId,
       );
 
       result.fold(
-          (error) =>
-              emit(FetchCommentReplyFailureState(error: error.toString())),
-          (response) => emit(FetchCommentReplySuccessState(reply: response
-
-          )));
+          (error) => emit(FetchCommentReplyFailureState(
+              error: error.toString(), commentId: event.commentId)),
+          (response) => emit(FetchCommentReplySuccessState(
+              reply: response, commentId: event.commentId)));
     });
   }
 }

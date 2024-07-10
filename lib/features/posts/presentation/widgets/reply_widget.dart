@@ -15,21 +15,23 @@ class _ReplyWidgetState extends State<ReplyWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Container(
-          width: 40,
-          height: 40,
-          decoration: const BoxDecoration(
-            shape: BoxShape.circle,
-          ),
-          child: widget.reply.proPic != null
-              ? Image.network(
-                  widget.reply.proPic!,
-                  fit: BoxFit.contain,
-                )
-              : Image.asset(
-                  'assets/second_pro_pic.png',
-                  fit: BoxFit.contain,
-                )),
+      ClipOval(
+        child: Container(
+            width: 40,
+            height: 40,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            child: widget.reply.proPic != null
+                ? Image.network(
+                    widget.reply.proPic!,
+                    fit: BoxFit.contain,
+                  )
+                : Image.asset(
+                    'assets/second_pro_pic.png',
+                    fit: BoxFit.contain,
+                  )),
+      ),
       const SizedBox(
         width: 12,
       ),
@@ -70,18 +72,18 @@ class _ReplyWidgetState extends State<ReplyWidget> {
                     height: 1.3,
                   ),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
-                const Text(
-                  'Reply',
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                    height: 1.3,
-                  ),
-                ),
+                // const SizedBox(
+                //   width: 10,
+                // ),
+                // const Text(
+                //   'Reply',
+                //   style: TextStyle(
+                //     color: Colors.grey,
+                //     fontWeight: FontWeight.w500,
+                //     fontSize: 14,
+                //     height: 1.3,
+                //   ),
+                // ),
               ],
             ),
             const SizedBox(
