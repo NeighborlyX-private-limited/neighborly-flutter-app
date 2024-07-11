@@ -38,6 +38,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool isCommentFilled = false;
   final FocusNode _commentFocusNode = FocusNode();
   List<dynamic> comments = [];
+  
   dynamic
       commentToReply; // Union type for storing either CommentEntity or ReplyEntity
 

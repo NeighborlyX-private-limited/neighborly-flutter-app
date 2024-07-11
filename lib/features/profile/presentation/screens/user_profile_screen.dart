@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/comments_section.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/groups_section.dart';
@@ -39,13 +38,29 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   void _fetchProfile() {
     BlocProvider.of<GetUserInfoBloc>(context)
         .add(GetUserInfoButtonPressedEvent(userId: widget.userId));
-    print('user id: ${widget.userId}');
   }
 
   @override
   Widget build(BuildContext context) {
     void showBottomSheet() {
       bottomSheet(context);
+    }
+
+    String checkStringInList(String str) {
+      switch (str) {
+        case 'Local Legend':
+          return 'assets/Local_Legend.svg';
+        case 'Sunflower':
+          return 'assets/Sunflower.svg';
+        case 'Streetlight':
+          return 'assets/Streetlight.svg';
+        case 'Park Bench':
+          return 'assets/Park_Bench.svg';
+        case 'Map':
+          return 'assets/Map.svg';
+        default:
+          return 'assets/react7.png';
+      }
     }
 
     return Directionality(
@@ -96,16 +111,39 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                       children: [
                         // Profile image
                         Center(
-                          child: Container(
-                            width: 90,
-                            height: 90,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: Image.network(
-                              state.profile.picture,
-                              fit: BoxFit.contain,
-                            ),
+                          child: Stack(
+                            children: [
+                              ClipOval(
+                                child: Container(
+                                  width: 90,
+                                  height: 90,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Image.network(
+                                    state.profile.picture,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 0,
+                                right: 0,
+                                child: Container(
+                                  width: 24,
+                                  height: 24,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  child: SvgPicture.asset(
+                                    checkStringInList(
+                                        state.profile.mostProminentAward!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -113,7 +151,14 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                           state.profile.username,
                           style: greyonboardingBody1Style,
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 2),
+                        state.profile.mostProminentAward != null
+                            ? Text(
+                                state.profile.mostProminentAward!,
+                                style: itallicMediumGreyTextStyleBlack,
+                              )
+                            : const SizedBox(),
+                        const SizedBox(height: 2),
                         state.profile.bio != null
                             ? Text(
                                 state.profile.bio!,

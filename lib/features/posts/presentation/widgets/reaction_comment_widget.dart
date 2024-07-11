@@ -187,6 +187,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
             );
           },
         ),
+        const SizedBox(
+          width: 12,
+        ),
         // Bools button
         BlocListener<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
@@ -245,6 +248,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
               ),
             ),
           ),
+        ),
+        const SizedBox(
+          width: 12,
         ),
         InkWell(
           onTap: () {
@@ -313,6 +319,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
               ),
             ),
           ),
+        ),
+        const SizedBox(
+          width: 12,
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),

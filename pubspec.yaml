@@ -55,6 +55,8 @@ dependencies:
   flutter_svg: ^2.0.10+1
   toggle_switch: ^2.3.0
   geocoding: ^3.0.0
+  hive:
+  hive_flutter: ^1.1.0
 
 dev_dependencies:
   flutter_test:

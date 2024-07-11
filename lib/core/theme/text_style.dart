@@ -84,3 +84,10 @@ var mediumGreyTextStyleBlack = GoogleFonts.roboto(
   fontSize: 14,
   fontWeight: FontWeight.w400,
 );
+
+var itallicMediumGreyTextStyleBlack = GoogleFonts.roboto(
+  color: const Color(0xff2E2E2E),
+  fontSize: 14,
+  fontWeight: FontWeight.w400,
+  fontStyle: FontStyle.italic,
+);

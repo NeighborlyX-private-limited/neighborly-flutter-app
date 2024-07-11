@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
@@ -42,29 +43,28 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   }
 
   Future<void> _loadReactionState() async {
+    final userID = ShardPrefHelper.getUserID();
+    final box = Hive.box('reactions');
     setState(() {
-      // Load the state for the current post
-      final userID = ShardPrefHelper.getUserID();
-      isCheered = ShardPrefHelper.getIsCheered(
-              userID!, '${widget.post.id}_isCheered') ??
-          false;
+      isCheered =
+          box.get('${userID}_${widget.post.id}_isCheered', defaultValue: false);
       isBooled =
-          ShardPrefHelper.getIsBoo(userID, '${widget.post.id}_isBooled') ??
-              false;
+          box.get('${userID}_${widget.post.id}_isBooled', defaultValue: false);
     });
   }
 
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    ShardPrefHelper.setIsCheered(userID!, widget.post.id, isCheered);
-    ShardPrefHelper.setIsBoo(userID, widget.post.id, isBooled);
+    final box = Hive.box('reactions');
+    await box.put('${userID}_${widget.post.id}_isCheered', isCheered);
+    await box.put('${userID}_${widget.post.id}_isBooled', isBooled);
   }
 
-  // remove the reaction from shared preference
   Future<void> _removeReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    ShardPrefHelper.setIsCheered(userID!, widget.post.id, false);
-    ShardPrefHelper.setIsBoo(userID, widget.post.id, false);
+    final box = Hive.box('reactions');
+    await box.put('${userID}_${widget.post.id}_isCheered', false);
+    await box.put('${userID}_${widget.post.id}_isBooled', false);
   }
 
   void _updateState(String reaction) {
@@ -131,7 +131,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         BlocListener<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
             if (state is FeedbackFailureState) {
-              // remove the reaction from shared preference
+              // remove the reaction from Hive
               _removeReactionState();
             }
           },
@@ -242,8 +242,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             ),
           ),
         ),
-        // Other reaction buttons
-        // Placeholder for additional reactions
+
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           height: 32,

@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     state.profile.mostProminentAward != null
                         ? Text(
                             state.profile.mostProminentAward!,
-                            style: mediumGreyTextStyleBlack,
+                            style: itallicMediumGreyTextStyleBlack,
                           )
                         : const SizedBox(),
                     const SizedBox(height: 2),

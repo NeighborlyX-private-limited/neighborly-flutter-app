@@ -185,6 +185,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     _contentController.clear();
                                     _titleController.clear();
                                     _removeImage();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Post Created'),
+                                      ),
+                                    );
                                     // context.go('/homescreen');
                                   }
                                 },
@@ -234,6 +239,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     for (var controller in _optionControllers) {
                                       controller.clear();
                                     }
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Poll Created'),
+                                      ),
+                                    );
                                   }
                                 },
                                 builder: (context, state) {

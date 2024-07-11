@@ -35,16 +35,18 @@ class PostWithCommentsWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                Container(
-                    width: 32,
-                    height: 32,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: Image.network(
-                      userProPic,
-                      fit: BoxFit.contain,
-                    )),
+                ClipOval(
+                  child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: Image.network(
+                        userProPic,
+                        fit: BoxFit.contain,
+                      )),
+                ),
                 const SizedBox(
                   width: 12,
                 ),

@@ -1,4 +1,4 @@
-import "package:shared_preferences/shared_preferences.dart";
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ShardPrefHelper {
   static late SharedPreferences _preferences;
@@ -10,7 +10,6 @@ class ShardPrefHelper {
       _preferences = await SharedPreferences.getInstance();
 
   // save cookies
-
   static Future setCookie(List<String> cookie) async =>
       await _preferences.setStringList(_cookie, cookie);
   static List<String>? getCookie() => _preferences.getStringList(_cookie) ?? [];

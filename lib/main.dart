@@ -32,9 +32,12 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/send_f
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'dependency_injection.dart' as di;
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox('reactions');
   di.init();
   await ShardPrefHelper.init();
   runApp(const MyApp());
