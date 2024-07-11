@@ -6,6 +6,7 @@ import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
 import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
+import 'package:neighborly_flutter_app/features/posts/data/model/reply_model.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
@@ -38,7 +39,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool isCommentFilled = false;
   final FocusNode _commentFocusNode = FocusNode();
   List<dynamic> comments = [];
-  
   dynamic
       commentToReply; // Union type for storing either CommentEntity or ReplyEntity
 
@@ -214,6 +214,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
                       if (isReply) {
                         // Handle sending reply to comment
+
                         BlocProvider.of<AddCommentBloc>(context).add(
                           AddCommentButtonPressedEvent(
                             commentId: commentToReply

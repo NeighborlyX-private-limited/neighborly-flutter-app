@@ -103,7 +103,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           ),
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       InkWell(
                         onTap: () {
                           showBottomSheet();

@@ -33,272 +33,293 @@ class PostWithCommentsWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                ClipOval(
-                  child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.network(
-                        userProPic,
-                        fit: BoxFit.contain,
-                      )),
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                Text(
-                  post.userName,
-                  style: mediumTextStyleBlack,
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                Text(
-                  'Commented on this',
-                  style: mediumGreyTextStyleBlack,
-                ),
-              ],
-            ),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {
-                    context.push('/userProfileScreen/${post.userId}');
-                  },
-                  child: Row(
-                    children: [
-                      Container(
-                          width: 40,
-                          height: 40,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: post.content.proPic != null
-                              ? Image.network(
-                                  post.content.proPic!,
-                                  fit: BoxFit.contain,
-                                )
-                              : Image.asset(
-                                  'assets/second_pro_pic.png',
-                                  fit: BoxFit.contain,
-                                )),
-                      const SizedBox(
-                        width: 12,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                post.userName,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 14),
-                              ),
-                              const SizedBox(
-                                width: 6,
-                              ),
-                              Container(
-                                width: 4,
-                                height: 4,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.grey[500],
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 6,
-                              ),
-                              Text(
-                                formatTimeDifference(post.createdAt),
-                                style: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            post.content.city,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey[500],
-                                fontSize: 14),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    showBottomSheet();
-                  },
-                  child: Icon(
-                    Icons.more_horiz,
-                    size: 30,
-                    color: Colors.grey[500],
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            post.content.title != null
-                ? Text(
-                    post.content.title!,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: Colors.grey[900],
-                      fontWeight: FontWeight.w500,
-                      fontSize: 17,
-                      height: 1.3,
-                    ),
-                  )
-                : Container(),
-            post.content.title != null
-                ? const SizedBox(
-                    height: 10,
-                  )
-                : Container(),
-            post.content.content != null
-                ? Text(
-                    post.content.content!,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: Colors.grey[800],
-                      fontSize: 15,
-                      height: 1.3,
-                    ),
-                  )
-                : Container(),
-            post.content.multimedia != null
-                ? const SizedBox(
-                    height: 10,
-                  )
-                : Container(),
-            post.content.multimedia != null
-                ? Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          width: double.infinity,
-                          height: 200,
-                          post.content.multimedia!,
-                          fit: BoxFit.cover,
-                        )),
-                  )
-                : Container(),
-            const SizedBox(
-              height: 20,
-            ),
-            ReactionWidget(
-              post: post.content,
-            ),
-            const Divider(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                        width: screenWidth * 0.1,
-                        height: screenWidth * 0.1,
+            InkWell(
+              onTap: () {
+                context.push('/userProfileScreen/${post.userId}');
+              },
+              child: Row(
+                children: [
+                  ClipOval(
+                    child: Container(
+                        width: 32,
+                        height: 32,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                         ),
                         child: Image.network(
                           userProPic,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         )),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Expanded(
-                      child: Column(
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    post.userName,
+                    style: mediumTextStyleBlack,
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    'Commented on this',
+                    style: mediumGreyTextStyleBlack,
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            InkWell(
+              onTap: () {
+                context.push(
+                    '/post-detail/${post.content.id}/${true}/${post.userId}');
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          context.push('/userProfileScreen/${post.userId}');
+                        },
+                        child: Row(
+                          children: [
+                            ClipOval(
+                              child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: post.content.proPic != null
+                                      ? Image.network(
+                                          post.content.proPic!,
+                                          fit: BoxFit.contain,
+                                        )
+                                      : Image.asset(
+                                          'assets/second_pro_pic.png',
+                                          fit: BoxFit.contain,
+                                        )),
+                            ),
+                            const SizedBox(
+                              width: 12,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      post.userName,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Container(
+                                      width: 4,
+                                      height: 4,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey[500],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 6,
+                                    ),
+                                    Text(
+                                      formatTimeDifference(post.createdAt),
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  post.content.city,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.grey[500],
+                                      fontSize: 14),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          showBottomSheet();
+                        },
+                        child: Icon(
+                          Icons.more_horiz,
+                          size: 30,
+                          color: Colors.grey[500],
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 12,
+                  ),
+                  post.content.title != null
+                      ? Text(
+                          post.content.title!,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            color: Colors.grey[900],
+                            fontWeight: FontWeight.w500,
+                            fontSize: 17,
+                            height: 1.3,
+                          ),
+                        )
+                      : Container(),
+                  post.content.title != null
+                      ? const SizedBox(
+                          height: 10,
+                        )
+                      : Container(),
+                  post.content.content != null
+                      ? Text(
+                          post.content.content!,
+                          textAlign: TextAlign.start,
+                          style: TextStyle(
+                            color: Colors.grey[800],
+                            fontSize: 15,
+                            height: 1.3,
+                          ),
+                        )
+                      : Container(),
+                  post.content.multimedia != null
+                      ? const SizedBox(
+                          height: 10,
+                        )
+                      : Container(),
+                  post.content.multimedia != null
+                      ? Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.network(
+                                width: double.infinity,
+                                height: 200,
+                                post.content.multimedia!,
+                                fit: BoxFit.cover,
+                              )),
+                        )
+                      : Container(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ReactionWidget(
+                    post: post.content,
+                  ),
+                  const Divider(),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            post.userName,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: screenWidth * 0.035,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 4,
-                          ),
-                          Text(
-                            post.commentText,
-                            style: TextStyle(
-                              color: Colors.grey[800],
-                              fontSize: screenWidth * 0.04,
-                              height: 1.3,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                timeAgo(post.createdAt),
-                                style: TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: screenWidth * 0.035,
-                                  height: 1.3,
+                          ClipOval(
+                            child: Container(
+                                width: screenWidth * 0.1,
+                                height: screenWidth * 0.1,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              GestureDetector(
-                                // Use GestureDetector for tap handling
-                                onTap: () {
-                                  // Request focus for the comment text field
-                                  // widget.commentFocusNode.requestFocus();
-                                },
-                                child: const Text(
-                                  'Reply',
+                                child: Image.network(
+                                  userProPic,
+                                  fit: BoxFit.cover,
+                                )),
+                          ),
+                          const SizedBox(
+                            width: 12,
+                          ),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  post.userName,
                                   style: TextStyle(
-                                    color: Colors.grey,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: screenWidth * 0.035,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                Text(
+                                  post.commentText,
+                                  style: TextStyle(
+                                    color: Colors.grey[800],
+                                    fontSize: screenWidth * 0.04,
                                     height: 1.3,
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          ProfileReactionCommentWidget(
-                            postComment: post,
-                          ),
-                          const SizedBox(
-                            height: 10,
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      timeAgo(post.createdAt),
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: screenWidth * 0.035,
+                                        height: 1.3,
+                                      ),
+                                    ),
+                                    // const SizedBox(
+                                    //   width: 10,
+                                    // ),
+                                    // GestureDetector(
+                                    //   // Use GestureDetector for tap handling
+                                    //   onTap: () {
+                                    //     // Request focus for the comment text field
+                                    //     // widget.commentFocusNode.requestFocus();
+                                    //   },
+                                    //   child: const Text(
+                                    //     'Reply',
+                                    //     style: TextStyle(
+                                    //       color: Colors.grey,
+                                    //       fontWeight: FontWeight.w500,
+                                    //       fontSize: 14,
+                                    //       height: 1.3,
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                ProfileReactionCommentWidget(
+                                  postComment: post,
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
         ),
