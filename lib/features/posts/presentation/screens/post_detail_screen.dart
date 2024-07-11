@@ -6,7 +6,6 @@ import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
 import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
-import 'package:neighborly_flutter_app/features/posts/data/model/reply_model.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
@@ -39,6 +38,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool isCommentFilled = false;
   final FocusNode _commentFocusNode = FocusNode();
   List<dynamic> comments = [];
+
   dynamic
       commentToReply; // Union type for storing either CommentEntity or ReplyEntity
 
@@ -82,90 +82,90 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
           backgroundColor: Colors.white,
-          leading: InkWell(
-            child: const Icon(Icons.arrow_back_ios, size: 15),
-            onTap: () => context.pop(),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            leading: InkWell(
+              child: const Icon(Icons.arrow_back_ios, size: 15),
+              onTap: () => context.pop(),
+            ),
+            centerTitle: true,
+            title: Text(widget.isPost ? 'Post' : 'Poll'),
           ),
-          centerTitle: true,
-          title: Text(widget.isPost ? 'Post' : 'Poll'),
-        ),
-        body: RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: BlocBuilder<GetPostByIdBloc, GetPostByIdState>(
-            builder: (context, postState) {
-              if (postState is GetPostByIdLoadingState) {
-                return const PostDetailSheemer();
-              } else if (postState is GetPostByIdSuccessState) {
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.all(16.0),
-                        children: [
-                          widget.isPost
-                              ? _buildPostDetails(postState.post)
-                              : _buildPollWidget(postState),
-                          const SizedBox(height: 20),
-                          ReactionWidget(post: postState.post),
-                          const SizedBox(height: 10),
-                          Divider(color: Colors.grey[300], thickness: 1),
-                          const SizedBox(height: 20),
-                          BlocBuilder<GetCommentsByPostIdBloc,
-                              GetCommentsByPostIdState>(
-                            builder: (context, commentState) {
-                              if (commentState
-                                  is GetcommentsByPostIdSuccessState) {
-                                comments = commentState.comments;
-                                if (comments.isEmpty) {
-                                  return const Center(
-                                    child: Text('No comments yet'),
-                                  );
-                                }
-
-                                return ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: comments.length,
-                                  itemBuilder: (context, index) {
-                                    return CommentWidget(
-                                      commentFocusNode: _commentFocusNode,
-                                      comment: comments[index],
-                                      onReplyTap: _handleReplyTap,
+          body: RefreshIndicator(
+            onRefresh: _onRefresh,
+            child: BlocBuilder<GetPostByIdBloc, GetPostByIdState>(
+              builder: (context, postState) {
+                if (postState is GetPostByIdLoadingState) {
+                  return const PostDetailSheemer();
+                } else if (postState is GetPostByIdSuccessState) {
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          padding: const EdgeInsets.all(16.0),
+                          children: [
+                            widget.isPost
+                                ? _buildPostDetails(postState.post)
+                                : _buildPollWidget(postState),
+                            const SizedBox(height: 20),
+                            ReactionWidget(post: postState.post),
+                            const SizedBox(height: 10),
+                            Divider(color: Colors.grey[300], thickness: 1),
+                            const SizedBox(height: 20),
+                            BlocBuilder<GetCommentsByPostIdBloc,
+                                GetCommentsByPostIdState>(
+                              builder: (context, commentState) {
+                                if (commentState
+                                    is GetcommentsByPostIdSuccessState) {
+                                  comments = commentState.comments;
+                                  if (comments.isEmpty) {
+                                    return const Center(
+                                      child: Text('No comments yet'),
                                     );
-                                  },
-                                  separatorBuilder: (context, index) =>
-                                      const SizedBox(height: 10),
-                                );
-                              } else if (commentState
-                                  is GetcommentsByPostIdFailureState) {
-                                return Center(
-                                  child: Text(commentState.error),
-                                );
-                              } else {
-                                return const SizedBox();
-                              }
-                            },
-                          ),
-                        ],
+                                  }
+
+                                  return ListView.separated(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: comments.length,
+                                    itemBuilder: (context, index) {
+                                      return CommentWidget(
+                                        commentFocusNode: _commentFocusNode,
+                                        comment: comments[index],
+                                        onReplyTap: _handleReplyTap,
+                                      );
+                                    },
+                                    separatorBuilder: (context, index) =>
+                                        const SizedBox(height: 10),
+                                  );
+                                } else if (commentState
+                                    is GetcommentsByPostIdFailureState) {
+                                  return Center(
+                                    child: Text(commentState.error),
+                                  );
+                                } else {
+                                  return const SizedBox();
+                                }
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    _buildCommentInputSection(),
-                  ],
-                );
-              } else if (postState is GetPostByIdFailureState) {
-                return Center(
-                  child: Text(postState.error),
-                );
-              } else {
-                return const SizedBox();
-              }
-            },
-          ),
-        ),
-      ),
+                      _buildCommentInputSection(),
+                    ],
+                  );
+                } else if (postState is GetPostByIdFailureState) {
+                  return Center(
+                    child: Text(postState.error),
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
+          )),
     );
   }
 

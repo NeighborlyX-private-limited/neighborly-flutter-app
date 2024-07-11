@@ -9,10 +9,19 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_p
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 
-class PostWidget extends StatelessWidget {
+class PostWidget extends StatefulWidget {
   final PostEntity post;
-  const PostWidget({super.key, required this.post});
 
+  const PostWidget({
+    super.key,
+    required this.post,
+  });
+
+  @override
+  State<PostWidget> createState() => _PostWidgetState();
+}
+
+class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
     void showBottomSheet() {
@@ -21,7 +30,8 @@ class PostWidget extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        context.push('/post-detail/${post.id}/${true}/${post.userId}');
+        context.push(
+            '/post-detail/${widget.post.id}/${true}/${widget.post.userId}');
       },
       child: Container(
         color: Colors.white,
@@ -35,7 +45,7 @@ class PostWidget extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    context.push('/userProfileScreen/${post.userId}');
+                    context.push('/userProfileScreen/${widget.post.userId}');
                   },
                   child: Row(
                     children: [
@@ -46,9 +56,9 @@ class PostWidget extends StatelessWidget {
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
-                            child: post.proPic != null
+                            child: widget.post.proPic != null
                                 ? Image.network(
-                                    post.proPic!,
+                                    widget.post.proPic!,
                                     fit: BoxFit.contain,
                                   )
                                 : Image.asset(
@@ -65,7 +75,7 @@ class PostWidget extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                post.userName,
+                                widget.post.userName,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w600, fontSize: 14),
                               ),
@@ -84,7 +94,7 @@ class PostWidget extends StatelessWidget {
                                 width: 6,
                               ),
                               Text(
-                                formatTimeDifference(post.createdAt),
+                                formatTimeDifference(widget.post.createdAt),
                                 style: TextStyle(
                                   color: Colors.grey[500],
                                   fontSize: 14,
@@ -93,7 +103,7 @@ class PostWidget extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            post.city,
+                            widget.post.city,
                             style: TextStyle(
                                 fontWeight: FontWeight.w400,
                                 color: Colors.grey[500],
@@ -119,9 +129,9 @@ class PostWidget extends StatelessWidget {
             const SizedBox(
               height: 12,
             ),
-            post.title != null
+            widget.post.title != null
                 ? Text(
-                    post.title!,
+                    widget.post.title!,
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       color: Colors.grey[900],
@@ -131,14 +141,14 @@ class PostWidget extends StatelessWidget {
                     ),
                   )
                 : Container(),
-            post.title != null
+            widget.post.title != null
                 ? const SizedBox(
                     height: 10,
                   )
                 : Container(),
-            post.content != null
+            widget.post.content != null
                 ? Text(
-                    post.content!,
+                    widget.post.content!,
                     textAlign: TextAlign.start,
                     style: TextStyle(
                       color: Colors.grey[800],
@@ -147,12 +157,12 @@ class PostWidget extends StatelessWidget {
                     ),
                   )
                 : Container(),
-            post.multimedia != null
+            widget.post.multimedia != null
                 ? const SizedBox(
                     height: 10,
                   )
                 : Container(),
-            post.multimedia != null
+            widget.post.multimedia != null
                 ? Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -162,7 +172,7 @@ class PostWidget extends StatelessWidget {
                         child: Image.network(
                           width: double.infinity,
                           height: 200,
-                          post.multimedia!,
+                          widget.post.multimedia!,
                           fit: BoxFit.cover,
                         )),
                   )
@@ -171,7 +181,7 @@ class PostWidget extends StatelessWidget {
               height: 20,
             ),
             ReactionWidget(
-              post: post,
+              post: widget.post,
             )
           ],
         ),
@@ -192,7 +202,7 @@ class PostWidget extends StatelessWidget {
           color: Colors.white,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: userId != post.userId
+          child: userId != widget.post.userId
               ? InkWell(
                   onTap: () {
                     showReportReasonBottomSheet();
@@ -218,6 +228,10 @@ class PostWidget extends StatelessWidget {
                           content: Text('Post Deleted'),
                         ),
                       );
+                      // setState(() {
+                      //   widget.posts.removeWhere(
+                      //       (element) => element.id == widget.post.id);
+                      // });
                       context.pop(context);
                     } else if (state is DeletePostFailureState) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -237,7 +251,7 @@ class PostWidget extends StatelessWidget {
                       onTap: () {
                         context.read<DeletePostBloc>().add(
                             DeletePostButtonPressedEvent(
-                                postId: post.id, type: 'post'));
+                                postId: widget.post.id, type: 'post'));
                       },
                       child: Row(
                         children: [
@@ -375,7 +389,7 @@ class PostWidget extends StatelessWidget {
                             context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                     type: 'content',
-                                    postId: post.id,
+                                    postId: widget.post.id,
                                     reason: reportReasons[0]));
                           },
                           child: Row(
@@ -396,7 +410,7 @@ class PostWidget extends StatelessWidget {
                             context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                     type: 'content',
-                                    postId: post.id,
+                                    postId: widget.post.id,
                                     reason: reportReasons[1]));
                           },
                           child: Row(
@@ -416,7 +430,7 @@ class PostWidget extends StatelessWidget {
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: post.id,
+                                  postId: widget.post.id,
                                   reason: reportReasons[2])),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -435,7 +449,7 @@ class PostWidget extends StatelessWidget {
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: post.id,
+                                  postId: widget.post.id,
                                   reason: reportReasons[3])),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -454,7 +468,7 @@ class PostWidget extends StatelessWidget {
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: post.id,
+                                  postId: widget.post.id,
                                   reason: reportReasons[4])),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,

@@ -21,5 +21,6 @@ class RouteConstants {
   static const String activityAndStatsScreenRouteName =
       'activityAndStatsScreen';
   static const String userProfileScreenRouteName = 'userProfileScreen';   
-  static const String communitiesScreenRouteName = 'communitiesScreen'; 
+  static const String communitiesScreenRouteName = 'communitiesScreen';
+  static const String basicInformationScreenRouteName = 'basicInformationScreen' ;
 }

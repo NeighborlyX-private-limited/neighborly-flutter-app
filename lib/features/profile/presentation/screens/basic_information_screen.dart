@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/text_field_widget.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/gender_dropdown_widget.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/widgets/post_button_widget.dart';
 
 class BasicInformationScreen extends StatefulWidget {
   const BasicInformationScreen({super.key});
@@ -18,269 +22,306 @@ class BasicInformationScreen extends StatefulWidget {
 
 class _BasicInformationScreenState extends State<BasicInformationScreen> {
   bool isActive = false;
-  late bool isCurrentPasswordFilled = false;
-  late bool isPasswordFilled = false;
-  late bool isConfirmPasswordFilled = false;
+  late bool isUsernamePasswordFilled = false;
+  late bool isEmailFilled = false;
+  late bool isPhoneNumberFilled = false;
   bool noConnection = false;
-  bool isWrongCurrentPassword = false;
 
-  late TextEditingController _currentPasswordController;
-  late TextEditingController _passwordController;
-  late TextEditingController _confirmPasswordController;
+  late TextEditingController _usernamePasswordController;
+  late TextEditingController _emailController;
+  late TextEditingController _phoneNumberController;
+  late TextEditingController _bioController;
+
+  File? _selectedImage; // Store the selected image
 
   @override
   void initState() {
-    _currentPasswordController = TextEditingController();
-    _passwordController = TextEditingController();
-    _confirmPasswordController = TextEditingController();
+    _usernamePasswordController = TextEditingController();
+    _emailController = TextEditingController();
+    _phoneNumberController = TextEditingController();
+    _bioController = TextEditingController();
+    _fetchProfile();
     super.initState();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _currentPasswordController.dispose();
-    _passwordController.dispose();
-    _confirmPasswordController.dispose();
+    _usernamePasswordController.dispose();
+    _emailController.dispose();
+    _phoneNumberController.dispose();
   }
 
-  bool checkIsActive() {
-    if (isPasswordFilled &&
-        isCurrentPasswordFilled &&
-        isConfirmPasswordFilled &&
-        _passwordController.text == _confirmPasswordController.text) {
-      return true;
+  void _fetchProfile() {
+    var state = context.read<GetProfileBloc>().state;
+    if (state is! GetProfileSuccessState) {
+      BlocProvider.of<GetProfileBloc>(context)
+          .add(GetProfileButtonPressedEvent());
     }
-    return false;
   }
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+      });
+    }
+  }
+
+  String? _selectedGender;
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
             backgroundColor: Colors.white,
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 14.0, left: 14.0, right: 14.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          InkWell(
-                            child: const Icon(Icons.arrow_back_ios, size: 20),
-                            onTap: () => context.pop(),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Security',
-                        style: blackNormalTextStyle,
-                      ),
-                      // BlocConsumer<UploadPostBloc, UploadPostState>(
-                      //   listener: (context, state) {
-                      //     if (state is UploadPostFailureState) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackBar(content: Text(state.error)),
-                      //       );
-                      //     } else if (state is UploadPostSuccessState) {
-                      //       _contentController.clear();
-                      //       _titleController.clear();
-                      //       _removeImage();
-                      //       // context.go('/homescreen');
-                      //     }
-                      //   },
-                      //   builder: (context, state) {
-                      //     if (state is UploadPostLoadingState) {
-                      //       return const Center(
-                      //           child: CircularProgressIndicator());
-                      //     }
-                      //     return PostButtonWidget(
-                      //       onTapListener: () async {
-                      //         List<double> location =
-                      //             ShardPrefHelper.getLocation();
-            
-                      //         List<Placemark> placemarks =
-                      //             await placemarkFromCoordinates(
-                      //           location[0],
-                      //           location[1],
-                      //         );
-            
-                      //         BlocProvider.of<UploadPostBloc>(context).add(
-                      //           UploadPostPressedEvent(
-                      //             city: placemarks[0].locality ?? '',
-                      //             content: _contentController.text.trim(),
-                      //             title: _titleController.text.trim(),
-                      //             type: 'post',
-                      //             multimedia: _selectedImage,
-                      //             allowMultipleVotes: false,
-                      //           ),
-                      //         );
-                      //       },
-                      //       isActive: isTitleFilled,
-                      //     );
-                      //   },
-                      // )
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Change password',
-                        style: blackNormalTextStyle,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      TextFieldWidget(
-                        border: true,
-                        onChanged: (value) {
-                          setState(() {
-                            isCurrentPasswordFilled =
-                                _currentPasswordController.text
-                                    .trim()
-                                    .isNotEmpty;
-                          });
-                        },
-                        controller: _currentPasswordController,
-                        lableText: 'Current Password',
-                        isPassword: true,
-                      ),
-                      isWrongCurrentPassword
-                          ? const Text(
-                              'Wrong password. Try again or click Forgot password to reset it.',
-                              style: TextStyle(color: Colors.red),
-                            )
-                          : const SizedBox(),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFieldWidget(
-                        border: true,
-                        onChanged: (value) {
-                          setState(() {
-                            isPasswordFilled =
-                                _passwordController.text.trim().isNotEmpty;
-                          });
-                        },
-                        controller: _passwordController,
-                        lableText: 'Password',
-                        isPassword: true,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      TextFieldWidget(
-                        border: true,
-                        onChanged: (value) {
-                          setState(() {
-                            isConfirmPasswordFilled =
-                                _confirmPasswordController.text
-                                    .trim()
-                                    .isNotEmpty;
-                          });
-                        },
-                        controller: _confirmPasswordController,
-                        isPassword: true,
-                        lableText: 'Confirm Password',
-                      ),
-                      const SizedBox(
-                        height: 45,
-                      ),
-                      BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
-                        listener: (context, state) {
-                          if (state is ChangePasswordFailureState) {
-                            if (state.error.contains('wrong')) {
-                              setState(() {
-                                isWrongCurrentPassword = true;
-                              });
-                              return;
-                            }
-                            if (state.error.contains('internet')) {
-                              setState(() {
-                                noConnection = true;
-                              });
-                              return;
-                            }
-                  
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.error)),
-                            );
-                          } else if (state is ChangePasswordSuccessState) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.message)),
-                            );
-                            context.push('/settingsScreen');
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state is ChangePasswordLoadingState) {
-                            return const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                          return ButtonContainerWidget(
-                            isActive: checkIsActive(),
-                            color: AppColors.primaryColor,
-                            text: 'Save Password',
-                            isFilled: true,
-                            onTapListener: () {
-                              final String? email =
-                                  ShardPrefHelper.getEmail();
-                              BlocProvider.of<ChangePasswordBloc>(context)
-                                  .add(
-                                ChangePasswordButtonPressedEvent(
-                                  currentPassword:
-                                      _currentPasswordController.text
-                                          .trim(),
-                                  email: email!,
-                                  newPassword:
-                                      _passwordController.text.trim(),
-                                  flag: true,
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          InkWell(
-                            onTap: () => context.push('/forgot-password'),
-                            child: Text(
-                              'Forgot your password?',
-                              style: onboardingBody2Style,
+            body: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 14.0, left: 14.0, right: 14.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            InkWell(
+                              child: const Icon(Icons.arrow_back_ios, size: 20),
+                              onTap: () => context.pop(),
                             ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      noConnection
-                          ? const Text(
-                              'No Internet Connection',
-                              style: TextStyle(color: Colors.red),
-                            )
-                          : const SizedBox(),
-                    ],
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Text(
+                              'Basic Information',
+                              style: blackNormalTextStyle,
+                            ),
+                          ],
+                        ),
+                        BlocConsumer<UploadPostBloc, UploadPostState>(
+                          listener: (context, state) {
+                            if (state is UploadPostFailureState) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(state.error)),
+                              );
+                            } else if (state is UploadPostSuccessState) {
+                              // _contentController.clear();
+                              // _titleController.clear();
+                              // _removeImage();
+                              // context.go('/homescreen');
+                            }
+                          },
+                          builder: (context, state) {
+                            if (state is UploadPostLoadingState) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            return PostButtonWidget(
+                              title: 'Save',
+                              onTapListener: () async {
+                                List<double> location =
+                                    ShardPrefHelper.getLocation();
+
+                                List<Placemark> placemarks =
+                                    await placemarkFromCoordinates(
+                                  location[0],
+                                  location[1],
+                                );
+
+                                // BlocProvider.of<UploadPostBloc>(context).add(
+                                //   UploadPostPressedEvent(
+                                //     city: placemarks[0].locality ?? '',
+                                //     content: _contentController.text.trim(),
+                                //     title: _titleController.text.trim(),
+                                //     type: 'post',
+                                //     multimedia: _selectedImage,
+                                //     allowMultipleVotes: false,
+                                //   ),
+                                // );
+                              },
+                              isActive: true,
+                            );
+                          },
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  BlocBuilder<GetProfileBloc, GetProfileState>(
+                    builder: (context, state) {
+                      if (state is GetProfileSuccessState) {
+                        _bioController.text = state.profile.bio ?? '';
+                        _emailController.text = state.profile.email;
+
+                        // _phoneNumberController.text = state.profile.phoneNumber;
+                        _usernamePasswordController.text =
+                            state.profile.username;
+                        return Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: ClipOval(
+                                  child: Container(
+                                    width: 90,
+                                    height: 90,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: _selectedImage == null
+                                        ? Image.network(
+                                            state.profile.picture,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.file(
+                                            _selectedImage!,
+                                            width: double.infinity,
+                                            height: 260,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Center(
+                                child: InkWell(
+                                  onTap: _pickImage,
+                                  child: Text(
+                                    'Edit photo',
+                                    style: noUnderlineblueNormalTextStyle,
+                                  ),
+                                ),
+                              ),
+                              // const SizedBox(height: 20),
+                              Text(
+                                'Username',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              TextFieldWidget(
+                                border: true,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isUsernamePasswordFilled =
+                                        _usernamePasswordController.text
+                                            .trim()
+                                            .isNotEmpty;
+                                  });
+                                },
+                                controller: _usernamePasswordController,
+                                lableText: '',
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Email Id',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              TextFieldWidget(
+                                border: true,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isEmailFilled =
+                                        _emailController.text.trim().isNotEmpty;
+                                  });
+                                },
+                                controller: _emailController,
+                                lableText: '',
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Phone number',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              TextFieldWidget(
+                                border: true,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isPhoneNumberFilled = _phoneNumberController
+                                        .text
+                                        .trim()
+                                        .isNotEmpty;
+                                  });
+                                },
+                                controller: _phoneNumberController,
+                                lableText: '',
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Gender',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              GenderDropdown(
+                                selectedGender: _selectedGender,
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _selectedGender = newValue;
+                                  });
+                                },
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Bio',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                height: 150,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: TextField(
+                                  onChanged: (value) {},
+                                  controller: _bioController,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: null,
+                                  minLines: 1,
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 45,
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        return const SizedBox();
+                      }
+                    },
+                  ),
+                ],
+              ),
             )));
   }
 }

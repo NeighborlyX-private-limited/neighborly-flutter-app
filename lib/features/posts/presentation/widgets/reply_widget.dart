@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_reply_widget.dart';
 
 class ReplyWidget extends StatefulWidget {
   final ReplyEntity reply;
@@ -87,7 +88,13 @@ class _ReplyWidgetState extends State<ReplyWidget> {
               ],
             ),
             const SizedBox(
-              width: 10,
+              height: 10,
+            ),
+            ReactionReplyWidget(
+              reply: widget.reply,
+            ),
+            const SizedBox(
+              height: 10,
             ),
           ],
         ),

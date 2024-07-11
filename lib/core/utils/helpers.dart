@@ -49,12 +49,24 @@ String timeAgo(String dateString) {
 
   // Define the output string
   if (difference.inSeconds < 60) {
+    if (difference.inSeconds == 1) {
+      return '${difference.inSeconds} second ago';
+    }
     return '${difference.inSeconds} seconds ago';
   } else if (difference.inMinutes < 60) {
+    if (difference.inMinutes == 1) {
+      return '${difference.inMinutes} minute ago';
+    }
     return '${difference.inMinutes} minutes ago';
   } else if (difference.inHours < 24) {
+    if (difference.inHours == 1) {
+      return '${difference.inHours} hour ago';
+    }
     return '${difference.inHours} hours ago';
   } else if (difference.inDays < 30) {
+    if (difference.inDays == 1) {
+      return '${difference.inDays} day ago';
+    }
     return '${difference.inDays} days ago';
   } else if (difference.inDays < 365) {
     int months = (difference.inDays / 30).floor();

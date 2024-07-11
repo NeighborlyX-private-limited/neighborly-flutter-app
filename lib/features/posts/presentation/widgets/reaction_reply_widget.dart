@@ -1,27 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/overlapping_images_widget.dart';
 
-class ReactionCommentWidget extends StatefulWidget {
-  final CommentEntity comment;
+class ReactionReplyWidget extends StatefulWidget {
+  final ReplyEntity reply;
 
-  const ReactionCommentWidget({
+  const ReactionReplyWidget({
     super.key,
-    required this.comment,
+    required this.reply,
   });
 
   @override
-  State<ReactionCommentWidget> createState() => _ReactionCommentWidgetState();
+  State<ReactionReplyWidget> createState() => _ReactionReplyWidgetState();
 }
 
-class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
+class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
   bool isCheered = false;
   bool isBooled = false;
   num awardsCount = 0;
@@ -34,9 +33,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
   void initState() {
     super.initState();
     // Initialize state variables with initial counts
-    cheersCount = widget.comment.cheers;
-    boolsCount = widget.comment.bools;
-    awardsCount = widget.comment.awardType.length;
+    cheersCount = widget.reply.cheers;
+    boolsCount = widget.reply.bools;
+    awardsCount = widget.reply.awardType.length;
     // Load persisted state
     _loadReactionState();
   }
@@ -45,28 +44,26 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     setState(() {
       // Load the state for the current post
       final userID = ShardPrefHelper.getUserID();
-      final box = Hive.box('commentReactions');
-      setState(() {
-        isCheered = box.get('${userID}_${widget.comment.commentid}_isCheered',
-            defaultValue: false);
-        isBooled = box.get('${userID}_${widget.comment.commentid}_isBooled',
-            defaultValue: false);
-      });
+      isCheered = ShardPrefHelper.getIsCheered(
+              userID!, '${widget.reply.id}_isCheered') ??
+          false;
+      isBooled =
+          ShardPrefHelper.getIsBoo(userID, '${widget.reply.id}_isBooled') ??
+              false;
     });
   }
 
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('commentReactions');
-    await box.put('${userID}_${widget.comment.commentid}_isCheered', isCheered);
-    await box.put('${userID}_${widget.comment.commentid}_isBooled', isBooled);
+    ShardPrefHelper.setIsCheered(userID!, widget.reply.id, isCheered);
+    ShardPrefHelper.setIsBoo(userID, widget.reply.id, isBooled);
   }
 
+  // remove the reaction from shared preference
   Future<void> _removeReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('commentReactions');
-    await box.put('${userID}_${widget.comment.commentid}_isCheered', false);
-    await box.put('${userID}_${widget.comment.commentid}_isBooled', false);
+    ShardPrefHelper.setIsCheered(userID!, widget.reply.id, false);
+    ShardPrefHelper.setIsBoo(userID, widget.reply.id, false);
   }
 
   void _updateState(String reaction) {
@@ -134,6 +131,17 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
           listener: (context, state) {
             if (state is FeedbackFailureState) {
               _removeReactionState();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error),
+                ),
+              );
+            } else if (state is FeedbackSuccessState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Feedback submitted successfully!'),
+                ),
+              );
             }
           },
           builder: (context, state) {
@@ -144,7 +152,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                 // Trigger BLoC event for cheers
                 BlocProvider.of<FeedbackBloc>(context).add(
                   FeedbackButtonPressedEvent(
-                      postId: widget.comment.commentid,
+                      postId: widget.reply.id,
                       feedback: 'cheer',
                       type: 'comment'), // Corrected type to 'comment'
                 );
@@ -190,9 +198,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
             );
           },
         ),
-        const SizedBox(
-          width: 12,
-        ),
+
         // Bools button
         BlocListener<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
@@ -207,7 +213,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
               // Trigger BLoC event for bools
               BlocProvider.of<FeedbackBloc>(context).add(
                 FeedbackButtonPressedEvent(
-                    postId: widget.comment.commentid,
+                    postId: widget.reply.id,
                     feedback: 'boo',
                     type: 'comment'), // Corrected type to 'comment'
               );
@@ -252,9 +258,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
             ),
           ),
         ),
-        const SizedBox(
-          width: 12,
-        ),
+
         InkWell(
           onTap: () {
             showBottomSheet().then((value) {
@@ -279,35 +283,35 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  widget.comment.awardType.isEmpty
+                  widget.reply.awardType.isEmpty
                       ? SvgPicture.asset(
                           'assets/react7.svg',
                           width: 20,
                           height: 25,
                         )
-                      : widget.comment.awardType.length == 1
+                      : widget.reply.awardType.length == 1
                           ? SvgPicture.asset(
-                              checkStringInList(widget.comment.awardType[0]),
+                              checkStringInList(widget.reply.awardType[0]),
                               width: 20,
                               height: 24,
                             )
-                          : widget.comment.awardType.length == 2
+                          : widget.reply.awardType.length == 2
                               ? OverlappingImages(
                                   images: [
                                     checkStringInList(
-                                        widget.comment.awardType[0]),
+                                        widget.reply.awardType[0]),
                                     checkStringInList(
-                                        widget.comment.awardType[1]),
+                                        widget.reply.awardType[1]),
                                   ],
                                 )
                               : OverlappingImages(
                                   images: [
                                     checkStringInList(
-                                        widget.comment.awardType[0]),
+                                        widget.reply.awardType[0]),
                                     checkStringInList(
-                                        widget.comment.awardType[1]),
+                                        widget.reply.awardType[1]),
                                     checkStringInList(
-                                        widget.comment.awardType[2]),
+                                        widget.reply.awardType[2]),
                                   ],
                                 ),
                   Text(
@@ -323,9 +327,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
             ),
           ),
         ),
-        const SizedBox(
-          width: 12,
-        ),
+
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           height: 32,
@@ -390,7 +392,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   onTap: () {
                     BlocProvider.of<GiveAwardBloc>(context).add(
                         GiveAwardButtonPressedEvent(
-                            id: widget.comment.commentid,
+                            id: widget.reply.id,
                             awardType: 'Local Legend',
                             type: 'comment'));
                     Navigator.pop(context, awardsCount + 1);
@@ -434,7 +436,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   onTap: () {
                     BlocProvider.of<GiveAwardBloc>(context)
                         .add(GiveAwardButtonPressedEvent(
-                      id: widget.comment.commentid,
+                      id: widget.reply.id,
                       awardType: 'Sunflower',
                       type: 'comment',
                     ));
@@ -479,7 +481,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   onTap: () {
                     BlocProvider.of<GiveAwardBloc>(context)
                         .add(GiveAwardButtonPressedEvent(
-                      id: widget.comment.commentid,
+                      id: widget.reply.id,
                       awardType: 'Streetlight',
                       type: 'comment',
                     ));
@@ -524,7 +526,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   onTap: () {
                     BlocProvider.of<GiveAwardBloc>(context)
                         .add(GiveAwardButtonPressedEvent(
-                      id: widget.comment.commentid,
+                      id: widget.reply.id,
                       awardType: 'Park Bench',
                       type: 'comment',
                     ));
@@ -569,7 +571,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   onTap: () {
                     BlocProvider.of<GiveAwardBloc>(context)
                         .add(GiveAwardButtonPressedEvent(
-                      id: widget.comment.commentid,
+                      id: widget.reply.id,
                       awardType: 'Map',
                       type: 'comment',
                     ));

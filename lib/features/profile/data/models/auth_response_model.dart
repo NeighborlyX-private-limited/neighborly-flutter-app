@@ -11,6 +11,7 @@ class AuthResponseModel extends AuthResponseEntity {
     super.karma,
     super.mostProminentAward,
     super.postCount,
+    // super.phoneNumber,
   });
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +25,7 @@ class AuthResponseModel extends AuthResponseEntity {
       karma: json['user']['karma'],
       mostProminentAward: json['user']['mostProminentAward'],
       postCount: json['user']['postCount'],
+      // phoneNumber: json['user']['phoneNumber'],
     );
   }
 

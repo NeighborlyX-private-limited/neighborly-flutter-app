@@ -76,7 +76,7 @@ class _PostSectionState extends State<PostSection> {
                   itemBuilder: (context, index) {
                     final post = state.post[index];
                     if (post.type == 'post') {
-                      return PostWidget(post: post);
+                      // return PostWidget(post: post);
                     } else if (post.type == 'poll') {
                       return PollWidget(
                         post: post,

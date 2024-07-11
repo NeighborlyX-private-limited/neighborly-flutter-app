@@ -67,6 +67,12 @@ var blueNormalTextStyle = GoogleFonts.roboto(
   decoration: TextDecoration.underline,
   decorationColor: const Color(0xff635BFF),
 );
+var noUnderlineblueNormalTextStyle = GoogleFonts.roboto(
+  color: const Color(0xff635BFF),
+  fontSize: 16,
+  fontWeight: FontWeight.w500,
+  decorationColor: const Color(0xff635BFF),
+);
 
 var mediumTextStyleBlack = GoogleFonts.roboto(
   color: const Color(0xff0A0A0A),

@@ -14,11 +14,13 @@ class AuthResponseEntity extends Equatable {
   final num? postCount;
   final String? mostProminentAward;
   final num? karma;
+  final String? phoneNumber;
 
   const AuthResponseEntity({
     required this.email,
     this.findMe = true,
     this.coordinates,
+    this.phoneNumber,
     this.karma,
     this.mostProminentAward,
     this.bio,

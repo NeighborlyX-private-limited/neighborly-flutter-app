@@ -78,7 +78,7 @@ class _GroupSectionState extends State<GroupSection> {
                   itemBuilder: (context, index) {
                     final post = state.groups[index];
                     if (post.type == 'post') {
-                      return PostWidget(post: post);
+                      // return PostWidget(post: post);
                     } else if (post.type == 'poll') {
                       return PollWidget(
                         post: post,

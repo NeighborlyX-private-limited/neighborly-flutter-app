@@ -13,6 +13,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/scre
 import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/activity_and_stats_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/basic_information_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/communities_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/feedback_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/security_screen.dart';
@@ -178,6 +179,13 @@ final GoRouter router = GoRouter(
           return UserProfileScreen(
             userId: userId,
           );
+        },
+      ),
+      GoRoute(
+        path: '/basicInformationScreen',
+        name: RouteConstants.basicInformationScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const BasicInformationScreen();
         },
       ),
     ]);

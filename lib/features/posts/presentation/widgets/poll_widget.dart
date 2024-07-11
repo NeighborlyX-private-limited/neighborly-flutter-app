@@ -37,7 +37,6 @@ class PollWidget extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       context.push('/userProfileScreen/${post.userId}');
-                      print('User ID: ${post.userId}');
                     },
                     child: Row(
                       children: [

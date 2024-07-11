@@ -5,24 +5,35 @@ import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/entities/post_with_comments_entity.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/profile_comment_reaction_widget.dart';
 
-class PostWithCommentsWidget extends StatelessWidget {
+class PostWithCommentsWidget extends StatefulWidget {
   final PostWithCommentsEntity post;
-  const PostWithCommentsWidget({super.key, required this.post});
+
+  const PostWithCommentsWidget({
+    super.key,
+    required this.post,
+  });
+
+  @override
+  State<PostWithCommentsWidget> createState() => _PostWithCommentsWidgetState();
+}
+
+class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
+  bool isDeleted = false;
 
   @override
   Widget build(BuildContext context) {
-    void showBottomSheet() {
-      bottomSheet(context);
+    void showBottomSheet(bool isComment) {
+      bottomSheet(context, isComment);
     }
 
     final screenWidth = MediaQuery.of(context).size.width;
 
     String userProPic = ShardPrefHelper.getUserProfilePicture()!;
+
     return InkWell(
       onTap: () {
         // context.push('/post-detail/${post.}/${true}/${post.userId}');
@@ -35,7 +46,7 @@ class PostWithCommentsWidget extends StatelessWidget {
           children: [
             InkWell(
               onTap: () {
-                context.push('/userProfileScreen/${post.userId}');
+                context.push('/userProfileScreen/${widget.post.userId}');
               },
               child: Row(
                 children: [
@@ -55,7 +66,7 @@ class PostWithCommentsWidget extends StatelessWidget {
                     width: 12,
                   ),
                   Text(
-                    post.userName,
+                    widget.post.userName,
                     style: mediumTextStyleBlack,
                   ),
                   const SizedBox(
@@ -72,7 +83,7 @@ class PostWithCommentsWidget extends StatelessWidget {
             InkWell(
               onTap: () {
                 context.push(
-                    '/post-detail/${post.content.id}/${true}/${post.userId}');
+                    '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}');
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,7 +94,8 @@ class PostWithCommentsWidget extends StatelessWidget {
                     children: [
                       InkWell(
                         onTap: () {
-                          context.push('/userProfileScreen/${post.userId}');
+                          context
+                              .push('/userProfileScreen/${widget.post.userId}');
                         },
                         child: Row(
                           children: [
@@ -94,9 +106,9 @@ class PostWithCommentsWidget extends StatelessWidget {
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                   ),
-                                  child: post.content.proPic != null
+                                  child: widget.post.content.proPic != null
                                       ? Image.network(
-                                          post.content.proPic!,
+                                          widget.post.content.proPic!,
                                           fit: BoxFit.contain,
                                         )
                                       : Image.asset(
@@ -113,7 +125,7 @@ class PostWithCommentsWidget extends StatelessWidget {
                                 Row(
                                   children: [
                                     Text(
-                                      post.userName,
+                                      widget.post.userName,
                                       style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14),
@@ -133,7 +145,8 @@ class PostWithCommentsWidget extends StatelessWidget {
                                       width: 6,
                                     ),
                                     Text(
-                                      formatTimeDifference(post.createdAt),
+                                      formatTimeDifference(
+                                          widget.post.createdAt),
                                       style: TextStyle(
                                         color: Colors.grey[500],
                                         fontSize: 14,
@@ -142,7 +155,7 @@ class PostWithCommentsWidget extends StatelessWidget {
                                   ],
                                 ),
                                 Text(
-                                  post.content.city,
+                                  widget.post.content.city,
                                   style: TextStyle(
                                       fontWeight: FontWeight.w400,
                                       color: Colors.grey[500],
@@ -155,7 +168,7 @@ class PostWithCommentsWidget extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          showBottomSheet();
+                          showBottomSheet(false);
                         },
                         child: Icon(
                           Icons.more_horiz,
@@ -168,9 +181,9 @@ class PostWithCommentsWidget extends StatelessWidget {
                   const SizedBox(
                     height: 12,
                   ),
-                  post.content.title != null
+                  widget.post.content.title != null
                       ? Text(
-                          post.content.title!,
+                          widget.post.content.title!,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             color: Colors.grey[900],
@@ -180,14 +193,14 @@ class PostWithCommentsWidget extends StatelessWidget {
                           ),
                         )
                       : Container(),
-                  post.content.title != null
+                  widget.post.content.title != null
                       ? const SizedBox(
                           height: 10,
                         )
                       : Container(),
-                  post.content.content != null
+                  widget.post.content.content != null
                       ? Text(
-                          post.content.content!,
+                          widget.post.content.content!,
                           textAlign: TextAlign.start,
                           style: TextStyle(
                             color: Colors.grey[800],
@@ -196,12 +209,12 @@ class PostWithCommentsWidget extends StatelessWidget {
                           ),
                         )
                       : Container(),
-                  post.content.multimedia != null
+                  widget.post.content.multimedia != null
                       ? const SizedBox(
                           height: 10,
                         )
                       : Container(),
-                  post.content.multimedia != null
+                  widget.post.content.multimedia != null
                       ? Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
@@ -211,7 +224,7 @@ class PostWithCommentsWidget extends StatelessWidget {
                               child: Image.network(
                                 width: double.infinity,
                                 height: 200,
-                                post.content.multimedia!,
+                                widget.post.content.multimedia!,
                                 fit: BoxFit.cover,
                               )),
                         )
@@ -220,104 +233,109 @@ class PostWithCommentsWidget extends StatelessWidget {
                     height: 20,
                   ),
                   ReactionWidget(
-                    post: post.content,
+                    post: widget.post.content,
                   ),
-                  const Divider(),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipOval(
-                            child: Container(
-                                width: screenWidth * 0.1,
-                                height: screenWidth * 0.1,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Image.network(
-                                  userProPic,
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                          const SizedBox(
-                            width: 12,
-                          ),
-                          Expanded(
-                            child: Column(
+                  !isDeleted
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Divider(),
+                            Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  post.userName,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: screenWidth * 0.035,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                Text(
-                                  post.commentText,
-                                  style: TextStyle(
-                                    color: Colors.grey[800],
-                                    fontSize: screenWidth * 0.04,
-                                    height: 1.3,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      timeAgo(post.createdAt),
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: screenWidth * 0.035,
-                                        height: 1.3,
-                                      ),
+                                ClipOval(
+                                  child: Container(
+                                    width: screenWidth * 0.1,
+                                    height: screenWidth * 0.1,
+                                    decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
                                     ),
-                                    // const SizedBox(
-                                    //   width: 10,
-                                    // ),
-                                    // GestureDetector(
-                                    //   // Use GestureDetector for tap handling
-                                    //   onTap: () {
-                                    //     // Request focus for the comment text field
-                                    //     // widget.commentFocusNode.requestFocus();
-                                    //   },
-                                    //   child: const Text(
-                                    //     'Reply',
-                                    //     style: TextStyle(
-                                    //       color: Colors.grey,
-                                    //       fontWeight: FontWeight.w500,
-                                    //       fontSize: 14,
-                                    //       height: 1.3,
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                  ],
+                                    child: widget.post.content.proPic != null
+                                        ? Image.network(
+                                            userProPic,
+                                            fit: BoxFit.contain,
+                                          )
+                                        : Image.asset(
+                                            'assets/second_pro_pic.png',
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
                                 ),
                                 const SizedBox(
-                                  height: 10,
+                                  width: 12,
                                 ),
-                                ProfileReactionCommentWidget(
-                                  postComment: post,
-                                ),
-                                const SizedBox(
-                                  height: 10,
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              widget.post.userName,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: screenWidth * 0.035,
+                                              ),
+                                            ),
+                                          ),
+                                          const Spacer(),
+                                          InkWell(
+                                            onTap: () {
+                                              showBottomSheet(true);
+                                            },
+                                            child: Icon(
+                                              Icons.more_horiz,
+                                              size: 30,
+                                              color: Colors.grey[500],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 4,
+                                      ),
+                                      Text(
+                                        widget.post.commentText,
+                                        style: TextStyle(
+                                          color: Colors.grey[800],
+                                          fontSize: screenWidth * 0.04,
+                                          height: 1.3,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            timeAgo(widget.post.createdAt),
+                                            style: TextStyle(
+                                              color: Colors.grey,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: screenWidth * 0.035,
+                                              height: 1.3,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      ProfileReactionCommentWidget(
+                                        postComment: widget.post,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                          ],
+                        )
+                      : Container(),
                 ],
               ),
             ),
@@ -327,300 +345,68 @@ class PostWithCommentsWidget extends StatelessWidget {
     );
   }
 
-  Future<dynamic> bottomSheet(BuildContext context) {
-    void showReportReasonBottomSheet() {
-      reportReasonBottomSheet(context);
-    }
-
+  Future<dynamic> bottomSheet(BuildContext context, bool isComment) {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: userId != post.userId
-              ? InkWell(
-                  onTap: () {
-                    showReportReasonBottomSheet();
-                  },
-                  child: Row(
-                    children: [
-                      Image.asset('assets/report_flag.png'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        'Report',
-                        style: redOnboardingBody1Style,
-                      )
-                    ],
+          child: BlocConsumer<DeletePostBloc, DeletePostState>(
+            listener: (context, state) {
+              if (state is DeletePostSuccessState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content:
+                        Text(isComment ? 'Comment Deleted' : 'Post Deleted'),
                   ),
-                )
-              : BlocConsumer<DeletePostBloc, DeletePostState>(
-                  listener: (context, state) {
-                    if (state is DeletePostSuccessState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Post Deleted'),
-                        ),
-                      );
-                      context.pop(context);
-                    } else if (state is DeletePostFailureState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.error),
-                        ),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is DeletePostLoadingState) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return InkWell(
-                      onTap: () {
-                        context.read<DeletePostBloc>().add(
-                            DeletePostButtonPressedEvent(
-                                postId: post.content.id, type: 'post'));
-                      },
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.delete,
-                            color: Colors.red,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            'Delete Post',
-                            style: redOnboardingBody1Style,
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                ),
-        );
-      },
-    );
-  }
-
-  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          height: 240,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Image.asset('assets/report_confirmation.png'),
-              Text(
-                'Thanks for letting us know',
-                style: onboardingHeading2Style,
-              ),
-              Text(
-                textAlign: TextAlign.center,
-                'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
-                style: blackonboardingBody1Style,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Future<dynamic> reportReasonBottomSheet(BuildContext context) {
-    void showReportConfirmationBottomSheet() {
-      reportConfirmationBottomSheet(context);
-    }
-
-    List<String> reportReasons = [
-      'Inappropriate content',
-      'Spam',
-      'Harassment or hate speech',
-      'Violence or dangerous organizations',
-      'Intellectual property violation',
-    ];
-    return showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return BlocConsumer<ReportPostBloc, ReportPostState>(
-          listener: (context, state) {
-            if (state is ReportPostSuccessState) {
-              Navigator.pop(context);
-              Navigator.pop(context);
-              showReportConfirmationBottomSheet();
-            } else if (state is ReportPostFailureState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.error),
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            return SingleChildScrollView(
-              child: Container(
-                color: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                );
+                context.pop(context);
+                setState(() {
+                  isDeleted = true;
+                });
+              } else if (state is DeletePostFailureState) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.error),
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              if (state is DeletePostLoadingState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              return InkWell(
+                onTap: () {
+                  context.read<DeletePostBloc>().add(
+                      DeletePostButtonPressedEvent(
+                          postId: isComment
+                              ? widget.post.commentId
+                              : widget.post.content.id,
+                          type: isComment ? 'comment' : 'post'));
+                },
+                child: Row(
                   children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: const Color(0xffB8B8B8),
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                      ),
+                    const Icon(
+                      Icons.delete,
+                      color: Colors.red,
                     ),
                     const SizedBox(
-                      height: 15,
+                      width: 10,
                     ),
-                    state is ReportPostLoadingState
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : Center(
-                            child: Text(
-                              'Reason to Report',
-                              style: onboardingHeading2Style,
-                            ),
-                          ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
-                                    type: 'post',
-                                    postId: post.content.id,
-                                    reason: reportReasons[0]));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[0],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
-                                    type: 'post',
-                                    postId: post.content.id,
-                                    reason: reportReasons[1]));
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[1],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
-                                  type: 'post',
-                                  postId: post.content.id,
-                                  reason: reportReasons[2])),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[2],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
-                                  type: 'post',
-                                  postId: post.content.id,
-                                  reason: reportReasons[3])),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[3],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
-                                  type: 'post',
-                                  postId: post.content.id,
-                                  reason: reportReasons[4])),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[4],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+                    Text(
+                      isComment ? 'Delete Comment' : 'Delete Post',
+                      style: redOnboardingBody1Style,
+                    )
                   ],
                 ),
-              ),
-            );
-          },
+              );
+            },
+          ),
         );
       },
     );

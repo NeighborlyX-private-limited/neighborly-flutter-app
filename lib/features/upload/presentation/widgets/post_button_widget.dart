@@ -3,11 +3,13 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 
 class PostButtonWidget extends StatelessWidget {
+  final String? title;
   final bool isActive;
   final VoidCallback? onTapListener;
   const PostButtonWidget({
     super.key,
     required this.isActive,
+    this.title,
     required this.onTapListener,
   });
 
@@ -27,7 +29,7 @@ class PostButtonWidget extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                'Post',
+                title ?? 'Post',
                 style: whiteNormalTextStyle,
               ),
             )),

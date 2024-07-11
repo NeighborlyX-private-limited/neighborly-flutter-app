@@ -44,7 +44,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   Future<void> _loadReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('reactions');
+    final box = Hive.box('postReactions');
     setState(() {
       isCheered =
           box.get('${userID}_${widget.post.id}_isCheered', defaultValue: false);
@@ -55,14 +55,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('reactions');
+    final box = Hive.box('postReactions');
     await box.put('${userID}_${widget.post.id}_isCheered', isCheered);
     await box.put('${userID}_${widget.post.id}_isBooled', isBooled);
   }
 
   Future<void> _removeReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('reactions');
+    final box = Hive.box('postReactions');
     await box.put('${userID}_${widget.post.id}_isCheered', false);
     await box.put('${userID}_${widget.post.id}_isBooled', false);
   }

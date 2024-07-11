@@ -7,6 +7,7 @@ class TextFieldWidget extends StatefulWidget {
   final TextInputType? inputType;
   final TextEditingController controller;
   final void Function(String) onChanged;
+  final double? height;
 
   final FocusNode? focusNode;
   final bool border;
@@ -18,7 +19,8 @@ class TextFieldWidget extends StatefulWidget {
       required this.controller,
       this.focusNode,
       required this.onChanged,
-      this.inputType});
+      this.inputType,
+      this.height});
 
   @override
   State<TextFieldWidget> createState() => _TextFieldWidgetState();
@@ -29,7 +31,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 60,
+      height: widget.height ?? 60,
       child: TextField(
         keyboardType: widget.inputType,
         onChanged: widget.onChanged,
