@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
@@ -46,27 +47,31 @@ class _ProfileReactionCommentWidgetState
     setState(() {
       // Load the state for the current post
       final userID = ShardPrefHelper.getUserID();
-      isCheered = ShardPrefHelper.getIsCheered(
-              userID!, '${widget.postComment.commentId}_isCheered') ??
-          false;
-      isBooled = ShardPrefHelper.getIsBoo(
-              userID, '${widget.postComment.commentId}_isBooled') ??
-          false;
+      final box = Hive.box('commentReactions');
+      setState(() {
+        isCheered = box.get(
+            '${userID}_${widget.postComment.commentId}_isCheered',
+            defaultValue: false);
+        isBooled = box.get('${userID}_${widget.postComment.commentId}_isBooled',
+            defaultValue: false);
+      });
     });
   }
 
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    ShardPrefHelper.setIsCheered(
-        userID!, widget.postComment.commentId, isCheered);
-    ShardPrefHelper.setIsBoo(userID, widget.postComment.commentId, isBooled);
+    final box = Hive.box('commentReactions');
+    await box.put(
+        '${userID}_${widget.postComment.commentId}_isCheered', isCheered);
+    await box.put(
+        '${userID}_${widget.postComment.commentId}_isBooled', isBooled);
   }
 
-  // remove the reaction from shared preference
   Future<void> _removeReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    ShardPrefHelper.setIsCheered(userID!, widget.postComment.commentId, false);
-    ShardPrefHelper.setIsBoo(userID, widget.postComment.commentId, false);
+    final box = Hive.box('commentReactions');
+    await box.put('${userID}_${widget.postComment.commentId}_isCheered', false);
+    await box.put('${userID}_${widget.postComment.commentId}_isBooled', false);
   }
 
   void _updateState(String reaction) {

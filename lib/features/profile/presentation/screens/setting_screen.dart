@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
@@ -456,6 +457,75 @@ class SettingScreen extends StatelessWidget {
   }
 
   Future<void> deleteBottomSheet(BuildContext context) {
+// Function to delete all data related to a specific user ID
+    Future<void> deleteUserPostData(String userID) async {
+      final box = Hive.box('postReactions');
+
+      // Iterate through all keys in the box
+      List<String> keysToRemove = [];
+      for (var key in box.keys) {
+        if (key.startsWith(userID)) {
+          keysToRemove.add(key);
+        }
+      }
+
+      // Remove all entries that match the user ID
+      for (var key in keysToRemove) {
+        await box.delete(key);
+      }
+    }
+
+    Future<void> deleteUserCommentData(String userID) async {
+      final box = Hive.box('commentReactions');
+
+      // Iterate through all keys in the box
+      List<String> keysToRemove = [];
+      for (var key in box.keys) {
+        if (key.startsWith(userID)) {
+          keysToRemove.add(key);
+        }
+      }
+
+      // Remove all entries that match the user ID
+      for (var key in keysToRemove) {
+        await box.delete(key);
+      }
+    }
+
+    Future<void> deleteUserReplyData(String userID) async {
+      final box = Hive.box('replyReactions');
+
+      // Iterate through all keys in the box
+      List<String> keysToRemove = [];
+      for (var key in box.keys) {
+        if (key.startsWith(userID)) {
+          keysToRemove.add(key);
+        }
+      }
+
+      // Remove all entries that match the user ID
+      for (var key in keysToRemove) {
+        await box.delete(key);
+      }
+    }
+
+    Future<void> deleteUserVoteData(String userID) async {
+      final box = Hive.box('pollVotes');
+
+      // Iterate through all keys in the box
+      List<String> keysToRemove = [];
+      for (var key in box.keys) {
+        if (key.startsWith(userID)) {
+          keysToRemove.add(key);
+        }
+      }
+
+      // Remove all entries that match the user ID
+      for (var key in keysToRemove) {
+        await box.delete(key);
+      }
+    }
+
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -513,12 +583,10 @@ class SettingScreen extends StatelessWidget {
                         );
                       } else if (state is LogoutSuccessState) {
                         // remove the user info from the shared preferences
-                        ShardPrefHelper.deleteBooPosts(
-                            ShardPrefHelper.getUserID()!);
-                        ShardPrefHelper.deleteCheeredPosts(
-                            ShardPrefHelper.getUserID()!);
-                        ShardPrefHelper.deltePollVotes(
-                            ShardPrefHelper.getUserID()!);
+                        deleteUserPostData(ShardPrefHelper.getUserID()!);
+                        deleteUserCommentData(ShardPrefHelper.getUserID()!);
+                        deleteUserReplyData(ShardPrefHelper.getUserID()!);
+                        deleteUserVoteData(ShardPrefHelper.getUserID()!);
 
                         ShardPrefHelper.removeUserID();
                         ShardPrefHelper.removeCookie();

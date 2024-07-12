@@ -39,6 +39,8 @@ void main() async {
   await Hive.initFlutter();
   await Hive.openBox('postReactions');
   await Hive.openBox('commentReactions');
+  await Hive.openBox('replyReactions');
+  await Hive.openBox('pollVotes');
   di.init();
   await ShardPrefHelper.init();
   runApp(const MyApp());

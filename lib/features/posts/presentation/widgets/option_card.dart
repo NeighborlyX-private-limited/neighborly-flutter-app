@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/entities/option_entity.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
@@ -33,12 +34,11 @@ class _OptionCardState extends State<OptionCard> {
   Future<void> _loadSelectionState() async {
     final userID = ShardPrefHelper.getUserID();
     setState(() {
-      isSelected = ShardPrefHelper.getPollVote(
-            userID!,
-            widget.pollId,
-            widget.option.optionId,
-          ) ??
-          false;
+      final box = Hive.box('pollVotes');
+      isSelected = box.get(
+          '$userID-${widget.pollId}-${widget.option.optionId}-_pollVote',
+          defaultValue: false);
+
       filledPercentage = isSelected
           ? calculatePercentage(
                 widget.option.votes,
@@ -51,8 +51,13 @@ class _OptionCardState extends State<OptionCard> {
 
   Future<void> _saveSelectionState() async {
     final userID = ShardPrefHelper.getUserID();
-    ShardPrefHelper.setPollVote(
-        userID!, widget.pollId, widget.option.optionId, isSelected);
+    // ShardPrefHelper.setPollVote(
+    //     userID!, widget.pollId, widget.option.optionId, isSelected);
+
+    final box = Hive.box('pollVotes');
+    await box.put(
+        '$userID-${widget.pollId}-${widget.option.optionId}-_pollVote',
+        isSelected);
   }
 
   void _toggleSelection() {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
@@ -41,29 +42,28 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
   }
 
   Future<void> _loadReactionState() async {
+    final userID = ShardPrefHelper.getUserID();
+    final box = Hive.box('replyReactions');
     setState(() {
-      // Load the state for the current post
-      final userID = ShardPrefHelper.getUserID();
-      isCheered = ShardPrefHelper.getIsCheered(
-              userID!, '${widget.reply.id}_isCheered') ??
-          false;
+      isCheered = box.get('${userID}_${widget.reply.id}_isCheered',
+          defaultValue: false);
       isBooled =
-          ShardPrefHelper.getIsBoo(userID, '${widget.reply.id}_isBooled') ??
-              false;
+          box.get('${userID}_${widget.reply.id}_isBooled', defaultValue: false);
     });
   }
 
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    ShardPrefHelper.setIsCheered(userID!, widget.reply.id, isCheered);
-    ShardPrefHelper.setIsBoo(userID, widget.reply.id, isBooled);
+    final box = Hive.box('replyReactions');
+    await box.put('${userID}_${widget.reply.id}_isCheered', isCheered);
+    await box.put('${userID}_${widget.reply.id}_isBooled', isBooled);
   }
 
-  // remove the reaction from shared preference
   Future<void> _removeReactionState() async {
     final userID = ShardPrefHelper.getUserID();
-    ShardPrefHelper.setIsCheered(userID!, widget.reply.id, false);
-    ShardPrefHelper.setIsBoo(userID, widget.reply.id, false);
+    final box = Hive.box('replyReactions');
+    await box.put('${userID}_${widget.reply.id}_isCheered', false);
+    await box.put('${userID}_${widget.reply.id}_isBooled', false);
   }
 
   void _updateState(String reaction) {

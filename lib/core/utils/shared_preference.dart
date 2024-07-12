@@ -63,60 +63,61 @@ class ShardPrefHelper {
   static Future removeLocation() async =>
       await _preferences.remove(_doubleListKey);
 
-  // save is cheered
-  static Future setIsCheered(String userId, num postId, bool isLiked) async =>
-      await _preferences.setBool('$userId-${postId}_isCheered', isLiked);
-  static bool? getIsCheered(String userId, String postId) =>
-      _preferences.getBool('$userId-${postId}_isCheered');
-  static Future<void> deleteCheeredPosts(String userId) async {
-    final keys = _preferences.getKeys();
-    final cheeredKeys = keys.where(
-        (key) => key.startsWith('$userId-') && key.endsWith('_isCheered'));
+  // // save is cheered
+  // static Future setIsCheered(String userId, num postId, bool isLiked) async =>
+  //     await _preferences.setBool('$userId-${postId}_isCheered', isLiked);
+  // static bool? getIsCheered(String userId, String postId) =>
+  //     _preferences.getBool('$userId-${postId}_isCheered');
+  // static Future<void> deleteCheeredPosts(String userId) async {
+  //   final keys = _preferences.getKeys();
+  //   final cheeredKeys = keys.where(
+  //       (key) => key.startsWith('$userId-') && key.endsWith('_isCheered'));
 
-    for (var key in cheeredKeys) {
-      if (_preferences.getBool(key) == true) {
-        await _preferences.remove(key);
-      }
-    }
-  }
+  //   for (var key in cheeredKeys) {
+  //     if (_preferences.getBool(key) == true) {
+  //       await _preferences.remove(key);
+  //     }
+  //   }
+  // }
 
-  // save is  boo
-  static Future setIsBoo(String userId, num postId, bool isLiked) async =>
-      await _preferences.setBool('$userId-${postId}_isBoo', isLiked);
-  static bool? getIsBoo(String userId, String postId) =>
-      _preferences.getBool('$userId-${postId}_isBoo');
-  static Future<void> deleteBooPosts(String userId) async {
-    final keys = _preferences.getKeys();
-    final booKeys = keys
-        .where((key) => key.startsWith('$userId-') && key.endsWith('_isBoo'));
+  // // save is  boo
+  // static Future setIsBoo(String userId, num postId, bool isLiked) async =>
+  //     await _preferences.setBool('$userId-${postId}_isBoo', isLiked);
+  // static bool? getIsBoo(String userId, String postId) =>
+  //     _preferences.getBool('$userId-${postId}_isBoo');
+  // static Future<void> deleteBooPosts(String userId) async {
+  //   final keys = _preferences.getKeys();
+  //   final booKeys = keys
+  //       .where((key) => key.startsWith('$userId-') && key.endsWith('_isBoo'));
 
-    for (var key in booKeys) {
-      if (_preferences.getBool(key) == true) {
-        await _preferences.remove(key);
-      }
-    }
-  }
+  //   for (var key in booKeys) {
+  //     if (_preferences.getBool(key) == true) {
+  //       await _preferences.remove(key);
+  //     }
+  //   }
+  // }
 
-  // save poll vote
-  static Future setPollVote(
-          String userId, num pollId, num voteId, bool vote) async =>
-      await _preferences.setBool('$userId-$pollId-$voteId-_pollVote', vote);
-  static bool? getPollVote(String userId, num pollId, num voteId) =>
-      _preferences.getBool('$userId-$pollId-$voteId-_pollVote');
-  static Future<void> deltePollVotes(String userId) async {
-    final keys = _preferences.getKeys();
-    final voteKeys = keys.where(
-        (key) => key.startsWith('$userId-') && key.endsWith('_pollVote'));
+  // // save poll vote
+  // static Future setPollVote(
+  //         String userId, num pollId, num voteId, bool vote) async =>
+  //     await _preferences.setBool('$userId-$pollId-$voteId-_pollVote', vote);
+  // static bool? getPollVote(String userId, num pollId, num voteId) =>
+  //     _preferences.getBool('$userId-$pollId-$voteId-_pollVote');
+  // static Future<void> deltePollVotes(String userId) async {
+  //   final keys = _preferences.getKeys();
+  //   final voteKeys = keys.where(
+  //       (key) => key.startsWith('$userId-') && key.endsWith('_pollVote'));
 
-    for (var key in voteKeys) {
-      if (_preferences.getBool(key) == true) {
-        await _preferences.remove(key);
-      }
-    }
-  }
+  //   for (var key in voteKeys) {
+  //     if (_preferences.getBool(key) == true) {
+  //       await _preferences.remove(key);
+  //     }
+  //   }
+  // }
 
   static Future<bool> clear() async {
     await _preferences.clear();
+    print('SharedPref cleared');
     return true;
   }
 }
