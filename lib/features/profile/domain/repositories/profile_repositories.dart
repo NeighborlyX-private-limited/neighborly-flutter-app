@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
 import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
@@ -36,4 +38,11 @@ abstract class ProfileRepositories {
   Future<Either<Failure, AuthResponseEntity>> getProfile();
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, void>> deleteAccount();
+  Future<Either<Failure, void>> editProfile({
+    required String username,
+    required String gender,
+    String? bio,
+    File? image,
+    // required List<double> homeCoordinates,
+  });
 }

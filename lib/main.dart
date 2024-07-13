@@ -21,6 +21,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_p
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
@@ -140,6 +141,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<GetMyGroupsBloc>(
             create: (context) => di.sl<GetMyGroupsBloc>(),
+          ),
+          BlocProvider<EditProfileBloc>(
+            create: (context) => di.sl<EditProfileBloc>(),
           ),
         ],
         child: MaterialApp.router(

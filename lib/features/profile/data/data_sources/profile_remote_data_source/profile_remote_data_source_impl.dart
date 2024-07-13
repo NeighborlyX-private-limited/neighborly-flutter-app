@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:neighborly_flutter_app/core/constants/constants.dart';
 import 'package:neighborly_flutter_app/core/error/exception.dart';
@@ -51,7 +52,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    // print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/user/update-user-location';
     final response = await client.put(
       Uri.parse(url),
@@ -122,7 +122,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    // print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/authentication/logout';
     final response = await client.get(
       Uri.parse(url),
@@ -146,7 +145,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    // print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/profile/user-content';
     Map<String, dynamic> queryParameters = {'userId': userId};
 
@@ -159,7 +157,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
-    
+
       return jsonData.map((data) => PostModel.fromJson(data)).toList();
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
@@ -174,7 +172,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    // print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/profile/send-feedback';
     final response = await client.post(
       Uri.parse(url),
@@ -285,6 +282,44 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
       throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<void> editProfile(
+      {required String username,
+      required String gender,
+      String? bio,
+      File? image,
+      // required List<double> homeCoordinates,
+      }) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrl/profile/edit-user-info';
+    final request = http.MultipartRequest('PUT', Uri.parse(url))
+      ..headers['Cookie'] = cookieHeader
+      ..fields['username'] = username
+      ..fields['bio'] = bio ?? ''
+      // ..fields['homeCoordinates'] = homeCoordinates.join(',')
+      ..fields['gender'] = gender;
+    if (image != null) {
+      request.files.add(
+        http.MultipartFile(
+          'file', // Field name for the file
+          image.readAsBytes().asStream(),
+          image.lengthSync(),
+          filename: image.path.split('/').last,
+        ),
+      );
+    }
+
+    final response = await request.send();
+    final responseString = await response.stream.bytesToString();
+    if (response.statusCode != 200) {
+      throw ServerException(message: jsonDecode(responseString)['error']);
     }
   }
 }

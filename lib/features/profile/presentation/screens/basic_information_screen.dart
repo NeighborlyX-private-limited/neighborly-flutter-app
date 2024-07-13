@@ -2,15 +2,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/text_field_widget.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/gender_dropdown_widget.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/widgets/post_button_widget.dart';
 
 class BasicInformationScreen extends StatefulWidget {
@@ -22,12 +21,11 @@ class BasicInformationScreen extends StatefulWidget {
 
 class _BasicInformationScreenState extends State<BasicInformationScreen> {
   bool isActive = false;
-  late bool isUsernamePasswordFilled = false;
+  late bool isUsernameFilled = false;
   late bool isEmailFilled = false;
-  late bool isPhoneNumberFilled = false;
   bool noConnection = false;
 
-  late TextEditingController _usernamePasswordController;
+  late TextEditingController _usernameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneNumberController;
   late TextEditingController _bioController;
@@ -36,7 +34,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
 
   @override
   void initState() {
-    _usernamePasswordController = TextEditingController();
+    _usernameController = TextEditingController();
     _emailController = TextEditingController();
     _phoneNumberController = TextEditingController();
     _bioController = TextEditingController();
@@ -47,9 +45,10 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
   @override
   void dispose() {
     super.dispose();
-    _usernamePasswordController.dispose();
+    _usernameController.dispose();
     _emailController.dispose();
     _phoneNumberController.dispose();
+    _bioController.dispose();
   }
 
   void _fetchProfile() {
@@ -69,6 +68,10 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
         _selectedImage = File(image.path);
       });
     }
+  }
+
+  bool checkIsFilled() {
+    return isUsernameFilled && isEmailFilled && _selectedGender != null;
   }
 
   String? _selectedGender;
@@ -103,21 +106,26 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                             ),
                           ],
                         ),
-                        BlocConsumer<UploadPostBloc, UploadPostState>(
+                        BlocConsumer<EditProfileBloc, EditProfileState>(
                           listener: (context, state) {
-                            if (state is UploadPostFailureState) {
+                            if (state is EditProfileFailureState) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text(state.error)),
                               );
-                            } else if (state is UploadPostSuccessState) {
-                              // _contentController.clear();
-                              // _titleController.clear();
+                            } else if (state is EditProfileSuccessState) {
+                              // _usernameController.clear();
+                              // _bioController.clear();
                               // _removeImage();
-                              // context.go('/homescreen');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Profile updated successfully')),
+                              );
+                              context.pop('/settingsScreen');
                             }
                           },
                           builder: (context, state) {
-                            if (state is UploadPostLoadingState) {
+                            if (state is EditProfileLoadingState) {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
@@ -127,24 +135,34 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 List<double> location =
                                     ShardPrefHelper.getLocation();
 
-                                List<Placemark> placemarks =
-                                    await placemarkFromCoordinates(
-                                  location[0],
-                                  location[1],
-                                );
-
-                                // BlocProvider.of<UploadPostBloc>(context).add(
-                                //   UploadPostPressedEvent(
-                                //     city: placemarks[0].locality ?? '',
-                                //     content: _contentController.text.trim(),
-                                //     title: _titleController.text.trim(),
-                                //     type: 'post',
-                                //     multimedia: _selectedImage,
-                                //     allowMultipleVotes: false,
-                                //   ),
+                                // List<Placemark> placemarks =
+                                //     await placemarkFromCoordinates(
+                                //   location[0],
+                                //   location[1],
                                 // );
+
+                                print('Location: $location');
+                                print('Username: ${_usernameController.text}');
+                                print('Email: ${_emailController.text}');
+                                print(
+                                    'Phone number: ${_phoneNumberController.text}');
+                                print('gender: $_selectedGender');
+                                print('bio: ${_bioController.text}');
+                                print('Image: $_selectedImage');
+
+                                BlocProvider.of<EditProfileBloc>(context).add(
+                                  EditProfileButtonPressedEvent(
+                                    bio: _bioController.text,
+                                    // email: _emailController.text,
+                                    // phoneNumber: _phoneNumberController.text,
+                                    username: _usernameController.text,
+                                    image: _selectedImage,
+                                    gender: _selectedGender!,
+                                    // homeCoordinates: location,
+                                  ),
+                                );
                               },
-                              isActive: true,
+                              isActive: checkIsFilled(),
                             );
                           },
                         )
@@ -154,12 +172,16 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                   BlocBuilder<GetProfileBloc, GetProfileState>(
                     builder: (context, state) {
                       if (state is GetProfileSuccessState) {
-                        _bioController.text = state.profile.bio ?? '';
-                        _emailController.text = state.profile.email;
+                        print('Profile fetched successfully');
+                        print('Username: ${state.profile.username}');
+                        print('Email: ${state.profile.email}');
 
-                        // _phoneNumberController.text = state.profile.phoneNumber;
-                        _usernamePasswordController.text =
-                            state.profile.username;
+                        // Set initial values when the state is fetched successfully
+                        _bioController.text = state.profile.bio ?? '';
+                        _emailController.text = ShardPrefHelper.getEmail()!;
+                        _usernameController.text =
+                            ShardPrefHelper.getUsername()!;
+                     
                         return Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
@@ -197,7 +219,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   ),
                                 ),
                               ),
-                              // const SizedBox(height: 20),
                               Text(
                                 'Username',
                                 style: greyonboardingBody1Style,
@@ -209,13 +230,12 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 border: true,
                                 onChanged: (value) {
                                   setState(() {
-                                    isUsernamePasswordFilled =
-                                        _usernamePasswordController.text
-                                            .trim()
-                                            .isNotEmpty;
+                                    isUsernameFilled = _usernameController.text
+                                        .trim()
+                                        .isNotEmpty;
                                   });
                                 },
-                                controller: _usernamePasswordController,
+                                controller: _usernameController,
                                 lableText: '',
                               ),
                               const SizedBox(
@@ -228,16 +248,30 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               const SizedBox(
                                 height: 5,
                               ),
-                              TextFieldWidget(
-                                border: true,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isEmailFilled =
-                                        _emailController.text.trim().isNotEmpty;
-                                  });
-                                },
-                                controller: _emailController,
-                                lableText: '',
+                              Container(
+                                height: 60,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: TextField(
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isEmailFilled = _emailController.text
+                                          .trim()
+                                          .isNotEmpty;
+                                    });
+                                  },
+                                  controller: _emailController,
+                                  decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                  ),
+                                  keyboardType: TextInputType.multiline,
+                                  maxLines: null,
+                                  minLines: 1,
+                                ),
                               ),
                               const SizedBox(
                                 height: 10,
@@ -251,14 +285,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               ),
                               TextFieldWidget(
                                 border: true,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isPhoneNumberFilled = _phoneNumberController
-                                        .text
-                                        .trim()
-                                        .isNotEmpty;
-                                  });
-                                },
+                                onChanged: (value) {},
                                 controller: _phoneNumberController,
                                 lableText: '',
                               ),
@@ -316,7 +343,9 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           ),
                         );
                       } else {
-                        return const SizedBox();
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
                       }
                     },
                   ),

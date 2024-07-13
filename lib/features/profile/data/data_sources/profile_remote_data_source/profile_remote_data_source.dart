@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:neighborly_flutter_app/core/models/post_model.dart';
 import 'package:neighborly_flutter_app/features/profile/data/models/auth_response_model.dart';
 import 'package:neighborly_flutter_app/features/profile/data/models/post_with_comments_model.dart';
@@ -34,4 +36,11 @@ abstract class ProfileRemoteDataSource {
   });
   Future<void> logout();
   Future<void> deleteAccount();
+  Future<void> editProfile({
+    required String username,
+    required String gender,
+    String? bio,
+    File? image,
+    // required List<double> homeCoordinates,
+  });
 }

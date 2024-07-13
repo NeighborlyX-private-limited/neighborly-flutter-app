@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
 import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
@@ -200,8 +202,35 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getMyGroups(userId: userId);
-        print('respository called');
         return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> editProfile({
+    required String username,
+    required String gender,
+    String? bio,
+    File? image,
+    // required List<double> homeCoordinates,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        await remoteDataSource.editProfile(
+          username: username,
+          bio: bio,
+          // homeCoordinates: homeCoordinates,
+          image: image,
+          gender: gender,
+        );
+        return const Right(null);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
       } catch (e) {

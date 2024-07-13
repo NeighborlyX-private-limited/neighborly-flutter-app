@@ -31,7 +31,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/create-post';
 
-    // Create a multipart request
+    // Create a multipart request 
     final request = http.MultipartRequest('POST', Uri.parse(url))
       ..headers['Cookie'] = cookieHeader
       ..fields['title'] = title

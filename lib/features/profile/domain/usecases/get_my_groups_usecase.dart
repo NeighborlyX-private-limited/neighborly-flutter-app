@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/entities/post_with_comments_entity.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/repositories/profile_repositories.dart';
 
 class GetMyGroupUsecase {

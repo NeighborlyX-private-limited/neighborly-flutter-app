@@ -22,6 +22,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_awa
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/delete_account_usecase.dart';
+import 'package:neighborly_flutter_app/features/profile/domain/usecases/edit_profile_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_comments_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_groups_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_my_posts_usecase.dart';
@@ -32,6 +33,7 @@ import 'package:neighborly_flutter_app/features/profile/domain/usecases/logout_u
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/send_feedback_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
@@ -130,6 +132,7 @@ void init() async {
   sl.registerLazySingleton(() => GetUserInfoUsecase(sl()));
   sl.registerLazySingleton(() => GetMyCommentsUsecase(sl()));
   sl.registerLazySingleton(() => GetMyGroupUsecase(sl()));
+  sl.registerLazySingleton(() => EditProfileUsecase(sl()));
 
   // register bloc
   sl.registerFactory(() => RegisterWithEmailBloc(registerUseCase: sl()));
@@ -164,6 +167,7 @@ void init() async {
   sl.registerFactory(() => GetUserInfoBloc(getUserInfoUsecase: sl()));
   sl.registerFactory(() => GetMyCommentsBloc(getMyCommentsUsecase: sl()));
   sl.registerFactory(() => GetMyGroupsBloc(getMyGroupsUsecase: sl()));
+  sl.registerFactory(() => EditProfileBloc(editProfileUsecase: sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());
