@@ -35,14 +35,18 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, AuthResponseEntity>> signupWithEmail({
-    required String email,
-    required String password,
+  Future<Either<Failure, AuthResponseEntity>> signup({
+    String? email,
+    String? password,
+    String? phone,
   }) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.signupWithEmail(
-            email: email, password: password,);
+        final result = await remoteDataSource.signup(
+          email: email,
+          password: password,
+          phone: phone,
+        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -55,16 +59,14 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, void>> logout() {
-    // TODO: implement logout
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<Failure, String>> resendOtp({required String email}) async {
+  Future<Either<Failure, String>> resendOtp({
+    String? email,
+    String? phone,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.resendOtp(email: email);
+        final result =
+            await remoteDataSource.resendOtp(email: email, phone: phone);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -77,14 +79,20 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, String>> verifyOtp(
-      {required String email,
-      required String otp,
-      required String verificationFor}) async {
+  Future<Either<Failure, String>> verifyOtp({
+    String? email,
+    required String otp,
+    String? verificationFor,
+    String? phone,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.verifyOtp(
-            email: email, otp: otp, verificationFor: verificationFor);
+          email: email,
+          otp: otp,
+          verificationFor: verificationFor,
+          phone: phone,
+        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

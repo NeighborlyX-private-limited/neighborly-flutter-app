@@ -5,7 +5,6 @@ import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 
 class CommunitiesScreen extends StatefulWidget {

@@ -58,7 +58,7 @@ import 'features/authentication/presentation/bloc/fogot_password_bloc/forgot_pas
 import 'features/authentication/presentation/bloc/google_authentication_bloc/google_authentication_bloc.dart';
 import 'features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import 'features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
-import 'features/authentication/presentation/bloc/register_with_email_bloc/register_with_email_bloc.dart';
+import 'features/authentication/presentation/bloc/register_bloc/register_bloc.dart';
 import 'features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'features/posts/data/data_sources/post_remote_data_source/post_remote_data_source.dart';
 import 'features/posts/data/data_sources/post_remote_data_source/post_remote_data_source_impl.dart';
@@ -103,7 +103,7 @@ void init() async {
       () => UploadRemoteDataSourceImpl(client: sl()));
 
   // register usecase
-  sl.registerLazySingleton(() => SignupWithEmailUsecase(sl()));
+  sl.registerLazySingleton(() => SignupUsecase(sl()));
   sl.registerLazySingleton(() => LoginWithEmailUsecase(sl()));
   sl.registerLazySingleton(() => ResendOTPUsecase(sl()));
   sl.registerLazySingleton(() => ForgotPasswordUsecase(sl()));
@@ -135,11 +135,11 @@ void init() async {
   sl.registerLazySingleton(() => EditProfileUsecase(sl()));
 
   // register bloc
-  sl.registerFactory(() => RegisterWithEmailBloc(registerUseCase: sl()));
+  sl.registerFactory(() => RegisterBloc(registerUseCase: sl()));
   sl.registerFactory(() => LoginWithEmailBloc(loginUseCase: sl()));
   sl.registerFactory(() => ResendOtpBloc(resendOTPUsecase: sl()));
   sl.registerFactory(() => ForgotPasswordBloc(forgotPasswordUsecase: sl()));
-  sl.registerFactory(() => OtpBloc(verifyOtpUseCase: sl()));
+  sl.registerFactory(() => OtpBloc(verifyOTPUsecase: sl()));
   sl.registerFactory(
       () => GoogleAuthenticationBloc(googleAuthenticationaUsecase: sl()));
   sl.registerFactory(() => ChangePasswordBloc(changePasswordUsecase: sl()));

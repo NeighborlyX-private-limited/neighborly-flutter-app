@@ -7,9 +7,13 @@ class ResendOTPUsecase {
 
   ResendOTPUsecase(this.repository);
 
-  Future<Either<Failure, String>> call(String email) async {
+  Future<Either<Failure, String>> call({
+    String? email,
+    String? phone,
+  }) async {
     return await repository.resendOtp(
       email: email,
+      phone: phone,
     );
   }
 }

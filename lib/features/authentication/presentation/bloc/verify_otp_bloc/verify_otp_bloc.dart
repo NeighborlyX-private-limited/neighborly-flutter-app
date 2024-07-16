@@ -6,25 +6,23 @@ part 'verify_otp_event.dart';
 part 'verify_otp_state.dart';
 
 class OtpBloc extends Bloc<OtpEvent, OtpState> {
-  OtpBloc({required VerifyOTPUsecase verifyOtpUseCase})
-      : _verifyOtpUseCase = verifyOtpUseCase,
+  final VerifyOTPUsecase _verifyOTPUsecase;
+
+  OtpBloc({required VerifyOTPUsecase verifyOTPUsecase})
+      : _verifyOTPUsecase = verifyOTPUsecase,
         super(OtpIdle()) {
-    on<OtpSubmitted>(_otpHandler);
-  }
+    on<OtpSubmitted>((OtpSubmitted event, Emitter<OtpState> emit) async {
+      emit(OtpLoadInProgress());
 
-  final VerifyOTPUsecase _verifyOtpUseCase;
+      final result = await _verifyOTPUsecase.call(
+        email: event.email,
+        otp: event.otp,
+        verificationFor: event.verificationFor,
+        phone: event.phone,
+      );
 
-  Future<void> _otpHandler(event, emit) async {
-    emit(OtpLoadInProgress());
-    final result = await _verifyOtpUseCase.call(
-      event.email,
-      event.otp,
-      event.verificationFor,
-    );
-
-    result.fold(
-      (error) => emit(OtpLoadFailure(error: error.message.toString())),
-      (message) => emit(OtpLoadSuccess(message: message)),
-    );
+      result.fold((error) => emit(OtpLoadFailure(error: error.toString())),
+          (response) => emit(OtpLoadSuccess(message: response)));
+    });
   }
 }

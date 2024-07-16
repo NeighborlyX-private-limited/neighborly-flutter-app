@@ -214,13 +214,16 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> editProfile({
-    required String username,
-    required String gender,
-    String? bio,
-    File? image,
-    // required List<double> homeCoordinates,
-  }) async {
+  Future<Either<Failure, void>> editProfile(
+      {String? username,
+      String? gender,
+      String? bio,
+      File? image,
+      String? phoneNumber,
+      bool? toggleFindMe
+
+      // required List<double> homeCoordinates,
+      }) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.editProfile(
@@ -228,6 +231,8 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
           bio: bio,
           // homeCoordinates: homeCoordinates,
           image: image,
+          phoneNumber: phoneNumber,
+          toggleFindMe: toggleFindMe,
           gender: gender,
         );
         return const Right(null);

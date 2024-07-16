@@ -7,10 +7,15 @@ class VerifyOTPUsecase {
 
   VerifyOTPUsecase(this.repository);
 
-  Future<Either<Failure, String>> call(
-      String email, String otp, String verificationFor) async {
+  Future<Either<Failure, String>> call({
+    String? email,
+    required String otp,
+    String? verificationFor,
+    String? phone,
+  }) async {
     return await repository.verifyOtp(
       email: email,
+      phone: phone,
       otp: otp,
       verificationFor: verificationFor,
     );

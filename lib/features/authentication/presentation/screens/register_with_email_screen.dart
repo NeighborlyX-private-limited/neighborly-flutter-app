@@ -5,7 +5,7 @@ import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
-import '../bloc/register_with_email_bloc/register_with_email_bloc.dart';
+import '../bloc/register_bloc/register_bloc.dart';
 import '../widgets/button_widget.dart';
 
 class RegisterWithEmailScreen extends StatefulWidget {
@@ -147,9 +147,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                   lableText: 'Re-Password',
                 ),
                 const SizedBox(height: 45),
-                BlocConsumer<RegisterWithEmailBloc, RegisterWithEmailState>(
-                  listener:
-                      (BuildContext context, RegisterWithEmailState state) {
+                BlocConsumer<RegisterBloc, RegisterState>(
+                  listener: (BuildContext context, RegisterState state) {
                     if (state is RegisterFailureState) {
                       if (state.error.contains('email')) {
                         setState(() {
@@ -198,7 +197,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                           setState(() {
                             isEmailValid = true;
                           });
-                          BlocProvider.of<RegisterWithEmailBloc>(context).add(
+                          BlocProvider.of<RegisterBloc>(context).add(
                             RegisterButtonPressedEvent(
                               email: _emailController.text.trim(),
                               password: _passwordController.text.trim(),

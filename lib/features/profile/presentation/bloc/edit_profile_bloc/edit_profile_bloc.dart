@@ -20,6 +20,8 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       final result = await _editProfileUsecase.call(
           username: event.username,
           gender: event.gender,
+          phoneNumber: event.phoneNumber,
+          toggleFindMe: event.toggleFindMe,
           // homeCoordinates: event.homeCoordinates,
           bio: event.bio,
           image: event.image);

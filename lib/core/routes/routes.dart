@@ -16,6 +16,7 @@ import 'package:neighborly_flutter_app/features/profile/presentation/screens/act
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/basic_information_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/communities_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/feedback_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/find_me_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/security_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/setting_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/user_profile_screen.dart';
@@ -162,6 +163,13 @@ final GoRouter router = GoRouter(
         name: RouteConstants.feedbackScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
           return const FeedbackScreen();
+        },
+      ),
+      GoRoute(
+        path: '/findMeScreen',
+        name: RouteConstants.findMeScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const FindMeScreen();
         },
       ),
       GoRoute(

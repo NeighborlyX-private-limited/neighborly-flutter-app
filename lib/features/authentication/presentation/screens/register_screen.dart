@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_bloc/register_bloc.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -53,6 +55,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool _isAuthorized = false; // has granted permissions?
   String _contactText = '';
 
+  late TextEditingController _controller;
+
   @override
   void initState() {
     super.initState();
@@ -71,41 +75,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
         });
       }
     });
-    // In the web, _googleSignIn.signInSilently() triggers the One Tap UX.
-    //
-    // It is recommended by Google Identity Services to render both the One Tap UX
-    // and the Google Sign In button together to "reduce friction and improve
-    // sign-in rates" ([docs](https://developers.google.com/identity/gsi/web/guides/display-button#html)).
+
     _googleSignIn.signInSilently();
+    _controller = TextEditingController();
   }
 
-  // String? _pickFirstNamedContact(Map<String, dynamic> data) {
-  //   final List<dynamic>? connections = data['connections'] as List<dynamic>?;
-  //   final Map<String, dynamic>? contact = connections?.firstWhere(
-  //     (dynamic contact) => (contact as Map<Object?, dynamic>)['names'] != null,
-  //     orElse: () => null,
-  //   ) as Map<String, dynamic>?;
-  //   if (contact != null) {
-  //     final List<dynamic> names = contact['names'] as List<dynamic>;
-  //     final Map<String, dynamic>? name = names.firstWhere(
-  //       (dynamic name) =>
-  //           (name as Map<Object?, dynamic>)['displayName'] != null,
-  //       orElse: () => null,
-  //     ) as Map<String, dynamic>?;
-  //     if (name != null) {
-  //       return name['displayName'] as String?;
-  //     }
-  //   }
-  //   return null;
-  // }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
-  // This is the on-click handler for the Sign In button that is rendered by Flutter.
-  //
-  // On the web, the on-click handler of the Sign In button is owned by the JS
-  // SDK, so this method can be considered mobile only.
-  // #docregion SignIn
-
-  final TextEditingController _controller = TextEditingController();
+  bool noConnection = false;
+  bool isPhoneFilled = false;
+  bool phoneAlreadyExists = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -151,7 +134,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 image: Image.asset('assets/google_icon.png'),
                 title: 'Continue with Google',
                 onTap: () {
-                  print('button clicked');
                   // BlocProvider.of<GoogleAuthenticationBloc>(context)
                   //     .add(const GoogleAuthenticationButtonPressedEvent());
                   _handleSignIn();
@@ -178,10 +160,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 border: true,
                 inputType: TextInputType.phone,
                 onChanged: (value) {
-                  // setState(() {
-                  //   isConfirmPasswordFilled =
-                  //       _confirmPasswordController.text.isNotEmpty;
-                  // });
+                  setState(() {
+                    isPhoneFilled = _controller.text.isNotEmpty;
+                  });
                 },
                 controller: _controller,
                 isPassword: false,
@@ -190,14 +171,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(
                 height: 15,
               ),
-              ButtonContainerWidget(
-                color: AppColors.primaryColor,
-                text: 'Continue',
-                isFilled: true,
-                onTapListener: () {
-                  // context.push("/loginScreen");
+              BlocConsumer<RegisterBloc, RegisterState>(
+                listener: (context, state) {
+                  if (state is RegisterFailureState) {
+                    if (state.error.contains('exists')) {
+                      setState(() {
+                        phoneAlreadyExists = true;
+                      });
+                      return;
+                    }
+                    if (state.error.contains('internet')) {
+                      setState(() {
+                        noConnection = true;
+                      });
+                      return;
+                    }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
+                  } else if (state is RegisterSuccessState) {
+                    context.push('/otp/${_controller.text}/phone-verify');
+                  }
+                },
+                builder: (context, state) {
+                  if (state is RegisterLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ButtonContainerWidget(
+                    color: AppColors.primaryColor,
+                    text: 'Continue',
+                    isActive: isPhoneFilled,
+                    isFilled: true,
+                    onTapListener: () {
+                      BlocProvider.of<RegisterBloc>(context).add(
+                        RegisterButtonPressedEvent(
+                          phone: _controller.text.trim(),
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
+              const SizedBox(
+                height: 15,
+              ),
+              phoneAlreadyExists
+                  ? const Text(
+                      'Phone Number already exists. Please login.',
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : const SizedBox(),
+              noConnection
+                  ? const Text(
+                      'No Internet Connection',
+                      style: TextStyle(color: Colors.red),
+                    )
+                  : const SizedBox(),
               const SizedBox(
                 height: 30,
               ),

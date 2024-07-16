@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 
 class PostSection extends StatefulWidget {
@@ -50,7 +49,6 @@ class _PostSectionState extends State<PostSection> {
               if (state is GetMyPostsLoadingState) {
                 return const PostSheemerWidget();
               } else if (state is GetMyPostsSuccessState) {
-                print('getallmyposts: ${state.post}');
                 if (state.post.isEmpty) {
                   return Center(
                     child: Column(

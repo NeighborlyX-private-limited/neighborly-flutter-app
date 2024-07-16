@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                               ),
                               child: SvgPicture.asset(
                                 checkStringInList(
-                                    state.profile.mostProminentAward!),
+                                    state.profile.mostProminentAward ?? 'Map'),
                                 fit: BoxFit.cover,
                               ),
                             ),

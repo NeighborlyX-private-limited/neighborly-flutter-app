@@ -36,11 +36,14 @@ abstract class ProfileRemoteDataSource {
   });
   Future<void> logout();
   Future<void> deleteAccount();
-  Future<void> editProfile({
-    required String username,
-    required String gender,
-    String? bio,
-    File? image,
-    // required List<double> homeCoordinates,
-  });
+  Future<void> editProfile(
+      {String? username,
+      String? gender,
+      String? bio,
+      File? image,
+      String? phoneNumber,
+      bool? toggleFindMe
+
+      // required List<double> homeCoordinates,
+      });
 }

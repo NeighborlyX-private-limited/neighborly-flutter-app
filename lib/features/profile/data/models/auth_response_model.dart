@@ -4,7 +4,7 @@ class AuthResponseModel extends AuthResponseEntity {
   const AuthResponseModel({
     required super.id,
     required super.username,
-    required super.email,
+    super.email,
     required super.picture,
     super.awardsCount,
     super.bio,

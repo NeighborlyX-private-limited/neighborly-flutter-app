@@ -28,11 +28,21 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     _otpController = TextEditingController();
-    BlocProvider.of<ResendOtpBloc>(context).add(
-      ResendOTPButtonPressedEvent(
-        email: widget.data,
-      ),
-    );
+    if (widget.verificationFor == 'phone-verify') {
+      BlocProvider.of<ResendOtpBloc>(context).add(
+        ResendOTPButtonPressedEvent(
+          phone: widget.data,
+        ),
+      );
+      print('phone-verify called: ${widget.data}');
+    } else {
+      BlocProvider.of<ResendOtpBloc>(context).add(
+        ResendOTPButtonPressedEvent(
+          email: widget.data,
+        ),
+      );
+    }
+
     super.initState();
   }
 
@@ -88,7 +98,9 @@ class _OtpScreenState extends State<OtpScreen> {
                 height: 5,
               ),
               Text(
-                'We sent a verification code to your email: ${widget.data}',
+                widget.verificationFor == 'phone-verify'
+                    ? 'We sent a verification code to your phone: ${widget.data}'
+                    : 'We sent a verification code to your email: ${widget.data}',
                 style: onboardingBodyStyle,
               ),
               const SizedBox(
@@ -139,12 +151,19 @@ class _OtpScreenState extends State<OtpScreen> {
                         isInvalidOtp = true;
                       });
                     }
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
                   } else if (state is OtpLoadSuccess) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.message)),
                     );
-                    if (widget.verificationFor == 'email-verify') {
+                    if (widget.verificationFor == 'email-verify' ||
+                        widget.verificationFor == 'phone-verify') {
                       context.go('/homescreen/true');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.message)),
+                      );
                     } else if (widget.verificationFor == 'forgot-password') {
                       context.push('/newPassword/${widget.data}');
                     }
@@ -162,12 +181,21 @@ class _OtpScreenState extends State<OtpScreen> {
                     text: 'Verify',
                     isFilled: true,
                     onTapListener: () {
-                      BlocProvider.of<OtpBloc>(context).add(
-                        OtpSubmitted(
+                      if (widget.verificationFor == 'phone-verify') {
+                        BlocProvider.of<OtpBloc>(context).add(
+                          OtpSubmitted(
                             otp: _otpController.text,
-                            email: widget.data,
-                            verificationFor: widget.verificationFor),
-                      );
+                            phone: widget.data,
+                          ),
+                        );
+                      } else {
+                        BlocProvider.of<OtpBloc>(context).add(
+                          OtpSubmitted(
+                              otp: _otpController.text,
+                              email: widget.data,
+                              verificationFor: widget.verificationFor),
+                        );
+                      }
                     },
                   );
                 },
@@ -177,11 +205,19 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               InkWell(
                 onTap: () {
-                  BlocProvider.of<ResendOtpBloc>(context).add(
-                    ResendOTPButtonPressedEvent(
-                      email: widget.data,
-                    ),
-                  );
+                  if (widget.verificationFor == 'phone-verify') {
+                    BlocProvider.of<ResendOtpBloc>(context).add(
+                      ResendOTPButtonPressedEvent(
+                        phone: widget.data,
+                      ),
+                    );
+                  } else {
+                    BlocProvider.of<ResendOtpBloc>(context).add(
+                      ResendOTPButtonPressedEvent(
+                        email: widget.data,
+                      ),
+                    );
+                  }
                 },
                 child: BlocConsumer<ResendOtpBloc, ResendOTPState>(
                   listener: (BuildContext context, ResendOTPState state) {
@@ -193,12 +229,6 @@ class _OtpScreenState extends State<OtpScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),
                       );
-
-                      // if (widget.verificationFor == 'email-verify') {
-                      //   context.go('/homescreen');
-                      // } else if (widget.verificationFor == 'forgot-password') {
-                      //   context.push('/changePassword/${widget.data}');
-                      // }
                     }
                   },
                   builder: (context, state) {

@@ -6,7 +6,7 @@ class AuthResponseModel extends AuthResponseEntity {
     required super.username,
     required super.token,
     required super.isVerified,
-    required super.email,
+    super.email,
     required super.coordinates,
     required super.picture,
     super.findMe = true,

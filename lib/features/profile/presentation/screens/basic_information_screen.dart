@@ -71,7 +71,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
   }
 
   bool checkIsFilled() {
-    return isUsernameFilled && isEmailFilled && _selectedGender != null;
+    return _selectedGender != null;
   }
 
   String? _selectedGender;
@@ -113,9 +113,9 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 SnackBar(content: Text(state.error)),
                               );
                             } else if (state is EditProfileSuccessState) {
-                              // _usernameController.clear();
-                              // _bioController.clear();
-                              // _removeImage();
+                              _usernameController.clear();
+                              _bioController.clear();
+
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:
@@ -132,8 +132,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                             return PostButtonWidget(
                               title: 'Save',
                               onTapListener: () async {
-                                List<double> location =
-                                    ShardPrefHelper.getLocation();
+                                // List<double> location =
+                                //     ShardPrefHelper.getLocation();
 
                                 // List<Placemark> placemarks =
                                 //     await placemarkFromCoordinates(
@@ -141,21 +141,13 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 //   location[1],
                                 // );
 
-                                print('Location: $location');
-                                print('Username: ${_usernameController.text}');
-                                print('Email: ${_emailController.text}');
-                                print(
-                                    'Phone number: ${_phoneNumberController.text}');
-                                print('gender: $_selectedGender');
-                                print('bio: ${_bioController.text}');
-                                print('Image: $_selectedImage');
-
                                 BlocProvider.of<EditProfileBloc>(context).add(
                                   EditProfileButtonPressedEvent(
-                                    bio: _bioController.text,
+                                    bio: _bioController.text.trim(),
                                     // email: _emailController.text,
-                                    // phoneNumber: _phoneNumberController.text,
-                                    username: _usernameController.text,
+                                    phoneNumber:
+                                        _phoneNumberController.text.trim(),
+                                    username: _usernameController.text.trim(),
                                     image: _selectedImage,
                                     gender: _selectedGender!,
                                     // homeCoordinates: location,
@@ -172,16 +164,13 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                   BlocBuilder<GetProfileBloc, GetProfileState>(
                     builder: (context, state) {
                       if (state is GetProfileSuccessState) {
-                        print('Profile fetched successfully');
-                        print('Username: ${state.profile.username}');
-                        print('Email: ${state.profile.email}');
-
                         // Set initial values when the state is fetched successfully
                         _bioController.text = state.profile.bio ?? '';
-                        _emailController.text = ShardPrefHelper.getEmail()!;
+                        _emailController.text =
+                            ShardPrefHelper.getEmail() ?? '';
                         _usernameController.text =
                             ShardPrefHelper.getUsername()!;
-                     
+
                         return Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(

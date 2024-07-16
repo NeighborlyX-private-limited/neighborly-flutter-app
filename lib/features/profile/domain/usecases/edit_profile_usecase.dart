@@ -9,18 +9,24 @@ class EditProfileUsecase {
 
   EditProfileUsecase(this.repository);
 
-  Future<Either<Failure, void>> call({
-    required String username,
-    required String gender,
-    String? bio,
-    File? image,
-    // required List<double> homeCoordinates,
-  }) async {
+  Future<Either<Failure, void>> call(
+      {String? username,
+      String? gender,
+      String? bio,
+      File? image,
+      String? phoneNumber,
+      bool? toggleFindMe
+
+      //  List<double> homeCoordinates,
+      }) async {
     return await repository.editProfile(
         username: username,
         gender: gender,
+
         // homeCoordinates: homeCoordinates,
         bio: bio,
+        phoneNumber: phoneNumber,
+        toggleFindMe: toggleFindMe,
         image: image);
   }
 }

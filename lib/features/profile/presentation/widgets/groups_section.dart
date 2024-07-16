@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 
 class GroupSection extends StatefulWidget {
@@ -29,7 +28,6 @@ class _GroupSectionState extends State<GroupSection> {
           .add(GetMyGroupsButtonPressedEvent(
         userId: widget.userId,
       ));
-      print('bloc called');
     }
   }
 

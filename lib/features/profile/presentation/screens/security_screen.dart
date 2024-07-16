@@ -183,7 +183,7 @@ class _SecurityPageState extends State<SecurityPage> {
                                 ChangePasswordButtonPressedEvent(
                                   currentPassword:
                                       _currentPasswordController.text.trim(),
-                                  email: email!,
+                                  email: email ?? '',
                                   newPassword: _passwordController.text.trim(),
                                   flag: true,
                                 ),

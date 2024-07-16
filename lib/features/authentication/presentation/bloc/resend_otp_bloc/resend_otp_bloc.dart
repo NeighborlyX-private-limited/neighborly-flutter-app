@@ -15,7 +15,10 @@ class ResendOtpBloc extends Bloc<ResendOTPEvent, ResendOTPState> {
         Emitter<ResendOTPState> emit) async {
       emit(ResendOTPLoadingState());
 
-      final result = await _resendOTPUsecase.call(event.email);
+      final result = await _resendOTPUsecase.call(
+        email: event.email,
+        phone: event.phone,
+      );
 
       result.fold(
           (error) => emit(ResendOTPFailureState(error: error.toString())),

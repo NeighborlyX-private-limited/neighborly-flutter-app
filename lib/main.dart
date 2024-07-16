@@ -6,7 +6,7 @@ import 'package:neighborly_flutter_app/features/authentication/presentation/bloc
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/google_authentication_bloc/google_authentication_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_with_email_bloc/register_with_email_bloc.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_bloc/register_bloc.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
@@ -55,8 +55,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<RegisterWithEmailBloc>(
-            create: (context) => di.sl<RegisterWithEmailBloc>(),
+          BlocProvider<RegisterBloc>(
+            create: (context) => di.sl<RegisterBloc>(),
           ),
           BlocProvider<LoginWithEmailBloc>(
             create: (context) => di.sl<LoginWithEmailBloc>(),

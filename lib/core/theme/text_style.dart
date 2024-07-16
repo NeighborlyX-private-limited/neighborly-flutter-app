@@ -24,6 +24,13 @@ var greyonboardingBody1Style = GoogleFonts.roboto(
   fontSize: 16,
   fontWeight: FontWeight.w600,
 );
+
+var blackonboardingBody2Style = GoogleFonts.roboto(
+  color: const Color(0xff0A0A0A),
+  fontSize: 16,
+  fontWeight: FontWeight.w600,
+);
+
 var redOnboardingBody1Style = GoogleFonts.roboto(
   color: Colors.red,
   fontSize: 16,

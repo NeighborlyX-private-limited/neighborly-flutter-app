@@ -7,16 +7,16 @@ abstract class OtpEvent extends Equatable {
 
 class OtpSubmitted extends OtpEvent {
   final String otp;
-  final String email;
-  final String verificationFor;
+  final String? email;
+  final String? verificationFor;
+  final String? phone;
   OtpSubmitted({
     required this.otp,
-    required this.email,
-    required this.verificationFor,
+    this.email,
+    this.verificationFor,
+    this.phone,
   });
 
   @override
-  List<Object?> get props => [otp, email];
+  List<Object?> get props => [otp, email, verificationFor, phone];
 }
-
-// class OtpResendRequested extends OtpEvent {}

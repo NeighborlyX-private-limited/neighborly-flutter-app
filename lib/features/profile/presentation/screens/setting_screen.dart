@@ -155,6 +155,31 @@ class SettingScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
+                context.push('/findMeScreen');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    'assets/find-me.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Find Me',
+                    style: blackonboardingBody1Style,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () {
                 context.push('/feedbackScreen');
               },
               child: Row(
@@ -415,13 +440,7 @@ class SettingScreen extends StatelessWidget {
                         ShardPrefHelper.removeImageUrl();
                         ShardPrefHelper.removeUserProfilePicture();
                         ShardPrefHelper.removeUsername();
-                        // print('userId : ${ShardPrefHelper.getUserID()}');
-                        // print('cookie : ${ShardPrefHelper.getCookie()}');
-                        // print('email : ${ShardPrefHelper.getEmail()}');
-                        // print('imageUrl : ${ShardPrefHelper.getImageUrl()}');
-                        // print(
-                        //     'imageUrl : ${ShardPrefHelper.getUserProfilePicture()}');
-                        // print('usename : ${ShardPrefHelper.getUsername()}');
+
                         context.go('/loginScreen');
                       }
                     },
@@ -595,13 +614,6 @@ class SettingScreen extends StatelessWidget {
                         ShardPrefHelper.removeUserProfilePicture();
                         ShardPrefHelper.removeUsername();
 
-                        // print('userId : ${ShardPrefHelper.getUserID()}');
-                        // print('cookie : ${ShardPrefHelper.getCookie()}');
-                        // print('email : ${ShardPrefHelper.getEmail()}');
-                        // print('imageUrl : ${ShardPrefHelper.getImageUrl()}');
-                        // print(
-                        //     'imageUrl : ${ShardPrefHelper.getUserProfilePicture()}');
-                        // print('usename : ${ShardPrefHelper.getUsername()}');
                         context.go('/registerScreen');
                       }
                     },

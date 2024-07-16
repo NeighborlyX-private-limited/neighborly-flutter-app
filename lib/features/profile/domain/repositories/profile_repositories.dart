@@ -38,11 +38,14 @@ abstract class ProfileRepositories {
   Future<Either<Failure, AuthResponseEntity>> getProfile();
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, void>> deleteAccount();
-  Future<Either<Failure, void>> editProfile({
-    required String username,
-    required String gender,
-    String? bio,
-    File? image,
-    // required List<double> homeCoordinates,
-  });
+  Future<Either<Failure, void>> editProfile(
+      {String? username,
+      String? gender,
+      String? bio,
+      File? image,
+      String? phoneNumber,
+      bool? toggleFindMe
+
+      // required List<double> homeCoordinates,
+      });
 }

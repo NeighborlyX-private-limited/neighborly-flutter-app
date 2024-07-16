@@ -74,7 +74,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    // print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/user/update-user-info';
     final response = await client.put(
       Uri.parse(url),
@@ -97,7 +96,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    // print('Cookies: $cookieHeader');
     String url = '$kBaseUrl/profile/user-info';
 
     final response = await client.get(
@@ -287,11 +285,14 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
   @override
   Future<void> editProfile(
-      {required String username,
-      required String gender,
+      {String? username,
+      String? gender,
       String? bio,
       File? image,
-      // required List<double> homeCoordinates,
+      String? phoneNumber,
+      bool? toggleFindMe
+
+      //  List<d?ouble> homeCoordinates,
       }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -301,10 +302,12 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     String url = '$kBaseUrl/profile/edit-user-info';
     final request = http.MultipartRequest('PUT', Uri.parse(url))
       ..headers['Cookie'] = cookieHeader
-      ..fields['username'] = username
+      ..fields['username'] = username ?? ShardPrefHelper.getUsername()!
       ..fields['bio'] = bio ?? ''
+      ..fields['phoneNumber'] = phoneNumber ?? ''
+      ..fields['toggleFindMe'] = toggleFindMe.toString()
       // ..fields['homeCoordinates'] = homeCoordinates.join(',')
-      ..fields['gender'] = gender;
+      ..fields['gender'] = gender ?? '';
     if (image != null) {
       request.files.add(
         http.MultipartFile(
