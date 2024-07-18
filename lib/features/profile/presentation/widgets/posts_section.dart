@@ -104,9 +104,7 @@ class _PostSectionState extends State<PostSection> {
                 }
                 return Center(child: Text(state.error));
               } else {
-                return const Center(
-                  child: Text('No data'),
-                );
+                return const SizedBox();
               }
             },
           )),

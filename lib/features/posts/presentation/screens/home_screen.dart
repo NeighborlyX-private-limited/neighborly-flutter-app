@@ -107,9 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
             } else if (state is GetAllPostsFailureState) {
               if (state.error.contains('Invalid Token')) {
                 context.go('/loginScreen');
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
               }
               if (state.error.contains('Internal server error')) {
                 return const Center(

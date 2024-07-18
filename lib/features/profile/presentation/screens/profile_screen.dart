@@ -4,6 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/comments_section.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/groups_section.dart';
@@ -37,6 +40,12 @@ class _ProfileScreenState extends State<ProfileScreen>
   void _fetchProfile() {
     BlocProvider.of<GetProfileBloc>(context)
         .add(GetProfileButtonPressedEvent());
+    BlocProvider.of<GetMyPostsBloc>(context)
+        .add(GetMyPostsButtonPressedEvent());
+    BlocProvider.of<GetMyCommentsBloc>(context)
+        .add(GetMyCommentsButtonPressedEvent());
+    BlocProvider.of<GetMyGroupsBloc>(context)
+        .add(GetMyGroupsButtonPressedEvent());
   }
 
   String checkStringInList(String str) {
@@ -91,7 +100,6 @@ class _ProfileScreenState extends State<ProfileScreen>
               } else if (state is GetProfileSuccessState) {
                 return Column(
                   children: [
-                    // Profile image
                     Center(
                       child: Stack(
                         children: [
@@ -128,7 +136,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 10),
                     Text(
                       state.profile.username,
@@ -180,19 +187,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                           ],
                         ),
                         const SizedBox(width: 55),
-                        Column(
-                          children: [
-                            Text(
-                              state.profile.awardsCount.toString(),
-                              style: onboardingBlackBody2Style,
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'Awards',
-                              style: mediumGreyTextStyleBlack,
-                            ),
-                          ],
-                        ),
+                        state.profile.awardsCount != 0
+                            ? Column(
+                                children: [
+                                  Text(
+                                    state.profile.awardsCount.toString(),
+                                    style: onboardingBlackBody2Style,
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Awards',
+                                    style: mediumGreyTextStyleBlack,
+                                  ),
+                                ],
+                              )
+                            : const SizedBox(),
                       ],
                     ),
                     const SizedBox(height: 15),
@@ -216,7 +225,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                       ),
                     ),
-
                     Expanded(
                       child: TabBarView(
                         controller: _tabController,
@@ -230,9 +238,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ],
                 );
               } else if (state is GetProfileFailureState) {
-                return Center(
-                  child: Text(state.error),
-                );
+                if (state.error.contains('Invalid Token')) {
+                  context.go('/loginScreen');
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.error)),
+                  );
+                }
               }
               return const SizedBox();
             },

@@ -436,10 +436,14 @@ class SettingScreen extends StatelessWidget {
                         // remove the user info from the shared preferences
                         ShardPrefHelper.removeUserID();
                         ShardPrefHelper.removeCookie();
-                        ShardPrefHelper.removeEmail();
+                        if (ShardPrefHelper.getEmail() != null) {
+                          ShardPrefHelper.removeEmail();
+                        }
                         ShardPrefHelper.removeImageUrl();
                         ShardPrefHelper.removeUserProfilePicture();
                         ShardPrefHelper.removeUsername();
+                        ShardPrefHelper.removePhoneNumber();
+                        ShardPrefHelper.removeGender();
 
                         context.go('/loginScreen');
                       }
@@ -609,10 +613,14 @@ class SettingScreen extends StatelessWidget {
 
                         ShardPrefHelper.removeUserID();
                         ShardPrefHelper.removeCookie();
-                        ShardPrefHelper.removeEmail();
+                        if (ShardPrefHelper.getEmail() != null) {
+                          ShardPrefHelper.removeEmail();
+                        }
                         ShardPrefHelper.removeImageUrl();
                         ShardPrefHelper.removeUserProfilePicture();
                         ShardPrefHelper.removeUsername();
+                        ShardPrefHelper.removePhoneNumber();
+                        ShardPrefHelper.removeGender();
 
                         context.go('/registerScreen');
                       }

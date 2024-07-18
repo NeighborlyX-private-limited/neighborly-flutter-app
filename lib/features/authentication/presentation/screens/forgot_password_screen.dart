@@ -99,9 +99,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
                 listener: (BuildContext context, ForgotPasswordState state) {
                   if (state is ForgotPasswordFailureState) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.error)),
-                    );
+                    if (state.error.contains('Invalid Token')) {
+                      context.go('/loginScreen');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.error)),
+                      );
+                    }
                   } else if (state is ForgotPasswordSuccessState) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.message)),

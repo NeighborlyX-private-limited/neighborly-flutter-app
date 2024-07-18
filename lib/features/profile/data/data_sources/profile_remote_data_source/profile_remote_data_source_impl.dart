@@ -322,7 +322,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     final response = await request.send();
     final responseString = await response.stream.bytesToString();
     if (response.statusCode != 200) {
-      throw ServerException(message: jsonDecode(responseString)['error']);
+      throw ServerException(message: jsonDecode(responseString)['message']);
     }
   }
 }

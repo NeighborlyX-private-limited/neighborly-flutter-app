@@ -21,14 +21,15 @@ class BasicInformationScreen extends StatefulWidget {
 
 class _BasicInformationScreenState extends State<BasicInformationScreen> {
   bool isActive = false;
-  late bool isUsernameFilled = false;
-  late bool isEmailFilled = false;
+  bool isEmpty = false;
+  bool isEmailFilled = false;
   bool noConnection = false;
 
   late TextEditingController _usernameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneNumberController;
   late TextEditingController _bioController;
+  late String _selectedGender;
 
   File? _selectedImage; // Store the selected image
 
@@ -38,6 +39,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
     _emailController = TextEditingController();
     _phoneNumberController = TextEditingController();
     _bioController = TextEditingController();
+    _selectedGender = ShardPrefHelper.getGender() ?? 'Male';
+
     _fetchProfile();
     super.initState();
   }
@@ -69,12 +72,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
       });
     }
   }
-
-  bool checkIsFilled() {
-    return _selectedGender != null;
-  }
-
-  String? _selectedGender;
 
   @override
   Widget build(BuildContext context) {
@@ -109,9 +106,15 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                         BlocConsumer<EditProfileBloc, EditProfileState>(
                           listener: (context, state) {
                             if (state is EditProfileFailureState) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(state.error)),
-                              );
+                              if (state.error.contains('cannot be empty')) {
+                                setState(() {
+                                  isEmpty = true;
+                                });
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(state.error)),
+                                );
+                              }
                             } else if (state is EditProfileSuccessState) {
                               _usernameController.clear();
                               _bioController.clear();
@@ -141,20 +144,29 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 //   location[1],
                                 // );
 
+                                _phoneNumberController.text.trim().isNotEmpty
+                                    ? ShardPrefHelper.setPhoneNumber(
+                                        _phoneNumberController.text.trim())
+                                    : ShardPrefHelper.setPhoneNumber('');
+
+                                ShardPrefHelper.setGender(_selectedGender);
+
+                                ShardPrefHelper.setUsername(
+                                    _usernameController.text.trim());
+
                                 BlocProvider.of<EditProfileBloc>(context).add(
                                   EditProfileButtonPressedEvent(
                                     bio: _bioController.text.trim(),
-                                    // email: _emailController.text,
                                     phoneNumber:
                                         _phoneNumberController.text.trim(),
                                     username: _usernameController.text.trim(),
                                     image: _selectedImage,
-                                    gender: _selectedGender!,
+                                    gender: _selectedGender,
                                     // homeCoordinates: location,
                                   ),
                                 );
                               },
-                              isActive: checkIsFilled(),
+                              isActive: true,
                             );
                           },
                         )
@@ -166,10 +178,11 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                       if (state is GetProfileSuccessState) {
                         // Set initial values when the state is fetched successfully
                         _bioController.text = state.profile.bio ?? '';
-                        _emailController.text =
-                            ShardPrefHelper.getEmail() ?? '';
-                        _usernameController.text =
-                            ShardPrefHelper.getUsername()!;
+                        _emailController.text = state.profile.email ?? '';
+                        _usernameController.text = state.profile.username;
+
+                        _phoneNumberController.text =
+                            state.profile.phoneNumber ?? '';
 
                         return Padding(
                           padding: const EdgeInsets.all(16),
@@ -208,6 +221,18 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   ),
                                 ),
                               ),
+                              isEmpty
+                                  ? const Text(
+                                      'Username and gender cannot be empty',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 15,
+                                      ),
+                                    )
+                                  : Container(),
+                              const SizedBox(
+                                height: 5,
+                              ),
                               Text(
                                 'Username',
                                 style: greyonboardingBody1Style,
@@ -217,13 +242,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               ),
                               TextFieldWidget(
                                 border: true,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isUsernameFilled = _usernameController.text
-                                        .trim()
-                                        .isNotEmpty;
-                                  });
-                                },
+                                onChanged: (value) {},
                                 controller: _usernameController,
                                 lableText: '',
                               ),
@@ -246,6 +265,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: TextField(
+                                  enabled: false,
                                   onChanged: (value) {
                                     setState(() {
                                       isEmailFilled = _emailController.text
@@ -292,7 +312,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 selectedGender: _selectedGender,
                                 onChanged: (String? newValue) {
                                   setState(() {
-                                    _selectedGender = newValue;
+                                    _selectedGender = newValue!;
                                   });
                                 },
                               ),

@@ -22,6 +22,7 @@ class _OtpScreenState extends State<OtpScreen> {
   bool isOtpFilled = false;
   bool isInvalidOtp = false;
   bool isExpiredOtp = false;
+  bool isUserNotFound = false;
 
   late TextEditingController _otpController;
 
@@ -141,19 +142,23 @@ class _OtpScreenState extends State<OtpScreen> {
               BlocConsumer<OtpBloc, OtpState>(
                 listener: (BuildContext context, OtpState state) {
                   if (state is OtpLoadFailure) {
-                    if (state.error == 'OTP has expired') {
+                    if (state.error.contains('User not found')) {
+                      setState(() {
+                        isUserNotFound = true;
+                      });
+                    } else if (state.error.contains('OTP has expired')) {
                       setState(() {
                         isExpiredOtp = true;
                       });
-                    }
-                    if (state.error.contains('Invalid OTP')) {
+                    } else if (state.error.contains('Invalid OTP')) {
                       setState(() {
                         isInvalidOtp = true;
                       });
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.error)),
+                      );
                     }
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.error)),
-                    );
                   } else if (state is OtpLoadSuccess) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.message)),
@@ -222,9 +227,23 @@ class _OtpScreenState extends State<OtpScreen> {
                 child: BlocConsumer<ResendOtpBloc, ResendOTPState>(
                   listener: (BuildContext context, ResendOTPState state) {
                     if (state is ResendOTPFailureState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.error)),
-                      );
+                      if (state.error.contains('User not found')) {
+                        setState(() {
+                          isUserNotFound = true;
+                        });
+                      } else if (state.error.contains('OTP has expired')) {
+                        setState(() {
+                          isExpiredOtp = true;
+                        });
+                      } else if (state.error.contains('Invalid OTP')) {
+                        setState(() {
+                          isInvalidOtp = true;
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.error)),
+                        );
+                      }
                     } else if (state is ResendOTPSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),
@@ -248,7 +267,35 @@ class _OtpScreenState extends State<OtpScreen> {
                     );
                   },
                 ),
-              )
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              isUserNotFound
+                  ? Row(
+                      children: [
+                        const Text(
+                          'User not found, please ',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 17,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            context.go('/registerScreen');
+                          },
+                          child: const Text(
+                            'Sign Up',
+                            style: TextStyle(
+                              color: AppColors.primaryColor,
+                              fontSize: 17,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : Container(),
             ],
           ),
         ),

@@ -15,7 +15,22 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _controller = TextEditingController();
+  late TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  bool isPhoneFilled = false;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -85,10 +100,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 border: true,
                 inputType: TextInputType.phone,
                 onChanged: (value) {
-                  // setState(() {
-                  //   isConfirmPasswordFilled =
-                  //       _confirmPasswordController.text.isNotEmpty;
-                  // });
+                  setState(() {
+                    isPhoneFilled = _controller.text.isNotEmpty;
+                  });
                 },
                 controller: _controller,
                 isPassword: false,
@@ -99,10 +113,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               ButtonContainerWidget(
                 color: AppColors.primaryColor,
+                isActive: isPhoneFilled,
                 text: 'Continue',
                 isFilled: true,
                 onTapListener: () {
-                  // context.push("/loginScreen");
+                  context.push('/otp/${_controller.text}/phone-verify');
                 },
               ),
               const SizedBox(

@@ -26,8 +26,14 @@ class ShardPrefHelper {
   // save userID
   static Future setUserID(String userId) async =>
       await _preferences.setString(_userID, userId);
-  static String? getUserID() => _preferences.getString(_userID) ?? '';
+  static String? getUserID() => _preferences.getString(_userID);
   static Future removeUserID() async => await _preferences.remove(_userID);
+
+  // save gender
+  static Future setGender(String gender) async =>
+      await _preferences.setString('gender', gender);
+  static String? getGender() => _preferences.getString('gender');
+  static Future removeGender() async => await _preferences.remove('gender');
 
   // save userProfilePicture
   static Future setUserProfilePicture(String userProfilePicture) async =>
@@ -42,6 +48,13 @@ class ShardPrefHelper {
       await _preferences.setString('username', username);
   static String? getUsername() => _preferences.getString('username');
   static Future removeUsername() async => await _preferences.remove('username');
+
+  // save phoneNumber
+  static Future setPhoneNumber(String phoneNumber) async =>
+      await _preferences.setString('phoneNumber', phoneNumber);
+  static String? getPhoneNumber() => _preferences.getString('phoneNumber');
+  static Future removePhoneNumber() async =>
+      await _preferences.remove('phoneNumber');
 
   // save email
   static Future setEmail(String email) async =>

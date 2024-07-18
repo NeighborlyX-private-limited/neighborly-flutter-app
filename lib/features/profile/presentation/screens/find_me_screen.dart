@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/edit_profile_bloc/edit_profile_bloc.dart';
 
 class FindMeScreen extends StatefulWidget {
@@ -68,23 +69,46 @@ class _FindMeScreenState extends State<FindMeScreen> {
                         ],
                       ),
                     ),
-                    Switch(
-                      value: allowFindMe,
-                      onChanged: (value) {
-                        setState(() {
-                          allowFindMe = value;
-                        });
-                        BlocProvider.of<EditProfileBloc>(context).add(
-                          EditProfileButtonPressedEvent(
-                            toggleFindMe: allowFindMe,
-                          ),
-                        );
-                        print('allowFindMe bloc called: $allowFindMe');
+                    BlocListener<EditProfileBloc, EditProfileState>(
+                      listener: (context, state) {
+                        if (state is EditProfileSuccessState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Find me updated successfully'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        } else if (state is EditProfileFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
                       },
-                      inactiveThumbColor: Colors.white,
-                      inactiveTrackColor: Colors.grey,
-                      activeTrackColor: const Color(0xff635BFF),
-                      activeColor: Colors.white,
+                      child: Switch(
+                        value: allowFindMe,
+                        onChanged: (value) {
+                          setState(() {
+                            allowFindMe = value;
+                          });
+                          String? userName = ShardPrefHelper.getUsername();
+                          String? gender = ShardPrefHelper.getGender();
+
+                          BlocProvider.of<EditProfileBloc>(context).add(
+                            EditProfileButtonPressedEvent(
+                              toggleFindMe: allowFindMe,
+                              username: userName ?? 'Default User',
+                              gender: gender ?? 'Male',
+                            ),
+                          );
+                        },
+                        inactiveThumbColor: Colors.white,
+                        inactiveTrackColor: Colors.grey,
+                        activeTrackColor: const Color(0xff635BFF),
+                        activeColor: Colors.white,
+                      ),
                     ),
                   ],
                 ),

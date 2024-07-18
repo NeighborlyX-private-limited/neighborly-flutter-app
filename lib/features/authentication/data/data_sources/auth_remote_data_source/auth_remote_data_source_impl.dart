@@ -74,7 +74,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200) {
       return "OTP sent successfully";
     } else {
-      throw ServerException(message: jsonDecode(response.body)['error']);
+      throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
 
