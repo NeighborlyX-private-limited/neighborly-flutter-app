@@ -62,9 +62,14 @@ class _GroupSectionState extends State<GroupSection> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Text(
-                          'Join your first community',
-                          style: bluemediumTextStyleBlack,
+                        InkWell(
+                          onTap: () {
+                            context.go('/groups');
+                          },
+                          child: Text(
+                            'Join your first community',
+                            style: bluemediumTextStyleBlack,
+                          ),
                         ),
                       ],
                     ),

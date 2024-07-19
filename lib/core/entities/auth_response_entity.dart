@@ -15,6 +15,8 @@ class AuthResponseEntity extends Equatable {
   final String? mostProminentAward;
   final num? karma;
   final String? phoneNumber;
+  final bool? isPhoneVerified;
+  final bool? isEmailVerified;
 
   const AuthResponseEntity({
     this.email,
@@ -25,6 +27,8 @@ class AuthResponseEntity extends Equatable {
     this.mostProminentAward,
     this.bio,
     this.postCount,
+    this.isEmailVerified,
+    this.isPhoneVerified,
     this.awardsCount,
     required this.picture,
     required this.id,
@@ -41,7 +45,8 @@ class AuthResponseEntity extends Equatable {
         isVerified,
         bio,
         awardsCount,
- 
+        isEmailVerified,
+        isPhoneVerified,
         mostProminentAward,
         email,
         karma,

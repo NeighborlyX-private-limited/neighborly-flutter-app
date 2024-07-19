@@ -1,30 +1,27 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
-import 'package:neighborly_flutter_app/features/homePage/widgets/dob_picker_widget.dart';
 import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/screens/home_screen.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/screens/profile_screen.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
 
 class MainPage extends StatefulWidget {
-  final bool isFirstTime;
+  final Widget child;
 
-  const MainPage({super.key, required this.isFirstTime});
+  const MainPage({
+    super.key,
+    required this.child,
+  });
 
   @override
   State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
-  int _currentIndex = 0;
   String? _currentAddress;
   Position? _currentPosition;
 
@@ -33,25 +30,11 @@ class _MainPageState extends State<MainPage> {
   bool isYearFilled = false;
 
   late PageController pageController;
-  late TextEditingController _dateController;
-  late TextEditingController _monthController;
-  late TextEditingController _yearController;
-  String _selectedGender = 'male';
 
   @override
   void initState() {
     pageController = PageController();
     fetchLocationAndUpdate();
-
-    if (widget.isFirstTime) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showBottomSheet();
-      });
-    }
-
-    _dateController = TextEditingController();
-    _monthController = TextEditingController();
-    _yearController = TextEditingController();
 
     super.initState();
   }
@@ -67,24 +50,30 @@ class _MainPageState extends State<MainPage> {
   void dispose() {
     pageController.dispose();
     super.dispose();
-    _dateController.dispose();
-    _monthController.dispose();
-    _yearController.dispose();
   }
 
-  String formatDOB(String day, String month, String year) {
-    return '$year-$month-$day';
-  }
+  // void navigationTapped(int index) {
+  //   pageController.jumpToPage(index);
+  // }
 
-  void navigationTapped(int index) {
-    pageController.jumpToPage(index);
-  }
+  // void onPageChanged(int index) {
+  //   setState(() {
+  //     _currentIndex = index;
+  //   });
+  // }
 
-  void onPageChanged(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
+  // Future<bool> _getDOBFilled() async {
+  //   final userID = ShardPrefHelper.getUserID();
+  //   final box = Hive.box('dobDatabse');
+
+  //   return box.get('${userID}_isFilled', defaultValue: false);
+  // }
+
+  // Future<void> _setDOBFilledTrue() async {
+  //   final userID = ShardPrefHelper.getUserID();
+  //   final box = Hive.box('dobDatabse');
+  //   await box.put('${userID}_isFilled', true);
+  // }
 
   Future<bool> _handleLocationPermission() async {
     bool serviceEnabled;
@@ -138,6 +127,38 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  int _currentIndex = 0;
+  // List<Widget> pages = [
+  //   const HomeScreen(),
+  //   const EventScreen(),
+  //   const CreatePostScreen(),
+  //   const CommunityScreen(),
+  //   const ProfileScreen(),
+  // ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    switch (index) {
+      case 0:
+        context.go('/home/false');
+        break;
+      case 1:
+        context.go('/events');
+        break;
+      case 2:
+        context.go('/create');
+        break;
+      case 3:
+        context.go('/groups');
+        break;
+      case 4:
+        context.go('/profile');
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -145,11 +166,9 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: const Color(0xFFF5F5FF),
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color(0xFFF5F5FF),
-          currentIndex: _currentIndex,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: AppColors.primaryColor,
           unselectedItemColor: Colors.grey,
-          onTap: navigationTapped,
           items: <BottomNavigationBarItem>[
             const BottomNavigationBarItem(
               icon: Icon(
@@ -183,187 +202,13 @@ class _MainPageState extends State<MainPage> {
               label: 'Profile',
             ),
           ],
-        ),
-        body: PageView(
-          controller: pageController,
-          onPageChanged: onPageChanged,
-          children: const <Widget>[
-            HomeScreen(),
-            HomeScreen(),
-            CreatePostScreen(),
-            CreatePostScreen(),
-            ProfileScreen(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> showBottomSheet() {
-    return showModalBottomSheet<num>(
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: const Color(0xffB8B8B8),
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Center(
-                  child: Text(
-                    'One last thing before we get started!!',
-                    style: onboardingHeading2Style,
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Text('1. Select your Gender', style: blackonboardingBody1Style),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        Radio<String>(
-                          value: 'Male',
-                          groupValue: _selectedGender,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedGender = value!;
-                            });
-                          },
-                        ),
-                        const Text('Male'),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Radio<String>(
-                          value: 'Female',
-                          groupValue: _selectedGender,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedGender = value!;
-                            });
-                          },
-                        ),
-                        const Text('Female'),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Radio<String>(
-                          value: 'Others',
-                          groupValue: _selectedGender,
-                          onChanged: (String? value) {
-                            setState(() {
-                              _selectedGender = value!;
-                            });
-                          },
-                        ),
-                        const Text('Others'),
-                      ],
-                    ),
-                  ],
-                ),
-                const Divider(color: Colors.grey),
-                Text('2. Date of Birth', style: blackonboardingBody1Style),
-                const SizedBox(height: 8),
-                DOBPickerWidget(
-                    dateController: _dateController,
-                    monthController: _monthController,
-                    yearController: _yearController,
-                    isDayFilled: true,
-                    isMonthFilled: true,
-                    isYearFilled: true),
-                const SizedBox(height: 45),
-                BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
-                  listener: (BuildContext context, GetGenderAndDOBState state) {
-                    if (state is GetGenderAndDOBFailureState) {
-                      // if (state.error.contains('email')) {
-                      //   setState(() {
-                      //     emailAlreadyExists = true;
-                      //   });
-                      //   return;
-                      // }
-                      // if (state.error.contains('internet')) {
-                      //   setState(() {
-                      //     noConnection = true;
-                      //   });
-                      //   return;
-                      // }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.error)),
-                      );
-                    } else if (state is GetGenderAndDOBSuccessState) {
-                      context.pop();
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is GetGenderAndDOBLoadingState) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    return ButtonContainerWidget(
-                        isActive: true,
-                        color: AppColors.primaryColor,
-                        text: 'Save',
-                        isFilled: true,
-                        onTapListener: () {
-                          // if (!isValidEmail(_emailController.text.trim())) {
-                          //   setState(() {
-                          //     isEmailValid = false;
-                          //   });
-                          //   return;
-                          // }
-                          // if (_passwordController.text.length < 8) {
-                          //   setState(() {
-                          //     isPasswordShort = true;
-                          //   });
-                          //   return;
-                          // }
-                          // setState(() {
-                          //   isEmailValid = true;
-                          // });
-                          BlocProvider.of<GetGenderAndDOBBloc>(context).add(
-                            GetGenderAndDOBButtonPressedEvent(
-                              dob: formatDOB(
-                                  _dateController.text.trim(),
-                                  _monthController.text.trim(),
-                                  _yearController.text.trim()),
-                              gender: _selectedGender,
-                            ),
-                          );
-                          context.pop();
-                        });
-                  },
-                ),
-                const SizedBox(height: 15),
-              ],
-            ),
+          currentIndex: _currentIndex,
+          onTap: (index) => _onItemTapped(
+            index,
           ),
-        );
-      },
+        ),
+        body: widget.child,
+      ),
     );
   }
 }

@@ -12,6 +12,8 @@ class AuthResponseModel extends AuthResponseEntity {
     super.mostProminentAward,
     super.postCount,
     super.phoneNumber,
+    super.isPhoneVerified,
+    super.isEmailVerified,
   });
 
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,8 @@ class AuthResponseModel extends AuthResponseEntity {
       mostProminentAward: json['user']['mostProminentAward'],
       postCount: json['user']['postCount'],
       phoneNumber: json['user']['phoneNumber'],
+      isPhoneVerified: json['user']['isPhoneVerified'],
+      isEmailVerified: json['user']['isEmailVerified'],
     );
   }
 

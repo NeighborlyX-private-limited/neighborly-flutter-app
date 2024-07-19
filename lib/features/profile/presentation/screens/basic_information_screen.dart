@@ -178,11 +178,28 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                       if (state is GetProfileSuccessState) {
                         // Set initial values when the state is fetched successfully
                         _bioController.text = state.profile.bio ?? '';
-                        _emailController.text = state.profile.email ?? '';
+                        String checkEmailVerified =
+                            state.profile.isEmailVerified != null &&
+                                    state.profile.isEmailVerified == true
+                                ? 'Verified'
+                                : 'Not Verified';
+                        String checkPhoneVerified =
+                            state.profile.isPhoneVerified != null &&
+                                    state.profile.isPhoneVerified == true
+                                ? 'Verified'
+                                : 'Not Verified';
+
+                        _emailController.text = state.profile.email != null &&
+                                state.profile.email != ''
+                            ? '${state.profile.email} ($checkEmailVerified)'
+                            : '';
                         _usernameController.text = state.profile.username;
 
-                        _phoneNumberController.text =
-                            state.profile.phoneNumber ?? '';
+                        _phoneNumberController
+                            .text = state.profile.phoneNumber != '' &&
+                                state.profile.phoneNumber != null
+                            ? '${state.profile.phoneNumber} ($checkPhoneVerified)'
+                            : '';
 
                         return Padding(
                           padding: const EdgeInsets.all(16),
@@ -257,9 +274,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 height: 5,
                               ),
                               Container(
-                                height: 60,
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
+                                    horizontal: 5, vertical: 5),
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey),
                                   borderRadius: BorderRadius.circular(10),
@@ -267,11 +283,11 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 child: TextField(
                                   enabled: false,
                                   onChanged: (value) {
-                                    setState(() {
-                                      isEmailFilled = _emailController.text
-                                          .trim()
-                                          .isNotEmpty;
-                                    });
+                                    // setState(() {
+                                    //   isEmailFilled = _emailController.text
+                                    //       .trim()
+                                    //       .isNotEmpty;
+                                    // });
                                   },
                                   controller: _emailController,
                                   decoration: const InputDecoration(

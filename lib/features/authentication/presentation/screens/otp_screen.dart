@@ -165,7 +165,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     );
                     if (widget.verificationFor == 'email-verify' ||
                         widget.verificationFor == 'phone-verify') {
-                      context.go('/homescreen/true');
+                      context.go('/home/true');
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),
                       );

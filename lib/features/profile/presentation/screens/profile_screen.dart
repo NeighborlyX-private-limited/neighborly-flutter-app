@@ -156,53 +156,62 @@ class _ProfileScreenState extends State<ProfileScreen>
                           )
                         : const SizedBox(),
                     const SizedBox(height: 15),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            Text(
-                              state.profile.postCount.toString(),
-                              style: onboardingBlackBody2Style,
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'Post',
-                              style: mediumGreyTextStyleBlack,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 55),
-                        Column(
-                          children: [
-                            Text(
-                              state.profile.karma.toString(),
-                              style: onboardingBlackBody2Style,
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'Karma',
-                              style: mediumGreyTextStyleBlack,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 55),
-                        state.profile.awardsCount != 0
-                            ? Column(
+                    Center(
+                      child: SizedBox(
+                        width: 250,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Column(
                                 children: [
                                   Text(
-                                    state.profile.awardsCount.toString(),
+                                    state.profile.postCount.toString(),
                                     style: onboardingBlackBody2Style,
                                   ),
                                   const SizedBox(height: 5),
                                   Text(
-                                    'Awards',
+                                    'Post',
                                     style: mediumGreyTextStyleBlack,
                                   ),
                                 ],
-                              )
-                            : const SizedBox(),
-                      ],
+                              ),
+                              const SizedBox(width: 55),
+                              Column(
+                                children: [
+                                  Text(
+                                    state.profile.karma.toString(),
+                                    style: onboardingBlackBody2Style,
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Karma',
+                                    style: mediumGreyTextStyleBlack,
+                                  ),
+                                ],
+                              ),
+                              state.profile.awardsCount != 0
+                                  ? const SizedBox(width: 55)
+                                  : const SizedBox(),
+                              state.profile.awardsCount != 0
+                                  ? Column(
+                                      children: [
+                                        Text(
+                                          state.profile.awardsCount.toString(),
+                                          style: onboardingBlackBody2Style,
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Text(
+                                          'Awards',
+                                          style: mediumGreyTextStyleBlack,
+                                        ),
+                                      ],
+                                    )
+                                  : const SizedBox(),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 15),
                     Container(

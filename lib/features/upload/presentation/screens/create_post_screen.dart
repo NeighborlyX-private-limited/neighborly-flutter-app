@@ -190,7 +190,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         content: Text('Post Created'),
                                       ),
                                     );
-                                    // context.go('/homescreen');
+
+                                    context.go('/home/false');
                                   }
                                 },
                                 builder: (context, state) {
@@ -244,6 +245,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         content: Text('Poll Created'),
                                       ),
                                     );
+                                    context.go('/home/false');
                                   }
                                 },
                                 builder: (context, state) {

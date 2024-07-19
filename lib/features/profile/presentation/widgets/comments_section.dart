@@ -31,8 +31,6 @@ class _CommentSectionState extends State<CommentSection> {
     }
   }
 
-  
-
   Future<void> _onRefresh() async {
     BlocProvider.of<GetMyCommentsBloc>(context)
         .add(GetMyCommentsButtonPressedEvent(
@@ -68,6 +66,18 @@ class _CommentSectionState extends State<CommentSection> {
                         Text(
                           'When you comment on photos and polls, your comments will appear here.',
                           style: mediumTextStyleBlack,
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            context.go('/home/false');
+                          },
+                          child: Text(
+                            'Go on, interact with stuff!',
+                            style: bluemediumTextStyleBlack,
+                          ),
                         ),
                       ],
                     ),

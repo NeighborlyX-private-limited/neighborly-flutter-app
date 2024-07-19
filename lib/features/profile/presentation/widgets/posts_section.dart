@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 
 class PostSection extends StatefulWidget {
@@ -61,9 +62,14 @@ class _PostSectionState extends State<PostSection> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Text(
-                          'Create your first post',
-                          style: bluemediumTextStyleBlack,
+                        InkWell(
+                          onTap: () {
+                            context.go('/create');
+                          },
+                          child: Text(
+                            'Create your first post',
+                            style: bluemediumTextStyleBlack,
+                          ),
                         ),
                       ],
                     ),
@@ -74,7 +80,7 @@ class _PostSectionState extends State<PostSection> {
                   itemBuilder: (context, index) {
                     final post = state.post[index];
                     if (post.type == 'post') {
-                      // return PostWidget(post: post);
+                      return PostWidget(post: post);
                     } else if (post.type == 'poll') {
                       return PollWidget(
                         post: post,

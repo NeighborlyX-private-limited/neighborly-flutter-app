@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 
@@ -75,34 +74,40 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
                         const SizedBox(
                           height: 10,
                         ),
-                        Text(
-                          'Join your first community',
-                          style: bluemediumTextStyleBlack,
+                        InkWell(
+                          onTap: () {
+                            context.go('/groups');
+                          },
+                          child: Text(
+                            'Join your first community',
+                            style: bluemediumTextStyleBlack,
+                          ),
                         ),
                       ],
                     ),
                   );
                 }
+                return const SizedBox();
 
-                return ListView.separated(
-                  itemCount: state.groups.length,
-                  itemBuilder: (context, index) {
-                    final post = state.groups[index];
-                    if (post.type == 'post') {
-                      // return PostWidget(post: post);
-                    } else if (post.type == 'poll') {
-                      return PollWidget(
-                        post: post,
-                      );
-                    }
-                    return const SizedBox();
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.0),
-                    );
-                  },
-                );
+                // return ListView.separated(
+                //   itemCount: state.groups.length,
+                //   itemBuilder: (context, index) {
+                //     final post = state.groups[index];
+                //     if (post.type == 'post') {
+                //       // return PostWidget(post: post);
+                //     } else if (post.type == 'poll') {
+                //       return PollWidget(
+                //         post: post,
+                //       );
+                //     }
+                //     return const SizedBox();
+                //   },
+                //   separatorBuilder: (BuildContext context, int index) {
+                //     return const Padding(
+                //       padding: EdgeInsets.symmetric(vertical: 5.0),
+                //     );
+                //   },
+                // );
               } else if (state is GetMyGroupsFailureState) {
                 if (state.error.contains('Invalid Token')) {
                   context.go('/loginScreen');

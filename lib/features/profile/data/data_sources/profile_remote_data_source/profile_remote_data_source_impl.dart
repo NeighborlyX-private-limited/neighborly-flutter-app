@@ -74,18 +74,18 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    String url = '$kBaseUrl/user/update-user-info';
+    String url = '$kBaseUrl/user/update-user-dob';
     final response = await client.put(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
         'Cookie': cookieHeader,
       },
-      body: jsonEncode({'gender': gender, 'dob': dob}),
+      body: jsonEncode({'dob': dob}),
     );
 
     if (response.statusCode != 200) {
-      throw ServerException(message: jsonDecode(response.body)['error']);
+      throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
 
