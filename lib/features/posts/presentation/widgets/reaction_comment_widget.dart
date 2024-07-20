@@ -351,266 +351,294 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     return showModalBottomSheet<num>(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+        return BlocListener<GiveAwardBloc, GiveAwardState>(
+          listener: (context, state) {
+            if (state is GiveAwardFailureState) {
+              Navigator.pop(context, awardsCount);
+              if (state.error.contains('Award not available')) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content:
+                        Text('Award not available. You run out of this award.'),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.error),
+                  ),
+                );
+              }
+            } else if (state is GiveAwardSuccessState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Award given successfully'),
+                ),
+              );
+              Navigator.pop(context, awardsCount + 1);
+            }
+          },
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              ),
             ),
-          ),
-          height: 800,
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: const Color(0xffB8B8B8),
-                      borderRadius: BorderRadius.circular(40),
+            height: 800,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffB8B8B8),
+                        borderRadius: BorderRadius.circular(40),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Center(
-                  child: Text(
-                    'Award this post',
-                    style: onboardingHeading2Style,
+                  const SizedBox(
+                    height: 15,
                   ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                InkWell(
-                  onTap: () {
-                    BlocProvider.of<GiveAwardBloc>(context).add(
-                        GiveAwardButtonPressedEvent(
-                            id: widget.comment.commentid,
-                            awardType: 'Local Legend',
-                            type: 'comment'));
-                    Navigator.pop(context, awardsCount + 1);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/Local_Legend.svg',
-                        width: 84,
-                        height: 84,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        // Ensures the text wraps within the available space
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Local Legend',
-                              style: greyonboardingBody1Style,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'Recognizing users who consistently contribute high-quality content.',
-                              style: mediumGreyTextStyleBlack,
-                              softWrap: true, // Enables text wrapping
-                            ),
-                          ],
+                  Center(
+                    child: Text(
+                      'Award this post',
+                      style: onboardingHeading2Style,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  InkWell(
+                    onTap: () {
+                      BlocProvider.of<GiveAwardBloc>(context).add(
+                          GiveAwardButtonPressedEvent(
+                              id: widget.comment.commentid,
+                              awardType: 'Local Legend',
+                              type: 'comment'));
+                      // Navigator.pop(context, awardsCount + 1);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/Local_Legend.svg',
+                          width: 84,
+                          height: 84,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    BlocProvider.of<GiveAwardBloc>(context)
-                        .add(GiveAwardButtonPressedEvent(
-                      id: widget.comment.commentid,
-                      awardType: 'Sunflower',
-                      type: 'comment',
-                    ));
-                    Navigator.pop(context, awardsCount + 1);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/Sunflower.svg',
-                        width: 84,
-                        height: 84,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        // Ensures the text wraps within the available space
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Sunflower',
-                              style: greyonboardingBody1Style,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'For bringing positivity and cheerfulness to the community.',
-                              style: mediumGreyTextStyleBlack,
-                              softWrap: true, // Enables text wrapping
-                            ),
-                          ],
+                        const SizedBox(
+                          width: 10,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    BlocProvider.of<GiveAwardBloc>(context)
-                        .add(GiveAwardButtonPressedEvent(
-                      id: widget.comment.commentid,
-                      awardType: 'Streetlight',
-                      type: 'comment',
-                    ));
-                    Navigator.pop(context, awardsCount + 1);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/Streetlight.svg',
-                        width: 84,
-                        height: 84,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        // Ensures the text wraps within the available space
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Streetlight',
-                              style: greyonboardingBody1Style,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'For providing clear guidance and valuable insights.',
-                              style: mediumGreyTextStyleBlack,
-                              softWrap: true, // Enables text wrapping
-                            ),
-                          ],
+                        Expanded(
+                          // Ensures the text wraps within the available space
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Local Legend',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'Recognizing users who consistently contribute high-quality content.',
+                                style: mediumGreyTextStyleBlack,
+                                softWrap: true, // Enables text wrapping
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                InkWell(
-                  onTap: () {
-                    BlocProvider.of<GiveAwardBloc>(context)
-                        .add(GiveAwardButtonPressedEvent(
-                      id: widget.comment.commentid,
-                      awardType: 'Park Bench',
-                      type: 'comment',
-                    ));
-                    Navigator.pop(context, awardsCount + 1);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/Park_Bench.svg',
-                        width: 84,
-                        height: 84,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        // Ensures the text wraps within the available space
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Park Bench',
-                              style: greyonboardingBody1Style,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'For offering comforting and supportive posts.',
-                              style: mediumGreyTextStyleBlack,
-                              softWrap: true, // Enables text wrapping
-                            ),
-                          ],
+                  InkWell(
+                    onTap: () {
+                      BlocProvider.of<GiveAwardBloc>(context)
+                          .add(GiveAwardButtonPressedEvent(
+                        id: widget.comment.commentid,
+                        awardType: 'Sunflower',
+                        type: 'comment',
+                      ));
+                      // Navigator.pop(context, awardsCount + 1);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/Sunflower.svg',
+                          width: 84,
+                          height: 84,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    BlocProvider.of<GiveAwardBloc>(context)
-                        .add(GiveAwardButtonPressedEvent(
-                      id: widget.comment.commentid,
-                      awardType: 'Map',
-                      type: 'comment',
-                    ));
-                    Navigator.pop(context, awardsCount + 1);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SvgPicture.asset(
-                        'assets/Map.svg',
-                        width: 84,
-                        height: 84,
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Expanded(
-                        // Ensures the text wraps within the available space
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Map',
-                              style: greyonboardingBody1Style,
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'For creating informative and detailed content.',
-                              style: mediumGreyTextStyleBlack,
-                              softWrap: true, // Enables text wrapping
-                            ),
-                          ],
+                        const SizedBox(
+                          width: 10,
                         ),
-                      ),
-                    ],
+                        Expanded(
+                          // Ensures the text wraps within the available space
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Sunflower',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'For bringing positivity and cheerfulness to the community.',
+                                style: mediumGreyTextStyleBlack,
+                                softWrap: true, // Enables text wrapping
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                  InkWell(
+                    onTap: () {
+                      BlocProvider.of<GiveAwardBloc>(context)
+                          .add(GiveAwardButtonPressedEvent(
+                        id: widget.comment.commentid,
+                        awardType: 'Streetlight',
+                        type: 'comment',
+                      ));
+                      // Navigator.pop(context, awardsCount + 1);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/Streetlight.svg',
+                          width: 84,
+                          height: 84,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          // Ensures the text wraps within the available space
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Streetlight',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'For providing clear guidance and valuable insights.',
+                                style: mediumGreyTextStyleBlack,
+                                softWrap: true, // Enables text wrapping
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      BlocProvider.of<GiveAwardBloc>(context)
+                          .add(GiveAwardButtonPressedEvent(
+                        id: widget.comment.commentid,
+                        awardType: 'Park Bench',
+                        type: 'comment',
+                      ));
+                      // Navigator.pop(context, awardsCount + 1);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/Park_Bench.svg',
+                          width: 84,
+                          height: 84,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          // Ensures the text wraps within the available space
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Park Bench',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'For offering comforting and supportive posts.',
+                                style: mediumGreyTextStyleBlack,
+                                softWrap: true, // Enables text wrapping
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      BlocProvider.of<GiveAwardBloc>(context)
+                          .add(GiveAwardButtonPressedEvent(
+                        id: widget.comment.commentid,
+                        awardType: 'Map',
+                        type: 'comment',
+                      ));
+                      // Navigator.pop(context, awardsCount + 1);
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/Map.svg',
+                          width: 84,
+                          height: 84,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          // Ensures the text wraps within the available space
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Map',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'For creating informative and detailed content.',
+                                style: mediumGreyTextStyleBlack,
+                                softWrap: true, // Enables text wrapping
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );

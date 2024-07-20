@@ -445,7 +445,7 @@ class SettingScreen extends StatelessWidget {
                         ShardPrefHelper.removePhoneNumber();
                         ShardPrefHelper.removeGender();
 
-                        context.go('/loginScreen');
+                        context.go('/');
                       }
                     },
                     builder: (context, state) {

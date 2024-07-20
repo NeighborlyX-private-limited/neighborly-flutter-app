@@ -120,8 +120,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       },
     );
 
-    print('Response Body: ${response.body}');
-
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => PostModel.fromJson(data)).toList()[0];

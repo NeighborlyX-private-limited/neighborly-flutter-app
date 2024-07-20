@@ -97,9 +97,7 @@ class _OptionCardState extends State<OptionCard> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color.fromARGB(255, 90, 92, 245)
-                    : Colors.transparent,
+                color: const Color.fromARGB(255, 90, 92, 245),
                 borderRadius: BorderRadius.circular(4),
               ),
               width: MediaQuery.of(context).size.width * filledPercentage,

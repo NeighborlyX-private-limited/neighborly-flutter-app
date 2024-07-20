@@ -325,4 +325,28 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       throw ServerException(message: jsonDecode(responseString)['message']);
     }
   }
+
+  @override
+  Future<List> getMyAwards() async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrl/profile/user-awards';
+
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['awards'];
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      throw ServerException(message: message);
+    }
+  }
 }

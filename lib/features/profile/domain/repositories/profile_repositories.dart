@@ -35,6 +35,7 @@ abstract class ProfileRepositories {
   Future<Either<Failure, void>> sendFeedback({
     required String feedback,
   });
+  Future<Either<Failure, List<dynamic>>> getMyAwards();
   Future<Either<Failure, AuthResponseEntity>> getProfile();
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, void>> deleteAccount();

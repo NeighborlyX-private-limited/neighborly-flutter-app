@@ -27,6 +27,7 @@ abstract class ProfileRemoteDataSource {
   Future<List<dynamic>> getMyGroups({
     String? userId,
   });
+  Future<List<dynamic>> getMyAwards();
   Future<void> sendFeedback({
     required String feedback,
   });

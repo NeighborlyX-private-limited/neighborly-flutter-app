@@ -180,26 +180,28 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                         _bioController.text = state.profile.bio ?? '';
                         String checkEmailVerified =
                             state.profile.isEmailVerified != null &&
+                                    state.profile.email != '' &&
                                     state.profile.isEmailVerified == true
                                 ? 'Verified'
                                 : 'Not Verified';
                         String checkPhoneVerified =
                             state.profile.isPhoneVerified != null &&
+                                    state.profile.phoneNumber != '' &&
                                     state.profile.isPhoneVerified == true
                                 ? 'Verified'
                                 : 'Not Verified';
 
                         _emailController.text = state.profile.email != null &&
                                 state.profile.email != ''
-                            ? '${state.profile.email} ($checkEmailVerified)'
+                            ? '${state.profile.email}'
                             : '';
                         _usernameController.text = state.profile.username;
 
-                        _phoneNumberController
-                            .text = state.profile.phoneNumber != '' &&
-                                state.profile.phoneNumber != null
-                            ? '${state.profile.phoneNumber} ($checkPhoneVerified)'
-                            : '';
+                        _phoneNumberController.text =
+                            state.profile.phoneNumber != '' &&
+                                    state.profile.phoneNumber != null
+                                ? '${state.profile.phoneNumber}'
+                                : '';
 
                         return Padding(
                           padding: const EdgeInsets.all(16),
@@ -267,7 +269,9 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 height: 10,
                               ),
                               Text(
-                                'Email Id',
+                                state.profile.email != ''
+                                    ? 'Email Id ($checkEmailVerified)'
+                                    : 'Email Id',
                                 style: greyonboardingBody1Style,
                               ),
                               const SizedBox(
@@ -275,20 +279,14 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               ),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 5, vertical: 5),
+                                    horizontal: 10, vertical: 5),
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.grey),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: TextField(
                                   enabled: false,
-                                  onChanged: (value) {
-                                    // setState(() {
-                                    //   isEmailFilled = _emailController.text
-                                    //       .trim()
-                                    //       .isNotEmpty;
-                                    // });
-                                  },
+                                  onChanged: (value) {},
                                   controller: _emailController,
                                   decoration: const InputDecoration(
                                     border: InputBorder.none,
@@ -302,7 +300,9 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 height: 10,
                               ),
                               Text(
-                                'Phone number',
+                                state.profile.phoneNumber != ''
+                                    ? 'Phone number ($checkPhoneVerified)'
+                                    : 'Phone number',
                                 style: greyonboardingBody1Style,
                               ),
                               const SizedBox(
