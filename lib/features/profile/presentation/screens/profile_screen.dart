@@ -82,14 +82,23 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
             ),
             actions: [
-              IconButton(
-                onPressed: () {
-                  context.push('/settingsScreen');
+              BlocBuilder<GetProfileBloc, GetProfileState>(
+                builder: (context, state) {
+                  if (state is GetProfileSuccessState) {
+                    return IconButton(
+                      onPressed: () {
+                        context.push(
+                            '/settingsScreen/${state.profile.karma.toString()}/${state.profile.findMe}');
+                      },
+                      icon: const Icon(
+                        Icons.settings_outlined,
+                        size: 25,
+                      ),
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
                 },
-                icon: const Icon(
-                  Icons.settings_outlined,
-                  size: 25,
-                ),
               ),
             ],
           ),

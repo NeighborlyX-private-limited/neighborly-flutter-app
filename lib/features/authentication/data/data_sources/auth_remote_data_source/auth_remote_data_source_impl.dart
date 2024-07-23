@@ -151,6 +151,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      // Assuming the response headers contain the Set-Cookie header
+      List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+      String userID = jsonDecode(response.body)['user']['_id'];
+      String username = jsonDecode(response.body)['user']['username'];
+      String proPic = jsonDecode(response.body)['user']['picture'];
+      List<dynamic> location = jsonDecode(response.body)['user']
+          ['current_coordinates']['coordinates'];
+      String? email = jsonDecode(response.body)['user']['email'];
+
+      ShardPrefHelper.setCookie(cookies);
+      ShardPrefHelper.setUserID(userID);
+      ShardPrefHelper.setEmail(email ?? '');
+      ShardPrefHelper.setUsername(username);
+      ShardPrefHelper.setUserProfilePicture(proPic);
+      ShardPrefHelper.setLocation([location[0], location[1]]);
+
       return 'Account is verified';
     } else {
       throw ServerException(message: jsonDecode(response.body)['error']);

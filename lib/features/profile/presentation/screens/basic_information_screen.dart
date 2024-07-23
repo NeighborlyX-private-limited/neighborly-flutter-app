@@ -124,7 +124,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                     content:
                                         Text('Profile updated successfully')),
                               );
-                              context.pop('/settingsScreen');
+                              context.pop('');
                             }
                           },
                           builder: (context, state) {

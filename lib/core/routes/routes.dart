@@ -25,23 +25,13 @@ import 'package:neighborly_flutter_app/features/profile/presentation/screens/sec
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/setting_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/user_profile_screen.dart';
 import 'package:neighborly_flutter_app/features/upload/presentation/screens/create_post_screen.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/screens/media_preview_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 List<String>? cookies = ShardPrefHelper.getCookie();
 
-// String setInitialLocation() {
-//   if (cookies == null) {
-//     return '/';
-//   } else {
-//     return '/homescreen';
-//   }
-// }
 
 String setInitialLocation() {
-  // Check if cookies exist and set the initial location accordingly
-  // return (cookies == null || cookies!.isEmpty) ? '/' : '/homescreen/false';
   return (cookies == null || cookies!.isEmpty) ? '/' : '/home/false';
 }
 
@@ -169,19 +159,24 @@ final GoRouter router = GoRouter(
         },
       ),
       GoRoute(
-        path: '/settingsScreen',
+        path: '/settingsScreen/:karma/:findMe',
         name: RouteConstants.settingsScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
-          return const SettingScreen();
+          final String karma = state.pathParameters['karma']!;
+          final bool findMe = state.pathParameters['findMe'] == 'true';
+          return SettingScreen(
+            karma: karma,
+            findMe: findMe,
+          );
         },
       ),
-      GoRoute(
-        path: '/media-preview',
-        name: RouteConstants.mediaPreviewScreenRouteName,
-        builder: (BuildContext context, GoRouterState state) {
-          return const MediaPreviewScreen();
-        },
-      ),
+      // GoRoute(
+      //   path: '/media-preview',
+      //   name: RouteConstants.mediaPreviewScreenRouteName,
+      //   builder: (BuildContext context, GoRouterState state) {
+      //     return const MediaPreviewScreen();
+      //   },
+      // ),
       GoRoute(
         path: '/securityScreen',
         name: RouteConstants.securityScreenRouteName,
@@ -190,10 +185,13 @@ final GoRouter router = GoRouter(
         },
       ),
       GoRoute(
-        path: '/activityAndStatsScreen',
+        path: '/activityAndStatsScreen/:karma',
         name: RouteConstants.activityAndStatsScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
-          return const ActivityAndStatsScreen();
+          final String karma = state.pathParameters['karma']!;
+          return ActivityAndStatsScreen(
+            karma: karma,
+          );
         },
       ),
       GoRoute(

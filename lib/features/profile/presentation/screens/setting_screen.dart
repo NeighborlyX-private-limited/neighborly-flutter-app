@@ -11,7 +11,9 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/button_widget.dart';
 
 class SettingScreen extends StatelessWidget {
-  const SettingScreen({super.key});
+  final String karma;
+  final bool findMe;
+  const SettingScreen({super.key, required this.karma, required this.findMe});
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +107,7 @@ class SettingScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                context.push('/activityAndStatsScreen');
+                context.push('/activityAndStatsScreen/$karma');
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,

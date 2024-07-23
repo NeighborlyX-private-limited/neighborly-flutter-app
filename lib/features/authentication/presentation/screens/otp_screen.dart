@@ -29,7 +29,8 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     _otpController = TextEditingController();
-    if (widget.verificationFor == 'phone-verify') {
+    if (widget.verificationFor == 'phone-login' ||
+        widget.verificationFor == 'phone-register') {
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           phone: widget.data,
@@ -99,7 +100,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 height: 5,
               ),
               Text(
-                widget.verificationFor == 'phone-verify'
+                widget.verificationFor == 'phone-login' ||
+                        widget.verificationFor == 'phone-register'
                     ? 'We sent a verification code to your phone: ${widget.data}'
                     : 'We sent a verification code to your email: ${widget.data}',
                 style: onboardingBodyStyle,
@@ -164,8 +166,15 @@ class _OtpScreenState extends State<OtpScreen> {
                       SnackBar(content: Text(state.message)),
                     );
                     if (widget.verificationFor == 'email-verify' ||
-                        widget.verificationFor == 'phone-verify') {
-                      context.go('/home/true');
+                        widget.verificationFor == 'phone-login' ||
+                        widget.verificationFor == 'phone-register') {
+                      if (widget.verificationFor == 'email-verify' ||
+                          widget.verificationFor == 'phone-register') {
+                        context.go('/home/true');
+                      } else {
+                        context.go('/home/false');
+                      }
+
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),
                       );
@@ -186,7 +195,8 @@ class _OtpScreenState extends State<OtpScreen> {
                     text: 'Verify',
                     isFilled: true,
                     onTapListener: () {
-                      if (widget.verificationFor == 'phone-verify') {
+                      if (widget.verificationFor == 'phone-login' ||
+                          widget.verificationFor == 'phone-register') {
                         BlocProvider.of<OtpBloc>(context).add(
                           OtpSubmitted(
                             otp: _otpController.text,
@@ -210,7 +220,8 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               InkWell(
                 onTap: () {
-                  if (widget.verificationFor == 'phone-verify') {
+                  if (widget.verificationFor == 'phone-login' ||
+                      widget.verificationFor == 'phone-register') {
                     BlocProvider.of<ResendOtpBloc>(context).add(
                       ResendOTPButtonPressedEvent(
                         phone: widget.data,

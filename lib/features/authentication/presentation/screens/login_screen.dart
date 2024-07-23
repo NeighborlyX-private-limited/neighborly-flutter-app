@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 text: 'Continue',
                 isFilled: true,
                 onTapListener: () {
-                  context.push('/otp/${_controller.text}/phone-verify');
+                  context.push('/otp/${_controller.text}/phone-login');
                 },
               ),
               const SizedBox(

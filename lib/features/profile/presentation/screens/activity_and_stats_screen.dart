@@ -8,7 +8,8 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_pr
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/award_widget.dart';
 
 class ActivityAndStatsScreen extends StatefulWidget {
-  const ActivityAndStatsScreen({super.key});
+  final String karma;
+  const ActivityAndStatsScreen({super.key, required this.karma});
 
   @override
   State<ActivityAndStatsScreen> createState() => _ActivityAndStatsScreenState();
@@ -134,17 +135,8 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                   ],
                                 ),
                               ),
-                              BlocBuilder<GetProfileBloc, GetProfileState>(
-                                builder: (context, state) {
-                                  if (state is GetProfileLoadingState) {
-                                    return const CircularProgressIndicator();
-                                  } else if (state is GetProfileSuccessState) {
-                                    return Text(state.profile.karma.toString(),
-                                        style: onboardingBlackBody2Style);
-                                  }
-                                  return const SizedBox();
-                                },
-                              ),
+                              Text(widget.karma.toString(),
+                                  style: onboardingBlackBody2Style)
                             ],
                           ),
                         ])),

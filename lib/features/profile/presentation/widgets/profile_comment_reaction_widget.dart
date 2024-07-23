@@ -359,13 +359,14 @@ class _ProfileReactionCommentWidgetState
                         Text('Award not available. You run out of this award.'),
                   ),
                 );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.error),
-                  ),
-                );
               }
+              // else {
+              //   ScaffoldMessenger.of(context).showSnackBar(
+              //     SnackBar(
+              //       content: Text(state.error),
+              //     ),
+              //   );
+              // }
             } else if (state is GiveAwardSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

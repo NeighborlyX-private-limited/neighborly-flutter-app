@@ -190,7 +190,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       SnackBar(content: Text(state.error)),
                     );
                   } else if (state is RegisterSuccessState) {
-                    context.push('/otp/${_controller.text}/phone-verify');
+                    context.push('/otp/${_controller.text}/phone-register');
                   }
                 },
                 builder: (context, state) {

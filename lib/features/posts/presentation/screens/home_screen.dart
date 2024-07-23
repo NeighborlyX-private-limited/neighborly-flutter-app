@@ -273,14 +273,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           listener: (BuildContext context,
                               GetGenderAndDOBState state) {
                             if (state is GetGenderAndDOBFailureState) {
-                              print('Error: ${state.error}');
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(state.error)),
-                              );
-                              context.pop(context);
+                              if (state.error
+                                  .contains('DOB can only be set once.')) {
+                                context.pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'User Info saved successfully.')),
+                                );
+                              } else {
+                                context.pop();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(state.error)),
+                                );
+                              }
                             } else if (state is GetGenderAndDOBSuccessState) {
                               print('User Info saved successfully.');
-                              context.pop(context);
+                              context.pop();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content:

@@ -163,7 +163,7 @@ class _SecurityPageState extends State<SecurityPage> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(state.message)),
                             );
-                            context.push('/settingsScreen');
+                            context.pop();
                           }
                         },
                         builder: (context, state) {
