@@ -1,55 +1,162 @@
 import 'package:flutter/material.dart';
-import 'view/screens/auth/view/signup.dart';
-import 'package:get/get.dart';
-import 'package:flutter_application_1/services/app_routes.dart';
-import 'package:flutter_application_1/view/screens/auth/view/login.dart';
-import 'package:flutter_application_1/view/screens/auth/controller/login_controller.dart';
-import 'package:flutter_application_1/view/screens/auth/controller/register_controller.dart';
-import 'package:flutter_application_1/view/screens/dashboard/view/home.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/core/routes/routes.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/google_authentication_bloc/google_authentication_bloc.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_bloc/register_bloc.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
+import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/fetch_comment_reply_bloc/fetch_comment_reply_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/edit_profile_bloc/edit_profile_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_awards_bloc/get_my_awards_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
+import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
+import 'dependency_injection.dart' as di;
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final prefs = await SharedPreferences.getInstance();
-  final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
-
-  runApp(MyApp(isLoggedIn: isLoggedIn));
+  await Hive.initFlutter();
+  await Hive.openBox('postReactions');
+  await Hive.openBox('commentReactions');
+  await Hive.openBox('replyReactions');
+  await Hive.openBox('pollVotes');
+  di.init();
+  await ShardPrefHelper.init();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
+  const MyApp({super.key});
 
-  const MyApp({Key? key, required this.isLoggedIn}) : super(key: key);
-
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      title: 'flutter_application_1',
-      initialRoute: isLoggedIn ? AppRoutes.home : AppRoutes.login,
-      getPages: [
-        GetPage(name: AppRoutes.login, page: () => LoginScreen(), binding: BindingsBuilder(() => Get.lazyPut(() => LoginController()))),
-        GetPage(name: AppRoutes.register, page: () => RegisterScreen(), binding: BindingsBuilder(() => Get.lazyPut(() => RegisterController()))),
-        GetPage(name: AppRoutes.home, page: () => HomeScreen()),
-      ],
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider<RegisterBloc>(
+            create: (context) => di.sl<RegisterBloc>(),
+          ),
+          BlocProvider<LoginWithEmailBloc>(
+            create: (context) => di.sl<LoginWithEmailBloc>(),
+          ),
+          BlocProvider<ResendOtpBloc>(
+            create: (context) => di.sl<ResendOtpBloc>(),
+          ),
+          BlocProvider<ForgotPasswordBloc>(
+            create: (context) => di.sl<ForgotPasswordBloc>(),
+          ),
+          BlocProvider<OtpBloc>(
+            create: (context) => di.sl<OtpBloc>(),
+          ),
+          BlocProvider<GoogleAuthenticationBloc>(
+            create: (context) => di.sl<GoogleAuthenticationBloc>(),
+          ),
+          BlocProvider<ChangePasswordBloc>(
+            create: (context) => di.sl<ChangePasswordBloc>(),
+          ),
+          BlocProvider<GetAllPostsBloc>(
+            create: (context) => di.sl<GetAllPostsBloc>(),
+          ),
+          BlocProvider<UploadPostBloc>(
+            create: (context) => di.sl<UploadPostBloc>(),
+          ),
+          BlocProvider<ReportPostBloc>(
+            create: (context) => di.sl<ReportPostBloc>(),
+          ),
+          BlocProvider<FeedbackBloc>(
+            create: (context) => di.sl<FeedbackBloc>(),
+          ),
+          BlocProvider<GetPostByIdBloc>(
+            create: (context) => di.sl<GetPostByIdBloc>(),
+          ),
+          BlocProvider<GetCommentsByPostIdBloc>(
+            create: (context) => di.sl<GetCommentsByPostIdBloc>(),
+          ),
+          BlocProvider<UpdateLocationBloc>(
+            create: (context) => di.sl<UpdateLocationBloc>(),
+          ),
+          BlocProvider<DeletePostBloc>(
+            create: (context) => di.sl<DeletePostBloc>(),
+          ),
+          BlocProvider<UploadFileBloc>(
+            create: (context) => di.sl<UploadFileBloc>(),
+          ),
+          BlocProvider<AddCommentBloc>(
+            create: (context) => di.sl<AddCommentBloc>(),
+          ),
+          BlocProvider<VotePollBloc>(
+            create: (context) => di.sl<VotePollBloc>(),
+          ),
+          BlocProvider<FetchCommentReplyBloc>(
+            create: (context) => di.sl<FetchCommentReplyBloc>(),
+          ),
+          BlocProvider<GiveAwardBloc>(
+            create: (context) => di.sl<GiveAwardBloc>(),
+          ),
+          BlocProvider<GetGenderAndDOBBloc>(
+            create: (context) => di.sl<GetGenderAndDOBBloc>(),
+          ),
+          BlocProvider<GetProfileBloc>(
+            create: (context) => di.sl<GetProfileBloc>(),
+          ),
+          BlocProvider<LogoutBloc>(
+            create: (context) => di.sl<LogoutBloc>(),
+          ),
+          BlocProvider<GetMyPostsBloc>(
+            create: (context) => di.sl<GetMyPostsBloc>(),
+          ),
+          BlocProvider<SendFeedbackBloc>(
+            create: (context) => di.sl<SendFeedbackBloc>(),
+          ),
+          BlocProvider<DeleteAccountBloc>(
+            create: (context) => di.sl<DeleteAccountBloc>(),
+          ),
+          BlocProvider<GetUserInfoBloc>(
+            create: (context) => di.sl<GetUserInfoBloc>(),
+          ),
+          BlocProvider<GetMyCommentsBloc>(
+            create: (context) => di.sl<GetMyCommentsBloc>(),
+          ),
+          BlocProvider<GetMyGroupsBloc>(
+            create: (context) => di.sl<GetMyGroupsBloc>(),
+          ),
+          BlocProvider<EditProfileBloc>(
+            create: (context) => di.sl<EditProfileBloc>(),
+          ),
+          BlocProvider<GetMyAwardsBloc>(
+            create: (context) => di.sl<GetMyAwardsBloc>(),
+          ),
+        ],
+        child: MaterialApp.router(
+          theme: ThemeData(
+            fontFamily: 'Roboto',
+          ),
+          debugShowCheckedModeBanner: false,
+          title: 'Neighborly',
+          routerConfig: router,
+        ));
   }
 }
-// void main() {
-//   runApp(MyApp());
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return GetMaterialApp(
-//       title: 'flutter_application_1',
-//       initialRoute: AppRoutes.login,
-//       getPages: [
-//         GetPage(name: AppRoutes.login, page: () => LoginScreen(), binding: BindingsBuilder(() => Get.lazyPut(() => LoginController()))),
-//         GetPage(name: AppRoutes.register, page: () => RegisterScreen(), binding: BindingsBuilder(() => Get.lazyPut(() => RegisterController()))),
-//         GetPage(name: AppRoutes.home, page: () => HomeScreen()),
-//       ],
-//     );
-//   }
-// }
