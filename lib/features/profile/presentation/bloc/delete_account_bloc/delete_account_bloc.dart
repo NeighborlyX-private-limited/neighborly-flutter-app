@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/usecases/delete_account_usecase.dart';
+
+import '../../../domain/usecases/delete_account_usecase.dart';
 
 part 'delete_account_event.dart';
 part 'delete_account_state.dart';

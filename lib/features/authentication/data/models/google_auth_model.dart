@@ -1,4 +1,4 @@
-import 'package:neighborly_flutter_app/features/authentication/domain/entities/google_auth_entity.dart';
+import '../../domain/entities/google_auth_entity.dart';
 
 class GoogleAuthModel extends GoogleAuthEntitiy {
   const GoogleAuthModel({

@@ -1,8 +1,9 @@
 import 'package:dartz/dartz.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
-import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
+
+import '../../../../core/entities/post_enitity.dart';
+import '../../../../core/error/failures.dart';
+import '../entities/comment_entity.dart';
+import '../entities/reply_entity.dart';
 
 abstract class PostRepositories {
   Future<Either<Failure, List<PostEntity>>> getAllPosts({

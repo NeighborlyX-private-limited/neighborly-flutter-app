@@ -2,7 +2,8 @@ import 'dart:io';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/upload/domain/usecases/upload_file_usecase.dart';
+
+import '../../../domain/usecases/upload_file_usecase.dart';
 
 part 'upload_file_event.dart';
 part 'upload_file_state.dart';

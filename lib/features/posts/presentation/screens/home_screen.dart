@@ -1,17 +1,20 @@
+import 'package:badges/badges.dart' as badges;
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/widgets/button_widget.dart';
-import 'package:neighborly_flutter_app/features/homePage/widgets/dob_picker_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/toggle_button_widget.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
+
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../authentication/presentation/widgets/button_widget.dart';
+import '../../../homePage/widgets/dob_picker_widget.dart';
+import '../../../profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
+import '../bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
+import '../widgets/poll_widget.dart';
+import '../widgets/post_sheemer_widget.dart';
+import '../widgets/post_widget.dart';
+import '../widgets/toggle_button_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isFirstTime;
@@ -36,13 +39,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _fetchPosts() {
-    BlocProvider.of<GetAllPostsBloc>(context)
-        .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
+    BlocProvider.of<GetAllPostsBloc>(context).add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
 
   Future<void> _onRefresh() async {
-    BlocProvider.of<GetAllPostsBloc>(context)
-        .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
+    BlocProvider.of<GetAllPostsBloc>(context).add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
 
   void handleToggle(bool value) {
@@ -87,11 +88,24 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: SvgPicture.asset(
-              'assets/alarm.svg',
-              fit: BoxFit.contain,
-              width: 30, // Adjusted to fit within the AppBar
-              height: 30,
+            child: GestureDetector(
+              onTap: () {
+                context.push('/notifications');
+              },
+              child: badges.Badge(
+                badgeContent: Text(
+                  '3', // TODO: this came from a checked still not maked
+                  style: TextStyle(color: Colors.white),
+                ),
+                badgeStyle: BadgeStyle(badgeColor: AppColors.primaryColor),
+                position: badges.BadgePosition.custom(end: 0, top: -8),
+                child: SvgPicture.asset(
+                  'assets/alarm.svg',
+                  fit: BoxFit.contain,
+                  width: 30, // Adjusted to fit within the AppBar
+                  height: 30,
+                ),
+              ),
             ),
           ),
         ],
@@ -172,8 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (BuildContext context, StateSetter setState) {
             return DraggableScrollableSheet(
               expand: false,
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
+              builder: (BuildContext context, ScrollController scrollController) {
                 return SingleChildScrollView(
                   controller: scrollController,
                   child: Container(
@@ -184,8 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         topRight: Radius.circular(20),
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -270,16 +282,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 45),
                         BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
-                          listener: (BuildContext context,
-                              GetGenderAndDOBState state) {
+                          listener: (BuildContext context, GetGenderAndDOBState state) {
                             if (state is GetGenderAndDOBFailureState) {
-                              if (state.error
-                                  .contains('DOB can only be set once.')) {
+                              if (state.error.contains('DOB can only be set once.')) {
                                 context.pop();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'User Info saved successfully.')),
+                                  const SnackBar(content: Text('User Info saved successfully.')),
                                 );
                               } else {
                                 context.pop();
@@ -291,9 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               print('User Info saved successfully.');
                               context.pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('User Info saved successfully.')),
+                                const SnackBar(content: Text('User Info saved successfully.')),
                               );
                             }
                           },
@@ -309,8 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               text: 'Save',
                               isFilled: true,
                               onTapListener: () {
-                                BlocProvider.of<GetGenderAndDOBBloc>(context)
-                                    .add(
+                                BlocProvider.of<GetGenderAndDOBBloc>(context).add(
                                   GetGenderAndDOBButtonPressedEvent(
                                     dob: formatDOB(
                                       dateController.text.trim(),

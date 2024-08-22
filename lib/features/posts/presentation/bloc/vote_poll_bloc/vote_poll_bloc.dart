@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/usecases/vote_poll_usecase.dart';
+
+import '../../../domain/usecases/vote_poll_usecase.dart';
 
 part 'vote_poll_event.dart';
 part 'vote_poll_state.dart';

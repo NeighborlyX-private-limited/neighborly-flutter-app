@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/usecases/verify_otp_usecase.dart';
+
+import '../../../domain/usecases/verify_otp_usecase.dart';
 
 part 'verify_otp_event.dart';
 part 'verify_otp_state.dart';
@@ -14,6 +15,9 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     on<OtpSubmitted>((OtpSubmitted event, Emitter<OtpState> emit) async {
       emit(OtpLoadInProgress());
 
+      print('event.email=${event.email}');
+      print('event.opt=${event.otp}');
+      print('event.verificationFor=${event.verificationFor}');
       final result = await _verifyOTPUsecase.call(
         email: event.email,
         otp: event.otp,

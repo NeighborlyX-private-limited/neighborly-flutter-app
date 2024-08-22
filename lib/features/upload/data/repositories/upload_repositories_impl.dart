@@ -1,11 +1,11 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/core/network/network_info.dart';
 
-import '../data_sources/upload_remote_data_source/upload_remote_data_source.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/network/network_info.dart';
 import '../../domain/repositories/upload_repositories.dart';
+import '../data_sources/upload_remote_data_source/upload_remote_data_source.dart';
 
 class UploadRepositoriesImpl implements UploadRepositories {
   final UploadRemoteDataSource remoteDataSource;

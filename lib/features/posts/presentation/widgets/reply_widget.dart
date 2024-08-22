@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/core/utils/helpers.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_reply_widget.dart';
+
+import '../../../../core/utils/helpers.dart';
+import '../../domain/entities/reply_entity.dart';
+import 'reaction_reply_widget.dart';
 
 class ReplyWidget extends StatefulWidget {
   final ReplyEntity reply;

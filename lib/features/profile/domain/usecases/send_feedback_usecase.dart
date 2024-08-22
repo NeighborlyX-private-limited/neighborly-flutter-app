@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/repositories/profile_repositories.dart';
+
+import '../../../../core/error/failures.dart';
+import '../repositories/profile_repositories.dart';
 
 class SendFeedbackUsecase {
   final ProfileRepositories repository;

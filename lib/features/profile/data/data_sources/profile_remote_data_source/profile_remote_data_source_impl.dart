@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:neighborly_flutter_app/core/constants/constants.dart';
-import 'package:neighborly_flutter_app/core/error/exception.dart';
-import 'package:neighborly_flutter_app/core/models/post_model.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/profile/data/data_sources/profile_remote_data_source/profile_remote_data_source.dart';
 import 'package:http/http.dart' as http;
-import 'package:neighborly_flutter_app/features/profile/data/models/auth_response_model.dart';
-import 'package:neighborly_flutter_app/features/profile/data/models/post_with_comments_model.dart';
+
+import '../../../../../core/constants/constants.dart';
+import '../../../../../core/error/exception.dart';
+import '../../../../../core/models/post_model.dart';
+import '../../../../../core/utils/shared_preference.dart';
+import '../../models/auth_response_model.dart';
+import '../../models/post_with_comments_model.dart';
+import 'profile_remote_data_source.dart';
 
 class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final http.Client client;

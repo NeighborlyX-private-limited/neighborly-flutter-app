@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/core/utils/helpers.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
-import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/comment_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/option_card.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_detail_sheemer.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
+
+import '../../../../core/entities/post_enitity.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../../data/model/comments_model.dart';
+import '../../domain/entities/comment_entity.dart';
+import '../../domain/entities/reply_entity.dart';
+import '../bloc/add_comment_bloc/add_comment_bloc.dart';
+import '../bloc/delete_post_bloc/delete_post_bloc.dart';
+import '../bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
+import '../bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
+import '../bloc/report_post_bloc/report_post_bloc.dart';
+import '../widgets/comment_widget.dart';
+import '../widgets/option_card.dart';
+import '../widgets/post_detail_sheemer.dart';
+import '../widgets/reaction_widget.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final String postId;
@@ -47,6 +48,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     super.initState();
     _commentController = TextEditingController();
     _fetchPostAndComments();
+    print('... POST DETAIL: postId=${widget.postId} ');
   }
 
   @override
@@ -306,7 +308,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                       ),
-                      child: postState.post.proPic != null
+                      child: postState.post.proPic != null && postState.post.proPic != ''
                           ? Image.network(
                               postState.post.proPic!,
                               fit: BoxFit.contain,
@@ -382,12 +384,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             color: Colors.grey[800],
           ),
         ),
-        postState.post.multimedia != null
+        postState.post.multimedia != null && postState.post.multimedia != ''
             ? const SizedBox(
                 height: 10,
               )
             : Container(),
-        postState.post.multimedia != null
+        postState.post.multimedia != null && postState.post.multimedia != ''
             ? Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
@@ -744,7 +746,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       width: 40,
                       height: 40,
                       decoration: const BoxDecoration(shape: BoxShape.circle),
-                      child: post.proPic != null
+                      child: post.proPic != null && post.proPic != ''
                           ? Image.network(post.proPic!, fit: BoxFit.contain)
                           : const Image(
                               image: AssetImage('assets/second_pro_pic.png'),
@@ -789,7 +791,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
           ),
         const SizedBox(height: 10),
-        if (post.multimedia != null)
+        if (post.multimedia != null && post.multimedia != '')
           Container(
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
             child: ClipRRect(

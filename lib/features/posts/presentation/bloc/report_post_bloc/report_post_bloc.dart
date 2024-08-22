@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/usecases/report_post_usecase.dart';
+
+import '../../../domain/usecases/report_post_usecase.dart';
 
 part 'report_post_event.dart';
 part 'report_post_state.dart';

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/overlapping_images_widget.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/entities/post_with_comments_entity.dart';
+
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../../../posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
+import '../../../posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
+import '../../../posts/presentation/widgets/overlapping_images_widget.dart';
+import '../../domain/entities/post_with_comments_entity.dart';
 
 class ProfileReactionCommentWidget extends StatefulWidget {
   final PostWithCommentsEntity postComment;

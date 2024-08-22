@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/repositories/auth_repository.dart';
+
+import '../../../../core/error/failures.dart';
+import '../repositories/auth_repository.dart';
 
 class VerifyOTPUsecase {
   final AuthRepository repository;

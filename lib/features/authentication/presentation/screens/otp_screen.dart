@@ -38,6 +38,7 @@ class _OtpScreenState extends State<OtpScreen> {
       );
       print('phone-verify called: ${widget.data}');
     } else {
+      print('widget.data=$widget.data');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           email: widget.data,

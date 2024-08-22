@@ -1,11 +1,12 @@
 import 'package:dartz/dartz.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/core/network/network_info.dart';
-import 'package:neighborly_flutter_app/features/posts/data/data_sources/post_remote_data_source/post_remote_data_source.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
-import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/repositories/post_repositories.dart';
+
+import '../../../../core/entities/post_enitity.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/network/network_info.dart';
+import '../../domain/entities/comment_entity.dart';
+import '../../domain/entities/reply_entity.dart';
+import '../../domain/repositories/post_repositories.dart';
+import '../data_sources/post_remote_data_source/post_remote_data_source.dart';
 
 class PostRepositoriesImpl implements PostRepositories {
   final PostRemoteDataSource remoteDataSource;

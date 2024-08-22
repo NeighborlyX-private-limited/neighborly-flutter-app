@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/comments_section.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/groups_section.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/posts_section.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/profile_sheemer_widget.dart';
+import 'package:share_it/share_it.dart';
+
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../bloc/get_user_info_bloc/get_user_info_bloc.dart';
+import '../widgets/comments_section.dart';
+import '../widgets/groups_section.dart';
+import '../widgets/posts_section.dart';
+import '../widgets/profile_sheemer_widget.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String userId;
@@ -27,6 +29,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _fetchProfile();
+
+    print('... INIT UserProfileScreen userId=${widget.userId}');
   }
 
   @override
@@ -295,7 +299,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 height: 4,
               ),
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  ShareIt.text(content: 'Hey, take a look on this profile', androidSheetTitle: 'Cool Person');
+                },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [

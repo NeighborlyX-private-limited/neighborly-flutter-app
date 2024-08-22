@@ -6,8 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+
 import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/shared_preference.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
 import '../widgets/post_button_widget.dart';
 
@@ -26,7 +27,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   // List of option controllers and focus nodes
   final List<TextEditingController> _optionControllers = [];
   final List<FocusNode> _optionFocusNodes = [];
-  int _optionIdCounter = 1; // Counter to keep track of option IDs
 
   bool isTitleFilled = false;
   bool isQuestionFilled = false;
@@ -118,11 +118,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
-  void _onOptionFocusChange(int index) {
-    setState(() {
-      _isKeyboardVisible = _optionFocusNodes[index].hasFocus;
-    });
-  }
+  // void _onOptionFocusChange(int index) {
+  //   setState(() {
+  //     _isKeyboardVisible = _optionFocusNodes[index].hasFocus;
+  //   });
+  // }
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
@@ -167,6 +167,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               _titleController.clear();
                               _contentController.clear();
                               _selectedImage = null; // Clear selected image
+
+                              context.go('/home/false');
                             } else {
                               setState(() {
                                 _condition = 'post';
@@ -469,26 +471,37 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ],
                         ),
                       ),
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/communities.svg'),
-                          const SizedBox(width: 10),
-                          Text('Create Community', style: mediumTextStyleBlack),
-                        ],
+                      InkWell(
+                        onTap: (){
+                          context.push('/groups/create');
+                        },
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/communities.svg'),
+                            const SizedBox(width: 10),
+                            Text('Create Community', style: mediumTextStyleBlack),
+                          ],
+                        ),
                       ),
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/add_location.svg'),
-                          const SizedBox(width: 10),
-                          Text('Add Location', style: mediumTextStyleBlack),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/create_an_event.svg'),
-                          const SizedBox(width: 10),
-                          Text('Create an Event', style: mediumTextStyleBlack),
-                        ],
+                      // TODO: create a action to this and remove the comment
+                      // Row(
+                      //   children: [
+                      //     SvgPicture.asset('assets/add_location.svg'),
+                      //     const SizedBox(width: 10),
+                      //     Text('Add Location', style: mediumTextStyleBlack),
+                      //   ],
+                      // ),
+                      GestureDetector(
+                        onTap: (){
+                          context.push('/events/create');
+                        },
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/create_an_event.svg'),
+                            const SizedBox(width: 10),
+                            Text('Create an Event', style: mediumTextStyleBlack),
+                          ],
+                        ),
                       ),
                       InkWell(
                         onTap: () {
@@ -565,7 +578,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   // Build dynamic option fields with the X button for removal
   List<Widget> _buildOptionFields() {
     return List.generate(_optionControllers.length, (index) {
-      _optionFocusNodes[index] ??= FocusNode();
+      // _optionFocusNodes[index] ??= FocusNode();
+      _optionFocusNodes[index];
 
       // Listen to focus changes on each FocusNode
       _optionFocusNodes[index].addListener(() {

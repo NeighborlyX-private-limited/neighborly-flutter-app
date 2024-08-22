@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/edit_profile_bloc/edit_profile_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
+
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../bloc/edit_profile_bloc/edit_profile_bloc.dart';
+import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 
 class FindMeScreen extends StatefulWidget {
   const FindMeScreen({super.key});

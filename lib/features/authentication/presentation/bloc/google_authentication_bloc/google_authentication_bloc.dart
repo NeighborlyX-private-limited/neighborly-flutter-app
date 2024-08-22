@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/entities/google_auth_entity.dart';
-import 'package:neighborly_flutter_app/features/authentication/domain/usecases/google_authentication_usecase.dart';
 
+import '../../../../../core/error/failures.dart';
+import '../../../domain/entities/google_auth_entity.dart';
+import '../../../domain/usecases/google_authentication_usecase.dart';
 
 part 'google_authentication_event.dart';
 part 'google_authentication_state.dart';

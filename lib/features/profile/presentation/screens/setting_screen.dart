@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/core/widgets/text_field_widget.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/button_widget.dart';
+
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../../../../core/widgets/text_field_widget.dart';
+import '../bloc/logout_bloc.dart/logout_bloc.dart';
+import '../widgets/button_widget.dart';
 
 class SettingScreen extends StatelessWidget {
   final String karma;

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/usecases/add_comment_usecase.dart';
+
+import '../../../domain/usecases/add_comment_usecase.dart';
 
 part 'add_comment_event.dart';
 part 'add_comment_state.dart';

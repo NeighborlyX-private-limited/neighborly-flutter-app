@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -5,9 +7,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../../core/theme/colors.dart';
+import '../../core/utils/shared_preference.dart';
+import '../notification/presentation/bloc/notification_general_cubit.dart';
+import 'bloc/update_location_bloc/update_location_bloc.dart';
 
 class MainPage extends StatefulWidget {
   final Widget child;
@@ -35,6 +40,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     pageController = PageController();
     fetchLocationAndUpdate();
+    updateFCMtokenNotification();
 
     super.initState();
   }
@@ -79,29 +85,50 @@ class _MainPageState extends State<MainPage> {
     bool serviceEnabled;
     LocationPermission permission;
 
+    // notification permission
+    // TODO move this for other place
+    var checkPushPermission = await Permission.notification.isDenied;
+    print('...checkPushPermission: ${checkPushPermission}');
+    if (checkPushPermission) {
+      // Exibir dialogo solicitando permissão para notificações
+      await Permission.notification.request();
+    }
+
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location services are disabled. Please enable the services')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Location services are disabled. Please enable the services')));
       return false;
     }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Location permissions are denied')));
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Location permissions are permanently denied, we cannot request permissions.')));
       return false;
     }
     return true;
+  }
+
+  Future<void> updateFCMtokenNotification() async {
+    print('...updateFCMtokenNotification running');
+    try {
+      var result = await BlocProvider.of<NotificationGeneralCubit>(context).updateFCMTokenUsecase();
+      result.fold(
+        (failure) {},
+        (currentFCMtoken) {
+          print('...updateFCMtokenNotification FCM token: ${currentFCMtoken}');
+          ShardPrefHelper.setFCMtoken(currentFCMtoken);
+        },
+      );
+    } catch (e) {
+      debugPrint('Error getting FCM token: $e');
+    }
   }
 
   Future<void> fetchLocationAndUpdate() async {
@@ -109,8 +136,7 @@ class _MainPageState extends State<MainPage> {
     if (!hasPermission) return;
 
     try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
       setState(() {
         _currentPosition = position;
       });

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/overlapping_images_widget.dart';
+import 'package:hive/hive.dart';
+import 'package:share_it/share_it.dart';
+
+import '../../../../core/entities/post_enitity.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../bloc/feedback_bloc/feedback_bloc.dart';
+import '../bloc/give_award_bloc/give_award_bloc.dart';
+import 'overlapping_images_widget.dart';
 
 class ReactionWidget extends StatefulWidget {
   final PostEntity post;
@@ -339,20 +341,26 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             ),
           ),
         ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          height: 32,
-          width: 60,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(21),
-              )),
-          child: Center(
-            child: SvgPicture.asset(
-              'assets/react4.svg',
-              width: 20,
-              height: 24,
+        InkWell(
+          onTap: (){
+            // #share 
+            ShareIt.text(content: 'Hey, take a look on this post', androidSheetTitle: 'Cool Post');
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 32,
+            width: 60,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                )),
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/react4.svg',
+                width: 20,
+                height: 24,
+              ),
             ),
           ),
         )

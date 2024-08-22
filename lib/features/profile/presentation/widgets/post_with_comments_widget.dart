@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/core/utils/helpers.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/entities/post_with_comments_entity.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/profile_comment_reaction_widget.dart';
+
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../../../posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
+import '../../../posts/presentation/widgets/reaction_widget.dart';
+import '../../domain/entities/post_with_comments_entity.dart';
+import 'profile_comment_reaction_widget.dart';
 
 class PostWithCommentsWidget extends StatefulWidget {
   final PostWithCommentsEntity post;

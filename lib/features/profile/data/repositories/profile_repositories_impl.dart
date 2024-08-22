@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
-import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/core/network/network_info.dart';
-import 'package:neighborly_flutter_app/features/profile/data/data_sources/profile_remote_data_source/profile_remote_data_source.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/entities/post_with_comments_entity.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/repositories/profile_repositories.dart';
+
+import '../../../../core/entities/auth_response_entity.dart';
+import '../../../../core/entities/post_enitity.dart';
+import '../../../../core/error/failures.dart';
+import '../../../../core/network/network_info.dart';
+import '../../domain/entities/post_with_comments_entity.dart';
+import '../../domain/repositories/profile_repositories.dart';
+import '../data_sources/profile_remote_data_source/profile_remote_data_source.dart';
 
 class ProfileRepositoriesImpl implements ProfileRepositories {
   final ProfileRemoteDataSource remoteDataSource;

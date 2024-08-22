@@ -2,10 +2,8 @@ class RouteConstants {
   static const String onboardingScreenRouteName = 'onboadingScreen';
   static const String reisterScreenRouteName = 'registerScreen';
   static const String loginScreenRouteName = 'loginScreen';
-  static const String registerWithEmailScreenRouteName =
-      'registerWithEmailScreen';
-  static const String loginWithEmailScreenRouteName =
-      'loginWithEmailScreenName';
+  static const String registerWithEmailScreenRouteName = 'registerWithEmailScreen';
+  static const String loginWithEmailScreenRouteName = 'loginWithEmailScreenName';
   static const String otpRouteName = 'otp';
   static const String forgotPasswordRouteName = 'forgotPassword';
   static const String homeScreenRouteName = 'homeScreen';
@@ -17,11 +15,10 @@ class RouteConstants {
   static const String settingsScreenRouteName = 'settingsScreen';
   static const String securityScreenRouteName = 'securityScreen';
   static const String postScreenRouteName = 'postScreen';
-  static const String feedbackScreenRouteName =  'feedbackScreen';
+  static const String feedbackScreenRouteName = 'feedbackScreen';
   static const String findMeScreenRouteName = 'findMeScreen';
-  static const String activityAndStatsScreenRouteName =
-      'activityAndStatsScreen';
-  static const String userProfileScreenRouteName = 'userProfileScreen';   
+  static const String activityAndStatsScreenRouteName = 'activityAndStatsScreen';
+  static const String userProfileScreenRouteName = 'userProfileScreen';
   static const String communitiesScreenRouteName = 'communitiesScreen';
-  static const String basicInformationScreenRouteName = 'basicInformationScreen' ;
+  static const String basicInformationScreenRouteName = 'basicInformationScreen';
 }

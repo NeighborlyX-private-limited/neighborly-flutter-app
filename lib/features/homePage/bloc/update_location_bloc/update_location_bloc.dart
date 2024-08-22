@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/usecases/update_location_usecase.dart';
+
+import '../../../profile/domain/usecases/update_location_usecase.dart';
 
 part 'update_location_event.dart';
 part 'update_location_state.dart';

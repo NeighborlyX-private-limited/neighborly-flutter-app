@@ -1,5 +1,5 @@
-import 'package:neighborly_flutter_app/core/models/post_model.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/entities/post_with_comments_entity.dart';
+import '../../../../core/models/post_model.dart';
+import '../../domain/entities/post_with_comments_entity.dart';
 
 class PostWithCommentsModel extends PostWithCommentsEntity {
   const PostWithCommentsModel({

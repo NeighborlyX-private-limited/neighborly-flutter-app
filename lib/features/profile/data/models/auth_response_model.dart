@@ -1,4 +1,4 @@
-import 'package:neighborly_flutter_app/core/entities/auth_response_entity.dart';
+import '../../../../core/entities/auth_response_entity.dart';
 
 class AuthResponseModel extends AuthResponseEntity {
   const AuthResponseModel({

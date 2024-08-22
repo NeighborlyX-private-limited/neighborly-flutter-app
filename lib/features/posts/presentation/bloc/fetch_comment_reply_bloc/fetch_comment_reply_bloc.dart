@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/usecases/fetch_comment_reply_usecase.dart';
+
+import '../../../domain/entities/reply_entity.dart';
+import '../../../domain/usecases/fetch_comment_reply_usecase.dart';
 
 part 'fetch_comment_reply_event.dart';
 part 'fetch_comment_reply_state.dart';

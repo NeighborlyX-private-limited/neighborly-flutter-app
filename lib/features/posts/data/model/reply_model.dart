@@ -1,4 +1,4 @@
-import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
+import '../../domain/entities/reply_entity.dart';
 
 class ReplyModel extends ReplyEntity {
   const ReplyModel({

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
+
+import '../../../../core/theme/text_style.dart';
 
 class AwardWidget extends StatelessWidget {
   final String imageUrl;

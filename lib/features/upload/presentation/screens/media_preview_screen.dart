@@ -2,14 +2,15 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:mime/mime.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'package:video_player/video_player.dart';
+
+import '../../../../core/utils/shared_preference.dart';
+import '../bloc/upload_file_bloc/upload_file_bloc.dart';
 
 class MediaPreviewScreen extends StatefulWidget {
   const MediaPreviewScreen({super.key});

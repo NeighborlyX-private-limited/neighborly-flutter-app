@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
+
+import '../../../../core/theme/colors.dart';
 
 class ButtonContainerWidget extends StatelessWidget {
   final Color color;

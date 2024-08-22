@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
+
+import '../../../../core/entities/post_enitity.dart';
 
 class PostWithCommentsEntity extends Equatable {
   final String userId;

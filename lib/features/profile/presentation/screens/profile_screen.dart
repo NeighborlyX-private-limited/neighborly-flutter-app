@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/comments_section.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/groups_section.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/posts_section.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/profile_sheemer_widget.dart';
+
+import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import '../bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
+import '../bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
+import '../bloc/get_profile_bloc/get_profile_bloc.dart';
+import '../widgets/comments_section.dart';
+import '../widgets/groups_section.dart';
+import '../widgets/posts_section.dart';
+import '../widgets/profile_sheemer_widget.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/poll_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_sheemer_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/post_widget.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
+
+import '../../../../core/theme/text_style.dart';
+import '../../../posts/presentation/widgets/poll_widget.dart';
+import '../../../posts/presentation/widgets/post_sheemer_widget.dart';
+import '../../../posts/presentation/widgets/post_widget.dart';
+import '../bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 
 class PostSection extends StatefulWidget {
   final String? userId;

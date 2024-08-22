@@ -1,5 +1,5 @@
-import 'package:neighborly_flutter_app/core/models/option_model.dart';
-import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
+import '../entities/post_enitity.dart';
+import 'option_model.dart';
 
 class PostModel extends PostEntity {
   const PostModel({
@@ -24,25 +24,25 @@ class PostModel extends PostEntity {
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
       id: json['contentid'], // Assuming contentid is always an int
-      awardType: json['awards'] as List<dynamic>,
-      type: json['type'] as String,
-      userId: json['userid'] as String,
+      awardType:  (json['awards'] as List<dynamic>?) ?? [],
+      type: json['type'] as String? ?? '',
+      userId: json['userid'] as String? ?? '',
       pollOptions: json['pollResults'] != null
           ? (json['pollResults'] as List<dynamic>)
               .map((e) => OptionModel.fromJson(e))
               .toList()
-          : null,
-      userName: json['username'] as String,
-      title: json['title'] as String?,
-      content: json['body'] as String?,
-      createdAt: json['createdat'] as String,
-      cheers: json['cheers'],
-      bools: json['boos'],
-      multimedia: json['multimedia'],
-      proPic: json['userProfilePicture'] as String?,
-      city: json['city'] as String,
-      commentCount: json['commentCount'],
-      allowMultipleVotes: json['allow_multiple_votes'],
+          : [],
+      userName: json['username'] as String? ?? '',
+      title: json['title'] as String? ?? '',
+      content: json['body'] as String? ?? '',
+      createdAt: json['createdat'] as String? ?? '',
+      cheers: json['cheers'] ?? 0,
+      bools: json['boos'] ?? 0,
+      multimedia: json['multimedia'] ?? '',
+      proPic: json['userProfilePicture'] as String? ?? '',
+      city: json['city'] as String? ?? '',
+      commentCount: json['commentCount'] ?? 0,
+      allowMultipleVotes: json['allow_multiple_votes'] ?? true,
     );
   }
 

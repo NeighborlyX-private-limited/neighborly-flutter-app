@@ -1,4 +1,4 @@
-import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
+import '../../domain/entities/comment_entity.dart';
 
 class CommentModel extends CommentEntity {
   const CommentModel({

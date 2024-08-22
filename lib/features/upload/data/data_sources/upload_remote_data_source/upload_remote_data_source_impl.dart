@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:neighborly_flutter_app/core/constants/constants.dart';
-import 'package:neighborly_flutter_app/core/error/exception.dart';
 import 'package:http/http.dart' as http;
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 
+import '../../../../../core/constants/constants.dart';
+import '../../../../../core/error/exception.dart';
+import '../../../../../core/utils/shared_preference.dart';
 import 'upload_remote_data_source.dart';
 
 class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {

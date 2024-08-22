@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:neighborly_flutter_app/core/error/failures.dart';
-import 'package:neighborly_flutter_app/features/upload/domain/repositories/upload_repositories.dart';
+
+import '../../../../core/error/failures.dart';
+import '../repositories/upload_repositories.dart';
 
 class UploadPostUsecase {
   final UploadRepositories repository;

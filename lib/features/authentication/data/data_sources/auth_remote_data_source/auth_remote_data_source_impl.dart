@@ -1,12 +1,13 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:neighborly_flutter_app/core/constants/constants.dart';
-import 'package:neighborly_flutter_app/core/error/exception.dart';
-import 'package:neighborly_flutter_app/core/utils/google_auth_helper.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 
-import 'auth_remote_data_source.dart';
+import 'package:http/http.dart' as http;
+
+import '../../../../../core/constants/constants.dart';
+import '../../../../../core/error/exception.dart';
+import '../../../../../core/utils/google_auth_helper.dart';
+import '../../../../../core/utils/shared_preference.dart';
 import '../../models/auth_response_model.dart';
+import 'auth_remote_data_source.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final http.Client client;
@@ -14,8 +15,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<AuthResponseModel> loginWithEmail(
-      {required String email, required String password}) async {
+  Future<AuthResponseModel> loginWithEmail({required String email, required String password}) async {
     String url = '$kBaseUrl/authentication/login';
     final response = await client.post(
       Uri.parse(url),
@@ -32,11 +32,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
       String username = jsonDecode(response.body)['user']['username'];
+      String accessToken = jsonDecode(response.body)['user']['access_token'];
+      String refreshToken = jsonDecode(response.body)['user']['refresh_token'];
       String proPic = jsonDecode(response.body)['user']['picture'];
-      List<dynamic> location = jsonDecode(response.body)['user']
-          ['current_coordinates']['coordinates'];
+      List<dynamic> location = jsonDecode(response.body)['user']['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
 
+      ShardPrefHelper.setAccessToken(accessToken);
+      ShardPrefHelper.setRefreshToken(refreshToken);
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setEmail(email ?? '');
@@ -105,8 +108,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String userID = jsonDecode(response.body)['user']['_id'];
       String username = jsonDecode(response.body)['user']['username'];
       String proPic = jsonDecode(response.body)['user']['picture'];
-      List<dynamic> location = jsonDecode(response.body)['user']
-          ['current_coordinates']['coordinates'];
+      List<dynamic> location = jsonDecode(response.body)['user']['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
 
       ShardPrefHelper.setCookie(cookies);
@@ -156,8 +158,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String userID = jsonDecode(response.body)['user']['_id'];
       String username = jsonDecode(response.body)['user']['username'];
       String proPic = jsonDecode(response.body)['user']['picture'];
-      List<dynamic> location = jsonDecode(response.body)['user']
-          ['current_coordinates']['coordinates'];
+      List<dynamic> location = jsonDecode(response.body)['user']['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
 
       ShardPrefHelper.setCookie(cookies);
@@ -211,8 +212,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw ServerException(
-          message: jsonDecode(response.body)['error_description']);
+      throw ServerException(message: jsonDecode(response.body)['error_description']);
     }
   }
 }

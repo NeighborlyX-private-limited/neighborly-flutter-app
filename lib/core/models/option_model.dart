@@ -1,4 +1,4 @@
-import 'package:neighborly_flutter_app/core/entities/option_entity.dart';
+import '../entities/option_entity.dart';
 
 class OptionModel extends OptionEntity {
   const OptionModel({

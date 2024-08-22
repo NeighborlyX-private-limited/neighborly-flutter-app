@@ -1,50 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/core/routes/routes.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/google_authentication_bloc/google_authentication_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/register_bloc/register_bloc.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
-import 'package:neighborly_flutter_app/features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/fetch_comment_reply_bloc/fetch_comment_reply_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/edit_profile_bloc/edit_profile_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_awards_bloc/get_my_awards_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
-import 'package:neighborly_flutter_app/features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
+
+import 'core/routes/routes.dart';
+import 'core/utils/app_initializers.dart';
 import 'dependency_injection.dart' as di;
-import 'package:hive_flutter/hive_flutter.dart';
+import 'features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
+import 'features/authentication/presentation/bloc/google_authentication_bloc/google_authentication_bloc.dart';
+import 'features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
+import 'features/authentication/presentation/bloc/register_bloc/register_bloc.dart';
+import 'features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
+import 'features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
+import 'features/chat/presentation/bloc/chat_group_cubit.dart';
+import 'features/chat/presentation/bloc/chat_main_cubit.dart';
+import 'features/chat/presentation/bloc/chat_private_cubit.dart';
+import 'features/communities/presentation/bloc/communities_create_cubit.dart';
+import 'features/communities/presentation/bloc/communities_main_cubit.dart';
+import 'features/communities/presentation/bloc/communities_search_cubit.dart';
+import 'features/communities/presentation/bloc/community_detail_cubit.dart';
+import 'features/event/presentation/bloc/event_create_cubit.dart';
+import 'features/event/presentation/bloc/event_detail_cubit.dart';
+import 'features/event/presentation/bloc/event_join_cubit.dart';
+import 'features/event/presentation/bloc/event_main_cubit.dart';
+import 'features/event/presentation/bloc/event_search_cubit.dart';
+import 'features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
+import 'features/notification/presentation/bloc/notification_general_cubit.dart';
+import 'features/notification/presentation/bloc/notification_list_cubit.dart';
+import 'features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
+import 'features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
+import 'features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
+import 'features/posts/presentation/bloc/fetch_comment_reply_bloc/fetch_comment_reply_bloc.dart';
+import 'features/posts/presentation/bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
+import 'features/posts/presentation/bloc/get_comments_by_postId_bloc/get_comments_by_postId_bloc.dart';
+import 'features/posts/presentation/bloc/get_post_by_id_bloc/get_post_by_id_bloc.dart';
+import 'features/posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
+import 'features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
+import 'features/posts/presentation/bloc/vote_poll_bloc/vote_poll_bloc.dart';
+import 'features/profile/presentation/bloc/change_password_bloc/change_password_bloc.dart';
+import 'features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
+import 'features/profile/presentation/bloc/edit_profile_bloc/edit_profile_bloc.dart';
+import 'features/profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
+import 'features/profile/presentation/bloc/get_my_awards_bloc/get_my_awards_bloc.dart';
+import 'features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import 'features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
+import 'features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
+import 'features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dart';
+import 'features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
+import 'features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
+import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
+import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
+import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  await Hive.openBox('postReactions');
-  await Hive.openBox('commentReactions');
-  await Hive.openBox('replyReactions');
-  await Hive.openBox('pollVotes');
-  di.init();
-  await ShardPrefHelper.init();
+  await AppInitializers.init();
+  
   runApp(const MyApp());
 }
 
@@ -148,6 +157,48 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<GetMyAwardsBloc>(
             create: (context) => di.sl<GetMyAwardsBloc>(),
+          ),
+          BlocProvider<CommunityMainCubit>(
+            create: (context) => di.sl<CommunityMainCubit>(),
+          ),
+          BlocProvider<CommunityCreateCubit>(
+            create: (context) => di.sl<CommunityCreateCubit>(),
+          ),
+          BlocProvider<CommunitySearchCubit>(
+            create: (context) => di.sl<CommunitySearchCubit>(),
+          ),
+          BlocProvider<CommunityDetailsCubit>(
+            create: (context) => di.sl<CommunityDetailsCubit>(),
+          ),
+          BlocProvider<ChatMainCubit>(
+            create: (context) => di.sl<ChatMainCubit>(),
+          ),
+          BlocProvider<ChatPrivateCubit>(
+            create: (context) => di.sl<ChatPrivateCubit>(),
+          ),
+          BlocProvider<ChatGroupCubit>(
+            create: (context) => di.sl<ChatGroupCubit>(),
+          ),
+          BlocProvider<EventMainCubit>(
+            create: (context) => di.sl<EventMainCubit>(),
+          ),
+          BlocProvider<EventCreateCubit>(
+            create: (context) => di.sl<EventCreateCubit>(),
+          ),
+          BlocProvider<EventDetailCubit>(
+            create: (context) => di.sl<EventDetailCubit>(),
+          ),
+          BlocProvider<EventSearchCubit>(
+            create: (context) => di.sl<EventSearchCubit>(),
+          ),
+          BlocProvider<EventJoinCubit>(
+            create: (context) => di.sl<EventJoinCubit>(),
+          ),
+          BlocProvider<NotificationGeneralCubit>(
+            create: (context) => di.sl<NotificationGeneralCubit>(),
+          ),
+          BlocProvider<NotificationListCubit>(
+            create: (context) => di.sl<NotificationListCubit>(),
           ),
         ],
         child: MaterialApp.router(

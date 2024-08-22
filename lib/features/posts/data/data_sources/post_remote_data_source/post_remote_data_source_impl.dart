@@ -1,13 +1,14 @@
 import 'dart:convert';
 
-import 'package:neighborly_flutter_app/core/constants/constants.dart';
-import 'package:neighborly_flutter_app/core/error/exception.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/posts/data/data_sources/post_remote_data_source/post_remote_data_source.dart';
 import 'package:http/http.dart' as http;
-import 'package:neighborly_flutter_app/features/posts/data/model/comments_model.dart';
-import 'package:neighborly_flutter_app/core/models/post_model.dart';
-import 'package:neighborly_flutter_app/features/posts/data/model/reply_model.dart';
+
+import '../../../../../core/constants/constants.dart';
+import '../../../../../core/error/exception.dart';
+import '../../../../../core/models/post_model.dart';
+import '../../../../../core/utils/shared_preference.dart';
+import '../../model/comments_model.dart';
+import '../../model/reply_model.dart';
+import 'post_remote_data_source.dart';
 
 class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   final http.Client client;

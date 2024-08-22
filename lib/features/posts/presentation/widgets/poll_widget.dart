@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/core/utils/helpers.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/core/entities/post_enitity.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/option_card.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_widget.dart';
+
+import '../../../../core/entities/post_enitity.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../bloc/delete_post_bloc/delete_post_bloc.dart';
+import '../bloc/report_post_bloc/report_post_bloc.dart';
+import 'option_card.dart';
+import 'reaction_widget.dart';
 
 class PollWidget extends StatelessWidget {
   final PostEntity post;

@@ -46,17 +46,42 @@ dependencies:
   flutter_inappwebview: ^6.0.0
   shared_preferences: ^2.2.3
   google_sign_in: ^6.2.1
-  shimmer: ^3.0.0
-  intl: ^0.19.0
+  intl: 0.18.1
   geolocator: ^8.0.0
   video_player: ^2.8.7
   image_picker: ^1.1.2
   mime: ^1.0.5
-  flutter_svg: ^2.0.10+1
   toggle_switch: ^2.3.0
   geocoding: ^3.0.0
   hive:
-  hive_flutter: ^1.1.0
+  hive_flutter: ^1.1.0 
+  share_it: ^0.7.0
+  permission_handler: ^10.4.2             
+  
+  # Notification 
+  firebase_core: ^3.3.0 
+  flutter_local_notifications: ^17.2.2 
+  firebase_messaging: ^15.0.4
+
+  # Socket
+  socket_io_client: ^2.0.3+1
+  
+  # UI
+  cached_network_image: ^3.3.1
+  flutter_svg: ^2.0.10+1
+  shimmer: ^3.0.0
+  line_icons: ^2.0.3
+  readmore: ^3.0.0
+  timeago: ^3.7.0
+  scrollable_clean_calendar: ^1.5.0
+  mobkit_dashed_border: ^0.0.6
+  badges: ^3.1.2
+
+  # Form
+  dropdown_button2: ^2.3.9
+  remove_diacritic: ^0.9.0
+  flutter_xlider: ^3.5.0
+  flutter_typeahead: ^5.2.0 
 
 dev_dependencies:
   flutter_test:

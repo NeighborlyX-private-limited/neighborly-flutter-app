@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/domain/usecases/get_gender_and_dob.dart';
+
+import '../../../domain/usecases/get_gender_and_dob.dart';
 
 part 'get_gender_and_DOB_event.dart';
 part 'get_gender_and_DOB_state.dart';

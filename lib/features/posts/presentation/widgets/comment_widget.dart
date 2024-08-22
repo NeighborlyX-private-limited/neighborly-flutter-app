@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
-import 'package:neighborly_flutter_app/core/utils/helpers.dart';
-import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/comment_entity.dart';
-import 'package:neighborly_flutter_app/features/posts/domain/entities/reply_entity.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/fetch_comment_reply_bloc/fetch_comment_reply_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reaction_comment_widget.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/reply_widget.dart';
+
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../../domain/entities/comment_entity.dart';
+import '../../domain/entities/reply_entity.dart';
+import '../bloc/delete_post_bloc/delete_post_bloc.dart';
+import '../bloc/fetch_comment_reply_bloc/fetch_comment_reply_bloc.dart';
+import '../bloc/report_post_bloc/report_post_bloc.dart';
+import 'reaction_comment_widget.dart';
+import 'reply_widget.dart';
 
 class CommentWidget extends StatefulWidget {
   final CommentEntity comment;

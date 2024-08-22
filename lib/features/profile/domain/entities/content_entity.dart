@@ -1,5 +1,4 @@
 // import 'package:equatable/equatable.dart';
-// import 'package:neighborly_flutter_app/core/entities/option_entity.dart';
 
 // class ContentEntity extends Equatable {
 //   final String userId;
