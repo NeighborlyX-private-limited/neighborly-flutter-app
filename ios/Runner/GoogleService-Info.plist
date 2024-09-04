@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>805628551035-fsgaga41cv73f4q38fqcvaud93feljsa.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCz9URlgSA-N7MEbtJEz5GT-ujgZpBLJNg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>805628551035</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.neighborlyFlutterApp</string>
+	<key>PROJECT_ID</key>
+	<string>neighborly-423215</string>
+	<key>STORAGE_BUCKET</key>
+	<string>neighborly-423215.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:805628551035:ios:8bdb3c9c5d7b5190dfe7de</string>
+</dict>
+</plist>
