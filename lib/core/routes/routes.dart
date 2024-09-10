@@ -51,7 +51,8 @@ import '../constants/route_constants.dart';
 import '../models/community_model.dart';
 import '../utils/shared_preference.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+final GlobalKey<NavigatorState> _rootNavigatorKey =
+    GlobalKey<NavigatorState>(debugLabel: 'root');
 List<String>? cookies = ShardPrefHelper.getCookie();
 
 String setInitialLocation() {
@@ -103,7 +104,8 @@ final GoRouter router = GoRouter(
         name: RouteConstants.otpRouteName,
         builder: (BuildContext context, GoRouterState state) {
           final String data = state.pathParameters['data']!;
-          final String verificationFor = state.pathParameters['verificationFor']!;
+          final String verificationFor =
+              state.pathParameters['verificationFor']!;
           return OtpScreen(data: data, verificationFor: verificationFor);
         },
       ),
@@ -142,14 +144,15 @@ final GoRouter router = GoRouter(
           GoRoute(
               path: '/home/:isFirstTime',
               builder: (context, state) {
-                final bool isFirstTime = state.pathParameters['isFirstTime'] == 'true';
+                final bool isFirstTime =
+                    state.pathParameters['isFirstTime'] == 'true';
                 return HomeScreen(
                   isFirstTime: isFirstTime,
                 );
               }),
           //
           //
-          // 
+          //
           GoRoute(
             path: '/events',
             builder: (context, state) => const EventMainScreen(),
@@ -161,13 +164,15 @@ final GoRouter router = GoRouter(
           GoRoute(
             path: '/events/edit',
             builder: (context, state) => EventCreateScreen(
-              eventToUpdate: state.extra != null ? state.extra as EventModel : null,
+              eventToUpdate:
+                  state.extra != null ? state.extra as EventModel : null,
             ),
           ),
           GoRoute(
             path: '/events/join', // register
             builder: (context, state) => EventJoinScreen(
-              eventToJoin: state.extra != null ? state.extra as EventModel : null,
+              eventToJoin:
+                  state.extra != null ? state.extra as EventModel : null,
             ),
           ),
           GoRoute(
@@ -189,14 +194,14 @@ final GoRouter router = GoRouter(
             ),
           ),
           //
-          // 
+          //
           //
           GoRoute(
             path: '/create',
             builder: (context, state) => const CreatePostScreen(),
           ),
-          // 
-          // 
+          //
+          //
           GoRoute(
             path: '/groups',
             builder: (context, state) => const CommunityScreen(),
@@ -207,11 +212,13 @@ final GoRouter router = GoRouter(
           ),
           GoRoute(
             path: '/groups/admin',
-            builder: (context, state) => CommunityAdminSetScreen(community: state.extra as CommunityModel),
+            builder: (context, state) => CommunityAdminSetScreen(
+                community: state.extra as CommunityModel),
           ),
           GoRoute(
             path: '/groups/admin/members',
-            builder: (context, state) => const CommunityAdminMembersUsersScreen(),
+            builder: (context, state) =>
+                const CommunityAdminMembersUsersScreen(),
           ),
           GoRoute(
             path: '/groups/admin/type',
@@ -223,7 +230,8 @@ final GoRouter router = GoRouter(
           ),
           GoRoute(
             path: '/groups/admin/description',
-            builder: (context, state) => const CommunityAdminDescriptionScreen(),
+            builder: (context, state) =>
+                const CommunityAdminDescriptionScreen(),
           ),
           GoRoute(
             path: '/groups/admin/icon',
@@ -235,7 +243,8 @@ final GoRouter router = GoRouter(
           ),
           GoRoute(
             path: '/groups/admin/blocked',
-            builder: (context, state) => const CommunityAdminBlockedUsersScreen(),
+            builder: (context, state) =>
+                const CommunityAdminBlockedUsersScreen(),
           ),
           GoRoute(
             path: '/groups/search',
@@ -243,11 +252,12 @@ final GoRouter router = GoRouter(
           ),
           GoRoute(
             path: '/groups/:communityId',
-            builder: (context, state) => CommunityDetailsScreen(communityId: state.pathParameters["communityId"] as String),
+            builder: (context, state) => CommunityDetailsScreen(
+                communityId: state.pathParameters["communityId"] as String),
           ),
-          // 
-          // 
-          // 
+          //
+          //
+          //
           GoRoute(
             path: '/chat',
             builder: (context, state) => const ChatMainScreen(),
@@ -275,14 +285,14 @@ final GoRouter router = GoRouter(
               room: state.extra as ChatRoomModel,
             ),
           ),
-          // 
-          // 
+          //
+          //
           GoRoute(
             path: '/profile',
             builder: (context, state) => const ProfileScreen(),
           ),
-          // 
-          // 
+          //
+          //
           GoRoute(
             path: '/notifications',
             builder: (context, state) => const NotificationListScreen(),

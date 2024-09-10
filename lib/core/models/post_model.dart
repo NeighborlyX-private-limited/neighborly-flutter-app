@@ -24,7 +24,7 @@ class PostModel extends PostEntity {
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
       id: json['contentid'], // Assuming contentid is always an int
-      awardType:  (json['awards'] as List<dynamic>?) ?? [],
+      awardType: (json['awards'] as List<dynamic>?) ?? [],
       type: json['type'] as String? ?? '',
       userId: json['userid'] as String? ?? '',
       pollOptions: json['pollResults'] != null

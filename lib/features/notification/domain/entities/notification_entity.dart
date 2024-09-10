@@ -2,10 +2,10 @@ import 'package:equatable/equatable.dart';
 
 class NotificationEntity extends Equatable {
   final String id;
-  final String triggerType;  // awar|boos|cheer|comment
-  final String title;  
-  final String message;  
- 
+  final String triggerType; // awar|boos|cheer|comment
+  final String title;
+  final String message;
+
   final String? postId;
   final String? eventId;
   final String? messageId;
@@ -14,10 +14,10 @@ class NotificationEntity extends Equatable {
   final String? notificationImage;
   final String? userId;
   final String? userName;
- 
+
   final String date;
   final String status;
-  
+
   NotificationEntity({
     required this.id,
     required this.triggerType,
@@ -56,10 +56,7 @@ class NotificationEntity extends Equatable {
     "status": "String"
 }
   */
-   
 
-  
-  @override 
+  @override
   List<Object?> get props => [id];
- 
 }

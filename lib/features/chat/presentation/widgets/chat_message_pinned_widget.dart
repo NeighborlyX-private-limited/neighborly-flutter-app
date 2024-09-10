@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:readmore/readmore.dart';
 
@@ -110,9 +110,9 @@ class ChatMessagePinnedWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: (){
-              if(isAdmin == true){
-                _showOverlay(  context,   overlayEntry);
+            onTap: () {
+              if (isAdmin == true) {
+                _showOverlay(context, overlayEntry);
               }
             },
             child: Padding(
@@ -135,8 +135,14 @@ class ChatMessagePinnedWidget extends StatelessWidget {
               trimMode: TrimMode.Line,
               trimCollapsedText: ' See more',
               trimExpandedText: ' See less',
-              moreStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.blue),
-              lessStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.blue),
+              moreStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.blue),
+              lessStyle: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.normal,
+                  color: Colors.blue),
             ),
           ),
           const SizedBox(width: 5),

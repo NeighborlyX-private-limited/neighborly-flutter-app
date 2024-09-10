@@ -15,7 +15,7 @@ class CancelEventUsecase {
   }) async {
     return await repository.cancelEvent(
       event: event,
-      reason: reason, 
+      reason: reason,
     );
   }
 }

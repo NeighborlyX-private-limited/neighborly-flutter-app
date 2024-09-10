@@ -110,16 +110,17 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<List<ChatMessageModel>> getRoomMessages({required String roomId, String? dateFrom}) async {
+  Future<List<ChatMessageModel>> getRoomMessages(
+      {required String roomId, String? dateFrom}) async {
     print('... getRoomMessages   \n roomId=$roomId \n dateFrom=$dateFrom');
 
-    if(dateFrom == null || dateFrom == ''){
+    if (dateFrom == null || dateFrom == '') {
       dateFrom = DateTime.now().toIso8601String();
     }
 
     // FAKE example
     await Future.delayed(Duration(seconds: 2));
-   
+
     String fakeData = '''
       [
         {
@@ -213,18 +214,19 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     //   throw ServerException(message: message);
     // }
   }
-  
+
   @override
-  Future<List<ChatMessageModel>> getGroupRoomMessages({required String roomId, String? dateFrom}) async {
+  Future<List<ChatMessageModel>> getGroupRoomMessages(
+      {required String roomId, String? dateFrom}) async {
     print('... getGroupRoomMessages   \n roomId=$roomId \n dateFrom=$dateFrom');
 
-    if(dateFrom == null || dateFrom == ''){
+    if (dateFrom == null || dateFrom == '') {
       dateFrom = DateTime.now().toIso8601String();
     }
 
     // FAKE example
     await Future.delayed(Duration(seconds: 2));
-   
+
     String fakeData = '''
       [
         {

@@ -79,16 +79,22 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
     locationEC.text = widget.eventToUpdate?.locationStr ?? '';
     addressEC.text = widget.eventToUpdate?.address ?? '';
 
-    dateStartEC.text = DateUtilsHelper.simplifyISOtimeString(widget.eventToUpdate?.dateStart ?? '');
-    dateEndEC.text = DateUtilsHelper.simplifyISOtimeString(widget.eventToUpdate?.dateEnd ?? '');
-    hourEndEC.text = DateUtilsHelper.simplifyISOtimeStringOnlyHour(widget.eventToUpdate?.dateEnd ?? '');
-    hourStartEC.text = DateUtilsHelper.simplifyISOtimeStringOnlyHour(widget.eventToUpdate?.dateStart ?? '');
+    dateStartEC.text = DateUtilsHelper.simplifyISOtimeString(
+        widget.eventToUpdate?.dateStart ?? '');
+    dateEndEC.text = DateUtilsHelper.simplifyISOtimeString(
+        widget.eventToUpdate?.dateEnd ?? '');
+    hourEndEC.text = DateUtilsHelper.simplifyISOtimeStringOnlyHour(
+        widget.eventToUpdate?.dateEnd ?? '');
+    hourStartEC.text = DateUtilsHelper.simplifyISOtimeStringOnlyHour(
+        widget.eventToUpdate?.dateStart ?? '');
 
     eventCreateCubit.updateDates(
       widget.eventToUpdate?.dateStart ?? '',
-      DateUtilsHelper.simplifyISOtimeStringOnlyHour(widget.eventToUpdate?.dateEnd ?? ''),
+      DateUtilsHelper.simplifyISOtimeStringOnlyHour(
+          widget.eventToUpdate?.dateEnd ?? ''),
       widget.eventToUpdate?.dateEnd ?? '',
-      DateUtilsHelper.simplifyISOtimeStringOnlyHour(widget.eventToUpdate?.hourEnd ?? ''),
+      DateUtilsHelper.simplifyISOtimeStringOnlyHour(
+          widget.eventToUpdate?.hourEnd ?? ''),
       widget.eventToUpdate?.category ?? '',
     );
 
@@ -139,7 +145,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -147,7 +154,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -165,7 +173,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -173,7 +182,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
-                          style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -230,7 +240,13 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
         setState(() => isValidForm = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ops, you forgot to fill: \n' + errors.map((e) => '\n${e}').toList().toString().replaceAll('[', '').replaceAll(']', '')),
+            content: Text('Ops, you forgot to fill: \n' +
+                errors
+                    .map((e) => '\n${e}')
+                    .toList()
+                    .toString()
+                    .replaceAll('[', '')
+                    .replaceAll(']', '')),
           ),
         );
       }
@@ -301,7 +317,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                       : Colors.red
                   : AppColors.primaryColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                borderRadius: BorderRadius.circular(
+                    50), // Ajuste o raio conforme necessário
               ),
               // padding: EdgeInsets.all(15)
             ),
@@ -309,7 +326,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Text(
                 currentStep == 4 ? 'Save' : 'Next >',
-                style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                style:
+                    TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
               ),
             ),
           ),
@@ -325,7 +343,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -395,7 +414,6 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                           onSelectImage: (newFile) {
                             print('newFile=${newFile.path}');
 
-                 
                             if (newFile != null) {
                               setState(() {
                                 fileToUpload = newFile;
@@ -415,12 +433,15 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                           hourStart: hourStartEC,
                           hourEnd: hourEndEC,
                           category: categoryEC,
-                          onChange: (dateStart, hourStart, dateEnd, hourEnd, category) {
-                            print('dateStart=${dateStart} hourStart=${hourStart}');
+                          onChange: (dateStart, hourStart, dateEnd, hourEnd,
+                              category) {
+                            print(
+                                'dateStart=${dateStart} hourStart=${hourStart}');
                             print('dateStart=${dateEnd} hourStart=${hourEnd}');
 
                             // updateDates(String dateStart, String hourStart, String dateEnd, String hourEnd)
-                            eventCreateCubit.updateDates(dateStart, hourStart, dateEnd, hourEnd, category);
+                            eventCreateCubit.updateDates(dateStart, hourStart,
+                                dateEnd, hourEnd, category);
                             preValidation(showMessage: false);
                           },
                         ),
@@ -541,17 +562,22 @@ class _Step1areaState extends State<Step1area> {
                 side: BorderSide(color: AppColors.primaryColor, width: 1),
               ),
             ),
-            child: selectedImage != null && selectedImage?.path != null || widget.currentUrl != ''
+            child: selectedImage != null && selectedImage?.path != null ||
+                    widget.currentUrl != ''
                 ? Stack(
                     children: [
                       (widget.currentUrl != null && widget.currentUrl != '')
-                      ? Image.network(widget.currentUrl, fit: BoxFit.cover,width: double.infinity,)
-                      : Image.file(
-                        selectedImage!,
-                        width: double.infinity,
-                        // height: 260,
-                        fit: BoxFit.cover,
-                      ),
+                          ? Image.network(
+                              widget.currentUrl,
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                            )
+                          : Image.file(
+                              selectedImage!,
+                              width: double.infinity,
+                              // height: 260,
+                              fit: BoxFit.cover,
+                            ),
                       Positioned(
                           right: 10,
                           bottom: 10,
@@ -561,7 +587,8 @@ class _Step1areaState extends State<Step1area> {
                               color: Colors.black.withOpacity(0.6),
                             ),
                             child: IconButton(
-                              icon: Icon(Icons.refresh_outlined, size: 30, color: Colors.white),
+                              icon: Icon(Icons.refresh_outlined,
+                                  size: 30, color: Colors.white),
                               onPressed: () {
                                 _pickImage();
                               },
@@ -574,7 +601,8 @@ class _Step1areaState extends State<Step1area> {
                       onTap: _pickImage,
                       child: Container(
                         // height: 20,
-                        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -707,17 +735,28 @@ class _Step2areaState extends State<Step2area> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => ManageDatesDialog(
-                                endDateStr: widget.dateStart.text == '' ? DateTime.now().toIso8601String().split('T')[0] : widget.dateStart.text,
-                                startDateStr: widget.dateStart.text == '' ? DateTime.now().toIso8601String().split('T')[0] : widget.dateEnd.text,
+                                endDateStr: widget.dateStart.text == ''
+                                    ? DateTime.now()
+                                        .toIso8601String()
+                                        .split('T')[0]
+                                    : widget.dateStart.text,
+                                startDateStr: widget.dateStart.text == ''
+                                    ? DateTime.now()
+                                        .toIso8601String()
+                                        .split('T')[0]
+                                    : widget.dateEnd.text,
                               )),
                     ); //
 
                     if (response == null) return;
 
-                    widget.dateStart.text = DateUtilsHelper.simplifyISOtimeString(response['startDateRaw'].toIso8601String());
+                    widget.dateStart.text =
+                        DateUtilsHelper.simplifyISOtimeString(
+                            response['startDateRaw'].toIso8601String());
 
                     print('...onPressOpenDatesSelection response=${response}');
-                    widget.onChange(response['startDateRaw'].toIso8601String(), '', '', '', '');
+                    widget.onChange(response['startDateRaw'].toIso8601String(),
+                        '', '', '', '');
                   },
                 ),
               ),
@@ -734,7 +773,9 @@ class _Step2areaState extends State<Step2area> {
                     widget.hourStart.text = value ?? '';
                     widget.onChange('', value ?? '', '', '', '');
                   },
-                  initialValue: widget.hourStart.text == '' ? "07:00 AM" : widget.hourStart.text,
+                  initialValue: widget.hourStart.text == ''
+                      ? "07:00 AM"
+                      : widget.hourStart.text,
                   placeholder: 'Start Hour',
                   // validator: Validatorless.required('Preenchimento é obrigatório'),
                 ),
@@ -765,20 +806,29 @@ class _Step2areaState extends State<Step2area> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => ManageDatesDialog(
-                                endDateStr:
-                                    widget.dateEnd.text == '' ? DateTime.now().toIso8601String().split('T')[0] : widget.dateEnd.text.split('T')[0],
-                                startDateStr:
-                                    widget.dateEnd.text == '' ? DateTime.now().toIso8601String().split('T')[0] : widget.dateEnd.text.split('T')[0],
+                                endDateStr: widget.dateEnd.text == ''
+                                    ? DateTime.now()
+                                        .toIso8601String()
+                                        .split('T')[0]
+                                    : widget.dateEnd.text.split('T')[0],
+                                startDateStr: widget.dateEnd.text == ''
+                                    ? DateTime.now()
+                                        .toIso8601String()
+                                        .split('T')[0]
+                                    : widget.dateEnd.text.split('T')[0],
                               )),
                     ); //
 
                     if (response == null) return;
 
-                    widget.dateEnd.text = DateUtilsHelper.simplifyISOtimeString(
-                        response['startDateRaw'].toIso8601String()); // really start on this point, since dialog return a range
+                    widget.dateEnd
+                        .text = DateUtilsHelper.simplifyISOtimeString(response[
+                            'startDateRaw']
+                        .toIso8601String()); // really start on this point, since dialog return a range
 
                     print('...onPressOpenDatesSelection response=${response}');
-                    widget.onChange('', '', response['startDateRaw'].toIso8601String(), '', '');
+                    widget.onChange('', '',
+                        response['startDateRaw'].toIso8601String(), '', '');
                   },
                 ),
               ),
@@ -793,7 +843,9 @@ class _Step2areaState extends State<Step2area> {
                     widget.hourEnd.text = value ?? '';
                     widget.onChange('', '', '', value ?? '', '');
                   },
-                  initialValue: widget.hourEnd.text == '' ? "07:00 AM" : widget.hourEnd.text,
+                  initialValue: widget.hourEnd.text == ''
+                      ? "07:00 AM"
+                      : widget.hourEnd.text,
                   placeholder: 'End Hour',
                   // validator: Validatorless.required('Preenchimento é obrigatório'),
                 ),
@@ -811,7 +863,9 @@ class _Step2areaState extends State<Step2area> {
               widget.category.text = value ?? '';
               widget.onChange('', '', '', '', value ?? '');
             },
-            initialValue: widget.category.text == '' ? kEventCategories[0] : widget.category.text,
+            initialValue: widget.category.text == ''
+                ? kEventCategories[0]
+                : widget.category.text,
             placeholder: 'Category',
             // validator: Validatorless.required('Preenchimento é obrigatório'),
           ),
@@ -959,7 +1013,7 @@ class Step4area extends StatelessWidget {
           //
           Divider(thickness: 10, color: AppColors.lightBackgroundColor),
           LocationDetailArea(
-            locationStr: event.locationStr ,
+            locationStr: event.locationStr,
             address: event.address,
           ),
           //

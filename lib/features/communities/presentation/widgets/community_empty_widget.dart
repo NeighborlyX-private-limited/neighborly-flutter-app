@@ -16,16 +16,16 @@ class CommunityEmptyWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [ 
+        children: [
           //
           //
           SvgPicture.asset(
             'assets/group-empty.svg',
-            width: MediaQuery.of(context).size.width *0.60,
+            width: MediaQuery.of(context).size.width * 0.60,
             // height: 84,
           ),
-                    const SizedBox(height: 20),
-          // 
+          const SizedBox(height: 20),
+          //
           //
           Text(
             'No Community Groups Yet',
@@ -49,7 +49,7 @@ class CommunityEmptyWidget extends StatelessWidget {
           const SizedBox(height: 25),
           //
           //
-      
+
           ElevatedButton(
             onPressed: () {
               // Lógica ao clicar no botão
@@ -58,7 +58,8 @@ class CommunityEmptyWidget extends StatelessWidget {
             style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xff635BFF),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                  borderRadius: BorderRadius.circular(
+                      50), // Ajuste o raio conforme necessário
                 ),
                 padding: EdgeInsets.all(15)),
             child: Padding(

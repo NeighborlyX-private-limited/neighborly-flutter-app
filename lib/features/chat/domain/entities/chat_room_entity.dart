@@ -1,6 +1,3 @@
- 
- 
-
 import 'package:equatable/equatable.dart';
 
 class ChatRoomEntity extends Equatable {
@@ -9,10 +6,10 @@ class ChatRoomEntity extends Equatable {
   final String avatarUrl;
   final String lastMessage;
   final String lastMessageDate;
-  final bool isMuted; 
-  final bool isGroup; 
+  final bool isMuted;
+  final bool isGroup;
   final int unreadedCount;
-  
+
   ChatRoomEntity({
     required this.id,
     required this.name,
@@ -24,8 +21,6 @@ class ChatRoomEntity extends Equatable {
     required this.unreadedCount,
   });
 
-  
-  @override 
+  @override
   List<Object?> get props => [id, name];
-
 }

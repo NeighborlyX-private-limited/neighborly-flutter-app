@@ -21,7 +21,8 @@ class NotificationTileWidget extends StatelessWidget {
 
   Widget leftAvatar() {
     print('notification.user=${notification.notificationImage}');
-    if (notification.notificationImage == null) return SizedBox(width: 30, height: 30);
+    if (notification.notificationImage == null)
+      return SizedBox(width: 30, height: 30);
 
     return UserAvatarStyledWidget(
       avatarUrl: notification.notificationImage!,
@@ -57,14 +58,14 @@ class NotificationTileWidget extends StatelessWidget {
 
   bool isDateWithinLastMonth(DateTime date) {
     DateTime now = DateTime.now();
-    DateTime oneMonthAgo = DateTime(now.year, now.month - 1, now.day, now.hour, now.minute, now.second);
+    DateTime oneMonthAgo = DateTime(
+        now.year, now.month - 1, now.day, now.hour, now.minute, now.second);
 
     return date.isAfter(oneMonthAgo);
   }
 
   void buildMainArea(BuildContext context) {
-
-    // if (notification.messageId != null) 
+    // if (notification.messageId != null)
 
     if (notification.messageId != null) {
       listWidgets.add(GestureDetector(
@@ -108,7 +109,8 @@ class NotificationTileWidget extends StatelessWidget {
 
                 if (notification.postId != null) {
                   // context.push('/post-detail/${notification.postId}/true/${notification.userId}');
-                  print('/post-detail/${notification.postId}/true/${notification.userId}');
+                  print(
+                      '/post-detail/${notification.postId}/true/${notification.userId}');
                 }
 
                 if (notification.eventId != null) {

@@ -13,7 +13,7 @@ class CommunityMainSheemer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(
-               height: 20,
+              height: 20,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -41,42 +41,42 @@ class CommunityMainSheemer extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-             ...List.generate(
-                4,
-                (index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Shimmer.fromColors(
-                            baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[100]!,
-                            child: Container(
-                              // width: 180,
-                              // height: MediaQuery.of(context).size.width * 0.4,
-                              height: 230,
-                              color: Colors.grey[300],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Shimmer.fromColors(
+            ...List.generate(
+              4,
+              (index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Shimmer.fromColors(
                           baseColor: Colors.grey[300]!,
                           highlightColor: Colors.grey[100]!,
                           child: Container(
-                            width: 180,
+                            // width: 180,
+                            // height: MediaQuery.of(context).size.width * 0.4,
                             height: 230,
                             color: Colors.grey[300],
                           ),
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 180,
+                          height: 230,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
             // ListView(
             //   children: List.generate(
             //     4,

@@ -143,7 +143,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -208,10 +209,19 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             //
                             //
                             DateArea(
-                              dateStart: DateUtilsHelper.simplifyISOtimeString(state.eventDetails!.dateStart), // 'March 14, 2023', // 
-                              dateEnd: DateUtilsHelper.simplifyISOtimeString(state.eventDetails!.dateEnd),
-                              hourStart: DateUtilsHelper.simplifyISOtimeStringOnlyHour(state.eventDetails!.dateStart), // '07:00 AM',
-                              hourEnd: DateUtilsHelper.simplifyISOtimeStringOnlyHour(state.eventDetails!.dateEnd), //'09:00 AM',
+                              dateStart: DateUtilsHelper.simplifyISOtimeString(
+                                  state.eventDetails!
+                                      .dateStart), // 'March 14, 2023', //
+                              dateEnd: DateUtilsHelper.simplifyISOtimeString(
+                                  state.eventDetails!.dateEnd),
+                              hourStart:
+                                  DateUtilsHelper.simplifyISOtimeStringOnlyHour(
+                                      state.eventDetails!
+                                          .dateStart), // '07:00 AM',
+                              hourEnd:
+                                  DateUtilsHelper.simplifyISOtimeStringOnlyHour(
+                                      state
+                                          .eventDetails!.dateEnd), //'09:00 AM',
                             ),
                             //
                             //
@@ -219,10 +229,13 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
                             //
                             //
-                            AboutArea(description: state.eventDetails!.description),
+                            AboutArea(
+                                description: state.eventDetails!.description),
                             //
                             //
-                            Divider(thickness: 10, color: AppColors.lightBackgroundColor),
+                            Divider(
+                                thickness: 10,
+                                color: AppColors.lightBackgroundColor),
                             LocationDetailArea(
                               locationStr: state.eventDetails!.locationStr,
                               address: state.eventDetails!.address,
@@ -230,14 +243,18 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             //
                             //
                             if (state.eventDetails!.isMine == false) ...[
-                              Divider(thickness: 10, color: AppColors.lightBackgroundColor),
+                              Divider(
+                                  thickness: 10,
+                                  color: AppColors.lightBackgroundColor),
                               HostArea(
                                 host: state.eventDetails!.host,
                               ),
                             ],
                             //
                             //
-                            Divider(thickness: 10, color: AppColors.lightBackgroundColor),
+                            Divider(
+                                thickness: 10,
+                                color: AppColors.lightBackgroundColor),
 
                             if (state.eventDetails!.isMine == true)
                               AuthorArea(onCancel: () {
@@ -246,18 +263,20 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               }, onEdit: () {
                                 print(' ON EDIT pressed'); // XXXr
                                 Navigator.of(context).pop();
-                                context.push('/events/edit', extra: state.eventDetails);
-
+                                context.push('/events/edit',
+                                    extra: state.eventDetails);
                               }),
                             //
                             //
-                            if (state.eventDetails!.isMine == false && state.eventDetails!.isJoined == false)
+                            if (state.eventDetails!.isMine == false &&
+                                state.eventDetails!.isJoined == false)
                               JoinArea(
                                 onJoin: () {
                                   // XXX
                                   print('JOINED IN ${state.eventDetails}');
                                   // eventDetailCubit.onPressJoin();
-                                  context.push('/events/join', extra: state.eventDetails);
+                                  context.push('/events/join',
+                                      extra: state.eventDetails);
                                 },
                                 isLoading: state.status == Status.loading,
                               ),
@@ -453,7 +472,8 @@ class ChatArea extends StatelessWidget {
                   const SizedBox(height: 5),
                   Text(
                     'Keep connected with others people',
-                    style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                    style:
+                        TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -505,8 +525,14 @@ class AboutArea extends StatelessWidget {
             trimMode: TrimMode.Line,
             trimCollapsedText: ' See more',
             trimExpandedText: ' See less',
-            moreStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.blue),
-            lessStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.blue),
+            moreStyle: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Colors.blue),
+            lessStyle: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Colors.blue),
           ),
           const SizedBox(height: 4),
         ],
@@ -563,12 +589,14 @@ class LocationDetailArea extends StatelessWidget {
                   children: [
                     Text(
                       locationStr,
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 5),
                     Text(
                       address,
-                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 16),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -630,7 +658,8 @@ class _JoinAreaState extends State<JoinArea> {
                 width: 6,
               ),
               Expanded(
-                child: Text('Neighborly is not responsible for any events and it is up to user’s discretion to look for their safety.',
+                child: Text(
+                    'Neighborly is not responsible for any events and it is up to user’s discretion to look for their safety.',
                     style: TextStyle(fontSize: 16)),
               ),
             ],
@@ -651,14 +680,18 @@ class _JoinAreaState extends State<JoinArea> {
                 widget.onJoin();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: _isChecked ? AppColors.primaryColor : Colors.grey[100],
+                backgroundColor:
+                    _isChecked ? AppColors.primaryColor : Colors.grey[100],
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                  borderRadius: BorderRadius.circular(
+                      50), // Ajuste o raio conforme necessário
                 ),
                 // padding: EdgeInsets.all(15)
               ),
               child: Padding(
-                padding:  EdgeInsets.symmetric(horizontal: 1, vertical: widget.isLoading == true ? 17: 25),
+                padding: EdgeInsets.symmetric(
+                    horizontal: 1,
+                    vertical: widget.isLoading == true ? 17 : 25),
                 child: widget.isLoading == true
                     ? SizedBox(
                         height: 22,
@@ -669,7 +702,10 @@ class _JoinAreaState extends State<JoinArea> {
                       )
                     : Text(
                         'Join',
-                        style: TextStyle(color: _isChecked ? Colors.white : Colors.grey, fontSize: 18, height: 0.3),
+                        style: TextStyle(
+                            color: _isChecked ? Colors.white : Colors.grey,
+                            fontSize: 18,
+                            height: 0.3),
                       ),
               ),
             ),
@@ -747,7 +783,8 @@ class HostArea extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.grey[100],
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                    borderRadius: BorderRadius.circular(
+                        50), // Ajuste o raio conforme necessário
                   ),
                   // padding: EdgeInsets.all(15)
                 ),
@@ -755,7 +792,8 @@ class HostArea extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 1),
                   child: Text(
                     'Message',
-                    style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                    style: TextStyle(
+                        color: Colors.black, fontSize: 18, height: 0.3),
                   ),
                 ),
               )
@@ -809,7 +847,8 @@ class AuthorArea extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -817,7 +856,8 @@ class AuthorArea extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -836,7 +876,8 @@ class AuthorArea extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -844,7 +885,8 @@ class AuthorArea extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
-                          style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -875,15 +917,18 @@ class AuthorArea extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.grey[100],
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                  borderRadius: BorderRadius.circular(
+                      50), // Ajuste o raio conforme necessário
                 ),
                 // padding: EdgeInsets.all(15)
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 1, vertical: 20),
                 child: Text(
                   'Cancel Event',
-                  style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                  style:
+                      TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
                 ),
               ),
             ),
@@ -904,15 +949,18 @@ class AuthorArea extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryColor,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                  borderRadius: BorderRadius.circular(
+                      50), // Ajuste o raio conforme necessário
                 ),
                 // padding: EdgeInsets.all(15)
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 1, vertical: 20),
                 child: Text(
                   'Edit Event',
-                  style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                  style:
+                      TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
                 ),
               ),
             ),

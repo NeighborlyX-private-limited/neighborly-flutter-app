@@ -79,7 +79,8 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
           suggestionCallback: (userSearchCriteria) async {
             if (userSearchCriteria.trim().length < 3) return [];
 
-            var results = await communitySearchCubit.suggestionCallback(userSearchCriteria);
+            var results = await communitySearchCubit
+                .suggestionCallback(userSearchCriteria);
 
             if (results.length > 0) {
               setState(() {
@@ -104,7 +105,8 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -136,7 +138,8 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                   communities: state.communities,
                   people: state.people,
                   onSelect: (selected) {
-                    print('JUMP TO...${selected is CommunityModel ? "Community" : "Profile info"}');
+                    print(
+                        'JUMP TO...${selected is CommunityModel ? "Community" : "Profile info"}');
 
                     if (selected is CommunityModel) {
                       Navigator.of(context).pop();
@@ -159,9 +162,10 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                       //
                       if (showDashInfo && state.dashData?.history != null)
                         HistoryListArea(
-                          terms: state.histories ,
+                          terms: state.histories,
                           onDelete: (toDeleteTerm) {
-                            communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
+                            communitySearchCubit
+                                .deleteHistoryTerm(toDeleteTerm);
                           },
                           onSelect: (historyTerm) {
                             // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
@@ -370,7 +374,8 @@ class ResultArea extends StatefulWidget {
   State<ResultArea> createState() => _ResultAreaState();
 }
 
-class _ResultAreaState extends State<ResultArea> with SingleTickerProviderStateMixin {
+class _ResultAreaState extends State<ResultArea>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -397,7 +402,9 @@ class _ResultAreaState extends State<ResultArea> with SingleTickerProviderStateM
         child: Row(
           children: [
             UserAvatarStyledWidget(
-              avatarUrl: resultLine is CommunityModel ? resultLine.avatarUrl : (resultLine as UserSimpleModel).avatarUrl,
+              avatarUrl: resultLine is CommunityModel
+                  ? resultLine.avatarUrl
+                  : (resultLine as UserSimpleModel).avatarUrl,
               avatarSize: 22,
               avatarBorderSize: 0,
             ),
@@ -415,7 +422,9 @@ class _ResultAreaState extends State<ResultArea> with SingleTickerProviderStateM
                   ),
                   const SizedBox(height: 7),
                   Text(
-                    resultLine is CommunityModel ? '${resultLine.membersCount} Members' : '${resultLine.karma} Karma',
+                    resultLine is CommunityModel
+                        ? '${resultLine.membersCount} Members'
+                        : '${resultLine.karma} Karma',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(fontWeight: FontWeight.normal),
@@ -433,7 +442,8 @@ class _ResultAreaState extends State<ResultArea> with SingleTickerProviderStateM
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                    borderRadius: BorderRadius.circular(
+                        50), // Ajuste o raio conforme necessário
                   ),
                   // padding: EdgeInsets.all(15)
                 ),
@@ -441,7 +451,8 @@ class _ResultAreaState extends State<ResultArea> with SingleTickerProviderStateM
                   padding: const EdgeInsets.symmetric(horizontal: 1),
                   child: Text(
                     'Join',
-                    style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                    style: TextStyle(
+                        color: Colors.white, fontSize: 18, height: 0.3),
                   ),
                 ),
               )

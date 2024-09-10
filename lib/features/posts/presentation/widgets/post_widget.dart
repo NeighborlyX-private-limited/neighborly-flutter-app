@@ -29,8 +29,6 @@ class _PostWidgetState extends State<PostWidget> {
       bottomSheet(context);
     }
 
- 
-
     return InkWell(
       onTap: () {
         context.push(
@@ -59,7 +57,8 @@ class _PostWidgetState extends State<PostWidget> {
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
-                            child: widget.post.proPic != null && widget.post.proPic != '' // XXX
+                            child: widget.post.proPic != null &&
+                                    widget.post.proPic != '' // XXX
                                 ? Image.network(
                                     widget.post.proPic!,
                                     fit: BoxFit.contain,

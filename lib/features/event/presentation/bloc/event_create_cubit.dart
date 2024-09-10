@@ -28,7 +28,7 @@ class EventCreateCubit extends Cubit<EventCreateState> {
     emit(state.copyWith(
       isUpdate: event != null,
       eventId: event?.id ?? '',
-      imageUrl: event?.avatarUrl ?? '', 
+      imageUrl: event?.avatarUrl ?? '',
     ));
   }
 
@@ -40,7 +40,10 @@ class EventCreateCubit extends Cubit<EventCreateState> {
     result.fold(
       (failure) {
         print('...BLOC onUpdateFile error: ${failure.message}');
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (imageUrl) {
         print('... BLOC imageUrl=${imageUrl}');
@@ -63,7 +66,8 @@ class EventCreateCubit extends Cubit<EventCreateState> {
     // to cover default values (when user doesnt )
     var category = state.category != '' ? state.category : newEvent.category;
     var hourEnd = state.hourEnd != '' ? state.hourEnd : newEvent.hourEnd;
-    var hourStart = state.hourStart != '' ? state.hourStart : newEvent.hourStart;
+    var hourStart =
+        state.hourStart != '' ? state.hourStart : newEvent.hourStart;
 
     EventModel adjustedEvent = newEvent.copyWith(
         id: state.eventId,
@@ -78,21 +82,30 @@ class EventCreateCubit extends Cubit<EventCreateState> {
     emit(state.copyWith(status: Status.initial));
 
     var result = state.isUpdate == false
-        ? await createEventUsecase(event: adjustedEvent, imageCover: pictureFile)
-        : await updateEventUsecase(event: adjustedEvent, imageCover: pictureFile);
+        ? await createEventUsecase(
+            event: adjustedEvent, imageCover: pictureFile)
+        : await updateEventUsecase(
+            event: adjustedEvent, imageCover: pictureFile);
 
     result.fold(
       (failure) {
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (noResponse) {
         emit(state.copyWith(
-            status: Status.success, successMessage: state.isUpdate == false ? 'Event created' : 'Event updated', newEvent: adjustedEvent));
+            status: Status.success,
+            successMessage:
+                state.isUpdate == false ? 'Event created' : 'Event updated',
+            newEvent: adjustedEvent));
       },
     );
   }
 
-  updateDates(String dateStart, String hourStart, String dateEnd, String hourEnd, String category) {
+  updateDates(String dateStart, String hourStart, String dateEnd,
+      String hourEnd, String category) {
     if (dateStart != '') emit(state.copyWith(dateStart: dateStart));
     if (hourStart != '') emit(state.copyWith(hourStart: hourStart));
 

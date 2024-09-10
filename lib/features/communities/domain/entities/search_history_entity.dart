@@ -1,15 +1,12 @@
- 
-
 import 'package:equatable/equatable.dart';
 
-class SearchHistoryEntity extends Equatable{
+class SearchHistoryEntity extends Equatable {
   final String term;
-  
+
   SearchHistoryEntity({
     required this.term,
   });
 
-  
-  @override 
+  @override
   List<Object?> get props => [term];
 }

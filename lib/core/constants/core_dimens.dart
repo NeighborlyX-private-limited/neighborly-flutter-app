@@ -54,6 +54,7 @@ class CoreDimens {
   }
 
   static EdgeInsets safeBottomPadding(EdgeInsets padding) {
-    return padding.copyWith(bottom: window.viewPadding.bottom == 0 ? padding.bottom : 0.0);
+    return padding.copyWith(
+        bottom: window.viewPadding.bottom == 0 ? padding.bottom : 0.0);
   }
 }

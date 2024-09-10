@@ -15,7 +15,7 @@ class ChatRoomsSheemer extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            
+
             ...List.generate(
               14,
               (index) {
@@ -30,7 +30,9 @@ class ChatRoomsSheemer extends StatelessWidget {
                         child: Container(
                           width: 60,
                           height: 60,
-                          decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(50)),
+                          decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(50)),
                         ),
                       ),
                       const SizedBox(
@@ -42,7 +44,7 @@ class ChatRoomsSheemer extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const SizedBox(
-                               height: 5,
+                              height: 5,
                             ),
                             Shimmer.fromColors(
                               baseColor: Colors.grey[300]!,
@@ -54,7 +56,7 @@ class ChatRoomsSheemer extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(
-                               height: 7,
+                              height: 7,
                             ),
                             Shimmer.fromColors(
                               baseColor: Colors.grey[300]!,

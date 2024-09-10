@@ -50,10 +50,12 @@ class EventRepositoriesImpl implements EventRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> cancelEvent({required EventModel event, String? reason}) async {
+  Future<Either<Failure, void>> cancelEvent(
+      {required EventModel event, String? reason}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.cancelEvent(event: event, reason: reason);
+        final result =
+            await remoteDataSource.cancelEvent(event: event, reason: reason);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -66,10 +68,12 @@ class EventRepositoriesImpl implements EventRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> createEvent({required EventModel event, File? imageCover}) async {
+  Future<Either<Failure, void>> createEvent(
+      {required EventModel event, File? imageCover}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.createEvent(event: event, imageCover: imageCover);
+        final result = await remoteDataSource.createEvent(
+            event: event, imageCover: imageCover);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -98,10 +102,12 @@ class EventRepositoriesImpl implements EventRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> updateEvent({required EventModel event, File? imageCover}) async {
+  Future<Either<Failure, void>> updateEvent(
+      {required EventModel event, File? imageCover}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.updateEvent(event: event, imageCover: imageCover);
+        final result = await remoteDataSource.updateEvent(
+            event: event, imageCover: imageCover);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

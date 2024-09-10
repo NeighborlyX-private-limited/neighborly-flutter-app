@@ -18,7 +18,6 @@ class PostWithCommentsModel extends PostWithCommentsEntity {
     return PostWithCommentsModel(
       awardType: json['awards'] as List<dynamic>,
       userId: json['userid'] as String,
-      
       userName: json['username'] as String,
       content: PostModel.fromJson(json['content'] as Map<String, dynamic>),
       createdAt: json['createdat'] as String,

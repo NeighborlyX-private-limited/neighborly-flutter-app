@@ -20,10 +20,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   });
 
   @override
-  Future<Either<Failure, List<CommunityModel>>> getAllCommunities({required bool isSummary, required bool isNearBy}) async {
+  Future<Either<Failure, List<CommunityModel>>> getAllCommunities(
+      {required bool isSummary, required bool isNearBy}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getAllCommunities(isSummary: isSummary, isNearBy: isNearBy);
+        final result = await remoteDataSource.getAllCommunities(
+            isSummary: isSummary, isNearBy: isNearBy);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -36,7 +38,8 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, CommunityModel>> getCommunity({required String communityId}) async {
+  Future<Either<Failure, CommunityModel>> getCommunity(
+      {required String communityId}) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getCommunity(
@@ -54,10 +57,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> makeAdmin({required String communityId, required String userId}) async {
+  Future<Either<Failure, void>> makeAdmin(
+      {required String communityId, required String userId}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.makeAdmin(communityId: communityId, userId: userId);
+        final result = await remoteDataSource.makeAdmin(
+            communityId: communityId, userId: userId);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -70,10 +75,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> removeUser({required String communityId, required String userId}) async {
+  Future<Either<Failure, void>> removeUser(
+      {required String communityId, required String userId}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.removeUser(communityId: communityId, userId: userId);
+        final result = await remoteDataSource.removeUser(
+            communityId: communityId, userId: userId);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -86,10 +93,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> unblockUser({required String communityId, required String userId}) async {
+  Future<Either<Failure, void>> unblockUser(
+      {required String communityId, required String userId}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.removeUser(communityId: communityId, userId: userId);
+        final result = await remoteDataSource.removeUser(
+            communityId: communityId, userId: userId);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -102,10 +111,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> updateType({required String communityId, required String newType}) async {
+  Future<Either<Failure, void>> updateType(
+      {required String communityId, required String newType}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.updateType(communityId: communityId, newType: newType);
+        final result = await remoteDataSource.updateType(
+            communityId: communityId, newType: newType);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -118,10 +129,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, String>> createCommunity({required CommunityModel community, File? pictureFile}) async {
+  Future<Either<Failure, String>> createCommunity(
+      {required CommunityModel community, File? pictureFile}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.createCommunity(community: community, pictureFile: pictureFile);
+        final result = await remoteDataSource.createCommunity(
+            community: community, pictureFile: pictureFile);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -134,10 +147,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> leaveCommunity({required String communityId}) async {
+  Future<Either<Failure, void>> leaveCommunity(
+      {required String communityId}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.leaveCommunity(communityId: communityId);
+        final result =
+            await remoteDataSource.leaveCommunity(communityId: communityId);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -150,10 +165,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> reportCommunity({required String communityId, required String reason}) async {
+  Future<Either<Failure, void>> reportCommunity(
+      {required String communityId, required String reason}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.reportCommunity(communityId: communityId, reason: reason);
+        final result = await remoteDataSource.reportCommunity(
+            communityId: communityId, reason: reason);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -166,10 +183,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> updateDescription({required String communityId, required String newDescription}) async {
+  Future<Either<Failure, void>> updateDescription(
+      {required String communityId, required String newDescription}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.updateDescription(communityId: communityId, newDescription: newDescription);
+        final result = await remoteDataSource.updateDescription(
+            communityId: communityId, newDescription: newDescription);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -182,7 +201,10 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> updateIcon({required String communityId, File? pictureFile, String? imageUrl}) async {
+  Future<Either<Failure, void>> updateIcon(
+      {required String communityId,
+      File? pictureFile,
+      String? imageUrl}) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.updateIcon(
@@ -202,10 +224,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> updateLocation({required String communityId, required String newLocation}) async {
+  Future<Either<Failure, void>> updateLocation(
+      {required String communityId, required String newLocation}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.updateLocation(communityId: communityId, newLocation: newLocation);
+        final result = await remoteDataSource.updateLocation(
+            communityId: communityId, newLocation: newLocation);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -218,10 +242,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> updateMute({required String communityId, required bool newValue}) async {
+  Future<Either<Failure, void>> updateMute(
+      {required String communityId, required bool newValue}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.updateMute(communityId: communityId, newValue: newValue);
+        final result = await remoteDataSource.updateMute(
+            communityId: communityId, newValue: newValue);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -234,10 +260,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> updateRadius({required String communityId, required num newRadius}) async {
+  Future<Either<Failure, void>> updateRadius(
+      {required String communityId, required num newRadius}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.updateRadius(communityId: communityId, newRadius: newRadius);
+        final result = await remoteDataSource.updateRadius(
+            communityId: communityId, newRadius: newRadius);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -266,10 +294,12 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   }
 
   @override
-  Future<Either<Failure, SearchResultModel>> getSearchResults({required String searchTem, required bool isPreview}) async {
+  Future<Either<Failure, SearchResultModel>> getSearchResults(
+      {required String searchTem, required bool isPreview}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getSearchResults(searchTem: searchTem, isPreview: isPreview);
+        final result = await remoteDataSource.getSearchResults(
+            searchTem: searchTem, isPreview: isPreview);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

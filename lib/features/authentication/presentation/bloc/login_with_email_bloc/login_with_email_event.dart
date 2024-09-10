@@ -17,5 +17,3 @@ class GoogleLoginEvent extends LoginWithEmailEvent {
   @override
   List<Object?> get props => [];
 }
-
-

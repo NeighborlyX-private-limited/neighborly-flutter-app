@@ -472,14 +472,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ),
                       InkWell(
-                        onTap: (){
+                        onTap: () {
                           context.push('/groups/create');
                         },
                         child: Row(
                           children: [
                             SvgPicture.asset('assets/communities.svg'),
                             const SizedBox(width: 10),
-                            Text('Create Community', style: mediumTextStyleBlack),
+                            Text('Create Community',
+                                style: mediumTextStyleBlack),
                           ],
                         ),
                       ),
@@ -492,14 +493,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       //   ],
                       // ),
                       GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           context.push('/events/create');
                         },
                         child: Row(
                           children: [
                             SvgPicture.asset('assets/create_an_event.svg'),
                             const SizedBox(width: 10),
-                            Text('Create an Event', style: mediumTextStyleBlack),
+                            Text('Create an Event',
+                                style: mediumTextStyleBlack),
                           ],
                         ),
                       ),

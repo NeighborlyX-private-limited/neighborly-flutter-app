@@ -12,12 +12,13 @@ class CommunityAdminLocationScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CommunityAdminLocationScreen> createState() => _CommunityAdminLocationScreenState();
+  State<CommunityAdminLocationScreen> createState() =>
+      _CommunityAdminLocationScreenState();
 }
 
-class _CommunityAdminLocationScreenState extends State<CommunityAdminLocationScreen> {
+class _CommunityAdminLocationScreenState
+    extends State<CommunityAdminLocationScreen> {
   late CommunityDetailsCubit communityCubit;
-  
 
   final newLocationEC = TextEditingController();
 
@@ -69,7 +70,9 @@ class _CommunityAdminLocationScreenState extends State<CommunityAdminLocationScr
                   );
                 } else {
                   print('SAVE');
-                  communityCubit.updateLocation(communityCubit.state.community?.id ?? '', newLocationEC.text.trim());
+                  communityCubit.updateLocation(
+                      communityCubit.state.community?.id ?? '',
+                      newLocationEC.text.trim());
                   Navigator.of(context).pop();
                 }
               },

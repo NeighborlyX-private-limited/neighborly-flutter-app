@@ -23,7 +23,8 @@ class CommunityCreateState extends Equatable {
       description: '',
       locationStr: '',
       createdAt: '',
-      avatarUrl: 'https://eu.ui-avatars.com/api/?name=XX&background=random&rounded=true',
+      avatarUrl:
+          'https://eu.ui-avatars.com/api/?name=XX&background=random&rounded=true',
       karma: 0,
       membersCount: 0,
       isPublic: false,

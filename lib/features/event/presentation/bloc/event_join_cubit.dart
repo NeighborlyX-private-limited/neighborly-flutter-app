@@ -8,21 +8,23 @@ import '../../domain/usecases/join_event_usecase.dart';
 
 part 'event_join_state.dart';
 
-class EventJoinCubit extends Cubit<EventJoinState> { 
+class EventJoinCubit extends Cubit<EventJoinState> {
   final JoinEventUsecase joinEventUsecase;
-  EventJoinCubit( 
+  EventJoinCubit(
     this.joinEventUsecase,
   ) : super(const EventJoinState());
 
-  void init( EventModel event) async {
+  void init(EventModel event) async {
     print('... BLOC - INIT event?=${event}');
- 
+
     emit(state.copyWith(eventJoin: event));
   }
 
-  
-
-  Future onPressRegister({ required String name, required String email, required String phone, required String gender}) async {
+  Future onPressRegister(
+      {required String name,
+      required String email,
+      required String phone,
+      required String gender}) async {
     print('...BLOC eventDetail onPressRegister=${state.eventJoin} ');
     emit(state.copyWith(status: Status.loading));
 
@@ -34,10 +36,16 @@ class EventJoinCubit extends Cubit<EventJoinState> {
 
     result.fold(
       (failure) {
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (noResponse) {
-        emit(state.copyWith(status: Status.success, successMessage: 'Event joined', eventJoin: state.eventJoin!.copyWith(isJoined: true)));
+        emit(state.copyWith(
+            status: Status.success,
+            successMessage: 'Event joined',
+            eventJoin: state.eventJoin!.copyWith(isJoined: true)));
       },
     );
   }

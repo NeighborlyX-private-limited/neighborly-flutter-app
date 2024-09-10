@@ -22,9 +22,6 @@ class ChatMessageWidget extends StatefulWidget {
 }
 
 class _ChatMessageWidgetState extends State<ChatMessageWidget> {
-
- 
-
   String formatTime(String dateTimeString) {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
     final DateFormat timeFormat = DateFormat('hh:mm a');
@@ -35,7 +32,9 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: widget.message.isMine ? MainAxisAlignment.start : MainAxisAlignment.end,
+      mainAxisAlignment: widget.message.isMine
+          ? MainAxisAlignment.start
+          : MainAxisAlignment.end,
       children: [
         Container(
           margin: EdgeInsets.symmetric(vertical: 5),
@@ -45,7 +44,9 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
           ),
           // padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           decoration: BoxDecoration(
-            color: widget.message.isMine ? Colors.grey[100] : AppColors.lightBackgroundColor,
+            color: widget.message.isMine
+                ? Colors.grey[100]
+                : AppColors.lightBackgroundColor,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Stack(
@@ -54,7 +55,8 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
                 padding: const EdgeInsets.fromLTRB(10, 15, 15, 25),
                 child: widget.message.pictureUrl != ''
                     ? Image.network('${widget.message.pictureUrl}')
-                    : (widget.message.pictureAsset != null && widget.message.pictureAsset?.path != '')
+                    : (widget.message.pictureAsset != null &&
+                            widget.message.pictureAsset?.path != '')
                         ? Image.file(widget.message.pictureAsset!)
                         : Text(
                             // message.date,
@@ -75,7 +77,7 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
                       SvgPicture.asset('assets/read_mark.svg'),
                       const SizedBox(width: 5),
                     ],
-                    Text( 
+                    Text(
                       formatTime(widget.message.date),
                       style: TextStyle(
                         fontSize: 13,

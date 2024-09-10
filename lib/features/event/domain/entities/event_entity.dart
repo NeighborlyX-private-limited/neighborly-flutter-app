@@ -1,5 +1,3 @@
- 
-
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/models/user_simple_model.dart';
@@ -19,7 +17,7 @@ class EventEntity extends Equatable {
   final UserSimpleModel host;
   final bool isJoined;
   final bool isMine;
-  
+
   EventEntity({
     required this.id,
     required this.title,
@@ -28,8 +26,8 @@ class EventEntity extends Equatable {
     required this.locationStr,
     required this.dateStart,
     required this.dateEnd,
-     this.hourStart = '',
-     this.hourEnd = '',
+    this.hourStart = '',
+    this.hourEnd = '',
     required this.category,
     required this.address,
     required this.host,
@@ -37,8 +35,6 @@ class EventEntity extends Equatable {
     required this.isMine,
   });
 
-  
-  @override 
+  @override
   List<Object?> get props => [id, title, avatarUrl];
-
 }

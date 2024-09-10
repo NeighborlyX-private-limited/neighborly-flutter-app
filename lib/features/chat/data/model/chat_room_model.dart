@@ -69,13 +69,16 @@ class ChatRoomModel extends ChatRoomEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory ChatRoomModel.fromJson(String source) => ChatRoomModel.fromMap(json.decode(source));
+  factory ChatRoomModel.fromJson(String source) =>
+      ChatRoomModel.fromMap(json.decode(source));
 
   static List<ChatRoomModel> fromJsonList(List<dynamic> json) {
-    var list = <ChatRoomModel>[]; 
+    var list = <ChatRoomModel>[];
 
     if (json.isNotEmpty) {
-      list = json.map<ChatRoomModel>((jsomItem) => ChatRoomModel.fromMap(jsomItem)).toList();
+      list = json
+          .map<ChatRoomModel>((jsomItem) => ChatRoomModel.fromMap(jsomItem))
+          .toList();
     }
 
     return list;

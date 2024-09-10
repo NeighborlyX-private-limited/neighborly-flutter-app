@@ -7,7 +7,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'fcm_extension.dart';
 
 class LocaleNotificationManager {
-  static final StreamController<RemoteMessage> onLocaleClick = StreamController<RemoteMessage>.broadcast();
+  static final StreamController<RemoteMessage> onLocaleClick =
+      StreamController<RemoteMessage>.broadcast();
 
   // static Future _onPayLoad(String? payload) async {
   //   if (payload == null) return;
@@ -59,7 +60,10 @@ class LocaleNotificationManager {
   }
 
   static void displayNotification(
-      RemoteMessage _notification, String? androidChannelId, String? androidChannelName, String? androidChannelDescription,
+      RemoteMessage _notification,
+      String? androidChannelId,
+      String? androidChannelName,
+      String? androidChannelDescription,
       [int? id]) {
     if (_notification.notification == null) return;
 
@@ -69,8 +73,12 @@ class LocaleNotificationManager {
 
     //! Android settings
     var _android = AndroidNotificationDetails(
-      androidChannelId ?? _notification.notification?.android?.channelId ?? 'FCM_Config',
-      androidChannelName ?? _notification.notification?.android?.channelId ?? 'FCM_Config',
+      androidChannelId ??
+          _notification.notification?.android?.channelId ??
+          'FCM_Config',
+      androidChannelName ??
+          _notification.notification?.android?.channelId ??
+          'FCM_Config',
       // androidChannelDescription ?? _notification.notification?.android?.channelId ?? 'FCM_Config',
       importance: _getImportance(_notification.notification!),
       priority: Priority.high,
@@ -86,8 +94,10 @@ class LocaleNotificationManager {
       sound: _notification.isDefaultAndroidSound
           ? null
           : (_notification.isAndroidRemoteSound
-              ? UriAndroidNotificationSound(_notification.notification!.android!.sound!)
-              : RawResourceAndroidNotificationSound(_notification.notification!.android!.sound)),
+              ? UriAndroidNotificationSound(
+                  _notification.notification!.android!.sound!)
+              : RawResourceAndroidNotificationSound(
+                  _notification.notification!.android!.sound)),
     );
     var badge = int.tryParse(_notification.notification?.apple?.badge ?? '');
     var _ios = DarwinNotificationDetails(
@@ -112,10 +122,12 @@ class LocaleNotificationManager {
     var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
 
     print('... displayNotification _id: ${_id}');
-    print('... displayNotification title: ${_notification.notification!.title}');
+    print(
+        '... displayNotification title: ${_notification.notification!.title}');
     print('... displayNotification body: ${_notification.notification!.body}');
     print('... displayNotification _details: ${_details}');
-    print('... displayNotification payload: ${jsonEncode(_notification.toMap())}');
+    print(
+        '... displayNotification payload: ${jsonEncode(_notification.toMap())}');
     try {
       _localeNotification.show(
         _id,

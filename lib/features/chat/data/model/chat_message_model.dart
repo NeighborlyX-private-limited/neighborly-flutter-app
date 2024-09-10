@@ -45,7 +45,8 @@ class ChatMessageModel extends ChatMessageEntity {
     return PostModel(
       userId: author?.id ?? '',
       userName: author?.name ?? '',
-      proPic: author?.avatarUrl ?? 'https://eu.ui-avatars.com/api/?name=${author?.name ?? "XXX"}&background=random&rounded=true',
+      proPic: author?.avatarUrl ??
+          'https://eu.ui-avatars.com/api/?name=${author?.name ?? "XXX"}&background=random&rounded=true',
       type: 'post',
       createdAt: date,
       cheers: cheers,
@@ -94,20 +95,27 @@ class ChatMessageModel extends ChatMessageEntity {
       boolOrCheer: map['boolOrCheer'] ?? '',
       pictureAsset: null,
       pictureUrl: map['pictureUrl'] ?? '',
-      repliesAvatas: map['repliesAvatas'] != null ? List<String>.from(map['repliesAvatas']) : [],
-      author: map['author'] != null ? UserSimpleModel.fromMap(map['author']) : null,
+      repliesAvatas: map['repliesAvatas'] != null
+          ? List<String>.from(map['repliesAvatas'])
+          : [],
+      author:
+          map['author'] != null ? UserSimpleModel.fromMap(map['author']) : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory ChatMessageModel.fromJson(String source) => ChatMessageModel.fromMap(json.decode(source));
+  factory ChatMessageModel.fromJson(String source) =>
+      ChatMessageModel.fromMap(json.decode(source));
 
   static List<ChatMessageModel> fromJsonList(List<dynamic> json) {
     var list = <ChatMessageModel>[];
 
     if (json.isNotEmpty) {
-      list = json.map<ChatMessageModel>((jsomItem) => ChatMessageModel.fromMap(jsomItem)).toList();
+      list = json
+          .map<ChatMessageModel>(
+              (jsomItem) => ChatMessageModel.fromMap(jsomItem))
+          .toList();
     }
 
     return list;

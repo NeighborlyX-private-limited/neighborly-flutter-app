@@ -3,7 +3,7 @@ part of 'chat_private_cubit.dart';
 class ChatPrivateState extends Equatable {
   final Status status;
   final Failure? failure;
-  final String? errorMessage; 
+  final String? errorMessage;
   final File? imageToUpload;
   final String roomId;
   final List<ChatMessageModel> messages;
@@ -30,7 +30,7 @@ class ChatPrivateState extends Equatable {
   ChatPrivateState copyWith({
     Status? status,
     Failure? failure,
-    String? errorMessage, 
+    String? errorMessage,
     File? imageToUpload,
     String? roomId,
     List<ChatMessageModel>? messages,
@@ -38,7 +38,7 @@ class ChatPrivateState extends Equatable {
     return ChatPrivateState(
       status: status ?? this.status,
       failure: failure ?? this.failure,
-      errorMessage: errorMessage ?? this.errorMessage, 
+      errorMessage: errorMessage ?? this.errorMessage,
       imageToUpload: imageToUpload ?? this.imageToUpload,
       roomId: roomId ?? this.roomId,
       messages: messages ?? this.messages,

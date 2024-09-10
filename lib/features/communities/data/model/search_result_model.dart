@@ -12,7 +12,8 @@ class SearchResultModel {
   });
 
   @override
-  String toString() => 'SearchResultModel(communities: $communities, people: $people)';
+  String toString() =>
+      'SearchResultModel(communities: $communities, people: $people)';
 
   Map<String, dynamic> toMap() {
     return {
@@ -23,12 +24,15 @@ class SearchResultModel {
 
   factory SearchResultModel.fromMap(Map<String, dynamic> map) {
     return SearchResultModel(
-      communities: List<CommunityModel>.from(map['communities']?.map((x) => CommunityModel.fromMap(x))),
-      people: List<UserSimpleModel>.from(map['people']?.map((x) => UserSimpleModel.fromMap(x))),
+      communities: List<CommunityModel>.from(
+          map['communities']?.map((x) => CommunityModel.fromMap(x))),
+      people: List<UserSimpleModel>.from(
+          map['people']?.map((x) => UserSimpleModel.fromMap(x))),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory SearchResultModel.fromJson(String source) => SearchResultModel.fromMap(json.decode(source));
+  factory SearchResultModel.fromJson(String source) =>
+      SearchResultModel.fromMap(json.decode(source));
 }

@@ -12,7 +12,7 @@ class EventEmptyGoing extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SvgPicture.asset('assets/event_empty.svg'),
-    
+
         Text(
           'You\'re not goiing to any events yet.',
           textAlign: TextAlign.center,
@@ -33,10 +33,10 @@ class EventEmptyGoing extends StatelessWidget {
           ),
         ),
         const SizedBox(
-           height: 15,
+          height: 15,
         ),
-        // 
-        // 
+        //
+        //
         ElevatedButton(
           onPressed: () {
             // Lógica ao clicar no botão
@@ -46,7 +46,8 @@ class EventEmptyGoing extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryColor,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+              borderRadius: BorderRadius.circular(
+                  50), // Ajuste o raio conforme necessário
             ),
             // padding: EdgeInsets.all(15)
           ),

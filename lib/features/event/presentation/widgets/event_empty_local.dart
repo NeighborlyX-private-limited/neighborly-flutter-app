@@ -3,24 +3,22 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/colors.dart';
 
 class EventEmptyLocal extends StatelessWidget {
+  const EventEmptyLocal({super.key});
 
-  const EventEmptyLocal({ super.key });
-
-   @override
-   Widget build(BuildContext context) {
-       return Container(
-        height: 300,
-        width: double.infinity,
-        margin: EdgeInsets.all(8),
-        decoration: BoxDecoration(  
-          color: AppColors.lightBackgroundColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-
-              Text(
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 300,
+      width: double.infinity,
+      margin: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: AppColors.lightBackgroundColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
             'No Event at moment',
             textAlign: TextAlign.center,
             style: TextStyle(
@@ -39,9 +37,8 @@ class EventEmptyLocal extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-
-          ],
-        ),
-       );
+        ],
+      ),
+    );
   }
 }

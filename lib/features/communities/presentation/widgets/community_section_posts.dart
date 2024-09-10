@@ -28,7 +28,6 @@ class CommunitySectionPosts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     
     return Container(
       width: double.infinity,
       color: AppColors.lightBackgroundColor,
@@ -45,7 +44,7 @@ class CommunitySectionPosts extends StatelessWidget {
                       child: PostWidget(
                         post: posts[index],
                       ),
-                    ); 
+                    );
                   }),
     );
   }

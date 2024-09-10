@@ -1,12 +1,10 @@
-
 import 'dart:convert';
 
 import '../../domain/entities/search_history_entity.dart';
 
 class SearchHistoryModel extends SearchHistoryEntity {
   SearchHistoryModel({required super.term});
-  
-  
+
   SearchHistoryEntity copyWith({
     String? term,
   }) {
@@ -29,13 +27,17 @@ class SearchHistoryModel extends SearchHistoryEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory SearchHistoryModel.fromJson(String source) => SearchHistoryModel.fromMap(json.decode(source));
+  factory SearchHistoryModel.fromJson(String source) =>
+      SearchHistoryModel.fromMap(json.decode(source));
 
   static List<SearchHistoryModel> fromJsonList(List<dynamic> json) {
-    var list = <SearchHistoryModel>[]; 
+    var list = <SearchHistoryModel>[];
 
     if (json.isNotEmpty) {
-      list = json.map<SearchHistoryModel>((jsomItem) => SearchHistoryModel.fromMap(jsomItem)).toList();
+      list = json
+          .map<SearchHistoryModel>(
+              (jsomItem) => SearchHistoryModel.fromMap(jsomItem))
+          .toList();
     }
 
     return list;

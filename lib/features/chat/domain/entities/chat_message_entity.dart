@@ -12,7 +12,7 @@ class ChatMessageEntity extends Equatable {
   final bool hasMore;
   final bool isAdmin;
   final bool isPinned;
-  final int repliesCount;  
+  final int repliesCount;
   final int cheers;
   final int bools;
   final String boolOrCheer;

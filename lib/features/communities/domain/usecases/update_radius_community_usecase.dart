@@ -12,6 +12,7 @@ class UpdateRadiusCommunityUsecase {
     required String communityId,
     required num newRadius,
   }) async {
-    return await repository.updateRadius(communityId: communityId, newRadius: newRadius);
+    return await repository.updateRadius(
+        communityId: communityId, newRadius: newRadius);
   }
 }

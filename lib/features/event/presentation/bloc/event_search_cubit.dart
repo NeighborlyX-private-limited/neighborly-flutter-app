@@ -30,7 +30,8 @@ class EventSearchCubit extends Cubit<EventSearchState> {
 
   onUpdateDate(String newDateStart, String newDateEnd) {
     print('...BLOC onUpdateDate=$newDateStart  newDateEnd=$newDateEnd');
-    emit(state.copyWith(dateFilterStart: newDateStart, dateFilterEnd: newDateEnd));
+    emit(state.copyWith(
+        dateFilterStart: newDateStart, dateFilterEnd: newDateEnd));
   }
 
   onPressSearch(String searchTerm) {
@@ -52,11 +53,15 @@ class EventSearchCubit extends Cubit<EventSearchState> {
     result.fold(
       (failure) {
         print('... BLOC GetLocalEvents error: ${failure}');
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (eventsLocalList) {
         print('... BLOC GetLocalEvents results: ${eventsLocalList}');
-        emit(state.copyWith(status: Status.success, eventsLocal: eventsLocalList));
+        emit(state.copyWith(
+            status: Status.success, eventsLocal: eventsLocalList));
       },
     );
   }

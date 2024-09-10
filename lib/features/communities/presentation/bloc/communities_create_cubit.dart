@@ -31,25 +31,37 @@ class CommunityCreateCubit extends Cubit<CommunityCreateState> {
     result.fold(
       (failure) {
         print('...BLOC onUpdateFile error: ${failure.message}');
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message, uploadIsLoading: false));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message,
+            uploadIsLoading: false));
       },
       (imageUrl) {
         print('... BLOC imageUrl=${imageUrl}');
-        emit(state.copyWith(imageToUpload: fileToUpload, imageUrl: imageUrl, uploadIsLoading: false));
+        emit(state.copyWith(
+            imageToUpload: fileToUpload,
+            imageUrl: imageUrl,
+            uploadIsLoading: false));
       },
     );
   }
 
   Future createCommunity(CommunityModel newCommunity, File? pictureFile) async {
     emit(state.copyWith(status: Status.loading));
-    final result = await createCommunityUsecase(community: newCommunity.copyWith(avatarUrl: state.imageUrl));
+    final result = await createCommunityUsecase(
+        community: newCommunity.copyWith(avatarUrl: state.imageUrl));
 
     result.fold(
       (failure) {
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (newCommunityId) {
-        emit(state.copyWith(status: Status.success, newCommunityId: newCommunityId));
+        emit(state.copyWith(
+            status: Status.success, newCommunityId: newCommunityId));
       },
     );
   }

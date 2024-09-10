@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/models/community_model.dart';
-import '../../../../core/widgets/stacked_avatar_indicator_widget.dart'; 
+import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
 
 class CommunityCardWidget extends StatelessWidget {
   final CommunityModel community;
@@ -66,7 +66,9 @@ class CommunityCardWidget extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                community.isPublic ? Icons.public : Icons.lock_person_outlined,
+                                community.isPublic
+                                    ? Icons.public
+                                    : Icons.lock_person_outlined,
                                 color: Colors.white,
                                 size: 15,
                               ),
@@ -122,14 +124,14 @@ class CommunityCardWidget extends StatelessWidget {
                           fontSize: 16,
                         ),
                       ),
-                      //
-                      //
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           StackedAvatarIndicator(
-                            avatarUrls: community.users.map((e) => e.avatarUrl).toList(),
+                            avatarUrls: community.users
+                                .map((e) => e.avatarUrl)
+                                .toList(),
                             showOnly: 3,
                             avatarSize: 22,
                             onTap: () {},
@@ -146,21 +148,23 @@ class CommunityCardWidget extends StatelessWidget {
                           ),
                         ],
                       ),
-
-                      //
-                      //
                       const SizedBox(height: 10),
-                      Container(
-                        height: 35,
-                        width: double.infinity,
-                        decoration: BoxDecoration(color: Color(0xff635BFF), borderRadius: BorderRadius.circular(20)),
-                        child: Center(
-                          child: Text(
-                            community.isPublic ? 'Join' : 'Request',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
+                      GestureDetector(
+                        onTap: () {},
+                        child: Container(
+                          height: 35,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                              color: Color(0xff635BFF),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Center(
+                            child: Text(
+                              community.isPublic ? 'Join' : 'Request',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                         ),

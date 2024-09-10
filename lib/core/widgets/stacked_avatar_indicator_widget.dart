@@ -1,6 +1,6 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 
 class StackedAvatarIndicator extends StatelessWidget {
   final List<String> avatarUrls;
@@ -22,9 +22,8 @@ class StackedAvatarIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     if (avatarUrls.length == 0) return SizedBox.shrink();
 
- 
-
-    final widthMultiplier = avatarUrls.length < showOnly! ? avatarUrls.length : showOnly;
+    final widthMultiplier =
+        avatarUrls.length < showOnly! ? avatarUrls.length : showOnly;
 
     return InkWell(
       onTap: () {
@@ -32,15 +31,16 @@ class StackedAvatarIndicator extends StatelessWidget {
       },
       child: Container(
         width: (21 * widthMultiplier!) + 4,
-        height: avatarSize!+6,
+        height: avatarSize! + 6,
         color: Colors.transparent,
         child: Stack(
           children: [
             for (int i = 0; i < min(avatarUrls.length, showOnly!); i++)
               Positioned(
-                left: i.toDouble() * avatarSize!, // Espaçamento entre os avatares
+                left:
+                    i.toDouble() * avatarSize!, // Espaçamento entre os avatares
                 child: CircleAvatar(
-                  radius: radius!+1,
+                  radius: radius! + 1,
                   backgroundColor: Colors.white,
                   child: CircleAvatar(
                     radius: radius,

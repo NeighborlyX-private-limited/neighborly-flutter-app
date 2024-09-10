@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 
@@ -36,7 +35,7 @@ class _ChatReactionWidgetState extends State<ChatReactionWidget> {
 
   // State variables to track counts
   late num cheersCount;
-  late num boolsCount; 
+  late num boolsCount;
 
   @override
   void initState() {
@@ -49,15 +48,15 @@ class _ChatReactionWidgetState extends State<ChatReactionWidget> {
     // Load persisted state
     _loadReactionState();
   }
- 
- 
 
   Future<void> _loadReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('postReactions');
     setState(() {
-      isCheered = box.get('${userID}_${widget.post.id}_isCheered', defaultValue: false);
-      isBooled = box.get('${userID}_${widget.post.id}_isBooled', defaultValue: false);
+      isCheered =
+          box.get('${userID}_${widget.post.id}_isCheered', defaultValue: false);
+      isBooled =
+          box.get('${userID}_${widget.post.id}_isBooled', defaultValue: false);
     });
   }
 
@@ -216,7 +215,7 @@ class _ChatReactionWidgetState extends State<ChatReactionWidget> {
         //
         //
         GestureDetector(
-          onTap: () { 
+          onTap: () {
             widget.onTapReply();
           },
           child: Container(
@@ -252,7 +251,8 @@ class _ChatReactionWidgetState extends State<ChatReactionWidget> {
                   //
                   const SizedBox(width: 5),
                   widget.post.commentCount != null
-                      ? Text('${widget.post.commentCount} ${widget.post.commentCount == 1 ? "reply" : "replies"}',
+                      ? Text(
+                          '${widget.post.commentCount} ${widget.post.commentCount == 1 ? "reply" : "replies"}',
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 12,

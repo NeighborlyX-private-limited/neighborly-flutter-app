@@ -12,6 +12,7 @@ class ReportCommunityUsecase {
     required String communityId,
     required String reason,
   }) async {
-    return await repository.reportCommunity(communityId: communityId, reason: reason);
+    return await repository.reportCommunity(
+        communityId: communityId, reason: reason);
   }
 }

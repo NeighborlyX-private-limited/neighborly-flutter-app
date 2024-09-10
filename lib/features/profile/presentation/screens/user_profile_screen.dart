@@ -300,7 +300,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               ),
               InkWell(
                 onTap: () {
-                  ShareIt.text(content: 'Hey, take a look on this profile', androidSheetTitle: 'Cool Person');
+                  ShareIt.text(
+                      content: 'Hey, take a look on this profile',
+                      androidSheetTitle: 'Cool Person');
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,

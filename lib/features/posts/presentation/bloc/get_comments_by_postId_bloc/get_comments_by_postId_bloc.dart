@@ -7,14 +7,17 @@ import '../../../domain/usecases/get_comments_by_postid_usecase.dart';
 part 'get_comments_by_postId_event.dart';
 part 'get_comments_by_postId_state.dart';
 
-class GetCommentsByPostIdBloc extends Bloc<GetCommentsByPostIdEvent, GetCommentsByPostIdState> {
+class GetCommentsByPostIdBloc
+    extends Bloc<GetCommentsByPostIdEvent, GetCommentsByPostIdState> {
   final GetCommentsByPostIdUsecase _getCommentsByPostIdUsecase;
 
-  GetCommentsByPostIdBloc({required GetCommentsByPostIdUsecase getCommentsByPostIdUsecase})
+  GetCommentsByPostIdBloc(
+      {required GetCommentsByPostIdUsecase getCommentsByPostIdUsecase})
       : _getCommentsByPostIdUsecase = getCommentsByPostIdUsecase,
         super(GetcommentsByPostIdInitialState()) {
-    on<GetCommentsByPostIdButtonPressedEvent>((GetCommentsByPostIdButtonPressedEvent event,
-        Emitter<GetCommentsByPostIdState> emit) async {
+    on<GetCommentsByPostIdButtonPressedEvent>(
+        (GetCommentsByPostIdButtonPressedEvent event,
+            Emitter<GetCommentsByPostIdState> emit) async {
       emit(GetcommentsByPostIdLoadingState());
 
       final result = await _getCommentsByPostIdUsecase.call(
@@ -22,8 +25,10 @@ class GetCommentsByPostIdBloc extends Bloc<GetCommentsByPostIdEvent, GetComments
       );
 
       result.fold(
-          (error) => emit(GetcommentsByPostIdFailureState(error: error.toString())),
-          (response) => emit(GetcommentsByPostIdSuccessState(comments: response)));
+          (error) =>
+              emit(GetcommentsByPostIdFailureState(error: error.toString())),
+          (response) =>
+              emit(GetcommentsByPostIdSuccessState(comments: response)));
     });
   }
 }

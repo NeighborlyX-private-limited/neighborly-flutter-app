@@ -12,6 +12,7 @@ class UpdateMuteCommunityUsecase {
     required String communityId,
     required bool newValue,
   }) async {
-    return await repository.updateMute(communityId: communityId, newValue: newValue);
+    return await repository.updateMute(
+        communityId: communityId, newValue: newValue);
   }
 }

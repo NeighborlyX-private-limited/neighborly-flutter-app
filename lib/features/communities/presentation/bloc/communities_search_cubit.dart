@@ -34,36 +34,49 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
     result.fold(
       (failure) {
         print('... BLOC SEARCH failure: ${failure.message}');
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (dashData) {
         // print('... BLOC SEARCH dash: $dashData');
-        emit(state.copyWith(status: Status.success, dashData: dashData, histories: [...dashData.history.map((e) => e.term).toList()] ));
+        emit(state.copyWith(
+            status: Status.success,
+            dashData: dashData,
+            histories: [...dashData.history.map((e) => e.term).toList()]));
       },
     );
   }
 
   Future getSearchResult(String searchTerm, bool isPreview) async {
     emit(state.copyWith(status: Status.loading));
-    final result = await getSearchResultsCommunitiesUsecase(searchTerm: searchTerm, isPreview: isPreview);
+    final result = await getSearchResultsCommunitiesUsecase(
+        searchTerm: searchTerm, isPreview: isPreview);
 
     result.fold(
       (failure) {
         // print('... BLOC SEARCH failure: ${failure.message}');
 
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (searchresult) {
         // print('... BLOC SEARCH results: dashData');
-        emit(state.copyWith(status: Status.success, searchResult: searchresult));
+        emit(
+            state.copyWith(status: Status.success, searchResult: searchresult));
       },
     );
   }
 
   void deleteHistoryTerm(String toDeleteTerm) {
     print('... BLOC deleteHistoryTerm toDeleteTerm=$toDeleteTerm');
-    
-    emit(state.copyWith(histories: [...state.histories.where((element) => element != toDeleteTerm)]));
+
+    emit(state.copyWith(histories: [
+      ...state.histories.where((element) => element != toDeleteTerm)
+    ]));
   }
 
   // ignore: body_might_complete_norminqueuey_nullable
@@ -74,7 +87,8 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     await Future.delayed(Duration(seconds: 1));
 
-    final result = await getSearchResultsCommunitiesUsecase(searchTerm: searchStr, isPreview: true);
+    final result = await getSearchResultsCommunitiesUsecase(
+        searchTerm: searchStr, isPreview: true);
 
     // print('..RESPONSE: ${response}');
 
@@ -98,13 +112,17 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
   Future getSearchResultBySumit(String searchTerm) async {
     emit(state.copyWith(status: Status.loading));
-    final result = await getSearchResultsCommunitiesUsecase(searchTerm: searchTerm, isPreview: false);
+    final result = await getSearchResultsCommunitiesUsecase(
+        searchTerm: searchTerm, isPreview: false);
 
     result.fold(
       (failure) {
         print('... BLOC SEARCH failure: ${failure.message}');
 
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (searchresult) {
         print('... BLOC SEARCH results: people: ${searchresult.people}');

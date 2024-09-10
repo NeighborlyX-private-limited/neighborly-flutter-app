@@ -33,10 +33,12 @@ class ChatRepositoriesImpl implements ChatRepositories {
   }
 
   @override
-  Future<Either<Failure, List<ChatMessageModel>>> getRoomMessages({required String roomId, String? dateFrom}) async {
+  Future<Either<Failure, List<ChatMessageModel>>> getRoomMessages(
+      {required String roomId, String? dateFrom}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getRoomMessages(roomId: roomId, dateFrom: dateFrom);
+        final result = await remoteDataSource.getRoomMessages(
+            roomId: roomId, dateFrom: dateFrom);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -47,12 +49,14 @@ class ChatRepositoriesImpl implements ChatRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
-  
+
   @override
-  Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages({required String roomId, String? dateFrom}) async {
+  Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages(
+      {required String roomId, String? dateFrom}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getGroupRoomMessages(roomId: roomId, dateFrom: dateFrom);
+        final result = await remoteDataSource.getGroupRoomMessages(
+            roomId: roomId, dateFrom: dateFrom);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

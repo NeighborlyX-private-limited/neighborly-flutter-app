@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/core_dimens.dart';
- 
 
 class UserAvatarSquareWidget extends StatelessWidget {
   final String? imageUrl;

@@ -111,9 +111,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           ? jsonEncode(<String, String>{
               'email': email!,
               'password': password!,
+        'fcmToken': 'Token',
             })
           : jsonEncode(<String, String>{
               'phoneNumber': phone,
+              'fcmToken': 'Token',
             }),
     );
     if (response.statusCode == 200) {

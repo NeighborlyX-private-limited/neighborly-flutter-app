@@ -68,9 +68,13 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                   // fillColor: widget.isDarkmode! ? Colors.grey[800] : Colors.grey[200],
                   fillColor: AppColors.lightBackgroundColor,
                   hintText: 'type to search your groups', // 'Buscar',
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), // Inside box padding
+                  contentPadding: EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 5), // Inside box padding
                   // hintStyle: TextStyle(color: widget.isDarkmode! ? Colors.white.withOpacity(0.4) : Colors.black26),
-                  hintStyle: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 20, fontWeight: FontWeight.w400),
+                  hintStyle: TextStyle(
+                      color: Colors.black.withOpacity(0.6),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400),
                   border: OutlineInputBorder(
                     gapPadding: 0,
                     borderSide: BorderSide(
@@ -115,20 +119,20 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
         ],
       ),
       body: BlocConsumer<ChatMainCubit, ChatMainState>(
-        listener: (context, state) { 
-
+        listener: (context, state) {
           switch (state.status) {
             case Status.loading:
               break;
-            case Status.failure: 
+            case Status.failure:
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
-            case Status.success: 
+            case Status.success:
               break;
             case Status.initial:
               break;
@@ -144,7 +148,9 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                 return const ChatRoomsSheemer();
               }
 
-              if (state.status != Status.loading && state.rooms.length == 0 && state.isSearching == false) {
+              if (state.status != Status.loading &&
+                  state.rooms.length == 0 &&
+                  state.isSearching == false) {
                 return ChatEmptyWidget();
               }
 
@@ -167,7 +173,8 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                         var goTo = selectedRoom.isGroup ? 'group' : 'private';
                         print('... goTo=${goTo}');
 
-                        context.push( '/chat/${goTo}/${state.rooms[index].id}', extra: state.rooms[index]);
+                        context.push('/chat/${goTo}/${state.rooms[index].id}',
+                            extra: state.rooms[index]);
                       },
                     );
                   }),

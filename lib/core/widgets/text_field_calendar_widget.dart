@@ -26,7 +26,8 @@ class TextFieldCalendarWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<TextFieldCalendarWidget> createState() => _TextFieldCalendarWidgetState();
+  State<TextFieldCalendarWidget> createState() =>
+      _TextFieldCalendarWidgetState();
 }
 
 class _TextFieldCalendarWidgetState extends State<TextFieldCalendarWidget> {

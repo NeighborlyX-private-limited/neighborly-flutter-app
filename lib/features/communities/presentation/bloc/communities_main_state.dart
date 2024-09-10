@@ -10,7 +10,7 @@ class CommunityMainState extends Equatable {
     this.status = Status.initial,
     this.failure,
     this.errorMessage = '',
-    this.communities = const [], 
+    this.communities = const [],
   });
 
   @override
@@ -24,14 +24,13 @@ class CommunityMainState extends Equatable {
     Status? status,
     Failure? failure,
     String? errorMessage,
-    List<CommunityModel>? communities, 
+    List<CommunityModel>? communities,
   }) {
     return CommunityMainState(
       status: status ?? this.status,
       failure: failure ?? this.failure,
       errorMessage: errorMessage ?? this.errorMessage,
-      communities: communities ?? this.communities, 
+      communities: communities ?? this.communities,
     );
   }
 }
- 

@@ -16,7 +16,7 @@ import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
 import '../bloc/community_detail_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
 import '../widgets/community_section_about.dart';
-import '../widgets/community_section_chat.dart'; 
+import '../widgets/community_section_chat.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   final String communityId;
@@ -30,7 +30,8 @@ class CommunityDetailsScreen extends StatefulWidget {
   State<CommunityDetailsScreen> createState() => _CommunityDetailsScreenState();
 }
 
-class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with SingleTickerProviderStateMixin {
+class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late var communityDetailCubit;
   late bool isJoined;
@@ -67,7 +68,11 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
     );
   }
 
-  Widget titleArea({required String title, required num userCount, required List<UserSimpleModel> users, required bool isPublic}) {
+  Widget titleArea(
+      {required String title,
+      required num userCount,
+      required List<UserSimpleModel> users,
+      required bool isPublic}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
       child: Row(
@@ -157,13 +162,15 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
               // Lógica ao clicar no botão
               // context.go('/groups/create');
               if (isJoined) {
-                bottomSheetMenu(context, '', communityCache?.name ?? '', communityCache?.isMuted ?? false);
+                bottomSheetMenu(context, '', communityCache?.name ?? '',
+                    communityCache?.isMuted ?? false);
               }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: isJoined ? Colors.white : AppColors.primaryColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                borderRadius: BorderRadius.circular(
+                    50), // Ajuste o raio conforme necessário
               ),
               // padding: EdgeInsets.all(15)
             ),
@@ -171,7 +178,10 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 isJoined ? 'Joined' : 'Join',
-                style: TextStyle(color: isJoined ? AppColors.primaryColor : Colors.white, fontSize: 18, height: 0.3),
+                style: TextStyle(
+                    color: isJoined ? AppColors.primaryColor : Colors.white,
+                    fontSize: 18,
+                    height: 0.3),
               ),
             ),
           )
@@ -223,7 +233,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -231,7 +242,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -253,7 +265,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -261,7 +274,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
-                          style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -275,7 +289,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
     );
   }
 
-  Future<dynamic> bottomSheetMenu(BuildContext context, String userId, String communityName, bool isMuted) {
+  Future<dynamic> bottomSheetMenu(
+      BuildContext context, String userId, String communityName, bool isMuted) {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -298,7 +313,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
                   }),
               MenuIconItem(
                   title: isMuted ? 'Unmute' : 'Mute',
-                  svgPath: isMuted ? 'assets/menu_unmute.svg' : 'assets/menu_mute.svg',
+                  svgPath: isMuted
+                      ? 'assets/menu_unmute.svg'
+                      : 'assets/menu_mute.svg',
                   iconSize: 25,
                   onTap: () {
                     communityDetailCubit.toggleMute();
@@ -463,7 +480,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
                   ''';
                   // Lógica ao clicar no botão
                   // context.go('/groups/create');
-                  ShareIt.text(content: message, androidSheetTitle: 'Look this event');
+                  ShareIt.text(
+                      content: message, androidSheetTitle: 'Look this event');
 
                   // TODO: remove this, only for presentation/test porpouse
                   context.push('/groups/admin', extra: communityCache);
@@ -480,7 +498,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> with Si
                     context.push('/groups/admin', extra: communityCache);
                   } else {
                     if (isJoined) {
-                      bottomSheetMenu(context, '', communityCache?.name ?? '', communityCache?.isMuted ?? false);
+                      bottomSheetMenu(context, '', communityCache?.name ?? '',
+                          communityCache?.isMuted ?? false);
                     }
                   }
                 },

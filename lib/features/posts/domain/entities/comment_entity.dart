@@ -10,7 +10,7 @@ class CommentEntity extends Equatable {
   final num cheers;
   final num bools;
   final String? proPic;
-  
+
   const CommentEntity({
     required this.awardType,
     required this.commentid,

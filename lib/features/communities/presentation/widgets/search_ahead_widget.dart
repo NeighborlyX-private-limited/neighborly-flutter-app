@@ -88,7 +88,7 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
             },
           ),
           const SizedBox(
-             width: 10,
+            width: 10,
           ),
         ],
         Flexible(
@@ -109,8 +109,8 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                   focusNode: focusNode,
                   onTapOutside: (event) => FocusScope.of(context).unfocus(),
                   textAlignVertical: TextAlignVertical.center,
-                  onFieldSubmitted: (value){
-                    if(widget.onSubmit == null) return; 
+                  onFieldSubmitted: (value) {
+                    if (widget.onSubmit == null) return;
 
                     print('...PRESS ENTER? ${value}');
                     widget.onSubmit!(value);
@@ -124,7 +124,8 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                     suffixIcon: widget.showClose!
                         ? IconButton(
                             // icon: Icon(Icons.close, color: widget.isDarkmode! ? Colors.white.withOpacity(0.4) : Colors.black26),
-                            icon: Icon(Icons.close, color: Colors.black.withOpacity(0.4)),
+                            icon: Icon(Icons.close,
+                                color: Colors.black.withOpacity(0.4)),
                             onPressed: () {
                               controller.clear();
                               searchEC.clear();
@@ -138,10 +139,16 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                     filled: true,
                     // fillColor: widget.isDarkmode! ? Colors.grey[800] : Colors.grey[200],
                     fillColor: AppColors.lightBackgroundColor,
-                    hintText: widget.lintText == '' ? 'type something here' : widget.lintText, // 'Buscar',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 5), // Inside box padding
+                    hintText: widget.lintText == ''
+                        ? 'type something here'
+                        : widget.lintText, // 'Buscar',
+                    contentPadding: EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 5), // Inside box padding
                     // hintStyle: TextStyle(color: widget.isDarkmode! ? Colors.white.withOpacity(0.4) : Colors.black26),
-                    hintStyle: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 20, fontWeight: FontWeight.w400),
+                    hintStyle: TextStyle(
+                        color: Colors.black.withOpacity(0.6),
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400),
                     border: OutlineInputBorder(
                       gapPadding: 0,
                       borderSide: BorderSide(
@@ -162,7 +169,8 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                   cursorColor: Colors.black,
                 );
               },
-              errorBuilder: (context, error) => Text('$error', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              errorBuilder: (context, error) => Text('$error',
+                  style: TextStyle(color: Theme.of(context).colorScheme.error)),
               emptyBuilder: (context) => Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: Text(
@@ -175,10 +183,10 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
-                      
-
                       UserAvatarStyledWidget(
-                        avatarUrl: result is CommunityModel ? result.avatarUrl : result.avatarUrl,
+                        avatarUrl: result is CommunityModel
+                            ? result.avatarUrl
+                            : result.avatarUrl,
                         avatarSize: 22,
                         avatarBorderSize: 0,
                       ),
@@ -191,17 +199,22 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                             result is CommunityModel ? result.name : result.name,
+                              result is CommunityModel
+                                  ? result.name
+                                  : result.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 15),
                             ),
                             //
                             Text(
-                              result is CommunityModel ? '${result.membersCount} Members' : '${result.karma} Karma',
+                              result is CommunityModel
+                                  ? '${result.membersCount} Members'
+                                  : '${result.karma} Karma',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style:TextStyle(fontWeight: FontWeight.normal),
+                              style: TextStyle(fontWeight: FontWeight.normal),
                             ),
                             //
                           ],

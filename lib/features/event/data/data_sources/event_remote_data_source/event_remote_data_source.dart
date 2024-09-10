@@ -10,7 +10,7 @@ abstract class EventRemoteDataSource {
       required String filterDateStart,
       required String filterDateEnd,
       required String filterCategory,
-      required String filterLocation}); 
+      required String filterLocation});
 
   Future<void> createEvent({required EventModel event, File? imageCover});
   Future<void> updateEvent({required EventModel event, File? imageCover});

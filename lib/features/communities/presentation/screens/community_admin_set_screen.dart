@@ -16,13 +16,15 @@ class CommunityAdminSetScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-                leading: GestureDetector(
-          child: Icon( Icons.arrow_back_ios, color: Colors.black,  ),
+        leading: GestureDetector(
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+          ),
           onTap: () {
             Navigator.pop(context);
-          } ,
-        ) ,
-
+          },
+        ),
         title: Text(
           'Settings',
           style: TextStyle(
@@ -57,7 +59,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
                 svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/members'); 
+                  context.push('/groups/admin/members');
                 },
               ),
               //
@@ -68,7 +70,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
                 svgPath: 'assets/menu_icon.svg',
                 iconSize: 25,
                 onTap: () {
-                   context.push('/groups/admin/icon');
+                  context.push('/groups/admin/icon');
                 },
               ),
               //
@@ -79,7 +81,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
                 svgPath: 'assets/menu_description.svg',
                 iconSize: 25,
                 onTap: () {
-                   context.push('/groups/admin/description');
+                  context.push('/groups/admin/description');
                 },
               ),
               //
@@ -111,7 +113,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
                 title: 'Community Type',
                 svgPath: 'assets/menu_type.svg',
                 iconSize: 25,
-                onTap: () { 
+                onTap: () {
                   context.push('/groups/admin/type');
                 },
               ),
@@ -130,7 +132,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
               //
               //
               const SizedBox(
-                 height: 300,
+                height: 300,
               ),
             ],
           ),

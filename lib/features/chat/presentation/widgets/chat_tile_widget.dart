@@ -46,7 +46,8 @@ class ChatTileWidget extends StatelessWidget {
 
   bool isDateWithinLastMonth(DateTime date) {
     DateTime now = DateTime.now();
-    DateTime oneMonthAgo = DateTime(now.year, now.month - 1, now.day, now.hour, now.minute, now.second);
+    DateTime oneMonthAgo = DateTime(
+        now.year, now.month - 1, now.day, now.hour, now.minute, now.second);
 
     return date.isAfter(oneMonthAgo);
   }
@@ -111,10 +112,13 @@ class ChatTileWidget extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 14,
-                          color: room.unreadedCount > 0 ? AppColors.primaryColor : Colors.grey,
+                          color: room.unreadedCount > 0
+                              ? AppColors.primaryColor
+                              : Colors.grey,
                         ),
                       ),
-                      if (room.unreadedCount > 0) unreadedCounter(room.unreadedCount),
+                      if (room.unreadedCount > 0)
+                        unreadedCounter(room.unreadedCount),
                     ],
                   ),
                   const SizedBox(height: 7),
@@ -122,10 +126,14 @@ class ChatTileWidget extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          room.lastMessage == '' ? 'no message so far' : room.lastMessage,
+                          room.lastMessage == ''
+                              ? 'no message so far'
+                              : room.lastMessage,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black45),
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal,
+                              color: Colors.black45),
                         ),
                       ),
                       const SizedBox(
@@ -137,7 +145,8 @@ class ChatTileWidget extends StatelessWidget {
                           'assets/mute_filled.svg',
                           width: 20,
                           height: 20,
-                          colorFilter: ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                          colorFilter:
+                              ColorFilter.mode(Colors.grey, BlendMode.srcIn),
                         ),
                       )
                     ],

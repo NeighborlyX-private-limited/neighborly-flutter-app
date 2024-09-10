@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '805628551035',
     projectId: 'neighborly-423215',
     storageBucket: 'neighborly-423215.appspot.com',
-    androidClientId: '805628551035-fsgaga41cv73f4q38fqcvaud93feljsa.apps.googleusercontent.com',
+    androidClientId:
+        '805628551035-fsgaga41cv73f4q38fqcvaud93feljsa.apps.googleusercontent.com',
     iosBundleId: 'com.example.neighborlyFlutterApp',
   );
 }

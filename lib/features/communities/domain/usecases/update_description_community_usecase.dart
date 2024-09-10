@@ -12,6 +12,7 @@ class UpdateDescriptionCommunityUsecase {
     required String communityId,
     required String newDescription,
   }) async {
-    return await repository.updateDescription(communityId: communityId, newDescription: newDescription);
+    return await repository.updateDescription(
+        communityId: communityId, newDescription: newDescription);
   }
 }

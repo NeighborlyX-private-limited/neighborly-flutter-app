@@ -35,11 +35,15 @@ class EventMainCubit extends Cubit<EventMainState> {
     result.fold(
       (failure) {
         print('... BLOC GetLocalEvents error: ${failure}');
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (eventsLocalList) {
         print('... BLOC GetLocalEvents results: ${eventsLocalList}');
-        emit(state.copyWith(status: Status.success, eventsLocal: eventsLocalList));
+        emit(state.copyWith(
+            status: Status.success, eventsLocal: eventsLocalList));
       },
     );
   }
@@ -58,10 +62,14 @@ class EventMainCubit extends Cubit<EventMainState> {
 
     result.fold(
       (failure) {
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (eventsMineList) {
-        emit(state.copyWith(status: Status.success, eventsMine: eventsMineList));
+        emit(
+            state.copyWith(status: Status.success, eventsMine: eventsMineList));
       },
     );
   }
@@ -80,10 +88,14 @@ class EventMainCubit extends Cubit<EventMainState> {
 
     result.fold(
       (failure) {
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (eventsGoingList) {
-        emit(state.copyWith(status: Status.success, eventsGoing: eventsGoingList));
+        emit(state.copyWith(
+            status: Status.success, eventsGoing: eventsGoingList));
       },
     );
   }

@@ -18,7 +18,8 @@ class ChatMessageGroupWidget extends StatefulWidget {
   final ChatMessageModel message;
   final bool? showIsReaded;
   final bool? showReply;
-  final bool? isAdmin; // isAdmin inside the message flag admin message, but this one is a layer above
+  final bool?
+      isAdmin; // isAdmin inside the message flag admin message, but this one is a layer above
   final Function(ChatMessageModel) onTap;
   final Function(ChatMessageModel, String)? onReply;
   final Function(String, String) onReact;
@@ -83,8 +84,10 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('postReactions');
     setState(() {
-      isCheered = box.get('${userID}_${widget.message.id}_isCheered', defaultValue: false);
-      isBooled = box.get('${userID}_${widget.message.id}_isBooled', defaultValue: false);
+      isCheered = box.get('${userID}_${widget.message.id}_isCheered',
+          defaultValue: false);
+      isBooled = box.get('${userID}_${widget.message.id}_isBooled',
+          defaultValue: false);
     });
   }
 
@@ -171,7 +174,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     );
   }
 
-  Widget reactionCircle({required String assetUrl, required VoidCallback onTap}) {
+  Widget reactionCircle(
+      {required String assetUrl, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -218,7 +222,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                       borderRadius: BorderRadius.all(Radius.circular(48)),
                     ),
                     isDense: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10)),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 10)),
               ),
             ),
             const SizedBox(width: 10),
@@ -226,7 +231,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
               onTap: () {
                 // #send
 
-                if (widget.onReply != null) widget.onReply!(widget.message, messageEC.text);
+                if (widget.onReply != null)
+                  widget.onReply!(widget.message, messageEC.text);
 
                 messageEC.clear();
                 setState(() {
@@ -325,7 +331,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                     ),
                                   ),
                                   const SizedBox(width: 5),
-                                  if (widget.message.author?.isAdmin == true || widget.message.isAdmin == true) ...[
+                                  if (widget.message.author?.isAdmin == true ||
+                                      widget.message.isAdmin == true) ...[
                                     isAdminBubble(),
                                   ],
                                   Expanded(
@@ -341,9 +348,13 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                               // message AREA
                               Container(
                                 child: widget.message.pictureUrl != ''
-                                    ? Image.network('${widget.message.pictureUrl}')
-                                    : (widget.message.pictureAsset != null && widget.message.pictureAsset?.path != '')
-                                        ? Image.file(widget.message.pictureAsset!)
+                                    ? Image.network(
+                                        '${widget.message.pictureUrl}')
+                                    : (widget.message.pictureAsset != null &&
+                                            widget.message.pictureAsset?.path !=
+                                                '')
+                                        ? Image.file(
+                                            widget.message.pictureAsset!)
                                         : Text(
                                             // message.date,
                                             widget.message.text,
@@ -366,7 +377,9 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                 //
                 // menu area
                 Container(
-                  height: showReplyInput ? MediaQuery.of(context).size.height * 0.10 : MediaQuery.of(context).size.height * 0.40,
+                  height: showReplyInput
+                      ? MediaQuery.of(context).size.height * 0.10
+                      : MediaQuery.of(context).size.height * 0.40,
                   decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
@@ -417,28 +430,32 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   assetUrl: 'assets/Local_Legend.svg',
                                   onTap: () {
                                     // Function(String, String)?
-                                    widget.onReact(widget.message.id, 'Local Legend');
+                                    widget.onReact(
+                                        widget.message.id, 'Local Legend');
                                     _removeOverlay();
                                   },
                                 ),
                                 reactionCircle(
                                   assetUrl: 'assets/Sunflower.svg',
                                   onTap: () {
-                                    widget.onReact(widget.message.id, 'Sunflower');
+                                    widget.onReact(
+                                        widget.message.id, 'Sunflower');
                                     _removeOverlay();
                                   },
                                 ),
                                 reactionCircle(
                                   assetUrl: 'assets/Streetlight.svg',
                                   onTap: () {
-                                    widget.onReact(widget.message.id, 'Streetlight');
+                                    widget.onReact(
+                                        widget.message.id, 'Streetlight');
                                     _removeOverlay();
                                   },
                                 ),
                                 reactionCircle(
                                   assetUrl: 'assets/Park_Bench.svg',
                                   onTap: () {
-                                    widget.onReact(widget.message.id, 'Park Bench');
+                                    widget.onReact(
+                                        widget.message.id, 'Park Bench');
                                     _removeOverlay();
                                   },
                                 ),
@@ -455,7 +472,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                           const SizedBox(height: 20),
                           //
                           //
-                    
+
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: MenuIconItem(
@@ -464,14 +481,13 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                 iconSize: 25,
                                 onTap: () {
                                   print('#replySee');
-                          
+
                                   widget.onTapReply(widget.message);
                                   _removeOverlay();
-                           
                                 }),
                           ),
-                          // 
-                          // 
+                          //
+                          //
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0), // XXX
                             child: MenuIconItem(
@@ -480,13 +496,13 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                 iconSize: 25,
                                 onTap: () {
                                   print('#reply');
-                          
+
                                   setState(() {
                                     showReplyInput = true;
                                     // FocusScope.of(context).requestFocus(messageFocusNode);
                                   });
                                   _removeOverlay();
-                          
+
                                   setState(() {
                                     if (messageFocusNode.canRequestFocus) {
                                       messageFocusNode.requestFocus();
@@ -498,7 +514,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                           ),
                           //
                           //
-                    
+
                           //
                           //
                           Padding(
@@ -510,7 +526,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                 onTap: () {
                                   // communityDetailCubit.toggleMute();
                                   widget.onShare(widget.message);
-                    
+
                                   setState(() {
                                     showReplyInput = false;
                                   });
@@ -824,7 +840,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     //
                     if (widget.message.repliesAvatas != null)
                       StackedAvatarIndicator(
-                        avatarUrls: widget.message.repliesAvatas.map((e) => e).toList(),
+                        avatarUrls:
+                            widget.message.repliesAvatas.map((e) => e).toList(),
                         showOnly: 4,
                         avatarSize: 20,
                         onTap: () {},
@@ -834,7 +851,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     //
                     const SizedBox(width: 5),
                     widget.message.repliesCount != null
-                        ? Text('${widget.message.repliesCount} ${widget.message.repliesCount == 1 ? "reply" : "replies"}',
+                        ? Text(
+                            '${widget.message.repliesCount} ${widget.message.repliesCount == 1 ? "reply" : "replies"}',
                             style: TextStyle(
                               color: Colors.grey[600],
                               fontSize: 12,
@@ -923,7 +941,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                           ),
                         ),
                         const SizedBox(width: 5),
-                        if (widget.message.author?.isAdmin == true || widget.message.isAdmin == true) ...[
+                        if (widget.message.author?.isAdmin == true ||
+                            widget.message.isAdmin == true) ...[
                           isAdminBubble(),
                         ],
                       ],
@@ -939,7 +958,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                         },
                         child: widget.message.pictureUrl != ''
                             ? Image.network('${widget.message.pictureUrl}')
-                            : (widget.message.pictureAsset != null && widget.message.pictureAsset?.path != '')
+                            : (widget.message.pictureAsset != null &&
+                                    widget.message.pictureAsset?.path != '')
                                 ? Image.file(widget.message.pictureAsset!)
                                 : Text(
                                     // message.date,
@@ -953,7 +973,10 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     ),
                     //
                     //
-                    if ((widget.message.repliesCount + widget.message.cheers + widget.message.bools) != 0) ...[
+                    if ((widget.message.repliesCount +
+                            widget.message.cheers +
+                            widget.message.bools) !=
+                        0) ...[
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: chatReactionLocalWidget(),

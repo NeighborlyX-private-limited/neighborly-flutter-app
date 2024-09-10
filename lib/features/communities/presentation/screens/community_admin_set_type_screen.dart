@@ -11,7 +11,8 @@ class CommunityAdminTypeScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CommunityAdminTypeScreen> createState() => _CommunityAdminTypeScreenState();
+  State<CommunityAdminTypeScreen> createState() =>
+      _CommunityAdminTypeScreenState();
 }
 
 class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
@@ -23,7 +24,8 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
 
-    selectedOption = communityCubit.state.community?.isPublic == true ? 'public' : 'private';
+    selectedOption =
+        communityCubit.state.community?.isPublic == true ? 'public' : 'private';
   }
 
   void _handleRadioValueChange(String? value) {
@@ -59,7 +61,9 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
           TextButton(
               onPressed: () {
                 print('SAVE');
-                communityCubit.updateType(communityCubit.state.community?.id ?? '', selectedOption ?? 'public');
+                communityCubit.updateType(
+                    communityCubit.state.community?.id ?? '',
+                    selectedOption ?? 'public');
                 Navigator.of(context).pop();
               },
               child: Text(
@@ -111,10 +115,10 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
               ),
             ),
             const SizedBox(
-               height: 15,
+              height: 15,
             ),
-            // 
-            // 
+            //
+            //
             ListTile(
               title: const Text(
                 'Private',

@@ -11,10 +11,8 @@ class CreateCommunityUsecase {
 
   CreateCommunityUsecase(this.repository);
 
-  Future<Either<Failure, String>> call({
-    required CommunityModel community,
-    File? pictureFile
-  }) async {
+  Future<Either<Failure, String>> call(
+      {required CommunityModel community, File? pictureFile}) async {
     return await repository.createCommunity(
       community: community,
       pictureFile: pictureFile,

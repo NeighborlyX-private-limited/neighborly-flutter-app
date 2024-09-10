@@ -25,10 +25,14 @@ class NotificationListCubit extends Cubit<NotificationListState> {
     result.fold(
       (failure) {
         print('BLOC getNotifications ERROR: ' + failure.message);
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (notificationsList) {
-        emit(state.copyWith(status: Status.success, notifications: notificationsList));
+        emit(state.copyWith(
+            status: Status.success, notifications: notificationsList));
       },
     );
   }

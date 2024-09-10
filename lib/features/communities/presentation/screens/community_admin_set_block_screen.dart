@@ -12,10 +12,12 @@ class CommunityAdminBlockedUsersScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CommunityAdminBlockedUsersScreen> createState() => _CommunityAdminBlockedUsersScreenState();
+  State<CommunityAdminBlockedUsersScreen> createState() =>
+      _CommunityAdminBlockedUsersScreenState();
 }
 
-class _CommunityAdminBlockedUsersScreenState extends State<CommunityAdminBlockedUsersScreen> {
+class _CommunityAdminBlockedUsersScreenState
+    extends State<CommunityAdminBlockedUsersScreen> {
   late CommunityDetailsCubit communityCubit;
   late List<UserSimpleModel> blockedMembers;
 
@@ -24,14 +26,17 @@ class _CommunityAdminBlockedUsersScreenState extends State<CommunityAdminBlocked
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
 
-    blockedMembers = communityCubit.state.community?.blockList != null ? [...communityCubit.state.community!.blockList] : [];
+    blockedMembers = communityCubit.state.community?.blockList != null
+        ? [...communityCubit.state.community!.blockList]
+        : [];
   }
 
   void removeUser(BuildContext context, String communityId, String userId) {
     communityCubit.unblockUser(communityId, userId);
 
     setState(() {
-      blockedMembers = blockedMembers.where((element) => element.id != userId).toList();
+      blockedMembers =
+          blockedMembers.where((element) => element.id != userId).toList();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('User unblocked'),
@@ -68,7 +73,8 @@ class _CommunityAdminBlockedUsersScreenState extends State<CommunityAdminBlocked
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -76,7 +82,8 @@ class _CommunityAdminBlockedUsersScreenState extends State<CommunityAdminBlocked
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -89,12 +96,14 @@ class _CommunityAdminBlockedUsersScreenState extends State<CommunityAdminBlocked
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.pop(context);
-                        removeUser(context, communityCubit.state.community?.id ?? '', userId);
+                        removeUser(context,
+                            communityCubit.state.community?.id ?? '', userId);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -102,7 +111,8 @@ class _CommunityAdminBlockedUsersScreenState extends State<CommunityAdminBlocked
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
-                          style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -222,4 +232,3 @@ class _CommunityAdminBlockedUsersScreenState extends State<CommunityAdminBlocked
 // ########################################################################
 // ########################################################################
 // ########################################################################
- 

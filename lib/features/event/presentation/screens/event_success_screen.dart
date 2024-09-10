@@ -85,7 +85,8 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                   children: [
                     SvgPicture.asset(
                       imageSelector(),
-                      width: MediaQuery.of(context).size.width * (type == 'join' ? 0.50 : 0.35),
+                      width: MediaQuery.of(context).size.width *
+                          (type == 'join' ? 0.50 : 0.35),
                       // height: 84,
                     ),
                     const SizedBox(height: 20),
@@ -144,14 +145,16 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                   ''';
                   // Lógica ao clicar no botão
                   // context.go('/groups/create');
-                  ShareIt.text(content: message, androidSheetTitle: 'Look this event');
+                  ShareIt.text(
+                      content: message, androidSheetTitle: 'Look this event');
 
                   // print('shareResult: ${shareResult}');
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xff635BFF),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                      borderRadius: BorderRadius.circular(
+                          50), // Ajuste o raio conforme necessário
                     ),
                     padding: EdgeInsets.all(15)),
                 child: Padding(
@@ -183,7 +186,8 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.grey[200],
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                      borderRadius: BorderRadius.circular(
+                          50), // Ajuste o raio conforme necessário
                     ),
                     padding: EdgeInsets.all(15)),
                 child: Padding(

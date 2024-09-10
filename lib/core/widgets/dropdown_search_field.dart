@@ -78,10 +78,12 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
         DropdownButtonHideUnderline(
           child: Container(
             height: 60,
-            decoration: BoxDecoration( 
-
+            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-              border: Border.all(width: 1, color: Colors.black), //  const Color.fromARGB(255, 198, 203, 208)
+              border: Border.all(
+                  width: 1,
+                  color: Colors
+                      .black), //  const Color.fromARGB(255, 198, 203, 208)
             ),
             // height: double.infinity,
             width: double.infinity,
@@ -154,7 +156,10 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
                   ),
                 ),
                 searchMatchFn: (item, searchValue) {
-                  return item.value.toString().toLowerCase().contains(searchValue.toLowerCase());
+                  return item.value
+                      .toString()
+                      .toLowerCase()
+                      .contains(searchValue.toLowerCase());
                 },
               ),
               //This to clear the search value when you close the menu

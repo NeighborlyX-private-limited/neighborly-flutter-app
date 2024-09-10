@@ -102,7 +102,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                       'Thread',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                   ),
                   const SizedBox(
@@ -118,7 +119,10 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                       widget.room.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black45, fontSize: 14),
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black45,
+                          fontSize: 14),
                     ),
                   ),
                 ],
@@ -168,7 +172,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
               onTap: () {
                 // #send
                 // XXX
-                chatGroupCubit.sendMessage(message: messageEC.text, image: fileToUpload);
+                chatGroupCubit.sendMessage(
+                    message: messageEC.text, image: fileToUpload);
 
                 // fileToUpload = null;
                 messageEC.clear();
@@ -179,7 +184,9 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                   height: 48,
                   width: 48,
                   decoration: BoxDecoration(
-                    color: isCommentFilled ? AppColors.primaryColor : Colors.grey[500],
+                    color: isCommentFilled
+                        ? AppColors.primaryColor
+                        : Colors.grey[500],
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -253,7 +260,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -275,7 +283,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
             bloc: chatGroupCubit,
             builder: (context, state) {
               if (state.status == Status.loading) {
-                return Container(color: Colors.white, child: ChatMessagesGroupSheemer());
+                return Container(
+                    color: Colors.white, child: ChatMessagesGroupSheemer());
               }
 
               return Container(
@@ -315,16 +324,20 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                           print('#onTap bool - send to remote');
                         },
                         onReact: (messageId, reactOrAward) {
-                          print('#onTap react - send to remote award: $reactOrAward');
+                          print(
+                              '#onTap react - send to remote award: $reactOrAward');
                         },
                         onReport: (messageId, reason) {
-                          print('#onTap report - send to remote reason: $reason');
+                          print(
+                              '#onTap report - send to remote reason: $reason');
                         },
                         onShare: (message) {
-                          print('#onTap share - do something to share: $message.id');
+                          print(
+                              '#onTap share - do something to share: $message.id');
                         },
                         onPin: (messageToBePinned) {
-                          print('#onTap PIN - send to remote: $messageToBePinned.id');
+                          print(
+                              '#onTap PIN - send to remote: $messageToBePinned.id');
                         },
                       ),
                     ),
@@ -347,13 +360,16 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
 
                             // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
 
-                            var dateSummary = onlyDate(state.messages[index].date);
+                            var dateSummary =
+                                onlyDate(state.messages[index].date);
                             print('..FODA dateSummary=$dateSummary');
 
                             var messageWidget = ChatMessageGroupWidget(
                               message: msg,
                               showReply: false,
-                              showIsReaded: (lineCount == state.messages.length) && msg.isMine,
+                              showIsReaded:
+                                  (lineCount == state.messages.length) &&
+                                      msg.isMine,
                               onTap: (msgSelected) {
                                 print('....selected=${msgSelected}');
                                 print('lineCount=${lineCount}');
@@ -373,16 +389,20 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                                 print('#onTap bool - send to remote');
                               },
                               onReact: (messageId, reactOrAward) {
-                                print('#onTap react - send to remote award: $reactOrAward');
+                                print(
+                                    '#onTap react - send to remote award: $reactOrAward');
                               },
                               onReport: (messageId, reason) {
-                                print('#onTap report - send to remote reason: $reason');
+                                print(
+                                    '#onTap report - send to remote reason: $reason');
                               },
                               onShare: (message) {
-                                print('#onTap share - do something to share: $message.id');
+                                print(
+                                    '#onTap share - do something to share: $message.id');
                               },
                               onPin: (messageToBePinned) {
-                                print('#onTap PIN - send to remote: $messageToBePinned.id');
+                                print(
+                                    '#onTap PIN - send to remote: $messageToBePinned.id');
                               },
                             );
 
@@ -393,7 +413,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                                   if (lastDate != '')
                                     Text(
                                       formatDate(dateSummary),
-                                      style: TextStyle(fontSize: 12, height: 2.5),
+                                      style:
+                                          TextStyle(fontSize: 12, height: 2.5),
                                     ),
                                   messageWidget,
                                 ],

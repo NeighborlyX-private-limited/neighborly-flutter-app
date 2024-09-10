@@ -39,11 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _fetchPosts() {
-    BlocProvider.of<GetAllPostsBloc>(context).add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
+    BlocProvider.of<GetAllPostsBloc>(context)
+        .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
 
   Future<void> _onRefresh() async {
-    BlocProvider.of<GetAllPostsBloc>(context).add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
+    BlocProvider.of<GetAllPostsBloc>(context)
+        .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
 
   void handleToggle(bool value) {
@@ -186,7 +188,8 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (BuildContext context, StateSetter setState) {
             return DraggableScrollableSheet(
               expand: false,
-              builder: (BuildContext context, ScrollController scrollController) {
+              builder:
+                  (BuildContext context, ScrollController scrollController) {
                 return SingleChildScrollView(
                   controller: scrollController,
                   child: Container(
@@ -197,7 +200,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         topRight: Radius.circular(20),
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -282,12 +286,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 45),
                         BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
-                          listener: (BuildContext context, GetGenderAndDOBState state) {
+                          listener: (BuildContext context,
+                              GetGenderAndDOBState state) {
                             if (state is GetGenderAndDOBFailureState) {
-                              if (state.error.contains('DOB can only be set once.')) {
+                              if (state.error
+                                  .contains('DOB can only be set once.')) {
                                 context.pop();
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('User Info saved successfully.')),
+                                  const SnackBar(
+                                      content: Text(
+                                          'User Info saved successfully.')),
                                 );
                               } else {
                                 context.pop();
@@ -299,7 +307,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               print('User Info saved successfully.');
                               context.pop();
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('User Info saved successfully.')),
+                                const SnackBar(
+                                    content:
+                                        Text('User Info saved successfully.')),
                               );
                             }
                           },
@@ -315,7 +325,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               text: 'Save',
                               isFilled: true,
                               onTapListener: () {
-                                BlocProvider.of<GetGenderAndDOBBloc>(context).add(
+                                BlocProvider.of<GetGenderAndDOBBloc>(context)
+                                    .add(
                                   GetGenderAndDOBButtonPressedEvent(
                                     dob: formatDOB(
                                       dateController.text.trim(),

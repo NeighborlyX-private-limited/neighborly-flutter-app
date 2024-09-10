@@ -20,7 +20,8 @@ class EventMainScreen extends StatefulWidget {
   State<EventMainScreen> createState() => _EventMainScreenState();
 }
 
-class _EventMainScreenState extends State<EventMainScreen> with SingleTickerProviderStateMixin {
+class _EventMainScreenState extends State<EventMainScreen>
+    with SingleTickerProviderStateMixin {
   // ignore: unused_field
   late TabController _tabController;
   late var eventMainCubit;
@@ -190,7 +191,8 @@ class _EventMainScreenState extends State<EventMainScreen> with SingleTickerProv
                             children: [
                               Text(
                                 isSummary ? 'Local Events' : 'All Local Events',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               GestureDetector(
                                 onTap: () {
@@ -212,7 +214,8 @@ class _EventMainScreenState extends State<EventMainScreen> with SingleTickerProv
 
                         if (state.eventsLocal.length == 0)
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
                             child: EventEmptyLocal(),
                           ),
                         //
@@ -227,10 +230,12 @@ class _EventMainScreenState extends State<EventMainScreen> with SingleTickerProv
                               itemCount: state.eventsLocal.length,
                               itemBuilder: (context, index) {
                                 return Container(
-                                  padding: EdgeInsets.only(left: index == 0 ? 13 : 1),
+                                  padding: EdgeInsets.only(
+                                      left: index == 0 ? 13 : 1),
                                   child: EventCardWidget(
                                     event: state.eventsLocal[index],
-                                    width: MediaQuery.of(context).size.width * 0.9,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.9,
                                     onSelect: (EventModel) {
                                       print('selected: ${EventModel}');
                                     },
@@ -331,7 +336,8 @@ class _EventMainScreenState extends State<EventMainScreen> with SingleTickerProv
                               // MY EVENTS
                               if (state.eventsMine.length > 0)
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
                                   child: EventEmptyMy(),
                                 ),
                               //
@@ -347,10 +353,14 @@ class _EventMainScreenState extends State<EventMainScreen> with SingleTickerProv
                               if (state.eventsGoing.length > 0)
                                 ...state.eventsGoing
                                     .map((event) => Padding(
-                                          padding: const EdgeInsets.only(top: 8.0),
+                                          padding:
+                                              const EdgeInsets.only(top: 8.0),
                                           child: EventCardWidget(
                                             event: event,
-                                            width: MediaQuery.of(context).size.width * 0.9,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.9,
                                             onSelect: (EventModel) {
                                               print('selected: ${EventModel}');
                                             },

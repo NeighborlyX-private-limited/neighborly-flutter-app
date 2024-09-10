@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 import 'package:scrollable_clean_calendar/controllers/clean_calendar_controller.dart';
 import 'package:scrollable_clean_calendar/scrollable_clean_calendar.dart';
 import 'package:scrollable_clean_calendar/utils/enums.dart';
@@ -57,9 +57,12 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
     print('...widget.startDateStr=${widget.startDateStr}');
     print('...widget.endDateStr=${widget.endDateStr}');
 
-    if ((widget.startDateStr != null && widget.startDateStr != '') && (widget.endDateStr != null && widget.endDateStr != '')) {
-      startDate = DateTime.parse(widget.startDateStr!); // DateFormat('dd/MM/yyyy').parse(widget.startDateStr!);
-      endDate = DateTime.parse(widget.endDateStr!); //DateFormat('dd/MM/yyyy').parse(widget.endDateStr!);
+    if ((widget.startDateStr != null && widget.startDateStr != '') &&
+        (widget.endDateStr != null && widget.endDateStr != '')) {
+      startDate = DateTime.parse(widget
+          .startDateStr!); // DateFormat('dd/MM/yyyy').parse(widget.startDateStr!);
+      endDate = DateTime.parse(widget
+          .endDateStr!); //DateFormat('dd/MM/yyyy').parse(widget.endDateStr!);
     }
 
     calendarController = CleanCalendarController(
@@ -95,8 +98,7 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async { 
-
+      onWillPop: () async {
         handleReturn();
         return true;
       },
@@ -126,7 +128,8 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
             layout: Layout.BEAUTY,
             calendarCrossAxisSpacing: 0,
             daySelectedBackgroundColor: AppColors.primaryColor,
-            daySelectedBackgroundColorBetween: AppColors.primaryColor.withAlpha(130),
+            daySelectedBackgroundColorBetween:
+                AppColors.primaryColor.withAlpha(130),
           ),
 
           //  RangePickerPage(),
@@ -136,7 +139,7 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
           child: Container(
             // height: 50,
             // color: Colors.amber,
-            
+
             child: Row(
               children: [
                 //
@@ -154,7 +157,8 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                        borderRadius: BorderRadius.circular(
+                            50), // Ajuste o raio conforme necessário
                       ),
                       // padding: EdgeInsets.all(15)
                     ),
@@ -162,7 +166,8 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
                         'Clear',
-                        style: TextStyle(color: Colors.grey, fontSize: 18, height: 0.3),
+                        style: TextStyle(
+                            color: Colors.grey, fontSize: 18, height: 0.3),
                       ),
                     ),
                   ),
@@ -181,7 +186,8 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                        borderRadius: BorderRadius.circular(
+                            50), // Ajuste o raio conforme necessário
                       ),
                       // padding: EdgeInsets.all(15)
                     ),
@@ -189,7 +195,8 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Text(
                         'Save Selection',
-                        style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                        style: TextStyle(
+                            color: Colors.white, fontSize: 18, height: 0.3),
                       ),
                     ),
                   ),

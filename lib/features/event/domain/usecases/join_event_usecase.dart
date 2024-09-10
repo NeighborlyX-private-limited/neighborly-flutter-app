@@ -10,10 +10,10 @@ class JoinEventUsecase {
   JoinEventUsecase(this.repository);
 
   Future<Either<Failure, void>> call({
-    required EventModel event, 
+    required EventModel event,
   }) async {
     return await repository.joinEvent(
-      event: event, 
+      event: event,
     );
   }
 }

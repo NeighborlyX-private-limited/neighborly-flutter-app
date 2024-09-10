@@ -13,7 +13,8 @@ class CommunityAdminIconScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CommunityAdminIconScreen> createState() => _CommunityAdminIconScreenState();
+  State<CommunityAdminIconScreen> createState() =>
+      _CommunityAdminIconScreenState();
 }
 
 class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
@@ -73,7 +74,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -81,7 +83,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -99,7 +102,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -107,7 +111,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
-                          style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -171,7 +176,9 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                       );
                     } else {
                       print('SAVE');
-                      communityCubit.updateIcon(communityCubit.state.community?.id ?? '', _selectedImage);
+                      communityCubit.updateIcon(
+                          communityCubit.state.community?.id ?? '',
+                          _selectedImage);
                       Navigator.of(context).pop();
                     }
                   },
@@ -204,18 +211,19 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                     ),
-                    child: _selectedImage != null && _selectedImage?.path != null
-                        ? Image.file(
-                            _selectedImage!,
-                            width: double.infinity,
-                            // height: 260,
-                            fit: BoxFit.cover,
-                          )
-                        : Image.network(
-                            communityCubit.state.community?.avatarUrl ??
-                                'https://eu.ui-avatars.com/api/?name=${communityCubit.state.community?.name}&background=random&rounded=true',
-                            fit: BoxFit.cover,
-                          ),
+                    child:
+                        _selectedImage != null && _selectedImage?.path != null
+                            ? Image.file(
+                                _selectedImage!,
+                                width: double.infinity,
+                                // height: 260,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.network(
+                                communityCubit.state.community?.avatarUrl ??
+                                    'https://eu.ui-avatars.com/api/?name=${communityCubit.state.community?.name}&background=random&rounded=true',
+                                fit: BoxFit.cover,
+                              ),
                   ),
                 ),
                 Positioned(

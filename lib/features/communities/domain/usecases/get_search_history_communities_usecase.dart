@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import '../../../../core/error/failures.dart'; 
+import '../../../../core/error/failures.dart';
 
 import '../../data/model/search_dash_model.dart';
 import '../repositories/community_repositories.dart';
@@ -9,7 +9,7 @@ class GetSearchHistoryCommunitiesUsecase {
 
   GetSearchHistoryCommunitiesUsecase(this.repository);
 
-  Future<Either<Failure, SearchDashModel>> call( ) async {
-    return await repository.getSearchHistoryAndTrends(  );
+  Future<Either<Failure, SearchDashModel>> call() async {
+    return await repository.getSearchHistoryAndTrends();
   }
 }

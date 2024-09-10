@@ -12,7 +12,6 @@ class GetCommunityUsecase {
   Future<Either<Failure, CommunityModel>> call({
     required String communityId,
   }) async {
-     
     return await repository.getCommunity(
       communityId: communityId,
     );

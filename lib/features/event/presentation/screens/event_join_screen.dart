@@ -79,7 +79,8 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -87,7 +88,8 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -105,7 +107,8 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -113,7 +116,8 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
-                          style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -142,7 +146,13 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
         setState(() => isValidForm = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ops, you forgot to fill: \n' + errors.map((e) => '\n${e}').toList().toString().replaceAll('[', '').replaceAll(']', '')),
+            content: Text('Ops, you forgot to fill: \n' +
+                errors
+                    .map((e) => '\n${e}')
+                    .toList()
+                    .toString()
+                    .replaceAll('[', '')
+                    .replaceAll(']', '')),
           ),
         );
       }
@@ -188,7 +198,8 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -354,14 +365,21 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                                 processSave();
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: _isChecked ? AppColors.primaryColor : Colors.grey[100],
+                                backgroundColor: _isChecked
+                                    ? AppColors.primaryColor
+                                    : Colors.grey[100],
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                                  borderRadius: BorderRadius.circular(
+                                      50), // Ajuste o raio conforme necessário
                                 ),
                                 // padding: EdgeInsets.all(15)
                               ),
                               child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 1, vertical: state.status == Status.loading ? 17 : 25),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 1,
+                                    vertical: state.status == Status.loading
+                                        ? 17
+                                        : 25),
                                 child: state.status == Status.loading
                                     ? SizedBox(
                                         height: 22,
@@ -372,7 +390,12 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                                       )
                                     : Text(
                                         'Register',
-                                        style: TextStyle(color: _isChecked ? Colors.white : Colors.grey, fontSize: 18, height: 0.3),
+                                        style: TextStyle(
+                                            color: _isChecked
+                                                ? Colors.white
+                                                : Colors.grey,
+                                            fontSize: 18,
+                                            height: 0.3),
                                       ),
                               ),
                             ),

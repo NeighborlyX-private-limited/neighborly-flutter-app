@@ -90,7 +90,8 @@ class EventCardWidget extends StatelessWidget {
                         Text(
                           formatDate(event.dateStart),
                           // 'March 14, 2023 at 7:00 AM',
-                          style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                          style: TextStyle(
+                              fontWeight: FontWeight.normal, fontSize: 16),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -100,7 +101,8 @@ class EventCardWidget extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 event.title,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -110,13 +112,17 @@ class EventCardWidget extends StatelessWidget {
                         //
                         Row(
                           children: [
-                            SvgPicture.asset('assets/icon_location.svg', height: 16,),
+                            SvgPicture.asset(
+                              'assets/icon_location.svg',
+                              height: 16,
+                            ),
                             const SizedBox(
                               width: 8,
                             ),
                             Text(
-                               event.locationStr,
-                              style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
+                              event.locationStr,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal, fontSize: 16),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -126,7 +132,6 @@ class EventCardWidget extends StatelessWidget {
                     ),
                   ),
                 )
-         
               ],
             ),
           ),

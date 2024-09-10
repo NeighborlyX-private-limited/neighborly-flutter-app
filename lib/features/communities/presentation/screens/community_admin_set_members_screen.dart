@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
@@ -13,22 +13,27 @@ class CommunityAdminMembersUsersScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CommunityAdminMembersUsersScreen> createState() => _CommunityAdminMembersUsersScreenState();
+  State<CommunityAdminMembersUsersScreen> createState() =>
+      _CommunityAdminMembersUsersScreenState();
 }
 
-class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembersUsersScreen> {
+class _CommunityAdminMembersUsersScreenState
+    extends State<CommunityAdminMembersUsersScreen> {
   late CommunityDetailsCubit communityCubit;
   late List<UserSimpleModel> members;
-  late List<UserSimpleModel> admins; 
+  late List<UserSimpleModel> admins;
 
   @override
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
 
-    members = communityCubit.state.community?.users != null ? [...communityCubit.state.community!.users] : [];
-    admins = communityCubit.state.community?.admins != null ? [...communityCubit.state.community!.admins] : [];
-
+    members = communityCubit.state.community?.users != null
+        ? [...communityCubit.state.community!.users]
+        : [];
+    admins = communityCubit.state.community?.admins != null
+        ? [...communityCubit.state.community!.admins]
+        : [];
   }
 
   void removeUser(BuildContext context, String communityId, String userId) {
@@ -55,7 +60,8 @@ class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembers
       admins = [newAdmin, ...admins];
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('User transformed. \nWith great power comes great responsabilities'),
+          content: Text(
+              'User transformed. \nWith great power comes great responsabilities'),
         ),
       );
     });
@@ -89,7 +95,8 @@ class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembers
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -97,7 +104,8 @@ class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembers
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -109,15 +117,16 @@ class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembers
                     flex: 40,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context); 
+                        Navigator.pop(context);
                         communityCubit.leaveCommunity();
-                        Navigator.pop(context); 
-                        Navigator.pop(context); 
+                        Navigator.pop(context);
+                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -125,7 +134,8 @@ class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembers
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
-                          style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -167,7 +177,8 @@ class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembers
                   textColor: Colors.red,
                   onTap: () {
                     Navigator.pop(context);
-                    removeUser(context, communityCubit.state.community?.id ?? '', userId);
+                    removeUser(context,
+                        communityCubit.state.community?.id ?? '', userId);
                   }),
             ],
           ),
@@ -239,7 +250,7 @@ class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembers
 
   @override
   Widget build(BuildContext context) {
-    final bool hasMembers = members.isNotEmpty ||  admins.isNotEmpty;
+    final bool hasMembers = members.isNotEmpty || admins.isNotEmpty;
 
     return Scaffold(
       backgroundColor: AppColors.lightBackgroundColor,
@@ -301,4 +312,3 @@ class _CommunityAdminMembersUsersScreenState extends State<CommunityAdminMembers
 // ########################################################################
 // ########################################################################
 // ########################################################################
- 

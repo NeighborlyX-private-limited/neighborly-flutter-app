@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart'; 
+import 'package:flutter_svg/flutter_svg.dart';
 
 class EventEmptyMy extends StatelessWidget {
   const EventEmptyMy({super.key});
@@ -11,7 +11,7 @@ class EventEmptyMy extends StatelessWidget {
       children: [
         const SizedBox(height: 30),
         SvgPicture.asset('assets/event_empty.svg'),
-    
+
         Text(
           'You have not created an event yet.',
           textAlign: TextAlign.center,
@@ -32,11 +32,10 @@ class EventEmptyMy extends StatelessWidget {
           ),
         ),
         const SizedBox(
-           height: 15,
+          height: 15,
         ),
-        // 
-        // 
-        
+        //
+        //
       ],
     );
   }

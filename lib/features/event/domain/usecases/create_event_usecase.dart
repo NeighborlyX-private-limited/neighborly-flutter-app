@@ -17,7 +17,7 @@ class CreateEventUsecase {
   }) async {
     return await repository.createEvent(
       event: event,
-      imageCover: imageCover, 
+      imageCover: imageCover,
     );
   }
 }

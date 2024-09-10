@@ -81,7 +81,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -89,7 +90,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
-                          style: TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.black, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -107,7 +109,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(
+                              50), // Ajuste o raio conforme necessário
                         ),
                         // padding: EdgeInsets.all(15)
                       ),
@@ -115,7 +118,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
-                          style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                          style: TextStyle(
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -243,7 +247,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                borderRadius: BorderRadius.circular(
+                    50), // Ajuste o raio conforme necessário
               ),
               // padding: EdgeInsets.all(15)
             ),
@@ -251,7 +256,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Text(
                 currentStep == 4 ? 'Save' : 'Next >',
-                style: TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                style:
+                    TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
               ),
             ),
           ),
@@ -271,7 +277,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -306,7 +313,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       //
                       //
                       if (currentStep == 1) ...[
-                        Step1area(nameController: nameEC, typeController: typeEC),
+                        Step1area(
+                            nameController: nameEC, typeController: typeEC),
                       ],
                       //
                       //
@@ -316,7 +324,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       //
                       //
                       if (currentStep == 3) ...[
-                        Step3area(locationController: locationEC, radiusController: radiusEC),
+                        Step3area(
+                            locationController: locationEC,
+                            radiusController: radiusEC),
                       ],
                       //
                       //
@@ -598,7 +608,7 @@ class _Step4areaState extends State<Step4area> {
                       width: MediaQuery.of(context).size.width * 0.7,
                       height: MediaQuery.of(context).size.width * 0.7,
                       // height: 190,
-                      decoration:   BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.black.withOpacity(0.7),
                       ),
@@ -639,7 +649,7 @@ class _Step4areaState extends State<Step4area> {
                 right: 0,
                 child: GestureDetector(
                   onTap: () {
-                    if(widget.isLoading == true) return; 
+                    if (widget.isLoading == true) return;
 
                     _pickImage();
                   },

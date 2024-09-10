@@ -65,14 +65,18 @@ class NotificationModel extends NotificationEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory NotificationModel.fromJson(String source) => NotificationModel.fromMap(json.decode(source));
+  factory NotificationModel.fromJson(String source) =>
+      NotificationModel.fromMap(json.decode(source));
 
   static List<NotificationModel> fromJsonList(List<dynamic> json) {
     var list = <NotificationModel>[];
     // print('list: ${json}');
 
     if (json.isNotEmpty) {
-      list = json.map<NotificationModel>((jsomItem) => NotificationModel.fromMap(jsomItem)).toList();
+      list = json
+          .map<NotificationModel>(
+              (jsomItem) => NotificationModel.fromMap(jsomItem))
+          .toList();
     }
 
     return list;

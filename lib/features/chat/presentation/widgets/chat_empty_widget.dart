@@ -60,7 +60,8 @@ class ChatEmptyWidget extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xff635BFF),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50), // Ajuste o raio conforme necessário
+                    borderRadius: BorderRadius.circular(
+                        50), // Ajuste o raio conforme necessário
                   ),
                   padding: EdgeInsets.all(15)),
               child: Padding(

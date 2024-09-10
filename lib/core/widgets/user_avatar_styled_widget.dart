@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../constants/core_dimens.dart';
- 
 
 class UserAvatarStyledWidget extends StatelessWidget {
   final String avatarUrl;
@@ -32,17 +31,19 @@ class UserAvatarStyledWidget extends StatelessWidget {
   //   );
   // }
 
-    Widget avatarArea(BuildContext context, String avatarUrl) {
-    final proportionalSize = CoreDimens.proportionalWidth(context, avatarSize ?? 30);
+  Widget avatarArea(BuildContext context, String avatarUrl) {
+    final proportionalSize =
+        CoreDimens.proportionalWidth(context, avatarSize ?? 30);
     return CircleAvatar(
-      radius: proportionalSize+avatarBorderSize!,
+      radius: proportionalSize + avatarBorderSize!,
       backgroundColor: Colors.green,
       child: CircleAvatar(
         radius: proportionalSize,
         backgroundColor: isDarkmode! ? Colors.black : Colors.white,
         child: CircleAvatar(
           radius: proportionalSize - avatarBorderSize!,
-          onBackgroundImageError: (_, __) => SvgPicture.asset('assets/vectors/my_profile_placeholder.svg'),
+          onBackgroundImageError: (_, __) =>
+              SvgPicture.asset('assets/vectors/my_profile_placeholder.svg'),
           backgroundImage: CachedNetworkImageProvider(avatarUrl),
         ),
       ),

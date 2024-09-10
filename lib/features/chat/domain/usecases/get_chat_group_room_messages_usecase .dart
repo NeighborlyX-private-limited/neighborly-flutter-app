@@ -7,7 +7,7 @@ import '../repositories/chat_repositories.dart';
 class GetChatGroupRoomMessagesUseCase {
   final ChatRepositories repository;
 
-  GetChatGroupRoomMessagesUseCase(this.repository); 
+  GetChatGroupRoomMessagesUseCase(this.repository);
 
   Future<Either<Failure, List<ChatMessageModel>>> call({
     required String roomId,

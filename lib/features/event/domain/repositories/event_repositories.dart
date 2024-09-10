@@ -15,8 +15,11 @@ abstract class EventRepositories {
     required String filterLocation,
   });
 
-  Future<Either<Failure, void>> createEvent({required EventModel event, File? imageCover});
-  Future<Either<Failure, void>> updateEvent({required EventModel event, File? imageCover});
-  Future<Either<Failure, void>> cancelEvent({required EventModel event, String? reason});
+  Future<Either<Failure, void>> createEvent(
+      {required EventModel event, File? imageCover});
+  Future<Either<Failure, void>> updateEvent(
+      {required EventModel event, File? imageCover});
+  Future<Either<Failure, void>> cancelEvent(
+      {required EventModel event, String? reason});
   Future<Either<Failure, void>> joinEvent({required EventModel event});
 }

@@ -12,10 +12,12 @@ class CommunityAdminRadiusScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CommunityAdminRadiusScreen> createState() => _CommunityAdminRadiusScreenState();
+  State<CommunityAdminRadiusScreen> createState() =>
+      _CommunityAdminRadiusScreenState();
 }
 
-class _CommunityAdminRadiusScreenState extends State<CommunityAdminRadiusScreen> {
+class _CommunityAdminRadiusScreenState
+    extends State<CommunityAdminRadiusScreen> {
   late CommunityDetailsCubit communityCubit;
 
   final newRadiusEC = TextEditingController();
@@ -68,7 +70,9 @@ class _CommunityAdminRadiusScreenState extends State<CommunityAdminRadiusScreen>
                   );
                 } else {
                   print('SAVE');
-                  communityCubit.updateRadius(communityCubit.state.community?.id ?? '', double.parse(newRadiusEC.text.trim()));
+                  communityCubit.updateRadius(
+                      communityCubit.state.community?.id ?? '',
+                      double.parse(newRadiusEC.text.trim()));
                   Navigator.of(context).pop();
                 }
               },

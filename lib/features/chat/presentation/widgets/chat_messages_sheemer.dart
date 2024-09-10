@@ -6,10 +6,10 @@ import 'package:shimmer/shimmer.dart';
 class ChatMessagesSheemer extends StatelessWidget {
   const ChatMessagesSheemer({super.key});
 
-int generateRandomNumber(int min, int max) {
-  final Random random = Random();
-  return min + random.nextInt(max - min + 1);
-}
+  int generateRandomNumber(int min, int max) {
+    final Random random = Random();
+    return min + random.nextInt(max - min + 1);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,19 +30,21 @@ int generateRandomNumber(int min, int max) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: Row(
-                   mainAxisAlignment: randomNum.isEven ?  MainAxisAlignment.start :  MainAxisAlignment.end,
+                    mainAxisAlignment: randomNum.isEven
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.end,
                     children: [
-                      
                       Shimmer.fromColors(
-                            baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[100]!,
-                            child: Container(
-                              width: MediaQuery.of(context).size.width *0.70,
-                              height: 60,
-                              decoration: BoxDecoration(color: Colors.grey[300], 
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.70,
+                          height: 60,
+                          decoration: BoxDecoration(
+                              color: Colors.grey[300],
                               borderRadius: BorderRadius.circular(10)),
-                            ),
-                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );

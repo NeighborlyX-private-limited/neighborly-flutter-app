@@ -23,8 +23,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
     print('... BLOC - INIT eventDetails?=${state.eventDetails}');
 
     // emit(state.copyWith(eventDetails: event, newEventId: eventId));
-    
-        
+
     emit(state.copyWith(
         eventDetails: EventModel(
             id: event.id,
@@ -49,14 +48,19 @@ class EventDetailCubit extends Cubit<EventDetailState> {
   Future cancelEvent(String? reason) async {
     emit(state.copyWith(status: Status.loading));
 
-    final result = await cancelEventUsecase(event: state.eventDetails!, reason: 'reason');
+    final result =
+        await cancelEventUsecase(event: state.eventDetails!, reason: 'reason');
 
     result.fold(
       (failure) {
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (noResponse) {
-        emit(state.copyWith(status: Status.success, successMessage: 'Event canceled'));
+        emit(state.copyWith(
+            status: Status.success, successMessage: 'Event canceled'));
       },
     );
   }
@@ -75,10 +79,16 @@ class EventDetailCubit extends Cubit<EventDetailState> {
 
     result.fold(
       (failure) {
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (noResponse) {
-        emit(state.copyWith(status: Status.success, successMessage: 'Event joined', eventDetails: state.eventDetails!.copyWith(isJoined: true)));
+        emit(state.copyWith(
+            status: Status.success,
+            successMessage: 'Event joined',
+            eventDetails: state.eventDetails!.copyWith(isJoined: true)));
       },
     );
   }

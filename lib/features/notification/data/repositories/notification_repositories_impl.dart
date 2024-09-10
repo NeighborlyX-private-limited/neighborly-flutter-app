@@ -32,7 +32,8 @@ class NotificationRepositoriesImpl implements NotificationRepositories {
   }
 
   @override
-  Future<Either<Failure, List<NotificationModel>>> getAllNotification({String? page})async {
+  Future<Either<Failure, List<NotificationModel>>> getAllNotification(
+      {String? page}) async {
     if (await networkInfo.isConnected) {
       try {
         var result = await remoteDataSource.getAllNotification(page: page);
@@ -46,6 +47,4 @@ class NotificationRepositoriesImpl implements NotificationRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
-
- 
 }

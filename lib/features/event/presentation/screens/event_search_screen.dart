@@ -26,7 +26,8 @@ class EventSearchScreen extends StatefulWidget {
   State<EventSearchScreen> createState() => _EventSearchScreenState();
 }
 
-class _EventSearchScreenState extends State<EventSearchScreen> with SingleTickerProviderStateMixin {
+class _EventSearchScreenState extends State<EventSearchScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late EventSearchCubit eventSearchCubit;
   int selectedTab = 0;
@@ -136,7 +137,8 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          eventSearchCubit.onUpdateCategory(kEventCategories[index]);
+                          eventSearchCubit
+                              .onUpdateCategory(kEventCategories[index]);
                           Navigator.pop(context);
                         },
                         child: Container(
@@ -154,7 +156,9 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
                       );
                     },
                     separatorBuilder: (context, index) {
-                      return Divider(color: Colors.grey[300]); // Aqui você pode personalizar o divisor
+                      return Divider(
+                          color: Colors.grey[
+                              300]); // Aqui você pode personalizar o divisor
                     },
                   ),
                 ),
@@ -182,7 +186,8 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
                     itemBuilder: (context, index) {
                       return InkWell(
                         onTap: () {
-                          eventSearchCubit.onUpdateLocation(kLocationList[index]);
+                          eventSearchCubit
+                              .onUpdateLocation(kLocationList[index]);
                           Navigator.pop(context);
                         },
                         child: Container(
@@ -200,7 +205,9 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
                       );
                     },
                     separatorBuilder: (context, index) {
-                      return Divider(color: Colors.grey[300]); // Aqui você pode personalizar o divisor
+                      return Divider(
+                          color: Colors.grey[
+                              300]); // Aqui você pode personalizar o divisor
                     },
                   ),
                 ),
@@ -269,7 +276,11 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
     return '${formattedDateStart} - ${formattedDateEnd}';
   }
 
-  Widget searchElement({required String noSelectedText, required String selectedValue, required VoidCallback onTap, required VoidCallback onClear}) {
+  Widget searchElement(
+      {required String noSelectedText,
+      required String selectedValue,
+      required VoidCallback onTap,
+      required VoidCallback onClear}) {
     return InkWell(
       onTap: selectedValue != '' ? onClear : onTap,
       child: Container(
@@ -294,7 +305,9 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
               width: 2,
             ),
             Icon(
-              selectedValue != '' ? Icons.close : Icons.keyboard_arrow_down_outlined,
+              selectedValue != ''
+                  ? Icons.close
+                  : Icons.keyboard_arrow_down_outlined,
               color: selectedValue != '' ? Colors.white : Colors.black38,
               size: selectedValue != '' ? 15 : 20,
             ),
@@ -341,9 +354,13 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
                 // fillColor: widget.isDarkmode! ? Colors.grey[800] : Colors.grey[200],
                 fillColor: AppColors.lightBackgroundColor,
                 hintText: 'Search', // 'Buscar',
-                contentPadding: EdgeInsets.symmetric(horizontal: 18, vertical: 3), // Inside box padding
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: 18, vertical: 3), // Inside box padding
                 // hintStyle: TextStyle(color: widget.isDarkmode! ? Colors.white.withOpacity(0.4) : Colors.black26),
-                hintStyle: TextStyle(color: Colors.black.withOpacity(0.6), fontSize: 18, fontWeight: FontWeight.w400),
+                hintStyle: TextStyle(
+                    color: Colors.black.withOpacity(0.6),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w400),
                 border: OutlineInputBorder(
                   gapPadding: 0,
                   borderSide: BorderSide(
@@ -375,7 +392,9 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
               children: [
                 searchElement(
                   noSelectedText: 'Date',
-                  selectedValue: dateFilterStart != '' ? simplifyISOtimeString(dateFilterStart, dateFilterEnd) : '',
+                  selectedValue: dateFilterStart != ''
+                      ? simplifyISOtimeString(dateFilterStart, dateFilterEnd)
+                      : '',
                   onTap: () async {
                     // setState(() {
                     //   selectedFilter = 'date';
@@ -386,8 +405,16 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
                       context,
                       MaterialPageRoute(
                           builder: (context) => ManageDatesDialog(
-                                endDateStr: dateFilterStart == '' ? DateTime.now().toIso8601String().split('T')[0] : dateFilterStart,
-                                startDateStr: dateFilterEnd == '' ? DateTime.now().toIso8601String().split('T')[0] : dateFilterEnd,
+                                endDateStr: dateFilterStart == ''
+                                    ? DateTime.now()
+                                        .toIso8601String()
+                                        .split('T')[0]
+                                    : dateFilterStart,
+                                startDateStr: dateFilterEnd == ''
+                                    ? DateTime.now()
+                                        .toIso8601String()
+                                        .split('T')[0]
+                                    : dateFilterEnd,
                               )),
                     ); //
 
@@ -395,7 +422,9 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
 
                     print('...onPressOpenDatesSelection response=${response}');
 
-                    eventSearchCubit.onUpdateDate(response['startDateRaw'].toString(), response['endDateRaw'].toString());
+                    eventSearchCubit.onUpdateDate(
+                        response['startDateRaw'].toString(),
+                        response['endDateRaw'].toString());
                   },
                   onClear: onCleanDate,
                 ),
@@ -530,28 +559,38 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
                             children: [
                               //
                               //
-                              if (state.status == Status.loading) EventMainSheemer(),
+                              if (state.status == Status.loading)
+                                EventMainSheemer(),
 
-                              if (state.status != Status.loading && state.eventsLocal.length == 0) ...[
+                              if (state.status != Status.loading &&
+                                  state.eventsLocal.length == 0) ...[
                                 if (searchTermEC.text != '') EventEmptyResult(),
 
                                 if (searchTermEC.text == '')
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 50.0),
                                     child: EventEmptySearchLocal(),
                                   ),
                                 //
                                 //
                               ],
-                              if (state.status != Status.loading && state.eventsLocal.length > 0) ...[
+                              if (state.status != Status.loading &&
+                                  state.eventsLocal.length > 0) ...[
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 18),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        isSummary ? 'Local Events' : 'All Local Events',
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                                        isSummary
+                                            ? 'Local Events'
+                                            : 'All Local Events',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
                                       ),
                                     ],
                                   ),
@@ -559,10 +598,14 @@ class _EventSearchScreenState extends State<EventSearchScreen> with SingleTicker
 
                                 ...state.eventsLocal
                                     .map((event) => Padding(
-                                          padding: const EdgeInsets.only(top: 8.0),
+                                          padding:
+                                              const EdgeInsets.only(top: 8.0),
                                           child: EventCardWidget(
                                             event: event,
-                                            width: MediaQuery.of(context).size.width * 0.9,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.9,
                                             onSelect: (EventModel) {
                                               print('selected: ${EventModel}');
                                             },

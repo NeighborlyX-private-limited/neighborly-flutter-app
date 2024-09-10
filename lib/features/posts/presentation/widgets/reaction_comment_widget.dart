@@ -49,8 +49,10 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
       final userID = ShardPrefHelper.getUserID();
       final box = Hive.box('commentReactions');
       setState(() {
-        isCheered = box.get('${userID}_${widget.comment.commentid}_isCheered', defaultValue: false);
-        isBooled = box.get('${userID}_${widget.comment.commentid}_isBooled', defaultValue: false);
+        isCheered = box.get('${userID}_${widget.comment.commentid}_isCheered',
+            defaultValue: false);
+        isBooled = box.get('${userID}_${widget.comment.commentid}_isBooled',
+            defaultValue: false);
       });
     });
   }
@@ -143,7 +145,10 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
 
                 // Trigger BLoC event for cheers
                 BlocProvider.of<FeedbackBloc>(context).add(
-                  FeedbackButtonPressedEvent(postId: widget.comment.commentid, feedback: 'cheer', type: 'comment'), // Corrected type to 'comment'
+                  FeedbackButtonPressedEvent(
+                      postId: widget.comment.commentid,
+                      feedback: 'cheer',
+                      type: 'comment'), // Corrected type to 'comment'
                 );
               },
               child: Container(
@@ -203,7 +208,10 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
 
               // Trigger BLoC event for bools
               BlocProvider.of<FeedbackBloc>(context).add(
-                FeedbackButtonPressedEvent(postId: widget.comment.commentid, feedback: 'boo', type: 'comment'), // Corrected type to 'comment'
+                FeedbackButtonPressedEvent(
+                    postId: widget.comment.commentid,
+                    feedback: 'boo',
+                    type: 'comment'), // Corrected type to 'comment'
               );
             },
             child: Container(
@@ -288,15 +296,20 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                           : widget.comment.awardType.length == 2
                               ? OverlappingImages(
                                   images: [
-                                    checkStringInList(widget.comment.awardType[0]),
-                                    checkStringInList(widget.comment.awardType[1]),
+                                    checkStringInList(
+                                        widget.comment.awardType[0]),
+                                    checkStringInList(
+                                        widget.comment.awardType[1]),
                                   ],
                                 )
                               : OverlappingImages(
                                   images: [
-                                    checkStringInList(widget.comment.awardType[0]),
-                                    checkStringInList(widget.comment.awardType[1]),
-                                    checkStringInList(widget.comment.awardType[2]),
+                                    checkStringInList(
+                                        widget.comment.awardType[0]),
+                                    checkStringInList(
+                                        widget.comment.awardType[1]),
+                                    checkStringInList(
+                                        widget.comment.awardType[2]),
                                   ],
                                 ),
                   Text(
@@ -318,7 +331,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
         InkWell(
           onTap: () {
             // #share
-            ShareIt.text(content: 'Hey, take a look on this comment', androidSheetTitle: 'Cool comment in a nice Post');
+            ShareIt.text(
+                content: 'Hey, take a look on this comment',
+                androidSheetTitle: 'Cool comment in a nice Post');
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -353,7 +368,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
               if (state.error.contains('Award not available')) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Award not available. You run out of this award.'),
+                    content:
+                        Text('Award not available. You run out of this award.'),
                   ),
                 );
               }
@@ -410,8 +426,11 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   ),
                   InkWell(
                     onTap: () {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(id: widget.comment.commentid, awardType: 'Local Legend', type: 'comment'));
+                      BlocProvider.of<GiveAwardBloc>(context).add(
+                          GiveAwardButtonPressedEvent(
+                              id: widget.comment.commentid,
+                              awardType: 'Local Legend',
+                              type: 'comment'));
                       // Navigator.pop(context, awardsCount + 1);
                     },
                     child: Row(
@@ -451,7 +470,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   ),
                   InkWell(
                     onTap: () {
-                      BlocProvider.of<GiveAwardBloc>(context).add(GiveAwardButtonPressedEvent(
+                      BlocProvider.of<GiveAwardBloc>(context)
+                          .add(GiveAwardButtonPressedEvent(
                         id: widget.comment.commentid,
                         awardType: 'Sunflower',
                         type: 'comment',
@@ -495,7 +515,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   ),
                   InkWell(
                     onTap: () {
-                      BlocProvider.of<GiveAwardBloc>(context).add(GiveAwardButtonPressedEvent(
+                      BlocProvider.of<GiveAwardBloc>(context)
+                          .add(GiveAwardButtonPressedEvent(
                         id: widget.comment.commentid,
                         awardType: 'Streetlight',
                         type: 'comment',
@@ -539,7 +560,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   ),
                   InkWell(
                     onTap: () {
-                      BlocProvider.of<GiveAwardBloc>(context).add(GiveAwardButtonPressedEvent(
+                      BlocProvider.of<GiveAwardBloc>(context)
+                          .add(GiveAwardButtonPressedEvent(
                         id: widget.comment.commentid,
                         awardType: 'Park Bench',
                         type: 'comment',
@@ -583,7 +605,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   ),
                   InkWell(
                     onTap: () {
-                      BlocProvider.of<GiveAwardBloc>(context).add(GiveAwardButtonPressedEvent(
+                      BlocProvider.of<GiveAwardBloc>(context)
+                          .add(GiveAwardButtonPressedEvent(
                         id: widget.comment.commentid,
                         awardType: 'Map',
                         type: 'comment',

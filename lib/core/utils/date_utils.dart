@@ -1,13 +1,16 @@
 import 'package:intl/intl.dart';
 
 class DateUtilsHelper {
-  static DateTime dateFormatter(String date) => DateFormat('dd/MM/yyyy HH:mm').parse(date);
+  static DateTime dateFormatter(String date) =>
+      DateFormat('dd/MM/yyyy HH:mm').parse(date);
 
-  static DateTime dateFormatterJustDate(String date) => DateFormat('dd/MM/yyyy').parse(date);
+  static DateTime dateFormatterJustDate(String date) =>
+      DateFormat('dd/MM/yyyy').parse(date);
 
   // static DateTime dateFormatterJustDateDots(String date) => DateFormat('dd/MM/yyyy').parse(date);
 
-  static String simplifyISOtimeStringStartEnd(String dateStart, String dateEnd) {
+  static String simplifyISOtimeStringStartEnd(
+      String dateStart, String dateEnd) {
     DateTime dateTimeStart = DateTime.parse(dateStart);
     DateTime dateTimeEnd = DateTime.parse(dateEnd);
 
@@ -19,17 +22,17 @@ class DateUtilsHelper {
   }
 
   static String simplifyISOtimeString(String date) {
-   try {
+    try {
       DateTime dateTimeStart = DateTime.parse(date);
 
-    // Formata a data no formato desejado (dd/MM)
-    String formattedDate = DateFormat('MMMM d, yyyy').format(dateTimeStart);
+      // Formata a data no formato desejado (dd/MM)
+      String formattedDate = DateFormat('MMMM d, yyyy').format(dateTimeStart);
 
-    return '${formattedDate}';
-   } catch (e) {
-    print('simplifyISOtimeString ERROR: ${e} [data: $date]');
-     return '';
-   }
+      return '${formattedDate}';
+    } catch (e) {
+      print('simplifyISOtimeString ERROR: ${e} [data: $date]');
+      return '';
+    }
   }
 
   static String simplifyISOtimeStringOnlyHour(String date) {
@@ -61,7 +64,8 @@ class DateUtilsHelper {
     try {
       DateTime dateTime = DateTime.parse(dateString);
       DateFormat formatter = DateFormat('dd/MM/yy'); // Format for "Jun/24"
-      String formattedDate = formatter.format(dateTime).replaceAll('/', separator);
+      String formattedDate =
+          formatter.format(dateTime).replaceAll('/', separator);
 
       return formattedDate;
     } catch (_) {
@@ -95,7 +99,9 @@ class DateUtilsHelper {
 
   static bool isToday(DateTime date) {
     final now = DateTime.now();
-    if (now.day == date.day && now.month == date.month && now.year == date.year) {
+    if (now.day == date.day &&
+        now.month == date.month &&
+        now.year == date.year) {
       return true;
     } else {
       return false;
@@ -104,7 +110,9 @@ class DateUtilsHelper {
 
   static bool isYesterday(DateTime date) {
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    if (yesterday.day == date.day && yesterday.month == date.month && yesterday.year == date.year) {
+    if (yesterday.day == date.day &&
+        yesterday.month == date.month &&
+        yesterday.year == date.year) {
       return true;
     } else {
       return false;
@@ -135,7 +143,9 @@ class DateUtilsHelper {
 
   static bool isPast(DateTime date) {
     final now = DateTime.now();
-    final pastDaysDifference = DateTime(date.year, date.month, date.day).difference(DateTime(now.year, now.month, now.day)).inDays;
+    final pastDaysDifference = DateTime(date.year, date.month, date.day)
+        .difference(DateTime(now.year, now.month, now.day))
+        .inDays;
     if (pastDaysDifference >= 0) {
       return false;
     } else {

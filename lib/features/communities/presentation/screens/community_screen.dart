@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -35,15 +35,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
       isNearBy = value;
     });
 
-    communityMainCubit.updateNearBy(!value); 
+    communityMainCubit.updateNearBy(!value);
   }
 
   void handleToggleIsSummary(bool value) {
     setState(() {
       isSummary = value;
-      communityMainCubit.updateIsSummary(value, !isNearBy); 
+      communityMainCubit.updateIsSummary(value, !isNearBy);
     });
-
   }
 
   @override
@@ -74,7 +73,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: InkWell(
-                onTap: (){
+                onTap: () {
                   context.push('/groups/search');
                 },
                 child: SvgPicture.asset(
@@ -88,8 +87,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: InkWell(
-                onTap: (){
-                    context.push('/chat');
+                onTap: () {
+                  context.push('/chat');
                 },
                 child: SvgPicture.asset(
                   'assets/chat.svg',
@@ -131,7 +130,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 if (state.communities.length > 0)
 
                   // return CommunityEmptyWidget();
-                  
+
                   return LayoutBuilder(builder: (context, constraints) {
                     int crossAxisCount = 2;
 
@@ -147,16 +146,20 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           children: [
                             const SizedBox(height: 5),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     isSummary ? 'Summary' : 'All Groups',
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20),
                                   ),
                                   GestureDetector(
-                                    onTap: (){
+                                    onTap: () {
                                       handleToggleIsSummary(!isSummary);
                                     },
                                     child: Text(
@@ -176,11 +179,15 @@ class _CommunityScreenState extends State<CommunityScreen> {
                             ),
                             Expanded(
                               child: GridView.builder(
-                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: crossAxisCount, // Número de colunas
-                                    crossAxisSpacing: 10.0, // Espaçamento horizontal entre os itens
-                                    mainAxisSpacing: 10.0, // Espaçamento vertical entre os itens
-                                    childAspectRatio: 1 / 1.5),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount:
+                                            crossAxisCount, // Número de colunas
+                                        crossAxisSpacing:
+                                            10.0, // Espaçamento horizontal entre os itens
+                                        mainAxisSpacing:
+                                            10.0, // Espaçamento vertical entre os itens
+                                        childAspectRatio: 1 / 1.5),
                                 itemCount: state.communities.length,
                                 itemBuilder: (context, index) {
                                   return Container(
@@ -195,7 +202,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                         ));
                   });
 
-                if (state.communities.length > 0 && state.status != Status.initial) {
+                if (state.communities.length > 0 &&
+                    state.status != Status.initial) {
                   return Text('empty');
                 }
 

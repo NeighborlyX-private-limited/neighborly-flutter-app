@@ -45,11 +45,6 @@ class CommunityModel extends CommunityEntity {
   }
 
   factory CommunityModel.fromMap(Map<String, dynamic> map) {
-
-    // map.entries.forEach((entry) { 
-    //   print('${entry.key}:${entry.value.runtimeType}:');
-    // });
-
     return CommunityModel(
       id: map['_id'] ?? map['id'] ?? "0",
       name: map['name'] ?? '',
@@ -59,12 +54,21 @@ class CommunityModel extends CommunityEntity {
       karma: map['karma'] ?? 0,
       radius: map['radius'] ?? 0,
       membersCount: map['membersCount'] ?? 0,
-      isPublic: map['isOpen'] ?? map['isPublic']  ?? false,
-      isJoined: map['isJoined'] ?? map['isJoined']  ?? false,
-      isMuted: map['isMuted'] ?? map['isMuted']  ?? false,
-      users: map['members'] != null ? List<UserSimpleModel>.from(map['members']?.map((x) => UserSimpleModel.fromMap(x))) : [],
-      admins: map['admin'] != null ? List<UserSimpleModel>.from(map['admin']?.map((x) => UserSimpleModel.fromMap(x))) : [],
-      blockList: map['blockList']  != null ?  List<UserSimpleModel>.from(map['blockList']?.map((x) => UserSimpleModel.fromMap(x))) : [],
+      isPublic: map['isOpen'] ?? map['isPublic'] ?? false,
+      isJoined: map['isJoined'] ?? map['isJoined'] ?? false,
+      isMuted: map['isMuted'] ?? map['isMuted'] ?? false,
+      users: map['members'] != null
+          ? List<UserSimpleModel>.from(
+              map['members']?.map((x) => UserSimpleModel.fromMap(x)))
+          : [],
+      admins: map['admin'] != null
+          ? List<UserSimpleModel>.from(
+              map['admin']?.map((x) => UserSimpleModel.fromMap(x)))
+          : [],
+      blockList: map['blockList'] != null
+          ? List<UserSimpleModel>.from(
+              map['blockList']?.map((x) => UserSimpleModel.fromMap(x)))
+          : [],
       locationStr: map['locationStr'] ?? '',
       // latLong: map['latLong']["coordinates"] ? List<double>.from(map['latLong']["coordinates"]) : [],
     );
@@ -72,7 +76,8 @@ class CommunityModel extends CommunityEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory CommunityModel.fromJson(String source) => CommunityModel.fromMap(json.decode(source));
+  factory CommunityModel.fromJson(Map<String, dynamic> source) =>
+      CommunityModel.fromMap(source);
 
   CommunityModel copyWith({
     String? id,
@@ -119,10 +124,12 @@ class CommunityModel extends CommunityEntity {
   }
 
   static List<CommunityModel> fromJsonList(List<dynamic> json) {
-    var list = <CommunityModel>[]; 
+    var list = <CommunityModel>[];
 
     if (json.isNotEmpty) {
-      list = json.map<CommunityModel>((jsomItem) => CommunityModel.fromMap(jsomItem)).toList();
+      list = json
+          .map<CommunityModel>((jsomItem) => CommunityModel.fromMap(jsomItem))
+          .toList();
     }
 
     return list;

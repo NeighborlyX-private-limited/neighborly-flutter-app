@@ -32,7 +32,8 @@ class UserSimpleModel extends UserSimpleEntity {
     return UserSimpleModel(
       id: map['userId'] ?? "0",
       name: map['userName'] ?? '',
-      avatarUrl: map['picture'] ?? 'https://eu.ui-avatars.com/api/?name=${map['name']}&background=random&rounded=true',
+      avatarUrl: map['picture'] ??
+          'https://eu.ui-avatars.com/api/?name=${map['name']}&background=random&rounded=true',
       isAdmin: map['isAdmin'] ?? false,
       karma: map['karma'] ?? 0,
     );
@@ -40,7 +41,8 @@ class UserSimpleModel extends UserSimpleEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory UserSimpleModel.fromJson(String source) => UserSimpleModel.fromMap(json.decode(source));
+  factory UserSimpleModel.fromJson(String source) =>
+      UserSimpleModel.fromMap(json.decode(source));
 
   static List<UserSimpleModel> fromJsonList(List<dynamic> json) {
     var list = <UserSimpleModel>[];
@@ -48,7 +50,8 @@ class UserSimpleModel extends UserSimpleEntity {
     print('jsonUSER==${json.runtimeType}');
 
     if (json.isNotEmpty) {
-      list = json.map((jsomItem) => UserSimpleModel.fromJson(jsomItem)).toList();
+      list =
+          json.map((jsomItem) => UserSimpleModel.fromJson(jsomItem)).toList();
     }
 
     return list;

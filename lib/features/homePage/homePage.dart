@@ -95,20 +95,24 @@ class _MainPageState extends State<MainPage> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Location services are disabled. Please enable the services')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
       return false;
     }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Location permissions are denied')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Location permissions are permanently denied, we cannot request permissions.')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
       return false;
     }
     return true;
@@ -117,7 +121,8 @@ class _MainPageState extends State<MainPage> {
   Future<void> updateFCMtokenNotification() async {
     print('...updateFCMtokenNotification running');
     try {
-      var result = await BlocProvider.of<NotificationGeneralCubit>(context).updateFCMTokenUsecase();
+      var result = await BlocProvider.of<NotificationGeneralCubit>(context)
+          .updateFCMTokenUsecase();
       result.fold(
         (failure) {},
         (currentFCMtoken) {
@@ -135,7 +140,8 @@ class _MainPageState extends State<MainPage> {
     if (!hasPermission) return;
 
     try {
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
       setState(() {
         _currentPosition = position;
       });

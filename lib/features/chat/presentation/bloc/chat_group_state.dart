@@ -1,9 +1,9 @@
 part of 'chat_group_cubit.dart';
 
 class ChatGroupState extends Equatable {
- final Status status;
+  final Status status;
   final Failure? failure;
-  final String? errorMessage; 
+  final String? errorMessage;
   final File? imageToUpload;
   final String roomId;
   final List<ChatMessageModel> messages;
@@ -30,7 +30,7 @@ class ChatGroupState extends Equatable {
   ChatGroupState copyWith({
     Status? status,
     Failure? failure,
-    String? errorMessage, 
+    String? errorMessage,
     File? imageToUpload,
     String? roomId,
     List<ChatMessageModel>? messages,
@@ -38,7 +38,7 @@ class ChatGroupState extends Equatable {
     return ChatGroupState(
       status: status ?? this.status,
       failure: failure ?? this.failure,
-      errorMessage: errorMessage ?? this.errorMessage, 
+      errorMessage: errorMessage ?? this.errorMessage,
       imageToUpload: imageToUpload ?? this.imageToUpload,
       roomId: roomId ?? this.roomId,
       messages: messages ?? this.messages,

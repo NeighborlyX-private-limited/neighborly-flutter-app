@@ -9,14 +9,16 @@ class MessageHandlerHelper {
   void doTheJump() {
     print('...MessageHandlerHelper data: ${messageData}');
 
-    print('...doTheJump userId? ${(messageData["userId"] != null)} ${messageData["userId"]}');
+    print(
+        '...doTheJump userId? ${(messageData["userId"] != null)} ${messageData["userId"]}');
 
     if (messageData['userId'] != null) {
       router.push('/userProfileScreen/${messageData['userId']}');
     }
 
     if (messageData['postId'] != null) {
-      router.push('/post-detail/${messageData['postId']}/true/${messageData['userId']}');
+      router.push(
+          '/post-detail/${messageData['postId']}/true/${messageData['userId']}');
     }
 
     if (messageData['groupId'] != null) {

@@ -110,8 +110,6 @@ class TileChat extends StatelessWidget {
   }
 }
 
-
-
 // class MembersList extends StatefulWidget {
 //   final String name;
 //   final String avatarUrl;
@@ -127,9 +125,6 @@ class TileChat extends StatelessWidget {
 // }
 
 // class _MembersListState extends State<MembersList> {
- 
-
-  
 
 //   @override
 //   Widget build(BuildContext context) {
@@ -164,7 +159,7 @@ class TileChat extends StatelessWidget {
 //               ),
 //             ),
 //           ),
-           
+
 //         ],
 //       ),
 //     )

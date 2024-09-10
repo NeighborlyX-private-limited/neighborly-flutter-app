@@ -53,7 +53,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -82,7 +83,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                 );
               }
 
-              if (state.status != Status.loading && state.notifications.length == 0) {
+              if (state.status != Status.loading &&
+                  state.notifications.length == 0) {
                 return Center(
                   child: NotificationsEmptyWidget(),
                 );
@@ -95,7 +97,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                 child: ListView.builder(
                   itemCount: state.notifications.length,
                   itemBuilder: (context, index) {
-                    return NotificationTileWidget(notification: state.notifications[index]);
+                    return NotificationTileWidget(
+                        notification: state.notifications[index]);
                   },
                 ),
               );

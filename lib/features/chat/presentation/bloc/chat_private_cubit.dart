@@ -24,16 +24,21 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
   }
 
   Future getRoomMessages({bool? hideLoading = false, String? dateFrom}) async {
-    print('... BLOC getRoomMessages hideLoading=$hideLoading dateFrom=$dateFrom');
+    print(
+        '... BLOC getRoomMessages hideLoading=$hideLoading dateFrom=$dateFrom');
     if (!hideLoading!) {
       emit(state.copyWith(status: Status.loading));
     }
-    final result = await getChatRoomMessagesUseCase(roomId: state.roomId, dateFrom: dateFrom);
+    final result = await getChatRoomMessagesUseCase(
+        roomId: state.roomId, dateFrom: dateFrom);
 
     result.fold(
       (failure) {
         print('...BLOC getRoomMessages ERROR: ${failure.message}');
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (messageList) {
         print('...BLOC getRoomMessages list: ${messageList}');
@@ -61,7 +66,8 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
       boolOrCheer: '',
       repliesAvatas: [],
     );
-    emit(state.copyWith(status: Status.success, messages: [newMessage, ...state.messages]));
+    emit(state.copyWith(
+        status: Status.success, messages: [newMessage, ...state.messages]));
   }
 
   //
@@ -85,6 +91,7 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
       boolOrCheer: '',
       repliesAvatas: [],
     );
-    emit(state.copyWith(status: Status.success, messages: [newMessage, ...state.messages]));
+    emit(state.copyWith(
+        status: Status.success, messages: [newMessage, ...state.messages]));
   }
 }

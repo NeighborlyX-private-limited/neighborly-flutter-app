@@ -331,9 +331,11 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
         ),
 
         InkWell(
-          onTap: (){
-            // #share 
-            ShareIt.text(content: 'Hey, take a look on this comment', androidSheetTitle: 'Cool Post');
+          onTap: () {
+            // #share
+            ShareIt.text(
+                content: 'Hey, take a look on this comment',
+                androidSheetTitle: 'Cool Post');
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),

@@ -10,10 +10,12 @@ class CommunityAdminDescriptionScreen extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CommunityAdminDescriptionScreen> createState() => _CommunityAdminDescriptionScreenState();
+  State<CommunityAdminDescriptionScreen> createState() =>
+      _CommunityAdminDescriptionScreenState();
 }
 
-class _CommunityAdminDescriptionScreenState extends State<CommunityAdminDescriptionScreen> {
+class _CommunityAdminDescriptionScreenState
+    extends State<CommunityAdminDescriptionScreen> {
   late CommunityDetailsCubit communityCubit;
 
   final newDescriptionEC = TextEditingController();
@@ -66,7 +68,9 @@ class _CommunityAdminDescriptionScreenState extends State<CommunityAdminDescript
                   );
                 } else {
                   print('SAVE');
-                  communityCubit.updateDescription(communityCubit.state.community?.id ?? '', newDescriptionEC.text.trim());
+                  communityCubit.updateDescription(
+                      communityCubit.state.community?.id ?? '',
+                      newDescriptionEC.text.trim());
                   Navigator.of(context).pop();
                 }
               },
@@ -93,7 +97,8 @@ class _CommunityAdminDescriptionScreenState extends State<CommunityAdminDescript
               //
               Container(
                 height: 450,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 margin: EdgeInsets.all(15),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),

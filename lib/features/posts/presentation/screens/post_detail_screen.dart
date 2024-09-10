@@ -308,7 +308,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                       ),
-                      child: postState.post.proPic != null && postState.post.proPic != ''
+                      child: postState.post.proPic != null &&
+                              postState.post.proPic != ''
                           ? Image.network(
                               postState.post.proPic!,
                               fit: BoxFit.contain,

@@ -33,13 +33,16 @@ class CommunitySectionAbout extends StatelessWidget {
             SizedBox(height: space),
             TextAndIconArea(
               title: 'Karma',
-              text:  '${community.karma}',
+              text: '${community.karma}',
               svgPath: 'assets/karma.svg',
             ),
             //
             //
             SizedBox(height: space),
-            TextAndIconArea(title: 'Radius', text: '${community.radius} miles', icon: Icons.pin_drop_outlined),
+            TextAndIconArea(
+                title: 'Radius',
+                text: '${community.radius} miles',
+                icon: Icons.pin_drop_outlined),
             //
             //
             SizedBox(height: space),
@@ -89,8 +92,14 @@ class DescriptionArea extends StatelessWidget {
             trimMode: TrimMode.Line,
             trimCollapsedText: ' See more',
             trimExpandedText: ' See less',
-            moreStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.blue),
-            lessStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.normal, color: Colors.blue),
+            moreStyle: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Colors.blue),
+            lessStyle: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.normal,
+                color: Colors.blue),
           ),
         ],
       ),
@@ -276,7 +285,9 @@ class _MembersListState extends State<MembersList> {
           if (hasMembers == true) ...[
             ...widget.admins.map((adm) => userTile(adm, true)),
             //
-            ...widget.members.take(showAll == true ? widget.members.length : 5).map((user) => userTile(user, false)),
+            ...widget.members
+                .take(showAll == true ? widget.members.length : 5)
+                .map((user) => userTile(user, false)),
             //
             showAll == false && widget.members.length > 5
                 ? Padding(

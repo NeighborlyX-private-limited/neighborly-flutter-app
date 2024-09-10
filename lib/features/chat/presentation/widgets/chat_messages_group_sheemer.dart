@@ -37,7 +37,9 @@ class ChatMessagesGroupSheemer extends StatelessWidget {
                         child: Container(
                           width: 60,
                           height: 60,
-                          decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(50)),
+                          decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(50)),
                         ),
                       ),
                       const SizedBox(
@@ -80,7 +82,10 @@ class ChatMessagesGroupSheemer extends StatelessWidget {
                                   child: Container(
                                     width: 50,
                                     height: 31,
-                                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(30)),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
                                   ),
                                 ),
                                 const SizedBox(
@@ -92,7 +97,10 @@ class ChatMessagesGroupSheemer extends StatelessWidget {
                                   child: Container(
                                     width: 50,
                                     height: 31,
-                                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(30)),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
                                   ),
                                 ),
                                 const SizedBox(
@@ -104,7 +112,10 @@ class ChatMessagesGroupSheemer extends StatelessWidget {
                                   child: Container(
                                     width: 80,
                                     height: 31,
-                                    decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(30)),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[300],
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
                                   ),
                                 ),
                               ],

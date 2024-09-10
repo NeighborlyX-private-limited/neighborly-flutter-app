@@ -96,7 +96,8 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
                       widget.room.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style:
+                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                     ),
                   ),
                   const SizedBox(
@@ -112,7 +113,10 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
                       'Online',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black45, fontSize: 14),
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black45,
+                          fontSize: 14),
                     ),
                   ),
                 ],
@@ -162,7 +166,8 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
               onTap: () {
                 // #send
                 // XXX
-                chatPrivateCubit.sendMessage(message: messageEC.text, image: fileToUpload);
+                chatPrivateCubit.sendMessage(
+                    message: messageEC.text, image: fileToUpload);
 
                 // fileToUpload = null;
                 messageEC.clear();
@@ -173,7 +178,9 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
                   height: 48,
                   width: 48,
                   decoration: BoxDecoration(
-                    color: isCommentFilled ? AppColors.primaryColor : Colors.grey[500],
+                    color: isCommentFilled
+                        ? AppColors.primaryColor
+                        : Colors.grey[500],
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
@@ -249,7 +256,8 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Something went wrong! ${state.failure?.message}'),
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -271,7 +279,8 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
             bloc: chatPrivateCubit,
             builder: (context, state) {
               if (state.status == Status.loading) {
-                return Container(color: Colors.white, child: ChatMessagesSheemer());
+                return Container(
+                    color: Colors.white, child: ChatMessagesSheemer());
               }
 
               return Container(
@@ -299,12 +308,15 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
 
                             // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
 
-                            var dateSummary = onlyDate(state.messages[index].date);
+                            var dateSummary =
+                                onlyDate(state.messages[index].date);
                             print('..FODA dateSummary=$dateSummary');
 
                             var messageWidget = ChatMessageWidget(
                                 message: msg,
-                                showIsReaded: (lineCount == state.messages.length) && msg.isMine,
+                                showIsReaded:
+                                    (lineCount == state.messages.length) &&
+                                        msg.isMine,
                                 onTap: (msgSelected) {
                                   print('....selected=${msgSelected}');
                                   print('lineCount=${lineCount}');
@@ -317,7 +329,8 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
                                   if (lastDate != '')
                                     Text(
                                       formatDate(dateSummary),
-                                      style: TextStyle(fontSize: 12, height: 2.5),
+                                      style:
+                                          TextStyle(fontSize: 12, height: 2.5),
                                     ),
                                   messageWidget,
                                 ],

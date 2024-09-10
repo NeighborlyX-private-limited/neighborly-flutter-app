@@ -98,13 +98,16 @@ class EventModel extends EventEntity {
 
   String toJson() => json.encode(toMap());
 
-  factory EventModel.fromJson(String source) => EventModel.fromMap(json.decode(source));
+  factory EventModel.fromJson(String source) =>
+      EventModel.fromMap(json.decode(source));
 
   static List<EventModel> fromJsonList(List<dynamic> json) {
     var list = <EventModel>[];
 
     if (json.isNotEmpty) {
-      list = json.map<EventModel>((jsomItem) => EventModel.fromMap(jsomItem)).toList();
+      list = json
+          .map<EventModel>((jsomItem) => EventModel.fromMap(jsomItem))
+          .toList();
     }
 
     return list;

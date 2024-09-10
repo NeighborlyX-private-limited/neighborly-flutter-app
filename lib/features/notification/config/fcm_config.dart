@@ -13,7 +13,8 @@ import 'locale_notifications_manager.dart';
 import 'message_behavior.dart';
 import 'message_handler_helper.dart';
 
-class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNotificationDetails, AndroidNotificationSound, StyleInformation> {
+class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
+    DarwinNotificationDetails, AndroidNotificationSound, StyleInformation> {
   @override
   Future<RemoteMessage?> getInitialMessage() async {
     // if (!kIsWeb) {
@@ -109,7 +110,8 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNot
     //   sound: sound,
     //   provisional: provisional,
     // );
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
       alert: alert,
       badge: badge,
       sound: sound,
@@ -128,8 +130,9 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNot
 
     Future<void> handleMessage(RemoteMessage message) async {
       // this part works with the app in BACKGROUND
-      print('...handleMessage ${message}'); 
-      print('...handleMessage existe order? ${(message.data["order"] != null)}');
+      print('...handleMessage ${message}');
+      print(
+          '...handleMessage existe order? ${(message.data["order"] != null)}');
       print('...handleMessage existe valor? order? ${message.data["order"]}');
 
       MessageHandlerHelper(messageData: message.data).doTheJump();
@@ -138,10 +141,14 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNot
     FirebaseMessaging.onMessage.listen((notification) {
       print('...listen - displayInForeground=${displayInForeground}');
       print('...listen - notification=${notification}');
-      print('...listen - notification.notification=${notification.notification}');
-      print('...listen - notification.notificationBODY=${notification.notification?.body}');
-      print('...listen - notification.notificationTITLE=${notification.notification?.title}');
-      print('...listen - notification.notificationDATA=${notification.notification}');
+      print(
+          '...listen - notification.notification=${notification.notification}');
+      print(
+          '...listen - notification.notificationBODY=${notification.notification?.body}');
+      print(
+          '...listen - notification.notificationTITLE=${notification.notification?.title}');
+      print(
+          '...listen - notification.notificationDATA=${notification.notification}');
       if (displayInForeground && notification.notification != null) {
         // MessageHandlerHelper(messageData: notification.data).doTheJump();
 
@@ -153,23 +160,26 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNot
         );
       }
     });
-    LocaleNotificationManager.onLocaleClick.stream.listen((message) => handleMessage(message),onError: (error){
+    LocaleNotificationManager.onLocaleClick.stream
+        .listen((message) => handleMessage(message), onError: (error) {
       print('...onLocaleClick');
       print(error);
-    }, onDone: (){
+    }, onDone: () {
       print('...onLocaleClick DONE');
     });
-    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage, onError: (error){
+    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage,
+        onError: (error) {
       print('...onMessageOpenedApp');
       print(error);
-    }, onDone: (){
+    }, onDone: () {
       print('...onMessageOpenedApp DONE');
     });
   }
 
   ///Call to FirebaseMessaging.instance.deleteToken();
   @override
-  Future<void> deleteToken({String? senderId}) => FirebaseMessaging.instance.deleteToken();
+  Future<void> deleteToken({String? senderId}) =>
+      FirebaseMessaging.instance.deleteToken();
 
   ///Call to FirebaseMessaging.instance.getAPNSToken();
   @override
@@ -177,11 +187,13 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNot
 
   ///Call to FirebaseMessaging.instance.getNotificationSettings();
   @override
-  Future<NotificationSettings> getNotificationSettings() => FirebaseMessaging.instance.getNotificationSettings();
+  Future<NotificationSettings> getNotificationSettings() =>
+      FirebaseMessaging.instance.getNotificationSettings();
 
   ///Call to FirebaseMessaging.instance.getToken();
   @override
-  Future<String?> getToken({String? vapidKey}) => FirebaseMessaging.instance.getToken(vapidKey: vapidKey);
+  Future<String?> getToken({String? vapidKey}) =>
+      FirebaseMessaging.instance.getToken(vapidKey: vapidKey);
 
   ///Call to FirebaseMessaging.instance.isAutoInitEnabled();
   @override
@@ -189,7 +201,8 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNot
 
   ///Call to FirebaseMessaging.instance.onTokenRefresh();
   @override
-  Stream<String> get onTokenRefresh => FirebaseMessaging.instance.onTokenRefresh;
+  Stream<String> get onTokenRefresh =>
+      FirebaseMessaging.instance.onTokenRefresh;
 
   ///Call to FirebaseMessaging.instance.pluginConstants;
   @override
@@ -217,12 +230,14 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNot
   ///Call to FirebaseMessaging.instance.subscribeToTopic();
   ///Not supported in web
   @override
-  Future<void> subscribeToTopic(String topic) => FirebaseMessaging.instance.subscribeToTopic(topic);
+  Future<void> subscribeToTopic(String topic) =>
+      FirebaseMessaging.instance.subscribeToTopic(topic);
 
   ///Call to FirebaseMessaging.instance.unsubscribeFromTopic();
   ///Not supported in web
   @override
-  Future<void> unsubscribeFromTopic(String topic) => FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+  Future<void> unsubscribeFromTopic(String topic) =>
+      FirebaseMessaging.instance.unsubscribeFromTopic(topic);
 
   @override
   void displayNotification({
@@ -370,5 +385,6 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails, DarwinNot
     String? androidChannelName,
     String? androidChannelDescription,
   }) =>
-      LocaleNotificationManager.displayNotification(notification, androidChannelId, androidChannelName, androidChannelDescription, id);
+      LocaleNotificationManager.displayNotification(notification,
+          androidChannelId, androidChannelName, androidChannelDescription, id);
 }

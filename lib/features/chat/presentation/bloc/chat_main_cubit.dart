@@ -5,7 +5,7 @@ import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart'; 
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 
 import '../../../../core/constants/constants.dart';
@@ -32,10 +32,9 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     print('... BLOC CHAT MAIN init');
     await getAllRooms();
 
-        var cookieData = ShardPrefHelper.getCookie();
+    var cookieData = ShardPrefHelper.getCookie();
 
     print('...cookieData=${cookieData}');
-    
   }
 
   void initSocket() {
@@ -53,10 +52,14 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     result.fold(
       (failure) {
         print('ERROR: ${failure.message}');
-        emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message));
+        emit(state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message));
       },
       (roomList) {
-        emit(state.copyWith(status: Status.success, rooms: roomList, roomsOriginal: roomList));
+        emit(state.copyWith(
+            status: Status.success, rooms: roomList, roomsOriginal: roomList));
       },
     );
   }
@@ -70,7 +73,8 @@ class ChatMainCubit extends Cubit<ChatMainState> {
       state.copyWith(
         isSearching: true,
         rooms: [
-          ...state.roomsOriginal.where((element) => element.name.toLowerCase().contains(termSearch.toLowerCase())),
+          ...state.roomsOriginal.where((element) =>
+              element.name.toLowerCase().contains(termSearch.toLowerCase())),
         ],
       ),
     );
@@ -81,17 +85,20 @@ class ChatMainCubit extends Cubit<ChatMainState> {
   // CHAT ###########################################################################
   void _setupChatSocket() {
     var baseUrlSocket = kBaseSocketUrl;
-    print('... CUBIT init _setupChatSocket baseUrlSocket=$baseUrlSocket _currentUser=${this._currentUser}');
+    print(
+        '... CUBIT init _setupChatSocket baseUrlSocket=$baseUrlSocket _currentUser=${this._currentUser}');
     if (baseUrlSocket == '' || this._currentUser == null) return;
 
-    if(socketChat != null) return; 
+    if (socketChat != null) return;
 
     socketChat = io(
         baseUrlSocket,
         OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .disableAutoConnect() // disable auto-connection
-            .setExtraHeaders({'Authorization': 'Bearer ' + this._currentUser!.token}) // optional
+            .setExtraHeaders({
+              'Authorization': 'Bearer ' + this._currentUser!.token
+            }) // optional
             .build());
 
     socketChat!.onConnect((_) {
@@ -125,7 +132,8 @@ class ChatMainCubit extends Cubit<ChatMainState> {
 
       var message = ChatMessageModel.fromMap(data);
 
-      print('... SOCK_CHAT message=${message} state.appIsOpen=${state.appIsOpen}');
+      print(
+          '... SOCK_CHAT message=${message} state.appIsOpen=${state.appIsOpen}');
 
       emit(state.copyWith(messages: [...state.messages, message]));
 
@@ -135,7 +143,8 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     });
 
     socketChat!.onDisconnect((_) => print('... SOCK_CHAT: disconnect'));
-    socketChat!.onConnectError((data) => print('... SOCK_CHAT: error: ${data}'));
+    socketChat!
+        .onConnectError((data) => print('... SOCK_CHAT: error: ${data}'));
 
     socketChat!.connect();
     socketChat!.emit('getConversations');
@@ -185,7 +194,8 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     Random random = Random(DateTime.now().millisecondsSinceEpoch);
     int randomNumber = random.nextInt(100);
 
-    AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
       androidChannelId, // Substitua pelo ID do seu canal de notificação
       androidChannelName, // Substitua pelo nome do seu canal de notificação
       importance: Importance.max,
@@ -193,9 +203,11 @@ class ChatMainCubit extends Cubit<ChatMainState> {
       ticker: 'ticker',
     );
 
-    print('... APP CUBIT showLocalNotification androidChannelId=$androidChannelId androidChannelName=$androidChannelName randomNumber=$randomNumber');
+    print(
+        '... APP CUBIT showLocalNotification androidChannelId=$androidChannelId androidChannelName=$androidChannelName randomNumber=$randomNumber');
 
-    NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
 
     await _localeNotification.show(
       randomNumber, // ID da notificação
