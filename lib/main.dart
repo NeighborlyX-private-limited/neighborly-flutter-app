@@ -14,6 +14,7 @@ import 'features/authentication/presentation/bloc/register_bloc/register_bloc.da
 import 'features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import 'features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit.dart';
+import 'features/chat/presentation/bloc/chat_group_cubit_thread.dart';
 import 'features/chat/presentation/bloc/chat_main_cubit.dart';
 import 'features/chat/presentation/bloc/chat_private_cubit.dart';
 import 'features/communities/presentation/bloc/communities_create_cubit.dart';
@@ -182,6 +183,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<ChatGroupCubit>(
             create: (context) => di.sl<ChatGroupCubit>(),
+          ),
+          BlocProvider<ChatGroupCubitThread>(
+            create: (context) => di.sl<ChatGroupCubitThread>(),
           ),
           BlocProvider<EventMainCubit>(
             create: (context) => di.sl<EventMainCubit>(),

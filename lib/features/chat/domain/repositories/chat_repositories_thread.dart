@@ -4,10 +4,11 @@ import '../../../../core/error/failures.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../data/model/chat_room_model.dart';
 
-abstract class ChatRepositories {
+abstract class ChatRepositoriesThread {
+
   Future<Either<Failure, List<ChatRoomModel>>> getAllChatRooms();
   Future<Either<Failure, List<ChatMessageModel>>> getRoomMessages(
       {required String roomId, String? dateFrom});
   Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages(
-      {required String roomId, String? dateFrom, bool isreply = false, int page = 1});
+      {required String roomId, String? dateFrom, bool isreply = false});
 }

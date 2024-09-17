@@ -40,15 +40,26 @@ class UserAvatarStyledWidget extends StatelessWidget {
       child: CircleAvatar(
         radius: proportionalSize,
         backgroundColor: isDarkmode! ? Colors.black : Colors.white,
-        child: CircleAvatar(
+        child: avatarUrl != null && avatarUrl.contains('.')? CircleAvatar(
           radius: proportionalSize - avatarBorderSize!,
+
           onBackgroundImageError: (_, __) =>
               SvgPicture.asset('assets/vectors/my_profile_placeholder.svg'),
           backgroundImage: CachedNetworkImageProvider(avatarUrl),
-        ),
+        ): CircleAvatar(
+      radius: proportionalSize - avatarBorderSize!,
+      backgroundColor: hexStringToColor(avatarUrl), // Set the color you want to display
+    ),
       ),
     );
   }
+
+  Color hexStringToColor(String hexString) {
+  final buffer = StringBuffer();
+  if (hexString.length == 7) buffer.write('FF'); // add alpha if missing
+  buffer.write(hexString.replaceFirst('#', ''));
+  return Color(int.parse(buffer.toString(), radix: 16));
+}
 
   @override
   Widget build(BuildContext context) {

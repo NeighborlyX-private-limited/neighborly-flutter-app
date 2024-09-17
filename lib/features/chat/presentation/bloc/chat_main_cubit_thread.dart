@@ -6,7 +6,6 @@ import 'dart:math';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:socket_io_client/socket_io_client.dart';
 
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
@@ -14,19 +13,18 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../data/model/chat_room_model.dart';
-import '../../domain/usecases/get_all_chat_rooms_usecase.dart';
+import '../../domain/usecases/get_all_chat_rooms_usecase_thread.dart';
 
-part 'chat_main_state.dart';
+part 'chat_main_state_thread.dart';
 
-class ChatMainCubit extends Cubit<ChatMainState> {
-  final GetAllChatRoomsUsecase getAllChatRoomsUsecase;
-  late Socket? socketChat;
+class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
+  final GetAllChatRoomsUsecaseThread getAllChatRoomsUsecase;
   late final _currentUser;
   Timer? _periodicPinger;
 
-  ChatMainCubit(
+  ChatMainCubitThread(
     this.getAllChatRoomsUsecase,
-  ) : super(const ChatMainState());
+  ) : super(const ChatMainStateThread());
 
   void init() async {
     print('... BLOC CHAT MAIN init');
@@ -35,14 +33,6 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     var cookieData = ShardPrefHelper.getCookie();
 
     print('...cookieData=${cookieData}');
-  }
-
-  void initSocket() {
-    var cookieData = ShardPrefHelper.getCookie();
-
-    print('...cookieData=${cookieData}');
-
-    _setupChatSocket();
   }
 
   Future getAllRooms() async {
@@ -83,80 +73,80 @@ class ChatMainCubit extends Cubit<ChatMainState> {
 //
   //
   // CHAT ###########################################################################
-  void _setupChatSocket() {
-    var baseUrlSocket = kBaseSocketUrl;
-    print(
-        '... CUBIT init _setupChatSocket baseUrlSocket=$baseUrlSocket _currentUser=${this._currentUser}');
-    if (baseUrlSocket == '' || this._currentUser == null) return;
+  // void _setupChatSocket() {
+  //   var baseUrlSocket = kBaseSocketUrl;
+  //   print(
+  //       '... CUBIT init _setupChatSocket baseUrlSocket=$baseUrlSocket _currentUser=${this._currentUser}');
+  //   if (baseUrlSocket == '' || this._currentUser == null) return;
 
-    if (socketChat != null) return;
+  //   if (socketChat != null) return;
 
-    socketChat = io(
-        baseUrlSocket,
-        OptionBuilder()
-            .setTransports(['websocket']) // for Flutter or Dart VM
-            .disableAutoConnect() // disable auto-connection
-            .setExtraHeaders({
-              'Authorization': 'Bearer ' + this._currentUser!.token
-            }) // optional
-            .build());
+  //   socketChat = io(
+  //       baseUrlSocket,
+  //       OptionBuilder()
+  //           .setTransports(['websocket']) // for Flutter or Dart VM
+  //           .disableAutoConnect() // disable auto-connection
+  //           .setExtraHeaders({
+  //             'Authorization': 'Bearer ' + this._currentUser!.token
+  //           }) // optional
+  //           .build());
 
-    socketChat!.onConnect((_) {
-      print('... SOCK_CHAT: connect');
-    });
+  //   socketChat!.onConnect((_) {
+  //     print('... SOCK_CHAT: connect');
+  //   });
 
-    socketChat!.on('friendActive', (data) {
-      print('... SOCK_CHAT: on=friendActive:: ');
-    });
+  //   socketChat!.on('friendActive', (data) {
+  //     print('... SOCK_CHAT: on=friendActive:: ');
+  //   });
 
-    socketChat!.on('getAllConversations', (data) {
-      print('... SOCK_CHAT: on=getAllConversations:: ');
-      print(data);
-      // print(data['isActive'].runtimeType);
+  //   socketChat!.on('getAllConversations', (data) {
+  //     print('... SOCK_CHAT: on=getAllConversations:: ');
+  //     print(data);
+  //     // print(data['isActive'].runtimeType);
 
-      if (data == null) return;
+  //     if (data == null) return;
 
-      // var conversations = data.map<ConversationModel>((c) => ConversationModel.fromMap(c)).toList();
+  //     // var conversations = data.map<ConversationModel>((c) => ConversationModel.fromMap(c)).toList();
 
-      // print('... SOCK_CHAT conversations=${conversations}');
+  //     // print('... SOCK_CHAT conversations=${conversations}');
 
-      // emit(state.copyWith(conversations: conversations));
-    });
+  //     // emit(state.copyWith(conversations: conversations));
+  //   });
 
-    socketChat!.on('newMessage', (data) {
-      print('... SOCK_CHAT: on=newMessage:: ');
-      print(data);
-      // print(data['isActive'].runtimeType);
+  //   socketChat!.on('newMessage', (data) {
+  //     print('... SOCK_CHAT: on=newMessage:: ');
+  //     print(data);
+  //     // print(data['isActive'].runtimeType);
 
-      if (data == null) return;
+  //     if (data == null) return;
 
-      var message = ChatMessageModel.fromMap(data);
+  //     var message = ChatMessageModel.fromMap(data);
 
-      print(
-          '... SOCK_CHAT message=${message} state.appIsOpen=${state.appIsOpen}');
+  //     print(
+  //         '... SOCK_CHAT message=${message} state.appIsOpen=${state.appIsOpen}');
 
-      emit(state.copyWith(messages: [...state.messages, message]));
+  //     emit(state.copyWith(messages: [...state.messages, message]));
 
-      if (state.appIsOpen == false) {
-        showLocalNotification('New Message', message.text);
-      }
-    });
+  //     if (state.appIsOpen == false) {
+  //       showLocalNotification('New Message', message.text);
+  //     }
+  //   });
 
-    socketChat!.onDisconnect((_) => print('... SOCK_CHAT: disconnect'));
-    socketChat!
-        .onConnectError((data) => print('... SOCK_CHAT: error: ${data}'));
+  //   socketChat!.onDisconnect((_) => print('... SOCK_CHAT: disconnect'));
+  //   socketChat!
+  //       .onConnectError((data) => print('... SOCK_CHAT: error: ${data}'));
 
-    socketChat!.connect();
-    socketChat!.emit('getConversations');
-    print('... SOCK_CHAT: setup done');
-  }
+  //   socketChat!.connect();
+  //   socketChat!.emit('getConversations');
+  //   print('... SOCK_CHAT: setup done');
+  // }
 
-  void startSocketPinger() {
-    _periodicPinger = Timer.periodic(Duration(seconds: 10), (timer) {
-      socketChat!.emit('ping');
-      print('... SOCK_CHAT: ping');
-    });
-  }
+  // void startSocketPinger() {
+  //   _periodicPinger = Timer.periodic(Duration(seconds: 10), (timer) {
+  //     socketChat!.emit('ping');
+  //     print('... SOCK_CHAT: ping');
+  //   });
+  // }
 
   void chatSentMessage(String message, int friendId, int conversationId) {
     socketChat!.emit('sendMessage', {

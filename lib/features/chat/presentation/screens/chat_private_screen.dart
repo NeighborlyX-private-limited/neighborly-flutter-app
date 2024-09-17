@@ -310,7 +310,6 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
 
                             var dateSummary =
                                 onlyDate(state.messages[index].date);
-                            print('..FODA dateSummary=$dateSummary');
 
                             var messageWidget = ChatMessageWidget(
                                 message: msg,

@@ -134,7 +134,7 @@ class NotificationTileWidget extends StatelessWidget {
                         lastMessageDate: '',
                         isMuted: false,
                         isGroup: false,
-                        unreadedCount: 1),
+                        unreadCount: 1),
                   );
                 }
               },

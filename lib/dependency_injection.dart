@@ -21,12 +21,20 @@ import 'features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_blo
 import 'features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import 'features/chat/data/data_sources/chat_remote_data_source/chat_remote_data_source.dart';
 import 'features/chat/data/data_sources/chat_remote_data_source/chat_remote_data_source_impl.dart';
+import 'features/chat/data/data_sources/chat_remote_data_source/chat_remote_data_source_thread.dart';
+import 'features/chat/data/data_sources/chat_remote_data_source/chat_remote_data_source_impl_thread.dart';
 import 'features/chat/data/repositories/chat_repositories_impl.dart';
+import 'features/chat/data/repositories/chat_repositories_impl_thread.dart';
 import 'features/chat/domain/repositories/chat_repositories.dart';
+import 'features/chat/domain/repositories/chat_repositories_thread.dart';
 import 'features/chat/domain/usecases/get_all_chat_rooms_usecase.dart';
 import 'features/chat/domain/usecases/get_chat_group_room_messages_usecase .dart';
 import 'features/chat/domain/usecases/get_chat_room_messages_usecase.dart';
+import 'features/chat/domain/usecases/get_all_chat_rooms_usecase_thread.dart';
+import 'features/chat/domain/usecases/get_chat_group_room_messages_usecase_thread.dart';
+import 'features/chat/domain/usecases/get_chat_room_messages_usecase_thread.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit.dart';
+import 'features/chat/presentation/bloc/chat_group_cubit_thread.dart';
 import 'features/chat/presentation/bloc/chat_main_cubit.dart';
 import 'features/chat/presentation/bloc/chat_private_cubit.dart';
 import 'features/communities/data/data_sources/community_remote_data_source/community_remote_data_source.dart';
@@ -137,7 +145,7 @@ import 'features/upload/domain/usecases/upload_file_usecase.dart';
 import 'features/upload/domain/usecases/upload_post_usecase.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
-
+import 'features/chat/Socket/socketService.dart';
 final sl = GetIt.instance;
 
 void init() async {
@@ -154,6 +162,8 @@ void init() async {
       CommunityRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<ChatRepositories>(
       () => ChatRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<ChatRepositoriesThread>(
+      () => ChatRepositoriesImplThread(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<EventRepositories>(
       () => EventRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<NotificationRepositories>(() =>
@@ -172,10 +182,13 @@ void init() async {
       () => CommunityRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton<ChatRemoteDataSource>(
       () => ChatRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<ChatRemoteDataSourceThread>(
+      () => ChatRemoteDataSourceImplThread(client: sl()));
   sl.registerLazySingleton<EventRemoteDataSource>(
       () => EventRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton<NotificationRemoteDataSource>(
       () => NotificationRemoteDataSourceImpl(client: sl()));
+  sl.registerLazySingleton<SocketService>(() => SocketService());
 
   // register usecase
   sl.registerLazySingleton(() => SignupUsecase(sl()));
@@ -226,6 +239,9 @@ void init() async {
   sl.registerLazySingleton(() => GetSearchHistoryCommunitiesUsecase(sl()));
   sl.registerLazySingleton(() => GetSearchResultsCommunitiesUsecase(sl()));
   sl.registerLazySingleton(() => GetAllChatRoomsUsecase(sl()));
+  sl.registerLazySingleton(() => GetAllChatRoomsUsecaseThread(sl()));
+  sl.registerLazySingleton(() => GetChatRoomMessagesUseCaseThread(sl()));
+  sl.registerLazySingleton(() => GetChatGroupRoomMessagesUseCaseThread(sl()));
   sl.registerLazySingleton(() => GetChatRoomMessagesUseCase(sl()));
   sl.registerLazySingleton(() => GetChatGroupRoomMessagesUseCase(sl()));
   sl.registerLazySingleton(() => GetEventsUsecase(sl()));
@@ -279,7 +295,8 @@ void init() async {
   sl.registerFactory(() => CommunitySearchCubit(sl(), sl()));
   sl.registerFactory(() => ChatMainCubit(sl()));
   sl.registerFactory(() => ChatPrivateCubit(sl()));
-  sl.registerFactory(() => ChatGroupCubit(sl()));
+  sl.registerFactory(() => ChatGroupCubit(sl(),sl<SocketService>()));
+  sl.registerFactory(() => ChatGroupCubitThread(sl(),sl<SocketService>()));
   sl.registerFactory(() => EventMainCubit(sl()));
   sl.registerFactory(() => EventCreateCubit(sl(), sl(), sl()));
   sl.registerFactory(() => EventDetailCubit(sl(), sl()));

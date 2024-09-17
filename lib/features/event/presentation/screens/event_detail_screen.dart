@@ -437,7 +437,7 @@ class ChatArea extends StatelessWidget {
                     lastMessageDate: '',
                     isMuted: false,
                     isGroup: true,
-                    unreadedCount: 0),
+                    unreadCount: 0),
               );
             },
       child: Container(
@@ -777,7 +777,7 @@ class HostArea extends StatelessWidget {
                         lastMessageDate: '',
                         isMuted: false,
                         isGroup: false,
-                        unreadedCount: 0),
+                        unreadCount: 0),
                   );
                 },
                 style: ElevatedButton.styleFrom(

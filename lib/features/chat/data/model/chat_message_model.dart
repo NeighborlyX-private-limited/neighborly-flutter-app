@@ -10,23 +10,21 @@ class ChatMessageModel extends ChatMessageEntity {
     required super.text, // post=content
     required super.date,
     required super.isMine,
-    required super.isReaded,
+    required super.readByuser,
     required super.hasMore,
     required super.pictureUrl,
-    super.pictureAsset,
     required super.isAdmin,
     required super.isPinned,
     required super.repliesCount, // post=commentCount
     required super.cheers,
-    required super.bools,
-    required super.boolOrCheer,
-    required super.repliesAvatas,
+    required super.boos,
+    required super.booOrCheer,
     super.author, //  post: userId, userName, proPic
   });
 
   @override
   String toString() {
-    return 'ChatMessageModel(id: $id, text: $text, date: $date, isMine: $isMine, isReaded: $isReaded, hasMore: $hasMore, isAdmin: $isAdmin, isPinned: $isPinned, repliesCount: $repliesCount, cheers: $cheers, bools: $bools, boolOrCheer: $boolOrCheer, pictureAsset: $pictureAsset, pictureUrl: $pictureUrl, repliesAvatas: $repliesAvatas, author: $author)';
+    return 'ChatMessageModel(id: $id, text: $text, date: $date, isMine: $isMine, readByuser: $readByuser, hasMore: $hasMore, isAdmin: $isAdmin, isPinned: $isPinned, repliesCount: $repliesCount, cheers: $cheers, boos: $boos, booOrCheer: $booOrCheer, pictureUrl: $pictureUrl, author: $author)';
   }
 
   num _extractAndConcatenateNumbers(String input) {
@@ -50,7 +48,7 @@ class ChatMessageModel extends ChatMessageEntity {
       type: 'post',
       createdAt: date,
       cheers: cheers,
-      bools: bools,
+      bools: boos,
       id: _extractAndConcatenateNumbers(id),
       city: 'Gothan',
       commentCount: repliesCount,
@@ -64,17 +62,15 @@ class ChatMessageModel extends ChatMessageEntity {
       'text': text,
       'date': date,
       'isMine': isMine,
-      'isReaded': isReaded,
+      'readByuser': readByuser,
       'hasMore': hasMore,
       'isAdmin': isAdmin,
       'isPinned': isPinned,
       'repliesCount': repliesCount,
       'cheers': cheers,
-      'bools': bools,
-      'boolOrCheer': boolOrCheer,
-      'pictureAsset': pictureAsset,
+      'boos': boos,
+      'booOrCheer': booOrCheer,
       'pictureUrl': pictureUrl,
-      'repliesAvatas': repliesAvatas,
       'author': author?.toMap(),
     };
   }
@@ -83,21 +79,17 @@ class ChatMessageModel extends ChatMessageEntity {
     return ChatMessageModel(
       id: map['id'] ?? '',
       text: map['text'] ?? '',
-      date: map['date'] ?? '',
+      date: map['date'] ?? DateTime.now().toString(),
       isMine: map['isMine'] ?? false,
-      isReaded: map['isReaded'] ?? false,
+      readByuser: map['readByuser'] ?? false,
       hasMore: map['hasMore'] ?? false,
       isAdmin: map['isAdmin'] ?? false,
       isPinned: map['isPinned'] ?? false,
       repliesCount: map['repliesCount']?.toInt() ?? 0,
       cheers: map['cheers']?.toInt() ?? 0,
-      bools: map['bools']?.toInt() ?? 0,
-      boolOrCheer: map['boolOrCheer'] ?? '',
-      pictureAsset: null,
+      boos: map['boos']?.toInt() ?? 0,
+      booOrCheer: map['booOrCheer'] ?? '',
       pictureUrl: map['pictureUrl'] ?? '',
-      repliesAvatas: map['repliesAvatas'] != null
-          ? List<String>.from(map['repliesAvatas'])
-          : [],
       author:
           map['author'] != null ? UserSimpleModel.fromMap(map['author']) : null,
     );

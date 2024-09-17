@@ -41,7 +41,7 @@ class CommunitySectionChat extends StatelessWidget {
                     lastMessageDate: DateTime.now().toIso8601String(),
                     isMuted: false,
                     isGroup: true,
-                    unreadedCount: 0,
+                    unreadCount: 0,
                   ),
                 );
               },

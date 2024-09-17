@@ -168,7 +168,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                     return ChatTileWidget(
                       room: state.rooms[index],
                       onTap: (selectedRoom) {
-                        print('selectedRoom=${selectedRoom}');
+                        print('selectedRoom= ${state.rooms[index]}');
 
                         var goTo = selectedRoom.isGroup ? 'group' : 'private';
                         print('... goTo=${goTo}');

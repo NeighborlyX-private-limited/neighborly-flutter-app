@@ -55,16 +55,15 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
       text: 'are you there?',
       date: dateFormat.format(DateTime.now()),
       isMine: false,
-      isReaded: false,
+      readByuser: false,
       hasMore: false,
       pictureUrl: '',
       isAdmin: false,
       isPinned: false,
       repliesCount: 0,
       cheers: 0,
-      bools: 0,
-      boolOrCheer: '',
-      repliesAvatas: [],
+      boos: 0,
+      booOrCheer: ''
     );
     emit(state.copyWith(
         status: Status.success, messages: [newMessage, ...state.messages]));
@@ -79,17 +78,15 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
       text: message ?? '',
       date: dateFormat.format(DateTime.now()),
       isMine: true,
-      isReaded: false,
+      readByuser: false,
       hasMore: false,
       pictureUrl: '',
-      pictureAsset: image,
       isAdmin: false,
       isPinned: false,
       repliesCount: 0,
       cheers: 0,
-      bools: 0,
-      boolOrCheer: '',
-      repliesAvatas: [],
+      boos: 0,
+      booOrCheer: ''
     );
     emit(state.copyWith(
         status: Status.success, messages: [newMessage, ...state.messages]));

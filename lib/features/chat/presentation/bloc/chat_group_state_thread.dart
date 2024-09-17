@@ -1,21 +1,19 @@
-part of 'chat_group_cubit.dart';
+part of 'chat_group_cubit_thread.dart';
 
-class ChatGroupState extends Equatable {
+class ChatGroupStateThread extends Equatable {
   final Status status;
   final Failure? failure;
   final String? errorMessage;
   final File? imageToUpload;
   final String roomId;
-  final int page;
   final List<ChatMessageModel> messages;
 
-  const ChatGroupState({
+  const ChatGroupStateThread({
     this.status = Status.initial,
     this.failure,
     this.errorMessage = '',
     this.roomId = '',
     this.imageToUpload,
-    this.page = 1,
     this.messages = const [],
   });
 
@@ -27,26 +25,23 @@ class ChatGroupState extends Equatable {
         imageToUpload,
         roomId,
         messages,
-        page,
       ];
 
-  ChatGroupState copyWith({
+  ChatGroupStateThread copyWith({
     Status? status,
     Failure? failure,
     String? errorMessage,
     File? imageToUpload,
     String? roomId,
-    int? page,
     List<ChatMessageModel>? messages,
   }) {
-    return ChatGroupState(
+    return ChatGroupStateThread(
       status: status ?? this.status,
       failure: failure ?? this.failure,
       errorMessage: errorMessage ?? this.errorMessage,
       imageToUpload: imageToUpload ?? this.imageToUpload,
       roomId: roomId ?? this.roomId,
       messages: messages ?? this.messages,
-      page: page ?? this.page,
     );
   }
 }

@@ -8,17 +8,15 @@ class ChatMessageEntity extends Equatable {
   final String text;
   final String date;
   final bool isMine;
-  final bool isReaded;
+  final bool readByuser;
   final bool hasMore;
   final bool isAdmin;
   final bool isPinned;
   final int repliesCount;
   final int cheers;
-  final int bools;
-  final String boolOrCheer;
-  final File? pictureAsset;
+  final int boos;
+  final String booOrCheer;
   final String? pictureUrl;
-  final List<String> repliesAvatas;
   final UserSimpleModel? author;
 
   ChatMessageEntity({
@@ -26,17 +24,15 @@ class ChatMessageEntity extends Equatable {
     required this.text,
     required this.date,
     required this.isMine,
-    required this.isReaded,
+    required this.readByuser,
     required this.hasMore,
     required this.isAdmin,
     required this.isPinned,
     required this.repliesCount,
     required this.cheers,
-    required this.bools,
-    required this.boolOrCheer,
-    this.pictureAsset,
+    required this.boos,
+    required this.booOrCheer,
     this.pictureUrl,
-    required this.repliesAvatas,
     this.author,
   });
 

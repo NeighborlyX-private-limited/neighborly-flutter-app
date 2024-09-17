@@ -11,7 +11,7 @@ class ChatRoomModel extends ChatRoomEntity {
     required super.lastMessageDate,
     required super.isMuted,
     required super.isGroup,
-    required super.unreadedCount,
+    required super.unreadCount,
   });
 
   ChatRoomModel copyWith({
@@ -22,7 +22,7 @@ class ChatRoomModel extends ChatRoomEntity {
     String? lastMessageDate,
     bool? isMuted,
     bool? isGroup,
-    int? unreadedCount,
+    int? unreadCount,
   }) {
     return ChatRoomModel(
       id: id ?? this.id,
@@ -32,13 +32,13 @@ class ChatRoomModel extends ChatRoomEntity {
       lastMessageDate: lastMessageDate ?? this.lastMessageDate,
       isMuted: isMuted ?? this.isMuted,
       isGroup: isGroup ?? this.isGroup,
-      unreadedCount: unreadedCount ?? this.unreadedCount,
+      unreadCount: unreadCount ?? this.unreadCount,
     );
   }
 
   @override
   String toString() {
-    return 'ChatRoomModel(id: $id, name: $name, avatarUrl: $avatarUrl, lastMessage: $lastMessage, lastMessageDate: $lastMessageDate, isMuted: $isMuted, isGroup: $isGroup, unreadedCount: $unreadedCount)';
+    return 'ChatRoomModel(id: $id, name: $name, avatarUrl: $avatarUrl, lastMessage: $lastMessage, lastMessageDate: $lastMessageDate, isMuted: $isMuted, isGroup: $isGroup, unreadCount: $unreadCount)';
   }
 
   Map<String, dynamic> toMap() {
@@ -50,7 +50,7 @@ class ChatRoomModel extends ChatRoomEntity {
       'lastMessageDate': lastMessageDate,
       'isMuted': isMuted,
       'isGroup': isGroup,
-      'unreadedCount': unreadedCount,
+      'unreadCount': unreadCount,
     };
   }
 
@@ -63,7 +63,7 @@ class ChatRoomModel extends ChatRoomEntity {
       lastMessageDate: map['lastMessageDate'] ?? '',
       isMuted: map['isMuted'] ?? false,
       isGroup: map['isGroup'] ?? false,
-      unreadedCount: map['unreadedCount']?.toInt() ?? 0,
+      unreadCount: map['unreadCount']?.toInt() ?? 0,
     );
   }
 

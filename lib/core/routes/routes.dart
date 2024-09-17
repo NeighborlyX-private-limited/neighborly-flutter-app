@@ -271,11 +271,15 @@ final GoRouter router = GoRouter(
           ),
           GoRoute(
             path: '/chat/group/thread/:messageId',
-            builder: (context, state) => ChatGroupThreadScreen(
+            
+            builder: (context, state) {
+              return ChatGroupThreadScreen(
               messageId: state.pathParameters["messageId"] as String,
               room: (state.extra as Map<String, dynamic>)['room'],
               message: (state.extra as Map<String, dynamic>)['message'],
-            ),
+
+            );
+            }
           ),
 
           GoRoute(

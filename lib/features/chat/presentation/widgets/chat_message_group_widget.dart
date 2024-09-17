@@ -73,7 +73,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     super.initState();
 
     cheersCount = widget.message.cheers;
-    boolsCount = widget.message.bools;
+    boolsCount = widget.message.boos;
     repliesCount = widget.message.repliesCount;
 
     // Load persisted state
@@ -149,10 +149,16 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     messageEC.dispose();
   }
 
-  String formatTime(String dateTimeString) {
+  String formatTime(String lastMessageDate) {
+    if (lastMessageDate == '') return lastMessageDate;
+    DateTime parsedDate = DateTime.parse(lastMessageDate);
+
+    // Format the date as "YYYY-MM-DD HH:mm:ss"
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
+
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
     final DateFormat timeFormat = DateFormat('hh:mm a');
-    DateTime dateTime = dateFormat.parse(dateTimeString);
+    DateTime dateTime = dateFormat.parse(formattedDate);
     return timeFormat.format(dateTime);
   }
 
@@ -338,7 +344,14 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   Expanded(
                                     child: Align(
                                       alignment: Alignment.centerRight,
-                                      child: Icon(Icons.close),
+                                      child: GestureDetector(
+        onTap: () {
+          setState(() {
+                                    showReplyInput = false;
+                                    // FocusScope.of(context).requestFocus(messageFocusNode);
+                                  });
+                                  _removeOverlay();
+        }, child: Icon(Icons.close),),
                                     ),
                                   )
                                 ],
@@ -347,17 +360,20 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                               //
                               // message AREA
                               Container(
-                                child: widget.message.pictureUrl != ''
+                                width:  MediaQuery.of(context).size.width,
+                                child: widget.message.pictureUrl != '' && widget.message.text == ''
                                     ? Image.network(
                                         '${widget.message.pictureUrl}')
-                                    : (widget.message.pictureAsset != null &&
-                                            widget.message.pictureAsset?.path !=
-                                                '')
-                                        ? Image.file(
-                                            widget.message.pictureAsset!)
-                                        : Text(
+                                        //  : (widget.message.pictureAsset != null &&
+                                        //     widget.message.pictureAsset?.path !=
+                                        //         '')
+                                        // ? Image.file(
+                                        //     widget.message.pictureAsset!)
+                                    : 
+                                    Text(
                                             // message.date,
                                             widget.message.text,
+                                            textAlign: TextAlign.start,
                                             style: TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.w400,
@@ -830,6 +846,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    /*
                     if (widget.message.repliesAvatas == null)
                       SvgPicture.asset(
                         'assets/react3.svg',
@@ -846,6 +863,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                         avatarSize: 20,
                         onTap: () {},
                       ),
+                      */
 
                     //
                     //
@@ -951,19 +969,20 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     //
                     // message AREA
                     Container(
-                      // color: Colors.red,
+                      width:  MediaQuery.of(context).size.width,
                       child: GestureDetector(
                         onTap: () {
                           _showOverlay(context);
                         },
-                        child: widget.message.pictureUrl != ''
+                        child: widget.message.pictureUrl != ''  && widget.message.text == ''
                             ? Image.network('${widget.message.pictureUrl}')
-                            : (widget.message.pictureAsset != null &&
-                                    widget.message.pictureAsset?.path != '')
-                                ? Image.file(widget.message.pictureAsset!)
-                                : Text(
+                            //  : (widget.message.pictureAsset != null &&
+                            //         widget.message.pictureAsset?.path != '')
+                            //     ? Image.file(widget.message.pictureAsset!)
+                            : Text(
                                     // message.date,
                                     widget.message.text,
+                                    textAlign: TextAlign.start,
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w400,
@@ -975,7 +994,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     //
                     if ((widget.message.repliesCount +
                             widget.message.cheers +
-                            widget.message.bools) !=
+                            widget.message.boos) >=
                         0) ...[
                       Padding(
                         padding: const EdgeInsets.only(top: 8.0),

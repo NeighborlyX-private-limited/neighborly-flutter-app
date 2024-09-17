@@ -10,7 +10,7 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../data/model/chat_room_model.dart';
-import '../bloc/chat_group_cubit.dart';
+import '../bloc/chat_group_cubit_thread.dart';
 import '../widgets/chat_message_group_widget.dart';
 import '../widgets/chat_messages_group_sheemer.dart';
 
@@ -23,7 +23,7 @@ class ChatGroupThreadScreen extends StatefulWidget {
     Key? key,
     required this.messageId,
     required this.room,
-    required this.message,
+    required this.message
   }) : super(key: key);
 
   @override
@@ -37,17 +37,30 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
   final FocusNode messageFocusNode = FocusNode();
   bool isCommentFilled = false;
   File? fileToUpload;
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-
-    chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
-    // chatGroupCubit.init(widget.roomId); // widget.roomId;
+    print('... THREAD INIT first time ${widget.message}');
+    chatGroupCubit = BlocProvider.of<ChatGroupCubitThread>(context);
+    chatGroupCubit.init(widget.message.id); // widget.roomId;
     print('... THREAD INIT');
     print('... room=${widget.room}');
     print('... message=${widget.message}');
   }
+
+  void _scrollToEnd() {
+    if (_scrollController.hasClients) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+    }
+  } 
 
   @override
   void dispose() {
@@ -172,8 +185,14 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
               onTap: () {
                 // #send
                 // XXX
+                
+                final payload = {
+                  'group_id': '${widget.room.id}',//'${widget.message.id}',
+                  'msg': messageEC.text,
+                  'parent_message_id': '${widget.message.id}'};
+                
                 chatGroupCubit.sendMessage(
-                    message: messageEC.text, image: fileToUpload);
+                     payload, true);
 
                 // fileToUpload = null;
                 messageEC.clear();
@@ -249,7 +268,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
           const SizedBox(width: 10),
         ],
       ),
-      body: BlocConsumer<ChatGroupCubit, ChatGroupState>(
+      body: BlocConsumer<ChatGroupCubitThread, ChatGroupStateThread>(
         listener: (context, state) {
           switch (state.status) {
             case Status.loading:
@@ -273,13 +292,20 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
             case Status.initial:
               break;
           }
+          if (state.status == Status.success) {
+            Future.delayed(Duration(milliseconds: 100), () {
+              if (_scrollController.hasClients) {
+                _scrollToEnd();
+              }
+            });
+          }
         },
         builder: (context, state) {
           //
           //
           int lineCount = 1;
           String lastDate = '';
-          return BlocBuilder<ChatGroupCubit, ChatGroupState>(
+          return BlocBuilder<ChatGroupCubitThread, ChatGroupStateThread>(
             bloc: chatGroupCubit,
             builder: (context, state) {
               if (state.status == Status.loading) {
@@ -318,10 +344,24 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                           print('#onTag reply');
                         },
                         onTapCheer: () {
-                          print('#onTap cheer - send to remote');
+                          print('#onTap cheer - send to remote ${widget.message})');
+                                final payload = {
+                                  'group_id': '${widget.room.id}',
+                                  'message_id': '${widget.message.id}',
+                                  'action': 'cheer'};
+                                context.read<ChatGroupCubitThread>().sendMessage(payload);
+                         
+
+                          print('after cheer ${widget.message}');
+                        
                         },
                         onTapBool: () {
                           print('#onTap bool - send to remote');
+                          final payload = {
+                                  'group_id': '${widget.room.id}',
+                                  'message_id': '${widget.message.id}',
+                                  'action': 'boo'};
+                                context.read<ChatGroupCubitThread>().sendMessage(payload);
                         },
                         onReact: (messageId, reactOrAward) {
                           print(
@@ -353,7 +393,9 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                         width: double.infinity,
                         margin: EdgeInsets.symmetric(horizontal: 10),
                         child: ListView.builder(
-                          reverse: true, // Inverter a ordem da lista
+                          controller: _scrollController,
+                          shrinkWrap: true,
+                          //reverse: true, // Inverter a ordem da lista
                           itemCount: state.messages.length,
                           itemBuilder: (context, index) {
                             var msg = state.messages[index];
@@ -362,7 +404,6 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
 
                             var dateSummary =
                                 onlyDate(state.messages[index].date);
-                            print('..FODA dateSummary=$dateSummary');
 
                             var messageWidget = ChatMessageGroupWidget(
                               message: msg,
@@ -383,11 +424,21 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                                 print('#onTag reply');
                               },
                               onTapCheer: () {
-                                print('#onTap cheer - send to remote');
-                              },
-                              onTapBool: () {
-                                print('#onTap bool - send to remote');
-                              },
+                          print('#onTap cheer - send to remote ${widget.room})');
+                                final payload = {
+                                  'group_id': '${widget.room.id}',
+                                  'message_id': '${state.messages[index].id}',
+                                  'action': 'cheer'};
+                                context.read<ChatGroupCubitThread>().sendMessage(payload);
+                        },
+                        onTapBool: () {
+                          print('#onTap bool - send to remote');
+                          final payload = {
+                                  'group_id': '${widget.room.id}',
+                                  'message_id': '${state.messages[index].id}',
+                                  'action': 'boo'};
+                                context.read<ChatGroupCubitThread>().sendMessage(payload);
+                        },
                               onReact: (messageId, reactOrAward) {
                                 print(
                                     '#onTap react - send to remote award: $reactOrAward');

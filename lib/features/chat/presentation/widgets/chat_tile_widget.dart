@@ -17,7 +17,7 @@ class ChatTileWidget extends StatelessWidget {
     required this.onTap,
   }) : super(key: key);
 
-  Widget unreadedCounter(int value) {
+  Widget unreadCounter(int value) {
     return Padding(
       padding: const EdgeInsets.only(left: 4.0),
       child: Container(
@@ -54,10 +54,13 @@ class ChatTileWidget extends StatelessWidget {
 
   String timeAgoArea(String lastMessageDate) {
     if (lastMessageDate == '') return lastMessageDate;
+     DateTime parsedDate = DateTime.parse(lastMessageDate);
 
+    // Format the date as "YYYY-MM-DD HH:mm:ss"
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
     DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
     DateFormat dateFormatSimple = DateFormat('dd/MM/yyyy');
-    DateTime dateTime = format.parse(room.lastMessageDate);
+    DateTime dateTime = format.parse(formattedDate);
     String timeAgo = timeago.format(dateTime);
 
     if (isDateWithinLastMonth(dateTime)) {
@@ -81,6 +84,7 @@ class ChatTileWidget extends StatelessWidget {
         color: Colors.white,
         child: Row(
           children: [
+            
             UserAvatarStyledWidget(
               avatarUrl: room.avatarUrl,
               avatarSize: 22,
@@ -96,7 +100,7 @@ class ChatTileWidget extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          room.name,
+                         room.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontWeight: FontWeight.w500),
@@ -112,13 +116,13 @@ class ChatTileWidget extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 14,
-                          color: room.unreadedCount > 0
+                          color: room.unreadCount > 0
                               ? AppColors.primaryColor
                               : Colors.grey,
                         ),
                       ),
-                      if (room.unreadedCount > 0)
-                        unreadedCounter(room.unreadedCount),
+                      if (room.unreadCount > 0)
+                        unreadCounter(room.unreadCount),
                     ],
                   ),
                   const SizedBox(height: 7),

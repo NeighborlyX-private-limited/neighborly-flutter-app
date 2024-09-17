@@ -22,10 +22,15 @@ class ChatMessageWidget extends StatefulWidget {
 }
 
 class _ChatMessageWidgetState extends State<ChatMessageWidget> {
-  String formatTime(String dateTimeString) {
+  String formatTime(String lastMessageDate) {
+    if (lastMessageDate == '') return lastMessageDate;
+    DateTime parsedDate = DateTime.parse(lastMessageDate);
+
+    // Format the date as "YYYY-MM-DD HH:mm:ss"
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
     final DateFormat timeFormat = DateFormat('hh:mm a');
-    DateTime dateTime = dateFormat.parse(dateTimeString);
+    DateTime dateTime = dateFormat.parse(formattedDate);
     return timeFormat.format(dateTime);
   }
 
@@ -55,10 +60,7 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
                 padding: const EdgeInsets.fromLTRB(10, 15, 15, 25),
                 child: widget.message.pictureUrl != ''
                     ? Image.network('${widget.message.pictureUrl}')
-                    : (widget.message.pictureAsset != null &&
-                            widget.message.pictureAsset?.path != '')
-                        ? Image.file(widget.message.pictureAsset!)
-                        : Text(
+                    : Text(
                             // message.date,
                             widget.message.text,
                             style: TextStyle(
