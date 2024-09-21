@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:share_it/share_it.dart';
 
+import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../domain/entities/comment_entity.dart';
@@ -11,6 +12,10 @@ import '../bloc/feedback_bloc/feedback_bloc.dart';
 import '../bloc/give_award_bloc/give_award_bloc.dart';
 import 'overlapping_images_widget.dart';
 
+import '../../../profile/presentation/bloc/get_my_awards_bloc/get_my_awards_bloc.dart';
+import '../../../profile/domain/usecases/get_my_awards_usecase.dart';
+import '../../../profile/data/data_sources/profile_remote_data_source/profile_remote_data_source_impl.dart';
+import 'package:http/http.dart' as http;
 class ReactionCommentWidget extends StatefulWidget {
   final CommentEntity comment;
 
@@ -31,6 +36,13 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
   // State variables to track counts
   late num cheersCount;
   late num boolsCount;
+  late ProfileRemoteDataSourceImpl profileRemoteDataSource;
+   bool isLocalLegendAwardAvailable = false;
+  bool isParkBenchAwardAvailable = false;
+  bool isSunflowerAwardAvailable = false;
+  bool isStreetlightAwardAvailable = false;
+  bool isMapAwardAvailable = false;
+  
 
   @override
   void initState() {
@@ -39,22 +51,65 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     cheersCount = widget.comment.cheers;
     boolsCount = widget.comment.bools;
     awardsCount = widget.comment.awardType.length;
+     profileRemoteDataSource = ProfileRemoteDataSourceImpl(client: http.Client());
+   
     // Load persisted state
     _loadReactionState();
   }
 
   Future<void> _loadReactionState() async {
     setState(() {
+      getmyawards();
       // Load the state for the current post
       final userID = ShardPrefHelper.getUserID();
       final box = Hive.box('commentReactions');
       setState(() {
-        isCheered = box.get('${userID}_${widget.comment.commentid}_isCheered',
-            defaultValue: false);
-        isBooled = box.get('${userID}_${widget.comment.commentid}_isBooled',
-            defaultValue: false);
+        isCheered = widget.comment.userFeedback == 'cheer';
+        isBooled = widget.comment.userFeedback == 'boo';
       });
     });
+  }
+  getmyawards () async {
+    List responseMessage = await profileRemoteDataSource.getMyAwards();
+    if(responseMessage.length == 0){
+       isLocalLegendAwardAvailable = false;
+       isParkBenchAwardAvailable = false;
+       isSunflowerAwardAvailable = false;
+       isStreetlightAwardAvailable = false;
+       isMapAwardAvailable = false;
+    }else{
+      for(int i=0;i<responseMessage.length; i++){
+      if(responseMessage[i]['type'] == 'Local Legend' && responseMessage[i]['count'] > 0){
+        setState((){
+          isLocalLegendAwardAvailable = true;
+        });
+      }
+      if(responseMessage[i]['type'] == 'Park Bench' && responseMessage[i]['count'] > 0){
+        setState((){
+          isParkBenchAwardAvailable = true;
+        });
+        
+      }
+      if(responseMessage[i]['type'] == 'Sunflower' && responseMessage[i]['count'] > 0){
+        setState((){
+          isSunflowerAwardAvailable = true;
+        });
+        
+      }
+      if(responseMessage[i]['type'] == 'Streetlight' && responseMessage[i]['count'] > 0){
+        setState((){
+          isStreetlightAwardAvailable = true;
+        });
+        
+      }
+      if(responseMessage[i]['type'] == 'Map' && responseMessage[i]['count'] > 0){
+        setState((){
+          isMapAwardAvailable = true;
+        });
+      }
+    }
+    }
+    
   }
 
   Future<void> _saveReactionState() async {
@@ -259,6 +314,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
         ),
         InkWell(
           onTap: () {
+            //  BlocProvider.of<GetMyAwardsBloc>(context).add(
+            //     GetMyAwardsButtonPressedEvent(),);
             showBottomSheet().then((value) {
               if (value != null) {
                 setState(() {
@@ -328,31 +385,31 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
         const SizedBox(
           width: 12,
         ),
-        InkWell(
-          onTap: () {
-            // #share
-            ShareIt.text(
-                content: 'Hey, take a look on this comment',
-                androidSheetTitle: 'Cool comment in a nice Post');
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            height: 32,
-            width: 56,
-            decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
-            child: Center(
-              child: SvgPicture.asset(
-                'assets/react4.svg',
-                width: 20,
-                height: 24,
-              ),
-            ),
-          ),
-        )
+        // InkWell(
+        //   onTap: () {
+        //     // #share
+        //     ShareIt.text(
+        //         content: 'Hey, take a look on this comment',
+        //         androidSheetTitle: 'Cool comment in a nice Post');
+        //   },
+        //   child: Container(
+        //     padding: const EdgeInsets.symmetric(horizontal: 8),
+        //     height: 32,
+        //     width: 56,
+        //     decoration: BoxDecoration(
+        //         border: Border.all(color: Colors.grey[300]!),
+        //         borderRadius: const BorderRadius.all(
+        //           Radius.circular(21),
+        //         )),
+        //     child: Center(
+        //       child: SvgPicture.asset(
+        //         'assets/react4.svg',
+        //         width: 20,
+        //         height: 24,
+        //       ),
+        //     ),
+        //   ),
+        // )
       ],
     );
   }
@@ -425,7 +482,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     height: 5,
                   ),
                   InkWell(
-                    onTap: () {
+                    onTap: !isLocalLegendAwardAvailable ? null : () {
                       BlocProvider.of<GiveAwardBloc>(context).add(
                           GiveAwardButtonPressedEvent(
                               id: widget.comment.commentid,
@@ -440,6 +497,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                           'assets/Local_Legend.svg',
                           width: 84,
                           height: 84,
+                           color: isLocalLegendAwardAvailable ? null :  Colors.grey.withOpacity(0.5), // Apply grey tint when disabled
+                          colorBlendMode: BlendMode.modulate,
                         ),
                         const SizedBox(
                           width: 10,
@@ -452,14 +511,22 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                             children: [
                               Text(
                                 'Local Legend',
-                                style: greyonboardingBody1Style,
+                                style: GoogleFonts.roboto(
+                                color: isLocalLegendAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                               ),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 'Recognizing users who consistently contribute high-quality content.',
-                                style: mediumGreyTextStyleBlack,
+                                style: GoogleFonts.roboto(
+                                color: isLocalLegendAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],
@@ -469,7 +536,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
+                    onTap: !isSunflowerAwardAvailable? null :() {
                       BlocProvider.of<GiveAwardBloc>(context)
                           .add(GiveAwardButtonPressedEvent(
                         id: widget.comment.commentid,
@@ -485,6 +552,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                           'assets/Sunflower.svg',
                           width: 84,
                           height: 84,
+                             colorBlendMode: BlendMode.modulate,
+                          color: isSunflowerAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
+                       
                         ),
                         const SizedBox(
                           width: 10,
@@ -495,16 +565,23 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                             Text(
                                 'Sunflower',
-                                style: greyonboardingBody1Style,
-                              ),
+                                style: GoogleFonts.roboto(
+                                color: isSunflowerAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),),
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text(
+                               Text(
                                 'For bringing positivity and cheerfulness to the community.',
-                                style: mediumGreyTextStyleBlack,
+                                style: GoogleFonts.roboto(
+                                color: isSunflowerAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],
@@ -514,7 +591,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
+                    onTap:!isStreetlightAwardAvailable ? null : () {
                       BlocProvider.of<GiveAwardBloc>(context)
                           .add(GiveAwardButtonPressedEvent(
                         id: widget.comment.commentid,
@@ -530,6 +607,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                           'assets/Streetlight.svg',
                           width: 84,
                           height: 84,
+                            colorBlendMode: BlendMode.modulate,
+                          color: isStreetlightAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
+                       
                         ),
                         const SizedBox(
                           width: 10,
@@ -542,14 +622,22 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                             children: [
                               Text(
                                 'Streetlight',
-                                style: greyonboardingBody1Style,
+                                style: GoogleFonts.roboto(
+                                color: isStreetlightAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                               ),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 'For providing clear guidance and valuable insights.',
-                                style: mediumGreyTextStyleBlack,
+                                style: GoogleFonts.roboto(
+                                color: isStreetlightAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],
@@ -559,7 +647,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
+                    onTap: !isParkBenchAwardAvailable ? null : () {
                       BlocProvider.of<GiveAwardBloc>(context)
                           .add(GiveAwardButtonPressedEvent(
                         id: widget.comment.commentid,
@@ -571,10 +659,12 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
+                         SvgPicture.asset(
                           'assets/Park_Bench.svg',
                           width: 84,
                           height: 84,
+                          colorBlendMode: BlendMode.modulate,
+                          color: isParkBenchAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
@@ -585,16 +675,23 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                             Text(
                                 'Park Bench',
-                                style: greyonboardingBody1Style,
-                              ),
+                                style: GoogleFonts.roboto(
+                                color: isParkBenchAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 'For offering comforting and supportive posts.',
-                                style: mediumGreyTextStyleBlack,
+                                style: GoogleFonts.roboto(
+                                color: isParkBenchAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],
@@ -604,7 +701,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
+                    onTap:  !isMapAwardAvailable ? null : () {
                       BlocProvider.of<GiveAwardBloc>(context)
                           .add(GiveAwardButtonPressedEvent(
                         id: widget.comment.commentid,
@@ -616,10 +713,12 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
+                          SvgPicture.asset(
                           'assets/Map.svg',
                           width: 84,
                           height: 84,
+                          colorBlendMode: BlendMode.modulate,
+                          color: isMapAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
@@ -630,16 +729,24 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                        Text(
                                 'Map',
-                                style: greyonboardingBody1Style,
+                                style: GoogleFonts.roboto(
+                                color: isMapAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                               ),
                               const SizedBox(
                                 height: 5,
                               ),
-                              Text(
+                               Text(
                                 'For creating informative and detailed content.',
-                                style: mediumGreyTextStyleBlack,
+                                style: GoogleFonts.roboto(
+                                color: isMapAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                              ),
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],

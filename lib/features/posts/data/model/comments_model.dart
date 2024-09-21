@@ -11,6 +11,7 @@ class CommentModel extends CommentEntity {
     required super.cheers,
     required super.bools,
     super.proPic,
+    required super.userFeedback,
   });
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +27,7 @@ class CommentModel extends CommentEntity {
       awardType: (json['award_type'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
+      userFeedback: json['userFeedback'] as String? 
     );
   }
   // Conversion from CommentEntity
@@ -39,6 +41,7 @@ class CommentModel extends CommentEntity {
       cheers: entity.cheers,
       bools: entity.bools,
       awardType: entity.awardType,
+      userFeedback: entity.userFeedback
     );
   }
 
@@ -53,6 +56,7 @@ class CommentModel extends CommentEntity {
       'bools': bools,
       'proPic': proPic,
       'awardType': awardType,
+      'userFeedback': userFeedback
     };
   }
 }

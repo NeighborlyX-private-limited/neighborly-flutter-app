@@ -15,6 +15,16 @@ import '../widgets/poll_widget.dart';
 import '../widgets/post_sheemer_widget.dart';
 import '../widgets/post_widget.dart';
 import '../widgets/toggle_button_widget.dart';
+import 'dart:async';
+import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
+
+import '../../../../core/theme/colors.dart';
+import '../../../../core/utils/shared_preference.dart';
+import '../../../notification/presentation/bloc/notification_general_cubit.dart';
+import '../../../homePage/bloc/update_location_bloc/update_location_bloc.dart';
+
 
 class HomeScreen extends StatefulWidget {
   final bool isFirstTime;
@@ -26,7 +36,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isHome = true;
-
   @override
   void initState() {
     super.initState();
@@ -52,7 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isHome = value;
     });
-
     _fetchPosts(); // Fetch posts based on the new isHome value
   }
 
@@ -64,6 +72,72 @@ class _HomeScreenState extends State<HomeScreen> {
     day = int.parse(day) > 31 ? '31' : day;
     day = day.length == 1 ? '0$day' : day;
     return '$year-$month-$day';
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // notification permission
+    // TODO move this for other place
+    var checkPushPermission = await Permission.notification.isDenied;
+    print('...checkPushPermission: ${checkPushPermission}');
+    if (checkPushPermission) {
+      // Exibir dialogo solicitando permissão para notificações
+      await Permission.notification.request();
+    }
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location services are disabled. Please enable the services')));
+      return false;
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permissions are denied')));
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              'Location permissions are permanently denied, we cannot request permissions.')));
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> fetchLocationAndUpdate() async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) return;
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      setState(() {
+       // _currentPosition = position;
+      });
+      ShardPrefHelper.setLocation([position.latitude, position.longitude]);
+      print('Location: ${position.latitude}, ${position.longitude}');
+      bool? isVerified = await ShardPrefHelper.getIsVerified();
+      
+      Map<String,List<num>> locationDetail = {
+       isVerified ? 'homeLocation': 'userLocation': [position.latitude, position.longitude]
+      };
+
+      BlocProvider.of<UpdateLocationBloc>(context).add(
+        UpdateLocationButtonPressedEvent(
+          location: locationDetail,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error getting location: $e');
+    }
   }
 
   @override

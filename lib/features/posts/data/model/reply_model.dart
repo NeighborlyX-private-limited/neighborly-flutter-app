@@ -11,6 +11,7 @@ class ReplyModel extends ReplyEntity {
     required super.cheers,
     required super.bools,
     super.proPic,
+    required super.userFeedback
   });
 
   factory ReplyModel.fromJson(Map<String, dynamic> json) {
@@ -25,6 +26,7 @@ class ReplyModel extends ReplyEntity {
       proPic: json['user_picture'] as String?,
       awardType:
           (json['awards'] as List<dynamic>).map((e) => e as String).toList(),
+      userFeedback: json['userFeedback'] as String?
     );
   }
 
@@ -39,6 +41,7 @@ class ReplyModel extends ReplyEntity {
       'bools': bools,
       'proPic': proPic,
       'awardType': awardType,
+      'userFeedback': userFeedback
     };
   }
 }

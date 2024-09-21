@@ -3,9 +3,9 @@ part of 'update_location_bloc.dart';
 abstract class UpdateLocationEvent extends Equatable {}
 
 class UpdateLocationButtonPressedEvent extends UpdateLocationEvent {
-  final List<num> location;
+  final Map<String,List<num>> location;
   UpdateLocationButtonPressedEvent({
-    required this.location,
+    required this.location
   });
 
   @override

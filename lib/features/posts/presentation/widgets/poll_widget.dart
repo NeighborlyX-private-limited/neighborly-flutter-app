@@ -10,10 +10,31 @@ import '../bloc/delete_post_bloc/delete_post_bloc.dart';
 import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'option_card.dart';
 import 'reaction_widget.dart';
-
-class PollWidget extends StatelessWidget {
+class PollWidget extends StatefulWidget {
   final PostEntity post;
   const PollWidget({super.key, required this.post});
+
+  @override
+  State<PollWidget> createState() => _PollWidgetState();
+}
+
+class _PollWidgetState extends State<PollWidget> {
+  PostEntity? post;
+  bool isselected = false;
+  bool isrefresh = false;
+  @override
+  void initState() {
+    super.initState();
+    uselocalpost();
+  }
+
+  uselocalpost(){
+    setState((){
+      print('post printing');
+      print(widget.post);
+      post = widget.post;
+     });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +44,7 @@ class PollWidget extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        context.push('/post-detail/${post.id}/${false}/${post.userId}');
+        context.push('/post-detail/${widget.post.id}/${false}/${widget.post.userId}');
       },
       child: Container(
           color: Colors.white,
@@ -37,7 +58,7 @@ class PollWidget extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      context.push('/userProfileScreen/${post.userId}');
+                      context.push('/userProfileScreen/${widget.post.userId}');
                     },
                     child: Row(
                       children: [
@@ -48,9 +69,9 @@ class PollWidget extends StatelessWidget {
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                               ),
-                              child: post.proPic != null
+                              child: widget.post.proPic != null
                                   ? Image.network(
-                                      post.proPic!,
+                                      widget.post.proPic!,
                                       fit: BoxFit.contain,
                                     )
                                   : Image.asset(
@@ -67,7 +88,7 @@ class PollWidget extends StatelessWidget {
                             Row(
                               children: [
                                 Text(
-                                  post.userName,
+                                  widget.post.userName,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14),
@@ -87,7 +108,7 @@ class PollWidget extends StatelessWidget {
                                   width: 6,
                                 ),
                                 Text(
-                                  formatTimeDifference(post.createdAt),
+                                  formatTimeDifference(widget.post.createdAt),
                                   style: TextStyle(
                                     color: Colors.grey[500],
                                     fontSize: 14,
@@ -96,7 +117,7 @@ class PollWidget extends StatelessWidget {
                               ],
                             ),
                             Text(
-                              post.city,
+                              widget.post.city,
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: Colors.grey[500],
@@ -123,19 +144,19 @@ class PollWidget extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                '${post.title}',
+                '${widget.post.title}',
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 16,
                   color: Colors.grey[800],
                 ),
               ),
-              post.multimedia != null
+              widget.post.multimedia != null
                   ? const SizedBox(
                       height: 10,
                     )
                   : Container(),
-              post.multimedia != null
+              widget.post.multimedia != null && widget.post.multimedia != ''
                   ? Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -145,7 +166,7 @@ class PollWidget extends StatelessWidget {
                           child: Image.network(
                             width: double.infinity,
                             height: 200,
-                            post.multimedia!,
+                            widget.post.multimedia!,
                             fit: BoxFit.cover,
                           )),
                     )
@@ -153,23 +174,83 @@ class PollWidget extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              for (var option in post.pollOptions!)
-                OptionCard(
-                  // selectedOptions: selectedOptions,
-                  // isMultipleVotesAllowed: post.allowMultipleVotes!,
-                  option: option,
-                  totalVotes: calculateTotalVotes(post.pollOptions!),
-                  pollId: post.id,
-                ),
+              if(!isrefresh)
+                for (var option in post?.pollOptions ?? [])
+                  OptionCard(
+                    onSelectOptionCallback: onSelectOptionCallback,
+                    // selectedOptions: selectedOptions,
+                    // isMultipleVotesAllowed: post.allowMultipleVotes!,
+                    option: option,
+                    totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
+                    pollId: post?.id ?? 0,
+                    allowMultiSelect: widget.post.allowMultipleVotes ?? false,
+                    otherOptions: post?.pollOptions ?? [],
+                    alreadyselected: isselected
+                  ),
+              if(isrefresh)
+                for (var option in post?.pollOptions ?? [])
+                  OptionCard(
+                    onSelectOptionCallback: onSelectOptionCallback,
+                    // selectedOptions: selectedOptions,
+                    // isMultipleVotesAllowed: post.allowMultipleVotes!,
+                    option: option,
+                    totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
+                    pollId: post?.id ?? 0,
+                    allowMultiSelect: widget.post.allowMultipleVotes ?? false,
+                    otherOptions: post?.pollOptions ?? [],
+                    alreadyselected: isselected
+                  ),
               const SizedBox(
                 height: 20,
               ),
               ReactionWidget(
-                post: post,
+                post: widget.post,
               )
             ],
           )),
     );
+  }
+
+  onSelectOptionCallback(int optionid) {
+    print('option sa$optionid');
+    if (widget.post.allowMultipleVotes ?? false){
+      print("ALLOW MULTI");
+      PostEntity? updatedPost = post?.copyWith(
+        pollOptions: post?.pollOptions?.map((option) {
+          if (option.optionId == optionid) {
+            return option.copyWith(userVoted: true);  // Update userVoted for a specific option
+          }
+          return option;  // Return other options unchanged
+        }).toList(),
+      );
+      setState((){
+        isrefresh = true;
+        post = updatedPost;
+       
+      });
+      Future.delayed(Duration(milliseconds: 200), () {
+  setState((){
+    
+        isrefresh = false;
+  });
+  });
+      print('post $updatedPost printing $post');
+
+    }else{
+      setState((){
+        isselected = true;
+      
+      PostEntity? updatedPost = post?.copyWith(
+        pollOptions: post?.pollOptions?.map((option) {
+          if (option.optionId == optionid) {
+            return option.copyWith(userVoted: true);  // Update userVoted for a specific option
+          }
+          return option;  // Return other options unchanged
+        }).toList(),
+        );
+        post = updatedPost;
+      });
+    }
   }
 
   Future<dynamic> bottomSheet(BuildContext context) {
@@ -185,7 +266,7 @@ class PollWidget extends StatelessWidget {
           color: Colors.white,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: userId != post.userId
+          child: userId != widget.post.userId
               ? InkWell(
                   onTap: () {
                     showReportReasonBottomSheet();
@@ -230,7 +311,7 @@ class PollWidget extends StatelessWidget {
                       onTap: () {
                         context.read<DeletePostBloc>().add(
                             DeletePostButtonPressedEvent(
-                                postId: post.id, type: 'post'));
+                                postId: widget.post.id, type: 'post'));
                       },
                       child: Row(
                         children: [
@@ -368,7 +449,7 @@ class PollWidget extends StatelessWidget {
                             context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                     type: 'content',
-                                    postId: post.id,
+                                    postId: widget.post.id,
                                     reason: reportReasons[0]));
                           },
                           child: Row(
@@ -389,7 +470,7 @@ class PollWidget extends StatelessWidget {
                             context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                     type: 'content',
-                                    postId: post.id,
+                                    postId: widget.post.id,
                                     reason: reportReasons[1]));
                           },
                           child: Row(
@@ -409,7 +490,7 @@ class PollWidget extends StatelessWidget {
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: post.id,
+                                  postId: widget.post.id,
                                   reason: reportReasons[2])),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -428,7 +509,7 @@ class PollWidget extends StatelessWidget {
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: post.id,
+                                  postId: widget.post.id,
                                   reason: reportReasons[3])),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -447,7 +528,7 @@ class PollWidget extends StatelessWidget {
                           onTap: () => context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: post.id,
+                                  postId: widget.post.id,
                                   reason: reportReasons[4])),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,

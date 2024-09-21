@@ -5,6 +5,7 @@ class OptionModel extends OptionEntity {
     required super.option,
     required super.optionId,
     required super.votes,
+    required super.userVoted 
   });
 
   factory OptionModel.fromJson(Map<String, dynamic> json) {
@@ -12,6 +13,7 @@ class OptionModel extends OptionEntity {
       option: json['option']['option'],
       optionId: json['optionId'],
       votes: json['votes'],
+      userVoted : json['userVoted'] ?? false
     );
   }
 
@@ -20,6 +22,7 @@ class OptionModel extends OptionEntity {
       'option': option,
       'optionId': optionId,
       'votes': votes,
+      'userVoted ': userVoted 
     };
   }
 }

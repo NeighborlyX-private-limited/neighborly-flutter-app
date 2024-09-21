@@ -81,31 +81,31 @@ class SettingScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            InkWell(
-              onTap: () {
-                context.push('/communitiesScreen');
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SvgPicture.asset(
-                    'assets/community.svg',
-                    height: 24,
-                    width: 24,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    'Communities',
-                    style: blackonboardingBody1Style,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
+            // InkWell(
+            //   onTap: () {
+            //     context.push('/communitiesScreen');
+            //   },
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.start,
+            //     children: [
+            //       SvgPicture.asset(
+            //         'assets/community.svg',
+            //         height: 24,
+            //         width: 24,
+            //       ),
+            //       const SizedBox(
+            //         width: 10,
+            //       ),
+            //       Text(
+            //         'Communities',
+            //         style: blackonboardingBody1Style,
+            //       ),
+            //     ],
+            //   ),
+            // ),
+            // const SizedBox(
+            //   height: 20,
+            // ),
             InkWell(
               onTap: () {
                 context.push('/activityAndStatsScreen/$karma');

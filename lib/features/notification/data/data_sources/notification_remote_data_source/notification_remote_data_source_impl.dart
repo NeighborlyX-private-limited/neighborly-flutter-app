@@ -31,10 +31,10 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         headers: <String, String>{
           'Cookie': cookieHeader,
         },
-        body: jsonEncode(<String, dynamic>{
+        body: {
           "fcmToken": currentToken,
           "userId": currentUser,
-        }));
+        });
 
     if (response.statusCode == 200) {
       // ignore: unused_local_variable

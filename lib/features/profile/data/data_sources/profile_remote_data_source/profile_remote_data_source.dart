@@ -12,7 +12,7 @@ abstract class ProfileRemoteDataSource {
     required bool flag,
   });
   Future<void> updateLocation({
-    required List<num> location,
+    required Map<String,List<num>> location,
   });
   Future<void> getGenderAndDOB({
     String? gender,

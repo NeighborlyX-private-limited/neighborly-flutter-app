@@ -8,7 +8,7 @@ class PostEntity extends Equatable {
   final String userName;
   final String? title;
   final String? content;
-  final String? multimedia; // Made nullable
+  final String? multimedia;
   final String createdAt;
   final num cheers;
   final num bools;
@@ -19,6 +19,7 @@ class PostEntity extends Equatable {
   final List<dynamic> awardType;
   final List<OptionEntity>? pollOptions;
   final bool? allowMultipleVotes;
+  final String userFeedback;
 
   const PostEntity({
     required this.city,
@@ -36,8 +37,49 @@ class PostEntity extends Equatable {
     required this.cheers,
     required this.bools,
     this.proPic,
-    this.multimedia, // Made nullable
+    this.multimedia,
+    required this.userFeedback,
   });
+
+  PostEntity copyWith({
+    num? id,
+    String? userId,
+    String? userName,
+    String? title,
+    String? content,
+    String? multimedia,
+    String? createdAt,
+    num? cheers,
+    num? bools,
+    String? proPic,
+    String? city,
+    num? commentCount,
+    String? type,
+    List<dynamic>? awardType,
+    List<OptionEntity>? pollOptions,
+    bool? allowMultipleVotes,
+    String? userFeedback,
+  }) {
+    return PostEntity(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      userName: userName ?? this.userName,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      multimedia: multimedia ?? this.multimedia,
+      createdAt: createdAt ?? this.createdAt,
+      cheers: cheers ?? this.cheers,
+      bools: bools ?? this.bools,
+      proPic: proPic ?? this.proPic,
+      city: city ?? this.city,
+      commentCount: commentCount ?? this.commentCount,
+      type: type ?? this.type,
+      awardType: awardType ?? this.awardType,
+      pollOptions: pollOptions ?? this.pollOptions,
+      allowMultipleVotes: allowMultipleVotes ?? this.allowMultipleVotes,
+      userFeedback: userFeedback ?? this.userFeedback,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -56,6 +98,7 @@ class PostEntity extends Equatable {
         proPic,
         allowMultipleVotes,
         bools,
-        multimedia, // Nullable in props list
+        multimedia,
+        userFeedback,
       ];
 }

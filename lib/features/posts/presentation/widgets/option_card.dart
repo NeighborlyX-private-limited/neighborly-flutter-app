@@ -7,15 +7,23 @@ import '../../../../core/utils/shared_preference.dart';
 import '../bloc/vote_poll_bloc/vote_poll_bloc.dart';
 
 class OptionCard extends StatefulWidget {
+  final Function onSelectOptionCallback; 
   final OptionEntity option;
   final double totalVotes;
   final num pollId;
+  final bool allowMultiSelect;
+  final List<OptionEntity> otherOptions;
+  final bool alreadyselected;
 
   const OptionCard({
     required this.totalVotes,
     super.key,
     required this.option,
     required this.pollId,
+    required this.allowMultiSelect,
+    required this.onSelectOptionCallback,
+    required this.otherOptions,
+    required this.alreadyselected
   });
 
   @override
@@ -36,11 +44,8 @@ class _OptionCardState extends State<OptionCard> {
     final userID = ShardPrefHelper.getUserID();
     setState(() {
       final box = Hive.box('pollVotes');
-      isSelected = box.get(
-          '$userID-${widget.pollId}-${widget.option.optionId}-_pollVote',
-          defaultValue: false);
-
-      filledPercentage = isSelected
+      isSelected = widget.option.userVoted;
+      filledPercentage = widget.option.userVoted
           ? calculatePercentage(
                 widget.option.votes,
                 widget.totalVotes,
@@ -62,20 +67,62 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   void _toggleSelection() {
+    print('iselected total ${widget.alreadyselected} voted ${widget.totalVotes} $isSelected');
     setState(() {
-      if (isSelected) {
+      if (isSelected || widget.alreadyselected) {
         return;
       }
-      isSelected = !isSelected;
-      filledPercentage = isSelected
-          ? calculatePercentage(
-                double.parse(widget.option.votes.toString()),
-                widget.totalVotes,
-              ) /
-              100
-          : 0.0;
-      _saveSelectionState();
-    });
+      
+      if (widget.allowMultiSelect){
+        
+        isSelected = !isSelected;
+        filledPercentage = isSelected
+            ? calculatePercentage(
+                  double.parse(widget.option.votes.toString()) +  1,
+                  widget.totalVotes + 1,
+                ) /
+                100
+            : 0.0;
+        BlocProvider.of<VotePollBloc>(context).add(
+          VotePollButtonPressedEvent(
+            pollId: widget.pollId,
+            optionId: widget.option.optionId,
+          ),
+        );
+        widget.onSelectOptionCallback(
+          widget.option.optionId,
+       //   widget.totalVotes
+          );
+      }else{
+        bool isalreadyvoted = false;
+        for(int i =0; i< widget.otherOptions.length; i++){
+          if(widget.otherOptions[i].userVoted){
+            isalreadyvoted = true;
+          }
+        }
+        if(!isalreadyvoted){
+          isSelected = !isSelected;
+          filledPercentage = isSelected
+              ? calculatePercentage(
+                    double.parse(widget.option.votes.toString()) +  1,
+                    widget.totalVotes + 1,
+                  ) /
+                  100
+              : 0.0;
+          BlocProvider.of<VotePollBloc>(context).add(
+          VotePollButtonPressedEvent(
+            pollId: widget.pollId,
+            optionId: widget.option.optionId,
+          ),
+        );
+        widget.onSelectOptionCallback(
+          widget.option.optionId,
+       //   widget.totalVotes
+          );
+        }
+      }
+      
+   });
   }
 
   @override
@@ -83,12 +130,6 @@ class _OptionCardState extends State<OptionCard> {
     return InkWell(
       onTap: () {
         _toggleSelection();
-        BlocProvider.of<VotePollBloc>(context).add(
-          VotePollButtonPressedEvent(
-            pollId: widget.pollId,
-            optionId: widget.option.optionId,
-          ),
-        );
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -127,10 +168,7 @@ class _OptionCardState extends State<OptionCard> {
                     ),
                   ),
                   Text(
-                    '${calculatePercentage(
-                      double.parse(widget.option.votes.toString()),
-                      widget.totalVotes,
-                    ).toStringAsFixed(1)}%',
+                    '${(filledPercentage * 100).toStringAsFixed(2)}%',
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 11,
@@ -149,5 +187,5 @@ class _OptionCardState extends State<OptionCard> {
 
 // Helper function to calculate percentage
 double calculatePercentage(num value, num total) {
-  return total == 0 ? 0 : (value / total) * 100;
+  return total == 0 ? 0 : (value/total) * 100;
 }

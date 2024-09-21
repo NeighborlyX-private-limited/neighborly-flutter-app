@@ -253,7 +253,7 @@ void init() async {
   sl.registerLazySingleton(() => GetAllNotificationsUsecase(sl()));
 
   // register bloc
-  sl.registerFactory(() => RegisterBloc(registerUseCase: sl()));
+  sl.registerFactory(() => RegisterBloc(registerUseCase: sl(), googleLoginCase: sl()));
   sl.registerFactory(
       () => LoginWithEmailBloc(loginUseCase: sl(), googleLoginCase: sl()));
   sl.registerFactory(() => ResendOtpBloc(resendOTPUsecase: sl()));

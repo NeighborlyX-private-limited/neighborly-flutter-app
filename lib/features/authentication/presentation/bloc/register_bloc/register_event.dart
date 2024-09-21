@@ -20,3 +20,10 @@ class RegisterButtonPressedEvent extends RegisterEvent {
         phone,
       ];
 }
+
+class GoogleSignUpEvent extends RegisterEvent {
+  GoogleSignUpEvent();
+
+  @override
+  List<Object?> get props => [];
+}

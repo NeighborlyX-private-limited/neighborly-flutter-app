@@ -239,7 +239,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           tabs: const [
                             Tab(text: 'Posts'),
                             Tab(text: 'Comments'),
-                            Tab(text: 'Communities'),
+                          //  Tab(text: 'Communities'),
                           ],
                         ),
                       ),
@@ -250,7 +250,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         children: const [
                           PostSection(),
                           CommentSection(),
-                          GroupSection(),
+                         // GroupSection(),
                         ],
                       ),
                     ),

@@ -19,6 +19,7 @@ class PostModel extends PostEntity {
     required super.city,
     required super.commentCount,
     required super.awardType,
+    required super.userFeedback
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +44,7 @@ class PostModel extends PostEntity {
       city: json['city'] as String? ?? '',
       commentCount: json['commentCount'] ?? 0,
       allowMultipleVotes: json['allow_multiple_votes'] ?? true,
+      userFeedback: json['userFeedback'] ?? ''
     );
   }
 
@@ -61,6 +63,7 @@ class PostModel extends PostEntity {
       'boos': bools,
       'multimedia': multimedia,
       'awards': awardType,
+      'userFeedback': userFeedback
     };
   }
 }

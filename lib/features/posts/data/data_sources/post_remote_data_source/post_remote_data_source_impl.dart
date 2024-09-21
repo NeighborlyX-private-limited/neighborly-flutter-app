@@ -86,15 +86,14 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     String url = '$kBaseUrl/wall/feedback';
     final response = await client.put(
       Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
+      headers: {
         'Cookie': cookieHeader,
       },
-      body: jsonEncode(<String, dynamic>{
-        'id': id,
+      body: {
+        'id': '$id',
         'feedback': feedback,
         'type': type,
-      }),
+      },
     );
 
     if (response.statusCode == 200) {
@@ -233,7 +232,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'optionid': optionId,
       }),
     );
-
+    
     if (response.statusCode == 201) {
       return;
     } else {

@@ -96,6 +96,11 @@ class ShardPrefHelper {
   static Future removeLocation() async =>
       await _preferences.remove(_doubleListKey);
 
+  //set and get isVerified
+  static Future setIsVerified(bool isVerified) async =>
+      await _preferences.setBool('isVerified', isVerified);
+  static bool getIsVerified() => _preferences.getBool('isVerified') ?? false;
+
   // // save is cheered
   // static Future setIsCheered(String userId, num postId, bool isLiked) async =>
   //     await _preferences.setBool('$userId-${postId}_isCheered', isLiked);

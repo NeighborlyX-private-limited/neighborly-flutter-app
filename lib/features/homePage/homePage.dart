@@ -47,7 +47,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    fetchLocationAndUpdate();
+    //fetchLocationAndUpdate();
     ShardPrefHelper.removeImageUrl();
   }
 
@@ -147,10 +147,24 @@ class _MainPageState extends State<MainPage> {
       });
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location: ${position.latitude}, ${position.longitude}');
+      bool? isVerified = await ShardPrefHelper.getIsVerified();
+        Map<String,List<num>> userlocationDetail = {
+        'userLocation' : [position.latitude, position.longitude]
+        };
+
+        BlocProvider.of<UpdateLocationBloc>(context).add(
+          UpdateLocationButtonPressedEvent(
+            location: userlocationDetail,
+          ),
+        );
+  
+      Map<String,List<num>> homelocationDetail = {
+        'homeLocation': [position.latitude, position.longitude]
+      };
 
       BlocProvider.of<UpdateLocationBloc>(context).add(
         UpdateLocationButtonPressedEvent(
-          location: [position.latitude, position.longitude],
+          location: homelocationDetail,
         ),
       );
     } catch (e) {
@@ -176,17 +190,17 @@ class _MainPageState extends State<MainPage> {
         context.go('/home/false');
         break;
       case 1:
-        context.go('/events');
-        break;
-      case 2:
         context.go('/create');
         break;
-      case 3:
-        context.go('/groups');
-        break;
-      case 4:
+      case 2:
         context.go('/profile');
         break;
+      // case 3:
+      //   context.go('/groups');
+      //   break;
+      // case 4:
+      //   context.go('/events');
+      //   break;
     }
   }
 
@@ -207,12 +221,12 @@ class _MainPageState extends State<MainPage> {
               ),
               label: 'Home',
             ),
-            const BottomNavigationBarItem(
-              icon: Icon(
-                Icons.calendar_month,
-              ),
-              label: 'Events',
-            ),
+            // const BottomNavigationBarItem(
+            //   icon: Icon(
+            //     Icons.calendar_month,
+            //   ),
+            //   label: 'Events',
+            // ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 'assets/add.svg',
@@ -220,12 +234,12 @@ class _MainPageState extends State<MainPage> {
               ),
               label: '',
             ),
-            const BottomNavigationBarItem(
-              icon: Icon(
-                Icons.groups,
-              ),
-              label: 'Groups',
-            ),
+            // const BottomNavigationBarItem(
+            //   icon: Icon(
+            //     Icons.groups,
+            //   ),
+            //   label: 'Groups',
+            // ),
             const BottomNavigationBarItem(
               icon: Icon(
                 Icons.person,

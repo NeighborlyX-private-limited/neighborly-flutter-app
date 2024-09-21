@@ -45,7 +45,7 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
 
   @override
   Future<Either<Failure, void>> updateLocation(
-      {required List<num> location}) async {
+      {required Map<String,List<num>> location}) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.updateLocation(location: location);

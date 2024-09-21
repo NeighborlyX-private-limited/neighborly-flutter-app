@@ -243,6 +243,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 awardType: const [],
                                 commentid: 0,
                                 cheers: 0, bools: 0,
+                                userFeedback: ''
                               ));
                         });
                         BlocProvider.of<AddCommentBloc>(context).add(
@@ -410,11 +411,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         ),
         for (var option in postState.post.pollOptions!)
           OptionCard(
+            onSelectOptionCallback: (){
+              
+            },
             // selectedOptions: selectedOptions,
             // isMultipleVotesAllowed: postState.post.allowMultipleVotes!,
             option: option,
             totalVotes: calculateTotalVotes(postState.post.pollOptions!),
             pollId: postState.post.id,
+            allowMultiSelect: postState.post.allowMultipleVotes ?? false,
+            otherOptions: postState.post.pollOptions ?? [],
+            alreadyselected: true,
           ),
       ],
     );

@@ -45,12 +45,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
       String username = jsonDecode(response.body)['user']['username'];
-      String accessToken = jsonDecode(response.body)['user']['access_token'];
-      String refreshToken = jsonDecode(response.body)['user']['refresh_token'];
+      String accessToken = jsonDecode(response.body)['refreshToken'];
+      String refreshToken = jsonDecode(response.body)['refreshToken'];
       String proPic = jsonDecode(response.body)['user']['picture'];
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
+      bool isVerified = jsonDecode(response.body)['user']['isVerified']; 
 
       ShardPrefHelper.setAccessToken(accessToken);
       ShardPrefHelper.setRefreshToken(refreshToken);
@@ -60,6 +61,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setLocation([location[0], location[1]]);
+      ShardPrefHelper.setIsVerified(isVerified);
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
@@ -101,7 +103,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? password,
     String? phone,
   }) async {
+    print('starting email signup');
     String url = '$kBaseUrl/authentication/register';
+    print('starting email signup hitting api');
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -118,6 +122,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'fcmToken': 'Token',
             }),
     );
+    print('starting email signup response $response or ${response.statusCode}');
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
@@ -127,7 +132,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
-
+      bool isVerified = jsonDecode(response.body)['user']['isVerified']; 
+      ShardPrefHelper.setIsVerified(isVerified);
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
 
@@ -152,23 +158,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     String urlForEmail = '$kBaseUrl/authentication/verify-otp';
     String urlForPhone = '$kBaseUrl/authentication/verify-phone-otp';
+    print('verificationfor $verificationFor');
     final response = await client.post(
       Uri.parse(email != null ? urlForEmail : urlForPhone),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
+      headers: {
+        //'Content-Type': 'application/json',
       },
       body: email != null
-          ? jsonEncode(<String, String>{
+          ? {
               'email': email,
               'otp': otp,
               "verificationFor": verificationFor!,
-            })
-          : jsonEncode(<String, String>{
+            }
+          : {
               'phoneNumber': phone!,
               'otp': otp,
-            }),
+            },
     );
-
+   
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
@@ -178,7 +185,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
-
+      bool isVerified = jsonDecode(response.body)['user']['isVerified']; 
+      ShardPrefHelper.setIsVerified(isVerified);
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setEmail(email ?? '');
@@ -218,9 +226,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String url = '$kBaseUrl/authentication/google/login';
       final GoogleSignIn googleSignIn = new GoogleSignIn();
       await googleSignIn.signOut();
-
+      print('here i am ');
       var signInResult = await GoogleSignInService.signInWithGoogle();
-
+      print('here i am result $signInResult');
       String tokenID = signInResult['idToken'];
       if (signInResult.containsKey('error')) {
         print(signInResult['error']);
@@ -254,6 +262,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             message: jsonDecode(response.body)['error_description']);
       }
     } catch (e) {
+      print('error for singup $e');
       debugPrint(e.toString());
     }
   }

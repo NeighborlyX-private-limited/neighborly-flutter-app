@@ -53,6 +53,7 @@ class ChatMessageModel extends ChatMessageEntity {
       city: 'Gothan',
       commentCount: repliesCount,
       awardType: [],
+      userFeedback: ''
     );
   }
 

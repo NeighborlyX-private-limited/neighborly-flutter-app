@@ -211,7 +211,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         location[0],
                                         location[1],
                                       );
-
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
@@ -471,19 +470,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ],
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          context.push('/groups/create');
-                        },
-                        child: Row(
-                          children: [
-                            SvgPicture.asset('assets/communities.svg'),
-                            const SizedBox(width: 10),
-                            Text('Create Community',
-                                style: mediumTextStyleBlack),
-                          ],
-                        ),
-                      ),
+                      // InkWell(
+                      //   onTap: () {
+                      //     context.push('/groups/create');
+                      //   },
+                      //   child: Row(
+                      //     children: [
+                      //       SvgPicture.asset('assets/communities.svg'),
+                      //       const SizedBox(width: 10),
+                      //       Text('Create Community',
+                      //           style: mediumTextStyleBlack),
+                      //     ],
+                      //   ),
+                      // ),
                       // TODO: create a action to this and remove the comment
                       // Row(
                       //   children: [
@@ -492,19 +491,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       //     Text('Add Location', style: mediumTextStyleBlack),
                       //   ],
                       // ),
-                      GestureDetector(
-                        onTap: () {
-                          context.push('/events/create');
-                        },
-                        child: Row(
-                          children: [
-                            SvgPicture.asset('assets/create_an_event.svg'),
-                            const SizedBox(width: 10),
-                            Text('Create an Event',
-                                style: mediumTextStyleBlack),
-                          ],
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     context.push('/events/create');
+                      //   },
+                      //   child: Row(
+                      //     children: [
+                      //       SvgPicture.asset('assets/create_an_event.svg'),
+                      //       const SizedBox(width: 10),
+                      //       Text('Create an Event',
+                      //           style: mediumTextStyleBlack),
+                      //     ],
+                      //   ),
+                      // ),
                       InkWell(
                         onTap: () {
                           setState(() {
@@ -531,7 +530,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          context.push('/media-preview');
+                          _pickImage();
                         },
                         child: Row(
                           children: [
@@ -540,24 +539,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ],
                         ),
                       ),
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/communities.svg'),
-                          const SizedBox(width: 10),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     SvgPicture.asset('assets/communities.svg'),
+                      //     const SizedBox(width: 10),
+                      //   ],
+                      // ),
                       Row(
                         children: [
                           SvgPicture.asset('assets/add_location.svg'),
                           const SizedBox(width: 10),
                         ],
                       ),
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/create_an_event.svg'),
-                          const SizedBox(width: 10),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     SvgPicture.asset('assets/create_an_event.svg'),
+                      //     const SizedBox(width: 10),
+                      //   ],
+                      // ),
                       InkWell(
                         onTap: () {
                           setState(() {

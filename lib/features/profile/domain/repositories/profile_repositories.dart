@@ -15,7 +15,7 @@ abstract class ProfileRepositories {
     required bool flag,
   });
   Future<Either<Failure, void>> updateLocation({
-    required List<num> location,
+    required Map<String,List<num>> location,
   });
   Future<Either<Failure, void>> getGenderAndDOB({
     String? gender,
