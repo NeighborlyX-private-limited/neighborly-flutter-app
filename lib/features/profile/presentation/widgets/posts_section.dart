@@ -81,10 +81,19 @@ class _PostSectionState extends State<PostSection> {
                   itemBuilder: (context, index) {
                     final post = state.post[index];
                     if (post.type == 'post') {
-                      return PostWidget(post: post);
+                      return PostWidget(post: post,onDelete: (){
+                              print('this one is called');
+                              //context.read<GetAllPostsBloc>().deletepost(post.id);
+                              _onRefresh();
+                            });
                     } else if (post.type == 'poll') {
                       return PollWidget(
                         post: post,
+                        onDelete: (){
+                              print('this one is called');
+                              //context.read<GetAllPostsBloc>().deletepost(post.id);
+                              _onRefresh();
+                            }
                       );
                     }
                     return const SizedBox();

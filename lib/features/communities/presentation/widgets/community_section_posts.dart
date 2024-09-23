@@ -43,6 +43,8 @@ class CommunitySectionPosts extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 8),
                       child: PostWidget(
                         post: posts[index],
+                        onDelete: (){
+                              }
                       ),
                     );
                   }),

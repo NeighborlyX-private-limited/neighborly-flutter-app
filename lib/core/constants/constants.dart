@@ -1,4 +1,5 @@
-const kBaseUrl = "https://dev.neighborly.in/api";
+//const kBaseUrl = "https://dev.neighborly.in/api";
+const kBaseUrl = "https://prod.neighborly.in/api";
 const kBaseSocketUrl = "ws://54.90.230.2:3001";
 
 const double kMaxRadius = 100;

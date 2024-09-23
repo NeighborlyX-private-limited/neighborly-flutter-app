@@ -411,6 +411,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         ),
         for (var option in postState.post.pollOptions!)
           OptionCard(
+            key: UniqueKey(),
             onSelectOptionCallback: (){
               
             },

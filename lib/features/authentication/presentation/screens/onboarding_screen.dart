@@ -30,7 +30,7 @@ class OnBoardingScreen extends StatelessWidget {
               height: 20,
             ),
             Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+              'Connect with your neighbors, share stories, and stay informed with Neighborly, your hyper-local community app designed to bring people together.',
               textAlign: TextAlign.center,
               style: blackonboardingBody1Style,
             ),

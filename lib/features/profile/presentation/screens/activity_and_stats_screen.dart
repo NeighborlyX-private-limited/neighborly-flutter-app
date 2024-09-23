@@ -129,7 +129,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                       height: 5,
                                     ),
                                     Text(
-                                      'Lorem ipsum dolor sit met, constur adipiscing elit,',
+                                      'Your Karma score reflects your engagement within the community. Share, help, and connect to build your score.',
                                       style: mediumGreyTextStyleBlack,
                                       softWrap: true, // Enables text wrapping
                                     ),
@@ -163,34 +163,74 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                SizedBox(
-                                  height: 530,
-                                  child: ListView.separated(
-                                    itemCount: state.awards.length,
-                                    itemBuilder: (context, index) {
-                                      final award = state.awards[index];
-                                      String title = checkStringInList(
-                                          award['type'])['title'];
-                                      String description = checkStringInList(
-                                          award['type'])['description'];
-                                      String imageUrl = checkStringInList(
-                                          award['type'])['imageUrl'];
+                                if(state.awards.length != 0)
+                                  SizedBox(
+                                    height: 530,
+                                    child: ListView.separated(
+                                      itemCount: state.awards.length,
+                                      itemBuilder: (context, index) {
+                                        final award = state.awards[index];
+                                        String title = checkStringInList(
+                                            award['type'])['title'];
+                                        String description = checkStringInList(
+                                            award['type'])['description'];
+                                        String imageUrl = checkStringInList(
+                                            award['type'])['imageUrl'];
 
-                                      return AwardWidget(
-                                          imageUrl: imageUrl,
-                                          title: title,
-                                          description: description,
-                                          count: award['count'].toString());
-                                    },
-                                    separatorBuilder:
-                                        (BuildContext context, int index) {
-                                      return const Padding(
-                                        padding: EdgeInsets.only(bottom: 10.0),
-                                      );
-                                    },
-                                  ),
-                                )
-                              ]));
+                                        return AwardWidget(
+                                            imageUrl: imageUrl,
+                                            title: title,
+                                            description: description,
+                                            count: award['count'].toString());
+                                      },
+                                      separatorBuilder:
+                                          (BuildContext context, int index) {
+                                        return const Padding(
+                                          padding: EdgeInsets.only(bottom: 10.0),
+                                        );
+                                      },
+                                    ),
+                                  )
+                                else
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        AwardWidget(
+                                            imageUrl: 'assets/Local_Legend.svg',
+                                            title: 'Local Legend',
+                                            description: 'Recognizing users who consistently contribute high-quality content.',
+                                            count: '0'
+                                            ),
+                                        AwardWidget(
+                                            imageUrl: 'assets/Sunflower.svg',
+                                            title: 'Sunflower',
+                                            description: 'For bringing positivity and cheerfulness to the community.',
+                                            count: '0'
+                                            ),
+                                        AwardWidget(
+                                            imageUrl: 'assets/Streetlight.svg',
+                                            title: 'Streetlight',
+                                            description: 'For providing clear guidance and valuable insights.',
+                                            count: '0'
+                                            ),
+                                        AwardWidget(
+                                            imageUrl: 'assets/Park_Bench.svg',
+                                            title: 'Park Bench',
+                                            description: 'For offering comforting and supportive posts.',
+                                            count: '0'
+                                            ),
+                                        AwardWidget(
+                                            imageUrl: 'assets/Map.svg',
+                                            title: 'Map',
+                                            description: 'For creating informative and detailed content.',
+                                            count: '0'
+                                            ),
+                                      ]
+                                    )
+                                  )
+                              ]
+                              )
+                              );
                     } else {
                       return const SizedBox();
                     }

@@ -1,8 +1,7 @@
 import 'dart:io';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
 import 'dependency_injection.dart' as di;
@@ -62,9 +61,70 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // String? _linkMessage;
+  // StreamSubscription? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+    //_initUniLinks();
+  }
+
+  // Future<void> _initUniLinks() async {
+  //   try{
+  //   _sub = linkStream.listen((String? link) {
+  //     print('is link fetched');
+  //     print('link $link');
+  //     if (link != null) {
+  //       setState(() {
+  //         _linkMessage = link;
+  //         // Handle navigation based on the link
+  //         _navigateToDeepLink(link);
+  //       });
+  //     }
+  //   }, onError: (err) {
+  //     print('Error: $err');
+  //   });
+  //   }catch(e){
+  //     print('error in main $e');
+  //   }
+  // }
+
+  // void _navigateToDeepLink(String link) {
+  //   try{
+  //   // Parse the link and navigate to the corresponding screen
+  //   // Example: If the link is "myapp://profile/123", navigate to profile screen
+  //   final uri = Uri.parse(link);
+  //   if (uri.pathSegments.length > 1) {
+  //     final path = uri.pathSegments[0];
+  //     final id = uri.pathSegments[1];
+
+  //     switch (path) {
+  //       case 'profile':
+  //         // Navigate to Profile screen
+  //        // Navigator.of(context).pushNamed('/profile', arguments: id);
+  //         break;
+  //       // Add more cases as needed
+  //     }
+  //   }
+  //   }catch(e){
+  //     print("error in navigate $e");
+  //   }
+  // }
+
+  // @override
+  // void dispose() {
+  //   _sub?.cancel();
+  //   super.dispose();
+  // }
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

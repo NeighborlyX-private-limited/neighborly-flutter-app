@@ -45,13 +45,11 @@ class _OptionCardState extends State<OptionCard> {
     setState(() {
       final box = Hive.box('pollVotes');
       isSelected = widget.option.userVoted;
-      filledPercentage = widget.option.userVoted
-          ? calculatePercentage(
+      filledPercentage = calculatePercentage(
                 widget.option.votes,
                 widget.totalVotes,
               ) /
-              100
-          : 0.0;
+              100;
     });
   }
 
@@ -67,7 +65,7 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   void _toggleSelection() {
-    print('iselected total ${widget.alreadyselected} voted ${widget.totalVotes} $isSelected');
+    print('iselected ${widget.allowMultiSelect} total ${widget.alreadyselected} voted ${widget.totalVotes} $isSelected');
     setState(() {
       if (isSelected || widget.alreadyselected) {
         return;

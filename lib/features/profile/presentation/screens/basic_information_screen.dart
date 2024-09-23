@@ -12,6 +12,8 @@ import '../../../upload/presentation/widgets/post_button_widget.dart';
 import '../bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 import '../widgets/gender_dropdown_widget.dart';
+import '../../../authentication/presentation/screens/otp_screen_profile_update.dart';
+import '../../../authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 
 class BasicInformationScreen extends StatefulWidget {
   const BasicInformationScreen({super.key});
@@ -31,6 +33,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
   late TextEditingController _phoneNumberController;
   late TextEditingController _bioController;
   late String _selectedGender;
+  bool isPhoneVerified = true;
+  bool isOTPSent = false;
 
   File? _selectedImage; // Store the selected image
 
@@ -133,7 +137,47 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            return PostButtonWidget(
+                            return BlocConsumer<ResendOtpBloc, ResendOTPState>(
+                            listener: (BuildContext context, ResendOTPState resentstate) {
+                              if (resentstate is ResendOTPFailureState) {
+                                
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(resentstate.error)),
+                                  );
+                                
+                              } else if (resentstate is ResendOTPSuccessState) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(resentstate.message)),
+                                );
+                                
+                                
+                                  //  Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => OtpScreenProfileUpdate(
+                                  //       data: _phoneNumberController.text.trim(),
+                                  //       verificationFor: 'phone-register',
+                                  //       onVerifiedSuccessfully: () {
+                                  //         // This function is executed after verification
+                                  //         BlocProvider.of<EditProfileBloc>(context).add(
+                                  //           EditProfileButtonPressedEvent(
+                                  //             bio: _bioController.text.trim(),
+                                  //             phoneNumber: _phoneNumberController.text.trim(),
+                                  //             username: _usernameController.text.trim(),
+                                  //             image: _selectedImage,
+                                  //             gender: _selectedGender,
+                                  //           ),
+                                  //         );
+                                  //       },
+                                  //     ),
+                                  //   ),
+                                  // );
+
+                               }
+                  },
+                  builder: (context, resentstate) {
+                    return
+                            PostButtonWidget(
                               title: 'Save',
                               onTapListener: () async {
                                 // List<double> location =
@@ -154,8 +198,62 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
 
                                 ShardPrefHelper.setUsername(
                                     _usernameController.text.trim());
+                                
+                                if(isPhoneVerified){
 
-                                BlocProvider.of<EditProfileBloc>(context).add(
+                                  BlocProvider.of<EditProfileBloc>(context).add(
+                                    EditProfileButtonPressedEvent(
+                                      bio: _bioController.text.trim(),
+                                      phoneNumber:
+                                          _phoneNumberController.text.trim(),
+                                      username: _usernameController.text.trim(),
+                                      image: _selectedImage,
+                                      gender: _selectedGender,
+                                      // homeCoordinates: location,
+                                    ),
+                                  );
+                                } else{
+                                  if(_phoneNumberController.text.trim().isNotEmpty){
+                                    //  BlocProvider.of<ResendOtpBloc>(context).add(
+                                    //   ResendOTPButtonPressedEvent(
+                                    //     phone: _phoneNumberController.text.trim(),
+                                    //   ),
+                                    // );
+                                    //if (resentstate is ResendOTPSuccessState && isOTPSent) {
+                                      setState((){
+                                  isOTPSent = true;
+                                });
+                                // ScaffoldMessenger.of(context).showSnackBar(
+                                //   SnackBar(content: Text("OTP sent successfully")),
+                                // );
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => OtpScreenProfileUpdate(
+                                        data: _phoneNumberController.text.trim(),
+                                        verificationFor: 'phone-register',
+                                        onVerifiedSuccessfully: () {
+                                          // This function is executed after verification
+                                          BlocProvider.of<EditProfileBloc>(context).add(
+                                            EditProfileButtonPressedEvent(
+                                              bio: _bioController.text.trim(),
+                                              phoneNumber: _phoneNumberController.text.trim(),
+                                              username: _usernameController.text.trim(),
+                                              image: _selectedImage,
+                                              gender: _selectedGender,
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                   
+                                    //}
+                                    //navigate to otp screen;
+                                    
+
+                                  }else{
+                                    BlocProvider.of<EditProfileBloc>(context).add(
                                   EditProfileButtonPressedEvent(
                                     bio: _bioController.text.trim(),
                                     phoneNumber:
@@ -166,9 +264,12 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                     // homeCoordinates: location,
                                   ),
                                 );
+                                  }
+                                }
                               },
                               isActive: true,
                             );
+                  });
                           },
                         )
                       ],
@@ -203,7 +304,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                     state.profile.phoneNumber != null
                                 ? '${state.profile.phoneNumber}'
                                 : '';
-
+                        isPhoneVerified = state.profile.isPhoneVerified ?? false;
                         return Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(

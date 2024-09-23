@@ -237,8 +237,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'token': tokenID}),
+        body: json.encode({'token': tokenID,'device': 'android'}), //TODO : need to fetch device type
       );
+
+      print('response google auth');
+      print(response);
 
       if (response.statusCode == 200) {
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];

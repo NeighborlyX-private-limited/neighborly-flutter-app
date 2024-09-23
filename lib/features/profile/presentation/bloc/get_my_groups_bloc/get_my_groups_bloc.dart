@@ -25,4 +25,14 @@ class GetMyGroupsBloc extends Bloc<GetMyGroupsEvent, GetMyGroupsState> {
           (response) => emit(GetMyGroupsSuccessState(groups: response)));
     });
   }
+
+  void deletepost(num postid){
+    print('here is go ${state.props}');
+   // List<PostEntity> oldPost = List<PostEntity>.from(state.props);
+      // print('old post ${oldPost.length}');
+      //  oldPost.removeWhere((item) => item.id == postid);
+      // //List<PostEntity> updatedpost = oldPost.forEach((e)=> e.id != event.postId);
+      // print('new post ${oldPost.length}');
+      // emit(GetAllPostsSuccessState(post: oldPost));
+  }
 }

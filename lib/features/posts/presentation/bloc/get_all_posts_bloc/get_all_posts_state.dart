@@ -24,3 +24,16 @@ class GetAllPostsFailureState extends GetAllPostsState {
   final String error;
   GetAllPostsFailureState({required this.error});
 }
+
+// class DeletePostLoadingState extends GetAllPostsState {
+//   DeletePostLoadingState();
+// }
+
+// class DeletePostSuccessState extends GetAllPostsState {
+//   DeletePostSuccessState();
+// }
+
+// class DeletePostFailureState extends GetAllPostsState {
+//   final String error;
+//   DeletePostFailureState({required this.error});
+// }

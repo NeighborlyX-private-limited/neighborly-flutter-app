@@ -9,7 +9,8 @@ import '../../../posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart'
 import '../../../posts/presentation/widgets/reaction_widget.dart';
 import '../../domain/entities/post_with_comments_entity.dart';
 import 'profile_comment_reaction_widget.dart';
-
+import '../../../posts/presentation/widgets/option_card.dart';
+import '../../../../core/entities/post_enitity.dart';
 class PostWithCommentsWidget extends StatefulWidget {
   final PostWithCommentsEntity post;
 
@@ -24,7 +25,22 @@ class PostWithCommentsWidget extends StatefulWidget {
 
 class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
   bool isDeleted = false;
+  bool isselected = false;
+  bool isrefresh = false;
+  PostEntity? post;
+  @override
+  void initState(){
+    super.initState();
+    uselocalpost();
+  }
 
+  uselocalpost(){
+    setState((){
+print('post printing');
+print(widget.post);
+post = widget.post.content;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     void showBottomSheet(bool isComment) {
@@ -83,8 +99,15 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
             const Divider(),
             InkWell(
               onTap: () {
+                print('on click ${widget.post.content.type}');
+                if(widget.post.content.type == 'post'){
                 context.push(
                     '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}');
+                }else{
+                  context.push(
+                    '/post-detail/${widget.post.content.id}/${false}/${widget.post.userId}');
+                
+                }
               },
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +149,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                 Row(
                                   children: [
                                     Text(
-                                      widget.post.userName,
+                                      widget.post.content.userName,
                                       style: const TextStyle(
                                           fontWeight: FontWeight.w600,
                                           fontSize: 14),
@@ -199,7 +222,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           height: 10,
                         )
                       : Container(),
-                  widget.post.content.content != null
+                  
+                  widget.post.content.type == 'post' && widget.post.content.content != null
                       ? Text(
                           widget.post.content.content!,
                           textAlign: TextAlign.start,
@@ -210,12 +234,12 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           ),
                         )
                       : Container(),
-                  widget.post.content.multimedia != null
+                  widget.post.content.multimedia != null && widget.post.content.multimedia != ''
                       ? const SizedBox(
                           height: 10,
                         )
                       : Container(),
-                  widget.post.content.multimedia != null
+                  widget.post.content.multimedia != null && widget.post.content.multimedia != ''
                       ? Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
@@ -230,11 +254,36 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                               )),
                         )
                       : Container(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ReactionWidget(
+                  if(widget.post.content.type =='post')
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  if(widget.post.content.type =='poll')
+                   for (var option in post?.pollOptions ?? [])
+                    OptionCard(
+                      key: UniqueKey(),
+                      onSelectOptionCallback: (int optionid){},
+                      // selectedOptions: selectedOptions,
+                      // isMultipleVotesAllowed: post.allowMultipleVotes!,
+                      option: option,
+                      totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
+                      pollId: post?.id ?? 0,
+                      allowMultiSelect: widget.post.content.allowMultipleVotes ?? false,
+                      otherOptions: post?.pollOptions ?? [],
+                      alreadyselected: isselected
+                    ),
+                  if(widget.post.content.type =='post')
+                    const SizedBox(
+                      height: 20,
+                    ),
+                  InkWell(
+                    onTap: (){
+                      context.push(
+                    '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}');
+                    },
+                  child: ReactionWidget(
                     post: widget.post.content,
+                  ),
                   ),
                   !isDeleted
                       ? Column(

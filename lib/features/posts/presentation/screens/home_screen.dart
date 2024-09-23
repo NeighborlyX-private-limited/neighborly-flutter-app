@@ -45,7 +45,28 @@ class _HomeScreenState extends State<HomeScreen> {
         showBottomSheet(context);
       });
     }
+   // _handleDeepLink('myapp://posts/12345');
   }
+
+//   void _handleDeepLink(String deepLink) {
+//   // Parse the deep link
+//   try {
+//   print('callifng deeplink $deepLink');
+//   Uri uri = Uri.parse(deepLink);
+  
+//   // // Check the scheme and host
+//    if (uri.scheme == 'myapp' && uri.host == 'posts') {
+//   //   // Extract the post ID from the path
+//   //   String postId = uri.pathSegments[1]; // Assuming the path is like /posts/12345
+
+//   //   // Navigate to the post detail screen
+    
+//    }
+//   }catch(e){
+//     print("getting error");
+//   }
+// }
+
 
   void _fetchPosts() {
     BlocProvider.of<GetAllPostsBloc>(context)
@@ -190,12 +211,14 @@ class _HomeScreenState extends State<HomeScreen> {
         onRefresh: _onRefresh,
         child: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
           builder: (context, state) {
+            print('state changed $state');
             if (state is GetAllPostsLoadingState) {
               return const PostSheemerWidget();
             } else if (state is GetAllPostsSuccessState) {
               final posts = state.post;
-              return posts.isEmpty
-                  ? InkWell(
+              return 
+              posts.isEmpty
+                  ? Center(child:InkWell(
                       onTap: () {
                         context.go('/create');
                       },
@@ -203,7 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         'Create your first post',
                         style: bluemediumTextStyleBlack,
                       ),
-                    )
+                    ),)
                   : ListView.separated(
                       itemCount: posts.length,
                       itemBuilder: (context, index) {
@@ -211,10 +234,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (post.type == 'post') {
                           return PostWidget(
                             post: post,
+                            onDelete: (){
+                              print('this one is called');
+                              //context.read<GetAllPostsBloc>().deletepost(post.id);
+                              _onRefresh();
+                            }
                           );
                         } else if (post.type == 'poll') {
                           return PollWidget(
                             post: post,
+                            onDelete: (){
+                              print('this one is called');
+                              //context.read<GetAllPostsBloc>().deletepost(post.id);
+                              _onRefresh();
+                            }
                           );
                         }
                         return const SizedBox();

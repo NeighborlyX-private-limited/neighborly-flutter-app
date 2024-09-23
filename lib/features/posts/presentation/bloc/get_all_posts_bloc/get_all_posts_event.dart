@@ -11,3 +11,16 @@ class GetAllPostsButtonPressedEvent extends GetAllPostsEvent {
   @override
   List<Object?> get props => [];
 }
+class DeleteOnePostsButtonPressedEvent extends GetAllPostsEvent {
+  final num postId;
+  final String type;
+  DeleteOnePostsButtonPressedEvent({
+    required this.postId,
+    required this.type,
+  });
+
+  @override
+  List<Object?> get props => [
+        postId,
+      ];
+}

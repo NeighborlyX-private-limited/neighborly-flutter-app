@@ -12,10 +12,12 @@ import 'reaction_widget.dart';
 
 class PostWidget extends StatefulWidget {
   final PostEntity post;
+  final Function onDelete;
 
   const PostWidget({
     super.key,
     required this.post,
+    required this.onDelete,
   });
 
   @override
@@ -254,6 +256,7 @@ class _PostWidgetState extends State<PostWidget> {
                         context.read<DeletePostBloc>().add(
                             DeletePostButtonPressedEvent(
                                 postId: widget.post.id, type: 'post'));
+                        widget.onDelete();
                       },
                       child: Row(
                         children: [

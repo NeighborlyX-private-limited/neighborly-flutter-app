@@ -6,6 +6,7 @@ class AuthResponseModel extends AuthResponseEntity {
     required super.username,
     required super.token,
     required super.isVerified,
+    required super.phoneNumber,
     super.email,
     required super.coordinates,
     required super.picture,
@@ -22,6 +23,7 @@ class AuthResponseModel extends AuthResponseEntity {
       coordinates: json['user']['current_coordinates']['coordinates'],
       picture: json['user']['picture'],
       findMe: json['user']['findMe'],
+      phoneNumber: json['user']['phoneNumber']
     );
   }
 
@@ -34,6 +36,7 @@ class AuthResponseModel extends AuthResponseEntity {
       'email': email,
       'coordinates': coordinates,
       'picture': picture,
+      'phoneNumber':phoneNumber,
       'findMe': findMe,
     };
   }

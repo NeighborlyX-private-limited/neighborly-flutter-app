@@ -7,12 +7,17 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/delete_post_bloc/delete_post_bloc.dart';
+import '../bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'option_card.dart';
+import '../../../../core/entities/option_entity.dart';
+import '../../../../core/models/option_model.dart';
 import 'reaction_widget.dart';
 class PollWidget extends StatefulWidget {
   final PostEntity post;
-  const PollWidget({super.key, required this.post});
+  final Function onDelete;
+
+  const PollWidget({super.key, required this.post, required this.onDelete});
 
   @override
   State<PollWidget> createState() => _PollWidgetState();
@@ -174,32 +179,18 @@ class _PollWidgetState extends State<PollWidget> {
               const SizedBox(
                 height: 10,
               ),
-              if(!isrefresh)
+           //   if(!isrefresh)
                 for (var option in post?.pollOptions ?? [])
                   OptionCard(
-                    onSelectOptionCallback: onSelectOptionCallback,
-                    // selectedOptions: selectedOptions,
-                    // isMultipleVotesAllowed: post.allowMultipleVotes!,
-                    option: option,
-                    totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
-                    pollId: post?.id ?? 0,
-                    allowMultiSelect: widget.post.allowMultipleVotes ?? false,
-                    otherOptions: post?.pollOptions ?? [],
-                    alreadyselected: isselected
-                  ),
-              if(isrefresh)
-                for (var option in post?.pollOptions ?? [])
-                  OptionCard(
-                    onSelectOptionCallback: onSelectOptionCallback,
-                    // selectedOptions: selectedOptions,
-                    // isMultipleVotesAllowed: post.allowMultipleVotes!,
-                    option: option,
-                    totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
-                    pollId: post?.id ?? 0,
-                    allowMultiSelect: widget.post.allowMultipleVotes ?? false,
-                    otherOptions: post?.pollOptions ?? [],
-                    alreadyselected: isselected
-                  ),
+                  key: UniqueKey(),  // Add this line to force rebuild
+                  onSelectOptionCallback: onSelectOptionCallback,
+                  option: option,
+                  totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
+                  pollId: post?.id ?? 0,
+                  allowMultiSelect: widget.post.allowMultipleVotes ?? false,
+                  otherOptions: post?.pollOptions ?? [],
+                  alreadyselected: option.userVoted,
+                ),
               const SizedBox(
                 height: 20,
               ),
@@ -213,43 +204,65 @@ class _PollWidgetState extends State<PollWidget> {
 
   onSelectOptionCallback(int optionid) {
     print('option sa$optionid');
+    print('check ${widget.post.allowMultipleVotes} allowed multi');
     if (widget.post.allowMultipleVotes ?? false){
       print("ALLOW MULTI");
-      PostEntity? updatedPost = post?.copyWith(
-        pollOptions: post?.pollOptions?.map((option) {
-          if (option.optionId == optionid) {
-            return option.copyWith(userVoted: true);  // Update userVoted for a specific option
-          }
-          return option;  // Return other options unchanged
-        }).toList(),
+      List<OptionEntity>? newOptions= List<OptionEntity>.from(post?.pollOptions ?? []);//post?.pollOptions;
+
+      for (int i = 0; i < newOptions.length; i++) {
+      newOptions[i] = newOptions[i].copyWith(
+        userVoted: newOptions[i].optionId == optionid
+          ? true // Mark selected option as voted
+          : newOptions[i].userVoted, // Keep the previous state for other options
+        votes: newOptions[i].optionId == optionid
+          ? (newOptions[i].votes ?? 0) + 1 // Increment votes for the selected option
+          : newOptions[i].votes, // Keep votes unchanged for other options
       );
-      setState((){
-        isrefresh = true;
-        post = updatedPost;
-       
-      });
-      Future.delayed(Duration(milliseconds: 200), () {
-  setState((){
-    
+    }
+
+    // Update the post with the new options
+    setState(() {
+      post = post?.copyWith(
+        pollOptions: newOptions,
+      );
+      isrefresh = true;
+    });
+
+    // Delay to stop the refresh state
+    Future.delayed(Duration(milliseconds: 10), () {
+      setState(() {
         isrefresh = false;
-  });
-  });
-      print('post $updatedPost printing $post');
+      });
+    });
 
     }else{
-      setState((){
-        isselected = true;
-      
-      PostEntity? updatedPost = post?.copyWith(
-        pollOptions: post?.pollOptions?.map((option) {
-          if (option.optionId == optionid) {
-            return option.copyWith(userVoted: true);  // Update userVoted for a specific option
-          }
-          return option;  // Return other options unchanged
-        }).toList(),
-        );
-        post = updatedPost;
+      List<OptionEntity>? newOptions= List<OptionEntity>.from(post?.pollOptions ?? []);//post?.pollOptions;
+
+      for (int i = 0; i < newOptions.length; i++) {
+      newOptions[i] = newOptions[i].copyWith(
+        userVoted: newOptions[i].optionId == optionid
+          ? true // Mark selected option as voted
+          : newOptions[i].userVoted, // Keep the previous state for other options
+        votes: newOptions[i].optionId == optionid
+          ? (newOptions[i].votes ?? 0) + 1 // Increment votes for the selected option
+          : newOptions[i].votes, // Keep votes unchanged for other options
+      );
+    }
+
+    // Update the post with the new options
+    setState(() {
+      post = post?.copyWith(
+        pollOptions: newOptions,
+      );
+      isrefresh = true;
+    });
+
+    // Delay to stop the refresh state
+    Future.delayed(Duration(milliseconds: 10), () {
+      setState(() {
+        isrefresh = false;
       });
+    });
     }
   }
 
@@ -312,6 +325,7 @@ class _PollWidgetState extends State<PollWidget> {
                         context.read<DeletePostBloc>().add(
                             DeletePostButtonPressedEvent(
                                 postId: widget.post.id, type: 'post'));
+                        widget.onDelete();
                       },
                       child: Row(
                         children: [
