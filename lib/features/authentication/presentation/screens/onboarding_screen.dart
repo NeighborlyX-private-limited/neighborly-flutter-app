@@ -24,6 +24,7 @@ class OnBoardingScreen extends StatelessWidget {
             ),
             Text(
               'Welcome to Neighborly',
+              textAlign: TextAlign.center,
               style: onboardingHeading1Style,
             ),
             const SizedBox(

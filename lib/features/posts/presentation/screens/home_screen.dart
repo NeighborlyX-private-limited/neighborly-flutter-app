@@ -183,28 +183,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () {
-                context.push('/notifications');
-              },
-              child: badges.Badge(
-                badgeContent: Text(
-                  '3', // TODO: this came from a checked still not maked
-                  style: TextStyle(color: Colors.white),
-                ),
-                badgeStyle: BadgeStyle(badgeColor: AppColors.primaryColor),
-                position: badges.BadgePosition.custom(end: 0, top: -8),
-                child: SvgPicture.asset(
-                  'assets/alarm.svg',
-                  fit: BoxFit.contain,
-                  width: 30, // Adjusted to fit within the AppBar
-                  height: 30,
-                ),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(right: 16.0),
+          //   child: GestureDetector(
+          //     onTap: () {
+          //       context.push('/notifications');
+          //     },
+          //     child: badges.Badge(
+          //       badgeContent: Text(
+          //         '3', // TODO: this came from a checked still not maked
+          //         style: TextStyle(color: Colors.white),
+          //       ),
+          //       badgeStyle: BadgeStyle(badgeColor: AppColors.primaryColor),
+          //       position: badges.BadgePosition.custom(end: 0, top: -8),
+          //       child: SvgPicture.asset(
+          //         'assets/alarm.svg',
+          //         fit: BoxFit.contain,
+          //         width: 30, // Adjusted to fit within the AppBar
+          //         height: 30,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
       body: RefreshIndicator(
