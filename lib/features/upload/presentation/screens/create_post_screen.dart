@@ -11,6 +11,7 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
 import '../widgets/post_button_widget.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -126,7 +127,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+      return compressImage(imageFileX: file);
+    });
 
     if (image != null) {
       setState(() {

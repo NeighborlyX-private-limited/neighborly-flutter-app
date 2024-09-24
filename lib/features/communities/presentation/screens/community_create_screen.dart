@@ -15,6 +15,7 @@ import '../../../../core/widgets/dropdown_search_field.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/communities_create_cubit.dart';
 import '../widgets/community_sheemer.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class CommunityCreateScreen extends StatefulWidget {
   const CommunityCreateScreen({super.key});
@@ -576,7 +577,9 @@ class _Step4areaState extends State<Step4area> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+      return compressImage(imageFileX: file);
+    });
 
     if (image != null) {
       setState(() {

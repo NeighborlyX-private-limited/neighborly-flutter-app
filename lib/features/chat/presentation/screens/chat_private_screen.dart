@@ -12,6 +12,7 @@ import '../../data/model/chat_room_model.dart';
 import '../bloc/chat_private_cubit.dart';
 import '../widgets/chat_message_widget.dart';
 import '../widgets/chat_messages_sheemer.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class ChatPrivateScreen extends StatefulWidget {
   final String roomId;
@@ -51,7 +52,9 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+      return compressImage(imageFileX: file);
+    });
 
     if (image != null) {
       setState(() {

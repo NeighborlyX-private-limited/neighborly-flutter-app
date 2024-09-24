@@ -15,6 +15,7 @@ import '../bloc/chat_group_cubit.dart';
 import '../widgets/chat_message_group_widget.dart';
 import '../widgets/chat_message_pinned_widget.dart';
 import '../widgets/chat_messages_group_sheemer.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class ChatGroupScreen extends StatefulWidget {
   final String roomId;
@@ -107,7 +108,9 @@ void _scrollToEnd() {
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+      return compressImage(imageFileX: file);
+    });
 
     if (image != null) {
       setState(() {

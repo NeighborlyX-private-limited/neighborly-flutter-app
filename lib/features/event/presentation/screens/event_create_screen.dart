@@ -23,6 +23,7 @@ import '../../data/model/event_model.dart';
 import '../bloc/event_create_cubit.dart';
 import '../widgets/manage_dates_dialog.dart';
 import 'event_detail_screen.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class EventCreateScreen extends StatefulWidget {
   final EventModel? eventToUpdate;
@@ -531,8 +532,10 @@ class _Step1areaState extends State<Step1area> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+      return compressImage(imageFileX: file);
+    });
+    
     if (image != null) {
       setState(() {
         selectedImage = File(image.path);

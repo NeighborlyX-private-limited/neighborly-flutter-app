@@ -11,6 +11,7 @@ import 'package:video_player/video_player.dart';
 
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/upload_file_bloc/upload_file_bloc.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class MediaPreviewScreen extends StatefulWidget {
   const MediaPreviewScreen({super.key});
@@ -134,7 +135,9 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
           maxWidth: double.tryParse(maxWidthController.text),
           maxHeight: double.tryParse(maxHeightController.text),
           imageQuality: int.tryParse(qualityController.text),
-        );
+        ).then((file){
+      return compressImage(imageFileX: file);
+    });
         if (pickedFile != null) {
           setState(() {
             _setImageFileListFromFile(pickedFile);

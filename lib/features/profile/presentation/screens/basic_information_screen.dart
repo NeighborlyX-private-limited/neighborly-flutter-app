@@ -14,6 +14,7 @@ import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 import '../widgets/gender_dropdown_widget.dart';
 import '../../../authentication/presentation/screens/otp_screen_profile_update.dart';
 import '../../../authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class BasicInformationScreen extends StatefulWidget {
   const BasicInformationScreen({super.key});
@@ -69,7 +70,9 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+      return compressImage(imageFileX: file);
+    });
 
     if (image != null) {
       setState(() {

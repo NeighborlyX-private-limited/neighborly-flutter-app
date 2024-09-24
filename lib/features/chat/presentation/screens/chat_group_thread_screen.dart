@@ -13,6 +13,7 @@ import '../../data/model/chat_room_model.dart';
 import '../bloc/chat_group_cubit_thread.dart';
 import '../widgets/chat_message_group_widget.dart';
 import '../widgets/chat_messages_group_sheemer.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class ChatGroupThreadScreen extends StatefulWidget {
   final String messageId;
@@ -70,7 +71,9 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+      return compressImage(imageFileX: file);
+    });
 
     if (image != null) {
       setState(() {

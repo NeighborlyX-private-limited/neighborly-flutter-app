@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
+import '../../../../core/constants/imagepickercompress.dart';
 
 class CommunityAdminIconScreen extends StatefulWidget {
   const CommunityAdminIconScreen({
@@ -36,7 +37,9 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+      return compressImage(imageFileX: file);
+    });
 
     if (image != null) {
       setState(() {

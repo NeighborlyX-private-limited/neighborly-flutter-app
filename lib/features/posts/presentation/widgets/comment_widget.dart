@@ -154,8 +154,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         child: const Text(
                           'Reply',
                           style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             fontSize: 14,
                             height: 1.3,
                           ),
