@@ -400,9 +400,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     borderRadius: BorderRadius.circular(4),
                     child: Image.network(
                       width: double.infinity,
-                      height: 200,
+                      //height: 200,
                       postState.post.multimedia!,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                     )),
               )
             : Container(),
@@ -808,8 +808,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               child: Image.network(
                 post.multimedia!,
                 width: double.infinity,
-                height: 200,
-                fit: BoxFit.cover,
+               // height: 200,
+                fit: BoxFit.contain,
               ),
             ),
           ),

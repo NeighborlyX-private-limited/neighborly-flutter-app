@@ -63,7 +63,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
         case 'Map':
           return 'assets/Map.svg';
         default:
-          return 'assets/react7.png';
+          return 'assets/react7.svg';
       }
     }
 
@@ -142,7 +142,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                   ),
                                   child: SvgPicture.asset(
                                     checkStringInList(
-                                        state.profile.mostProminentAward!),
+                                        state.profile?.mostProminentAward ?? ''),
                                     fit: BoxFit.cover,
                                   ),
                                 ),

@@ -27,6 +27,7 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
+
     void showBottomSheet() {
       bottomSheet(context);
     }
@@ -175,9 +176,9 @@ class _PostWidgetState extends State<PostWidget> {
                         borderRadius: BorderRadius.circular(4),
                         child: Image.network(
                           width: double.infinity,
-                          height: 200,
+                          //height: 200,
                           widget.post.multimedia!,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         )),
                   )
                 : Container(),

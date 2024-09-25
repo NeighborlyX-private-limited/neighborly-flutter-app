@@ -170,9 +170,9 @@ class _PollWidgetState extends State<PollWidget> {
                           borderRadius: BorderRadius.circular(4),
                           child: Image.network(
                             width: double.infinity,
-                            height: 200,
+                            //height: 200,
                             widget.post.multimedia!,
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                           )),
                     )
                   : Container(),
