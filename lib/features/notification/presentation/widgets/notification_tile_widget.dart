@@ -115,6 +115,10 @@ class NotificationTileWidget extends StatelessWidget {
                   print(
                       '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
                 }
+                /*
+                TODO: Vinay here you have to add navigation for profile. Check with bharat whether we will get profile notification or not
+                only then its required to implment 
+                */
 
                 // if (notification.eventId != null) {
                 //   // context.push('/events/detail/:eventId/${notification.eventId}');

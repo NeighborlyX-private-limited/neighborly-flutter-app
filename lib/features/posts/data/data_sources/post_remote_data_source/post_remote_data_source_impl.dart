@@ -136,8 +136,12 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    String n = '305';
-    //String url = commentId == '0'? '$kBaseUrl/posts/fetch-comments/$postId' : '$kBaseUrl/posts/fetch-comment-thread/$n';
+    /*
+    TODO: Vinay here you have to replace fetch-comment-thread/$commentId with new commentid api , bharat will provide you and check
+    fetch-comments and commentid both api response should be same model type else you will get error
+    */
+
+    //String url = commentId == '0'? '$kBaseUrl/posts/fetch-comments/$postId' : '$kBaseUrl/posts/fetch-comment-thread/$commentId';
     String url = '$kBaseUrl/posts/fetch-comments/$postId';
     print("url created $url");
     final response = await client.get(
