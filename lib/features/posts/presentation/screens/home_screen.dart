@@ -24,7 +24,7 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../notification/presentation/bloc/notification_general_cubit.dart';
 import '../../../homePage/bloc/update_location_bloc/update_location_bloc.dart';
-
+import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
 
 class HomeScreen extends StatefulWidget {
   final bool isFirstTime;
@@ -45,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
         showBottomSheet(context);
       });
     }
+    getNotificationCount();
     //_handleDeepLink('https://prod.neighborly.in/posts/12345');
   }
 
@@ -161,6 +162,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  int notificationcount = 0;
+  getNotificationCount(){
+    getAllNotificationCount().then((value){
+      if(value != null && value > 0){
+        setState((){
+          notificationcount = value;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,10 +202,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.push('/notifications');
               },
               child: badges.Badge(
-                badgeContent: Text(
-                  '3', // TODO: this came from a checked still not maked
+                badgeContent: notificationcount > 0 ? Text(
+                  "$notificationcount", // TODO: this came from a checked still not maked
                   style: TextStyle(color: Colors.white),
-                ),
+                ): null,
                 badgeStyle: BadgeStyle(badgeColor: AppColors.primaryColor),
                 position: badges.BadgePosition.custom(end: 0, top: -8),
                 child: SvgPicture.asset(
