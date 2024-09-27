@@ -4,12 +4,14 @@ class NotificationListState extends Equatable {
   final Status status;
   final Failure? failure;
   final String? errorMessage;
+  final int page;
   final List<NotificationModel> notifications;
 
   const NotificationListState({
     this.status = Status.initial,
     this.failure,
     this.errorMessage = '',
+    this.page = 1,
     this.notifications = const [],
   });
 
@@ -19,12 +21,14 @@ class NotificationListState extends Equatable {
         failure,
         errorMessage,
         notifications,
+        page
       ];
 
   NotificationListState copyWith({
     Status? status,
     Failure? failure,
     String? errorMessage,
+    int? page,
     List<NotificationModel>? notifications,
   }) {
     return NotificationListState(
@@ -32,6 +36,7 @@ class NotificationListState extends Equatable {
       failure: failure ?? this.failure,
       errorMessage: errorMessage ?? this.errorMessage,
       notifications: notifications ?? this.notifications,
+      page: page ?? this.page
     );
   }
 }

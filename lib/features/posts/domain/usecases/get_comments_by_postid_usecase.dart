@@ -11,7 +11,8 @@ class GetCommentsByPostIdUsecase {
 
   Future<Either<Failure, List<CommentEntity>>> call({
     required num id,
+    required String commentId,
   }) async {
-    return await repository.getCommentsByPostId(postId: id);
+    return await repository.getCommentsByPostId(postId: id, commentId: commentId);
   }
 }

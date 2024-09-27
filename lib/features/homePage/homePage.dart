@@ -2,6 +2,7 @@
 
 import 'dart:async';
 
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +14,8 @@ import '../../core/theme/colors.dart';
 import '../../core/utils/shared_preference.dart';
 import '../notification/presentation/bloc/notification_general_cubit.dart';
 import 'bloc/update_location_bloc/update_location_bloc.dart';
+
+import '../../features/posts/presentation/screens/post_detail_screen.dart';
 
 class MainPage extends StatefulWidget {
   final Widget child;
@@ -34,6 +37,9 @@ class _MainPageState extends State<MainPage> {
   bool isMonthFilled = false;
   bool isYearFilled = false;
 
+  static const platform = MethodChannel('com.example.neighborly_flutter_app');
+  String? _deepLink;
+
   late PageController pageController;
 
   @override
@@ -41,7 +47,35 @@ class _MainPageState extends State<MainPage> {
     pageController = PageController();
     fetchLocationAndUpdate();
     updateFCMtokenNotification();
+    _setDeepLinkListener();
     super.initState();
+  }
+
+  Future<void> _setDeepLinkListener() async{
+    platform.setMethodCallHandler((MethodCall call) async {
+      if (call.method == "onDeepLink"){
+        print("deep link received");
+        setState((){
+          _deepLink = call.arguments;
+          List? linksplit = _deepLink?.split('neighborly.in');
+          if (linksplit != null && linksplit.length > 1) {
+            //if(linksplit[1].contains('post-detail/')){
+                try{
+                  context.push(linksplit[1]);
+                }catch(e){
+                  print("error aaya kch $e");
+                }
+            // }
+            // else{
+            //   context.push('/userProfileScreen/${widget.post.userId}');
+            //   print('here you have to handle other navigation for url based on if condition');
+            // }
+          }else{
+            print("Empty means open default page");
+          }
+        });
+      }
+    });
   }
 
   @override

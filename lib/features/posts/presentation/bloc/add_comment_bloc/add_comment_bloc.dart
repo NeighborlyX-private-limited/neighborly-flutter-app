@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../domain/usecases/add_comment_usecase.dart';
 
+import '../../../domain/entities/comment_entity.dart';
 part 'add_comment_event.dart';
 part 'add_comment_state.dart';
 
@@ -27,4 +28,6 @@ class AddCommentBloc extends Bloc<AddCommentEvent, AddCommentState> {
           (response) => emit(AddCommentSuccessState()));
     });
   }
+
+  
 }

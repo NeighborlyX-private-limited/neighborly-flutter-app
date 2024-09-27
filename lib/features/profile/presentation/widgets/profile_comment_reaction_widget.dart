@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
-
+import 'package:share_it/share_it.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
@@ -12,10 +12,14 @@ import '../../domain/entities/post_with_comments_entity.dart';
 
 class ProfileReactionCommentWidget extends StatefulWidget {
   final PostWithCommentsEntity postComment;
+  final isPost;
+  final postId;
 
   const ProfileReactionCommentWidget({
     super.key,
     required this.postComment,
+    required this.isPost,
+    required this.postId,
   });
 
   @override
@@ -324,7 +328,15 @@ class _ProfileReactionCommentWidgetState
             ),
           ),
         ),
-        Container(
+        InkWell(
+         onTap:(){
+          String link = 'https://prod.neighborly.in/post-detail/${widget.postId}/${widget.isPost}/${widget.postComment.userId}/${widget.postComment.commentId}';
+            ShareIt.text(
+                content: link,
+                androidSheetTitle: 'Cool Post');
+         },
+
+         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           height: 32,
           width: 56,
@@ -340,7 +352,7 @@ class _ProfileReactionCommentWidgetState
               height: 24,
             ),
           ),
-        )
+        ),),
       ],
     );
   }

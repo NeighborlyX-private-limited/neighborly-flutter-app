@@ -54,7 +54,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="prod.neighborly.in" android:pathPrefix="/posts" />
+                <data android:scheme="https" android:host="prod.neighborly.in"/>
             </intent-filter>
 
 

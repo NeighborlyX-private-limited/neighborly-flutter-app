@@ -18,10 +18,12 @@ import '../../../profile/data/data_sources/profile_remote_data_source/profile_re
 import 'package:http/http.dart' as http;
 class ReactionCommentWidget extends StatefulWidget {
   final CommentEntity comment;
+  final bool isPost;
 
   const ReactionCommentWidget({
     super.key,
     required this.comment,
+    required this.isPost,
   });
 
   @override
@@ -385,31 +387,34 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
         const SizedBox(
           width: 12,
         ),
-        // InkWell(
-        //   onTap: () {
-        //     // #share
-        //     ShareIt.text(
-        //         content: 'Hey, take a look on this comment',
-        //         androidSheetTitle: 'Cool comment in a nice Post');
-        //   },
-        //   child: Container(
-        //     padding: const EdgeInsets.symmetric(horizontal: 8),
-        //     height: 32,
-        //     width: 56,
-        //     decoration: BoxDecoration(
-        //         border: Border.all(color: Colors.grey[300]!),
-        //         borderRadius: const BorderRadius.all(
-        //           Radius.circular(21),
-        //         )),
-        //     child: Center(
-        //       child: SvgPicture.asset(
-        //         'assets/react4.svg',
-        //         width: 20,
-        //         height: 24,
-        //       ),
-        //     ),
-        //   ),
-        // )
+        InkWell(
+          onTap: () {
+            // #share
+            print('omment share ${widget.comment.postid}');
+           String link = 'https://prod.neighborly.in/post-detail/${widget.comment.postid}/${widget.isPost}/${widget.comment.userId}/${widget.comment.commentid}';
+            print(link);
+            ShareIt.text(
+                content: '$link',
+                androidSheetTitle: 'Cool comment in a nice Post');
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 32,
+            width: 56,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                )),
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/react4.svg',
+                width: 20,
+                height: 24,
+              ),
+            ),
+          ),
+        )
       ],
     );
   }

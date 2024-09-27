@@ -405,9 +405,12 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         
         InkWell(
           onTap: () {
+            print('widget.post.id');
+            print(widget.post.type);
             // #share
+            String link = 'https://prod.neighborly.in/post-detail/${widget.post.id}/${widget.post.type=='post'?'true':'false'}/${widget.post.userId}/0';
             ShareIt.text(
-                content: 'Hey, take a look on this post',
+                content: link,
                 androidSheetTitle: 'Cool Post');
           },
           child: Container(

@@ -20,12 +20,12 @@ class NotificationTileWidget extends StatelessWidget {
   List<Widget> listWidgets = [];
 
   Widget leftAvatar() {
-    print('notification.user=${notification.notificationImage}');
-    if (notification.notificationImage == null)
-      return SizedBox(width: 30, height: 30);
+    //print('notification.user=${notification.notificationImage}');
+    // if (notification.notificationImage == null)
+    //   return SizedBox(width: 30, height: 30);
 
     return UserAvatarStyledWidget(
-      avatarUrl: notification.notificationImage!,
+      avatarUrl: notification.notificationImage == null || notification.notificationImage ==''? "https://img.freepik.com/fotos-gratis/especialista-em-seguranca-cibernetica-a-trabalhar-com-tecnologia-em-luzes-de-neon_23-2151645661.jpg?t=st=1722573533~exp=1722577133~hmac=fc9a6c66bed1aef3fad7541423c49fa69ea858159e8d3d6903039c7edf5dde65&w=360" : notification.notificationImage!,
       avatarSize: 23,
       avatarBorderSize: 0,
     );
@@ -91,7 +91,7 @@ class NotificationTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     buildMainArea(context);
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
       width: double.infinity,
       child: Row(
         children: [
@@ -103,40 +103,43 @@ class NotificationTileWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GestureDetector(
               onTap: () {
-                // if (notification.postId != null) {
-                //   context.push('/userProfileScreen/${notification.userId}');
+                print(notification);
+                bool ispost = notification.posttype == 'post';
+                print('notification ${notification.posttype}');
+                String commentid = '0';
+                if(notification.title == 'You’ve Got a Comment!'){
+                  commentid = notification.commentId.toString() ?? '0';
+                }
+                if (notification.postId != null) {
+                 context.push('/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/commentid');
+                  print(
+                      '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
+                }
+
+                // if (notification.eventId != null) {
+                //   // context.push('/events/detail/:eventId/${notification.eventId}');
+                //   print('/events/detail/:eventId/${notification.eventId}');
                 // }
 
-                if (notification.postId != null) {
-                  // context.push('/post-detail/${notification.postId}/true/${notification.userId}');
-                  print(
-                      '/post-detail/${notification.postId}/true/${notification.userId}');
-                }
+                // if (notification.groupId != null) {
+                //   // context.push('/groups/${notification.groupId}');
+                //   print('/groups/${notification.groupId}');
+                // }
 
-                if (notification.eventId != null) {
-                  // context.push('/events/detail/:eventId/${notification.eventId}');
-                  print('/events/detail/:eventId/${notification.eventId}');
-                }
-
-                if (notification.groupId != null) {
-                  // context.push('/groups/${notification.groupId}');
-                  print('/groups/${notification.groupId}');
-                }
-
-                if (notification.messageId != null) {
-                  context.push(
-                    '/chat/private/${notification.notificationImage}',
-                    extra: ChatRoomModel(
-                        id: notification.messageId!,
-                        name: notification.userName ?? '.-.',
-                        avatarUrl: notification.notificationImage!,
-                        lastMessage: '',
-                        lastMessageDate: '',
-                        isMuted: false,
-                        isGroup: false,
-                        unreadCount: 1),
-                  );
-                }
+                // if (notification.messageId != null) {
+                //   context.push(
+                //     '/chat/private/${notification.notificationImage}',
+                //     extra: ChatRoomModel(
+                //         id: notification.messageId!,
+                //         name: notification.userName ?? '.-.',
+                //         avatarUrl: notification.notificationImage!,
+                //         lastMessage: '',
+                //         lastMessageDate: '',
+                //         isMuted: false,
+                //         isGroup: false,
+                //         unreadCount: 1),
+                //   );
+                // }
               },
               child: Wrap(
                 runSpacing: 4,

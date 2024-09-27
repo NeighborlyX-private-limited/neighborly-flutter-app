@@ -17,12 +17,16 @@ class CommentWidget extends StatefulWidget {
   final CommentEntity comment;
   final FocusNode commentFocusNode; // Step 1: Define a FocusNode
   final Function(dynamic) onReplyTap; // Callback for reply tap
+  final bool isPost;
+  final Function onDelete;
 
   const CommentWidget({
     super.key,
     required this.comment,
     required this.commentFocusNode,
     required this.onReplyTap,
+    required this.isPost,
+    required this.onDelete
   });
 
   @override
@@ -167,6 +171,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                   ),
                   ReactionCommentWidget(
                     comment: widget.comment,
+                    isPost: widget.isPost
                   ),
                   const SizedBox(
                     height: 10,
@@ -297,6 +302,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     }
                     return InkWell(
                       onTap: () {
+                        widget.onDelete();
                         context.read<DeletePostBloc>().add(
                             DeletePostButtonPressedEvent(
                                 postId: widget.comment.commentid,

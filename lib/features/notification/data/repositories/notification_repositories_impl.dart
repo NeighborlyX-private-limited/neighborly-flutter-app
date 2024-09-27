@@ -36,7 +36,7 @@ class NotificationRepositoriesImpl implements NotificationRepositories {
       {String? page}) async {
     if (await networkInfo.isConnected) {
       try {
-        var result = await remoteDataSource.getAllNotification(page: page);
+        List<NotificationModel> result = await remoteDataSource.getAllNotification(page: page);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

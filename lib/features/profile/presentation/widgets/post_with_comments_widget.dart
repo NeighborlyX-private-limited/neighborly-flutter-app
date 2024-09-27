@@ -102,10 +102,10 @@ post = widget.post.content;
                 print('on click ${widget.post.content.type}');
                 if(widget.post.content.type == 'post'){
                 context.push(
-                    '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}');
+                    '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
                 }else{
                   context.push(
-                    '/post-detail/${widget.post.content.id}/${false}/${widget.post.userId}');
+                    '/post-detail/${widget.post.content.id}/${false}/${widget.post.userId}/0');
                 
                 }
               },
@@ -279,7 +279,7 @@ post = widget.post.content;
                   InkWell(
                     onTap: (){
                       context.push(
-                    '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}');
+                    '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
                     },
                   child: ReactionWidget(
                     post: widget.post.content,
@@ -377,6 +377,8 @@ post = widget.post.content;
                                       ),
                                       ProfileReactionCommentWidget(
                                         postComment: widget.post,
+                                        isPost:  widget.post.content.type == 'post',
+                                        postId: widget.post.commentId
                                       ),
                                     ],
                                   ),

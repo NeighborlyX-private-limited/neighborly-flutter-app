@@ -19,9 +19,10 @@ class GetCommentsByPostIdBloc
         (GetCommentsByPostIdButtonPressedEvent event,
             Emitter<GetCommentsByPostIdState> emit) async {
       emit(GetcommentsByPostIdLoadingState());
-
+      
       final result = await _getCommentsByPostIdUsecase.call(
         id: event.postId,
+        commentId: event.commentId,
       );
 
       result.fold(
@@ -30,5 +31,19 @@ class GetCommentsByPostIdBloc
           (response) =>
               emit(GetcommentsByPostIdSuccessState(comments: response)));
     });
+  }
+
+  void deleteComment(num commentid){
+    print("delete post $state");
+    if (state is GetcommentsByPostIdSuccessState) {
+      print("delete post inside state");
+      final successState = state as GetcommentsByPostIdSuccessState;
+      emit(GetcommentsByPostIdLoadingState());
+        List<CommentEntity> oldPost = List<CommentEntity>.from(successState.comments);
+        print("old comments length ${oldPost.length}");
+       oldPost.removeWhere((item) => item.commentid == commentid);
+       print("old comment agains length ${oldPost.length}");
+      emit(GetcommentsByPostIdSuccessState(comments: oldPost));
+    }
   }
 }

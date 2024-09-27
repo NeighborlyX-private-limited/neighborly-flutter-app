@@ -74,6 +74,37 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     "status": "String"
 }
 */
+
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    print('cookies list $cookies');
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrlNotification/notifications/fetch-notification?status=unread&page=$page&limit=100';
+
+    print('cookie $cookieHeader');
+
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+         'Cookie': cookieHeader,
+        //'Cookie': 'connect.sid=s%3ATNsUxcpmB530JPuGonUAMDf7UM75k6Q4.mxgR3Q0l1w8bXnJiiZlxe76Dlme%2FOEHdlLkM4ZHRoFA; refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2N2QwZDZkNjIxMDQxZGEyYzdiNzllOCIsImlhdCI6MTcyNjE1MTY5OCwiZXhwIjoxNzM5MTExNjk4fQ.nVVIIKSfktYn64zktVqexxi86sfXqkuKRjp9g13fuM0',
+      },
+    );
+    print("message response api $response");
+      
+    if (response.statusCode == 200) {
+      print('without decode ${jsonDecode(response.body)["notifications"]}');
+      print("message API else ${jsonDecode(response.body)}");
+      final fakeJson = jsonDecode(response.body)["notifications"];
+    return NotificationModel.fromJsonList(fakeJson);
+      // return jsonDecode(response.body)["notifications"];
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      print("message API else $message");
+      throw ServerException(message: message);
+    }
     // final String action;  // award|boos|cheers|comment
     String fakeData = '''
       [

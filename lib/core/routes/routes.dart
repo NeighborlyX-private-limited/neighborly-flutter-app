@@ -58,7 +58,6 @@ List<String>? cookies = ShardPrefHelper.getCookie();
 String setInitialLocation() {
   return (cookies == null || cookies!.isEmpty) ? '/' : '/home/false';
 }
-
 final GoRouter router = GoRouter(
     initialLocation: setInitialLocation(),
     // initialLocation: '/',
@@ -304,16 +303,18 @@ final GoRouter router = GoRouter(
         ],
       ),
       GoRoute(
-        path: '/post-detail/:postId/:isPost/:userId',
+        path: '/post-detail/:postId/:isPost/:userId/:commentId',
         name: RouteConstants.postDetailScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
           final String postId = state.pathParameters['postId']!;
           final bool isPost = state.pathParameters['isPost'] == 'true';
           final String userId = state.pathParameters['userId']!;
+          final String commentId = state.pathParameters['commentId'] ?? '0';
           return PostDetailScreen(
             postId: postId,
             isPost: isPost,
             userId: userId,
+            commentId: commentId,
           );
         },
       ),

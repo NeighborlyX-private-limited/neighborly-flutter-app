@@ -23,12 +23,15 @@ class PostDetailScreen extends StatefulWidget {
   final String postId;
   final bool isPost;
   final String userId;
+  final String commentId;
 
   const PostDetailScreen(
       {super.key,
       required this.postId,
       required this.userId,
-      required this.isPost});
+      required this.isPost,
+      required this.commentId
+      });
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -63,7 +66,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     BlocProvider.of<GetPostByIdBloc>(context)
         .add(GetPostByIdButtonPressedEvent(postId: postId));
     BlocProvider.of<GetCommentsByPostIdBloc>(context)
-        .add(GetCommentsByPostIdButtonPressedEvent(postId: postId));
+        .add(GetCommentsByPostIdButtonPressedEvent(postId: postId,commentId: widget.commentId));
   }
 
   Future<void> _onRefresh() async {
@@ -71,7 +74,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     BlocProvider.of<GetPostByIdBloc>(context)
         .add(GetPostByIdButtonPressedEvent(postId: postId));
     BlocProvider.of<GetCommentsByPostIdBloc>(context)
-        .add(GetCommentsByPostIdButtonPressedEvent(postId: postId));
+        .add(GetCommentsByPostIdButtonPressedEvent(postId: postId, commentId: widget.commentId));
   }
 
   void _handleReplyTap(dynamic commentOrReply) {
@@ -137,6 +140,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                         commentFocusNode: _commentFocusNode,
                                         comment: comments[index],
                                         onReplyTap: _handleReplyTap,
+                                        isPost: widget.isPost,
+                                        onDelete: (){
+                                          context.read<GetCommentsByPostIdBloc>().deleteComment(comments[index].commentid);
+                                        }
                                       );
                                     },
                                     separatorBuilder: (context, index) =>
@@ -243,7 +250,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 awardType: const [],
                                 commentid: 0,
                                 cheers: 0, bools: 0,
-                                userFeedback: ''
+                                userFeedback: '',
+                                postid: postId.toString()
                               ));
                         });
                         BlocProvider.of<AddCommentBloc>(context).add(

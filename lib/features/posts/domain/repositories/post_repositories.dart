@@ -22,6 +22,7 @@ abstract class PostRepositories {
       {required num id, required String feedback, required String type});
   Future<Either<Failure, List<CommentEntity>>> getCommentsByPostId({
     required num postId,
+    required String commentId,
   });
   Future<Either<Failure, void>> addComment({
     required num postId,

@@ -18,7 +18,7 @@ class MessageHandlerHelper {
 
     if (messageData['postId'] != null) {
       router.push(
-          '/post-detail/${messageData['postId']}/true/${messageData['userId']}');
+          '/post-detail/${messageData['postId']}/true/${messageData['userId']}/0');
     }
 
     if (messageData['groupId'] != null) {

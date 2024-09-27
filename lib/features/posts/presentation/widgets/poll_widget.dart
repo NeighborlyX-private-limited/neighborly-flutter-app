@@ -49,7 +49,7 @@ class _PollWidgetState extends State<PollWidget> {
 
     return InkWell(
       onTap: () {
-        context.push('/post-detail/${widget.post.id}/${false}/${widget.post.userId}');
+        context.push('/post-detail/${widget.post.id}/${false}/${widget.post.userId}/0');
       },
       child: Container(
           color: Colors.white,

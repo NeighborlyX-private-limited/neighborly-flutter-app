@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
@@ -52,6 +53,7 @@ import 'features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
+import 'features/posts/presentation/screens/post_detail_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,11 +74,49 @@ class _MyAppState extends State<MyApp> {
   // String? _linkMessage;
   // StreamSubscription? _sub;
 
+  // static const platform = MethodChannel('com.example.neighborly_flutter_app');
+  // String? _deepLink;
+
   @override
   void initState() {
     super.initState();
     //_initUniLinks();
+    //_setDeepLinkListener();
   }
+
+  // Future<void> _setDeepLinkListener() async{
+  //   platform.setMethodCallHandler((MethodCall call) async {
+  //     if (call.method == "onDeepLink"){
+  //       print("deep link received by harsh");
+  //       setState((){
+  //         _deepLink = call.arguments;
+  //         print('deep link aaya $_deepLink');
+  //         List? linksplit = _deepLink?.split('neighborly.in/');
+  //         if (linksplit != null && linksplit.length > 1) {
+  //           if(linksplit[1].contains('posts/')){
+  //               print('this is post');
+  //               try{
+  //                               Navigator.of(context).push(MaterialPageRoute(
+  //                 builder: (context) => PostDetailScreen(
+  //                   postId: '201',
+  //                   isPost: false,
+  //                   userId: '667d0d6d621041da2c7b79e8'
+  //                 ),));
+  //               }catch(e){
+  //                 print("error aaya kch $e");
+  //                 //handle default page if error
+  //               }
+  //           }
+  //           else{
+  //             print('here you have to handle other navigation for url based on if condition');
+  //           }
+  //         }else{
+  //           print("Empty means open default page");
+  //         }
+  //       });
+  //     }
+  //   });
+  // }
 
   // Future<void> _initUniLinks() async {
   //   try{
@@ -128,6 +168,9 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // if(_deepLink != null){
+    //   print("deeplink null nahi hai");
+    // }
     return MultiBlocProvider(
         providers: [
           BlocProvider<RegisterBloc>(
@@ -275,7 +318,7 @@ class _MyAppState extends State<MyApp> {
           ),
           debugShowCheckedModeBanner: false,
           title: 'Neighborly',
-          routerConfig: router,
+          routerConfig: router,          
         ));
   }
 }

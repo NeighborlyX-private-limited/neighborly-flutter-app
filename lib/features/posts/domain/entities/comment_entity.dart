@@ -11,6 +11,7 @@ class CommentEntity extends Equatable {
   final num bools;
   final String? proPic;
   final String? userFeedback;
+  final String? postid;
 
   const CommentEntity({
     required this.awardType,
@@ -22,7 +23,8 @@ class CommentEntity extends Equatable {
     required this.cheers,
     required this.bools,
     this.proPic,
-    required this.userFeedback
+    required this.userFeedback,
+    required this.postid
   });
 
   @override
@@ -36,6 +38,7 @@ class CommentEntity extends Equatable {
         bools,
         proPic,
         awardType, // Nullable in props list
-        userFeedback
+        userFeedback,
+        postid
       ];
 }

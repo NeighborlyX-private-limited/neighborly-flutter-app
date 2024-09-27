@@ -130,13 +130,16 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<List<CommentModel>> getCommentsByPostId({required num postId}) async {
+  Future<List<CommentModel>> getCommentsByPostId({required num postId, required String commentId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
+    String n = '305';
+    //String url = commentId == '0'? '$kBaseUrl/posts/fetch-comments/$postId' : '$kBaseUrl/posts/fetch-comment-thread/$n';
     String url = '$kBaseUrl/posts/fetch-comments/$postId';
+    print("url created $url");
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
@@ -148,7 +151,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
-      return jsonData.map((data) => CommentModel.fromJson(data)).toList();
+      return jsonData.map((data) => CommentModel.fromJson(data, postId)).toList();
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
       throw ServerException(message: message);

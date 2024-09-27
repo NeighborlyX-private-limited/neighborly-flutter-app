@@ -17,6 +17,7 @@ class NotificationEntity extends Equatable {
 
   final String date;
   final String status;
+  final String posttype;
 
   NotificationEntity({
     required this.id,
@@ -33,6 +34,7 @@ class NotificationEntity extends Equatable {
     this.userName,
     required this.date,
     required this.status,
+    required this.posttype
   });
 
   /* 

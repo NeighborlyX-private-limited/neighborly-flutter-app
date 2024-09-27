@@ -35,7 +35,7 @@ class _PostWidgetState extends State<PostWidget> {
     return InkWell(
       onTap: () {
         context.push(
-            '/post-detail/${widget.post.id}/${true}/${widget.post.userId}');
+            '/post-detail/${widget.post.id}/${true}/${widget.post.userId}/0');
       },
       child: Container(
         color: Colors.white,

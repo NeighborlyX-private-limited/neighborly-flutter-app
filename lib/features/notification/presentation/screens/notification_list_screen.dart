@@ -16,16 +16,68 @@ class NotificationListScreen extends StatefulWidget {
 
 class _NotificationListScreenState extends State<NotificationListScreen> {
   late NotificationListCubit notificationsListCubit;
+  ScrollController _scrollController = ScrollController();
+   bool _isLoadingMore = false;
+  bool _shouldScrollToBottom = true;
+  double _previousScrollOffset = 0.0;
 
   @override
   void initState() {
     super.initState();
     notificationsListCubit = BlocProvider.of<NotificationListCubit>(context);
     notificationsListCubit.init();
+    _scrollController.addListener(() {
+  // Check if the scroll is near the top
+  if (_scrollController.position.pixels <= 100 && !_isLoadingMore) {
+    _loadMoreMessages();
+  }
+});
+
+  }
+
+  void _scrollToBottom() {
+  if (_scrollController.hasClients && _shouldScrollToBottom) {
+    Future.delayed(Duration(milliseconds: 300), () {
+      _scrollController.position.jumpTo(_previousScrollOffset);
+      print("Scrolling to bottom: $_previousScrollOffset");
+    });
+  }
+}
+
+
+  void _scrollToEnd() {
+  if (_scrollController.hasClients) {
+    Future.delayed(Duration(milliseconds: 300), () {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+      setState((){
+          _previousScrollOffset = _scrollController.position.maxScrollExtent;
+      }); 
+      });
+    }
+  }
+
+  Future<void> _loadMoreMessages() async {
+    double currentScrollOffset = _scrollController.offset;
+    setState(() {
+      _isLoadingMore = true;
+      _shouldScrollToBottom = false;
+    });
+    await context.read<NotificationListCubit>().fetchOlderNotification();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.jumpTo(_previousScrollOffset + 500);
+    });
+    setState(() {
+      _isLoadingMore = false;
+    });
   }
 
   @override
   void dispose() {
+    notificationsListCubit.setPagetoDefault();
     super.dispose();
   }
 
@@ -63,6 +115,17 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
             case Status.initial:
               break;
           }
+           if (state.status == Status.success && !_isLoadingMore) {
+          _shouldScrollToBottom = true;
+          //_scrollToBottom();
+        }
+          if (state.status == Status.success && state.page == 1) {
+            Future.delayed(Duration(milliseconds: 100), () {
+              if (_scrollController.hasClients) {
+                _scrollToEnd();
+              }
+            });
+          }
         },
         builder: (context, state) {
           //
@@ -95,6 +158,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                 width: double.infinity,
                 color: Colors.white,
                 child: ListView.builder(
+                  controller: _scrollController,
                   itemCount: state.notifications.length,
                   itemBuilder: (context, index) {
                     return NotificationTileWidget(

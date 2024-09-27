@@ -300,8 +300,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               ),
               InkWell(
                 onTap: () {
+                  String link = 'https://prod.neighborly.in/userProfileScreen/${widget.userId}';
                   ShareIt.text(
-                      content: 'Hey, take a look on this profile',
+                      content: '$link',
                       androidSheetTitle: 'Cool Person');
                 },
                 child: Row(
