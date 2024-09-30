@@ -8,7 +8,9 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../chat/data/model/chat_room_model.dart';
 import '../../data/model/notification_model.dart';
+//import '../../../data/model/notification_model.dart';
 
+import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
 class NotificationTileWidget extends StatelessWidget {
   final NotificationModel notification;
 
@@ -40,6 +42,9 @@ class NotificationTileWidget extends StatelessWidget {
   //     borderRadius: 10,
   //   );
   // }
+// Future<void>NotificationStatus(String notificationId)async{
+//   await updateNotificationStatus(notificationId);
+// }
 
   String timeAgoArea(String lastMessageDate) {
     if (lastMessageDate == '') return lastMessageDate;
@@ -103,7 +108,8 @@ class NotificationTileWidget extends StatelessWidget {
               child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GestureDetector(
-              onTap: () {
+              onTap: () async{
+                await updateNotificationStatus(notification.id);
                 print(notification);
                 bool ispost = notification.posttype == 'post';
                 print('notification ${notification.posttype}');

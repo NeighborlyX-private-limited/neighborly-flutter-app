@@ -123,6 +123,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             }),
     );
     print('starting email signup response $response or ${response.statusCode}');
+    print('${response.body}');
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
@@ -131,8 +132,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String proPic = jsonDecode(response.body)['user']['picture'];
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
-      String? email = jsonDecode(response.body)['user']['email'];
-      bool isVerified = jsonDecode(response.body)['user']['isVerified']; 
+      String? email = jsonDecode(response.body)['user']['email']??'';
+      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
+      print(cookies);
+      print(userID);
+      print(username);
+      print(proPic);
+      print(location);
+      print(email);
+      print(isVerified);
+
+
       ShardPrefHelper.setIsVerified(isVerified);
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
@@ -145,6 +155,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
+      print("here error");
       throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
