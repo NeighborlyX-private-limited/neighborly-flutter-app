@@ -91,6 +91,7 @@ class NotificationTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     buildMainArea(context);
     return Container(
+      color: notification.status == "unread"?Color(0xFFF0F0F0):Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
       width: double.infinity,
       child: Row(
@@ -106,6 +107,7 @@ class NotificationTileWidget extends StatelessWidget {
                 print(notification);
                 bool ispost = notification.posttype == 'post';
                 print('notification ${notification.posttype}');
+                print('notification ${notification.userId}');
                 String commentid = '0';
                 if(notification.title == 'You’ve Got a Comment!'){
                   commentid = notification.commentId.toString() ?? '0';
@@ -115,6 +117,7 @@ class NotificationTileWidget extends StatelessWidget {
                   print(
                       '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
                 }
+                //context.push('/userProfileScreen/${notification.userId}');
                 /*
                 TODO: Vinay here you have to add navigation for profile. Check with bharat whether we will get profile notification or not
                 only then its required to implment 

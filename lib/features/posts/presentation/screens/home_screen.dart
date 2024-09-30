@@ -45,7 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
         showBottomSheet(context);
       });
     }
-    getNotificationCount();
+   // getNotificationCount();
+    getUnreadNotificationCount();
+    // getUnreadNotificationCount();
     //_handleDeepLink('https://prod.neighborly.in/posts/12345');
   }
 
@@ -75,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onRefresh() async {
+    getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
         .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
@@ -172,6 +175,21 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
+  int unreadNotificationCount = 0;
+void getUnreadNotificationCount() async{
+
+  getNotificationUnreadCount().then((value) {
+    if (value != null && value > 0) {
+      setState(() {
+        unreadNotificationCount = value;
+        print('Count: $unreadNotificationCount');
+      });
+    }
+  }).catchError((error) {
+    // Handle any errors that occurred during the API call
+    print("Error in getUnreadNotificationCount: $error");
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -202,8 +220,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.push('/notifications');
               },
               child: badges.Badge(
-                badgeContent: notificationcount > 0 ? Text(
-                  "$notificationcount", // TODO: this came from a checked still not maked
+                badgeContent: unreadNotificationCount > 0 ? Text(
+                  "$unreadNotificationCount", // TODO: this came from a checked still not maked
                   style: TextStyle(color: Colors.white),
                 ): null,
                 badgeStyle: BadgeStyle(badgeColor: AppColors.primaryColor),
