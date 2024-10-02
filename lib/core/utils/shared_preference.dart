@@ -101,6 +101,18 @@ class ShardPrefHelper {
       await _preferences.setBool('isVerified', isVerified);
   static bool getIsVerified() => _preferences.getBool('isVerified') ?? false;
 
+  //set and get isSkippedTutorial
+  static Future setIsSkippedTutorial(bool isSkippedTutorial) async =>
+      await _preferences.setBool('isSkippedTutorial', isSkippedTutorial);
+  static bool getIsSkippedTutorial() =>
+      _preferences.getBool('IsSkippedTutorial') ?? false;
+
+  //set and get isViewedTutorial
+  static Future setIsViewedTutorial(bool isViewedTutorial) async =>
+      await _preferences.setBool('isViewedTutorial', isViewedTutorial);
+  static bool getIsViewedTutorial() =>
+      _preferences.getBool('isViewedTutorial') ?? false;
+
   // // save is cheered
   // static Future setIsCheered(String userId, num postId, bool isLiked) async =>
   //     await _preferences.setBool('$userId-${postId}_isCheered', isLiked);

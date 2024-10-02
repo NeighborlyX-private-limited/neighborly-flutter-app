@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
 
 import 'core/network/network_info.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
@@ -146,6 +147,7 @@ import 'features/upload/domain/usecases/upload_post_usecase.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'features/chat/Socket/socketService.dart';
+
 final sl = GetIt.instance;
 
 void init() async {
@@ -162,8 +164,8 @@ void init() async {
       CommunityRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<ChatRepositories>(
       () => ChatRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
-  sl.registerLazySingleton<ChatRepositoriesThread>(
-      () => ChatRepositoriesImplThread(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<ChatRepositoriesThread>(() =>
+      ChatRepositoriesImplThread(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<EventRepositories>(
       () => EventRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<NotificationRepositories>(() =>
@@ -253,7 +255,8 @@ void init() async {
   sl.registerLazySingleton(() => GetAllNotificationsUsecase(sl()));
 
   // register bloc
-  sl.registerFactory(() => RegisterBloc(registerUseCase: sl(), googleLoginCase: sl()));
+  sl.registerFactory(
+      () => RegisterBloc(registerUseCase: sl(), googleLoginCase: sl()));
   sl.registerFactory(
       () => LoginWithEmailBloc(loginUseCase: sl(), googleLoginCase: sl()));
   sl.registerFactory(() => ResendOtpBloc(resendOTPUsecase: sl()));
@@ -295,8 +298,8 @@ void init() async {
   sl.registerFactory(() => CommunitySearchCubit(sl(), sl()));
   sl.registerFactory(() => ChatMainCubit(sl()));
   sl.registerFactory(() => ChatPrivateCubit(sl()));
-  sl.registerFactory(() => ChatGroupCubit(sl(),sl<SocketService>()));
-  sl.registerFactory(() => ChatGroupCubitThread(sl(),sl<SocketService>()));
+  sl.registerFactory(() => ChatGroupCubit(sl(), sl<SocketService>()));
+  sl.registerFactory(() => ChatGroupCubitThread(sl(), sl<SocketService>()));
   sl.registerFactory(() => EventMainCubit(sl()));
   sl.registerFactory(() => EventCreateCubit(sl(), sl(), sl()));
   sl.registerFactory(() => EventDetailCubit(sl(), sl()));
@@ -304,6 +307,7 @@ void init() async {
   sl.registerFactory(() => EventJoinCubit(sl()));
   sl.registerFactory(() => NotificationGeneralCubit(sl()));
   sl.registerFactory(() => NotificationListCubit(sl()));
+  sl.registerFactory<TutorialCubit>(() => TutorialCubit(sl()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

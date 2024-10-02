@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../entities/user_simple_entity.dart';
 
 class UserSimpleModel extends UserSimpleEntity {
-  UserSimpleModel({
+  const UserSimpleModel({
     required super.id,
     required super.name,
     required super.avatarUrl,

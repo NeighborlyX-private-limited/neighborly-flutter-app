@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
 
 import '../../features/authentication/presentation/screens/forgot_password_screen.dart';
 import '../../features/authentication/presentation/screens/login_screen.dart';
@@ -58,6 +59,7 @@ List<String>? cookies = ShardPrefHelper.getCookie();
 String setInitialLocation() {
   return (cookies == null || cookies!.isEmpty) ? '/' : '/home/false';
 }
+
 final GoRouter router = GoRouter(
     initialLocation: setInitialLocation(),
     // initialLocation: '/',
@@ -96,6 +98,13 @@ final GoRouter router = GoRouter(
         name: RouteConstants.loginWithEmailScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
           return const LoginWithEmailScreen();
+        },
+      ),
+      GoRoute(
+        path: '/tutorialScreen',
+        name: RouteConstants.tutorialScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const TutorialScreen();
         },
       ),
       GoRoute(
@@ -269,17 +278,14 @@ final GoRouter router = GoRouter(
             ),
           ),
           GoRoute(
-            path: '/chat/group/thread/:messageId',
-            
-            builder: (context, state) {
-              return ChatGroupThreadScreen(
-              messageId: state.pathParameters["messageId"] as String,
-              room: (state.extra as Map<String, dynamic>)['room'],
-              message: (state.extra as Map<String, dynamic>)['message'],
-
-            );
-            }
-          ),
+              path: '/chat/group/thread/:messageId',
+              builder: (context, state) {
+                return ChatGroupThreadScreen(
+                  messageId: state.pathParameters["messageId"] as String,
+                  room: (state.extra as Map<String, dynamic>)['room'],
+                  message: (state.extra as Map<String, dynamic>)['message'],
+                );
+              }),
 
           GoRoute(
             path: '/chat/private/:roomId',

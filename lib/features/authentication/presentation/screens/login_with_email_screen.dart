@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -158,10 +159,22 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     }
                   } else if (state is LoginSuccessState) {
                     bool isEmailVerified = state.authResponseEntity.isVerified!;
-                    isEmailVerified
-                        ? context.go('/home/false')
-                        : context
-                            .push('/otp/${_emailController.text}/email-verify');
+                    // bool isSkippedTutorial =
+                    //     state.authResponseEntity.isSkippedTutorial!;
+                    // bool isViewedTutorial =
+                    //     state.authResponseEntity.isViewedTutorial!;
+                    bool isSkippedTutorial =
+                        ShardPrefHelper.getIsSkippedTutorial();
+                    bool isViewedTutorial =
+                        ShardPrefHelper.getIsViewedTutorial();
+                    if (!isSkippedTutorial && !isViewedTutorial) {
+                      context.go('/tutorialScreen');
+                    } else {
+                      isEmailVerified
+                          ? context.go('/home/false')
+                          : context.push(
+                              '/otp/${_emailController.text}/email-verify');
+                    }
                   }
                 },
                 builder: (context, state) {

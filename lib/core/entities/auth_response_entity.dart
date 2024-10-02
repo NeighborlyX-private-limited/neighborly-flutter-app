@@ -17,8 +17,12 @@ class AuthResponseEntity extends Equatable {
   final String? phoneNumber;
   final bool? isPhoneVerified;
   final bool? isEmailVerified;
+  final bool? isViewedTutorial;
+  final bool? isSkippedTutorial;
 
   const AuthResponseEntity({
+    this.isViewedTutorial,
+    this.isSkippedTutorial,
     this.email,
     this.findMe = true,
     this.coordinates,
@@ -54,5 +58,7 @@ class AuthResponseEntity extends Equatable {
         findMe,
         // coordinates,
         picture,
+        isSkippedTutorial,
+        isViewedTutorial
       ];
 }

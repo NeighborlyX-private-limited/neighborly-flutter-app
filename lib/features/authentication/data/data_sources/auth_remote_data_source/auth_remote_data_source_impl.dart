@@ -51,8 +51,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
-      bool isVerified = jsonDecode(response.body)['user']['isVerified']; 
+      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
+      bool isSkippedTutorial =
+          jsonDecode(response.body)['user']['skippedTutorial'];
+      bool isViewedTutorial =
+          jsonDecode(response.body)['user']['viewedTutorial'];
 
+      ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
+      ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setAccessToken(accessToken);
       ShardPrefHelper.setRefreshToken(refreshToken);
       ShardPrefHelper.setCookie(cookies);
@@ -115,7 +121,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           ? jsonEncode(<String, String>{
               'email': email!,
               'password': password!,
-        'fcmToken': 'Token',
+              'fcmToken': 'Token',
             })
           : jsonEncode(<String, String>{
               'phoneNumber': phone,
@@ -132,7 +138,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
-      bool isVerified = jsonDecode(response.body)['user']['isVerified']; 
+      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
+      bool isSkippedTutorial =
+          jsonDecode(response.body)['user']['skippedTutorial'];
+      bool isViewedTutorial =
+          jsonDecode(response.body)['user']['viewedTutorial'];
+
+      ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
+      ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setIsVerified(isVerified);
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
@@ -175,7 +188,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'otp': otp,
             },
     );
-   
+
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
@@ -185,7 +198,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
-      bool isVerified = jsonDecode(response.body)['user']['isVerified']; 
+      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
+      bool isSkippedTutorial =
+          jsonDecode(response.body)['user']['skippedTutorial'];
+      bool isViewedTutorial =
+          jsonDecode(response.body)['user']['viewedTutorial'];
+
+      ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
+      ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setIsVerified(isVerified);
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
@@ -237,10 +257,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({'token': tokenID,'device': 'android','fcmToken':'dE3QQU0UScSvPrABZE81H3:APA91bFHthp42ntwpvyFw4gBRqsmip'}), //TODO : need to fetch device type
+        body: json.encode({
+          'token': tokenID,
+          'device': 'android',
+          'fcmToken': 'dE3QQU0UScSvPrABZE81H3:APA91bFHthp42ntwpvyFw4gBRqsmip'
+        }), //TODO : need to fetch device type
       );
       if (response.statusCode == 200) {
-        
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
         String userID = jsonDecode(response.body)['user']['_id'];
         String username = jsonDecode(response.body)['user']['username'];

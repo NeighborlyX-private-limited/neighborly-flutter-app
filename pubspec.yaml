@@ -84,6 +84,7 @@ dependencies:
   flutter_typeahead: ^5.2.0 
   flutter_image_compress: ^2.3.0
   cross_file: ^0.3.4+2
+  bloc: ^8.1.4
   # uni_links: ^0.5.1
 
 dev_dependencies:
