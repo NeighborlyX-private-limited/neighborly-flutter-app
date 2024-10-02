@@ -60,7 +60,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     }
     print('cookies list $cookies');
     String cookieHeader = cookies.join('; ');
-    String url = '$kBaseUrlNotification/notifications/fetch-notification?page=1&limit=10';
+    String url = '$kBaseUrlNotification/notifications/fetch-notification?page=1&limit=100';
 
     print('cookie $cookieHeader');
 
@@ -152,8 +152,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'Content-Type': 'application/json; charset=utf-8',
         'Authorization': 'Bearer $getAccessToken',
         'Cookie': cookieHeader,
+        
       },
-
     );
 
     if (response.statusCode == 200) {
@@ -191,7 +191,8 @@ Future<void> updateNotificationStatus(String notificationId) async {
     },
   );
 
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 || jsonDecode(response.body)['message']=="Notification not found or already read") {
+
     print("Notification status updated successfully.");
   } else {
     final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';

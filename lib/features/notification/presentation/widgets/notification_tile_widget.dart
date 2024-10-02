@@ -9,8 +9,8 @@ import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../chat/data/model/chat_room_model.dart';
 import '../../data/model/notification_model.dart';
 //import '../../../data/model/notification_model.dart';
-
 import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
+
 class NotificationTileWidget extends StatelessWidget {
   final NotificationModel notification;
 
@@ -35,16 +35,13 @@ class NotificationTileWidget extends StatelessWidget {
 
   // Widget rightAvatar() {
   //   if (notification.notificationImage == null) return SizedBox(width: 30, height: 30);
-
   //   return UserAvatarSquareWidget(
   //     imageUrl: notification.notificationImage,
   //     size: 50,
   //     borderRadius: 10,
   //   );
   // }
-// Future<void>NotificationStatus(String notificationId)async{
-//   await updateNotificationStatus(notificationId);
-// }
+
 
   String timeAgoArea(String lastMessageDate) {
     if (lastMessageDate == '') return lastMessageDate;
@@ -87,16 +84,14 @@ class NotificationTileWidget extends StatelessWidget {
 
     listWidgets.add(Text(notification.message));
 
-    // if(notification.action ==)
-
     listWidgets.add(Text(timeAgoArea(notification.date)));
   }
-
+Color tileColor = Color(0xFFF0F0F0);
   @override
   Widget build(BuildContext context) {
     buildMainArea(context);
     return Container(
-      color: notification.status == "unread"?Color(0xFFF0F0F0):Colors.white,
+      color: notification.status == "unread" ? Color(0xFFF0F0F0) :Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
       width: double.infinity,
       child: Row(
@@ -109,7 +104,11 @@ class NotificationTileWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GestureDetector(
               onTap: () async{
-                await updateNotificationStatus(notification.id);
+                if(notification.status == "unread"){
+                  await updateNotificationStatus(notification.id);
+                }
+
+
                 print(notification);
                 bool ispost = notification.posttype == 'post';
                 print('notification ${notification.posttype}');
@@ -119,7 +118,7 @@ class NotificationTileWidget extends StatelessWidget {
                   commentid = notification.commentId.toString() ?? '0';
                 }
                 if (notification.postId != null) {
-                 context.push('/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/commentid');
+                 context.push('/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
                   print(
                       '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
                 }

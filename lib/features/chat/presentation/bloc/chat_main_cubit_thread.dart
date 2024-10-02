@@ -24,7 +24,7 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
 
   ChatMainCubitThread(
     this.getAllChatRoomsUsecase,
-  ) : super(const ChatMainStateThread());
+  ) : super(ChatMainStateThread());
 
   void init() async {
     print('... BLOC CHAT MAIN init');
@@ -148,31 +148,31 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
   //   });
   // }
 
-  void chatSentMessage(String message, int friendId, int conversationId) {
-    socketChat!.emit('sendMessage', {
-      'message': message,
-      'friendId': friendId,
-      'conversationId': conversationId,
-    });
+  // void chatSentMessage(String message, int friendId, int conversationId) {
+  //   socketChat!.emit('sendMessage', {
+  //     'message': message,
+  //     'friendId': friendId,
+  //     'conversationId': conversationId,
+  //   });
 
-    emit(state.copyWith(messages: [
-      ...state.messages,
-      ChatMessageModel(
-          id: 'id',
-          text: message,
-          date: DateTime.now().toIso8601String(),
-          isMine: false,
-          readByuser: false,
-          hasMore: false,
-          pictureUrl: 'pictureUrl',
-          isAdmin: false,
-          isPinned: false,
-          repliesCount: 0,
-          cheers: 0,
-          boos: 0,
-          booOrCheer: 'message'),
-    ]));
-  }
+  //   emit(state.copyWith(messages: [
+  //     ...state.messages,
+  //     ChatMessageModel(
+  //         id: 'id',
+  //         text: message,
+  //         date: DateTime.now().toIso8601String(),
+  //         isMine: false,
+  //         readByuser: false,
+  //         hasMore: false,
+  //         pictureUrl: 'pictureUrl',
+  //         isAdmin: false,
+  //         isPinned: false,
+  //         repliesCount: 0,
+  //         cheers: 0,
+  //         boos: 0,
+  //         booOrCheer: 'message'),
+  //   ]));
+  // }
 
   Future<void> showLocalNotification(String title, String body) async {
     final appName = 'Neighborly';

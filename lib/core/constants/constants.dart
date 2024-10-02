@@ -2,13 +2,11 @@
 const kBaseUrl = "https://prod.neighborly.in/api";
 const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 
-
 //// dev base url
 // const kBaseUrl = "https://dev.neighborly.in/api";
 // const kBaseUrlNotification = "https://dev.neighborly.in/notification";
 
 const kBaseSocketUrl = "ws://54.90.230.2:3001";
-
 const double kMaxRadius = 100;
 const double kMinRadius = 1;
 

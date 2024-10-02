@@ -44,16 +44,16 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
   }
 }
 
-  Future<void> _onRefresh() async {
-    notificationsListCubit = BlocProvider.of<NotificationListCubit>(context);
-    notificationsListCubit.init();
-    _scrollController.addListener(() {
-      // Check if the scroll is near the top
-      if (_scrollController.position.pixels <= 100 && !_isLoadingMore) {
-        _loadMoreMessages();
-      }
-    });
-  }
+  // Future<void> _onRefresh() async {
+  //   notificationsListCubit = BlocProvider.of<NotificationListCubit>(context);
+  //   notificationsListCubit.init();
+  //   _scrollController.addListener(() {
+  //     // Check if the scroll is near the top
+  //     if (_scrollController.position.pixels <= 100 && !_isLoadingMore) {
+  //       _loadMoreMessages();
+  //     }
+  //   });
+  // }
   void _scrollToEnd() {
   if (_scrollController.hasClients) {
     Future.delayed(Duration(milliseconds: 300), () {
@@ -105,84 +105,80 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         ),
         title: Text('Notifications'),
       ),
-      body: RefreshIndicator(
-          onRefresh: _onRefresh,
-        child:BlocConsumer<NotificationListCubit, NotificationListState>(
-          listener: (context, state) {
-            switch (state.status) {
-              case Status.loading:
-                break;
-              case Status.failure:
-                print('ERROR ${state.failure?.message}');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content:
-                    Text('Something went wrong! ${state.failure?.message}'),
-                  ),
-                );
-                break;
-              case Status.success:
-                break;
-              case Status.initial:
-                break;
-            }
-            if (state.status == Status.success && !_isLoadingMore) {
-              _shouldScrollToBottom = true;
-              //_scrollToBottom();
-            }
-            if (state.status == Status.success && state.page == 1) {
-              Future.delayed(Duration(milliseconds: 100), () {
-                if (_scrollController.hasClients) {
-                  _scrollToEnd();
-                }
-              });
-            }
-          },
-          builder: (context, state) {
-            //
-            //
-            return BlocBuilder<NotificationListCubit, NotificationListState>(
-              bloc: notificationsListCubit,
-              builder: (context, state) {
-                if (state.status == Status.loading) {
-                  // return const NotificationMainSheemer();
-                  return Center(
-                    child: SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: CircularProgressIndicator(
-                        color: AppColors.primaryColor,
-                      ),
+      body: BlocConsumer<NotificationListCubit, NotificationListState>(
+        listener: (context, state) {
+          switch (state.status) {
+            case Status.loading:
+              break;
+            case Status.failure:
+              print('ERROR ${state.failure?.message}');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content:
+                      Text('Something went wrong! ${state.failure?.message}'),
+                ),
+              );
+              break;
+            case Status.success:
+              break;
+            case Status.initial:
+              break;
+          }
+           if (state.status == Status.success && !_isLoadingMore) {
+          _shouldScrollToBottom = true;
+          //_scrollToBottom();
+        }
+          if (state.status == Status.success && state.page == 1) {
+            Future.delayed(Duration(milliseconds: 100), () {
+              if (_scrollController.hasClients) {
+                _scrollToEnd();
+              }
+            });
+          }
+        },
+        builder: (context, state) {
+          //
+          //
+          return BlocBuilder<NotificationListCubit, NotificationListState>(
+            bloc: notificationsListCubit,
+            builder: (context, state) {
+              if (state.status == Status.loading) {
+                // return const NotificationMainSheemer();
+                return Center(
+                  child: SizedBox(
+                    height: 40,
+                    width: 40,
+                    child: CircularProgressIndicator(
+                      color: AppColors.primaryColor,
                     ),
-                  );
-                }
-
-                if (state.status != Status.loading &&
-                    state.notifications.length == 0) {
-                  return Center(
-                    child: NotificationsEmptyWidget(),
-                  );
-                }
-
-                return Container(
-                  padding: EdgeInsets.only(top: 15),
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    itemCount: state.notifications.length,
-                    itemBuilder: (context, index) {
-                      return NotificationTileWidget(
-                          notification: state.notifications[index]);
-                    },
                   ),
                 );
-              },
-            );
-          },
-        ),
-      ),
+              }
 
+              if (state.status != Status.loading &&
+                  state.notifications.length == 0) {
+                return Center(
+                  child: NotificationsEmptyWidget(),
+                );
+              }
+
+              return Container(
+                padding: EdgeInsets.only(top: 15),
+                width: double.infinity,
+                color: Colors.white,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  itemCount: state.notifications.length,
+                  itemBuilder: (context, index) {
+                    return NotificationTileWidget(
+                        notification: state.notifications[index]);
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

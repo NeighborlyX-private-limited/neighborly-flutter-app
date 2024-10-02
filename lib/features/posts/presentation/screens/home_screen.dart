@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onRefresh() async {
-    getUnreadNotificationCount();
+   await getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
         .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
@@ -164,7 +164,6 @@ class _HomeScreenState extends State<HomeScreen> {
       debugPrint('Error getting location: $e');
     }
   }
-
   int notificationcount = 0;
   getNotificationCount(){
     getAllNotificationCount().then((value){
@@ -176,8 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
   int unreadNotificationCount = 0;
-void getUnreadNotificationCount() async{
-
+Future<void> getUnreadNotificationCount() async{
   getNotificationUnreadCount().then((value) {
     if (value != null && value > 0) {
       setState(() {
@@ -307,6 +305,7 @@ void getUnreadNotificationCount() async{
             }
           },
         ),
+
       ),
     );
   }
