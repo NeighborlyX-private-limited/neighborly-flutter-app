@@ -167,7 +167,9 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                         ShardPrefHelper.getIsSkippedTutorial();
                     bool isViewedTutorial =
                         ShardPrefHelper.getIsViewedTutorial();
-                    if (!isSkippedTutorial && !isViewedTutorial) {
+                    print(isSkippedTutorial);
+                    print(isViewedTutorial);
+                    if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                       context.go('/tutorialScreen');
                     } else {
                       isEmailVerified

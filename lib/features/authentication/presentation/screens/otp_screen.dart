@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -173,7 +174,15 @@ class _OtpScreenState extends State<OtpScreen> {
                           widget.verificationFor == 'phone-register') {
                         context.go('/home/true');
                       } else {
-                        context.go('/home/false');
+                        bool isSkippedTutorial =
+                            ShardPrefHelper.getIsSkippedTutorial();
+                        bool isViewedTutorial =
+                            ShardPrefHelper.getIsViewedTutorial();
+                        if (!isSkippedTutorial && !isViewedTutorial) {
+                          context.go('/tutorialScreen');
+                        } else {
+                          context.go('/home/false');
+                        }
                       }
 
                       ScaffoldMessenger.of(context).showSnackBar(

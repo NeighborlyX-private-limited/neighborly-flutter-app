@@ -105,7 +105,7 @@ class ShardPrefHelper {
   static Future setIsSkippedTutorial(bool isSkippedTutorial) async =>
       await _preferences.setBool('isSkippedTutorial', isSkippedTutorial);
   static bool getIsSkippedTutorial() =>
-      _preferences.getBool('IsSkippedTutorial') ?? false;
+      _preferences.getBool('isSkippedTutorial') ?? false;
 
   //set and get isViewedTutorial
   static Future setIsViewedTutorial(bool isViewedTutorial) async =>

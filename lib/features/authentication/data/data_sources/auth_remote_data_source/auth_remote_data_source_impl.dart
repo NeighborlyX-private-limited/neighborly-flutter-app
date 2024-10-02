@@ -56,9 +56,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           jsonDecode(response.body)['user']['skippedTutorial'];
       bool isViewedTutorial =
           jsonDecode(response.body)['user']['viewedTutorial'];
+      print(isSkippedTutorial);
+      print(isViewedTutorial);
 
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
+
+      bool skip = ShardPrefHelper.getIsSkippedTutorial();
+      bool view = ShardPrefHelper.getIsViewedTutorial();
+
+      print(skip);
+      print(view);
+
       ShardPrefHelper.setAccessToken(accessToken);
       ShardPrefHelper.setRefreshToken(refreshToken);
       ShardPrefHelper.setCookie(cookies);

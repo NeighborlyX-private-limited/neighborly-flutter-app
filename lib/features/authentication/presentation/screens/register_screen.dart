@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import '../bloc/google_authentication_bloc/google_authentication_bloc.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -134,26 +135,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 40,
               ),
               BlocConsumer<RegisterBloc, RegisterState>(
-        listener: (BuildContext context, RegisterState state) {
-
-          if (state is OAuthSuccessState) {
-            Future.delayed(Duration(seconds: 5)).then((_) {
-              context.push('/home/false');
-              setState(() {});
-            });
-          }
-        },
-        builder: (context, state) {
-           return   RegisterOption(
-                image: Image.asset('assets/google_icon.png'),
-                title: 'Continue with Google',
-                onTap: () {
-                  BlocProvider.of<RegisterBloc>(context).add(
+                  listener: (BuildContext context, RegisterState state) {
+                if (state is OAuthSuccessState) {
+                  Future.delayed(Duration(seconds: 5)).then((_) {
+                    bool isSkippedTutorial =
+                        ShardPrefHelper.getIsSkippedTutorial();
+                    bool isViewedTutorial =
+                        ShardPrefHelper.getIsViewedTutorial();
+                    if (!isSkippedTutorial && !isViewedTutorial) {
+                      context.go('/tutorialScreen');
+                    } else {
+                      context.push('/home/false');
+                    }
+                    setState(() {});
+                  });
+                }
+              }, builder: (context, state) {
+                return RegisterOption(
+                  image: Image.asset('assets/google_icon.png'),
+                  title: 'Continue with Google',
+                  onTap: () {
+                    BlocProvider.of<RegisterBloc>(context).add(
                       GoogleSignUpEvent(),
                     );
-                },
-              );
-        }),
+                  },
+                );
+              }),
               const SizedBox(
                 height: 10,
               ),
