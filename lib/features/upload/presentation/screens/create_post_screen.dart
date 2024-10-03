@@ -486,7 +486,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       //     ],
                       //   ),
                       // ),
+
                       // TODO: create a action to this and remove the comment
+
                       // Row(
                       //   children: [
                       //     SvgPicture.asset('assets/add_location.svg'),

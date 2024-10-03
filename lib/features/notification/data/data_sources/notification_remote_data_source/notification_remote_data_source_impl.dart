@@ -60,7 +60,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     }
     print('cookies list $cookies');
     String cookieHeader = cookies.join('; ');
-    String url = '$kBaseUrlNotification/notifications/fetch-notification?status=unread&page=$page&limit=100';
+    String url = '$kBaseUrlNotification/notifications/fetch-notification?page=1&limit=100';
 
     print('cookie $cookieHeader');
 
@@ -77,6 +77,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       print('without decode ${jsonDecode(response.body)["notifications"]}');
       print("message API else ${jsonDecode(response.body)}");
       final fakeJson = jsonDecode(response.body)["notifications"];
+      final length = jsonDecode(response.body)["total"];
+      print(length);
       return NotificationModel.fromJsonList(fakeJson);
       // return jsonDecode(response.body)["notifications"];
     } else {
@@ -97,7 +99,8 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     }
     print('cookies list $cookies');
     String cookieHeader = cookies.join('; ');
-    String url = '$kBaseUrlNotification/notifications/fetch-notification?status=unread&page=$page&limit=100';
+    String url = '$kBaseUrlNotification/notifications/fetch-notification?page=$page&limit=100';
+    // String url = '$kBaseUrlNotification/notifications/fetch-notification?status=unread&page=$page&limit=100';
 
     print('cookie $cookieHeader');
 
@@ -114,6 +117,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       print('without decode ${jsonDecode(response.body)["notifications"]}');
       print("message API else ${jsonDecode(response.body)}");
       final fakeJson = jsonDecode(response.body)["total"];
+      print(fakeJson);
       return fakeJson != null ? fakeJson : 0;
       // return jsonDecode(response.body)["notifications"];
     } else {
@@ -122,3 +126,78 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       throw ServerException(message: message);
     }
   }
+
+  Future<int> getNotificationUnreadCount() async {
+
+    final http.Client client = http.Client();
+
+
+
+    List<String>? cookies = ShardPrefHelper.getCookie();
+
+    String? getAccessToken = ShardPrefHelper.getAccessToken();
+
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrlNotification/notifications/get-unread-notification-count';
+
+    print('cookie $cookieHeader');
+    //var currentToken = await FirebaseMessaging.instance.getToken();
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer $getAccessToken',
+        'Cookie': cookieHeader,
+        
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final fakeJson = jsonDecode(response.body)["unreadCount"];
+      return fakeJson != null ? fakeJson : 0;
+      return fakeJson;
+    } else {
+
+      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      print("message API else $message");
+      throw ServerException(message: message);
+    }
+  }
+Future<void> updateNotificationStatus(String notificationId) async {
+  final http.Client client = http.Client();
+
+  List<String>? cookies = ShardPrefHelper.getCookie();
+  String? getAccessToken = ShardPrefHelper.getAccessToken();
+
+  if (cookies == null || cookies.isEmpty) {
+    throw const ServerException(message: 'No cookies found');
+  }
+
+  String cookieHeader = cookies.join('; ');
+  String url = '$kBaseUrlNotification/notifications/update-notification-status?notificationId=$notificationId';
+
+  print('cookie $cookieHeader');
+
+  final response = await client.put(
+    Uri.parse(url),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': 'Bearer $getAccessToken',
+      'Cookie': cookieHeader,
+    },
+  );
+
+  if (response.statusCode == 200 || jsonDecode(response.body)['message']=="Notification not found or already read") {
+
+    print("Notification status updated successfully.");
+  } else {
+    final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+    print("Error updating notification status: $message");
+    throw ServerException(message: message);
+  }
+}
+

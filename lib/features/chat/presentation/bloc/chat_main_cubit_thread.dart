@@ -24,7 +24,7 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
 
   ChatMainCubitThread(
     this.getAllChatRoomsUsecase,
-  ) : super(const ChatMainStateThread());
+  ) : super(ChatMainStateThread());
 
   void init() async {
     print('... BLOC CHAT MAIN init');

@@ -138,6 +138,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             }),
     );
     print('starting email signup response $response or ${response.statusCode}');
+    print('${response.body}');
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
@@ -167,6 +168,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
+      print("here error");
       throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
