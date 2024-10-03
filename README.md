@@ -182,6 +182,7 @@ Issuer: CN=Neighborly App, OU=Neighborly, O=India, L=New Delli, ST=IN, C=IN
 Serial number: 705c8419
 Valid from: Sat Aug 17 09:27:27 CEST 2024 until: Wed Jan 03 08:27:27 CET 2052
 Certificate fingerprints:
+
          SHA1: 6F:37:09:93:59:E0:46:07:F4:D0:B3:17:D1:55:1D:96:8E:4A:33:EB
          SHA256: 01:A3:6C:4E:7E:C8:BE:43:3F:C3:65:AA:A1:EE:AA:AF:59:39:B5:C9:7A:EA:1C:43:A2:23:5A:08:80:7F:11:6D
  

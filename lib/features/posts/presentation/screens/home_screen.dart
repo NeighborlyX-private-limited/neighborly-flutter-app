@@ -39,14 +39,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    getUnreadNotificationCount();
     _fetchPosts();
     if (widget.isFirstTime) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showBottomSheet(context);
       });
     }
-   // getNotificationCount();
-    getUnreadNotificationCount();
+    // getNotificationCount();
+
     // getUnreadNotificationCount();
     //_handleDeepLink('https://prod.neighborly.in/posts/12345');
   }
@@ -56,20 +57,25 @@ class _HomeScreenState extends State<HomeScreen> {
   // try {
   // print('callifng deeplink $deepLink');
   // Uri uri = Uri.parse(deepLink);
-  
+
   // // // Check the scheme and host
   //  if (uri.scheme == 'myapp' && uri.host == 'posts') {
   // //   // Extract the post ID from the path
   // //   String postId = uri.pathSegments[1]; // Assuming the path is like /posts/12345
 
   // //   // Navigate to the post detail screen
-    
+
   //  }
   // }catch(e){
   //   print("getting error");
   // }
 // }
+  void onNotificationRead() {
+    // Your logic to mark the notification as read
 
+    // Then refresh the unread notification count
+    getUnreadNotificationCount();
+  }
 
   void _fetchPosts() {
     BlocProvider.of<GetAllPostsBloc>(context)
@@ -77,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onRefresh() async {
-   await getUnreadNotificationCount();
+    getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
         .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
@@ -145,14 +151,17 @@ class _HomeScreenState extends State<HomeScreen> {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       setState(() {
-       // _currentPosition = position;
+        // _currentPosition = position;
       });
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location: ${position.latitude}, ${position.longitude}');
       bool? isVerified = await ShardPrefHelper.getIsVerified();
-      
-      Map<String,List<num>> locationDetail = {
-       isVerified ? 'homeLocation': 'userLocation': [position.latitude, position.longitude]
+
+      Map<String, List<num>> locationDetail = {
+        isVerified ? 'homeLocation' : 'userLocation': [
+          position.latitude,
+          position.longitude
+        ]
       };
 
       BlocProvider.of<UpdateLocationBloc>(context).add(
@@ -164,30 +173,32 @@ class _HomeScreenState extends State<HomeScreen> {
       debugPrint('Error getting location: $e');
     }
   }
+
   int notificationcount = 0;
-  getNotificationCount(){
-    getAllNotificationCount().then((value){
-      if(value != null && value > 0){
-        setState((){
+  getNotificationCount() {
+    getAllNotificationCount().then((value) {
+      if (value != null && value > 0) {
+        setState(() {
           notificationcount = value;
         });
       }
     });
   }
+
   int unreadNotificationCount = 0;
-Future<void> getUnreadNotificationCount() async{
-  getNotificationUnreadCount().then((value) {
-    if (value != null && value > 0) {
-      setState(() {
-        unreadNotificationCount = value;
-        print('Count: $unreadNotificationCount');
-      });
-    }
-  }).catchError((error) {
-    // Handle any errors that occurred during the API call
-    print("Error in getUnreadNotificationCount: $error");
-  });
-}
+  Future<void> getUnreadNotificationCount() async {
+    getNotificationUnreadCount().then((value) {
+      if (value != null && value > 0) {
+        setState(() {
+          unreadNotificationCount = value;
+          print('Count: $unreadNotificationCount');
+        });
+      }
+    }).catchError((error) {
+      // Handle any errors that occurred during the API call
+      print("Error in getUnreadNotificationCount: $error");
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -218,10 +229,12 @@ Future<void> getUnreadNotificationCount() async{
                 context.push('/notifications');
               },
               child: badges.Badge(
-                badgeContent: unreadNotificationCount > 0 ? Text(
-                  "$unreadNotificationCount", // TODO: this came from a checked still not maked
-                  style: TextStyle(color: Colors.white),
-                ): null,
+                badgeContent: unreadNotificationCount > 0
+                    ? Text(
+                        "$unreadNotificationCount", // TODO: this came from a checked still not maked
+                        style: TextStyle(color: Colors.white),
+                      )
+                    : null,
                 badgeStyle: BadgeStyle(badgeColor: AppColors.primaryColor),
                 position: badges.BadgePosition.custom(end: 0, top: -8),
                 child: SvgPicture.asset(
@@ -244,39 +257,38 @@ Future<void> getUnreadNotificationCount() async{
               return const PostSheemerWidget();
             } else if (state is GetAllPostsSuccessState) {
               final posts = state.post;
-              return 
-              posts.isEmpty
-                  ? Center(child:InkWell(
-                      onTap: () {
-                        context.go('/create');
-                      },
-                      child: Text(
-                        'Create your first post',
-                        style: bluemediumTextStyleBlack,
+              return posts.isEmpty
+                  ? Center(
+                      child: InkWell(
+                        onTap: () {
+                          context.go('/create');
+                        },
+                        child: Text(
+                          'Create your first post',
+                          style: bluemediumTextStyleBlack,
+                        ),
                       ),
-                    ),)
+                    )
                   : ListView.separated(
                       itemCount: posts.length,
                       itemBuilder: (context, index) {
                         final post = posts[index];
                         if (post.type == 'post') {
                           return PostWidget(
-                            post: post,
-                            onDelete: (){
-                              print('this one is called');
-                              //context.read<GetAllPostsBloc>().deletepost(post.id);
-                              _onRefresh();
-                            }
-                          );
+                              post: post,
+                              onDelete: () {
+                                print('this one is called');
+                                //context.read<GetAllPostsBloc>().deletepost(post.id);
+                                _onRefresh();
+                              });
                         } else if (post.type == 'poll') {
                           return PollWidget(
-                            post: post,
-                            onDelete: (){
-                              print('this one is called');
-                              //context.read<GetAllPostsBloc>().deletepost(post.id);
-                              _onRefresh();
-                            }
-                          );
+                              post: post,
+                              onDelete: () {
+                                print('this one is called');
+                                //context.read<GetAllPostsBloc>().deletepost(post.id);
+                                _onRefresh();
+                              });
                         }
                         return const SizedBox();
                       },
@@ -305,7 +317,6 @@ Future<void> getUnreadNotificationCount() async{
             }
           },
         ),
-
       ),
     );
   }

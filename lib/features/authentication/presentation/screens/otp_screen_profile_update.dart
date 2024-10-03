@@ -13,7 +13,10 @@ class OtpScreenProfileUpdate extends StatefulWidget {
   final String verificationFor;
   final Function onVerifiedSuccessfully;
   const OtpScreenProfileUpdate(
-      {super.key, required this.data, required this.verificationFor, required this.onVerifiedSuccessfully});
+      {super.key,
+      required this.data,
+      required this.verificationFor,
+      required this.onVerifiedSuccessfully});
 
   @override
   State<OtpScreenProfileUpdate> createState() => _OtpScreenProfileUpdateState();
@@ -181,8 +184,6 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
                         SnackBar(content: Text(state.message)),
                       );
                       Navigator.of(context).pop();
-
-                      
                     } else if (widget.verificationFor == 'forgot-password') {
                       context.push('/newPassword/${widget.data}');
                     }

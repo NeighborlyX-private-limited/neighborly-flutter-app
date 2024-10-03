@@ -27,7 +27,10 @@ class NotificationTileWidget extends StatelessWidget {
     //   return SizedBox(width: 30, height: 30);
 
     return UserAvatarStyledWidget(
-      avatarUrl: notification.notificationImage == null || notification.notificationImage ==''? "https://img.freepik.com/fotos-gratis/especialista-em-seguranca-cibernetica-a-trabalhar-com-tecnologia-em-luzes-de-neon_23-2151645661.jpg?t=st=1722573533~exp=1722577133~hmac=fc9a6c66bed1aef3fad7541423c49fa69ea858159e8d3d6903039c7edf5dde65&w=360" : notification.notificationImage!,
+      avatarUrl: notification.notificationImage == null ||
+              notification.notificationImage == ''
+          ? "https://img.freepik.com/fotos-gratis/especialista-em-seguranca-cibernetica-a-trabalhar-com-tecnologia-em-luzes-de-neon_23-2151645661.jpg?t=st=1722573533~exp=1722577133~hmac=fc9a6c66bed1aef3fad7541423c49fa69ea858159e8d3d6903039c7edf5dde65&w=360"
+          : notification.notificationImage!,
       avatarSize: 23,
       avatarBorderSize: 0,
     );
@@ -41,7 +44,6 @@ class NotificationTileWidget extends StatelessWidget {
   //     borderRadius: 10,
   //   );
   // }
-
 
   String timeAgoArea(String lastMessageDate) {
     if (lastMessageDate == '') return lastMessageDate;
@@ -86,12 +88,13 @@ class NotificationTileWidget extends StatelessWidget {
 
     listWidgets.add(Text(timeAgoArea(notification.date)));
   }
-Color tileColor = Color(0xFFF0F0F0);
+
+  Color tileColor = Color(0xFFF0F0F0);
   @override
   Widget build(BuildContext context) {
     buildMainArea(context);
     return Container(
-      color: notification.status == "unread" ? Color(0xFFF0F0F0) :Colors.white,
+      color: notification.status == "unread" ? Color(0xFFF0F0F0) : Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 0),
       width: double.infinity,
       child: Row(
@@ -103,22 +106,22 @@ Color tileColor = Color(0xFFF0F0F0);
               child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GestureDetector(
-              onTap: () async{
-                if(notification.status == "unread"){
+              onTap: () async {
+                if (notification.status == "unread") {
                   await updateNotificationStatus(notification.id);
                 }
-
 
                 print(notification);
                 bool ispost = notification.posttype == 'post';
                 print('notification ${notification.posttype}');
                 print('notification ${notification.userId}');
                 String commentid = '0';
-                if(notification.title == 'You’ve Got a Comment!'){
-                  commentid = notification.commentId.toString() ?? '0';
+                if (notification.title == 'You’ve Got a Comment!') {
+                  commentid = notification.commentId ?? '0';
                 }
                 if (notification.postId != null) {
-                 context.push('/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
+                  context.push(
+                      '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
                   print(
                       '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
                 }

@@ -134,26 +134,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 height: 40,
               ),
               BlocConsumer<RegisterBloc, RegisterState>(
-        listener: (BuildContext context, RegisterState state) {
-
-          if (state is OAuthSuccessState) {
-            Future.delayed(Duration(seconds: 5)).then((_) {
-              context.push('/home/false');
-              setState(() {});
-            });
-          }
-        },
-        builder: (context, state) {
-           return   RegisterOption(
-                image: Image.asset('assets/google_icon.png'),
-                title: 'Continue with Google',
-                onTap: () {
-                  BlocProvider.of<RegisterBloc>(context).add(
+                  listener: (BuildContext context, RegisterState state) {
+                if (state is OAuthSuccessState) {
+                  Future.delayed(Duration(seconds: 5)).then((_) {
+                    context.push('/home/false');
+                    setState(() {});
+                  });
+                }
+              }, builder: (context, state) {
+                return RegisterOption(
+                  image: Image.asset('assets/google_icon.png'),
+                  title: 'Continue with Google',
+                  onTap: () {
+                    BlocProvider.of<RegisterBloc>(context).add(
                       GoogleSignUpEvent(),
                     );
-                },
-              );
-        }),
+                  },
+                );
+              }),
               const SizedBox(
                 height: 10,
               ),
