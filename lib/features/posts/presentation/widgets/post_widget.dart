@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -27,7 +28,6 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
-
     void showBottomSheet() {
       bottomSheet(context);
     }
@@ -55,21 +55,34 @@ class _PostWidgetState extends State<PostWidget> {
                     children: [
                       ClipOval(
                         child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: widget.post.proPic != null &&
-                                    widget.post.proPic != '' // XXX
-                                ? Image.network(
-                                    widget.post.proPic!,
-                                    fit: BoxFit.contain,
-                                  )
-                                : Image.asset(
-                                    'assets/second_pro_pic.png',
-                                    fit: BoxFit.contain,
-                                  )),
+                          width: 40,
+                          height: 40,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          child: widget.post.proPic != null &&
+                                  widget.post.proPic != ''
+                              ? CachedNetworkImage(
+                                  imageUrl: widget.post.proPic!,
+                                  fit: BoxFit.contain,
+                                  placeholder: (context, url) => Center(
+                                    child: SizedBox(
+                                      height: 16,
+                                      width: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.blue,
+                                      ),
+                                    ), // Show loading indicator
+                                  ),
+                                  errorWidget: (context, url, error) => Icon(Icons
+                                      .error), // Show error icon if image fails to load
+                                )
+                              : Image.asset(
+                                  'assets/second_pro_pic.png',
+                                  fit: BoxFit.contain,
+                                ),
+                        ),
                       ),
                       const SizedBox(
                         width: 12,
@@ -173,14 +186,24 @@ class _PostWidgetState extends State<PostWidget> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: Image.network(
-                          width: double.infinity,
-                          //height: 200,
-                          widget.post.multimedia!,
-                          fit: BoxFit.contain,
-                        )),
-                  )
+                      borderRadius: BorderRadius.circular(4),
+                      child: CachedNetworkImage(
+                        imageUrl: widget.post.multimedia!,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                        placeholder: (context, url) => Center(
+                          child: SizedBox(
+                              height: 16,
+                              width: 16,
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                                strokeWidth: 2,
+                              )), // Show loading indicator while image loads
+                        ),
+                        errorWidget: (context, url, error) => Icon(Icons
+                            .error), // Show error icon if image fails to load
+                      ),
+                    ))
                 : Container(),
             const SizedBox(
               height: 20,

@@ -128,6 +128,7 @@ class AuthRepositoryImpl implements AuthRepository {
         print('GoogleAuthenticationButtonPressedEvent in repository');
         final result = await remoteDataSource.googleAuthentication();
         print('GoogleAuthenticationButtonPressedEvent success');
+        print(result);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

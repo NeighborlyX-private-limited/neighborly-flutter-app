@@ -176,7 +176,17 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
                         widget.verificationFor == 'phone-register') {
                       if (widget.verificationFor == 'email-verify' ||
                           widget.verificationFor == 'phone-register') {
-                        context.go('/home/true');
+                        bool isSkippedTutorial =
+                            ShardPrefHelper.getIsSkippedTutorial();
+                        bool isViewedTutorial =
+                            ShardPrefHelper.getIsViewedTutorial();
+                        print(isSkippedTutorial);
+                        print(isViewedTutorial);
+                        if ((!isSkippedTutorial) && (!isViewedTutorial)) {
+                          context.go('/tutorialScreen');
+                        } else {
+                          context.go('/home/true');
+                        }
                       } else {
                         bool isSkippedTutorial =
                             ShardPrefHelper.getIsSkippedTutorial();

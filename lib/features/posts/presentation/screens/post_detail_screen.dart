@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,8 +31,7 @@ class PostDetailScreen extends StatefulWidget {
       required this.postId,
       required this.userId,
       required this.isPost,
-      required this.commentId
-      });
+      required this.commentId});
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -65,16 +65,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     final postId = int.parse(widget.postId);
     BlocProvider.of<GetPostByIdBloc>(context)
         .add(GetPostByIdButtonPressedEvent(postId: postId));
-    BlocProvider.of<GetCommentsByPostIdBloc>(context)
-        .add(GetCommentsByPostIdButtonPressedEvent(postId: postId,commentId: widget.commentId));
+    BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
+        GetCommentsByPostIdButtonPressedEvent(
+            postId: postId, commentId: widget.commentId));
   }
 
   Future<void> _onRefresh() async {
     final postId = int.parse(widget.postId);
     BlocProvider.of<GetPostByIdBloc>(context)
         .add(GetPostByIdButtonPressedEvent(postId: postId));
-    BlocProvider.of<GetCommentsByPostIdBloc>(context)
-        .add(GetCommentsByPostIdButtonPressedEvent(postId: postId, commentId: widget.commentId));
+    BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
+        GetCommentsByPostIdButtonPressedEvent(
+            postId: postId, commentId: widget.commentId));
   }
 
   void _handleReplyTap(dynamic commentOrReply) {
@@ -137,14 +139,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     itemCount: comments.length,
                                     itemBuilder: (context, index) {
                                       return CommentWidget(
-                                        commentFocusNode: _commentFocusNode,
-                                        comment: comments[index],
-                                        onReplyTap: _handleReplyTap,
-                                        isPost: widget.isPost,
-                                        onDelete: (){
-                                          context.read<GetCommentsByPostIdBloc>().deleteComment(comments[index].commentid);
-                                        }
-                                      );
+                                          commentFocusNode: _commentFocusNode,
+                                          comment: comments[index],
+                                          onReplyTap: _handleReplyTap,
+                                          isPost: widget.isPost,
+                                          onDelete: () {
+                                            context
+                                                .read<GetCommentsByPostIdBloc>()
+                                                .deleteComment(
+                                                    comments[index].commentid);
+                                          });
                                     },
                                     separatorBuilder: (context, index) =>
                                         const SizedBox(height: 10),
@@ -242,17 +246,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           comments.insert(
                               0,
                               CommentModel(
-                                userId: userId,
-                                userName: username, // Use actual user name
-                                proPic: propic, // Use actual profile picture
-                                text: _commentController.text,
-                                createdAt: DateTime.now().toString(),
-                                awardType: const [],
-                                commentid: 0,
-                                cheers: 0, bools: 0,
-                                userFeedback: '',
-                                postid: postId.toString()
-                              ));
+                                  userId: userId,
+                                  userName: username, // Use actual user name
+                                  proPic: propic, // Use actual profile picture
+                                  text: _commentController.text,
+                                  createdAt: DateTime.now().toString(),
+                                  awardType: const [],
+                                  commentid: 0,
+                                  cheers: 0,
+                                  bools: 0,
+                                  userFeedback: '',
+                                  postid: postId.toString()));
                         });
                         BlocProvider.of<AddCommentBloc>(context).add(
                           AddCommentButtonPressedEvent(
@@ -420,9 +424,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         for (var option in postState.post.pollOptions!)
           OptionCard(
             key: UniqueKey(),
-            onSelectOptionCallback: (){
-              
-            },
+            onSelectOptionCallback: () {},
             // selectedOptions: selectedOptions,
             // isMultipleVotesAllowed: postState.post.allowMultipleVotes!,
             option: option,
@@ -764,7 +766,23 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       height: 40,
                       decoration: const BoxDecoration(shape: BoxShape.circle),
                       child: post.proPic != null && post.proPic != ''
-                          ? Image.network(post.proPic!, fit: BoxFit.contain)
+                          ? CachedNetworkImage(
+                              imageUrl: post.proPic!,
+                              fit: BoxFit.contain,
+                              width: double.infinity,
+                              placeholder: (context, url) => Center(
+                                child: SizedBox(
+                                    height: 16,
+                                    width: 16,
+                                    child: CircularProgressIndicator(
+                                      color: Colors.blue,
+                                      strokeWidth: 2,
+                                    )), // Show loading indicator while image loads
+                              ),
+                              errorWidget: (context, url, error) => Icon(Icons
+                                  .error), // Show error icon if image fails to load
+                            )
+                          // ? Image.network(post.proPic!, fit: BoxFit.contain)
                           : const Image(
                               image: AssetImage('assets/second_pro_pic.png'),
                               fit: BoxFit.contain,
@@ -813,12 +831,29 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(4),
-              child: Image.network(
-                post.multimedia!,
-                width: double.infinity,
-               // height: 200,
+              child: CachedNetworkImage(
+                imageUrl: post.multimedia!,
                 fit: BoxFit.contain,
+                width: double.infinity,
+                //height: 200,
+                placeholder: (context, url) => Center(
+                  child: SizedBox(
+                      height: 16,
+                      width: 16,
+                      child: CircularProgressIndicator(
+                        color: Colors.blue,
+                        strokeWidth: 2,
+                      )), // Show loading indicator while image loads
+                ),
+                errorWidget: (context, url, error) =>
+                    Icon(Icons.error), // Show error icon if image fails to load
               ),
+              // child: Image.network(
+              //   post.multimedia!,
+              //   width: double.infinity,
+              //   // height: 200,
+              //   fit: BoxFit.contain,
+              // ),
             ),
           ),
         const SizedBox(height: 10),

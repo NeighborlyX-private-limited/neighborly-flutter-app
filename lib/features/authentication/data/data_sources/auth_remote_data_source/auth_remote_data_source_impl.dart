@@ -254,9 +254,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<dynamic> googleAuthentication() async {
     try {
+      print("start vinay checking");
       String url = '$kBaseUrl/authentication/google/login';
-      final GoogleSignIn googleSignIn = new GoogleSignIn();
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      print("start vinay checking googleSignIn $googleSignIn");
       await googleSignIn.signOut();
+      print("start vinay checking signOut ");
+
       print('here i am ');
       var signInResult = await GoogleSignInService.signInWithGoogle();
       print('here i am result $signInResult');
@@ -282,7 +286,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         List<dynamic> location = jsonDecode(response.body)['user']
             ['current_coordinates']['coordinates'];
         String? email = jsonDecode(response.body)['user']['email'];
-
+        print("cookies : $cookies");
         ShardPrefHelper.setCookie(cookies);
         ShardPrefHelper.setUserID(userID);
         ShardPrefHelper.setEmail(email ?? '');

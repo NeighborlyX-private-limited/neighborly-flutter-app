@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
@@ -46,11 +47,11 @@ class TutorialScreenState extends State<TutorialScreen> {
 
   // List of tutorial images
   final List<String> tutorialImages = [
-    'assets/cheers_tute_image.png',
-    'assets/boos_tute_image.png',
-    'assets/award_tute_image.png',
-    'assets/home_location_tute_image.png',
-    'assets/current_location_tute_image.png',
+    'assets/tute1.svg',
+    'assets/tute2.svg',
+    'assets/tute3.svg',
+    'assets/tute4.svg',
+    'assets/tute5.svg',
   ];
 
   @override
@@ -107,11 +108,17 @@ class TutorialScreenState extends State<TutorialScreen> {
                   children: [
                     // Background Image based on current page
                     Positioned.fill(
-                      child: Image.asset(
+                      child: SvgPicture.asset(
                         tutorialImages[index],
                         fit: BoxFit.cover,
                       ),
                     ),
+                    // Positioned.fill(
+                    //   child: Image.asset(
+                    //     tutorialImages[index],
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    // ),
                     // Overlay container with title, description, and buttons
                     Positioned.fill(
                       top: 50,

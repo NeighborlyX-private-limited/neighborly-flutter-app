@@ -1,4 +1,4 @@
-// const kBaseUrl = "https://dev.neighborly.in/api";
+// const kBaseUrl = "https://prod.neighborly.in/api";
 // const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 
 const kBaseUrl = "https://dev.neighborly.in/api";

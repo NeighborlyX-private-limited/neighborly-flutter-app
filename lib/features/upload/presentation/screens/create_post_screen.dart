@@ -124,19 +124,48 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   //     _isKeyboardVisible = _optionFocusNodes[index].hasFocus;
   //   });
   // }
-
+  bool isImagePicking = false;
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
-      return compressImage(imageFileX: file);
-    });
+    XFile? image;
 
-    if (image != null) {
+    try {
       setState(() {
-        _selectedImage = File(image.path);
+        isImagePicking = true; // Start loading
+      });
+
+      // Pick image and then compress
+      image = await picker.pickImage(source: ImageSource.gallery).then((file) {
+        return compressImage(imageFileX: file);
+      });
+
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image!.path); // Update selected image
+        });
+      }
+    } catch (e) {
+      print("Error picking image: $e");
+    } finally {
+      setState(() {
+        isImagePicking = false; // End loading
       });
     }
   }
+
+  // Future<void> _pickImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image =
+  //       await picker.pickImage(source: ImageSource.gallery).then((file) {
+  //     return compressImage(imageFileX: file);
+  //   });
+
+  //   if (image != null) {
+  //     setState(() {
+  //       _selectedImage = File(image.path);
+  //     });
+  //   }
+  // }
 
   void _removeImage() {
     setState(() {
@@ -144,6 +173,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
+  bool isImageUploading = false;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -157,6 +187,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
+                  isImagePicking ? LinearProgressIndicator() : SizedBox(),
+                  isImageUploading ? LinearProgressIndicator() : SizedBox(),
                   Padding(
                     padding: const EdgeInsets.only(
                         top: 14.0, left: 14.0, right: 14.0),
@@ -182,11 +214,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         _condition == 'post'
                             ? BlocConsumer<UploadPostBloc, UploadPostState>(
                                 listener: (context, state) {
+                                  if (state is UploadPostLoadingState) {
+                                    setState(() {
+                                      isImageUploading = true;
+                                    });
+                                  }
                                   if (state is UploadPostFailureState) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text(state.error)),
                                     );
                                   } else if (state is UploadPostSuccessState) {
+                                    setState(() {
+                                      isImageUploading = false;
+                                    });
                                     _contentController.clear();
                                     _titleController.clear();
                                     _removeImage();
@@ -202,7 +242,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 builder: (context, state) {
                                   if (state is UploadPostLoadingState) {
                                     return const Center(
-                                        child: CircularProgressIndicator());
+                                        child: Text('Uploading...'));
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {

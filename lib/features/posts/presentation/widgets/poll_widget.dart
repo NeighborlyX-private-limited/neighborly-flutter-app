@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +14,7 @@ import 'option_card.dart';
 import '../../../../core/entities/option_entity.dart';
 import '../../../../core/models/option_model.dart';
 import 'reaction_widget.dart';
+
 class PollWidget extends StatefulWidget {
   final PostEntity post;
   final Function onDelete;
@@ -33,12 +35,12 @@ class _PollWidgetState extends State<PollWidget> {
     uselocalpost();
   }
 
-  uselocalpost(){
-    setState((){
+  uselocalpost() {
+    setState(() {
       print('post printing');
       print(widget.post);
       post = widget.post;
-     });
+    });
   }
 
   @override
@@ -49,7 +51,8 @@ class _PollWidgetState extends State<PollWidget> {
 
     return InkWell(
       onTap: () {
-        context.push('/post-detail/${widget.post.id}/${false}/${widget.post.userId}/0');
+        context.push(
+            '/post-detail/${widget.post.id}/${false}/${widget.post.userId}/0');
       },
       child: Container(
           color: Colors.white,
@@ -75,10 +78,27 @@ class _PollWidgetState extends State<PollWidget> {
                                 shape: BoxShape.circle,
                               ),
                               child: widget.post.proPic != null
-                                  ? Image.network(
-                                      widget.post.proPic!,
+                                  ? CachedNetworkImage(
+                                      imageUrl: widget.post.proPic!,
                                       fit: BoxFit.contain,
+                                      width: double.infinity,
+                                      placeholder: (context, url) => Center(
+                                        child: SizedBox(
+                                            height: 16,
+                                            width: 16,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.blue,
+                                              strokeWidth: 2,
+                                            )), // Show loading indicator while image loads
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          Icon(Icons
+                                              .error), // Show error icon if image fails to load
                                     )
+                                  // ? Image.network(
+                                  //     widget.post.proPic!,
+                                  //     fit: BoxFit.contain,
+                                  //   )
                                   : Image.asset(
                                       'assets/second_pro_pic.png',
                                       fit: BoxFit.contain,
@@ -167,22 +187,39 @@ class _PollWidgetState extends State<PollWidget> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: Image.network(
-                            width: double.infinity,
-                            //height: 200,
-                            widget.post.multimedia!,
-                            fit: BoxFit.contain,
-                          )),
+                        borderRadius: BorderRadius.circular(4),
+                        child: CachedNetworkImage(
+                          imageUrl: widget.post.multimedia!,
+                          fit: BoxFit.contain,
+                          width: double.infinity,
+                          placeholder: (context, url) => Center(
+                            child: SizedBox(
+                                height: 16,
+                                width: 16,
+                                child: CircularProgressIndicator(
+                                  color: Colors.blue,
+                                  strokeWidth: 2,
+                                )), // Show loading indicator while image loads
+                          ),
+                          errorWidget: (context, url, error) => Icon(Icons
+                              .error), // Show error icon if image fails to load
+                        ),
+                        // child: Image.network(
+                        //   width: double.infinity,
+                        //   //height: 200,
+                        //   widget.post.multimedia!,
+                        //   fit: BoxFit.contain,
+                        // )
+                      ),
                     )
                   : Container(),
               const SizedBox(
                 height: 10,
               ),
-           //   if(!isrefresh)
-                for (var option in post?.pollOptions ?? [])
-                  OptionCard(
-                  key: UniqueKey(),  // Add this line to force rebuild
+              //   if(!isrefresh)
+              for (var option in post?.pollOptions ?? [])
+                OptionCard(
+                  key: UniqueKey(), // Add this line to force rebuild
                   onSelectOptionCallback: onSelectOptionCallback,
                   option: option,
                   totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
@@ -205,64 +242,69 @@ class _PollWidgetState extends State<PollWidget> {
   onSelectOptionCallback(int optionid) {
     print('option sa$optionid');
     print('check ${widget.post.allowMultipleVotes} allowed multi');
-    if (widget.post.allowMultipleVotes ?? false){
+    if (widget.post.allowMultipleVotes ?? false) {
       print("ALLOW MULTI");
-      List<OptionEntity>? newOptions= List<OptionEntity>.from(post?.pollOptions ?? []);//post?.pollOptions;
+      List<OptionEntity>? newOptions =
+          List<OptionEntity>.from(post?.pollOptions ?? []); //post?.pollOptions;
 
       for (int i = 0; i < newOptions.length; i++) {
-      newOptions[i] = newOptions[i].copyWith(
-        userVoted: newOptions[i].optionId == optionid
-          ? true // Mark selected option as voted
-          : newOptions[i].userVoted, // Keep the previous state for other options
-        votes: newOptions[i].optionId == optionid
-          ? (newOptions[i].votes ?? 0) + 1 // Increment votes for the selected option
-          : newOptions[i].votes, // Keep votes unchanged for other options
-      );
-    }
+        newOptions[i] = newOptions[i].copyWith(
+          userVoted: newOptions[i].optionId == optionid
+              ? true // Mark selected option as voted
+              : newOptions[i]
+                  .userVoted, // Keep the previous state for other options
+          votes: newOptions[i].optionId == optionid
+              ? (newOptions[i].votes ?? 0) +
+                  1 // Increment votes for the selected option
+              : newOptions[i].votes, // Keep votes unchanged for other options
+        );
+      }
 
-    // Update the post with the new options
-    setState(() {
-      post = post?.copyWith(
-        pollOptions: newOptions,
-      );
-      isrefresh = true;
-    });
-
-    // Delay to stop the refresh state
-    Future.delayed(Duration(milliseconds: 10), () {
+      // Update the post with the new options
       setState(() {
-        isrefresh = false;
+        post = post?.copyWith(
+          pollOptions: newOptions,
+        );
+        isrefresh = true;
       });
-    });
 
-    }else{
-      List<OptionEntity>? newOptions= List<OptionEntity>.from(post?.pollOptions ?? []);//post?.pollOptions;
+      // Delay to stop the refresh state
+      Future.delayed(Duration(milliseconds: 10), () {
+        setState(() {
+          isrefresh = false;
+        });
+      });
+    } else {
+      List<OptionEntity>? newOptions =
+          List<OptionEntity>.from(post?.pollOptions ?? []); //post?.pollOptions;
 
       for (int i = 0; i < newOptions.length; i++) {
-      newOptions[i] = newOptions[i].copyWith(
-        userVoted: newOptions[i].optionId == optionid
-          ? true // Mark selected option as voted
-          : newOptions[i].userVoted, // Keep the previous state for other options
-        votes: newOptions[i].optionId == optionid
-          ? (newOptions[i].votes ?? 0) + 1 // Increment votes for the selected option
-          : newOptions[i].votes, // Keep votes unchanged for other options
-      );
-    }
+        newOptions[i] = newOptions[i].copyWith(
+          userVoted: newOptions[i].optionId == optionid
+              ? true // Mark selected option as voted
+              : newOptions[i]
+                  .userVoted, // Keep the previous state for other options
+          votes: newOptions[i].optionId == optionid
+              ? (newOptions[i].votes ?? 0) +
+                  1 // Increment votes for the selected option
+              : newOptions[i].votes, // Keep votes unchanged for other options
+        );
+      }
 
-    // Update the post with the new options
-    setState(() {
-      post = post?.copyWith(
-        pollOptions: newOptions,
-      );
-      isrefresh = true;
-    });
-
-    // Delay to stop the refresh state
-    Future.delayed(Duration(milliseconds: 10), () {
+      // Update the post with the new options
       setState(() {
-        isrefresh = false;
+        post = post?.copyWith(
+          pollOptions: newOptions,
+        );
+        isrefresh = true;
       });
-    });
+
+      // Delay to stop the refresh state
+      Future.delayed(Duration(milliseconds: 10), () {
+        setState(() {
+          isrefresh = false;
+        });
+      });
     }
   }
 
