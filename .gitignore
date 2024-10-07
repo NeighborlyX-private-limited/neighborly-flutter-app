@@ -1,3 +1,46 @@
+# # Miscellaneous
+# *.class
+# *.log
+# *.pyc
+# *.swp
+# .DS_Store
+# .atom/
+# .buildlog/
+# .history
+# .svn/
+# migrate_working_dir/
+
+# # IntelliJ related
+# *.iml
+# *.ipr
+# *.iws
+# .idea/
+
+# # The .vscode folder contains launch configuration and tasks you configure in
+# # VS Code which you may wish to be included in version control, so this line
+# # is commented out by default.
+# #.vscode/
+
+# # Flutter/Dart/Pub related
+# **/doc/api/
+# **/ios/Flutter/.last_build_id
+# .dart_tool/
+# .flutter-plugins
+# .flutter-plugins-dependencies
+# .pub-cache/
+# .pub/
+# /build/
+
+# # Symbolication related
+# app.*.symbols
+
+# # Obfuscation related
+# app.*.map.json
+
+# # Android Studio will place build artifacts here
+# /android/app/debug
+# /android/app/profile
+# /android/app/release
 # Miscellaneous
 *.class
 *.log
@@ -41,3 +84,62 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android specific
+android/.gradle/
+android/.idea/
+android/local.properties
+android/app/keystore/*.jks    # Ignore all .jks files in the keystore folder inside android/app
+
+# iOS specific
+ios/Flutter/.last_build_id
+ios/.generated/
+ios/.symlinks/
+ios/Pods/
+ios/Runner.xcworkspace/
+ios/Runner.xcodeproj/project.xcworkspace/
+ios/Runner.xcodeproj/xcuserdata/
+
+# Web specific
+web/.dart_tool/
+web/.flutter-plugins-dependencies
+
+# Windows specific
+windows/.dart_tool/
+windows/.flutter-plugins-dependencies
+
+# Linux specific
+linux/.dart_tool/
+linux/.flutter-plugins-dependencies
+
+# macOS specific
+macos/.dart_tool/
+macos/.flutter-plugins-dependencies
+
+# VSCode settings and launch configurations
+.vscode/
+*.code-workspace
+
+# Dependency and package files
+.packages
+pubspec.lock
+
+# Log files
+*.log
+
+# Temporary files and directories
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+
+# Coverage and test result files
+coverage/
+
+# Firebase-related files (uncomment if you use Firebase)
+# android/app/google-services.json
+# ios/Runner/GoogleService-Info.plist
+
+# Other sensitive files
+**/secrets.json
