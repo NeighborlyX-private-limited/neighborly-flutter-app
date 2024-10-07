@@ -532,10 +532,11 @@ class _Step1areaState extends State<Step1area> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+    final XFile? image =
+        await picker.pickImage(source: ImageSource.gallery).then((file) {
       return compressImage(imageFileX: file);
     });
-    
+
     if (image != null) {
       setState(() {
         selectedImage = File(image.path);
@@ -662,6 +663,7 @@ class _Step1areaState extends State<Step1area> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
+              textCapitalization: TextCapitalization.sentences,
               onChanged: (value) {},
               controller: widget.descriptionController,
               decoration: const InputDecoration(
@@ -929,6 +931,7 @@ class Step3area extends StatelessWidget {
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
+              textCapitalization: TextCapitalization.sentences,
               onChanged: (value) {},
               controller: addressController,
               decoration: const InputDecoration(

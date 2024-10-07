@@ -25,7 +25,6 @@ class MainPage extends StatefulWidget {
     required this.child,
   });
 
-
   @override
   State<MainPage> createState() => _MainPageState();
 }
@@ -52,26 +51,26 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
-  Future<void> _setDeepLinkListener() async{
+  Future<void> _setDeepLinkListener() async {
     platform.setMethodCallHandler((MethodCall call) async {
-      if (call.method == "onDeepLink"){
+      if (call.method == "onDeepLink") {
         print("deep link received");
-        setState((){
+        setState(() {
           _deepLink = call.arguments;
           List? linksplit = _deepLink?.split('neighborly.in');
           if (linksplit != null && linksplit.length > 1) {
             //if(linksplit[1].contains('post-detail/')){
-                try{
-                  context.push(linksplit[1]);
-                }catch(e){
-                  print("error aaya kch $e");
-                }
+            try {
+              context.push(linksplit[1]);
+            } catch (e) {
+              print("error aaya kch $e");
+            }
             // }
             // else{
             //   context.push('/userProfileScreen/${widget.post.userId}');
             //   print('here you have to handle other navigation for url based on if condition');
             // }
-          }else{
+          } else {
             print("Empty means open default page");
           }
         });
@@ -180,20 +179,21 @@ class _MainPageState extends State<MainPage> {
       setState(() {
         _currentPosition = position;
       });
+      print('my location lat long: ${position.latitude} ${position.longitude}');
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location: ${position.latitude}, ${position.longitude}');
       bool? isVerified = await ShardPrefHelper.getIsVerified();
-        Map<String,List<num>> userlocationDetail = {
-        'userLocation' : [position.latitude, position.longitude]
-        };
+      Map<String, List<num>> userlocationDetail = {
+        'userLocation': [position.latitude, position.longitude]
+      };
 
-        BlocProvider.of<UpdateLocationBloc>(context).add(
-          UpdateLocationButtonPressedEvent(
-            location: userlocationDetail,
-          ),
-        );
-  
-      Map<String,List<num>> homelocationDetail = {
+      BlocProvider.of<UpdateLocationBloc>(context).add(
+        UpdateLocationButtonPressedEvent(
+          location: userlocationDetail,
+        ),
+      );
+
+      Map<String, List<num>> homelocationDetail = {
         'homeLocation': [position.latitude, position.longitude]
       };
 

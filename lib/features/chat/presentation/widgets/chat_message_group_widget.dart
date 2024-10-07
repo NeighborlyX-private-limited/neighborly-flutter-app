@@ -211,6 +211,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
           children: [
             Expanded(
               child: TextField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: messageEC,
                 focusNode: messageFocusNode,
                 onChanged: (value) {},
@@ -345,13 +346,15 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                     child: Align(
                                       alignment: Alignment.centerRight,
                                       child: GestureDetector(
-        onTap: () {
-          setState(() {
-                                    showReplyInput = false;
-                                    // FocusScope.of(context).requestFocus(messageFocusNode);
-                                  });
-                                  _removeOverlay();
-        }, child: Icon(Icons.close),),
+                                        onTap: () {
+                                          setState(() {
+                                            showReplyInput = false;
+                                            // FocusScope.of(context).requestFocus(messageFocusNode);
+                                          });
+                                          _removeOverlay();
+                                        },
+                                        child: Icon(Icons.close),
+                                      ),
                                     ),
                                   )
                                 ],
@@ -360,25 +363,25 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                               //
                               // message AREA
                               Container(
-                                width:  MediaQuery.of(context).size.width,
-                                child: widget.message.pictureUrl != '' && widget.message.text == ''
+                                width: MediaQuery.of(context).size.width,
+                                child: widget.message.pictureUrl != '' &&
+                                        widget.message.text == ''
                                     ? Image.network(
                                         '${widget.message.pictureUrl}')
-                                        //  : (widget.message.pictureAsset != null &&
-                                        //     widget.message.pictureAsset?.path !=
-                                        //         '')
-                                        // ? Image.file(
-                                        //     widget.message.pictureAsset!)
-                                    : 
-                                    Text(
-                                            // message.date,
-                                            widget.message.text,
-                                            textAlign: TextAlign.start,
-                                            style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
+                                    //  : (widget.message.pictureAsset != null &&
+                                    //     widget.message.pictureAsset?.path !=
+                                    //         '')
+                                    // ? Image.file(
+                                    //     widget.message.pictureAsset!)
+                                    : Text(
+                                        // message.date,
+                                        widget.message.text,
+                                        textAlign: TextAlign.start,
+                                        style: TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
                               ),
                               //
                               //
@@ -969,25 +972,26 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     //
                     // message AREA
                     Container(
-                      width:  MediaQuery.of(context).size.width,
+                      width: MediaQuery.of(context).size.width,
                       child: GestureDetector(
                         onTap: () {
                           _showOverlay(context);
                         },
-                        child: widget.message.pictureUrl != ''  && widget.message.text == ''
+                        child: widget.message.pictureUrl != '' &&
+                                widget.message.text == ''
                             ? Image.network('${widget.message.pictureUrl}')
                             //  : (widget.message.pictureAsset != null &&
                             //         widget.message.pictureAsset?.path != '')
                             //     ? Image.file(widget.message.pictureAsset!)
                             : Text(
-                                    // message.date,
-                                    widget.message.text,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
+                                // message.date,
+                                widget.message.text,
+                                textAlign: TextAlign.start,
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
                       ),
                     ),
                     //

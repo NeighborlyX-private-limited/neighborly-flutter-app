@@ -43,9 +43,9 @@ class GoogleAuthenticationBloc
   // Map failure to user-friendly message
   String _mapFailureToMessage(Failure failure) {
     if (failure is ServerFailure) {
-      return 'Server Failure: ${failure.message}';
+      return failure.message;
     } else {
-      return 'Unexpected Error';
+      return 'oops something went wrong';
     }
   }
 }

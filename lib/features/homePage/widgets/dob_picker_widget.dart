@@ -93,6 +93,7 @@ class _DOBPickerWidgetState extends State<DOBPickerWidget> {
     return Container(
       width: 100,
       child: TextField(
+        textCapitalization: TextCapitalization.sentences,
         controller: controller,
         focusNode: focusNode,
         textAlign: TextAlign.center,

@@ -81,20 +81,21 @@ class _PostSectionState extends State<PostSection> {
                   itemBuilder: (context, index) {
                     final post = state.post[index];
                     if (post.type == 'post') {
-                      return PostWidget(post: post,onDelete: (){
-                              print('this one is called');
-                              //context.read<GetAllPostsBloc>().deletepost(post.id);
-                              _onRefresh();
-                            });
+                      return PostWidget(
+                          post: post,
+                          onDelete: () {
+                            print('this one is called');
+                            //context.read<GetAllPostsBloc>().deletepost(post.id);
+                            _onRefresh();
+                          });
                     } else if (post.type == 'poll') {
                       return PollWidget(
-                        post: post,
-                        onDelete: (){
-                              print('this one is called');
-                              //context.read<GetAllPostsBloc>().deletepost(post.id);
-                              _onRefresh();
-                            }
-                      );
+                          post: post,
+                          onDelete: () {
+                            print('this one is called');
+                            //context.read<GetAllPostsBloc>().deletepost(post.id);
+                            _onRefresh();
+                          });
                     }
                     return const SizedBox();
                   },
@@ -114,7 +115,7 @@ class _PostSectionState extends State<PostSection> {
                 if (state.error.contains('Internal server error')) {
                   return const Center(
                       child: Text(
-                    'Server Error',
+                    'oops something went wrong',
                     style: TextStyle(color: Colors.red),
                   ));
                 }

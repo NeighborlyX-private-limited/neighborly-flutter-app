@@ -105,6 +105,7 @@ class _CommunityAdminDescriptionScreenState
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextField(
+                  textCapitalization: TextCapitalization.sentences,
                   onChanged: (value) {},
                   controller: newDescriptionEC,
                   decoration: const InputDecoration(

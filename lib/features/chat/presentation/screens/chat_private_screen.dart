@@ -52,7 +52,8 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+    final XFile? image =
+        await picker.pickImage(source: ImageSource.gallery).then((file) {
       return compressImage(imageFileX: file);
     });
 
@@ -140,6 +141,7 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
           children: [
             Expanded(
               child: TextField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: messageEC,
                 focusNode: messageFocusNode,
                 onChanged: (value) {

@@ -33,6 +33,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
     return SizedBox(
       height: widget.height ?? 60,
       child: TextField(
+        textCapitalization: TextCapitalization.sentences,
         keyboardType: widget.inputType,
         onChanged: widget.onChanged,
         obscureText: widget.isPassword ? _isObscured : false,

@@ -88,6 +88,12 @@ class ShardPrefHelper {
     return await _preferences.setStringList(_doubleListKey, stringList);
   }
 
+// set is currect location is on
+  static Future setIsLocationOn(bool isLocationOn) async =>
+      await _preferences.setBool('isLocationOn', isLocationOn);
+  static bool getIsLocationOn() =>
+      _preferences.getBool('isLocationOn') ?? false;
+
   static List<double> getLocation() {
     List<String> stringList = _preferences.getStringList(_doubleListKey) ?? [];
     return stringList.map((e) => double.tryParse(e) ?? 0.0).toList();

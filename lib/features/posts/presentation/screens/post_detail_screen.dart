@@ -191,6 +191,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             Expanded(
               child: TextField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: _commentController,
                 focusNode: _commentFocusNode,
                 onChanged: (value) {

@@ -1,67 +1,66 @@
-  import 'dart:convert';
-  import 'dart:io';
+import 'dart:convert';
+import 'dart:io';
 
-  import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 
-  import '../../../../../core/constants/constants.dart';
-  import '../../../../../core/error/exception.dart';
-  import '../../../../../core/models/post_model.dart';
-  import '../../../../../core/utils/shared_preference.dart';
-  import '../../models/auth_response_model.dart';
-  import '../../models/post_with_comments_model.dart';
-  import 'profile_remote_data_source.dart';
+import '../../../../../core/constants/constants.dart';
+import '../../../../../core/error/exception.dart';
+import '../../../../../core/models/post_model.dart';
+import '../../../../../core/utils/shared_preference.dart';
+import '../../models/auth_response_model.dart';
+import '../../models/post_with_comments_model.dart';
+import 'profile_remote_data_source.dart';
 
-  class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
-    final http.Client client;
+class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
+  final http.Client client;
 
-    ProfileRemoteDataSourceImpl({required this.client});
-    @override
-    Future<String> changePassword(
-        {String? currentPassword,
-        required String newPassword,
-        required String email,
-        required bool flag}) async {
-      Map<String, dynamic> queryParameters = {
-        'newPassword': newPassword,
-        'email': email,
-        'flag': flag,
-      };
-      if (currentPassword != null) {
-        queryParameters['currentPassword'] = currentPassword;
-      }
-      String url = '$kBaseUrl/user/change-password';
-
-      final response = await client.put(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(queryParameters),
-      );
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body)['msg'];
-      } else {
-        throw ServerException(message: jsonDecode(response.body)['error']);
-      }
+  ProfileRemoteDataSourceImpl({required this.client});
+  @override
+  Future<String> changePassword(
+      {String? currentPassword,
+      required String newPassword,
+      required String email,
+      required bool flag}) async {
+    Map<String, dynamic> queryParameters = {
+      'newPassword': newPassword,
+      'email': email,
+      'flag': flag,
+    };
+    if (currentPassword != null) {
+      queryParameters['currentPassword'] = currentPassword;
     }
+    String url = '$kBaseUrl/user/change-password';
+
+    final response = await client.put(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(queryParameters),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['msg'];
+    } else {
+      throw ServerException(message: jsonDecode(response.body)['error']);
+    }
+  }
 
   @override
-  Future<void> updateLocation({required Map<String,List<num>> location}) async {
+  Future<void> updateLocation(
+      {required Map<String, List<num>> location}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/user/update-user-location';
-    final response = await client.put(
-      Uri.parse(url),
-      headers: {
-        'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
-      },
-      body: jsonEncode(location)
-    );
+    final response = await client.put(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Cookie': cookieHeader,
+        },
+        body: jsonEncode(location));
     if (response.statusCode != 200) {
       throw ServerException(message: jsonDecode(response.body)['error']);
     }
@@ -158,7 +157,7 @@
 
       return jsonData.map((data) => PostModel.fromJson(data)).toList();
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -253,7 +252,8 @@
           .map((data) => PostWithCommentsModel.fromJson(data))
           .toList();
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      print("error--> $message");
       throw ServerException(message: message);
     }
   }
@@ -278,7 +278,7 @@
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['groups'];
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -345,7 +345,7 @@
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['awards'];
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }

@@ -86,7 +86,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       print("message API else $message");
       throw ServerException(message: message);
     }
-  }
+  } 
 }
 
   Future<int> getAllNotificationCount({String? page}) async {

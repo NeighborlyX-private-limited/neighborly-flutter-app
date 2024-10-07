@@ -70,7 +70,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+    final XFile? image =
+        await picker.pickImage(source: ImageSource.gallery).then((file) {
       return compressImage(imageFileX: file);
     });
 
@@ -141,138 +142,147 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   child: CircularProgressIndicator());
                             }
                             return BlocConsumer<ResendOtpBloc, ResendOTPState>(
-                            listener: (BuildContext context, ResendOTPState resentstate) {
+                                listener: (BuildContext context,
+                                    ResendOTPState resentstate) {
                               if (resentstate is ResendOTPFailureState) {
-                                
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(resentstate.error)),
-                                  );
-                                
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(resentstate.error)),
+                                );
                               } else if (resentstate is ResendOTPSuccessState) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(content: Text(resentstate.message)),
                                 );
-                                
-                                
-                                  //  Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute(
-                                  //     builder: (context) => OtpScreenProfileUpdate(
-                                  //       data: _phoneNumberController.text.trim(),
-                                  //       verificationFor: 'phone-register',
-                                  //       onVerifiedSuccessfully: () {
-                                  //         // This function is executed after verification
-                                  //         BlocProvider.of<EditProfileBloc>(context).add(
-                                  //           EditProfileButtonPressedEvent(
-                                  //             bio: _bioController.text.trim(),
-                                  //             phoneNumber: _phoneNumberController.text.trim(),
-                                  //             username: _usernameController.text.trim(),
-                                  //             image: _selectedImage,
-                                  //             gender: _selectedGender,
-                                  //           ),
-                                  //         );
-                                  //       },
-                                  //     ),
-                                  //   ),
+
+                                //  Navigator.push(
+                                //   context,
+                                //   MaterialPageRoute(
+                                //     builder: (context) => OtpScreenProfileUpdate(
+                                //       data: _phoneNumberController.text.trim(),
+                                //       verificationFor: 'phone-register',
+                                //       onVerifiedSuccessfully: () {
+                                //         // This function is executed after verification
+                                //         BlocProvider.of<EditProfileBloc>(context).add(
+                                //           EditProfileButtonPressedEvent(
+                                //             bio: _bioController.text.trim(),
+                                //             phoneNumber: _phoneNumberController.text.trim(),
+                                //             username: _usernameController.text.trim(),
+                                //             image: _selectedImage,
+                                //             gender: _selectedGender,
+                                //           ),
+                                //         );
+                                //       },
+                                //     ),
+                                //   ),
+                                // );
+                              }
+                            }, builder: (context, resentstate) {
+                              return PostButtonWidget(
+                                title: 'Save',
+                                onTapListener: () async {
+                                  // List<double> location =
+                                  //     ShardPrefHelper.getLocation();
+
+                                  // List<Placemark> placemarks =
+                                  //     await placemarkFromCoordinates(
+                                  //   location[0],
+                                  //   location[1],
                                   // );
 
-                               }
-                  },
-                  builder: (context, resentstate) {
-                    return
-                            PostButtonWidget(
-                              title: 'Save',
-                              onTapListener: () async {
-                                // List<double> location =
-                                //     ShardPrefHelper.getLocation();
+                                  _phoneNumberController.text.trim().isNotEmpty
+                                      ? ShardPrefHelper.setPhoneNumber(
+                                          _phoneNumberController.text.trim())
+                                      : ShardPrefHelper.setPhoneNumber('');
 
-                                // List<Placemark> placemarks =
-                                //     await placemarkFromCoordinates(
-                                //   location[0],
-                                //   location[1],
-                                // );
+                                  ShardPrefHelper.setGender(_selectedGender);
 
-                                _phoneNumberController.text.trim().isNotEmpty
-                                    ? ShardPrefHelper.setPhoneNumber(
-                                        _phoneNumberController.text.trim())
-                                    : ShardPrefHelper.setPhoneNumber('');
+                                  ShardPrefHelper.setUsername(
+                                      _usernameController.text.trim());
 
-                                ShardPrefHelper.setGender(_selectedGender);
-
-                                ShardPrefHelper.setUsername(
-                                    _usernameController.text.trim());
-                                
-                                if(isPhoneVerified){
-
-                                  BlocProvider.of<EditProfileBloc>(context).add(
-                                    EditProfileButtonPressedEvent(
-                                      bio: _bioController.text.trim(),
-                                      phoneNumber:
-                                          _phoneNumberController.text.trim(),
-                                      username: _usernameController.text.trim(),
-                                      image: _selectedImage,
-                                      gender: _selectedGender,
-                                      // homeCoordinates: location,
-                                    ),
-                                  );
-                                } else{
-                                  if(_phoneNumberController.text.trim().isNotEmpty){
-                                    //  BlocProvider.of<ResendOtpBloc>(context).add(
-                                    //   ResendOTPButtonPressedEvent(
-                                    //     phone: _phoneNumberController.text.trim(),
-                                    //   ),
-                                    // );
-                                    //if (resentstate is ResendOTPSuccessState && isOTPSent) {
-                                      setState((){
-                                  isOTPSent = true;
-                                });
-                                // ScaffoldMessenger.of(context).showSnackBar(
-                                //   SnackBar(content: Text("OTP sent successfully")),
-                                // );
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => OtpScreenProfileUpdate(
-                                        data: _phoneNumberController.text.trim(),
-                                        verificationFor: 'phone-register',
-                                        onVerifiedSuccessfully: () {
-                                          // This function is executed after verification
-                                          BlocProvider.of<EditProfileBloc>(context).add(
-                                            EditProfileButtonPressedEvent(
-                                              bio: _bioController.text.trim(),
-                                              phoneNumber: _phoneNumberController.text.trim(),
-                                              username: _usernameController.text.trim(),
-                                              image: _selectedImage,
-                                              gender: _selectedGender,
-                                            ),
-                                          );
-                                        },
+                                  if (isPhoneVerified) {
+                                    BlocProvider.of<EditProfileBloc>(context)
+                                        .add(
+                                      EditProfileButtonPressedEvent(
+                                        bio: _bioController.text.trim(),
+                                        phoneNumber:
+                                            _phoneNumberController.text.trim(),
+                                        username:
+                                            _usernameController.text.trim(),
+                                        image: _selectedImage,
+                                        gender: _selectedGender,
+                                        // homeCoordinates: location,
                                       ),
-                                    ),
-                                  );
-                                   
-                                    //}
-                                    //navigate to otp screen;
-                                    
+                                    );
+                                  } else {
+                                    if (_phoneNumberController.text
+                                        .trim()
+                                        .isNotEmpty) {
+                                      //  BlocProvider.of<ResendOtpBloc>(context).add(
+                                      //   ResendOTPButtonPressedEvent(
+                                      //     phone: _phoneNumberController.text.trim(),
+                                      //   ),
+                                      // );
+                                      //if (resentstate is ResendOTPSuccessState && isOTPSent) {
+                                      setState(() {
+                                        isOTPSent = true;
+                                      });
+                                      // ScaffoldMessenger.of(context).showSnackBar(
+                                      //   SnackBar(content: Text("OTP sent successfully")),
+                                      // );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              OtpScreenProfileUpdate(
+                                            data: _phoneNumberController.text
+                                                .trim(),
+                                            verificationFor: 'phone-register',
+                                            onVerifiedSuccessfully: () {
+                                              // This function is executed after verification
+                                              BlocProvider.of<EditProfileBloc>(
+                                                      context)
+                                                  .add(
+                                                EditProfileButtonPressedEvent(
+                                                  bio: _bioController.text
+                                                      .trim(),
+                                                  phoneNumber:
+                                                      _phoneNumberController
+                                                          .text
+                                                          .trim(),
+                                                  username: _usernameController
+                                                      .text
+                                                      .trim(),
+                                                  image: _selectedImage,
+                                                  gender: _selectedGender,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      );
 
-                                  }else{
-                                    BlocProvider.of<EditProfileBloc>(context).add(
-                                  EditProfileButtonPressedEvent(
-                                    bio: _bioController.text.trim(),
-                                    phoneNumber:
-                                        _phoneNumberController.text.trim(),
-                                    username: _usernameController.text.trim(),
-                                    image: _selectedImage,
-                                    gender: _selectedGender,
-                                    // homeCoordinates: location,
-                                  ),
-                                );
+                                      //}
+                                      //navigate to otp screen;
+                                    } else {
+                                      BlocProvider.of<EditProfileBloc>(context)
+                                          .add(
+                                        EditProfileButtonPressedEvent(
+                                          bio: _bioController.text.trim(),
+                                          phoneNumber: _phoneNumberController
+                                              .text
+                                              .trim(),
+                                          username:
+                                              _usernameController.text.trim(),
+                                          image: _selectedImage,
+                                          gender: _selectedGender,
+                                          // homeCoordinates: location,
+                                        ),
+                                      );
+                                    }
                                   }
-                                }
-                              },
-                              isActive: true,
-                            );
-                  });
+                                },
+                                isActive: true,
+                              );
+                            });
                           },
                         )
                       ],
@@ -307,7 +317,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                     state.profile.phoneNumber != null
                                 ? '${state.profile.phoneNumber}'
                                 : '';
-                        isPhoneVerified = state.profile.isPhoneVerified ?? false;
+                        isPhoneVerified =
+                            state.profile.isPhoneVerified ?? false;
                         return Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
@@ -390,6 +401,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: TextField(
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
                                   enabled: false,
                                   onChanged: (value) {},
                                   controller: _emailController,
@@ -456,6 +469,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: TextField(
+                                  textCapitalization:
+                                      TextCapitalization.sentences,
                                   onChanged: (value) {},
                                   controller: _bioController,
                                   decoration: const InputDecoration(

@@ -20,12 +20,12 @@ class ChatGroupThreadScreen extends StatefulWidget {
   final ChatRoomModel room;
   final ChatMessageModel message;
 
-  const ChatGroupThreadScreen({
-    Key? key,
-    required this.messageId,
-    required this.room,
-    required this.message
-  }) : super(key: key);
+  const ChatGroupThreadScreen(
+      {Key? key,
+      required this.messageId,
+      required this.room,
+      required this.message})
+      : super(key: key);
 
   @override
   State<ChatGroupThreadScreen> createState() => _ChatGroupThreadScreenState();
@@ -61,7 +61,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
         );
       });
     }
-  } 
+  }
 
   @override
   void dispose() {
@@ -71,7 +71,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+    final XFile? image =
+        await picker.pickImage(source: ImageSource.gallery).then((file) {
       return compressImage(imageFileX: file);
     });
 
@@ -159,6 +160,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
           children: [
             Expanded(
               child: TextField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: messageEC,
                 focusNode: messageFocusNode,
                 onChanged: (value) {
@@ -188,14 +190,14 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
               onTap: () {
                 // #send
                 // XXX
-                
+
                 final payload = {
-                  'group_id': '${widget.room.id}',//'${widget.message.id}',
+                  'group_id': '${widget.room.id}', //'${widget.message.id}',
                   'msg': messageEC.text,
-                  'parent_message_id': '${widget.message.id}'};
-                
-                chatGroupCubit.sendMessage(
-                     payload, true);
+                  'parent_message_id': '${widget.message.id}'
+                };
+
+                chatGroupCubit.sendMessage(payload, true);
 
                 // fileToUpload = null;
                 messageEC.clear();
@@ -347,24 +349,29 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                           print('#onTag reply');
                         },
                         onTapCheer: () {
-                          print('#onTap cheer - send to remote ${widget.message})');
-                                final payload = {
-                                  'group_id': '${widget.room.id}',
-                                  'message_id': '${widget.message.id}',
-                                  'action': 'cheer'};
-                                context.read<ChatGroupCubitThread>().sendMessage(payload);
-                         
+                          print(
+                              '#onTap cheer - send to remote ${widget.message})');
+                          final payload = {
+                            'group_id': '${widget.room.id}',
+                            'message_id': '${widget.message.id}',
+                            'action': 'cheer'
+                          };
+                          context
+                              .read<ChatGroupCubitThread>()
+                              .sendMessage(payload);
 
                           print('after cheer ${widget.message}');
-                        
                         },
                         onTapBool: () {
                           print('#onTap bool - send to remote');
                           final payload = {
-                                  'group_id': '${widget.room.id}',
-                                  'message_id': '${widget.message.id}',
-                                  'action': 'boo'};
-                                context.read<ChatGroupCubitThread>().sendMessage(payload);
+                            'group_id': '${widget.room.id}',
+                            'message_id': '${widget.message.id}',
+                            'action': 'boo'
+                          };
+                          context
+                              .read<ChatGroupCubitThread>()
+                              .sendMessage(payload);
                         },
                         onReact: (messageId, reactOrAward) {
                           print(
@@ -427,21 +434,28 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                                 print('#onTag reply');
                               },
                               onTapCheer: () {
-                          print('#onTap cheer - send to remote ${widget.room})');
+                                print(
+                                    '#onTap cheer - send to remote ${widget.room})');
                                 final payload = {
                                   'group_id': '${widget.room.id}',
                                   'message_id': '${state.messages[index].id}',
-                                  'action': 'cheer'};
-                                context.read<ChatGroupCubitThread>().sendMessage(payload);
-                        },
-                        onTapBool: () {
-                          print('#onTap bool - send to remote');
-                          final payload = {
+                                  'action': 'cheer'
+                                };
+                                context
+                                    .read<ChatGroupCubitThread>()
+                                    .sendMessage(payload);
+                              },
+                              onTapBool: () {
+                                print('#onTap bool - send to remote');
+                                final payload = {
                                   'group_id': '${widget.room.id}',
                                   'message_id': '${state.messages[index].id}',
-                                  'action': 'boo'};
-                                context.read<ChatGroupCubitThread>().sendMessage(payload);
-                        },
+                                  'action': 'boo'
+                                };
+                                context
+                                    .read<ChatGroupCubitThread>()
+                                    .sendMessage(payload);
+                              },
                               onReact: (messageId, reactOrAward) {
                                 print(
                                     '#onTap react - send to remote award: $reactOrAward');

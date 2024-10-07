@@ -83,19 +83,18 @@ class _GroupSectionState extends State<GroupSection> {
                     final post = state.groups[index];
                     if (post.type == 'post') {
                       // return PostWidget(post: post,onDelete: (){
-                            //   print('this one is called');
-                            //   //context.read<GetAllPostsBloc>().deletepost(post.id);
-                            //   _onRefresh();
-                            // });
+                      //   print('this one is called');
+                      //   //context.read<GetAllPostsBloc>().deletepost(post.id);
+                      //   _onRefresh();
+                      // });
                     } else if (post.type == 'poll') {
                       return PollWidget(
-                        post: post,
-                        onDelete: (){
-                              print('this one is called');
-                              //context.read<GetAllPostsBloc>().deletepost(post.id);
-                              _onRefresh();
-                            }
-                      );
+                          post: post,
+                          onDelete: () {
+                            print('this one is called');
+                            //context.read<GetAllPostsBloc>().deletepost(post.id);
+                            _onRefresh();
+                          });
                     }
                     return const SizedBox();
                   },
@@ -115,7 +114,7 @@ class _GroupSectionState extends State<GroupSection> {
                 if (state.error.contains('Internal server error')) {
                   return const Center(
                       child: Text(
-                    'Server Error',
+                    'oops something went wrong',
                     style: TextStyle(color: Colors.red),
                   ));
                 }

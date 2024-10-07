@@ -119,7 +119,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
                 if (state.error.contains('Internal server error')) {
                   return const Center(
                       child: Text(
-                    'Server Error',
+                    'oops something went wrong',
                     style: TextStyle(color: Colors.red),
                   ));
                 }

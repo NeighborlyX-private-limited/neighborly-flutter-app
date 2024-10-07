@@ -48,52 +48,52 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     super.initState();
     chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
     chatGroupCubit.init(widget.roomId); // widget.roomId;
-  _scrollController.addListener(() {
-    if (_scrollController.position.pixels == _scrollController.position.minScrollExtent && !_isLoadingMore) {
-      _loadMoreMessages();
-    }
-  });
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels ==
+              _scrollController.position.minScrollExtent &&
+          !_isLoadingMore) {
+        _loadMoreMessages();
+      }
+    });
   }
 
-void _scrollToBottom() {
-  if (_scrollController.hasClients && _shouldScrollToBottom) {
-    Future.delayed(Duration(milliseconds: 300), () {
-      _scrollController.position.jumpTo(
-        _previousScrollOffset
-      );
-    });
-  }
-}
-void _scrollToEnd() {
-  if (_scrollController.hasClients) {
-    Future.delayed(Duration(milliseconds: 300), () {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-      setState((){
-          _previousScrollOffset = _scrollController.position.maxScrollExtent;
+  void _scrollToBottom() {
+    if (_scrollController.hasClients && _shouldScrollToBottom) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        _scrollController.position.jumpTo(_previousScrollOffset);
       });
-      
-    });
+    }
   }
-}
+
+  void _scrollToEnd() {
+    if (_scrollController.hasClients) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+        setState(() {
+          _previousScrollOffset = _scrollController.position.maxScrollExtent;
+        });
+      });
+    }
+  }
 
   Future<void> _loadMoreMessages() async {
     double currentScrollOffset = _scrollController.offset;
     setState(() {
       _isLoadingMore = true;
       _shouldScrollToBottom = false;
-     // _previousScrollOffset = _scrollController.position.pixels;
+      // _previousScrollOffset = _scrollController.position.pixels;
     });
 
     // Fetch older messages from server via ChatGroupCubit
     await context.read<ChatGroupCubit>().fetchOlderMessages();
     // Restore the previous scroll position after loading more messages
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    _scrollController.jumpTo(_previousScrollOffset + 500);
-  });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.jumpTo(_previousScrollOffset + 500);
+    });
     setState(() {
       _isLoadingMore = false;
     });
@@ -108,7 +108,8 @@ void _scrollToEnd() {
 
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
+    final XFile? image =
+        await picker.pickImage(source: ImageSource.gallery).then((file) {
       return compressImage(imageFileX: file);
     });
 
@@ -131,7 +132,6 @@ void _scrollToEnd() {
             color: Colors.black,
           ),
           onTap: () {
-            
             context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
             Navigator.pop(context);
           },
@@ -199,6 +199,7 @@ void _scrollToEnd() {
           children: [
             Expanded(
               child: TextField(
+                textCapitalization: TextCapitalization.sentences,
                 controller: messageEC,
                 focusNode: messageFocusNode,
                 onChanged: (value) {
@@ -232,7 +233,7 @@ void _scrollToEnd() {
                   'group_id': '${widget.roomId}',
                   'msg': messageEC.text
                 };
-                context.read<ChatGroupCubit>().sendMessage(payload,true);
+                context.read<ChatGroupCubit>().sendMessage(payload, true);
                 // fileToUpload = null;
                 messageEC.clear();
               },
@@ -331,7 +332,6 @@ void _scrollToEnd() {
         ],
       ),
       body: BlocConsumer<ChatGroupCubit, ChatGroupState>(
-        
         listener: (context, state) {
           print('... state.currentUser: ${state.status}');
 
@@ -358,9 +358,9 @@ void _scrollToEnd() {
               break;
           }
           if (state.status == Status.success && !_isLoadingMore) {
-          _shouldScrollToBottom = true;
-          //_scrollToBottom();
-        }
+            _shouldScrollToBottom = true;
+            //_scrollToBottom();
+          }
           if (state.status == Status.success && state.page == 1) {
             Future.delayed(Duration(milliseconds: 100), () {
               if (_scrollController.hasClients) {
@@ -386,7 +386,6 @@ void _scrollToEnd() {
                   ...state.messages.where((element) => element.isPinned)
                 ];
               }
-              
 
               return Container(
                 padding: EdgeInsets.only(top: 1),
@@ -409,16 +408,16 @@ void _scrollToEnd() {
                     //
 //                     //  TextButton(onPressed: _loadMoreMessages, child: Text('Load more messages'),
 // ),
-                    if (_isLoadingMore) 
-                          Padding(
-                            padding: const EdgeInsets.all(6.0), // You can change this value
-                            child: Container(
-                              child: Center(child: CircularProgressIndicator()),
-                            ),
-                          ),
-                              // Show loading indicator at the top when fetching more messages
-                               
-                      
+                    if (_isLoadingMore)
+                      Padding(
+                        padding: const EdgeInsets.all(
+                            6.0), // You can change this value
+                        child: Container(
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      ),
+                    // Show loading indicator at the top when fetching more messages
+
                     Expanded(
                       child: Container(
                         color: Colors.white,
@@ -428,15 +427,12 @@ void _scrollToEnd() {
                           controller: _scrollController,
                           shrinkWrap: true,
                           // reverse: true, // Inverter a ordem da lista
-                          itemCount: state.messages.length + (_isLoadingMore ? 1 : 0),
+                          itemCount:
+                              state.messages.length + (_isLoadingMore ? 1 : 0),
                           itemBuilder: (context, index) {
-                            
                             if (index >= state.messages.length) {
-                             
-                            return SizedBox.shrink();
+                              return SizedBox.shrink();
                             }
-                        
-                            
 
                             var msg = state.messages[index];
 
@@ -446,8 +442,8 @@ void _scrollToEnd() {
 
                             var dateSummary =
                                 onlyDate(state.messages[index].date);
-                            if (_isLoadingMore && index == state.messages.length) {
-                              
+                            if (_isLoadingMore &&
+                                index == state.messages.length) {
                               // Show loading indicator at the top when fetching more messages
                               return Center(child: CircularProgressIndicator());
                             }
@@ -469,7 +465,6 @@ void _scrollToEnd() {
                                     extra: {
                                       'message': msgIdToSendReply,
                                       'room': widget.room,
-                                      
                                     });
                               },
                               onTapReply: (messageToOpen) {
@@ -482,19 +477,26 @@ void _scrollToEnd() {
                                     });
                               },
                               onTapCheer: () {
-                                print('#onTap cheer - send to remote ${state.messages[index]})');
+                                print(
+                                    '#onTap cheer - send to remote ${state.messages[index]})');
                                 final payload = {
                                   'group_id': '${widget.roomId}',
                                   'message_id': '${state.messages[index].id}',
-                                  'action': 'cheer'};
-                                context.read<ChatGroupCubit>().sendMessage(payload);
+                                  'action': 'cheer'
+                                };
+                                context
+                                    .read<ChatGroupCubit>()
+                                    .sendMessage(payload);
                               },
                               onTapBool: () {
-                               final payload = {
+                                final payload = {
                                   'group_id': '${widget.roomId}',
                                   'message_id': '${state.messages[index].id}',
-                                  'action': 'boo'};
-                                context.read<ChatGroupCubit>().sendMessage(payload);
+                                  'action': 'boo'
+                                };
+                                context
+                                    .read<ChatGroupCubit>()
+                                    .sendMessage(payload);
                               },
                               onReact: (messageId, reactOrAward) {
                                 print(

@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
@@ -40,6 +42,42 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool _isKeyboardVisible = false; // Track keyboard visibility
 
   File? _selectedImage; // Store the selected image
+
+  /// Function to fetch the current city name
+  Future<String?> getCityName() async {
+    try {
+      // Check for location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        // Request permissions if not granted
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied ||
+            permission == LocationPermission.deniedForever) {
+          return 'Location permissions are denied';
+        }
+      }
+
+      // Get the current position (latitude and longitude)
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      // Use the coordinates to get the address details
+      List<Placemark> placemarks =
+          await placemarkFromCoordinates(position.latitude, position.longitude);
+
+      // Extract the city name from the first placemark
+      if (placemarks.isNotEmpty) {
+        return placemarks
+            .first.locality; // City name is stored in the 'locality' field
+      } else {
+        return 'No city found at this location';
+      }
+    } catch (e) {
+      print('Error getting city name: $e');
+      return 'Failed to get city name';
+    }
+  }
 
   @override
   void initState() {
@@ -136,6 +174,34 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       // Pick image and then compress
       image = await picker.pickImage(source: ImageSource.gallery).then((file) {
+        return compressImage(imageFileX: file);
+      });
+
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image!.path); // Update selected image
+        });
+      }
+    } catch (e) {
+      print("Error picking image: $e");
+    } finally {
+      setState(() {
+        isImagePicking = false; // End loading
+      });
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+    XFile? image;
+
+    try {
+      setState(() {
+        isImagePicking = true; // Start loading
+      });
+
+      // Pick image and then compress
+      image = await picker.pickImage(source: ImageSource.camera).then((file) {
         return compressImage(imageFileX: file);
       });
 
@@ -254,10 +320,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         location[0],
                                         location[1],
                                       );
+                                      bool _iaLOcationOn =
+                                          ShardPrefHelper.getIsLocationOn();
+                                      String city = '';
+                                      if (_iaLOcationOn) {
+                                        city = await getCityName() ?? '';
+                                      } else {
+                                        city = placemarks[0].locality ?? '';
+                                      }
+
+                                      print("city====== $city");
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
-                                          city: placemarks[0].locality ?? '',
+                                          city: city,
                                           content:
                                               _contentController.text.trim(),
                                           title: _titleController.text.trim(),
@@ -382,6 +458,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       child: Column(
                         children: [
                           TextField(
+                            textCapitalization: TextCapitalization.sentences,
                             onChanged: (value) {
                               setState(() {
                                 isTitleFilled =
@@ -399,6 +476,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             minLines: 1,
                           ),
                           TextField(
+                            textCapitalization: TextCapitalization.sentences,
                             onChanged: (value) {
                               setState(() {
                                 // Handle content input changes if necessary
@@ -425,6 +503,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       child: Column(
                         children: [
                           TextField(
+                            textCapitalization: TextCapitalization.sentences,
                             onChanged: (value) {
                               setState(() {
                                 isQuestionFilled =
@@ -590,11 +669,28 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       //     const SizedBox(width: 10),
                       //   ],
                       // ),
-                      Row(
-                        children: [
-                          SvgPicture.asset('assets/add_location.svg'),
-                          const SizedBox(width: 10),
-                        ],
+                      InkWell(
+                        onTap: () {
+                          _pickImageFromCamera();
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color.fromARGB(255, 218, 233, 197),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: const Color.fromARGB(255, 0, 195, 255),
+                              ),
+                            ),
+                            //Image.asset('assets/camera_icon.png'),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
                       ),
                       // Row(
                       //   children: [
@@ -639,6 +735,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           Stack(
             children: [
               TextField(
+                textCapitalization: TextCapitalization.sentences,
                 onChanged: (value) {
                   setState(() {
                     // Option filled check is performed on all options

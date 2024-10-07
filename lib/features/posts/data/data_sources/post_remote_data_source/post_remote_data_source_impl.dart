@@ -38,7 +38,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => PostModel.fromJson(data)).toList();
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -70,7 +70,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     if (response.statusCode == 200) {
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -124,13 +124,14 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => PostModel.fromJson(data)).toList()[0];
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
 
   @override
-  Future<List<CommentModel>> getCommentsByPostId({required num postId, required String commentId}) async {
+  Future<List<CommentModel>> getCommentsByPostId(
+      {required num postId, required String commentId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
@@ -155,9 +156,11 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
-      return jsonData.map((data) => CommentModel.fromJson(data, postId)).toList();
+      return jsonData
+          .map((data) => CommentModel.fromJson(data, postId))
+          .toList();
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -185,7 +188,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     if (response.statusCode == 200) {
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -215,7 +218,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     if (response.statusCode == 201) {
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -239,11 +242,11 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'optionid': optionId,
       }),
     );
-    
+
     if (response.statusCode == 201) {
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -269,7 +272,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       // print('Response Body: ${jsonData}');
       return jsonData.map((data) => ReplyModel.fromJson(data)).toList();
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }
@@ -302,7 +305,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     if (response.statusCode == 200) {
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       throw ServerException(message: message);
     }
   }

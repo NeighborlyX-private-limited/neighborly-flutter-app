@@ -73,7 +73,7 @@ class TutorialScreenState extends State<TutorialScreen> {
     }
   }
 
-  // Skip tutorial
+  //// Skip tutorial
   void _skipTutorial() {
     _tutorialCubit.updateTutorialStatus(false, true);
   }
@@ -124,7 +124,7 @@ class TutorialScreenState extends State<TutorialScreen> {
                       top: 50,
                       child: Center(
                         child: Container(
-                          height: 230,
+                          height: 260,
                           width: MediaQuery.of(context).size.width * 0.8,
                           padding: const EdgeInsets.all(16.0),
                           decoration: BoxDecoration(

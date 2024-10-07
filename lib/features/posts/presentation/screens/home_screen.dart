@@ -39,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    ShardPrefHelper.setIsLocationOn(false);
     getUnreadNotificationCount();
     _fetchPosts();
     if (widget.isFirstTime) {
@@ -305,7 +306,14 @@ class _HomeScreenState extends State<HomeScreen> {
               if (state.error.contains('Internal server error')) {
                 return const Center(
                     child: Text(
-                  'Server Error',
+                  'oops something went wrong',
+                  style: TextStyle(color: Colors.red),
+                ));
+              }
+              if (state.error.contains('No Internet Connection')) {
+                return const Center(
+                    child: Text(
+                  'No Internet Connection',
                   style: TextStyle(color: Colors.red),
                 ));
               }
