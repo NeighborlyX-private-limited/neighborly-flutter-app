@@ -50,6 +50,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String proPic = jsonDecode(response.body)['user']['picture'];
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
+      List<dynamic> homeLocation =
+          jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
+      print('home cord : ${homeLocation}');
       String? email = jsonDecode(response.body)['user']['email'];
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
       bool isSkippedTutorial =
@@ -76,6 +79,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setLocation([location[0], location[1]]);
+      ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
       ShardPrefHelper.setIsVerified(isVerified);
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
@@ -147,6 +151,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String proPic = jsonDecode(response.body)['user']['picture'];
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
+      List<dynamic> homeLocation =
+          jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
       bool isSkippedTutorial =
@@ -165,6 +171,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setLocation([location[0], location[1]]);
+      ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
@@ -208,6 +215,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String proPic = jsonDecode(response.body)['user']['picture'];
       List<dynamic> location = jsonDecode(response.body)['user']
           ['current_coordinates']['coordinates'];
+      List<dynamic> homeLocation =
+          jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
       String? email = jsonDecode(response.body)['user']['email'];
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
       bool isSkippedTutorial =
@@ -224,6 +233,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setLocation([location[0], location[1]]);
+      ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
 
       return 'Account is verified';
     } else {
@@ -285,6 +295,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         String proPic = jsonDecode(response.body)['user']['picture'];
         List<dynamic> location = jsonDecode(response.body)['user']
             ['current_coordinates']['coordinates'];
+        List<dynamic> homeLocation = jsonDecode(response.body)['user']
+            ['home_coordinates']['coordinates'];
         String? email = jsonDecode(response.body)['user']['email'];
         print("cookies : $cookies");
         ShardPrefHelper.setCookie(cookies);
@@ -293,6 +305,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ShardPrefHelper.setUsername(username);
         ShardPrefHelper.setUserProfilePicture(proPic);
         ShardPrefHelper.setLocation([location[0], location[1]]);
+        ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
 
         return jsonDecode(response.body);
       } else {

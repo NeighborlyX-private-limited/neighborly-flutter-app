@@ -7,6 +7,7 @@ class ShardPrefHelper {
   static const String _refreshToken = 'refreshToken';
   static const String _userID = 'userID';
   static const String _doubleListKey = 'doubleList';
+  static const String _homeListKey = 'homeList';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -50,6 +51,17 @@ class ShardPrefHelper {
   static String? getGender() => _preferences.getString('gender');
   static Future removeGender() async => await _preferences.remove('gender');
 
+  // save city
+  static Future setHomeCity(String city) async =>
+      await _preferences.setString('Homecity', city);
+  static String? getHomeCity() => _preferences.getString('Homecity');
+  static Future removeHomeCity() async => await _preferences.remove('Homecity');
+
+  static Future setCurrentCity(String city) async =>
+      await _preferences.setString('city', city);
+  static String? getCurrentCity() => _preferences.getString('city');
+  static Future removeCurrentCity() async => await _preferences.remove('city');
+
   // save userProfilePicture
   static Future setUserProfilePicture(String userProfilePicture) async =>
       await _preferences.setString('userProfilePicture', userProfilePicture);
@@ -88,12 +100,6 @@ class ShardPrefHelper {
     return await _preferences.setStringList(_doubleListKey, stringList);
   }
 
-// set is currect location is on
-  static Future setIsLocationOn(bool isLocationOn) async =>
-      await _preferences.setBool('isLocationOn', isLocationOn);
-  static bool getIsLocationOn() =>
-      _preferences.getBool('isLocationOn') ?? false;
-
   static List<double> getLocation() {
     List<String> stringList = _preferences.getStringList(_doubleListKey) ?? [];
     return stringList.map((e) => double.tryParse(e) ?? 0.0).toList();
@@ -102,7 +108,27 @@ class ShardPrefHelper {
   static Future removeLocation() async =>
       await _preferences.remove(_doubleListKey);
 
+  // Save home location
+  static Future setHomeLocation(List<double> doubleList) async {
+    List<String> stringList = doubleList.map((e) => e.toString()).toList();
+    return await _preferences.setStringList(_homeListKey, stringList);
+  }
+
+  static List<double> getHomeLocation() {
+    List<String> stringList = _preferences.getStringList(_homeListKey) ?? [];
+    return stringList.map((e) => double.tryParse(e) ?? 0.0).toList();
+  }
+
+  static Future removeHomeLocation() async =>
+      await _preferences.remove(_homeListKey);
+
   //set and get isVerified
+// set is currect location is on
+  static Future setIsLocationOn(bool isLocationOn) async =>
+      await _preferences.setBool('isLocationOn', isLocationOn);
+  static bool getIsLocationOn() =>
+      _preferences.getBool('isLocationOn') ?? false;
+
   static Future setIsVerified(bool isVerified) async =>
       await _preferences.setBool('isVerified', isVerified);
   static bool getIsVerified() => _preferences.getBool('isVerified') ?? false;

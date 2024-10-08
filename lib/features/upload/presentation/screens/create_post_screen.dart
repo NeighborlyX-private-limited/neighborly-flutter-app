@@ -312,20 +312,38 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {
+                                      bool iaLocationOn =
+                                          ShardPrefHelper.getIsLocationOn();
+
                                       List<double> location =
                                           ShardPrefHelper.getLocation();
 
-                                      List<Placemark> placemarks =
-                                          await placemarkFromCoordinates(
-                                        location[0],
-                                        location[1],
-                                      );
-                                      bool _iaLOcationOn =
-                                          ShardPrefHelper.getIsLocationOn();
+                                      List<double> homeLocation =
+                                          ShardPrefHelper.getHomeLocation();
+
                                       String city = '';
-                                      if (_iaLOcationOn) {
-                                        city = await getCityName() ?? '';
+                                      List<double> locationCord = [];
+                                      if (iaLocationOn) {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          location[0],
+                                          location[1],
+                                        );
+                                        var lat = location[0];
+                                        var long = location[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
                                       } else {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          homeLocation[0],
+                                          homeLocation[1],
+                                        );
+                                        var lat = homeLocation[0];
+                                        var long = homeLocation[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
                                         city = placemarks[0].locality ?? '';
                                       }
 
@@ -340,6 +358,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           type: 'post',
                                           multimedia: _selectedImage,
                                           allowMultipleVotes: false,
+                                          location: locationCord,
                                         ),
                                       );
                                     },
@@ -375,19 +394,48 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {
+                                      bool iaLocationOn =
+                                          ShardPrefHelper.getIsLocationOn();
+
                                       List<double> location =
                                           ShardPrefHelper.getLocation();
 
-                                      List<Placemark> placemarks =
-                                          await placemarkFromCoordinates(
-                                        location[0],
-                                        location[1],
-                                      );
+                                      List<double> homeLocation =
+                                          ShardPrefHelper.getHomeLocation();
 
+                                      String city = '';
+                                      List<double> locationCord = [];
+                                      if (iaLocationOn) {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          location[0],
+                                          location[1],
+                                        );
+                                        var lat = location[0];
+                                        var long = location[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      } else {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          homeLocation[0],
+                                          homeLocation[1],
+                                        );
+                                        var lat = homeLocation[0];
+                                        var long = homeLocation[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      }
+
+                                      print("city during post ====== $city");
+                                      print(
+                                          "cord during post ====== $locationCord");
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
-                                          city: placemarks[0].locality ?? '',
+                                          city: city,
                                           multimedia: _selectedImage,
                                           title:
                                               _questionController.text.trim(),
@@ -403,6 +451,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           type: 'poll',
                                           allowMultipleVotes:
                                               allowMultipleVotes,
+                                          location: locationCord,
                                         ),
                                       );
                                     },
@@ -574,6 +623,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           ),
           bottomSheet: !_isKeyboardVisible
               ? Container(
+                  // color: Colors.red,
                   color: Colors.white,
                   height: 220,
                   padding:
@@ -589,6 +639,30 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             const SizedBox(width: 10),
                             Text('Add a Photo or GIF',
                                 style: mediumTextStyleBlack),
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          _pickImageFromCamera();
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color.fromARGB(255, 224, 238, 206),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: const Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ),
+                            //Image.asset('assets/camera_icon.png'),
+                            const SizedBox(width: 10),
+                            Text('Take a Picture', style: mediumTextStyleBlack)
                           ],
                         ),
                       ),
@@ -680,11 +754,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               width: 40,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: const Color.fromARGB(255, 218, 233, 197),
+                                color: const Color.fromARGB(255, 224, 238, 206),
                               ),
                               child: Icon(
                                 Icons.camera_alt_outlined,
-                                color: const Color.fromARGB(255, 0, 195, 255),
+                                color: const Color.fromARGB(255, 195, 0, 255),
                               ),
                             ),
                             //Image.asset('assets/camera_icon.png'),

@@ -2,6 +2,8 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
+import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 
 import 'core/network/network_info.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
@@ -170,6 +172,8 @@ void init() async {
       () => EventRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<NotificationRepositories>(() =>
       NotificationRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+  // sl.registerLazySingleton<CityRepository>(() => CityRepository());
+  sl.registerLazySingleton<CityRepository>(() => CityRepository());
 
   // register datasource
   sl.registerLazySingleton<AuthRemoteDataSource>(
@@ -308,6 +312,9 @@ void init() async {
   sl.registerFactory(() => NotificationGeneralCubit(sl()));
   sl.registerFactory(() => NotificationListCubit(sl()));
   sl.registerFactory<TutorialCubit>(() => TutorialCubit(sl()));
+  // sl.registerFactory(
+  //     () => CityBloc(sl<CityRepository>(), cityRepository: null));
+  sl.registerFactory(() => CityBloc(sl<CityRepository>()));
 
   // register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());

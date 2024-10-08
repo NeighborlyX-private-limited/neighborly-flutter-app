@@ -15,6 +15,7 @@ const List<String> kReportReasons = [
   'Intellectual property violation',
 ];
 
+const List<String> kCityList = ['Delhi', 'Noida', 'Gurugram'];
 const List<String> kLocationList = [
   'Agra',
   'Ahmedabad',

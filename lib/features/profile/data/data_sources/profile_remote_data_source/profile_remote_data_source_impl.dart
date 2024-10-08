@@ -49,18 +49,28 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<void> updateLocation(
       {required Map<String, List<num>> location}) async {
+    print('location------------ $location');
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
+    var city = ShardPrefHelper.getCurrentCity();
     String cookieHeader = cookies.join('; ');
-    String url = '$kBaseUrl/user/update-user-location';
-    final response = await client.put(Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Cookie': cookieHeader,
-        },
-        body: jsonEncode(location));
+    String url = '$kBaseUrl/user/update-user-location/$city';
+    print("update location api hit------- ");
+    print("update location api hit-------- $location ");
+    final response = await client.put(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
+      },
+      //body: jsonEncode(location));
+    );
+    print("update location api hit res ${jsonDecode(response.body)}");
+    if (response.statusCode == 200) {
+      print('location update successfully');
+    }
     if (response.statusCode != 200) {
       throw ServerException(message: jsonDecode(response.body)['error']);
     }

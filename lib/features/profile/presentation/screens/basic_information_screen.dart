@@ -4,11 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:neighborly_flutter_app/core/constants/constants.dart';
+import 'package:neighborly_flutter_app/core/widgets/dropdown_search_field.dart';
+import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/city_dropdown.dart';
 
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../../../upload/presentation/widgets/post_button_widget.dart';
+import '../bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import '../bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 import '../widgets/gender_dropdown_widget.dart';
@@ -33,7 +41,9 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
   late TextEditingController _emailController;
   late TextEditingController _phoneNumberController;
   late TextEditingController _bioController;
+  late TextEditingController _locationController;
   late String _selectedGender;
+  late String _selectedCity;
   bool isPhoneVerified = true;
   bool isOTPSent = false;
 
@@ -41,11 +51,14 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
 
   @override
   void initState() {
+    _locationController = TextEditingController();
     _usernameController = TextEditingController();
     _emailController = TextEditingController();
     _phoneNumberController = TextEditingController();
     _bioController = TextEditingController();
     _selectedGender = ShardPrefHelper.getGender() ?? 'Male';
+    print(ShardPrefHelper.getHomeCity());
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
 
     _fetchProfile();
     super.initState();
@@ -194,6 +207,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                       : ShardPrefHelper.setPhoneNumber('');
 
                                   ShardPrefHelper.setGender(_selectedGender);
+                                  ShardPrefHelper.setHomeCity(_selectedCity);
 
                                   ShardPrefHelper.setUsername(
                                       _usernameController.text.trim());
@@ -209,6 +223,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                             _usernameController.text.trim(),
                                         image: _selectedImage,
                                         gender: _selectedGender,
+
                                         // homeCoordinates: location,
                                       ),
                                     );
@@ -450,6 +465,114 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   });
                                 },
                               ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'City',
+                                style: greyonboardingBody1Style,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              // BlocProvider<CityBloc, CityState>(
+                              //   // Create the BLoC instance
+
+                              //   child: BlocListener<CityBloc, CityState>(
+                              //     listener: (context, state) {
+                              //       if (state is CityUpdatedState) {
+                              //         ScaffoldMessenger.of(context)
+                              //             .showSnackBar(
+                              //           SnackBar(
+                              //               content: Text(
+                              //                   'City updated to ${state.city} successfully!')),
+                              //         );
+                              //       } else if (state is CityErrorState) {
+                              //         ScaffoldMessenger.of(context)
+                              //             .showSnackBar(
+                              //           SnackBar(
+                              //               content: Text(
+                              //                   'Failed to update city: ${state.errorMessage}')),
+                              //         );
+                              //       }
+                              //     },
+                              //     child: CityDropdown(
+                              //       selectCity: _selectedCity,
+                              //       onChanged: (String? newValue) {
+                              //         setState(() {
+                              //           _selectedCity = newValue!;
+                              //         });
+
+                              //         // Trigger the BLoC event only for the CityDropdown button
+                              //         if (newValue != null) {
+                              //           context.read<CityBloc>().add(
+                              //               CitySelectedEvent(city: newValue));
+                              //         }
+                              //       },
+                              //     ),
+                              //   ),
+                              // ),
+                              // Wrap the dropdown button inside BlocListener and BlocProvider if necessary.
+
+                              BlocProvider(
+                                create: (context) => CityBloc(sl<
+                                    CityRepository>()), // Create and provide the CityBloc.
+                                child: BlocListener<CityBloc, CityState>(
+                                  listener: (context, state) {
+                                    if (state is CityUpdatedState) {
+                                      print("yes");
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'City updated to ${state.city} successfully!')),
+                                      );
+                                    } else if (state is CityErrorState) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Failed to update city: ${state.errorMessage}')),
+                                      );
+                                    }
+                                  },
+                                  child: CityDropdown(
+                                    selectCity: _selectedCity,
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        _selectedCity = newValue!;
+                                      });
+
+                                      // Trigger the BLoC event only for the CityDropdown button.
+                                      if (newValue != null) {
+                                        // Add the UpdateCityEvent to the CityBloc when a new city is selected.
+                                        context
+                                            .read<CityBloc>()
+                                            .add(UpdateCityEvent(newValue));
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+
+                              // CityDropdown(
+                              //   selectCity: _selectedCity,
+                              //   onChanged: (String? newValue) {
+                              //     setState(() {
+                              //       _selectedCity = newValue!;
+                              //     });
+                              //   },
+                              // ),
+                              // DropdownSearchField(
+                              //   label: 'City',
+                              //   items: kCityList,
+                              //   onChanged: (value) {
+                              //     _locationController.text = value ?? '';
+                              //   },
+                              //   initialValue: _locationController.text,
+                              //   placeholder: _locationController.text,
+                              //   // validator: Validatorless.required('Preenchimento é obrigatório'),
+                              // ),
                               const SizedBox(
                                 height: 10,
                               ),

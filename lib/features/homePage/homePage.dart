@@ -31,7 +31,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   String? _currentAddress;
-  Position? _currentPosition;
+  // Position? _currentPosition;
 
   bool isDayFilled = false;
   bool isMonthFilled = false;
@@ -127,13 +127,13 @@ class _MainPageState extends State<MainPage> {
       await Permission.notification.request();
     }
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location services are disabled. Please enable the services')));
-      return false;
-    }
+    // serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!serviceEnabled) {
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //       content: Text(
+    //           'Location services are disabled. Please enable the services')));
+    //   return false;
+    // }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -177,31 +177,33 @@ class _MainPageState extends State<MainPage> {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       setState(() {
-        _currentPosition = position;
+        // _currentPosition = position;
       });
-      print('my location lat long: ${position.latitude} ${position.longitude}');
+      print(
+          'my location lat long==============: ${position.latitude} ${position.longitude}');
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
-      print('Location: ${position.latitude}, ${position.longitude}');
-      bool? isVerified = await ShardPrefHelper.getIsVerified();
-      Map<String, List<num>> userlocationDetail = {
-        'userLocation': [position.latitude, position.longitude]
-      };
+      print('Location===========: ${position.latitude}, ${position.longitude}');
+      // bool? isVerified = await ShardPrefHelper.getIsVerified();
+      // Map<String, List<num>> userlocationDetail = {
+      //   'userLocation': [position.latitude, position.longitude]
+      // };
+      // print('update user location-------');
+      // BlocProvider.of<UpdateLocationBloc>(context).add(
+      //   UpdateLocationButtonPressedEvent(
+      //     location: userlocationDetail,
+      //   ),
+      // );
 
-      BlocProvider.of<UpdateLocationBloc>(context).add(
-        UpdateLocationButtonPressedEvent(
-          location: userlocationDetail,
-        ),
-      );
+      print('update user homelocationDetail-------');
+      // Map<String, List<num>> homelocationDetail = {
+      //   'homeLocation': [position.latitude, position.longitude]
+      // };
 
-      Map<String, List<num>> homelocationDetail = {
-        'homeLocation': [position.latitude, position.longitude]
-      };
-
-      BlocProvider.of<UpdateLocationBloc>(context).add(
-        UpdateLocationButtonPressedEvent(
-          location: homelocationDetail,
-        ),
-      );
+      // BlocProvider.of<UpdateLocationBloc>(context).add(
+      //   UpdateLocationButtonPressedEvent(
+      //     location: homelocationDetail,
+      //   ),
+      // );
     } catch (e) {
       debugPrint('Error getting location: $e');
     }

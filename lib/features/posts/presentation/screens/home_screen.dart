@@ -3,6 +3,7 @@ import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/colors.dart';
@@ -39,7 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    ShardPrefHelper.setIsLocationOn(false);
+    fetchLocationAndUpdate();
+    setCityHomeName();
+    setCityCurrentName();
+    //ShardPrefHelper.setIsLocationOn(false);
     getUnreadNotificationCount();
     _fetchPosts();
     if (widget.isFirstTime) {
@@ -89,10 +93,42 @@ class _HomeScreenState extends State<HomeScreen> {
         .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
   }
 
+  setCityHomeName() async {
+    List<double> homeLocation = ShardPrefHelper.getHomeLocation();
+    print('home cord inn in city set: ${homeLocation}');
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      homeLocation[0],
+      homeLocation[1],
+    );
+
+    var city = placemarks[0].locality ?? 'Delhi';
+    print('home city $city');
+    // var city = 'Delhi';
+    ShardPrefHelper.setHomeCity(city);
+  }
+
+  setCityCurrentName() async {
+    List<double> location = ShardPrefHelper.getLocation();
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      location[0],
+      location[1],
+    );
+
+    var city = placemarks[0].locality ?? 'Delhi';
+    print('current city $city');
+    ShardPrefHelper.setCurrentCity(city);
+  }
+
   void handleToggle(bool value) {
-    setState(() {
-      isHome = value;
-    });
+    if (mounted) {
+      setState(() {
+        isHome = value;
+      });
+    }
+
+    if (!isHome) {
+      fetchLocationAndUpdate();
+    }
     _fetchPosts(); // Fetch posts based on the new isHome value
   }
 
@@ -119,13 +155,13 @@ class _HomeScreenState extends State<HomeScreen> {
       await Permission.notification.request();
     }
 
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location services are disabled. Please enable the services')));
-      return false;
-    }
+    // serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!serviceEnabled) {
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //       content: Text(
+    //           'Location services are disabled. Please enable the services')));
+    //   return false;
+    // }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -151,25 +187,26 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      setState(() {
-        // _currentPosition = position;
-      });
+      // setState(() {
+      //   // _currentPosition = position;
+      // });
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location: ${position.latitude}, ${position.longitude}');
-      bool? isVerified = await ShardPrefHelper.getIsVerified();
+      //bool? isVerified = await ShardPrefHelper.getIsVerified();
 
-      Map<String, List<num>> locationDetail = {
-        isVerified ? 'homeLocation' : 'userLocation': [
-          position.latitude,
-          position.longitude
-        ]
-      };
+      ///remove this code because we will only update the location only from settings
+      // Map<String, List<num>> locationDetail = {
+      //   isVerified ? 'homeLocation' : 'userLocation': [
+      //     position.latitude,
+      //     position.longitude
+      //   ]
+      // };
 
-      BlocProvider.of<UpdateLocationBloc>(context).add(
-        UpdateLocationButtonPressedEvent(
-          location: locationDetail,
-        ),
-      );
+      // BlocProvider.of<UpdateLocationBloc>(context).add(
+      //   UpdateLocationButtonPressedEvent(
+      //     location: locationDetail,
+      //   ),
+      // );
     } catch (e) {
       debugPrint('Error getting location: $e');
     }
@@ -179,9 +216,11 @@ class _HomeScreenState extends State<HomeScreen> {
   getNotificationCount() {
     getAllNotificationCount().then((value) {
       if (value != null && value > 0) {
-        setState(() {
-          notificationcount = value;
-        });
+        if (mounted) {
+          setState(() {
+            notificationcount = value;
+          });
+        }
       }
     });
   }
@@ -190,10 +229,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> getUnreadNotificationCount() async {
     getNotificationUnreadCount().then((value) {
       if (value != null && value > 0) {
-        setState(() {
-          unreadNotificationCount = value;
-          print('Count: $unreadNotificationCount');
-        });
+        if (mounted) {
+          setState(() {
+            unreadNotificationCount = value;
+            print('Count: $unreadNotificationCount');
+          });
+        }
       }
     }).catchError((error) {
       // Handle any errors that occurred during the API call

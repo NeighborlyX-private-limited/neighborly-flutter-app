@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
 import 'dependency_injection.dart' as di;
@@ -310,6 +313,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<NotificationListCubit>(
             create: (context) => di.sl<NotificationListCubit>(),
+          ),
+          BlocProvider<CityBloc>(
+            create: (context) => CityBloc(sl<CityRepository>()),
           ),
         ],
         child: MaterialApp.router(
