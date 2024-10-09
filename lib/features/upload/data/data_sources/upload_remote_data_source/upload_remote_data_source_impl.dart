@@ -16,7 +16,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
   @override
   Future<void> uploadPost({
     required String title,
-    required List<double> location,
+    //required List<double> location,
     String? content,
     required String type,
     File? multimedia,
@@ -45,7 +45,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       ..fields['type'] = type
       ..fields['city'] = city
       ..fields['pollOptions'] = jsonEncode(options ?? [])
-      ..fields['location'] = jsonEncode(location)
+      //..fields['location'] = jsonEncode(location)
       ..fields['allowMultipleVotes'] = allowMultipleVotes.toString();
 
     // Add multimedia file if available

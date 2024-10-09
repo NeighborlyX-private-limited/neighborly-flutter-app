@@ -6,7 +6,7 @@ import '../../../../core/error/failures.dart';
 abstract class UploadRepositories {
   Future<Either<Failure, void>> uploadPost({
     required String title,
-    required List<double> location,
+    //required List<double> location,
     String? content,
     required String type,
     File? multimedia,

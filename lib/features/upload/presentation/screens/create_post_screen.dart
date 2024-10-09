@@ -347,7 +347,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         city = placemarks[0].locality ?? '';
                                       }
 
-                                      print("city====== $city");
+                                      print("post city ====== $city");
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
@@ -358,7 +358,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           type: 'post',
                                           multimedia: _selectedImage,
                                           allowMultipleVotes: false,
-                                          location: locationCord,
+                                          //location: locationCord,
                                         ),
                                       );
                                     },
@@ -451,7 +451,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           type: 'poll',
                                           allowMultipleVotes:
                                               allowMultipleVotes,
-                                          location: locationCord,
+                                          //location: locationCord,
                                         ),
                                       );
                                     },

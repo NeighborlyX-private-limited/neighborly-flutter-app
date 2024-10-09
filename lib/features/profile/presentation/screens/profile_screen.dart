@@ -274,6 +274,7 @@
 //   }
 // }
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -414,10 +415,27 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                         ),
-                                        child: Image.network(
-                                          state.profile.picture,
+                                        child: CachedNetworkImage(
+                                          imageUrl: state.profile.picture,
                                           fit: BoxFit.cover,
+                                          placeholder: (context, url) => Center(
+                                            child: SizedBox(
+                                              height: 26,
+                                              width: 26,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                color: Colors.blue,
+                                              ),
+                                            ), // Show loading indicator
+                                          ),
+                                          errorWidget: (context, url, error) =>
+                                              Icon(Icons
+                                                  .error), // Show error icon if image fails to load
                                         ),
+                                        // child: Image.network(
+                                        //   state.profile.picture,
+                                        //   fit: BoxFit.cover,
+                                        // ),
                                       ),
                                     ),
                                     Positioned(

@@ -64,7 +64,7 @@ class _PostWidgetState extends State<PostWidget> {
                                   widget.post.proPic != ''
                               ? CachedNetworkImage(
                                   imageUrl: widget.post.proPic!,
-                                  fit: BoxFit.contain,
+                                  fit: BoxFit.cover,
                                   placeholder: (context, url) => Center(
                                     child: SizedBox(
                                       height: 16,

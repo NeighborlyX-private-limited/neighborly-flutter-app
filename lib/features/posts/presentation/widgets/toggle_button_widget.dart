@@ -20,8 +20,20 @@ class CustomToggleSwitch extends StatefulWidget {
 }
 
 class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
+  final bool _isLocationOn = ShardPrefHelper.getIsLocationOn();
   int currentIndex = 0;
-  // final bool _isLocationOn = ShardPrefHelper.getIsLocationOn();
+
+  setCurrentIndex() {
+    setState(() {
+      currentIndex = _isLocationOn ? 1 : 0;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setCurrentIndex();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,14 +61,13 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
       onToggle: (index) {
         if (mounted) {
           setState(() {
-            // print('location on or not ${_isLocationOn}');
-            // ShardPrefHelper.setIsLocationOn(!_isLocationOn);
-            // print('location on ${ShardPrefHelper.getIsLocationOn()}');
             print('index value----- $index');
             if (index == 1) {
               ShardPrefHelper.setIsLocationOn(true);
+              setCurrentIndex();
             } else {
               ShardPrefHelper.setIsLocationOn(false);
+              setCurrentIndex();
             }
 
             currentIndex = index!; // Update the current index
