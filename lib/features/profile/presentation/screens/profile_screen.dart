@@ -363,9 +363,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                         innerBoxIsScrolled; // Detect scroll position
                     return <Widget>[
                       SliverAppBar(
+                        //backgroundColor: Colors.amber,
                         pinned: true,
                         backgroundColor: Colors.white,
-                        expandedHeight: 280.0,
+                        expandedHeight: 300.0,
                         leading: IconButton(
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () {
@@ -375,8 +376,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         title: _isTabBarVisible
                             ? Text(
-                                state.profile.username[0].toUpperCase() +
-                                    state.profile.username.substring(1),
+                                state.profile.username,
                                 style: onboardingHeading2Style.copyWith(),
                               )
                             // ? Text(
@@ -460,22 +460,34 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 ),
                               ),
                               const SizedBox(height: 10),
-                              Text(
-                                state.profile.username,
-                                style: greyonboardingBody1Style,
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  state.profile.username,
+                                  style: greyonboardingBody1Style,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               state.profile.mostProminentAward != null
-                                  ? Text(
-                                      state.profile.mostProminentAward!,
-                                      style: itallicMediumGreyTextStyleBlack,
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: Text(
+                                        state.profile.mostProminentAward!,
+                                        style: itallicMediumGreyTextStyleBlack,
+                                      ),
                                     )
                                   : const SizedBox(),
                               const SizedBox(height: 2),
                               state.profile.bio != null
-                                  ? Text(
-                                      state.profile.bio!,
-                                      style: mediumGreyTextStyleBlack,
+                                  ? Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20),
+                                      child: Text(
+                                        state.profile.bio!,
+                                        style: mediumGreyTextStyleBlack,
+                                      ),
                                     )
                                   : const SizedBox(),
                               const SizedBox(height: 15),
