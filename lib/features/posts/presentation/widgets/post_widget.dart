@@ -192,13 +192,24 @@ class _PostWidgetState extends State<PostWidget> {
                         fit: BoxFit.contain,
                         width: double.infinity,
                         placeholder: (context, url) => Center(
-                          child: SizedBox(
-                              height: 16,
-                              width: 16,
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 125),
+                            height: 300,
+                            // width: double.infinity,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                // color: Colors.red,
+                              ),
+                              padding: EdgeInsets.all(10),
+                              height: 50,
+                              width: 50,
                               child: CircularProgressIndicator(
                                 color: Colors.blue,
                                 strokeWidth: 2,
-                              )), // Show loading indicator while image loads
+                              ),
+                            ),
+                          ),
                         ),
                         errorWidget: (context, url, error) => Icon(Icons
                             .error), // Show error icon if image fails to load
