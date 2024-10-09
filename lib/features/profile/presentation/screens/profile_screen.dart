@@ -497,27 +497,27 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             ),
                                           ],
                                         ),
-                                        state.profile.awardsCount != 0
-                                            ? const SizedBox(width: 55)
-                                            : const SizedBox(),
-                                        state.profile.awardsCount != 0
-                                            ? Column(
-                                                children: [
-                                                  Text(
-                                                    state.profile.awardsCount
-                                                        .toString(),
-                                                    style:
-                                                        onboardingBlackBody2Style,
-                                                  ),
-                                                  const SizedBox(height: 5),
-                                                  Text(
-                                                    'Awards',
-                                                    style:
-                                                        mediumGreyTextStyleBlack,
-                                                  ),
-                                                ],
-                                              )
-                                            : const SizedBox(),
+                                        const SizedBox(width: 55),
+                                        // state.profile.awardsCount != 0
+                                        //     ? const SizedBox(width: 55)
+                                        //     : const SizedBox(),
+                                        // state.profile.awardsCount != 0
+                                        // ?
+                                        Column(
+                                          children: [
+                                            Text(
+                                              state.profile.awardsCount
+                                                  .toString(),
+                                              style: onboardingBlackBody2Style,
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              'Awards',
+                                              style: mediumGreyTextStyleBlack,
+                                            ),
+                                          ],
+                                        )
+                                        // : const SizedBox(),
                                       ],
                                     ),
                                   ),
