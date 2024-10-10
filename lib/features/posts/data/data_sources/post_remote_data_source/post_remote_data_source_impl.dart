@@ -19,14 +19,14 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   Future<List<PostModel>> getAllPosts({
     required bool isHome,
   }) async {
-    print('here ishome $isHome');
+    print('ishome in getAllPosts == $isHome');
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      throw const ServerException(message: 'No cookies found in getAllPosts');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/fetch-posts';
-    print('here ishome $isHome');
+
     Map<String, dynamic> queryParameters;
     if (isHome) {
       queryParameters = {'home': '$isHome'};
@@ -34,15 +34,16 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       List<double> location = ShardPrefHelper.getLocation();
       double lat = location[0];
       double long = location[1];
-      print('lat $lat');
-      print('long $long');
+      print('lat in getAllPosts ==> $lat');
+      print('long in getAllPosts ==> $long');
       queryParameters = {
         'home': '$isHome',
         'latitude': '$lat',
         'longitude': '$long'
       };
     }
-    print('url : ${Uri.parse(url).replace(queryParameters: queryParameters)}');
+    print(
+        'url in getAllPosts ==> : ${Uri.parse(url).replace(queryParameters: queryParameters)}');
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
       headers: <String, String>{
@@ -51,9 +52,8 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     );
 
     final List<dynamic> jsonData = jsonDecode(response.body);
-    print('data == > $jsonData');
-    print('data == > $jsonData');
-    print('data == > $jsonData');
+    print('fetch-posts api response in getAllPosts == > $jsonData');
+
     if (response.statusCode == 200) {
       return jsonData.map((data) => PostModel.fromJson(data)).toList();
     } else {

@@ -12,7 +12,7 @@ class UploadPostUsecase {
 
   Future<Either<Failure, void>> call({
     required String title,
-    //required List<double> location,
+    required List<double> location,
     String? content,
     required String type,
     File? multimedia,
@@ -28,7 +28,7 @@ class UploadPostUsecase {
       allowMultipleVotes: allowMultipleVotes,
       city: city,
       options: options,
-      //location: location,
+      location: location,
     );
   }
 }

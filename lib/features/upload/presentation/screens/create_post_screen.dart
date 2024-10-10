@@ -354,6 +354,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         }
 
                                         print("post city ====== $city");
+                                        print(
+                                            "post city cord====== $locationCord");
                                         BlocProvider.of<UploadPostBloc>(context)
                                             .add(
                                           UploadPostPressedEvent(
@@ -364,7 +366,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                             type: 'post',
                                             multimedia: _selectedImage,
                                             allowMultipleVotes: false,
-                                            //location: locationCord,
+                                            location: locationCord,
                                           ),
                                         );
                                       },
@@ -461,7 +463,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                             type: 'poll',
                                             allowMultipleVotes:
                                                 allowMultipleVotes,
-                                            //location: locationCord,
+                                            location: locationCord,
                                           ),
                                         );
                                       },

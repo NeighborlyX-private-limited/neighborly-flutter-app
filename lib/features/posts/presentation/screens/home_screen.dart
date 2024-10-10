@@ -37,9 +37,11 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isHome = true;
+
   @override
   void initState() {
     super.initState();
+    setIsHome();
     fetchLocationAndUpdate();
     setCityHomeName();
     setCityCurrentName();
@@ -57,6 +59,12 @@ class _HomeScreenState extends State<HomeScreen> {
     //_handleDeepLink('https://prod.neighborly.in/posts/12345');
   }
 
+  setIsHome() {
+    var isLocationOn = ShardPrefHelper.getIsLocationOn();
+    setState(() {
+      isHome = isLocationOn ? false : true;
+    });
+  }
   // void _handleDeepLink(String deepLink) {
   // // Parse the deep link
   // try {
@@ -88,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onRefresh() async {
+    setIsHome();
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
         .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
@@ -301,16 +310,49 @@ class _HomeScreenState extends State<HomeScreen> {
               final posts = state.post;
               return posts.isEmpty
                   ? Center(
-                      child: InkWell(
-                        onTap: () {
-                          context.go('/create');
-                        },
-                        child: Text(
-                          'Create your first post',
-                          style: bluemediumTextStyleBlack,
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/nothing.svg',
+                            height: 200.0,
+                            width: 200.0,
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                              "Time to be the hero this wall needs, start the"),
+                          Text('Conversation!'),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryColor),
+                            onPressed: () {
+                              context.go('/create');
+                            },
+                            child: Text(
+                              'Create a Post',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        ],
                       ),
                     )
+                  // ? Center(
+                  //     child: InkWell(
+                  //       onTap: () {
+                  //         context.go('/create');
+                  //       },
+                  //       child: Text(
+                  //         'Create your first post',
+                  //         style: bluemediumTextStyleBlack,
+                  //       ),
+                  //     ),
+                  //   )
                   : ListView.separated(
                       itemCount: posts.length,
                       itemBuilder: (context, index) {

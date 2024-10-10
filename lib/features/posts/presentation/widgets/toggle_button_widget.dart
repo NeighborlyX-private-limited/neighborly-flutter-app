@@ -20,11 +20,12 @@ class CustomToggleSwitch extends StatefulWidget {
 }
 
 class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
-  final bool _isLocationOn = ShardPrefHelper.getIsLocationOn();
+  //final bool _isLocationOn = ShardPrefHelper.getIsLocationOn();
   int currentIndex = 0;
 
   setCurrentIndex() {
     setState(() {
+      final bool _isLocationOn = ShardPrefHelper.getIsLocationOn();
       currentIndex = _isLocationOn ? 1 : 0;
     });
   }
@@ -37,7 +38,7 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    print("togggle click");
+    print("togggle click with index === $currentIndex");
     return ToggleSwitch(
       initialLabelIndex: currentIndex,
       minHeight: 35,
@@ -61,7 +62,7 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
       onToggle: (index) {
         if (mounted) {
           setState(() {
-            print('index value----- $index');
+            print('index value ----- $index');
             if (index == 1) {
               ShardPrefHelper.setIsLocationOn(true);
               setCurrentIndex();
@@ -70,7 +71,7 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
               setCurrentIndex();
             }
 
-            currentIndex = index!; // Update the current index
+            //currentIndex = index!; // Update the current index
           });
         }
 

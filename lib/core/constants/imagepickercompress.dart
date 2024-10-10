@@ -34,12 +34,11 @@
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path/path.dart' as p;
 import 'dart:io';
-import 'package:cross_file/cross_file.dart'; // XFile class
 
 Future<XFile> compressImage({
   required XFile? imageFileX,
-  int initialQuality = 95, // Initial quality parameter
-  double sizeLimitMB = 1.00, // Size limit in MB
+  int initialQuality = 95,
+  double sizeLimitMB = 1.00,
   CompressFormat format = CompressFormat.jpeg,
 }) async {
   if (imageFileX == null) {
@@ -89,7 +88,7 @@ Future<XFile> compressImage({
       print(
           "Compressed Image Size: ${imageSizeMB.toStringAsFixed(2)} MB with Quality: $currentQuality");
     } else {
-      break; // Stop compression if the image fails
+      break;
     }
   }
 
