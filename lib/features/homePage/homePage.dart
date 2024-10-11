@@ -176,13 +176,14 @@ class _MainPageState extends State<MainPage> {
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      setState(() {
-        // _currentPosition = position;
-      });
+
       print(
           'my location lat long==============: ${position.latitude} ${position.longitude}');
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location===========: ${position.latitude}, ${position.longitude}');
+      setState(() {
+        // _currentPosition = position;
+      });
       // bool? isVerified = await ShardPrefHelper.getIsVerified();
       // Map<String, List<num>> userlocationDetail = {
       //   'userLocation': [position.latitude, position.longitude]

@@ -163,9 +163,9 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if(state.awards.length != 0)
+                                if (state.awards.length != 0)
                                   SizedBox(
-                                    height: 530,
+                                    height: 500,
                                     child: ListView.separated(
                                       itemCount: state.awards.length,
                                       itemBuilder: (context, index) {
@@ -186,51 +186,47 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                       separatorBuilder:
                                           (BuildContext context, int index) {
                                         return const Padding(
-                                          padding: EdgeInsets.only(bottom: 10.0),
+                                          padding:
+                                              EdgeInsets.only(bottom: 10.0),
                                         );
                                       },
                                     ),
                                   )
                                 else
                                   Container(
-                                    child: Column(
-                                      children: [
-                                        AwardWidget(
-                                            imageUrl: 'assets/Local_Legend.svg',
-                                            title: 'Local Legend',
-                                            description: 'Recognizing users who consistently contribute high-quality content.',
-                                            count: '0'
-                                            ),
-                                        AwardWidget(
-                                            imageUrl: 'assets/Sunflower.svg',
-                                            title: 'Sunflower',
-                                            description: 'For bringing positivity and cheerfulness to the community.',
-                                            count: '0'
-                                            ),
-                                        AwardWidget(
-                                            imageUrl: 'assets/Streetlight.svg',
-                                            title: 'Streetlight',
-                                            description: 'For providing clear guidance and valuable insights.',
-                                            count: '0'
-                                            ),
-                                        AwardWidget(
-                                            imageUrl: 'assets/Park_Bench.svg',
-                                            title: 'Park Bench',
-                                            description: 'For offering comforting and supportive posts.',
-                                            count: '0'
-                                            ),
-                                        AwardWidget(
-                                            imageUrl: 'assets/Map.svg',
-                                            title: 'Map',
-                                            description: 'For creating informative and detailed content.',
-                                            count: '0'
-                                            ),
-                                      ]
-                                    )
-                                  )
-                              ]
-                              )
-                              );
+                                      child: Column(children: [
+                                    AwardWidget(
+                                        imageUrl: 'assets/Local_Legend.svg',
+                                        title: 'Local Legend',
+                                        description:
+                                            'Recognizing users who consistently contribute high-quality content.',
+                                        count: '0'),
+                                    AwardWidget(
+                                        imageUrl: 'assets/Sunflower.svg',
+                                        title: 'Sunflower',
+                                        description:
+                                            'For bringing positivity and cheerfulness to the community.',
+                                        count: '0'),
+                                    AwardWidget(
+                                        imageUrl: 'assets/Streetlight.svg',
+                                        title: 'Streetlight',
+                                        description:
+                                            'For providing clear guidance and valuable insights.',
+                                        count: '0'),
+                                    AwardWidget(
+                                        imageUrl: 'assets/Park_Bench.svg',
+                                        title: 'Park Bench',
+                                        description:
+                                            'For offering comforting and supportive posts.',
+                                        count: '0'),
+                                    AwardWidget(
+                                        imageUrl: 'assets/Map.svg',
+                                        title: 'Map',
+                                        description:
+                                            'For creating informative and detailed content.',
+                                        count: '0'),
+                                  ]))
+                              ]));
                     } else {
                       return const SizedBox();
                     }

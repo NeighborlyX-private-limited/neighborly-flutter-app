@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/core/constants/constants.dart';
 import 'package:neighborly_flutter_app/core/error/exception.dart';
@@ -11,6 +12,7 @@ class CityRepository {
     }
     String cookieHeader = cookies.join('; ');
     final url = Uri.parse('$kBaseUrl/user/update-user-location/$city');
+    print('url in updateCity ==> $url');
 
     try {
       final response = await http.put(
@@ -22,14 +24,26 @@ class CityRepository {
       );
 
       if (response.statusCode == 200) {
-        print('City updated successfully. Response: ${response.body}');
+        Map<String, dynamic> responseMap = jsonDecode(response.body);
+        String message = responseMap['message'];
+        List<String> words = message.split(' ');
+        String lastWord = words.last;
+        print('Last word of message ==> $lastWord');
+        print('Last word of message ==> ${responseMap['user_coordinates']}');
+        ShardPrefHelper.setHomeCity(lastWord);
+        ShardPrefHelper.setHomeLocation([
+          responseMap['user_coordinates'][0],
+          responseMap['user_coordinates'][1]
+        ]);
+
+        print('City updated successfully. Response ==> ${response.body}');
       } else {
-        print('Failed to update city. Response: ${response.body}');
+        print('Failed to update city. Response ==> ${response.body}');
         throw Exception('Failed to update city');
       }
     } catch (e) {
       print('Error: $e');
-      rethrow; // Rethrow to let the BLoC handle the error
+      rethrow;
     }
   }
 }

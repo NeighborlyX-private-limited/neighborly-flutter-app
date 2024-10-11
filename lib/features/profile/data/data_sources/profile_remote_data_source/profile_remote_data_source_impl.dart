@@ -137,7 +137,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         'Cookie': cookieHeader,
       },
     );
-
+    if (response.statusCode == 200) {
+      ShardPrefHelper.setIsLocationOn(false);
+    }
     if (response.statusCode != 200) {
       throw ServerException(message: jsonDecode(response.body)['msg']);
     }

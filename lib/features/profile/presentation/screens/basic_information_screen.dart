@@ -57,8 +57,9 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
     _phoneNumberController = TextEditingController();
     _bioController = TextEditingController();
     _selectedGender = ShardPrefHelper.getGender() ?? 'Male';
-    print(ShardPrefHelper.getHomeCity());
+    print('city in basic info  ==> ${ShardPrefHelper.getHomeCity()}');
     _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
+    print('city in basic info  ==> ${ShardPrefHelper.getHomeCity()}');
 
     _fetchProfile();
     super.initState();
@@ -207,7 +208,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                       : ShardPrefHelper.setPhoneNumber('');
 
                                   ShardPrefHelper.setGender(_selectedGender);
-                                  ShardPrefHelper.setHomeCity(_selectedCity);
+                                  //ShardPrefHelper.setHomeCity(_selectedCity);
 
                                   ShardPrefHelper.setUsername(
                                       _usernameController.text.trim());

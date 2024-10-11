@@ -201,6 +201,7 @@ class _HomeScreenState extends State<HomeScreen> {
       // });
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location: ${position.latitude}, ${position.longitude}');
+      setState(() {});
       //bool? isVerified = await ShardPrefHelper.getIsVerified();
 
       ///remove this code because we will only update the location only from settings

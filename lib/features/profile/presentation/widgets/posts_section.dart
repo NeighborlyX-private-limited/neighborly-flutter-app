@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 import '../../../../core/theme/text_style.dart';
 import '../../../posts/presentation/widgets/poll_widget.dart';
@@ -56,22 +58,55 @@ class _PostSectionState extends State<PostSection> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Welcome! Your space is empty.',
-                          style: onboardingHeading2Style,
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            context.go('/create');
-                          },
-                          child: Text(
-                            'Create your first post',
-                            style: bluemediumTextStyleBlack,
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/nothing.svg',
+                                height: 150.0,
+                                width: 150.0,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                  "Time to be the hero this wall needs, start the"),
+                              Text('Conversation!'),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryColor),
+                                onPressed: () {
+                                  context.go('/create');
+                                },
+                                child: Text(
+                                  'Create a Post',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              )
+                            ],
                           ),
-                        ),
+                        )
+                        // Text(
+                        //   'Welcome! Your space is empty.',
+                        //   style: onboardingHeading2Style,
+                        // ),
+                        // const SizedBox(
+                        //   height: 10,
+                        // ),
+                        // InkWell(
+                        //   onTap: () {
+                        //     context.go('/create');
+                        //   },
+                        //   child: Text(
+                        //     'Create your first post',
+                        //     style: bluemediumTextStyleBlack,
+                        //   ),
+                        // ),
                       ],
                     ),
                   );
