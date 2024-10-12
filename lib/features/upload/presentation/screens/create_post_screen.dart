@@ -163,6 +163,57 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   //   });
   // }
   bool isImagePicking = false;
+  List<File> _selectedImages = [];
+// ----------------------------------------------------
+  Future<void> _pickImages() async {
+    final ImagePicker picker = ImagePicker();
+
+    // Check if the user already has 5 images selected
+    if (_selectedImages.length >= 5) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('You can select up to 5 images.')),
+      );
+      return; // Exit the function if the limit is reached
+    }
+
+    try {
+      setState(() {
+        isImagePicking = true; // Start loading
+      });
+
+      // Pick multiple images
+      List<XFile>? images =
+          await picker.pickMultiImage(imageQuality: 95, limit: 5);
+
+      if (images != null) {
+        for (XFile imageFile in images) {
+          // Check if adding this image exceeds the limit
+          if (_selectedImages.length < 5) {
+            XFile compressedImage = await compressImage(imageFileX: imageFile);
+            setState(() {
+              _selectedImages.add(
+                  File(compressedImage.path)); // Update selected images list
+            });
+            print(_selectedImages);
+          } else {
+            // Show a message if the user tries to select more than 5 images
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('You can select up to 5 images.')),
+            );
+            break; // Exit the loop if the limit is reached
+          }
+        }
+        return;
+      }
+    } catch (e) {
+      print("Error picking images: $e");
+    } finally {
+      setState(() {
+        isImagePicking = false; // End loading
+      });
+    }
+  }
+
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     XFile? image;
@@ -646,6 +697,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         InkWell(
+                          // onTap: _pickImages,
                           onTap: _pickImage,
                           child: Row(
                             children: [
