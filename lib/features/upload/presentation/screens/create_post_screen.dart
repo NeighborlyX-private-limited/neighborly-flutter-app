@@ -7,8 +7,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
@@ -37,11 +35,44 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   late String _condition;
 
-  late FocusNode _titleFocusNode; // Declare the FocusNode
+  late FocusNode _titleFocusNode;
   late FocusNode _contentFocusNode;
   bool _isKeyboardVisible = false; // Track keyboard visibility
 
   File? _selectedImage; // Store the selected image
+
+  @override
+  void initState() {
+    super.initState();
+    _contentController = TextEditingController();
+    _titleController = TextEditingController();
+    _questionController = TextEditingController();
+    _condition = 'post';
+    _addOption();
+    _addOption();
+
+    _titleFocusNode = FocusNode();
+    _contentFocusNode = FocusNode();
+
+    _titleFocusNode.addListener(_onTiteFocusChange);
+    _contentFocusNode.addListener(_onContentFocusChange);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _contentController.dispose();
+    _titleController.dispose();
+    _questionController.dispose();
+    for (var controller in _optionControllers) {
+      controller.dispose();
+    }
+    for (var focusNode in _optionFocusNodes) {
+      focusNode.dispose();
+    }
+    _titleFocusNode.dispose();
+    _contentFocusNode.dispose();
+  }
 
   /// Function to fetch the current city name
   Future<String?> getCityName() async {
@@ -74,26 +105,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         return 'No city found at this location';
       }
     } catch (e) {
-      print('Error getting city name: $e');
+      print('Error getting city name in getCityName: $e');
       return 'Failed to get city name';
     }
-  }
-
-  @override
-  void initState() {
-    _contentController = TextEditingController();
-    _titleController = TextEditingController();
-    _questionController = TextEditingController();
-    _condition = 'post';
-    super.initState();
-    _addOption(); // Add two default options
-    _addOption();
-
-    _titleFocusNode = FocusNode(); // Initialize FocusNode
-    _contentFocusNode = FocusNode();
-
-    _titleFocusNode.addListener(_onTiteFocusChange);
-    _contentFocusNode.addListener(_onContentFocusChange);
   }
 
   // Check if all options and question are filled
@@ -129,22 +143,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
-  @override
-  void dispose() {
-    _contentController.dispose();
-    _titleController.dispose();
-    _questionController.dispose();
-    for (var controller in _optionControllers) {
-      controller.dispose();
-    }
-    for (var focusNode in _optionFocusNodes) {
-      focusNode.dispose();
-    }
-    _titleFocusNode.dispose();
-    _contentFocusNode.dispose();
-    super.dispose();
-  }
-
   void _onTiteFocusChange() {
     setState(() {
       _isKeyboardVisible = _titleFocusNode.hasFocus;
@@ -163,8 +161,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   //   });
   // }
   bool isImagePicking = false;
+  bool isImageUploading = false;
   List<File> _selectedImages = [];
-// ----------------------------------------------------
+
   Future<void> _pickImages() async {
     final ImagePicker picker = ImagePicker();
 
@@ -173,7 +172,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('You can select up to 5 images.')),
       );
-      return; // Exit the function if the limit is reached
+      setState(() {
+        _selectedImages = [];
+      });
+      return;
     }
 
     try {
@@ -185,12 +187,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       List<XFile>? images =
           await picker.pickMultiImage(imageQuality: 95, limit: 5);
 
-      if (images != null) {
+      if (images.isNotEmpty) {
         for (XFile imageFile in images) {
           // Check if adding this image exceeds the limit
           if (_selectedImages.length < 5) {
             XFile compressedImage = await compressImage(imageFileX: imageFile);
             setState(() {
+              _selectedImage = File(compressedImage.path);
               _selectedImages.add(
                   File(compressedImage.path)); // Update selected images list
             });
@@ -200,13 +203,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('You can select up to 5 images.')),
             );
+            setState(() {
+              _selectedImages = [];
+            });
             break; // Exit the loop if the limit is reached
           }
         }
+        setState(() {
+          isImagePicking = false; // End loading
+        });
         return;
       }
     } catch (e) {
-      print("Error picking images: $e");
+      print("Error picking multiple images: $e");
     } finally {
       setState(() {
         isImagePicking = false; // End loading
@@ -231,6 +240,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (image != null) {
         setState(() {
           _selectedImage = File(image!.path); // Update selected image
+          print('_selectedImage path in pic image fn: $_selectedImage');
         });
       }
     } catch (e) {
@@ -270,595 +280,627 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
-  // Future<void> _pickImage() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? image =
-  //       await picker.pickImage(source: ImageSource.gallery).then((file) {
-  //     return compressImage(imageFileX: file);
-  //   });
-
-  //   if (image != null) {
-  //     setState(() {
-  //       _selectedImage = File(image.path);
-  //     });
-  //   }
-  // }
-
   void _removeImage() {
     setState(() {
+      // _selectedImages.removeAt(index);
       _selectedImage = null;
+      _selectedImages = [];
     });
   }
 
-  bool isImageUploading = false;
+  void _removeImages(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+      // _selectedImage = null;
+      // _selectedImages = [];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (didPop, result) {},
-      child: SafeArea(
-        child: Scaffold(
-            backgroundColor: Colors.white,
-            body: GestureDetector(
-              onTap: () {
-                // Close the keyboard when tapping outside of the input field
-                FocusScope.of(context).unfocus();
-              },
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    isImagePicking ? LinearProgressIndicator() : SizedBox(),
-                    isImageUploading ? LinearProgressIndicator() : SizedBox(),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 14.0, left: 14.0, right: 14.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            child: const Icon(Icons.close, size: 30),
-                            onTap: () {
-                              if (_condition == 'post') {
-                                _titleController.clear();
-                                _contentController.clear();
-                                _selectedImage = null; // Clear selected image
-
-                                context.go('/home/false');
-                              } else {
-                                setState(() {
-                                  _condition = 'post';
-                                });
-                              }
-                            },
-                          ),
-                          _condition == 'post'
-                              ? BlocConsumer<UploadPostBloc, UploadPostState>(
-                                  listener: (context, state) {
-                                    if (state is UploadPostLoadingState) {
-                                      setState(() {
-                                        isImageUploading = true;
-                                      });
-                                    }
-                                    if (state is UploadPostFailureState) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(content: Text(state.error)),
-                                      );
-                                    } else if (state
-                                        is UploadPostSuccessState) {
-                                      setState(() {
-                                        isImageUploading = false;
-                                      });
-                                      _contentController.clear();
-                                      _titleController.clear();
-                                      _removeImage();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Post Created'),
-                                        ),
-                                      );
-
-                                      context.go('/home/false');
-                                    }
-                                  },
-                                  builder: (context, state) {
-                                    if (state is UploadPostLoadingState) {
-                                      return const Center(
-                                          child: Text('Uploading...'));
-                                    }
-                                    return PostButtonWidget(
-                                      onTapListener: () async {
-                                        bool iaLocationOn =
-                                            ShardPrefHelper.getIsLocationOn();
-
-                                        List<double> location =
-                                            ShardPrefHelper.getLocation();
-
-                                        List<double> homeLocation =
-                                            ShardPrefHelper.getHomeLocation();
-
-                                        String city = '';
-                                        List<double> locationCord = [];
-                                        if (iaLocationOn) {
-                                          List<Placemark> placemarks =
-                                              await placemarkFromCoordinates(
-                                            location[0],
-                                            location[1],
-                                          );
-                                          var lat = location[0];
-                                          var long = location[1];
-                                          locationCord.add(lat);
-                                          locationCord.add(long);
-                                          city = placemarks[0].locality ?? '';
-                                        } else {
-                                          List<Placemark> placemarks =
-                                              await placemarkFromCoordinates(
-                                            homeLocation[0],
-                                            homeLocation[1],
-                                          );
-                                          var lat = homeLocation[0];
-                                          var long = homeLocation[1];
-                                          locationCord.add(lat);
-                                          locationCord.add(long);
-                                          city = placemarks[0].locality ?? '';
-                                        }
-
-                                        print("post city ====== $city");
-                                        print(
-                                            "post city cord====== $locationCord");
-                                        BlocProvider.of<UploadPostBloc>(context)
-                                            .add(
-                                          UploadPostPressedEvent(
-                                            city: city,
-                                            content:
-                                                _contentController.text.trim(),
-                                            title: _titleController.text.trim(),
-                                            type: 'post',
-                                            multimedia: _selectedImage,
-                                            allowMultipleVotes: false,
-                                            location: locationCord,
-                                          ),
-                                        );
-                                      },
-                                      isActive: isTitleFilled,
+    return SafeArea(
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          body: GestureDetector(
+            onTap: () {
+              // Close the keyboard when tapping outside of the input field
+              FocusScope.of(context).unfocus();
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  isImagePicking ? LinearProgressIndicator() : SizedBox(),
+                  isImageUploading ? LinearProgressIndicator() : SizedBox(),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 14.0, left: 14.0, right: 14.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        InkWell(
+                          child: const Icon(Icons.close, size: 30),
+                          onTap: () {
+                            print(
+                                '_selectedImage path in on tap fn: $_selectedImage');
+                            if (_condition == 'post') {
+                              _titleController.clear();
+                              _contentController.clear();
+                              _selectedImage = null;
+                              context.go('/home/false');
+                            } else {
+                              setState(() {
+                                _condition = 'post';
+                              });
+                            }
+                          },
+                        ),
+                        _condition == 'post'
+                            ? BlocConsumer<UploadPostBloc, UploadPostState>(
+                                listener: (context, state) {
+                                  if (state is UploadPostLoadingState) {
+                                    setState(() {
+                                      isImageUploading = true;
+                                    });
+                                  }
+                                  if (state is UploadPostFailureState) {
+                                    ///chnage error msg error
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(state.error)),
                                     );
-                                  },
-                                )
-                              : BlocConsumer<UploadPostBloc, UploadPostState>(
-                                  listener: (context, state) {
-                                    if (state is UploadPostFailureState) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(content: Text(state.error)),
-                                      );
-                                    } else if (state
-                                        is UploadPostSuccessState) {
-                                      _questionController.clear();
+                                  } else if (state is UploadPostSuccessState) {
+                                    setState(() {
+                                      isImageUploading = false;
+                                    });
+                                    _contentController.clear();
+                                    _titleController.clear();
+                                    _removeImage();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Post Created'),
+                                      ),
+                                    );
 
-                                      _removeImage();
-                                      for (var controller
-                                          in _optionControllers) {
-                                        controller.clear();
+                                    context.go('/home/false');
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if (state is UploadPostLoadingState) {
+                                    return const Center(
+                                        child: Text('Uploading...'));
+                                  }
+                                  return PostButtonWidget(
+                                    onTapListener: () async {
+                                      bool iaLocationOn =
+                                          ShardPrefHelper.getIsLocationOn();
+
+                                      List<double> location =
+                                          ShardPrefHelper.getLocation();
+
+                                      List<double> homeLocation =
+                                          ShardPrefHelper.getHomeLocation();
+
+                                      String city = '';
+                                      List<double> locationCord = [];
+                                      if (iaLocationOn) {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          location[0],
+                                          location[1],
+                                        );
+                                        var lat = location[0];
+                                        var long = location[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      } else {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          homeLocation[0],
+                                          homeLocation[1],
+                                        );
+                                        var lat = homeLocation[0];
+                                        var long = homeLocation[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
                                       }
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Poll Created'),
+
+                                      print("post city ====== $city");
+                                      print(
+                                          "post city cord ====== $locationCord");
+                                      print(
+                                          '_selectedImage path in on tap fn: $_selectedImage');
+                                      BlocProvider.of<UploadPostBloc>(context)
+                                          .add(
+                                        UploadPostPressedEvent(
+                                          city: city,
+                                          content:
+                                              _contentController.text.trim(),
+                                          title: _titleController.text.trim(),
+                                          type: 'post',
+                                          multimedia: _selectedImage,
+                                          allowMultipleVotes: false,
+                                          location: locationCord,
                                         ),
                                       );
-                                      context.go('/home/false');
-                                    }
-                                  },
-                                  builder: (context, state) {
-                                    if (state is UploadPostLoadingState) {
-                                      return const Center(
-                                          child: CircularProgressIndicator());
-                                    }
-                                    return PostButtonWidget(
-                                      onTapListener: () async {
-                                        bool iaLocationOn =
-                                            ShardPrefHelper.getIsLocationOn();
-
-                                        List<double> location =
-                                            ShardPrefHelper.getLocation();
-
-                                        List<double> homeLocation =
-                                            ShardPrefHelper.getHomeLocation();
-
-                                        String city = '';
-                                        List<double> locationCord = [];
-                                        if (iaLocationOn) {
-                                          List<Placemark> placemarks =
-                                              await placemarkFromCoordinates(
-                                            location[0],
-                                            location[1],
-                                          );
-                                          var lat = location[0];
-                                          var long = location[1];
-                                          locationCord.add(lat);
-                                          locationCord.add(long);
-                                          city = placemarks[0].locality ?? '';
-                                        } else {
-                                          List<Placemark> placemarks =
-                                              await placemarkFromCoordinates(
-                                            homeLocation[0],
-                                            homeLocation[1],
-                                          );
-                                          var lat = homeLocation[0];
-                                          var long = homeLocation[1];
-                                          locationCord.add(lat);
-                                          locationCord.add(long);
-                                          city = placemarks[0].locality ?? '';
-                                        }
-
-                                        print("city during post ====== $city");
-                                        print(
-                                            "cord during post ====== $locationCord");
-                                        BlocProvider.of<UploadPostBloc>(context)
-                                            .add(
-                                          UploadPostPressedEvent(
-                                            city: city,
-                                            multimedia: _selectedImage,
-                                            title:
-                                                _questionController.text.trim(),
-                                            options: List.generate(
-                                              _optionControllers.length,
-                                              (index) => {
-                                                "option":
-                                                    _optionControllers[index]
-                                                        .text
-                                                        .trim(),
-                                              },
-                                            ),
-                                            type: 'poll',
-                                            allowMultipleVotes:
-                                                allowMultipleVotes,
-                                            location: locationCord,
-                                          ),
-                                        );
-                                      },
-                                      isActive: checkIsPollActive(),
+                                    },
+                                    isActive: isTitleFilled,
+                                  );
+                                },
+                              )
+                            : BlocConsumer<UploadPostBloc, UploadPostState>(
+                                listener: (context, state) {
+                                  if (state is UploadPostFailureState) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(state.error)),
                                     );
-                                  },
+                                  } else if (state is UploadPostSuccessState) {
+                                    _questionController.clear();
+
+                                    _removeImage();
+                                    for (var controller in _optionControllers) {
+                                      controller.clear();
+                                    }
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Poll Created'),
+                                      ),
+                                    );
+                                    context.go('/home/false');
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if (state is UploadPostLoadingState) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  }
+                                  return PostButtonWidget(
+                                    onTapListener: () async {
+                                      bool iaLocationOn =
+                                          ShardPrefHelper.getIsLocationOn();
+
+                                      List<double> location =
+                                          ShardPrefHelper.getLocation();
+
+                                      List<double> homeLocation =
+                                          ShardPrefHelper.getHomeLocation();
+
+                                      String city = '';
+                                      List<double> locationCord = [];
+                                      if (iaLocationOn) {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          location[0],
+                                          location[1],
+                                        );
+                                        var lat = location[0];
+                                        var long = location[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      } else {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          homeLocation[0],
+                                          homeLocation[1],
+                                        );
+                                        var lat = homeLocation[0];
+                                        var long = homeLocation[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      }
+
+                                      print("city during post ====== $city");
+                                      print(
+                                          "cord during post ====== $locationCord");
+                                      BlocProvider.of<UploadPostBloc>(context)
+                                          .add(
+                                        UploadPostPressedEvent(
+                                          city: city,
+                                          multimedia: _selectedImage,
+                                          title:
+                                              _questionController.text.trim(),
+                                          options: List.generate(
+                                            _optionControllers.length,
+                                            (index) => {
+                                              "option":
+                                                  _optionControllers[index]
+                                                      .text
+                                                      .trim(),
+                                            },
+                                          ),
+                                          type: 'poll',
+                                          allowMultipleVotes:
+                                              allowMultipleVotes,
+                                          location: locationCord,
+                                        ),
+                                      );
+                                    },
+                                    isActive: checkIsPollActive(),
+                                  );
+                                },
+                              ),
+                      ],
+                    ),
+                  ),
+                  if (_selectedImage != null)
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(16),
+                            ),
+                            child: Image.file(
+                              _selectedImage!,
+                              width: double.infinity,
+                              height: 260,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: GestureDetector(
+                              onTap: () {
+                                _removeImage();
+                              },
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
                                 ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                    if (_selectedImage != null) // Preview selected image
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(16),
-                              ),
-                              child: Image.file(
-                                _selectedImage!,
-                                width: double.infinity,
-                                height: 260,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: GestureDetector(
-                                onTap: _removeImage,
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                    size: 24,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
 
-                    if (_condition == 'post')
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 14.0, left: 14.0, right: 14.0),
-                        child: Column(
-                          children: [
-                            TextField(
-                              textCapitalization: TextCapitalization.sentences,
-                              onChanged: (value) {
-                                setState(() {
-                                  isTitleFilled =
-                                      _titleController.text.trim().isNotEmpty;
-                                });
-                              },
-                              controller: _titleController,
-                              focusNode:
-                                  _titleFocusNode, // Attach the FocusNode
-                              decoration: const InputDecoration(
-                                hintText: 'Title',
-                                border: InputBorder.none,
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              minLines: 1,
-                            ),
-                            TextField(
-                              textCapitalization: TextCapitalization.sentences,
-                              onChanged: (value) {
-                                setState(() {
-                                  // Handle content input changes if necessary
-                                });
-                              },
-                              controller: _contentController,
-                              focusNode:
-                                  _contentFocusNode, // Attach the FocusNode
-                              decoration: const InputDecoration(
-                                hintText: 'What\'s on your mind?',
-                                border: InputBorder.none,
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              minLines: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (_condition == 'poll')
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 14.0, left: 14.0, right: 14.0),
-                        child: Column(
-                          children: [
-                            TextField(
-                              textCapitalization: TextCapitalization.sentences,
-                              onChanged: (value) {
-                                setState(() {
-                                  isQuestionFilled = _questionController.text
-                                      .trim()
-                                      .isNotEmpty;
-                                });
-                              },
-                              controller: _questionController,
+                  // if (_selectedImages
+                  //     .isNotEmpty) // You can check for empty images list
+                  //   Padding(
+                  //     padding: const EdgeInsets.all(8.0),
+                  //     child: SizedBox(
+                  //       height: 260,
+                  //       child: PageView.builder(
+                  //         scrollDirection: Axis.horizontal,
+                  //         itemCount: _selectedImages.length,
+                  //         itemBuilder: (context, index) {
+                  //           // Ensure the index is accessible here
+                  //           return Stack(
+                  //             children: [
+                  //               ClipRRect(
+                  //                 borderRadius: BorderRadius.circular(16),
+                  //                 child: Image.file(
+                  //                   _selectedImages[index],
+                  //                   width: double.infinity,
+                  //                   height: 260,
+                  //                   fit: BoxFit.cover,
+                  //                 ),
+                  //               ),
+                  //               Positioned(
+                  //                 top: 8,
+                  //                 right: 8,
+                  //                 child: GestureDetector(
+                  //                   onTap: () => _removeImages(
+                  //                       index), // Pass the correct index
+                  //                   child: Container(
+                  //                     decoration: const BoxDecoration(
+                  //                       color: Colors.red,
+                  //                       shape: BoxShape.circle,
+                  //                     ),
+                  //                     child: const Icon(
+                  //                       Icons.close,
+                  //                       color: Colors.white,
+                  //                       size: 24,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           );
+                  //         },
+                  //       ),
+                  //     ),
+                  //   ),
 
-                              focusNode:
-                                  _contentFocusNode, // Attach the FocusNode
-                              decoration: const InputDecoration(
-                                hintText: 'Write your question here...',
-                                border: InputBorder.none,
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              minLines: 1,
+                  if (_condition == 'post')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 14.0, left: 14.0, right: 14.0),
+                      child: Column(
+                        children: [
+                          TextField(
+                            textCapitalization: TextCapitalization.sentences,
+                            onChanged: (value) {
+                              setState(() {
+                                isTitleFilled =
+                                    _titleController.text.trim().isNotEmpty;
+                              });
+                            },
+                            controller: _titleController,
+                            focusNode: _titleFocusNode,
+                            decoration: const InputDecoration(
+                              hintText: 'Title',
+                              border: InputBorder.none,
                             ),
-                            const SizedBox(height: 12),
-                            ..._buildOptionFields(), // Build option fields
-                            InkWell(
-                              onTap: _addOption,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  const Icon(
-                                    Icons.add,
-                                    color: Color(0xff635BFF),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    'Add Option',
-                                    style: blueNormalTextStyle,
-                                  ),
-                                ],
-                              ),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            minLines: 1,
+                          ),
+                          TextField(
+                            textCapitalization: TextCapitalization.sentences,
+                            onChanged: (value) {
+                              setState(() {
+                                // Handle content input changes if necessary
+                              });
+                            },
+                            controller: _contentController,
+                            focusNode: _contentFocusNode,
+                            decoration: const InputDecoration(
+                              hintText: 'What\'s on your mind?',
+                              border: InputBorder.none,
                             ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            minLines: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                  if (_condition == 'poll')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 14.0, left: 14.0, right: 14.0),
+                      child: Column(
+                        children: [
+                          TextField(
+                            textCapitalization: TextCapitalization.sentences,
+                            onChanged: (value) {
+                              setState(() {
+                                isQuestionFilled =
+                                    _questionController.text.trim().isNotEmpty;
+                              });
+                            },
+                            controller: _questionController,
+
+                            focusNode:
+                                _contentFocusNode, // Attach the FocusNode
+                            decoration: const InputDecoration(
+                              hintText: 'Write your question here...',
+                              border: InputBorder.none,
+                            ),
+                            keyboardType: TextInputType.multiline,
+                            maxLines: null,
+                            minLines: 1,
+                          ),
+                          const SizedBox(height: 12),
+                          ..._buildOptionFields(), // Build option fields
+                          InkWell(
+                            onTap: _addOption,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Text(
-                                  'Allow multiple votes',
-                                  style: greyonboardingBody1Style,
+                                const Icon(
+                                  Icons.add,
+                                  color: Color(0xff635BFF),
                                 ),
-                                Switch(
-                                  value: allowMultipleVotes,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      allowMultipleVotes = value;
-                                    });
-                                  },
-                                  inactiveThumbColor: Colors.white,
-                                  inactiveTrackColor: Colors.grey,
-                                  activeTrackColor: const Color(0xff635BFF),
-                                  activeColor: Colors.white,
+                                const SizedBox(width: 5),
+                                Text(
+                                  'Add Option',
+                                  style: blueNormalTextStyle,
                                 ),
                               ],
                             ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Allow multiple votes',
+                                style: greyonboardingBody1Style,
+                              ),
+                              Switch(
+                                value: allowMultipleVotes,
+                                onChanged: (value) {
+                                  setState(() {
+                                    allowMultipleVotes = value;
+                                  });
+                                },
+                                inactiveThumbColor: Colors.white,
+                                inactiveTrackColor: Colors.grey,
+                                activeTrackColor: const Color(0xff635BFF),
+                                activeColor: Colors.white,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(
+                      height: 200), // Space to accommodate the bottom sheet
+                ],
+              ),
+            ),
+          ),
+          bottomSheet: !_isKeyboardVisible
+              ? Container(
+                  // color: Colors.red,
+                  color: Colors.white,
+                  height: 220,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      InkWell(
+                        // onTap: _pickImages,
+                        onTap: _pickImage,
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/add_a_photo.svg'),
+                            const SizedBox(width: 10),
+                            Text('Add a Photo or GIF',
+                                style: mediumTextStyleBlack),
                           ],
                         ),
                       ),
-                    const SizedBox(
-                        height: 200), // Space to accommodate the bottom sheet
-                  ],
-                ),
-              ),
-            ),
-            bottomSheet: !_isKeyboardVisible
-                ? Container(
-                    // color: Colors.red,
-                    color: Colors.white,
-                    height: 220,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          // onTap: _pickImages,
-                          onTap: _pickImage,
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('assets/add_a_photo.svg'),
-                              const SizedBox(width: 10),
-                              Text('Add a Photo or GIF',
-                                  style: mediumTextStyleBlack),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            _pickImageFromCamera();
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      const Color.fromARGB(255, 224, 238, 206),
-                                ),
-                                child: Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: const Color.fromARGB(255, 0, 0, 0),
-                                ),
+                      InkWell(
+                        onTap: () {
+                          _pickImageFromCamera();
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color.fromARGB(255, 224, 238, 206),
                               ),
-                              //Image.asset('assets/camera_icon.png'),
-                              const SizedBox(width: 10),
-                              Text('Take a Picture',
-                                  style: mediumTextStyleBlack)
-                            ],
-                          ),
-                        ),
-                        // InkWell(
-                        //   onTap: () {
-                        //     context.push('/groups/create');
-                        //   },
-                        //   child: Row(
-                        //     children: [
-                        //       SvgPicture.asset('assets/communities.svg'),
-                        //       const SizedBox(width: 10),
-                        //       Text('Create Community',
-                        //           style: mediumTextStyleBlack),
-                        //     ],
-                        //   ),
-                        // ),
-
-                        // TODO: create a action to this and remove the comment
-
-                        // Row(
-                        //   children: [
-                        //     SvgPicture.asset('assets/add_location.svg'),
-                        //     const SizedBox(width: 10),
-                        //     Text('Add Location', style: mediumTextStyleBlack),
-                        //   ],
-                        // ),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     context.push('/events/create');
-                        //   },
-                        //   child: Row(
-                        //     children: [
-                        //       SvgPicture.asset('assets/create_an_event.svg'),
-                        //       const SizedBox(width: 10),
-                        //       Text('Create an Event',
-                        //           style: mediumTextStyleBlack),
-                        //     ],
-                        //   ),
-                        // ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              _condition = 'poll';
-                            });
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('assets/create_a_poll.svg'),
-                              const SizedBox(width: 10),
-                              Text('Create a Poll',
-                                  style: mediumTextStyleBlack),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : Container(
-                    color: Colors.white,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            _pickImage();
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('assets/add_a_photo.svg'),
-                              const SizedBox(width: 10),
-                            ],
-                          ),
-                        ),
-                        // Row(
-                        //   children: [
-                        //     SvgPicture.asset('assets/communities.svg'),
-                        //     const SizedBox(width: 10),
-                        //   ],
-                        // ),
-                        InkWell(
-                          onTap: () {
-                            _pickImageFromCamera();
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      const Color.fromARGB(255, 224, 238, 206),
-                                ),
-                                child: Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: const Color.fromARGB(255, 195, 0, 255),
-                                ),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: const Color.fromARGB(255, 0, 0, 0),
                               ),
-                              //Image.asset('assets/camera_icon.png'),
-                              const SizedBox(width: 10),
-                            ],
-                          ),
+                            ),
+                            //Image.asset('assets/camera_icon.png'),
+                            const SizedBox(width: 10),
+                            Text('Take a Picture', style: mediumTextStyleBlack)
+                          ],
                         ),
-                        // Row(
-                        //   children: [
-                        //     SvgPicture.asset('assets/create_an_event.svg'),
-                        //     const SizedBox(width: 10),
-                        //   ],
-                        // ),
-                        InkWell(
-                          onTap: () {
-                            setState(() {
-                              _condition = 'poll';
-                            });
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('assets/create_a_poll.svg'),
-                              const SizedBox(width: 10),
-                            ],
-                          ),
+                      ),
+                      // InkWell(
+                      //   onTap: () {
+                      //     context.push('/groups/create');
+                      //   },
+                      //   child: Row(
+                      //     children: [
+                      //       SvgPicture.asset('assets/communities.svg'),
+                      //       const SizedBox(width: 10),
+                      //       Text('Create Community',
+                      //           style: mediumTextStyleBlack),
+                      //     ],
+                      //   ),
+                      // ),
+
+                      // TODO: create a action to this and remove the comment
+
+                      // Row(
+                      //   children: [
+                      //     SvgPicture.asset('assets/add_location.svg'),
+                      //     const SizedBox(width: 10),
+                      //     Text('Add Location', style: mediumTextStyleBlack),
+                      //   ],
+                      // ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     context.push('/events/create');
+                      //   },
+                      //   child: Row(
+                      //     children: [
+                      //       SvgPicture.asset('assets/create_an_event.svg'),
+                      //       const SizedBox(width: 10),
+                      //       Text('Create an Event',
+                      //           style: mediumTextStyleBlack),
+                      //     ],
+                      //   ),
+                      // ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _condition = 'poll';
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/create_a_poll.svg'),
+                            const SizedBox(width: 10),
+                            Text('Create a Poll', style: mediumTextStyleBlack),
+                          ],
                         ),
-                      ],
-                    ),
-                  )),
-      ),
+                      ),
+                    ],
+                  ),
+                )
+              : Container(
+                  color: Colors.white,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          // _pickImages();
+                          _pickImage();
+                        },
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/add_a_photo.svg'),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+                      // Row(
+                      //   children: [
+                      //     SvgPicture.asset('assets/communities.svg'),
+                      //     const SizedBox(width: 10),
+                      //   ],
+                      // ),
+                      InkWell(
+                        onTap: () {
+                          _pickImageFromCamera();
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color.fromARGB(255, 224, 238, 206),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: const Color.fromARGB(255, 195, 0, 255),
+                              ),
+                            ),
+                            //Image.asset('assets/camera_icon.png'),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+                      // Row(
+                      //   children: [
+                      //     SvgPicture.asset('assets/create_an_event.svg'),
+                      //     const SizedBox(width: 10),
+                      //   ],
+                      // ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            _condition = 'poll';
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/create_a_poll.svg'),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )),
     );
   }
 

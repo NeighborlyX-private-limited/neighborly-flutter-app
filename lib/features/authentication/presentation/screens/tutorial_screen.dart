@@ -153,7 +153,7 @@ class TutorialScreenState extends State<TutorialScreen> {
                                   textAlign: TextAlign.left,
                                 ),
                               ),
-                              // Display description based on current tutorial content (left-aligned)
+                             
                               Align(
                                 alignment: Alignment.topLeft,
                                 child: Text(

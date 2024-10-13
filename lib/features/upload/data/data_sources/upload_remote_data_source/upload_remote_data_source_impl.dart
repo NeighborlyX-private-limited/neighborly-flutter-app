@@ -28,6 +28,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
+    print('_selectedImage path in uploadPost fn: $multimedia');
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/create-post';
     var isLocationOn = ShardPrefHelper.getIsLocationOn();
@@ -339,6 +340,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
 
   @override
   Future<String> uploadFile({required File file}) async {
+    print('uploadFile fun call');
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
@@ -361,6 +363,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     final responseString = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
+      print('image s3 url: ${jsonDecode(responseString)['url']}');
       return jsonDecode(responseString)['url'];
     } else {
       throw ServerException(message: jsonDecode(responseString)['message']);

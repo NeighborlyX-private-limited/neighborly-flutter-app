@@ -52,7 +52,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           ['current_coordinates']['coordinates'];
       List<dynamic> homeLocation =
           jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
-      print('home cord : ${homeLocation}');
+      print('home cord inn login: ${homeLocation}');
       String? email = jsonDecode(response.body)['user']['email'];
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
       bool isSkippedTutorial =
