@@ -181,9 +181,9 @@ class _MainPageState extends State<MainPage> {
           'my location lat long==============: ${position.latitude} ${position.longitude}');
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print('Location===========: ${position.latitude}, ${position.longitude}');
-      setState(() {
-        // _currentPosition = position;
-      });
+      // setState(() {
+      //   // _currentPosition = position;
+      // });
       // bool? isVerified = await ShardPrefHelper.getIsVerified();
       // Map<String, List<num>> userlocationDetail = {
       //   'userLocation': [position.latitude, position.longitude]

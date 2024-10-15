@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
@@ -213,11 +214,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             BlocConsumer<AddCommentBloc, AddCommentState>(
               listener: (context, state) {
                 if (state is AddCommentFailureState) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(state.error),
-                    ),
-                  );
+                  if (state.error.contains("Sorry, you are banned")) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Sorry, you are banned")),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.error),
+                      ),
+                    );
+                  }
                 }
               },
               builder: (context, state) {
@@ -414,7 +421,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     child: Image.network(
                       width: double.infinity,
                       //height: 200,
-                      postState.post.multimedia!,
+                      //i have to use some widget to dispay all image logic
+                      postState.post.multimedia![0],
+                      // postState.post.multimedia!,
                       fit: BoxFit.contain,
                     )),
               )
@@ -827,36 +836,71 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
           ),
         const SizedBox(height: 10),
-        if (post.multimedia != null && post.multimedia != '')
-          Container(
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
-              child: CachedNetworkImage(
-                imageUrl: post.multimedia!,
-                fit: BoxFit.contain,
-                width: double.infinity,
-                //height: 200,
-                placeholder: (context, url) => Center(
-                  child: SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        color: Colors.blue,
-                        strokeWidth: 2,
-                      )), // Show loading indicator while image loads
+        post.multimedia != null &&
+                post.multimedia!.isNotEmpty &&
+                post.multimedia!.length > 1
+            ? ImageSlider(
+                multimedia:
+                    post.multimedia ?? [], // Provide the list of image URLs
+              )
+            : Container(),
+        post.multimedia != null &&
+                post.multimedia!.isNotEmpty &&
+                post.multimedia!.length == 1
+            ? Container(
+                decoration:
+                    BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(4),
+                  child: CachedNetworkImage(
+                    // todo: here also change toshow all images
+                    imageUrl: post.multimedia![0],
+                    // imageUrl: post.multimedia!,
+                    fit: BoxFit.contain,
+                    width: double.infinity,
+                    //height: 200,
+                    placeholder: (context, url) => Center(
+                      child: SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            color: Colors.blue,
+                            strokeWidth: 2,
+                          )), // Show loading indicator while image loads
+                    ),
+                    errorWidget: (context, url, error) => Icon(
+                        Icons.error), // Show error icon if image fails to load
+                  ),
                 ),
-                errorWidget: (context, url, error) =>
-                    Icon(Icons.error), // Show error icon if image fails to load
-              ),
-              // child: Image.network(
-              //   post.multimedia!,
-              //   width: double.infinity,
-              //   // height: 200,
-              //   fit: BoxFit.contain,
-              // ),
-            ),
-          ),
+              )
+            : Container(),
+        // if (post.multimedia != null && post.multimedia!= '')
+        //   Container(
+        //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+        //     child: ClipRRect(
+        //       borderRadius: BorderRadius.circular(4),
+        //       child: CachedNetworkImage(
+        //         // todo: here also change toshow all images
+        //         imageUrl: post.multimedia![0],
+        //         // imageUrl: post.multimedia!,
+        //         fit: BoxFit.contain,
+        //         width: double.infinity,
+        //         //height: 200,
+        //         placeholder: (context, url) => Center(
+        //           child: SizedBox(
+        //               height: 16,
+        //               width: 16,
+        //               child: CircularProgressIndicator(
+        //                 color: Colors.blue,
+        //                 strokeWidth: 2,
+        //               )), // Show loading indicator while image loads
+        //         ),
+        //         errorWidget: (context, url, error) =>
+        //             Icon(Icons.error), // Show error icon if image fails to load
+        //       ),
+
+        //     ),
+        //   ),
         const SizedBox(height: 10),
         Text(
           convertDateString(post.createdAt),

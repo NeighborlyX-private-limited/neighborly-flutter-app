@@ -14,7 +14,7 @@ class PostModel extends PostEntity {
       required super.bools,
       required super.id,
       super.allowMultipleVotes,
-      super.multimedia,
+      required super.multimedia,
       super.proPic,
       required super.city,
       required super.commentCount,
@@ -23,7 +23,7 @@ class PostModel extends PostEntity {
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
-        id: json['contentid'], // Assuming contentid is always an int
+        id: json['contentid'],
         awardType: (json['awards'] as List<dynamic>?) ?? [],
         type: json['type'] as String? ?? '',
         userId: json['userid'] as String? ?? '',
@@ -38,7 +38,10 @@ class PostModel extends PostEntity {
         createdAt: json['createdat'] as String? ?? '',
         cheers: json['cheers'] ?? 0,
         bools: json['boos'] ?? 0,
-        multimedia: json['multimedia'] ?? '',
+        multimedia: (json['multimedia'] as List<dynamic>?)
+                ?.map((item) => item as String)
+                .toList() ??
+            [],
         proPic: json['userProfilePicture'] as String? ?? '',
         city: json['city'] as String? ?? '',
         commentCount: json['commentCount'] ?? 0,

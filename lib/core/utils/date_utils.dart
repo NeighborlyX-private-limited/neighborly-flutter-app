@@ -28,7 +28,7 @@ class DateUtilsHelper {
       // Formata a data no formato desejado (dd/MM)
       String formattedDate = DateFormat('MMMM d, yyyy').format(dateTimeStart);
 
-      return '${formattedDate}';
+      return formattedDate;
     } catch (e) {
       print('simplifyISOtimeString ERROR: ${e} [data: $date]');
       return '';

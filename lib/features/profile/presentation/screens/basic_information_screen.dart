@@ -24,6 +24,16 @@ import '../../../authentication/presentation/screens/otp_screen_profile_update.d
 import '../../../authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import '../../../../core/constants/imagepickercompress.dart';
 
+import 'package:image_cropper/image_cropper.dart';
+
+class CropAspectRatioPresetCustom implements CropAspectRatioPresetData {
+  @override
+  (int, int)? get data => (2, 3);
+
+  @override
+  String get name => '2x3 (customized)';
+}
+
 class BasicInformationScreen extends StatefulWidget {
   const BasicInformationScreen({super.key});
 
@@ -84,17 +94,58 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image =
-        await picker.pickImage(source: ImageSource.gallery).then((file) {
-      return compressImage(imageFileX: file);
-    });
+
+    // Pick the image from the gallery
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 
     if (image != null) {
-      setState(() {
-        _selectedImage = File(image.path);
-      });
+      // Crop the image
+      File? croppedFile = await _cropImage(image.path);
+
+      if (croppedFile != null) {
+        setState(() {
+          _selectedImage = croppedFile;
+        });
+      }
     }
   }
+
+// Function to crop the image
+  Future<File?> _cropImage(String imagePath) async {
+    CroppedFile? croppedFile =
+        await ImageCropper().cropImage(sourcePath: imagePath, uiSettings: [
+      AndroidUiSettings(
+        toolbarTitle: 'Cropper',
+        toolbarColor: Colors.deepOrange,
+        toolbarWidgetColor: Colors.white,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.square,
+          CropAspectRatioPresetCustom(),
+        ],
+      ),
+    ]);
+
+    if (croppedFile != null) {
+      return File(croppedFile.path);
+    } else {
+      return null; // The user cancelled the cropping
+    }
+  }
+
+  // Future<void> _pickImage() async {
+  //   final ImagePicker picker = ImagePicker();
+  //   final XFile? image =
+  //       await picker.pickImage(source: ImageSource.gallery).then((file) {
+  //     return compressImage(imageFileX: file);
+  //   });
+
+  //   if (image != null) {
+  //     setState(() {
+  //       _selectedImage = File(image.path);
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

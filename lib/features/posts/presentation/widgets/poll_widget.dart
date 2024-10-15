@@ -189,7 +189,8 @@ class _PollWidgetState extends State<PollWidget> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(4),
                         child: CachedNetworkImage(
-                          imageUrl: widget.post.multimedia!,
+                          imageUrl: widget.post.multimedia![0],
+                          // imageUrl: widget.post.multimedia!,
                           fit: BoxFit.contain,
                           width: double.infinity,
                           placeholder: (context, url) => Center(

@@ -41,20 +41,20 @@ class ChatMessageModel extends ChatMessageEntity {
 
   PostModel toPost() {
     return PostModel(
-      userId: author?.id ?? '',
-      userName: author?.name ?? '',
-      proPic: author?.avatarUrl ??
-          'https://eu.ui-avatars.com/api/?name=${author?.name ?? "XXX"}&background=random&rounded=true',
-      type: 'post',
-      createdAt: date,
-      cheers: cheers,
-      bools: boos,
-      id: _extractAndConcatenateNumbers(id),
-      city: 'Gothan',
-      commentCount: repliesCount,
-      awardType: [],
-      userFeedback: ''
-    );
+        userId: author?.id ?? '',
+        userName: author?.name ?? '',
+        proPic: author?.avatarUrl ??
+            'https://eu.ui-avatars.com/api/?name=${author?.name ?? "XXX"}&background=random&rounded=true',
+        type: 'post',
+        createdAt: date,
+        cheers: cheers,
+        bools: boos,
+        id: _extractAndConcatenateNumbers(id),
+        city: 'Gothan',
+        commentCount: repliesCount,
+        awardType: [],
+        userFeedback: '',
+        multimedia: []);
   }
 
   Map<String, dynamic> toMap() {

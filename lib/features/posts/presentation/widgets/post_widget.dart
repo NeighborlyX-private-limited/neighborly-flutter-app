@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
@@ -175,12 +176,22 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                   )
                 : Container(),
-            widget.post.multimedia != null
+            widget.post.multimedia!.isNotEmpty
                 ? const SizedBox(
                     height: 10,
                   )
                 : Container(),
-            widget.post.multimedia != null && widget.post.multimedia != ''
+            widget.post.multimedia != null &&
+                    widget.post.multimedia!.isNotEmpty &&
+                    widget.post.multimedia!.length > 1
+                ? ImageSlider(
+                    multimedia: widget.post.multimedia ??
+                        [], // Provide the list of image URLs
+                  )
+                : Container(),
+            widget.post.multimedia != null &&
+                    widget.post.multimedia!.isNotEmpty &&
+                    widget.post.multimedia!.length == 1
                 ? Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -188,7 +199,8 @@ class _PostWidgetState extends State<PostWidget> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4),
                       child: CachedNetworkImage(
-                        imageUrl: widget.post.multimedia!,
+                        imageUrl: widget.post.multimedia![0],
+                        // imageUrl: widget.post.multimedia!,
                         fit: BoxFit.contain,
                         width: double.infinity,
                         placeholder: (context, url) => Center(

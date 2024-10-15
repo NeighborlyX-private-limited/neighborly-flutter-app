@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -11,6 +12,7 @@ import '../../domain/entities/post_with_comments_entity.dart';
 import 'profile_comment_reaction_widget.dart';
 import '../../../posts/presentation/widgets/option_card.dart';
 import '../../../../core/entities/post_enitity.dart';
+
 class PostWithCommentsWidget extends StatefulWidget {
   final PostWithCommentsEntity post;
 
@@ -29,18 +31,19 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
   bool isrefresh = false;
   PostEntity? post;
   @override
-  void initState(){
+  void initState() {
     super.initState();
     uselocalpost();
   }
 
-  uselocalpost(){
-    setState((){
-print('post printing');
-print(widget.post);
-post = widget.post.content;
+  uselocalpost() {
+    setState(() {
+      print('post printing');
+      print(widget.post);
+      post = widget.post.content;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     void showBottomSheet(bool isComment) {
@@ -100,13 +103,12 @@ post = widget.post.content;
             InkWell(
               onTap: () {
                 print('on click ${widget.post.content.type}');
-                if(widget.post.content.type == 'post'){
-                context.push(
-                    '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
-                }else{
+                if (widget.post.content.type == 'post') {
                   context.push(
-                    '/post-detail/${widget.post.content.id}/${false}/${widget.post.userId}/0');
-                
+                      '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
+                } else {
+                  context.push(
+                      '/post-detail/${widget.post.content.id}/${false}/${widget.post.userId}/0');
                 }
               },
               child: Column(
@@ -222,8 +224,8 @@ post = widget.post.content;
                           height: 10,
                         )
                       : Container(),
-                  
-                  widget.post.content.type == 'post' && widget.post.content.content != null
+                  widget.post.content.type == 'post' &&
+                          widget.post.content.content != null
                       ? Text(
                           widget.post.content.content!,
                           textAlign: TextAlign.start,
@@ -234,12 +236,17 @@ post = widget.post.content;
                           ),
                         )
                       : Container(),
-                  widget.post.content.multimedia != null && widget.post.content.multimedia != ''
-                      ? const SizedBox(
-                          height: 10,
+                  widget.post.content.multimedia != null &&
+                          widget.post.content.multimedia!.isNotEmpty &&
+                          widget.post.content.multimedia!.length > 1
+                      ? ImageSlider(
+                          multimedia: widget.post.content.multimedia ??
+                              [], // Provide the list of image URLs
                         )
                       : Container(),
-                  widget.post.content.multimedia != null && widget.post.content.multimedia != ''
+                  widget.post.content.multimedia != null &&
+                          widget.post.content.multimedia!.isNotEmpty &&
+                          widget.post.content.multimedia!.length == 1
                       ? Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
@@ -249,41 +256,66 @@ post = widget.post.content;
                               child: Image.network(
                                 width: double.infinity,
                                 // height: 200,
-                                widget.post.content.multimedia!,
+                                widget.post.content.multimedia![0],
+                                // widget.post.content.multimedia!,
                                 fit: BoxFit.contain,
                               )),
                         )
                       : Container(),
-                  if(widget.post.content.type =='post')
+                  // widget.post.content.multimedia != null &&
+                  //         widget.post.content.multimedia != ''
+                  //     ? const SizedBox(
+                  //         height: 10,
+                  //       )
+                  //     : Container(),
+                  // widget.post.content.multimedia != null &&
+                  //         widget.post.content.multimedia != ''
+                  //     ? Container(
+                  //         decoration: BoxDecoration(
+                  //           borderRadius: BorderRadius.circular(8),
+                  //         ),
+                  //         child: ClipRRect(
+                  //             borderRadius: BorderRadius.circular(4),
+                  //             child: Image.network(
+                  //               width: double.infinity,
+                  //               // height: 200,
+                  //               widget.post.content.multimedia![0],
+                  //               // widget.post.content.multimedia!,
+                  //               fit: BoxFit.contain,
+                  //             )),
+                  //       )
+                  //     : Container(),
+                  if (widget.post.content.type == 'post')
                     const SizedBox(
                       height: 20,
                     ),
-                  if(widget.post.content.type =='poll')
-                   for (var option in post?.pollOptions ?? [])
-                    OptionCard(
-                      key: UniqueKey(),
-                      onSelectOptionCallback: (int optionid){},
-                      // selectedOptions: selectedOptions,
-                      // isMultipleVotesAllowed: post.allowMultipleVotes!,
-                      option: option,
-                      totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
-                      pollId: post?.id ?? 0,
-                      allowMultiSelect: widget.post.content.allowMultipleVotes ?? false,
-                      otherOptions: post?.pollOptions ?? [],
-                      alreadyselected: isselected
-                    ),
-                  if(widget.post.content.type =='post')
+                  if (widget.post.content.type == 'poll')
+                    for (var option in post?.pollOptions ?? [])
+                      OptionCard(
+                          key: UniqueKey(),
+                          onSelectOptionCallback: (int optionid) {},
+                          // selectedOptions: selectedOptions,
+                          // isMultipleVotesAllowed: post.allowMultipleVotes!,
+                          option: option,
+                          totalVotes:
+                              calculateTotalVotes(post?.pollOptions! ?? []),
+                          pollId: post?.id ?? 0,
+                          allowMultiSelect:
+                              widget.post.content.allowMultipleVotes ?? false,
+                          otherOptions: post?.pollOptions ?? [],
+                          alreadyselected: isselected),
+                  if (widget.post.content.type == 'post')
                     const SizedBox(
                       height: 20,
                     ),
                   InkWell(
-                    onTap: (){
+                    onTap: () {
                       context.push(
-                    '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
+                          '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
                     },
-                  child: ReactionWidget(
-                    post: widget.post.content,
-                  ),
+                    child: ReactionWidget(
+                      post: widget.post.content,
+                    ),
                   ),
                   !isDeleted
                       ? Column(
@@ -376,10 +408,10 @@ post = widget.post.content;
                                         height: 10,
                                       ),
                                       ProfileReactionCommentWidget(
-                                        postComment: widget.post,
-                                        isPost:  widget.post.content.type == 'post',
-                                        postId: widget.post.commentId
-                                      ),
+                                          postComment: widget.post,
+                                          isPost: widget.post.content.type ==
+                                              'post',
+                                          postId: widget.post.commentId),
                                     ],
                                   ),
                                 ),

@@ -5,7 +5,8 @@ abstract class UploadPostEvent extends Equatable {}
 class UploadPostPressedEvent extends UploadPostEvent {
   final List<double> location;
   final String? content;
-  final File? multimedia;
+  final List<File>? multimedia;
+  //final File? multimedia;
   final String title;
   final String type;
   final String city;

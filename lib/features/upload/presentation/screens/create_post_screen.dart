@@ -162,13 +162,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   // }
   bool isImagePicking = false;
   bool isImageUploading = false;
-  List<File> _selectedImages = [];
+  List<File>? _selectedImages = [];
 
   Future<void> _pickImages() async {
     final ImagePicker picker = ImagePicker();
 
     // Check if the user already has 5 images selected
-    if (_selectedImages.length >= 5) {
+    if (_selectedImages!.length >= 5) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('You can select up to 5 images.')),
       );
@@ -190,11 +190,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (images.isNotEmpty) {
         for (XFile imageFile in images) {
           // Check if adding this image exceeds the limit
-          if (_selectedImages.length < 5) {
+          if (_selectedImages!.length < 5) {
             XFile compressedImage = await compressImage(imageFileX: imageFile);
             setState(() {
-              _selectedImage = File(compressedImage.path);
-              _selectedImages.add(
+              // _selectedImage = File(compressedImage.path);
+              _selectedImages!.add(
                   File(compressedImage.path)); // Update selected images list
             });
             print(_selectedImages);
@@ -284,13 +284,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() {
       // _selectedImages.removeAt(index);
       _selectedImage = null;
-      _selectedImages = [];
+      //_selectedImages = [];
     });
   }
 
   void _removeImages(int index) {
     setState(() {
-      _selectedImages.removeAt(index);
+      _selectedImages!.removeAt(index);
       // _selectedImage = null;
       // _selectedImages = [];
     });
@@ -325,6 +325,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             if (_condition == 'post') {
                               _titleController.clear();
                               _contentController.clear();
+                              _selectedImages = [];
                               _selectedImage = null;
                               context.go('/home/false');
                             } else {
@@ -344,9 +345,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   }
                                   if (state is UploadPostFailureState) {
                                     ///chnage error msg error
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(state.error)),
-                                    );
+                                    print("here ${state.error}");
+                                    if (state.error
+                                        .contains("Sorry, you are banned")) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                            content:
+                                                Text("Sorry, you are banned")),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(content: Text(state.error)),
+                                      );
+                                    }
                                   } else if (state is UploadPostSuccessState) {
                                     setState(() {
                                       isImageUploading = false;
@@ -418,7 +431,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                               _contentController.text.trim(),
                                           title: _titleController.text.trim(),
                                           type: 'post',
-                                          multimedia: _selectedImage,
+                                          multimedia: _selectedImages,
+                                          // multimedia: _selectedImage,
                                           allowMultipleVotes: false,
                                           location: locationCord,
                                         ),
@@ -431,6 +445,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             : BlocConsumer<UploadPostBloc, UploadPostState>(
                                 listener: (context, state) {
                                   if (state is UploadPostFailureState) {
+                                    print("here is am ${state.error}");
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text(state.error)),
                                     );
@@ -498,7 +513,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           .add(
                                         UploadPostPressedEvent(
                                           city: city,
-                                          multimedia: _selectedImage,
+                                          multimedia: _selectedImages,
+                                          // multimedia: _selectedImage,
                                           title:
                                               _questionController.text.trim(),
                                           options: List.generate(
@@ -524,93 +540,93 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ],
                     ),
                   ),
-                  if (_selectedImage != null)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(16),
-                            ),
-                            child: Image.file(
-                              _selectedImage!,
-                              width: double.infinity,
-                              height: 260,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: GestureDetector(
-                              onTap: () {
-                                _removeImage();
-                              },
-                              child: Container(
-                                decoration: const BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.close,
-                                  color: Colors.white,
-                                  size: 24,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                  // if (_selectedImages
-                  //     .isNotEmpty) // You can check for empty images list
+                  // if (_selectedImage != null)
                   //   Padding(
                   //     padding: const EdgeInsets.all(8.0),
-                  //     child: SizedBox(
-                  //       height: 260,
-                  //       child: PageView.builder(
-                  //         scrollDirection: Axis.horizontal,
-                  //         itemCount: _selectedImages.length,
-                  //         itemBuilder: (context, index) {
-                  //           // Ensure the index is accessible here
-                  //           return Stack(
-                  //             children: [
-                  //               ClipRRect(
-                  //                 borderRadius: BorderRadius.circular(16),
-                  //                 child: Image.file(
-                  //                   _selectedImages[index],
-                  //                   width: double.infinity,
-                  //                   height: 260,
-                  //                   fit: BoxFit.cover,
-                  //                 ),
+                  //     child: Stack(
+                  //       children: [
+                  //         ClipRRect(
+                  //           borderRadius: const BorderRadius.all(
+                  //             Radius.circular(16),
+                  //           ),
+                  //           child: Image.file(
+                  //             _selectedImage!,
+                  //             width: double.infinity,
+                  //             height: 260,
+                  //             fit: BoxFit.cover,
+                  //           ),
+                  //         ),
+                  //         Positioned(
+                  //           top: 8,
+                  //           right: 8,
+                  //           child: GestureDetector(
+                  //             onTap: () {
+                  //               _removeImage();
+                  //             },
+                  //             child: Container(
+                  //               decoration: const BoxDecoration(
+                  //                 color: Colors.red,
+                  //                 shape: BoxShape.circle,
                   //               ),
-                  //               Positioned(
-                  //                 top: 8,
-                  //                 right: 8,
-                  //                 child: GestureDetector(
-                  //                   onTap: () => _removeImages(
-                  //                       index), // Pass the correct index
-                  //                   child: Container(
-                  //                     decoration: const BoxDecoration(
-                  //                       color: Colors.red,
-                  //                       shape: BoxShape.circle,
-                  //                     ),
-                  //                     child: const Icon(
-                  //                       Icons.close,
-                  //                       color: Colors.white,
-                  //                       size: 24,
-                  //                     ),
-                  //                   ),
-                  //                 ),
+                  //               child: const Icon(
+                  //                 Icons.close,
+                  //                 color: Colors.white,
+                  //                 size: 24,
                   //               ),
-                  //             ],
-                  //           );
-                  //         },
-                  //       ),
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
                   //     ),
                   //   ),
+
+                  if (_selectedImages!
+                      .isNotEmpty) // You can check for empty images list
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 260,
+                        child: PageView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _selectedImages!.length,
+                          itemBuilder: (context, index) {
+                            // Ensure the index is accessible here
+                            return Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Image.file(
+                                    _selectedImages![index],
+                                    width: double.infinity,
+                                    height: 260,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: GestureDetector(
+                                    onTap: () => _removeImages(
+                                        index), // Pass the correct index
+                                    child: Container(
+                                      decoration: const BoxDecoration(
+                                        color: Colors.red,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                        size: 24,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
 
                   if (_condition == 'post')
                     Padding(
@@ -743,8 +759,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       InkWell(
-                        // onTap: _pickImages,
-                        onTap: _pickImage,
+                        onTap: _pickImages,
+                        // onTap: _pickImage,
                         child: Row(
                           children: [
                             SvgPicture.asset('assets/add_a_photo.svg'),
@@ -840,8 +856,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     children: [
                       InkWell(
                         onTap: () {
-                          // _pickImages();
-                          _pickImage();
+                          _pickImages();
+                          // _pickImage();
                         },
                         child: Row(
                           children: [

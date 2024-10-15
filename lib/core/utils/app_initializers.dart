@@ -18,7 +18,7 @@ class AppInitializers {
 
     // Firebase
     final fcmConfig = FCMConfig();
-    final appName = 'Neighborly';
+    const appName = 'Neighborly';
     await fcmConfig.init(
       messageBehaviors: [OrderMessageBehavior()],
       onBackgroundMessage: firebaseMessagingBackgroundHandler,
