@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
@@ -56,7 +54,6 @@ import 'features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
-import 'features/posts/presentation/screens/post_detail_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
