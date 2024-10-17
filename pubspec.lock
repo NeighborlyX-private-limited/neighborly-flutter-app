@@ -293,7 +293,11 @@ packages:
       sha256: "400b6592f16a4409a7f2bb929a9a7e38c72cceb8ffb99ee57bbf2cb2cecf8386"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< Updated upstream
     version: "3.4.1"
+=======
+    version: "3.3.3"
+>>>>>>> Stashed changes
   flutter_image_compress:
     dependency: "direct main"
     description:
