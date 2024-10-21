@@ -172,7 +172,7 @@ void init() async {
       () => EventRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<NotificationRepositories>(() =>
       NotificationRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
-  // sl.registerLazySingleton<CityRepository>(() => CityRepository());
+
   sl.registerLazySingleton<CityRepository>(() => CityRepository());
 
   // register datasource
@@ -312,8 +312,6 @@ void init() async {
   sl.registerFactory(() => NotificationGeneralCubit(sl()));
   sl.registerFactory(() => NotificationListCubit(sl()));
   sl.registerFactory<TutorialCubit>(() => TutorialCubit(sl()));
-  // sl.registerFactory(
-  //     () => CityBloc(sl<CityRepository>(), cityRepository: null));
   sl.registerFactory(() => CityBloc(sl<CityRepository>()));
 
   // register network info

@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
@@ -18,13 +17,9 @@ import '../widgets/post_widget.dart';
 import '../widgets/toggle_button_widget.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
-import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../../core/theme/colors.dart';
 import '../../../../core/utils/shared_preference.dart';
-import '../../../notification/presentation/bloc/notification_general_cubit.dart';
-import '../../../homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -45,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchLocationAndUpdate();
     setCityHomeName();
     setCityCurrentName();
-    //ShardPrefHelper.setIsLocationOn(false);
     getUnreadNotificationCount();
     _fetchPosts();
     if (widget.isFirstTime) {
@@ -53,18 +47,9 @@ class _HomeScreenState extends State<HomeScreen> {
         showBottomSheet(context);
       });
     }
-    // getNotificationCount();
-
-    // getUnreadNotificationCount();
     //_handleDeepLink('https://prod.neighborly.in/posts/12345');
   }
 
-  setIsHome() {
-    var isLocationOn = ShardPrefHelper.getIsLocationOn();
-    setState(() {
-      isHome = isLocationOn ? false : true;
-    });
-  }
   // void _handleDeepLink(String deepLink) {
   // // Parse the deep link
   // try {
@@ -84,27 +69,32 @@ class _HomeScreenState extends State<HomeScreen> {
   // }
 // }
   void onNotificationRead() {
-    // Your logic to mark the notification as read
-
-    // Then refresh the unread notification count
     getUnreadNotificationCount();
   }
 
   void _fetchPosts() {
     BlocProvider.of<GetAllPostsBloc>(context)
-        .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
+        .add(GetAllPostsButtonPressedEvent(isHome: isHome));
+  }
+
+  /// set the location of  user whether their home location is on or current location in
+  setIsHome() {
+    var isLocationOn = ShardPrefHelper.getIsLocationOn();
+    setState(() {
+      isHome = isLocationOn ? false : true;
+    });
   }
 
   Future<void> _onRefresh() async {
     setIsHome();
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
-        .add(GetAllPostsButtonPressedEvent(isHome: isHome)); // Use isHome state
+        .add(GetAllPostsButtonPressedEvent(isHome: isHome));
   }
 
   setCityHomeName() async {
     List<double> homeLocation = ShardPrefHelper.getHomeLocation();
-    print('home cord inn in city set: ${homeLocation}');
+    print('home cord in city set: $homeLocation');
     List<Placemark> placemarks = await placemarkFromCoordinates(
       homeLocation[0],
       homeLocation[1],
@@ -112,7 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     var city = placemarks[0].locality ?? 'Delhi';
     print('home city $city');
-    // var city = 'Delhi';
     ShardPrefHelper.setHomeCity(city);
   }
 
@@ -138,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!isHome) {
       fetchLocationAndUpdate();
     }
-    _fetchPosts(); // Fetch posts based on the new isHome value
+    _fetchPosts();
   }
 
   String formatDOB(String day, String month, String year) {
@@ -152,15 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
+    // bool serviceEnabled;
     LocationPermission permission;
 
-    // notification permission
-    // TODO move this for other place
     var checkPushPermission = await Permission.notification.isDenied;
-    print('...checkPushPermission: ${checkPushPermission}');
+    print('...checkPushPermission: $checkPushPermission');
     if (checkPushPermission) {
-      // Exibir dialogo solicitando permissão para notificações
       await Permission.notification.request();
     }
 
@@ -189,6 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return true;
   }
 
+  /// fetch the user location and upldate it.
   Future<void> fetchLocationAndUpdate() async {
     final hasPermission = await _handleLocationPermission();
     if (!hasPermission) return;
@@ -200,10 +187,10 @@ class _HomeScreenState extends State<HomeScreen> {
       //   // _currentPosition = position;
       // });
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
-      print('Location: ${position.latitude}, ${position.longitude}');
+      print(
+          'Lat Long in Home Screen: ${position.latitude}, ${position.longitude}');
       setState(() {});
       //bool? isVerified = await ShardPrefHelper.getIsVerified();
-
       ///remove this code because we will only update the location only from settings
       // Map<String, List<num>> locationDetail = {
       //   isVerified ? 'homeLocation' : 'userLocation': [
@@ -222,32 +209,19 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  int notificationcount = 0;
-  getNotificationCount() {
-    getAllNotificationCount().then((value) {
-      if (value != null && value > 0) {
-        if (mounted) {
-          setState(() {
-            notificationcount = value;
-          });
-        }
-      }
-    });
-  }
-
+  ///fetch the unread notification count
   int unreadNotificationCount = 0;
   Future<void> getUnreadNotificationCount() async {
     getNotificationUnreadCount().then((value) {
-      if (value != null && value > 0) {
+      if (value > 0) {
         if (mounted) {
           setState(() {
             unreadNotificationCount = value;
-            print('Count: $unreadNotificationCount');
+            print('UnreadNotificationCount Count: $unreadNotificationCount');
           });
         }
       }
     }).catchError((error) {
-      // Handle any errors that occurred during the API call
       print("Error in getUnreadNotificationCount: $error");
     });
   }
@@ -269,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
             CustomToggleSwitch(
               imagePath1: 'assets/home.svg',
               imagePath2: 'assets/location.svg',
-              onToggle: handleToggle, // Pass the callback function
+              onToggle: handleToggle,
             ),
           ],
         ),
@@ -283,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: badges.Badge(
                 badgeContent: unreadNotificationCount > 0
                     ? Text(
-                        "$unreadNotificationCount", // TODO: this came from a checked still not maked
+                        "$unreadNotificationCount",
                         style: TextStyle(color: Colors.white),
                       )
                     : null,
@@ -292,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: SvgPicture.asset(
                   'assets/alarm.svg',
                   fit: BoxFit.contain,
-                  width: 30, // Adjusted to fit within the AppBar
+                  width: 30,
                   height: 30,
                 ),
               ),
@@ -414,7 +388,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> showBottomSheet(BuildContext context) {
-    // String selectedGender = 'male';
     TextEditingController dateController = TextEditingController();
     TextEditingController monthController = TextEditingController();
     TextEditingController yearController = TextEditingController();
@@ -572,7 +545,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       monthController.text.trim(),
                                       yearController.text.trim(),
                                     ),
-                                    // gender: selectedGender,
                                   ),
                                 );
                               },

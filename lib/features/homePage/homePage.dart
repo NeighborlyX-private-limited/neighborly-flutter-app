@@ -1,7 +1,6 @@
 // ignore_for_file: unused_field
 
 import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,13 +8,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../../core/theme/colors.dart';
 import '../../core/utils/shared_preference.dart';
 import '../notification/presentation/bloc/notification_general_cubit.dart';
-import 'bloc/update_location_bloc/update_location_bloc.dart';
-
-import '../../features/posts/presentation/screens/post_detail_screen.dart';
 
 class MainPage extends StatefulWidget {
   final Widget child;
@@ -30,16 +25,18 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  String? _currentAddress;
-  // Position? _currentPosition;
-
+  ///bool varibale
   bool isDayFilled = false;
   bool isMonthFilled = false;
   bool isYearFilled = false;
 
-  static const platform = MethodChannel('com.example.neighborly_flutter_app');
+  ///strinng varibale
+  String? _currentAddress;
   String? _deepLink;
 
+  static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
+
+  ///controllers
   late PageController pageController;
 
   @override
@@ -115,15 +112,12 @@ class _MainPageState extends State<MainPage> {
   // }
 
   Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
+    // bool serviceEnabled;
     LocationPermission permission;
 
-    // notification permission
-    // TODO move this for other place
     var checkPushPermission = await Permission.notification.isDenied;
-    print('...checkPushPermission: ${checkPushPermission}');
+    print('...checkPushPermission: $checkPushPermission');
     if (checkPushPermission) {
-      // Exibir dialogo solicitando permissão para notificações
       await Permission.notification.request();
     }
 
@@ -160,7 +154,7 @@ class _MainPageState extends State<MainPage> {
       result.fold(
         (failure) {},
         (currentFCMtoken) {
-          print('...updateFCMtokenNotification FCM token: ${currentFCMtoken}');
+          print('...updateFCMtokenNotification FCM token: $currentFCMtoken');
           ShardPrefHelper.setFCMtoken(currentFCMtoken);
         },
       );
@@ -175,12 +169,12 @@ class _MainPageState extends State<MainPage> {
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
 
-      print(
-          'my location lat long==============: ${position.latitude} ${position.longitude}');
+      print('Lat Long Home Page: ${position.latitude} ${position.longitude}');
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
-      print('Location===========: ${position.latitude}, ${position.longitude}');
+
       // setState(() {
       //   // _currentPosition = position;
       // });
@@ -195,7 +189,6 @@ class _MainPageState extends State<MainPage> {
       //   ),
       // );
 
-      print('update user homelocationDetail-------');
       // Map<String, List<num>> homelocationDetail = {
       //   'homeLocation': [position.latitude, position.longitude]
       // };
@@ -211,14 +204,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   int _currentIndex = 0;
-  // List<Widget> pages = [
-  //   const HomeScreen(),
-  //   const EventScreen(),
-  //   const CreatePostScreen(),
-  //   const CommunityScreen(),
-  //   const ProfileScreen(),
-  // ];
-
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;

@@ -7,8 +7,6 @@ class DateUtilsHelper {
   static DateTime dateFormatterJustDate(String date) =>
       DateFormat('dd/MM/yyyy').parse(date);
 
-  // static DateTime dateFormatterJustDateDots(String date) => DateFormat('dd/MM/yyyy').parse(date);
-
   static String simplifyISOtimeStringStartEnd(
       String dateStart, String dateEnd) {
     DateTime dateTimeStart = DateTime.parse(dateStart);
@@ -18,7 +16,7 @@ class DateUtilsHelper {
     String formattedDateStart = DateFormat('dd/MM').format(dateTimeStart);
     String formattedDateEnd = DateFormat('dd/MM').format(dateTimeEnd);
 
-    return '${formattedDateStart} - ${formattedDateEnd}';
+    return '$formattedDateStart - $formattedDateEnd';
   }
 
   static String simplifyISOtimeString(String date) {
@@ -30,7 +28,7 @@ class DateUtilsHelper {
 
       return formattedDate;
     } catch (e) {
-      print('simplifyISOtimeString ERROR: ${e} [data: $date]');
+      print('simplifyISOtimeString ERROR: $e [data: $date]');
       return '';
     }
   }
@@ -123,7 +121,6 @@ class DateUtilsHelper {
     final months = <DateTime>[];
     months.add(since ?? DateTime.now());
 
-    // print('zzz monthsToReturn=$monthsToReturn  months.length=${months.length}');
     while (months.length < monthsToReturn) {
       final lastDate = months.last;
       months.add(DateTime(lastDate.year, lastDate.month - 1));
@@ -154,7 +151,6 @@ class DateUtilsHelper {
   }
 
   static int extractYearFromIsodateString(String dateString) {
-    //  final String dateString = '2024-03-01';
     final DateFormat dateFormat = DateFormat('yyyy');
     final DateTime parsedDate = dateFormat.parse(dateString);
     print('extractYearFromIsodateString=${parsedDate.year}');

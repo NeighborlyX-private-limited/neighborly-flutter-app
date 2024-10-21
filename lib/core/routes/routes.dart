@@ -62,7 +62,6 @@ String setInitialLocation() {
 
 final GoRouter router = GoRouter(
     initialLocation: setInitialLocation(),
-    // initialLocation: '/',
     navigatorKey: _rootNavigatorKey,
     routes: <RouteBase>[
       GoRoute(
@@ -158,9 +157,6 @@ final GoRouter router = GoRouter(
                   isFirstTime: isFirstTime,
                 );
               }),
-          //
-          //
-          //
           GoRoute(
             path: '/events',
             builder: (context, state) => const EventMainScreen(),
@@ -201,15 +197,10 @@ final GoRouter router = GoRouter(
               event: state.extra != null ? state.extra as EventModel : null,
             ),
           ),
-          //
-          //
-          //
           GoRoute(
             path: '/create',
             builder: (context, state) => const CreatePostScreen(),
           ),
-          //
-          //
           GoRoute(
             path: '/groups',
             builder: (context, state) => const CommunityScreen(),
@@ -263,9 +254,6 @@ final GoRouter router = GoRouter(
             builder: (context, state) => CommunityDetailsScreen(
                 communityId: state.pathParameters["communityId"] as String),
           ),
-          //
-          //
-          //
           GoRoute(
             path: '/chat',
             builder: (context, state) => const ChatMainScreen(),
@@ -286,7 +274,6 @@ final GoRouter router = GoRouter(
                   message: (state.extra as Map<String, dynamic>)['message'],
                 );
               }),
-
           GoRoute(
             path: '/chat/private/:roomId',
             builder: (context, state) => ChatPrivateScreen(
@@ -294,14 +281,10 @@ final GoRouter router = GoRouter(
               room: state.extra as ChatRoomModel,
             ),
           ),
-          //
-          //
           GoRoute(
             path: '/profile',
             builder: (context, state) => const ProfileScreen(),
           ),
-          //
-          //
           GoRoute(
             path: '/notifications',
             builder: (context, state) => const NotificationListScreen(),

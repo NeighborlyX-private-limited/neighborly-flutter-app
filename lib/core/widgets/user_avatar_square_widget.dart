@@ -11,13 +11,13 @@ class UserAvatarSquareWidget extends StatelessWidget {
   final double? borderRadius;
 
   const UserAvatarSquareWidget({
-    Key? key,
+    super.key,
     this.imageUrl,
     this.imageAssetPath,
     this.size = 100,
     this.borderSize = kBorderWidthBig,
     this.borderRadius = 20,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

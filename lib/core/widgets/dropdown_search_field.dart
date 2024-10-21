@@ -28,14 +28,14 @@ class DropdownSearchField extends StatefulWidget {
   final String? Function(String?)? validator;
 
   const DropdownSearchField({
-    Key? key,
+    super.key,
     required this.items,
     this.label,
     this.placeholder,
     this.initialValue,
     required this.onChanged,
     this.validator,
-  }) : super(key: key);
+  });
 
   @override
   State<DropdownSearchField> createState() => _DropdownSearchFieldState();
@@ -71,7 +71,6 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
           Text(
             widget.label ?? '',
             style: greyonboardingBody1Style,
-            // style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
           ),
           const SizedBox(height: 10),
         ],
@@ -80,12 +79,8 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-              border: Border.all(
-                  width: 1,
-                  color: Colors
-                      .black), //  const Color.fromARGB(255, 198, 203, 208)
+              border: Border.all(width: 1, color: Colors.black),
             ),
-            // height: double.infinity,
             width: double.infinity,
             child: DropdownButton2<String>(
               isExpanded: true,

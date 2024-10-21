@@ -49,8 +49,7 @@ class UserAvatarStyledWidget extends StatelessWidget {
               )
             : CircleAvatar(
                 radius: proportionalSize - avatarBorderSize!,
-                backgroundColor: hexStringToColor(
-                    avatarUrl), // Set the color you want to display
+                backgroundColor: hexStringToColor(avatarUrl),
               ),
       ),
     );
@@ -58,7 +57,7 @@ class UserAvatarStyledWidget extends StatelessWidget {
 
   Color hexStringToColor(String hexString) {
     final buffer = StringBuffer();
-    if (hexString.length == 7) buffer.write('FF'); // add alpha if missing
+    if (hexString.length == 7) buffer.write('FF');
     buffer.write(hexString.replaceFirst('#', ''));
     return Color(int.parse(buffer.toString(), radix: 16));
   }

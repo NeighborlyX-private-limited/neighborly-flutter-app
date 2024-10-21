@@ -1,11 +1,11 @@
-package com.example.neighborly_flutter_app
+package com.neighborlyx.neighborlysocial
 import android.content.Intent
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity: FlutterActivity() {
-    private val CHANNEL = "com.example.neighborly_flutter_app"
+    private val CHANNEL = "com.neighborlyx.neighborlysocial"
 
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)

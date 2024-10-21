@@ -25,8 +25,8 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
 
   setCurrentIndex() {
     setState(() {
-      final bool _isLocationOn = ShardPrefHelper.getIsLocationOn();
-      currentIndex = _isLocationOn ? 1 : 0;
+      final bool isLocationOn = ShardPrefHelper.getIsLocationOn();
+      currentIndex = isLocationOn ? 1 : 0;
     });
   }
 

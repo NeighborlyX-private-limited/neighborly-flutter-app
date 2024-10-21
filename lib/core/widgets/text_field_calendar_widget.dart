@@ -14,7 +14,7 @@ class TextFieldCalendarWidget extends StatefulWidget {
   final VoidCallback onTap;
 
   const TextFieldCalendarWidget({
-    Key? key,
+    super.key,
     required this.lableText,
     this.inputType,
     required this.controller,
@@ -23,7 +23,7 @@ class TextFieldCalendarWidget extends StatefulWidget {
     this.focusNode,
     required this.border,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<TextFieldCalendarWidget> createState() =>
@@ -31,7 +31,6 @@ class TextFieldCalendarWidget extends StatefulWidget {
 }
 
 class _TextFieldCalendarWidgetState extends State<TextFieldCalendarWidget> {
-  // bool _isObscured = true;
   @override
   Widget build(BuildContext context) {
     return SizedBox(

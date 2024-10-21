@@ -406,28 +406,80 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             color: Colors.grey[800],
           ),
         ),
-        postState.post.multimedia != null && postState.post.multimedia != ''
+        postState.post.multimedia!.isNotEmpty
             ? const SizedBox(
                 height: 10,
               )
             : Container(),
-        postState.post.multimedia != null && postState.post.multimedia != ''
+        postState.post.multimedia != null &&
+                postState.post.multimedia!.isNotEmpty &&
+                postState.post.multimedia!.length > 1
+            ? ImageSlider(
+                multimedia: postState.post.multimedia ??
+                    [], // Provide the list of image URLs
+              )
+            : Container(),
+        postState.post.multimedia != null &&
+                postState.post.multimedia!.isNotEmpty &&
+                postState.post.multimedia!.length == 1
             ? Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Image.network(
-                      width: double.infinity,
-                      //height: 200,
-                      //i have to use some widget to dispay all image logic
-                      postState.post.multimedia![0],
-                      // postState.post.multimedia!,
-                      fit: BoxFit.contain,
-                    )),
-              )
+                  borderRadius: BorderRadius.circular(4),
+                  child: CachedNetworkImage(
+                    imageUrl: postState.post.multimedia![0],
+                    // imageUrl: widget.post.multimedia!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    placeholder: (context, url) => Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 125),
+                        height: 300,
+                        // width: double.infinity,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            // color: Colors.red,
+                          ),
+                          padding: EdgeInsets.all(10),
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(
+                            color: Colors.blue,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(
+                        Icons.error), // Show error icon if image fails to load
+                  ),
+                ))
             : Container(),
+        // postState.post.multimedia != null && postState.post.multimedia != ''
+        //     ? const SizedBox(
+        //         height: 10,
+        //       )
+        //     : Container(),
+        // postState.post.multimedia != null && postState.post.multimedia != ''
+        //     ? Container(
+        //         decoration: BoxDecoration(
+        //           borderRadius: BorderRadius.circular(8),
+        //         ),
+        //         child: ClipRRect(
+        //             borderRadius: BorderRadius.circular(4),
+        //             child: Image.network(
+        //               width: double.infinity,
+        //               //height: 200,
+        //               //i have to use some widget to dispay all image logic
+        //               postState.post.multimedia![0],
+        //               // postState.post.multimedia!,
+        //               fit: BoxFit.contain,
+        //             )),
+        //       )
+        //     : Container(),
         const SizedBox(
           height: 10,
         ),

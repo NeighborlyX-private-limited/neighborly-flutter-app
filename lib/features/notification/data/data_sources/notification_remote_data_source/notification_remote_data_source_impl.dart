@@ -154,11 +154,11 @@ Future<int> getNotificationUnreadCount() async {
       'Cookie': cookieHeader,
     },
   );
-
+  print('unread count -- ${response.body}');
   if (response.statusCode == 200) {
-    final fakeJson = jsonDecode(response.body)["unreadCount"];
-    return fakeJson != null ? fakeJson : 0;
-    return fakeJson;
+    final count = jsonDecode(response.body)["unreadCount"];
+    return count ?? 0;
+    // return fakeJson;
   } else {
     final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
     print("message API else $message");

@@ -9,18 +9,18 @@ class StackedAvatarIndicator extends StatelessWidget {
   final double? radius;
   final VoidCallback? onTap;
 
-  StackedAvatarIndicator({
-    Key? key,
+  const StackedAvatarIndicator({
+    super.key,
     required this.avatarUrls,
     this.showOnly = 3,
     this.avatarSize = 32,
     this.onTap,
     this.radius = 12,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (avatarUrls.length == 0) return SizedBox.shrink();
+    if (avatarUrls.isEmpty) return SizedBox.shrink();
 
     final widthMultiplier =
         avatarUrls.length < showOnly! ? avatarUrls.length : showOnly;
@@ -37,8 +37,7 @@ class StackedAvatarIndicator extends StatelessWidget {
           children: [
             for (int i = 0; i < min(avatarUrls.length, showOnly!); i++)
               Positioned(
-                left:
-                    i.toDouble() * avatarSize!, // Espaçamento entre os avatares
+                left: i.toDouble() * avatarSize!,
                 child: CircleAvatar(
                   radius: radius! + 1,
                   backgroundColor: Colors.white,

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:805628551035:android:d4b1a1d6c4ffda92dfe7de",
         "android_client_info": {
-          "package_name": "com.example.neighborly_flutter_app"
+          "package_name": "com.neighborlyx.neighborlysocial"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "805628551035-hetm54q007m97g84gr735jiosgtc24r5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.neighborly_flutter_app",
+            "package_name": "com.neighborlyx.neighborlysocial",
             "certificate_hash": "45812b5514b55c54284943dcf10a5b25b0a6b938"
           }
         },
@@ -25,7 +25,7 @@
           "client_id": "805628551035-qllln1ecjrf9st68g4db800l1egesm7e.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.neighborly_flutter_app",
+            "package_name": "com.neighborlyx.neighborlysocial",
             "certificate_hash": "abe27ede1b94a7404eeb4b97a0fc2e16a13756c9"
           }
         },

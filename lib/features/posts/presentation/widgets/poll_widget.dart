@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
@@ -176,12 +178,61 @@ class _PollWidgetState extends State<PollWidget> {
                   color: Colors.grey[800],
                 ),
               ),
-              widget.post.multimedia != null
+              // widget.post.multimedia != null
+              //     ? const SizedBox(
+              //         height: 10,
+              //       )
+              //     : Container(),
+              // widget.post.multimedia != null && widget.post.multimedia != ''
+              //     ? Container(
+              //         decoration: BoxDecoration(
+              //           borderRadius: BorderRadius.circular(8),
+              //         ),
+              //         child: ClipRRect(
+              //           borderRadius: BorderRadius.circular(4),
+              //           child: CachedNetworkImage(
+              //             imageUrl: widget.post.multimedia![0],
+              //             // imageUrl: widget.post.multimedia!,
+              //             fit: BoxFit.contain,
+              //             width: double.infinity,
+              //             placeholder: (context, url) => Center(
+              //               child: SizedBox(
+              //                   height: 16,
+              //                   width: 16,
+              //                   child: CircularProgressIndicator(
+              //                     color: Colors.blue,
+              //                     strokeWidth: 2,
+              //                   )), // Show loading indicator while image loads
+              //             ),
+              //             errorWidget: (context, url, error) => Icon(Icons
+              //                 .error), // Show error icon if image fails to load
+              //           ),
+              //           // child: Image.network(
+              //           //   width: double.infinity,
+              //           //   //height: 200,
+              //           //   widget.post.multimedia!,
+              //           //   fit: BoxFit.contain,
+              //           // )
+              //         ),
+              //       )
+              //     : Container(),
+              // --------------------------------------------------
+              widget.post.multimedia!.isNotEmpty
                   ? const SizedBox(
                       height: 10,
                     )
                   : Container(),
-              widget.post.multimedia != null && widget.post.multimedia != ''
+              widget.post.multimedia != null &&
+                      widget.post.multimedia!.isNotEmpty &&
+                      widget.post.multimedia!.length > 1
+                  ? ImageSlider(
+                      multimedia: widget.post.multimedia ??
+                          [], // Provide the list of image URLs
+                    )
+                  : Container(),
+              widget.post.multimedia != null &&
+                      widget.post.multimedia!.isNotEmpty &&
+                      widget.post.multimedia!.length == 1
                   ? Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -191,28 +242,32 @@ class _PollWidgetState extends State<PollWidget> {
                         child: CachedNetworkImage(
                           imageUrl: widget.post.multimedia![0],
                           // imageUrl: widget.post.multimedia!,
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                           width: double.infinity,
                           placeholder: (context, url) => Center(
-                            child: SizedBox(
-                                height: 16,
-                                width: 16,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 125),
+                              height: 300,
+                              // width: double.infinity,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  // color: Colors.red,
+                                ),
+                                padding: EdgeInsets.all(10),
+                                height: 50,
+                                width: 50,
                                 child: CircularProgressIndicator(
                                   color: Colors.blue,
                                   strokeWidth: 2,
-                                )), // Show loading indicator while image loads
+                                ),
+                              ),
+                            ),
                           ),
                           errorWidget: (context, url, error) => Icon(Icons
                               .error), // Show error icon if image fails to load
                         ),
-                        // child: Image.network(
-                        //   width: double.infinity,
-                        //   //height: 200,
-                        //   widget.post.multimedia!,
-                        //   fit: BoxFit.contain,
-                        // )
-                      ),
-                    )
+                      ))
                   : Container(),
               const SizedBox(
                 height: 10,

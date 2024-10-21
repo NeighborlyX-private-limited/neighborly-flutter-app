@@ -268,7 +268,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       if (image != null) {
         setState(() {
-          _selectedImage = File(image!.path); // Update selected image
+          _selectedImages!.add(File(image!.path));
+          // _selectedImage = File(image!.path); // Update selected image
         });
       }
     } catch (e) {

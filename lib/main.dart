@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
   // String? _linkMessage;
   // StreamSubscription? _sub;
 
-  // static const platform = MethodChannel('com.example.neighborly_flutter_app');
+  // static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
   // String? _deepLink;
 
   @override
