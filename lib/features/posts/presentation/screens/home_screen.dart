@@ -240,11 +240,67 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 34,
             ),
             const SizedBox(width: 10),
-            CustomToggleSwitch(
-              imagePath1: 'assets/home.svg',
-              imagePath2: 'assets/location.svg',
-              onToggle: handleToggle,
+            Container(
+              height: 39,
+              width: 120,
+              decoration: BoxDecoration(
+                  color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
+                  borderRadius: BorderRadius.circular(10)),
+              child: Row(
+                children: [
+                  Container(
+                    height: 35,
+                    // width: 50,
+                    decoration: BoxDecoration(
+                        color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: SvgPicture.asset(
+                      'assets/location.svg',
+                      height: 35,
+                      width: 55,
+                    ),
+                  ),
+                  Container(
+                      height: 35,
+                      // width: 50,
+                      decoration: BoxDecoration(
+                          color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Icon(Icons.arrow_drop_down)),
+                  VerticalDivider(
+                    width: 20.0, // Space around the line
+                    thickness: 1.0, // Line thickness
+                    color: Colors.black, // Line color
+                  ),
+                  Container(
+                    height: 35,
+                    // width: 50,
+                    decoration: BoxDecoration(
+                        color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: SvgPicture.asset(
+                      'assets/location.svg',
+                      height: 35,
+                      width: 55,
+                    ),
+                  ),
+                ],
+              ),
             ),
+
+            // Container(
+            //   height: 35,
+            //   width: 50,
+            //   decoration: BoxDecoration(
+            //       color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
+            //       borderRadius: BorderRadius.circular(10)),
+            //   child: Image.asset('assets/home.svg'),
+            // ),
+            // CustomToggleSwitch(
+            //   imagePath1: 'assets/home.svg',
+            //   imagePath2: 'assets/location.svg',
+            //   onToggle: handleToggle,
+            // ),
           ],
         ),
         actions: [
