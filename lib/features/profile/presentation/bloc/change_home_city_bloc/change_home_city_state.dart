@@ -15,6 +15,15 @@ class CityInitialState extends CityState {}
 class CityLoadingState extends CityState {}
 
 // State when the city has been successfully updated
+// class CityUpdatedState extends CityState {
+
+//   final String city;
+
+//   CityUpdatedState(this.city);
+
+//   @override
+//   List<Object> get props => [city];
+// }
 class CityUpdatedState extends CityState {
   final String city;
 

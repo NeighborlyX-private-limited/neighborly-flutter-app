@@ -4,26 +4,24 @@ import 'package:flutter/material.dart';
 class ImageSlider extends StatefulWidget {
   final List<String> multimedia;
 
-  const ImageSlider({Key? key, required this.multimedia}) : super(key: key);
+  const ImageSlider({super.key, required this.multimedia});
 
   @override
-  _ImageSliderState createState() => _ImageSliderState();
+  ImageSliderState createState() => ImageSliderState();
 }
 
-class _ImageSliderState extends State<ImageSlider> {
+class ImageSliderState extends State<ImageSlider> {
   int _currentPage = 0;
 
   @override
   Widget build(BuildContext context) {
-    // Get the full width of the screen
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Column(
       children: [
-        // Image slider
-        Container(
-          height: 300, // Fixed height for images
-          width: screenWidth, // Full width of the screen
+        SizedBox(
+          height: 300,
+          width: screenWidth,
           child: PageView.builder(
             itemCount: widget.multimedia.length,
             onPageChanged: (int index) {
@@ -36,23 +34,21 @@ class _ImageSliderState extends State<ImageSlider> {
                 borderRadius: BorderRadius.circular(8),
                 child: CachedNetworkImage(
                   imageUrl: widget.multimedia[index],
-                  fit: BoxFit.cover, // Ensures the image covers the whole area
-                  width: screenWidth, // Ensure full width of the screen
-                  height: 350, // Ensure fixed height
+                  fit: BoxFit.cover,
+                  width: screenWidth,
+                  height: 350,
                   placeholder: (context, url) => Center(
                     child: CircularProgressIndicator(
                       color: Colors.blue,
                       strokeWidth: 2,
                     ),
                   ),
-                  errorWidget: (context, url, error) => Icon(
-                      Icons.error), // Show error icon if image fails to load
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
               );
             },
           ),
         ),
-        // Indicator showing the current image position
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: widget.multimedia.map((url) {

@@ -7,7 +7,7 @@ import '../../../../core/utils/shared_preference.dart';
 import '../bloc/vote_poll_bloc/vote_poll_bloc.dart';
 
 class OptionCard extends StatefulWidget {
-  final Function onSelectOptionCallback; 
+  final Function onSelectOptionCallback;
   final OptionEntity option;
   final double totalVotes;
   final num pollId;
@@ -15,16 +15,15 @@ class OptionCard extends StatefulWidget {
   final List<OptionEntity> otherOptions;
   final bool alreadyselected;
 
-  const OptionCard({
-    required this.totalVotes,
-    super.key,
-    required this.option,
-    required this.pollId,
-    required this.allowMultiSelect,
-    required this.onSelectOptionCallback,
-    required this.otherOptions,
-    required this.alreadyselected
-  });
+  const OptionCard(
+      {required this.totalVotes,
+      super.key,
+      required this.option,
+      required this.pollId,
+      required this.allowMultiSelect,
+      required this.onSelectOptionCallback,
+      required this.otherOptions,
+      required this.alreadyselected});
 
   @override
   State<OptionCard> createState() => _OptionCardState();
@@ -41,15 +40,15 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   Future<void> _loadSelectionState() async {
-    final userID = ShardPrefHelper.getUserID();
+    //final userID = ShardPrefHelper.getUserID();
     setState(() {
-      final box = Hive.box('pollVotes');
+      //final box = Hive.box('pollVotes');
       isSelected = widget.option.userVoted;
       filledPercentage = calculatePercentage(
-                widget.option.votes,
-                widget.totalVotes,
-              ) /
-              100;
+            widget.option.votes,
+            widget.totalVotes,
+          ) /
+          100;
     });
   }
 
@@ -65,18 +64,18 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   void _toggleSelection() {
-    print('iselected ${widget.allowMultiSelect} total ${widget.alreadyselected} voted ${widget.totalVotes} $isSelected');
+    print(
+        'iselected ${widget.allowMultiSelect} total ${widget.alreadyselected} voted ${widget.totalVotes} $isSelected');
     setState(() {
       if (isSelected || widget.alreadyselected) {
         return;
       }
-      
-      if (widget.allowMultiSelect){
-        
+
+      if (widget.allowMultiSelect) {
         isSelected = !isSelected;
         filledPercentage = isSelected
             ? calculatePercentage(
-                  double.parse(widget.option.votes.toString()) +  1,
+                  double.parse(widget.option.votes.toString()) + 1,
                   widget.totalVotes + 1,
                 ) /
                 100
@@ -89,38 +88,35 @@ class _OptionCardState extends State<OptionCard> {
         );
         widget.onSelectOptionCallback(
           widget.option.optionId,
-       //   widget.totalVotes
-          );
-      }else{
+        );
+      } else {
         bool isalreadyvoted = false;
-        for(int i =0; i< widget.otherOptions.length; i++){
-          if(widget.otherOptions[i].userVoted){
+        for (int i = 0; i < widget.otherOptions.length; i++) {
+          if (widget.otherOptions[i].userVoted) {
             isalreadyvoted = true;
           }
         }
-        if(!isalreadyvoted){
+        if (!isalreadyvoted) {
           isSelected = !isSelected;
           filledPercentage = isSelected
               ? calculatePercentage(
-                    double.parse(widget.option.votes.toString()) +  1,
+                    double.parse(widget.option.votes.toString()) + 1,
                     widget.totalVotes + 1,
                   ) /
                   100
               : 0.0;
           BlocProvider.of<VotePollBloc>(context).add(
-          VotePollButtonPressedEvent(
-            pollId: widget.pollId,
-            optionId: widget.option.optionId,
-          ),
-        );
-        widget.onSelectOptionCallback(
-          widget.option.optionId,
-       //   widget.totalVotes
+            VotePollButtonPressedEvent(
+              pollId: widget.pollId,
+              optionId: widget.option.optionId,
+            ),
+          );
+          widget.onSelectOptionCallback(
+            widget.option.optionId,
           );
         }
       }
-      
-   });
+    });
   }
 
   @override
@@ -185,5 +181,5 @@ class _OptionCardState extends State<OptionCard> {
 
 // Helper function to calculate percentage
 double calculatePercentage(num value, num total) {
-  return total == 0 ? 0 : (value/total) * 100;
+  return total == 0 ? 0 : (value / total) * 100;
 }

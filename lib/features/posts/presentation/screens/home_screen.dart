@@ -5,13 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/dependency_injection.dart';
-import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/city_drop_down_home.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/city_dropdown.dart';
+
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
@@ -21,7 +19,6 @@ import '../bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import '../widgets/poll_widget.dart';
 import '../widgets/post_sheemer_widget.dart';
 import '../widgets/post_widget.dart';
-import '../widgets/toggle_button_widget.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -94,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  /// refersh the home screen
   Future<void> _onRefresh() async {
     setIsHome();
     getUnreadNotificationCount();
@@ -101,6 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
         .add(GetAllPostsButtonPressedEvent(isHome: isHome));
   }
 
+// set home location city name
   setCityHomeName() async {
     List<double> homeLocation = ShardPrefHelper.getHomeLocation();
     print('home cord in city set: $homeLocation');
@@ -114,6 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
     ShardPrefHelper.setHomeCity(city);
   }
 
+// set current location city name
   setCityCurrentName() async {
     List<double> location = ShardPrefHelper.getLocation();
     List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -159,26 +159,25 @@ class _HomeScreenState extends State<HomeScreen> {
       await Permission.notification.request();
     }
 
-    // serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    // if (!serviceEnabled) {
-    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    //       content: Text(
-    //           'Location services are disabled. Please enable the services')));
-    //   return false;
-    // }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
+          const SnackBar(
+            content: Text('Location permissions are denied'),
+          ),
+        );
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
           content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
+              'Location permissions are permanently denied, we cannot request permissions.'),
+        ),
+      );
       return false;
     }
     return true;
@@ -192,9 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      // setState(() {
-      //   // _currentPosition = position;
-      // });
+
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print(
           'Lat Long in Home Screen: ${position.latitude}, ${position.longitude}');
@@ -235,14 +232,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // int currentIndex = 0;
-  // setCurrentIndex() {
-  //   setState(() {
-  //     final bool isLocationOn = ShardPrefHelper.getIsLocationOn();
-  //     currentIndex = isLocationOn ? 1 : 0;
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,18 +241,16 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // SVG Logo
             SvgPicture.asset(
               'assets/logo.svg',
               width: 30,
               height: 34,
             ),
             const SizedBox(width: 10),
-            // Home/Location Toggle and City Dropdown
             Flexible(
               child: Container(
                 height: 40,
-                width: 180, // You might adjust this for more space
+                width: 120,
                 decoration: BoxDecoration(
                   color: const Color(0xffC5C2FF),
                   borderRadius: BorderRadius.circular(100),
@@ -295,50 +282,43 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(),
                     // Vertical Divider
                     Container(
                       height: 20,
-                      width: 2,
+                      width: 1,
                       color: const Color(0xff2E2E2E),
                     ),
                     // Dropdown for city selection
-                    SizedBox(
-                      width: 30,
-                      child: BlocProvider(
-                        create: (context) => CityBloc(sl<CityRepository>()),
-                        child: BlocListener<CityBloc, CityState>(
-                          listener: (context, state) {
-                            if (state is CityUpdatedState) {
-                              print("City updated");
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content:
-                                        Text('City updated to ${state.city}!')),
-                              );
-                            } else if (state is CityErrorState) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                    content:
-                                        Text('Error: ${state.errorMessage}')),
-                              );
-                            }
-                          },
-                          child: SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CityDropdown(
-                              //isHome: true,
-                              selectCity: _selectedCity,
-                              onChanged: (String? newValue) {
-                                if (newValue != null) {
-                                  context
-                                      .read<CityBloc>()
-                                      .add(UpdateCityEvent(newValue));
-                                }
-                              },
+                    BlocListener<CityBloc, CityState>(
+                      listener: (context, state) {
+                        if (state is CityUpdatedState) {
+                          if (isHome) {
+                            _fetchPosts();
+                          }
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('City updated to ${state.city}!'),
                             ),
-                          ),
-                        ),
+                          );
+                        } else if (state is CityErrorState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: ${state.errorMessage}'),
+                            ),
+                          );
+                        }
+                      },
+                      child: HomeDropdownCity(
+                        selectCity: _selectedCity,
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            context
+                                .read<CityBloc>()
+                                .add(UpdateCityEvent(newValue));
+                          }
+                        },
                       ),
                     ),
                     // Location Button

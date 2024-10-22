@@ -12,10 +12,9 @@ import '../bloc/feedback_bloc/feedback_bloc.dart';
 import '../bloc/give_award_bloc/give_award_bloc.dart';
 import 'overlapping_images_widget.dart';
 
-import '../../../profile/presentation/bloc/get_my_awards_bloc/get_my_awards_bloc.dart';
-import '../../../profile/domain/usecases/get_my_awards_usecase.dart';
 import '../../../profile/data/data_sources/profile_remote_data_source/profile_remote_data_source_impl.dart';
 import 'package:http/http.dart' as http;
+
 class ReactionCommentWidget extends StatefulWidget {
   final CommentEntity comment;
   final bool isPost;
@@ -39,12 +38,11 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
   late num cheersCount;
   late num boolsCount;
   late ProfileRemoteDataSourceImpl profileRemoteDataSource;
-   bool isLocalLegendAwardAvailable = false;
+  bool isLocalLegendAwardAvailable = false;
   bool isParkBenchAwardAvailable = false;
   bool isSunflowerAwardAvailable = false;
   bool isStreetlightAwardAvailable = false;
   bool isMapAwardAvailable = false;
-  
 
   @override
   void initState() {
@@ -53,8 +51,9 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     cheersCount = widget.comment.cheers;
     boolsCount = widget.comment.bools;
     awardsCount = widget.comment.awardType.length;
-     profileRemoteDataSource = ProfileRemoteDataSourceImpl(client: http.Client());
-   
+    profileRemoteDataSource =
+        ProfileRemoteDataSourceImpl(client: http.Client());
+
     // Load persisted state
     _loadReactionState();
   }
@@ -63,55 +62,57 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
     setState(() {
       getmyawards();
       // Load the state for the current post
-      final userID = ShardPrefHelper.getUserID();
-      final box = Hive.box('commentReactions');
+      //final userID = ShardPrefHelper.getUserID();
+      //final box = Hive.box('commentReactions');
       setState(() {
         isCheered = widget.comment.userFeedback == 'cheer';
         isBooled = widget.comment.userFeedback == 'boo';
       });
     });
   }
-  getmyawards () async {
+
+  getmyawards() async {
     List responseMessage = await profileRemoteDataSource.getMyAwards();
-    if(responseMessage.length == 0){
-       isLocalLegendAwardAvailable = false;
-       isParkBenchAwardAvailable = false;
-       isSunflowerAwardAvailable = false;
-       isStreetlightAwardAvailable = false;
-       isMapAwardAvailable = false;
-    }else{
-      for(int i=0;i<responseMessage.length; i++){
-      if(responseMessage[i]['type'] == 'Local Legend' && responseMessage[i]['count'] > 0){
-        setState((){
-          isLocalLegendAwardAvailable = true;
-        });
-      }
-      if(responseMessage[i]['type'] == 'Park Bench' && responseMessage[i]['count'] > 0){
-        setState((){
-          isParkBenchAwardAvailable = true;
-        });
-        
-      }
-      if(responseMessage[i]['type'] == 'Sunflower' && responseMessage[i]['count'] > 0){
-        setState((){
-          isSunflowerAwardAvailable = true;
-        });
-        
-      }
-      if(responseMessage[i]['type'] == 'Streetlight' && responseMessage[i]['count'] > 0){
-        setState((){
-          isStreetlightAwardAvailable = true;
-        });
-        
-      }
-      if(responseMessage[i]['type'] == 'Map' && responseMessage[i]['count'] > 0){
-        setState((){
-          isMapAwardAvailable = true;
-        });
+    if (responseMessage.isEmpty) {
+      isLocalLegendAwardAvailable = false;
+      isParkBenchAwardAvailable = false;
+      isSunflowerAwardAvailable = false;
+      isStreetlightAwardAvailable = false;
+      isMapAwardAvailable = false;
+    } else {
+      for (int i = 0; i < responseMessage.length; i++) {
+        if (responseMessage[i]['type'] == 'Local Legend' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isLocalLegendAwardAvailable = true;
+          });
+        }
+        if (responseMessage[i]['type'] == 'Park Bench' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isParkBenchAwardAvailable = true;
+          });
+        }
+        if (responseMessage[i]['type'] == 'Sunflower' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isSunflowerAwardAvailable = true;
+          });
+        }
+        if (responseMessage[i]['type'] == 'Streetlight' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isStreetlightAwardAvailable = true;
+          });
+        }
+        if (responseMessage[i]['type'] == 'Map' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isMapAwardAvailable = true;
+          });
+        }
       }
     }
-    }
-    
   }
 
   Future<void> _saveReactionState() async {
@@ -205,7 +206,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   FeedbackButtonPressedEvent(
                       postId: widget.comment.commentid,
                       feedback: 'cheer',
-                      type: 'comment'), // Corrected type to 'comment'
+                      type: 'comment'),
                 );
               },
               child: Container(
@@ -235,7 +236,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                         width: 3,
                       ),
                       Text(
-                        cheersCount.toString(), // Use state variable for count
+                        cheersCount.toString(),
                         style: TextStyle(
                           color: isCheered ? Colors.red : Colors.grey[900],
                           fontSize: 12,
@@ -268,7 +269,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                 FeedbackButtonPressedEvent(
                     postId: widget.comment.commentid,
                     feedback: 'boo',
-                    type: 'comment'), // Corrected type to 'comment'
+                    type: 'comment'),
               );
             },
             child: Container(
@@ -298,7 +299,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                       width: 3,
                     ),
                     Text(
-                      boolsCount.toString(), // Use state variable for count
+                      boolsCount.toString(),
                       style: TextStyle(
                         color: isBooled ? Colors.blue : Colors.grey[600],
                         fontSize: 12,
@@ -321,7 +322,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
             showBottomSheet().then((value) {
               if (value != null) {
                 setState(() {
-                  awardsCount = value; // Update state with new awardsCount
+                  awardsCount = value;
                 });
               }
             });
@@ -391,10 +392,11 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
           onTap: () {
             // #share
             print('omment share ${widget.comment.postid}');
-           String link = 'https://prod.neighborly.in/post-detail/${widget.comment.postid}/${widget.isPost}/${widget.comment.userId}/${widget.comment.commentid}';
+            String link =
+                'https://prod.neighborly.in/post-detail/${widget.comment.postid}/${widget.isPost}/${widget.comment.userId}/${widget.comment.commentid}';
             print(link);
             ShareIt.text(
-                content: '$link',
+                content: link,
                 androidSheetTitle: 'Cool comment in a nice Post');
           },
           child: Container(
@@ -435,13 +437,6 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                   ),
                 );
               }
-              // else {
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(
-              //       content: Text(state.error),
-              //     ),
-              //   );
-              // }
             } else if (state is GiveAwardSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -487,14 +482,15 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     height: 5,
                   ),
                   InkWell(
-                    onTap: !isLocalLegendAwardAvailable ? null : () {
-                      BlocProvider.of<GiveAwardBloc>(context).add(
-                          GiveAwardButtonPressedEvent(
-                              id: widget.comment.commentid,
-                              awardType: 'Local Legend',
-                              type: 'comment'));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isLocalLegendAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                                GiveAwardButtonPressedEvent(
+                                    id: widget.comment.commentid,
+                                    awardType: 'Local Legend',
+                                    type: 'comment'));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -502,14 +498,15 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                           'assets/Local_Legend.svg',
                           width: 84,
                           height: 84,
-                           color: isLocalLegendAwardAvailable ? null :  Colors.grey.withOpacity(0.5), // Apply grey tint when disabled
+                          color: isLocalLegendAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                           colorBlendMode: BlendMode.modulate,
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -517,10 +514,12 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               Text(
                                 'Local Legend',
                                 style: GoogleFonts.roboto(
-                                color: isLocalLegendAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  color: isLocalLegendAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -528,11 +527,13 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               Text(
                                 'Recognizing users who consistently contribute high-quality content.',
                                 style: GoogleFonts.roboto(
-                                color: isLocalLegendAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isLocalLegendAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),
@@ -541,15 +542,16 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: !isSunflowerAwardAvailable? null :() {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(
-                        id: widget.comment.commentid,
-                        awardType: 'Sunflower',
-                        type: 'comment',
-                      ));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isSunflowerAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context)
+                                .add(GiveAwardButtonPressedEvent(
+                              id: widget.comment.commentid,
+                              awardType: 'Sunflower',
+                              type: 'comment',
+                            ));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -557,37 +559,42 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                           'assets/Sunflower.svg',
                           width: 84,
                           height: 84,
-                             colorBlendMode: BlendMode.modulate,
-                          color: isSunflowerAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
-                       
+                          colorBlendMode: BlendMode.modulate,
+                          color: isSunflowerAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                             Text(
+                              Text(
                                 'Sunflower',
                                 style: GoogleFonts.roboto(
-                                color: isSunflowerAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),),
+                                  color: isSunflowerAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                               const SizedBox(
                                 height: 5,
                               ),
-                               Text(
+                              Text(
                                 'For bringing positivity and cheerfulness to the community.',
                                 style: GoogleFonts.roboto(
-                                color: isSunflowerAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isSunflowerAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),
@@ -596,15 +603,16 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap:!isStreetlightAwardAvailable ? null : () {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(
-                        id: widget.comment.commentid,
-                        awardType: 'Streetlight',
-                        type: 'comment',
-                      ));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isStreetlightAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context)
+                                .add(GiveAwardButtonPressedEvent(
+                              id: widget.comment.commentid,
+                              awardType: 'Streetlight',
+                              type: 'comment',
+                            ));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -612,15 +620,15 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                           'assets/Streetlight.svg',
                           width: 84,
                           height: 84,
-                            colorBlendMode: BlendMode.modulate,
-                          color: isStreetlightAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
-                       
+                          colorBlendMode: BlendMode.modulate,
+                          color: isStreetlightAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -628,10 +636,12 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               Text(
                                 'Streetlight',
                                 style: GoogleFonts.roboto(
-                                color: isStreetlightAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  color: isStreetlightAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -639,11 +649,13 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               Text(
                                 'For providing clear guidance and valuable insights.',
                                 style: GoogleFonts.roboto(
-                                color: isStreetlightAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isStreetlightAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),
@@ -652,52 +664,59 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: !isParkBenchAwardAvailable ? null : () {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(
-                        id: widget.comment.commentid,
-                        awardType: 'Park Bench',
-                        type: 'comment',
-                      ));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isParkBenchAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context)
+                                .add(GiveAwardButtonPressedEvent(
+                              id: widget.comment.commentid,
+                              awardType: 'Park Bench',
+                              type: 'comment',
+                            ));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                         SvgPicture.asset(
+                        SvgPicture.asset(
                           'assets/Park_Bench.svg',
                           width: 84,
                           height: 84,
                           colorBlendMode: BlendMode.modulate,
-                          color: isParkBenchAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
+                          color: isParkBenchAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                             Text(
+                              Text(
                                 'Park Bench',
                                 style: GoogleFonts.roboto(
-                                color: isParkBenchAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),),
+                                  color: isParkBenchAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                               const SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 'For offering comforting and supportive posts.',
                                 style: GoogleFonts.roboto(
-                                color: isParkBenchAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isParkBenchAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),
@@ -706,53 +725,59 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap:  !isMapAwardAvailable ? null : () {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(
-                        id: widget.comment.commentid,
-                        awardType: 'Map',
-                        type: 'comment',
-                      ));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isMapAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context)
+                                .add(GiveAwardButtonPressedEvent(
+                              id: widget.comment.commentid,
+                              awardType: 'Map',
+                              type: 'comment',
+                            ));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                          SvgPicture.asset(
+                        SvgPicture.asset(
                           'assets/Map.svg',
                           width: 84,
                           height: 84,
                           colorBlendMode: BlendMode.modulate,
-                          color: isMapAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
+                          color: isMapAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                        Text(
+                              Text(
                                 'Map',
                                 style: GoogleFonts.roboto(
-                                color: isMapAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  color: isMapAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
                               ),
-                               Text(
+                              Text(
                                 'For creating informative and detailed content.',
                                 style: GoogleFonts.roboto(
-                                color: isMapAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isMapAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),

@@ -14,11 +14,13 @@ class CityBloc extends Bloc<CityEvent, CityState> {
   // Handler method for UpdateCityEvent
   Future<void> _onUpdateCity(
       UpdateCityEvent event, Emitter<CityState> emit) async {
+    print("this is call finally CityLoadingState");
     emit(CityLoadingState()); // Emit loading state if needed
 
     try {
       // Call the repository to update the city
       await cityRepository.updateCity(event.city);
+      print("this is call finally CityUpdatedState");
 
       // If successful, emit CityUpdatedState
       emit(CityUpdatedState(event.city));

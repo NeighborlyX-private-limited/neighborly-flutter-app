@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CityDropdown extends StatelessWidget {
+  final bool isHome;
   final String? selectCity;
-  final bool? isHome;
   final Function(String?) onChanged;
 
   const CityDropdown(
@@ -16,11 +16,18 @@ class CityDropdown extends StatelessWidget {
     print('city in basic info widget ==> $selectCity');
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(
-              color: Colors.transparent,
-            )),
+        icon: isHome == true
+            ? Icon(
+                Icons.arrow_drop_down,
+                size: 30,
+              )
+            : null,
+        //hintText: 'City',
+        border: isHome == true
+            ? InputBorder.none
+            : OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8.0),
+              ),
       ),
       value: selectCity,
       items: const [
@@ -36,6 +43,10 @@ class CityDropdown extends StatelessWidget {
           value: 'Gurugram',
           child: Text('Gurugram'),
         ),
+        // DropdownMenuItem(
+        //   value: 'Kannauj',
+        //   child: Text('Kannauj'),
+        // ),
         DropdownMenuItem(
           value: 'New Delhi',
           child: Text('New Delhi'),

@@ -95,8 +95,8 @@ class PostRepositoriesImpl implements PostRepositories {
       {required num postId, required String commentId}) async {
     if (await networkInfo.isConnected) {
       try {
-        final result =
-            await remoteDataSource.getCommentsByPostId(postId: postId,commentId: commentId);
+        final result = await remoteDataSource.getCommentsByPostId(
+            postId: postId, commentId: commentId);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

@@ -90,7 +90,7 @@ class _DOBPickerWidgetState extends State<DOBPickerWidget> {
     required int maxLength,
     required String validationPattern,
   }) {
-    return Container(
+    return SizedBox(
       width: 100,
       child: TextField(
         textCapitalization: TextCapitalization.sentences,
