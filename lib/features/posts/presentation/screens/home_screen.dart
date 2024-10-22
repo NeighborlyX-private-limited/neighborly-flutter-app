@@ -5,6 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/city_drop_down_home.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/widgets/city_dropdown.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
@@ -32,6 +39,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isHome = true;
+  late String _selectedCity;
 
   @override
   void initState() {
@@ -41,6 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setCityHomeName();
     setCityCurrentName();
     getUnreadNotificationCount();
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
     _fetchPosts();
     if (widget.isFirstTime) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -226,6 +235,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  // int currentIndex = 0;
+  // setCurrentIndex() {
+  //   setState(() {
+  //     final bool isLocationOn = ShardPrefHelper.getIsLocationOn();
+  //     currentIndex = isLocationOn ? 1 : 0;
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -233,76 +250,264 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            // SVG Logo
             SvgPicture.asset(
               'assets/logo.svg',
               width: 30,
               height: 34,
             ),
             const SizedBox(width: 10),
-            Container(
-              height: 39,
-              width: 120,
-              decoration: BoxDecoration(
-                  color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
-                  borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                children: [
-                  Container(
-                    height: 35,
-                    // width: 50,
-                    decoration: BoxDecoration(
-                        color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: SvgPicture.asset(
-                      'assets/location.svg',
-                      height: 35,
-                      width: 55,
+            // Home/Location Toggle and City Dropdown
+            Flexible(
+              child: Container(
+                height: 40,
+                width: 180, // You might adjust this for more space
+                decoration: BoxDecoration(
+                  color: const Color(0xffC5C2FF),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Home Button
+                    InkWell(
+                      onTap: () {
+                        ShardPrefHelper.setIsLocationOn(false);
+                        handleToggle(true);
+                      },
+                      child: Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isHome
+                              ? const Color(0xff635BFF)
+                              : const Color(0xffC5C2FF),
+                        ),
+                        child: Center(
+                          child: SvgPicture.asset(
+                            'assets/home.svg',
+                            height: 25,
+                            width: 25,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  Container(
-                      height: 35,
-                      // width: 50,
-                      decoration: BoxDecoration(
-                          color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Icon(Icons.arrow_drop_down)),
-                  VerticalDivider(
-                    width: 20.0, // Space around the line
-                    thickness: 1.0, // Line thickness
-                    color: Colors.black, // Line color
-                  ),
-                  Container(
-                    height: 35,
-                    // width: 50,
-                    decoration: BoxDecoration(
-                        color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
-                        borderRadius: BorderRadius.circular(10)),
-                    child: SvgPicture.asset(
-                      'assets/location.svg',
-                      height: 35,
-                      width: 55,
+                    // Vertical Divider
+                    Container(
+                      height: 20,
+                      width: 2,
+                      color: const Color(0xff2E2E2E),
                     ),
-                  ),
-                ],
+                    // Dropdown for city selection
+                    SizedBox(
+                      width: 30,
+                      child: BlocProvider(
+                        create: (context) => CityBloc(sl<CityRepository>()),
+                        child: BlocListener<CityBloc, CityState>(
+                          listener: (context, state) {
+                            if (state is CityUpdatedState) {
+                              print("City updated");
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('City updated to ${state.city}!')),
+                              );
+                            } else if (state is CityErrorState) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content:
+                                        Text('Error: ${state.errorMessage}')),
+                              );
+                            }
+                          },
+                          child: SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CityDropdown(
+                              //isHome: true,
+                              selectCity: _selectedCity,
+                              onChanged: (String? newValue) {
+                                if (newValue != null) {
+                                  context
+                                      .read<CityBloc>()
+                                      .add(UpdateCityEvent(newValue));
+                                }
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Location Button
+                    InkWell(
+                      onTap: () {
+                        ShardPrefHelper.setIsLocationOn(true);
+                        handleToggle(false);
+                      },
+                      child: Container(
+                        height: 35,
+                        width: 35,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isHome
+                              ? const Color(0xffC5C2FF)
+                              : const Color(0xff635BFF),
+                        ),
+                        child: Center(
+                          child: SvgPicture.asset(
+                            'assets/location.svg',
+                            height: 25,
+                            width: 25,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-
-            // Container(
-            //   height: 35,
-            //   width: 50,
-            //   decoration: BoxDecoration(
-            //       color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
-            //       borderRadius: BorderRadius.circular(10)),
-            //   child: Image.asset('assets/home.svg'),
-            // ),
-            // CustomToggleSwitch(
-            //   imagePath1: 'assets/home.svg',
-            //   imagePath2: 'assets/location.svg',
-            //   onToggle: handleToggle,
-            // ),
           ],
         ),
+        // title: Row(
+        //   children: [
+        //     SvgPicture.asset(
+        //       'assets/logo.svg',
+        //       width: 30,
+        //       height: 34,
+        //     ),
+        //     const SizedBox(width: 10),
+        //     Container(
+        //       height: 40,
+        //       width: 120,
+        //       decoration: BoxDecoration(
+        //         color: Color(0xffC5C2FF),
+        //         borderRadius: BorderRadius.circular(100),
+        //       ),
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //         children: [
+        //           InkWell(
+        //             onTap: () {
+        //               ShardPrefHelper.setIsLocationOn(false);
+        //               handleToggle(true);
+        //             },
+        //             child: Container(
+        //               height: 35,
+        //               width: 35,
+        //               decoration: BoxDecoration(
+        //                 shape: BoxShape.circle,
+        //                 color: isHome ? Color(0xff635BFF) : Color(0xffC5C2FF),
+        //               ),
+        //               child: Center(
+        //                 child: SvgPicture.asset(
+        //                   'assets/home.svg',
+        //                   height: 25,
+        //                   width: 25,
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
+        //           // SizedBox(
+        //           //   width: 10,
+        //           // ),
+        //           Container(
+        //             height: 20,
+        //             width: 2,
+        //             color: Color(0xff2E2E2E),
+        //           ),
+        //           Expanded(
+        //             child: SizedBox(
+        //               width: 30,
+        //               height: 25,
+        //               child: BlocProvider(
+        //                 create: (context) => CityBloc(sl<
+        //                     CityRepository>()), // Create and provide the CityBloc.
+        //                 child: BlocListener<CityBloc, CityState>(
+        //                   listener: (context, state) {
+        //                     if (state is CityUpdatedState) {
+        //                       print("yes");
+        //                       ScaffoldMessenger.of(context).showSnackBar(
+        //                         SnackBar(
+        //                             content: Text(
+        //                                 'City updated to ${state.city} successfully!')),
+        //                       );
+        //                     } else if (state is CityErrorState) {
+        //                       ScaffoldMessenger.of(context).showSnackBar(
+        //                         SnackBar(
+        //                             content: Text(
+        //                                 'Failed to update city: ${state.errorMessage}')),
+        //                       );
+        //                     }
+        //                   },
+        //                   child: SizedBox(
+        //                     width: 20,
+        //                     child: CityDropdownHome(
+        //                       selectCity: _selectedCity,
+        //                       onChanged: (String? newValue) {
+        //                         setState(() {
+        //                           _selectedCity = newValue!;
+        //                         });
+
+        //                         // Trigger the BLoC event only for the CityDropdown button.
+        //                         if (newValue != null) {
+        //                           // Add the UpdateCityEvent to the CityBloc when a new city is selected.
+        //                           context
+        //                               .read<CityBloc>()
+        //                               .add(UpdateCityEvent(newValue));
+        //                         }
+        //                       },
+        //                     ),
+        //                   ),
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
+        //           // Container(
+        //           //     height: 35,
+        //           //     // width: 50,
+        //           //     decoration: BoxDecoration(
+        //           //         color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
+        //           //         borderRadius: BorderRadius.circular(10)),
+        //           //     child: Icon(Icons.arrow_drop_down_circle)),
+
+        //           InkWell(
+        //             onTap: () {
+        //               ShardPrefHelper.setIsLocationOn(true);
+        //               handleToggle(false);
+        //             },
+        //             child: Container(
+        //               height: 35,
+        //               width: 35,
+        //               decoration: BoxDecoration(
+        //                 shape: BoxShape.circle,
+        //                 color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
+        //                 // color: isHome ? Color(0xff635BFF) : Color(0xffC5C2FF),
+        //                 // borderRadius: BorderRadius.circular(10)
+        //               ),
+        //               child: Center(
+        //                 child: SvgPicture.asset(
+        //                   'assets/location.svg',
+        //                   height: 25,
+        //                   width: 25,
+        //                   // color: Color(0xff635BFF),
+        //                 ),
+        //               ),
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+
+        //     // CustomToggleSwitch(
+        //     //   imagePath1: 'assets/home.svg',
+        //     //   imagePath2: 'assets/location.svg',
+        //     //   onToggle: handleToggle,
+        //     // ),
+        //   ],
+        // ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
