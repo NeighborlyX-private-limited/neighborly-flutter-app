@@ -74,10 +74,10 @@ class _PostWidgetState extends State<PostWidget> {
                                         strokeWidth: 2,
                                         color: Colors.blue,
                                       ),
-                                    ), // Show loading indicator
+                                    ),
                                   ),
-                                  errorWidget: (context, url, error) => Icon(Icons
-                                      .error), // Show error icon if image fails to load
+                                  errorWidget: (context, url, error) =>
+                                      Icon(Icons.error),
                                 )
                               : Image.asset(
                                   'assets/second_pro_pic.png',
@@ -185,8 +185,7 @@ class _PostWidgetState extends State<PostWidget> {
                     widget.post.multimedia!.isNotEmpty &&
                     widget.post.multimedia!.length > 1
                 ? ImageSlider(
-                    multimedia: widget.post.multimedia ??
-                        [], // Provide the list of image URLs
+                    multimedia: widget.post.multimedia ?? [],
                   )
                 : Container(),
             widget.post.multimedia != null &&
@@ -200,18 +199,15 @@ class _PostWidgetState extends State<PostWidget> {
                       borderRadius: BorderRadius.circular(4),
                       child: CachedNetworkImage(
                         imageUrl: widget.post.multimedia![0],
-                        // imageUrl: widget.post.multimedia!,
                         fit: BoxFit.contain,
                         width: double.infinity,
                         placeholder: (context, url) => Center(
                           child: Container(
                             padding: EdgeInsets.symmetric(vertical: 125),
                             height: 300,
-                            // width: double.infinity,
                             child: Container(
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                // color: Colors.red,
                               ),
                               padding: EdgeInsets.all(10),
                               height: 50,
@@ -223,8 +219,7 @@ class _PostWidgetState extends State<PostWidget> {
                             ),
                           ),
                         ),
-                        errorWidget: (context, url, error) => Icon(Icons
-                            .error), // Show error icon if image fails to load
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ))
                 : Container(),
@@ -279,10 +274,7 @@ class _PostWidgetState extends State<PostWidget> {
                           content: Text('Post Deleted'),
                         ),
                       );
-                      // setState(() {
-                      //   widget.posts.removeWhere(
-                      //       (element) => element.id == widget.post.id);
-                      // });
+
                       context.pop(context);
                     } else if (state is DeletePostFailureState) {
                       ScaffoldMessenger.of(context).showSnackBar(

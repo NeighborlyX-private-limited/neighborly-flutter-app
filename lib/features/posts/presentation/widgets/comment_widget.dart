@@ -15,27 +15,26 @@ import 'reply_widget.dart';
 
 class CommentWidget extends StatefulWidget {
   final CommentEntity comment;
-  final FocusNode commentFocusNode; // Step 1: Define a FocusNode
-  final Function(dynamic) onReplyTap; // Callback for reply tap
+  final FocusNode commentFocusNode;
+  final Function(dynamic) onReplyTap;
   final bool isPost;
   final Function onDelete;
 
-  const CommentWidget({
-    super.key,
-    required this.comment,
-    required this.commentFocusNode,
-    required this.onReplyTap,
-    required this.isPost,
-    required this.onDelete
-  });
+  const CommentWidget(
+      {super.key,
+      required this.comment,
+      required this.commentFocusNode,
+      required this.onReplyTap,
+      required this.isPost,
+      required this.onDelete});
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
 }
 
 class _CommentWidgetState extends State<CommentWidget> {
-  bool _showReplies = false; // To track if replies are shown
-  List<ReplyEntity> _replies = []; // To store fetched replies
+  bool _showReplies = false;
+  List<ReplyEntity> _replies = [];
   late FetchCommentReplyBloc _fetchCommentReplyBloc;
 
   @override
@@ -46,12 +45,13 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   void _fetchReplies() {
     setState(() {
-      _showReplies = !_showReplies; // Toggle the showReplies state
+      _showReplies = !_showReplies;
     });
     if (_showReplies) {
       _fetchCommentReplyBloc.add(
         FetchCommentReplyButtonPressedEvent(
-            commentId: widget.comment.commentid),
+          commentId: widget.comment.commentid,
+        ),
       );
     }
   }
@@ -150,10 +150,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          widget.onReplyTap(
-                              widget.comment); // Set the comment to reply
-                          widget.commentFocusNode
-                              .requestFocus(); // Request focus for the comment text field
+                          widget.onReplyTap(widget.comment);
+                          widget.commentFocusNode.requestFocus();
                         },
                         child: const Text(
                           'Reply',
@@ -170,9 +168,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     height: 10,
                   ),
                   ReactionCommentWidget(
-                    comment: widget.comment,
-                    isPost: widget.isPost
-                  ),
+                      comment: widget.comment, isPost: widget.isPost),
                   const SizedBox(
                     height: 10,
                   ),

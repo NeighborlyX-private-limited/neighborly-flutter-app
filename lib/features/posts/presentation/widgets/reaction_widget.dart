@@ -11,10 +11,7 @@ import '../../../../core/utils/shared_preference.dart';
 import '../bloc/feedback_bloc/feedback_bloc.dart';
 import '../bloc/give_award_bloc/give_award_bloc.dart';
 import 'overlapping_images_widget.dart';
-import 'dart:ui';
 
-import '../../../profile/presentation/bloc/get_my_awards_bloc/get_my_awards_bloc.dart';
-import '../../../profile/domain/usecases/get_my_awards_usecase.dart';
 import '../../../profile/data/data_sources/profile_remote_data_source/profile_remote_data_source_impl.dart';
 import 'package:http/http.dart' as http;
 
@@ -39,7 +36,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   bool isSunflowerAwardAvailable = false;
   bool isStreetlightAwardAvailable = false;
   bool isMapAwardAvailable = false;
-   late ProfileRemoteDataSourceImpl profileRemoteDataSource;
+  late ProfileRemoteDataSourceImpl profileRemoteDataSource;
   // State variables to track counts
   late num cheersCount;
   late num boolsCount;
@@ -51,63 +48,65 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     cheersCount = widget.post.cheers;
     boolsCount = widget.post.bools;
     awardsCount = widget.post.awardType.length;
- profileRemoteDataSource = ProfileRemoteDataSourceImpl(client: http.Client());
-   
+    profileRemoteDataSource =
+        ProfileRemoteDataSourceImpl(client: http.Client());
+
     // Load persisted state
     _loadReactionState();
   }
 
   Future<void> _loadReactionState() async {
     getmyawards();
-    final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('postReactions');
+    // final userID = ShardPrefHelper.getUserID();
+    // final box = Hive.box('postReactions');
     setState(() {
       isCheered = widget.post.userFeedback == 'cheer';
-          
+
       isBooled = widget.post.userFeedback == 'boo';
-          
     });
   }
 
-  getmyawards () async {
+  getmyawards() async {
     List responseMessage = await profileRemoteDataSource.getMyAwards();
-     if(responseMessage.length == 0){
-       isLocalLegendAwardAvailable = false;
-       isParkBenchAwardAvailable = false;
-       isSunflowerAwardAvailable = false;
-       isStreetlightAwardAvailable = false;
-       isMapAwardAvailable = false;
-    }else{
-      for(int i=0;i<responseMessage.length; i++){
-      if(responseMessage[i]['type'] == 'Local Legend' && responseMessage[i]['count'] > 0){
-        setState((){
-          isLocalLegendAwardAvailable = true;
-        });
+    if (responseMessage.isEmpty) {
+      isLocalLegendAwardAvailable = false;
+      isParkBenchAwardAvailable = false;
+      isSunflowerAwardAvailable = false;
+      isStreetlightAwardAvailable = false;
+      isMapAwardAvailable = false;
+    } else {
+      for (int i = 0; i < responseMessage.length; i++) {
+        if (responseMessage[i]['type'] == 'Local Legend' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isLocalLegendAwardAvailable = true;
+          });
+        }
+        if (responseMessage[i]['type'] == 'Park Bench' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isParkBenchAwardAvailable = true;
+          });
+        }
+        if (responseMessage[i]['type'] == 'Sunflower' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isSunflowerAwardAvailable = true;
+          });
+        }
+        if (responseMessage[i]['type'] == 'Streetlight' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isStreetlightAwardAvailable = true;
+          });
+        }
+        if (responseMessage[i]['type'] == 'Map' &&
+            responseMessage[i]['count'] > 0) {
+          setState(() {
+            isMapAwardAvailable = true;
+          });
+        }
       }
-      if(responseMessage[i]['type'] == 'Park Bench' && responseMessage[i]['count'] > 0){
-        setState((){
-          isParkBenchAwardAvailable = true;
-        });
-        
-      }
-      if(responseMessage[i]['type'] == 'Sunflower' && responseMessage[i]['count'] > 0){
-        setState((){
-          isSunflowerAwardAvailable = true;
-        });
-        
-      }
-      if(responseMessage[i]['type'] == 'Streetlight' && responseMessage[i]['count'] > 0){
-        setState((){
-          isStreetlightAwardAvailable = true;
-        });
-        
-      }
-      if(responseMessage[i]['type'] == 'Map' && responseMessage[i]['count'] > 0){
-        setState((){
-          isMapAwardAvailable = true;
-        });
-      }
-    }
     }
   }
 
@@ -231,7 +230,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       width: 3,
                     ),
                     Text(
-                      cheersCount.toString(), // Use state variable for count
+                      cheersCount.toString(),
                       style: TextStyle(
                         color: isCheered ? Colors.red : Colors.grey[900],
                         fontSize: 12,
@@ -288,7 +287,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       width: 3,
                     ),
                     Text(
-                      boolsCount.toString(), // Use state variable for count
+                      boolsCount.toString(),
                       style: TextStyle(
                         color: isBooled ? Colors.blue : Colors.grey[600],
                         fontSize: 12,
@@ -335,19 +334,18 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             ),
           ),
         ),
-      InkWell(
+        InkWell(
           onTap: () {
             // BlocProvider.of<GetMyAwardsBloc>(context).add(
             //     GetMyAwardsButtonPressedEvent(),
             // );
             showBottomSheet().then((value) {
-                    if (value != null) {
-                      setState(() {
-                        awardsCount = value; // Update state with new awardsCount
-                      });
-                    }
-                  });
-            
+              if (value != null) {
+                setState(() {
+                  awardsCount = value;
+                });
+              }
+            });
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -402,16 +400,15 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             ),
           ),
         ),
-        
+
         InkWell(
           onTap: () {
             print('widget.post.id');
             print(widget.post.type);
             // #share
-            String link = 'https://prod.neighborly.in/post-detail/${widget.post.id}/${widget.post.type=='post'?'true':'false'}/${widget.post.userId}/0';
-            ShareIt.text(
-                content: link,
-                androidSheetTitle: 'Cool Post');
+            String link =
+                'https://prod.neighborly.in/post-detail/${widget.post.id}/${widget.post.type == 'post' ? 'true' : 'false'}/${widget.post.userId}/0';
+            ShareIt.text(content: link, androidSheetTitle: 'Cool Post');
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -451,13 +448,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                   ),
                 );
               }
-              // else {
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //     SnackBar(
-              //       content: Text(state.error),
-              //     ),
-              //   );
-              // }
             } else if (state is GiveAwardSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -503,74 +493,81 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     height: 5,
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                  ),
-                  child:InkWell(
-                    onTap: !isLocalLegendAwardAvailable ? null : () {
-                      BlocProvider.of<GiveAwardBloc>(context).add(
-                        GiveAwardButtonPressedEvent(
-                          id: widget.post.id,
-                          awardType: 'Local Legend',
-                          type: 'post',
-                        ),
-                      );
-                    } ,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/Local_Legend.svg',
-                          width: 84,
-                          height: 84,
-                          color: isLocalLegendAwardAvailable ? null :  Colors.grey.withOpacity(0.5), // Apply grey tint when disabled
-                          colorBlendMode: BlendMode.modulate,
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          // Ensures the text wraps within the available space
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Local Legend',
-                                style: GoogleFonts.roboto(
-                                color: isLocalLegendAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              ),
-                              const SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                'Recognizing users who consistently contribute high-quality content.',
-                                style: GoogleFonts.roboto(
-                                color: isLocalLegendAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
-                              ),
-                            ],
+                    decoration: BoxDecoration(),
+                    child: InkWell(
+                      onTap: !isLocalLegendAwardAvailable
+                          ? null
+                          : () {
+                              BlocProvider.of<GiveAwardBloc>(context).add(
+                                GiveAwardButtonPressedEvent(
+                                  id: widget.post.id,
+                                  awardType: 'Local Legend',
+                                  type: 'post',
+                                ),
+                              );
+                            },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SvgPicture.asset(
+                            'assets/Local_Legend.svg',
+                            width: 84,
+                            height: 84,
+                            color: isLocalLegendAwardAvailable
+                                ? null
+                                : Colors.grey.withOpacity(0.5),
+                            colorBlendMode: BlendMode.modulate,
                           ),
-                        ),
-                      ],
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Local Legend',
+                                  style: GoogleFonts.roboto(
+                                    color: isLocalLegendAwardAvailable
+                                        ? Color(0xff3D3D3D)
+                                        : Colors.grey.withOpacity(0.5),
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                Text(
+                                  'Recognizing users who consistently contribute high-quality content.',
+                                  style: GoogleFonts.roboto(
+                                    color: isLocalLegendAwardAvailable
+                                        ? Color(0xff2E2E2E)
+                                        : Colors.grey.withOpacity(0.5),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  softWrap: true,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  ),
                   InkWell(
-                    onTap: !isSunflowerAwardAvailable? null :() {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(
-                        id: widget.post.id,
-                        awardType: 'Sunflower',
-                        type: 'post',
-                      ));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isSunflowerAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context)
+                                .add(GiveAwardButtonPressedEvent(
+                              id: widget.post.id,
+                              awardType: 'Sunflower',
+                              type: 'post',
+                            ));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -579,13 +576,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                           width: 84,
                           height: 84,
                           colorBlendMode: BlendMode.modulate,
-                          color: isSunflowerAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
+                          color: isSunflowerAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -593,10 +591,12 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                               Text(
                                 'Sunflower',
                                 style: GoogleFonts.roboto(
-                                color: isSunflowerAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  color: isSunflowerAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -604,11 +604,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                               Text(
                                 'For bringing positivity and cheerfulness to the community.',
                                 style: GoogleFonts.roboto(
-                                color: isSunflowerAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isSunflowerAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),
@@ -617,15 +619,16 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: !isStreetlightAwardAvailable ? null : () {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(
-                        id: widget.post.id,
-                        awardType: 'Streetlight',
-                        type: 'post',
-                      ));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isStreetlightAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context)
+                                .add(GiveAwardButtonPressedEvent(
+                              id: widget.post.id,
+                              awardType: 'Streetlight',
+                              type: 'post',
+                            ));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -634,13 +637,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                           width: 84,
                           height: 84,
                           colorBlendMode: BlendMode.modulate,
-                          color: isStreetlightAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
+                          color: isStreetlightAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -648,10 +652,12 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                               Text(
                                 'Streetlight',
                                 style: GoogleFonts.roboto(
-                                color: isStreetlightAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  color: isStreetlightAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -659,11 +665,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                               Text(
                                 'For providing clear guidance and valuable insights.',
                                 style: GoogleFonts.roboto(
-                                color: isStreetlightAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isStreetlightAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),
@@ -672,15 +680,16 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: !isParkBenchAwardAvailable ? null : () {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(
-                        id: widget.post.id,
-                        awardType: 'Park Bench',
-                        type: 'post',
-                      ));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isParkBenchAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context)
+                                .add(GiveAwardButtonPressedEvent(
+                              id: widget.post.id,
+                              awardType: 'Park Bench',
+                              type: 'post',
+                            ));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -689,13 +698,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                           width: 84,
                           height: 84,
                           colorBlendMode: BlendMode.modulate,
-                          color: isParkBenchAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
+                          color: isParkBenchAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -703,10 +713,12 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                               Text(
                                 'Park Bench',
                                 style: GoogleFonts.roboto(
-                                color: isParkBenchAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  color: isParkBenchAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -714,11 +726,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                               Text(
                                 'For offering comforting and supportive posts.',
                                 style: GoogleFonts.roboto(
-                                color: isParkBenchAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isParkBenchAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),
@@ -727,15 +741,16 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     ),
                   ),
                   InkWell(
-                    onTap: !isMapAwardAvailable ? null : () {
-                      BlocProvider.of<GiveAwardBloc>(context)
-                          .add(GiveAwardButtonPressedEvent(
-                        id: widget.post.id,
-                        awardType: 'Map',
-                        type: 'post',
-                      ));
-                      // Navigator.pop(context, awardsCount + 1);
-                    },
+                    onTap: !isMapAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context)
+                                .add(GiveAwardButtonPressedEvent(
+                              id: widget.post.id,
+                              awardType: 'Map',
+                              type: 'post',
+                            ));
+                          },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -744,13 +759,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                           width: 84,
                           height: 84,
                           colorBlendMode: BlendMode.modulate,
-                          color: isMapAwardAvailable ? null :  Colors.grey.withOpacity(0.5),
+                          color: isMapAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Expanded(
-                          // Ensures the text wraps within the available space
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -758,10 +774,12 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                               Text(
                                 'Map',
                                 style: GoogleFonts.roboto(
-                                color: isMapAwardAvailable ? Color(0xff3D3D3D) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
+                                  color: isMapAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               const SizedBox(
                                 height: 5,
@@ -769,11 +787,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                               Text(
                                 'For creating informative and detailed content.',
                                 style: GoogleFonts.roboto(
-                                color: isMapAwardAvailable ? Color(0xff2E2E2E) :  Colors.grey.withOpacity(0.5),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              ),
-                                softWrap: true, // Enables text wrapping
+                                  color: isMapAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
                               ),
                             ],
                           ),

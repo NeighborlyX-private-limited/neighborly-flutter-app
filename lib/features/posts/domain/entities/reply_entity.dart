@@ -12,18 +12,17 @@ class ReplyEntity extends Equatable {
   final String? proPic;
   final String? userFeedback;
 
-  const ReplyEntity({
-    required this.awardType,
-    required this.id,
-    required this.userId,
-    required this.userName,
-    required this.text,
-    required this.createdAt,
-    required this.cheers,
-    required this.bools,
-    this.proPic,
-    required this.userFeedback
-  });
+  const ReplyEntity(
+      {required this.awardType,
+      required this.id,
+      required this.userId,
+      required this.userName,
+      required this.text,
+      required this.createdAt,
+      required this.cheers,
+      required this.bools,
+      this.proPic,
+      required this.userFeedback});
 
   @override
   List<Object?> get props => [
@@ -35,7 +34,7 @@ class ReplyEntity extends Equatable {
         cheers,
         bools,
         proPic,
-        awardType, // Nullable in props list
+        awardType,
         userFeedback
       ];
 }
