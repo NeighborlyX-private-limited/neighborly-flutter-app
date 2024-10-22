@@ -315,7 +315,8 @@ const List<String> scopes = <String>[
 GoogleSignIn _googleSignIn = GoogleSignIn(
   // Optional clientId
   serverClientId:
-      '805628551035-k20h8ab6vdvr8qth03hn0r53hdgh4vo4.apps.googleusercontent.com',
+      '805628551035-m915bsicvr5c2id664e8etia8ekmvot9.apps.googleusercontent.com',
+  // '805628551035-k20h8ab6vdvr8qth03hn0r53hdgh4vo4.apps.googleusercontent.com',
   scopes: scopes,
 );
 
@@ -432,9 +433,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       bool isViewedTutorial =
                           ShardPrefHelper.getIsViewedTutorial();
                       if (!isSkippedTutorial && !isViewedTutorial) {
+                        print('OAuthSuccessState');
                         context.go('/tutorialScreen');
                       } else {
-                        context.push('/home/false');
+                        context.push('/home/true');
                       }
                       setState(() {});
                     });
@@ -445,6 +447,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     image: Image.asset('assets/google_icon.png'),
                     title: 'Continue with Google',
                     onTap: () {
+                      print('GoogleSignUpEvent press...');
                       BlocProvider.of<RegisterBloc>(context).add(
                         GoogleSignUpEvent(),
                       );
