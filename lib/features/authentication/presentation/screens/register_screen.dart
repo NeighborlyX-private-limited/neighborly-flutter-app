@@ -438,7 +438,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       } else {
                         context.push('/home/true');
                       }
-                      setState(() {});
+                      //setState(() {});
                     });
                   }
                 },

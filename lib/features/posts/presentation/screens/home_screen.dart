@@ -79,6 +79,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _fetchPosts() {
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
+    setState(() {});
     BlocProvider.of<GetAllPostsBloc>(context)
         .add(GetAllPostsButtonPressedEvent(isHome: isHome));
   }
@@ -250,13 +252,13 @@ class _HomeScreenState extends State<HomeScreen> {
             Flexible(
               child: Container(
                 height: 40,
-                width: 120,
+                width: 150,
                 decoration: BoxDecoration(
                   color: const Color(0xffC5C2FF),
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Home Button
                     InkWell(
@@ -266,28 +268,41 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       child: Container(
                         height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isHome
-                              ? const Color(0xff635BFF)
-                              : const Color(0xffC5C2FF),
-                        ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/home.svg',
-                            height: 25,
-                            width: 25,
-                          ),
+                        width: 65,
+                        // decoration: BoxDecoration(
+                        //   shape: BoxShape.circle,
+                        //   color: isHome
+                        //       ? const Color(0xff635BFF)
+                        //       : const Color(0xffC5C2FF),
+                        // ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: isHome
+                                  ? const Color(0xff635BFF)
+                                  : const Color.fromARGB(255, 65, 65, 70),
+                            ),
+                            Text(
+                              _selectedCity,
+                              style: TextStyle(
+                                fontWeight: isHome
+                                    ? FontWeight.w900
+                                    : FontWeight.normal,
+                                fontSize: 16,
+                                color: isHome
+                                    ? const Color(0xff635BFF)
+                                    : const Color.fromARGB(255, 65, 65, 70),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    SizedBox(),
-                    // Vertical Divider
-                    Container(
-                      height: 20,
-                      width: 1,
-                      color: const Color(0xff2E2E2E),
+                    SizedBox(
+                      width: 5,
                     ),
                     // Dropdown for city selection
                     BlocListener<CityBloc, CityState>(
@@ -320,6 +335,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           }
                         },
                       ),
+                    ),
+                    // Vertical Divider
+                    Container(
+                      height: 25,
+                      width: 1,
+                      color: const Color(0xff2E2E2E),
+                    ),
+                    SizedBox(
+                      width: 5,
                     ),
                     // Location Button
                     InkWell(
