@@ -189,7 +189,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/true');
+                          context.go('/home/false');
                         }
                       }
 

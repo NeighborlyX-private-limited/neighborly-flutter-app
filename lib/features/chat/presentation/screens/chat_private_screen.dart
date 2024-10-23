@@ -19,10 +19,10 @@ class ChatPrivateScreen extends StatefulWidget {
   final ChatRoomModel room;
 
   const ChatPrivateScreen({
-    Key? key,
+    super.key,
     required this.roomId,
     required this.room,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatPrivateScreen> createState() => _ChatPrivateScreenState();

@@ -55,10 +55,11 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
         title: SearchAheadElement(
           showTitle: true,
           isDarkmode: false,
+          showBackButton: true,
           lintText: 'Search',
           icon: Icons.search,
           onSearchTextChange: (currentStrSearchValue) {
-            print('... currentStrSearchValue=${currentStrSearchValue}');
+            print('... currentStrSearchValue=$currentStrSearchValue');
             print('... SHOW? ${(currentStrSearchValue == '')}');
             // if (currentStrSearchValue == '') {
             setState(() {
@@ -71,7 +72,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
             }
           },
           onFocusChange: (newFocusValie) {
-            print('... newFocusValie=${newFocusValie}');
+            print('... newFocusValie=$newFocusValie');
           },
           onSuggestionSelected: (selectedItem) {
             // widget.onSuggestionSelected(selectedItem);
@@ -93,7 +94,6 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
             print('... SEARCH = $searchTerm');
             communitySearchCubit.getSearchResultBySumit(searchTerm);
           },
-          showBackButton: true,
         ),
       ),
       body: BlocConsumer<CommunitySearchCubit, CommunitySearchState>(
@@ -129,10 +129,11 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
               //
               // RESULTS by submit/enter
               if (state.searchTerm != '' && state.status != Status.loading) {
-                if (state.communities.length == 0 && state.people.length == 0)
+                if (state.communities.isEmpty && state.people.isEmpty) {
                   return CommunitySearchEmptyWidget(
                     searchTem: state.searchTerm,
                   );
+                }
 
                 return ResultArea(
                   communities: state.communities,

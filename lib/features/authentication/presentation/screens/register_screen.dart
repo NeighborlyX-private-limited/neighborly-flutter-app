@@ -518,6 +518,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           phone: _controller.text.trim(),
                         ),
                       );
+                      // BlocProvider.of<RegisterBloc>(context).add(
+                      // RegisterButtonPressedEvent(
+                      //   phone: _controller.text.trim(),
+                      // ),
+                      // );
                     },
                   );
                 },

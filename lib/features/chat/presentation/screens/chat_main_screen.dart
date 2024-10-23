@@ -139,8 +139,6 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
           }
         },
         builder: (context, state) {
-          //h
-          //
           return BlocBuilder<ChatMainCubit, ChatMainState>(
             bloc: chatMainCubit,
             builder: (context, state) {
@@ -149,12 +147,12 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
               }
 
               if (state.status != Status.loading &&
-                  state.rooms.length == 0 &&
+                  state.rooms.isEmpty &&
                   state.isSearching == false) {
                 return ChatEmptyWidget();
               }
 
-              if (state.isSearching == true && state.rooms.length == 0) {
+              if (state.isSearching == true && state.rooms.isEmpty) {
                 return ChatSearchEmptyWidget(searchTem: searchEC.text);
               }
 
@@ -171,9 +169,9 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                         print('selectedRoom= ${state.rooms[index]}');
 
                         var goTo = selectedRoom.isGroup ? 'group' : 'private';
-                        print('... goTo=${goTo}');
+                        print('... goTo=$goTo');
 
-                        context.push('/chat/${goTo}/${state.rooms[index].id}',
+                        context.push('/chat/$goTo/${state.rooms[index].id}',
                             extra: state.rooms[index]);
                       },
                     );

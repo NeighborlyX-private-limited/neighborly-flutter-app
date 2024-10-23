@@ -161,7 +161,7 @@ Future<int> getNotificationUnreadCount() async {
     // return fakeJson;
   } else {
     final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
-    print("message API else $message");
+    print("message API else in count $message");
     throw ServerException(message: message);
   }
 }

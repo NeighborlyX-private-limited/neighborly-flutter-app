@@ -27,8 +27,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({required this.client});
 
   @override
-  Future<AuthResponseModel> loginWithEmail(
-      {required String email, required String password}) async {
+  Future<AuthResponseModel> loginWithEmail({
+    required String email,
+    required String password,
+  }) async {
     String url = '$kBaseUrl/authentication/login';
     final response = await client.post(
       Uri.parse(url),
@@ -41,6 +43,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }),
     );
     if (response.statusCode == 200) {
+      print('...Login response: ${response.body}');
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
@@ -52,7 +55,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           ['current_coordinates']['coordinates'];
       List<dynamic> homeLocation =
           jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
-      print('home cord inn login: ${homeLocation}');
+      print('home cord inn login: $homeLocation');
       String? email = jsonDecode(response.body)['user']['email'];
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
       bool isSkippedTutorial =
@@ -110,8 +113,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      print('otp has been send');
       return "OTP sent successfully";
     } else {
+      print('resendOtp ${response.body}');
       throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
@@ -124,6 +129,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     print('starting email signup');
     String url = '$kBaseUrl/authentication/register';
+    String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
+    print('fcm token in signup $fcmToken');
     print('starting email signup hitting api');
     final response = await client.post(
       Uri.parse(url),
@@ -134,15 +141,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           ? jsonEncode(<String, String>{
               'email': email!,
               'password': password!,
-              'fcmToken': 'Token',
+              'fcmToken': fcmToken,
             })
           : jsonEncode(<String, String>{
               'phoneNumber': phone,
-              'fcmToken': 'Token',
+              'fcmToken': fcmToken,
             }),
     );
     print('starting email signup response $response or ${response.statusCode}');
-    print('${response.body}');
+    print(response.body);
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];

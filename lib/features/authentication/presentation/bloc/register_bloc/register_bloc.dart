@@ -10,10 +10,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   final SignupUsecase _registerUser;
   final GoogleAuthenticationUsecase _googleLogin;
 
-  RegisterBloc(
-      {required SignupUsecase registerUseCase,
-      required GoogleAuthenticationUsecase googleLoginCase})
-      : _googleLogin = googleLoginCase,
+  RegisterBloc({
+    required SignupUsecase registerUseCase,
+    required GoogleAuthenticationUsecase googleLoginCase,
+  })  : _googleLogin = googleLoginCase,
         _registerUser = registerUseCase,
         super(RegisterInitialState()) {
     on<RegisterButtonPressedEvent>(

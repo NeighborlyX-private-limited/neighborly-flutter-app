@@ -172,6 +172,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                       context.go('/tutorialScreen');
                     } else {
+                      print('...isEmailVerified: $isEmailVerified');
                       isEmailVerified
                           ? context.go('/home/false')
                           : context.push(
