@@ -4,11 +4,12 @@ class RegisterOption extends StatelessWidget {
   final Image image;
   final String title;
   final Function onTap;
-  const RegisterOption(
-      {super.key,
-      required this.image,
-      required this.title,
-      required this.onTap});
+  const RegisterOption({
+    super.key,
+    required this.image,
+    required this.title,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +32,10 @@ class RegisterOption extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500),
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ],
           )),

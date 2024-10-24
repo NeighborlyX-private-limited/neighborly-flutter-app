@@ -74,10 +74,15 @@ android {
 
     buildTypes {
         release {
-            shrinkResources false
+             shrinkResources false
              minifyEnabled false
             // signingConfig signingConfigs.debug
             signingConfig signingConfigs.release
+        //     shrinkResources true
+        //      minifyEnabled true
+        //     ndk {
+        //     debugSymbolLevel 'FULL'  // Generates full debug symbols
+        // }
         }
     }
 }

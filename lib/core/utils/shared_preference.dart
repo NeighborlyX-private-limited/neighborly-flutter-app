@@ -9,15 +9,18 @@ class ShardPrefHelper {
   static const String _doubleListKey = 'doubleList';
   static const String _homeListKey = 'homeList';
 
+  ///...init
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
 
+  ///...setAccessToken
   static Future setAccessToken(String accessToken) async =>
       await _preferences.setString(_accessToken, accessToken);
   static String? getAccessToken() => _preferences.getString(_accessToken) ?? '';
   static Future removeAccessToken() async =>
       await _preferences.remove(_accessToken);
 
+  ///...setRefreshToken
   static Future setRefreshToken(String refreshToken) async =>
       await _preferences.setString(_refreshToken, refreshToken);
   static String? getRefreshToken() =>
@@ -25,44 +28,43 @@ class ShardPrefHelper {
   static Future removeRefreshToken() async =>
       await _preferences.remove(_refreshToken);
 
-  // save cookies
+  ///... save cookies
   static Future setCookie(List<String> cookie) async =>
       await _preferences.setStringList(_cookie, cookie);
   static List<String>? getCookie() => _preferences.getStringList(_cookie) ?? [];
   static Future removeCookie() async => await _preferences.remove(_cookie);
 
-  // save image url
+  ///.... save image url
   static Future setImageUrl(String imageUrl) async =>
       await _preferences.setString('imageUrl', imageUrl);
   static String? getImageUrl() => _preferences.getString('imageUrl');
-
-  // remove image url
   static Future removeImageUrl() async => await _preferences.remove('imageUrl');
 
-  // save userID
+  ///... save userID
   static Future setUserID(String userId) async =>
       await _preferences.setString(_userID, userId);
   static String? getUserID() => _preferences.getString(_userID);
   static Future removeUserID() async => await _preferences.remove(_userID);
 
-  // save gender
+  ///.... save gender
   static Future setGender(String gender) async =>
       await _preferences.setString('gender', gender);
   static String? getGender() => _preferences.getString('gender');
   static Future removeGender() async => await _preferences.remove('gender');
 
-  // save city
+  ///.... save city
   static Future setHomeCity(String city) async =>
       await _preferences.setString('Homecity', city);
   static String? getHomeCity() => _preferences.getString('Homecity');
   static Future removeHomeCity() async => await _preferences.remove('Homecity');
 
+////....setCurrentCity
   static Future setCurrentCity(String city) async =>
       await _preferences.setString('city', city);
   static String? getCurrentCity() => _preferences.getString('city');
   static Future removeCurrentCity() async => await _preferences.remove('city');
 
-  // save userProfilePicture
+  ///... save userProfilePicture
   static Future setUserProfilePicture(String userProfilePicture) async =>
       await _preferences.setString('userProfilePicture', userProfilePicture);
   static String? getUserProfilePicture() =>
@@ -70,31 +72,31 @@ class ShardPrefHelper {
   static Future removeUserProfilePicture() async =>
       await _preferences.remove('userProfilePicture');
 
-  // save username
+  ///.... save username
   static Future setUsername(String username) async =>
       await _preferences.setString('username', username);
   static String? getUsername() => _preferences.getString('username');
   static Future removeUsername() async => await _preferences.remove('username');
 
-  // save phoneNumber
+  ///.... save phoneNumber
   static Future setPhoneNumber(String phoneNumber) async =>
       await _preferences.setString('phoneNumber', phoneNumber);
   static String? getPhoneNumber() => _preferences.getString('phoneNumber');
   static Future removePhoneNumber() async =>
       await _preferences.remove('phoneNumber');
 
-  // FCM token
+  ///... FCM token
   static Future setFCMtoken(String newToken) async =>
       await _preferences.setString('FCMtoken', newToken);
   static String? getFCMtoken() => _preferences.getString('FCMtoken');
 
-  // save email
+  ///... save email
   static Future setEmail(String email) async =>
       await _preferences.setString('email', email);
   static String? getEmail() => _preferences.getString('email');
   static Future removeEmail() async => await _preferences.remove('email');
 
-  // Save location
+  ///... Save location
   static Future setLocation(List<double> doubleList) async {
     List<String> stringList = doubleList.map((e) => e.toString()).toList();
     return await _preferences.setStringList(_doubleListKey, stringList);
@@ -108,7 +110,7 @@ class ShardPrefHelper {
   static Future removeLocation() async =>
       await _preferences.remove(_doubleListKey);
 
-  // Save home location
+  ///.... Save home location
   static Future setHomeLocation(List<double> doubleList) async {
     List<String> stringList = doubleList.map((e) => e.toString()).toList();
     return await _preferences.setStringList(_homeListKey, stringList);
@@ -122,24 +124,28 @@ class ShardPrefHelper {
   static Future removeHomeLocation() async =>
       await _preferences.remove(_homeListKey);
 
-  //set and get isVerified
-// set is currect location is on
+  ///... set is currect location is on
   static Future setIsLocationOn(bool isLocationOn) async =>
       await _preferences.setBool('isLocationOn', isLocationOn);
   static bool getIsLocationOn() =>
       _preferences.getBool('isLocationOn') ?? false;
-
+////....setIsVerified
   static Future setIsVerified(bool isVerified) async =>
       await _preferences.setBool('isVerified', isVerified);
   static bool getIsVerified() => _preferences.getBool('isVerified') ?? false;
+////...setIsPhoneVerified
+  static Future setIsPhoneVerified(bool isVerified) async =>
+      await _preferences.setBool('isPhoneVerified', isVerified);
+  static bool getIsPhoneVerified() =>
+      _preferences.getBool('isPhoneVerified') ?? false;
 
-  //set and get isSkippedTutorial
+  ///...set and get isSkippedTutorial
   static Future setIsSkippedTutorial(bool isSkippedTutorial) async =>
       await _preferences.setBool('isSkippedTutorial', isSkippedTutorial);
   static bool getIsSkippedTutorial() =>
       _preferences.getBool('isSkippedTutorial') ?? false;
 
-  //set and get isViewedTutorial
+  ///....set and get isViewedTutorial
   static Future setIsViewedTutorial(bool isViewedTutorial) async =>
       await _preferences.setBool('isViewedTutorial', isViewedTutorial);
   static bool getIsViewedTutorial() =>
@@ -196,7 +202,7 @@ class ShardPrefHelper {
   //     }
   //   }
   // }
-
+////.... clear
   static Future<bool> clear() async {
     await _preferences.clear();
     print('SharedPref cleared');

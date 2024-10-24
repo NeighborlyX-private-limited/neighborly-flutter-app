@@ -14,20 +14,23 @@ class TutorialCubit extends Cubit<TutorialState> {
 
   // Function to call the API and update tutorial status
   Future<void> updateTutorialStatus(bool viewed, bool skipped) async {
-    print("api hit start");
+    print("updateTutorialStatus api start with...");
+    print('viewed: $viewed');
+    print('skipped: $skipped');
     emit(TutorialUpdateLoading());
-    print("api hit loading start");
+
     try {
       List<String>? cookies = ShardPrefHelper.getCookie();
       if (cookies == null || cookies.isEmpty) {
+        print("No cookies found...");
         throw const ServerException(message: 'No cookies found');
       }
-      print('cookies list $cookies');
+      print('cookies list: $cookies');
       String cookieHeader = cookies.join('; ');
+
       //  API URL
       const url = '$kBaseUrl/user/update-tutorial-info';
-      print(url);
-      print("api hit loading start");
+      print('url: $url');
 
       //  request body
       final data = {
@@ -37,20 +40,18 @@ class TutorialCubit extends Cubit<TutorialState> {
         }
       };
 
-      print("api calling start");
       // API call
       final response = await httpClient.put(
         Uri.parse(url),
         headers: <String, String>{
           'Cookie': cookieHeader,
           'Content-Type': 'application/json',
-          //'Cookie': 'connect.sid=s%3ATNsUxcpmB530JPuGonUAMDf7UM75k6Q4.mxgR3Q0l1w8bXnJiiZlxe76Dlme%2FOEHdlLkM4ZHRoFA; refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2N2QwZDZkNjIxMDQxZGEyYzdiNzllOCIsImlhdCI6MTcyNjE1MTY5OCwiZXhwIjoxNzM5MTExNjk4fQ.nVVIIKSfktYn64zktVqexxi86sfXqkuKRjp9g13fuM0',
         },
         body: jsonEncode(data),
       );
-      print("api finish ${response.body}");
+      print("update Tutorial Status code: ${response.statusCode}");
+      print("update Tutorial Status response: ${response.body}");
 
-      //  successful
       if (response.statusCode == 200) {
         bool isSkippedTutorial =
             jsonDecode(response.body)['user']['skippedTutorial'];
@@ -59,13 +60,15 @@ class TutorialCubit extends Cubit<TutorialState> {
 
         ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
         ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
-        print(response.body);
+
         emit(TutorialUpdateSuccess());
       } else {
+        print("update Tutorial Status else error: ${response.body}");
         emit(TutorialUpdateFailure(
-            'Failed to update tutorial status. Error: ${response.statusCode}'));
+            'Failed to update tutorial status: ${response.statusCode}'));
       }
     } catch (e) {
+      print("update Tutorial Status catch error: ${e.toString()}");
       emit(TutorialUpdateFailure(e.toString()));
     }
   }

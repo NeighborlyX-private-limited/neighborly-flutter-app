@@ -18,5 +18,10 @@ class OtpSubmitted extends OtpEvent {
   });
 
   @override
-  List<Object?> get props => [otp, email, verificationFor, phone];
+  List<Object?> get props => [
+        otp,
+        email,
+        verificationFor,
+        phone,
+      ];
 }

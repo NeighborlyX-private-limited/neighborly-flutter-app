@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,23 +19,37 @@ class LoginWithEmailBloc
       : _googleLogin = googleLoginCase,
         _loginUser = loginUseCase,
         super(LoginInitialState()) {
+    ///LoginButtonPressedEvent
     on<LoginButtonPressedEvent>((LoginButtonPressedEvent event,
         Emitter<LoginWithEmailState> emit) async {
       emit(LoginLoadingState());
 
       final result = await _loginUser.call(event.email, event.password);
+      print('...Result in LoginWithEmailBloc $result');
 
-      result.fold((error) => emit(LoginFailureState(error: error.toString())),
-          (response) => emit(LoginSuccessState(authResponseEntity: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(LoginFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(LoginSuccessState(authResponseEntity: response));
+      });
     });
 
+    ///GoogleLoginEvent
     on<GoogleLoginEvent>(
         (GoogleLoginEvent event, Emitter<LoginWithEmailState> emit) async {
       emit(LoginLoadingState());
 
       final result = await _googleLogin.call();
-      result.fold((error) => emit(LoginFailureState(error: error.toString())),
-          (response) => emit(OAuthSuccessState(message: 'true')));
+      print('...Result in GoogleLoginEvent $result');
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(LoginFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(OAuthSuccessState(message: 'true'));
+      });
     });
   }
 }

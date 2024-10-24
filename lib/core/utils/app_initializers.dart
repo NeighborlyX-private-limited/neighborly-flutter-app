@@ -25,7 +25,6 @@ class AppInitializers {
       androidChannelId: appName,
       androidChannelName: '$appName Channel',
       androidChannelDescription: appName,
-      // appAndroidIcon: '@mipmap/ic_notification',
       appAndroidIcon: '@mipmap/ic_launcher',
       displayInForeground: Platform.isAndroid,
     );

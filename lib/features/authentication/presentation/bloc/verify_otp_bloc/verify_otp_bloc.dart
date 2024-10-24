@@ -15,18 +15,21 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
     on<OtpSubmitted>((OtpSubmitted event, Emitter<OtpState> emit) async {
       emit(OtpLoadInProgress());
 
-      print('event.email=${event.email}');
-      print('event.opt=${event.otp}');
-      print('event.verificationFor=${event.verificationFor}');
       final result = await _verifyOTPUsecase.call(
         email: event.email,
         otp: event.otp,
         verificationFor: event.verificationFor,
         phone: event.phone,
       );
+      print('...Result in OtpBloc $result');
 
-      result.fold((error) => emit(OtpLoadFailure(error: error.toString())),
-          (response) => emit(OtpLoadSuccess(message: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(OtpLoadFailure(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(OtpLoadSuccess(message: response));
+      });
     });
   }
 }

@@ -252,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Flexible(
               child: Container(
                 height: 40,
-                width: 150,
+                width: 160,
                 decoration: BoxDecoration(
                   color: const Color(0xffC5C2FF),
                   borderRadius: BorderRadius.circular(100),
@@ -260,6 +260,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 16,
+                      color: isHome
+                          ? const Color(0xff635BFF)
+                          : const Color.fromARGB(255, 65, 65, 70),
+                    ),
                     // Home Button
                     InkWell(
                       onTap: () {
@@ -268,36 +275,25 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       child: Container(
                         height: 35,
-                        width: 65,
+                        width: 60,
                         // decoration: BoxDecoration(
                         //   shape: BoxShape.circle,
                         //   color: isHome
                         //       ? const Color(0xff635BFF)
                         //       : const Color(0xffC5C2FF),
                         // ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              size: 16,
+                        child: Center(
+                          child: Text(
+                            _selectedCity,
+                            style: TextStyle(
+                              fontWeight:
+                                  isHome ? FontWeight.w900 : FontWeight.normal,
+                              fontSize: 16,
                               color: isHome
                                   ? const Color(0xff635BFF)
                                   : const Color.fromARGB(255, 65, 65, 70),
                             ),
-                            Text(
-                              _selectedCity,
-                              style: TextStyle(
-                                fontWeight: isHome
-                                    ? FontWeight.w900
-                                    : FontWeight.normal,
-                                fontSize: 16,
-                                color: isHome
-                                    ? const Color(0xff635BFF)
-                                    : const Color.fromARGB(255, 65, 65, 70),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),

@@ -8,7 +8,7 @@ abstract class GoogleAuthenticationEvent extends Equatable {
 }
 
 class GoogleAuthenticationButtonPressedEvent extends GoogleAuthenticationEvent {
-  GoogleAuthenticationButtonPressedEvent();
+  const GoogleAuthenticationButtonPressedEvent();
 
   @override
   List<Object?> get props => [];

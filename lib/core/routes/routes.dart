@@ -57,7 +57,16 @@ final GlobalKey<NavigatorState> _rootNavigatorKey =
 List<String>? cookies = ShardPrefHelper.getCookie();
 
 String setInitialLocation() {
-  return (cookies == null || cookies!.isEmpty) ? '/' : '/home/false';
+  var IsPhoneVarify = ShardPrefHelper.getIsPhoneVerified();
+  var IsVarify = ShardPrefHelper.getIsVerified();
+  if (cookies == null || cookies!.isEmpty) {
+    return '/';
+  } else {
+    if (IsPhoneVarify || IsVarify) {
+      return '/home/false';
+    }
+    return '/';
+  }
 }
 
 final GoRouter router = GoRouter(

@@ -12,7 +12,6 @@ class DateUtilsHelper {
     DateTime dateTimeStart = DateTime.parse(dateStart);
     DateTime dateTimeEnd = DateTime.parse(dateEnd);
 
-    // Formata a data no formato desejado (dd/MM)
     String formattedDateStart = DateFormat('dd/MM').format(dateTimeStart);
     String formattedDateEnd = DateFormat('dd/MM').format(dateTimeEnd);
 
@@ -23,7 +22,6 @@ class DateUtilsHelper {
     try {
       DateTime dateTimeStart = DateTime.parse(date);
 
-      // Formata a data no formato desejado (dd/MM)
       String formattedDate = DateFormat('MMMM d, yyyy').format(dateTimeStart);
 
       return formattedDate;
@@ -61,7 +59,7 @@ class DateUtilsHelper {
 
     try {
       DateTime dateTime = DateTime.parse(dateString);
-      DateFormat formatter = DateFormat('dd/MM/yy'); // Format for "Jun/24"
+      DateFormat formatter = DateFormat('dd/MM/yy');
       String formattedDate =
           formatter.format(dateTime).replaceAll('/', separator);
 
@@ -76,7 +74,7 @@ class DateUtilsHelper {
 
     try {
       DateTime dateTime = DateTime.parse(dateString);
-      DateFormat formatter = DateFormat('MMM-yy'); // Format for "Jun/24"
+      DateFormat formatter = DateFormat('MMM-yy');
       String formattedDate = formatter.format(dateTime);
 
       return formattedDate.replaceAll('-', '');
@@ -84,16 +82,6 @@ class DateUtilsHelper {
       return null;
     }
   }
-
-  // static String getVerboseDesc(DateTime date, DateFormat fallbackFormat) {
-  //   if (isToday(date)) {
-  //     return CoreStrings.dates.today;
-  //   } else if (isYesterday(date)) {
-  //     return CoreStrings.dates.yesterday;
-  //   } else {
-  //     return fallbackFormat.format(date);
-  //   }
-  // }
 
   static bool isToday(DateTime date) {
     final now = DateTime.now();
@@ -153,7 +141,7 @@ class DateUtilsHelper {
   static int extractYearFromIsodateString(String dateString) {
     final DateFormat dateFormat = DateFormat('yyyy');
     final DateTime parsedDate = dateFormat.parse(dateString);
-    print('extractYearFromIsodateString=${parsedDate.year}');
+    print('extract Year From Iso date String = ${parsedDate.year}');
     return parsedDate.year;
   }
 }

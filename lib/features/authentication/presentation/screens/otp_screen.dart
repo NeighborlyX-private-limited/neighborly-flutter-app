@@ -12,8 +12,11 @@ import '../widgets/button_widget.dart';
 class OtpScreen extends StatefulWidget {
   final String data;
   final String verificationFor;
-  const OtpScreen(
-      {super.key, required this.data, required this.verificationFor});
+  const OtpScreen({
+    super.key,
+    required this.data,
+    required this.verificationFor,
+  });
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -32,14 +35,14 @@ class _OtpScreenState extends State<OtpScreen> {
     _otpController = TextEditingController();
     if (widget.verificationFor == 'phone-login' ||
         widget.verificationFor == 'phone-register') {
+      print('phone-resend otp called: ${widget.data}');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           phone: widget.data,
         ),
       );
-      print('phone-verify called: ${widget.data}');
     } else {
-      print('widget.data=$widget.data');
+      print('email-resend verify called = $widget.data');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           email: widget.data,
@@ -154,7 +157,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       setState(() {
                         isExpiredOtp = true;
                       });
-                    } else if (state.error.contains('Invalid OTP')) {
+                    } else if (state.error.contains('Invalid')) {
                       setState(() {
                         isInvalidOtp = true;
                       });
@@ -302,6 +305,7 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               isUserNotFound
                   ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
                           'User not found, please ',

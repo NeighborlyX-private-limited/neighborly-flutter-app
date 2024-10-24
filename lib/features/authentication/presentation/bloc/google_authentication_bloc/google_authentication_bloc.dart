@@ -28,15 +28,22 @@ class GoogleAuthenticationBloc
     // You need to pass the context from where this event is triggered
     try {
       final response = await _googleAuthenticationUsecase.call();
+      print('...Result in GoogleAuthenticationBloc $response');
 
-      response.fold(
-          (failure) => emit(GoogleAuthenticationFailureState(
-              error: _mapFailureToMessage(failure))),
-          (googleAuthEntity) => emit(GoogleAuthenticationSuccessState(
-              googleAuthEntity: googleAuthEntity)));
+      response.fold((failure) {
+        print('fold failure: ${failure.toString()}');
+        emit(GoogleAuthenticationFailureState(
+            error: _mapFailureToMessage(failure)));
+      }, (googleAuthEntity) {
+        print('fold googleAuthEntity: ${googleAuthEntity.toString()}');
+        emit(GoogleAuthenticationSuccessState(
+            googleAuthEntity: googleAuthEntity));
+      });
     } catch (e) {
+      print(
+          'Unexpected error occurred in GoogleAuthenticationFailureState: ${e.toString()}');
       emit(GoogleAuthenticationFailureState(
-          error: 'Unexpected error occurred: ${e.toString()}'));
+          error: 'Unexpected error occurred : ${e.toString()}'));
     }
   }
 

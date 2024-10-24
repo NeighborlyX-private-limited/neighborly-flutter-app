@@ -37,7 +37,7 @@ class OnBoardingScreen extends StatelessWidget {
             ),
             Expanded(child: Container()),
             ButtonContainerWidget(
-              text: 'Join Neighborly',
+              text: 'Sign up',
               color: AppColors.primaryColor,
               onTapListener: () {
                 context.push("/registerScreen");

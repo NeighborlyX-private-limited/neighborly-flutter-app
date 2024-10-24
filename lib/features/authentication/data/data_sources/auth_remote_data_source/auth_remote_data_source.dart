@@ -25,5 +25,7 @@ abstract class AuthRemoteDataSource {
     String? email,
     String? phone,
   });
-  Future<String> forgotPassword({required String email});
+  Future<String> forgotPassword({
+    required String email,
+  });
 }
