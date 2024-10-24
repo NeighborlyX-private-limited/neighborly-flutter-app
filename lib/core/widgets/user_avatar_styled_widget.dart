@@ -40,7 +40,7 @@ class UserAvatarStyledWidget extends StatelessWidget {
       child: CircleAvatar(
         radius: proportionalSize,
         backgroundColor: isDarkmode! ? Colors.black : Colors.white,
-        child: avatarUrl != null && avatarUrl.contains('.')
+        child: avatarUrl.contains('.')
             ? CircleAvatar(
                 radius: proportionalSize - avatarBorderSize!,
                 onBackgroundImageError: (_, __) => SvgPicture.asset(

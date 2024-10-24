@@ -62,7 +62,7 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
 
   @override
   Widget build(BuildContext context) {
-    print('... BUILD selectedValue=${selectedValue}');
+    print('... BUILD selectedValue=$selectedValue');
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,

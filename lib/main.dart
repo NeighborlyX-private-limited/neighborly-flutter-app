@@ -67,13 +67,12 @@ class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
   @override
-  _MyAppState createState() => _MyAppState();
+  MyAppState createState() => MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> {
   // String? _linkMessage;
   // StreamSubscription? _sub;
-
   // static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
   // String? _deepLink;
 
