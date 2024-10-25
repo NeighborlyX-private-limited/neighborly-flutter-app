@@ -571,7 +571,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             controller: _titleController,
                             focusNode: _titleFocusNode,
                             decoration: const InputDecoration(
-                              hintText: 'Title',
+                              hintText: 'Title (Required)',
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.multiline,
