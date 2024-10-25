@@ -20,10 +20,15 @@ class GetAllPostsBloc extends Bloc<GetAllPostsEvent, GetAllPostsState> {
       final result = await _getAllPostsUsecase.call(
         isHome: event.isHome,
       );
+      print('...Result in GetAllPostsBloc $result');
 
-      result.fold(
-          (error) => emit(GetAllPostsFailureState(error: error.toString())),
-          (response) => emit(GetAllPostsSuccessState(post: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(GetAllPostsFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(GetAllPostsSuccessState(post: response));
+      });
     });
     // on<DeleteOnePostsButtonPressedEvent>((DeleteOnePostsButtonPressedEvent event,
     //     Emitter<GetAllPostsState> emit) async {
@@ -36,11 +41,11 @@ class GetAllPostsBloc extends Bloc<GetAllPostsEvent, GetAllPostsState> {
     // });
   }
 
-  void deletepost(num postid){
+  void deletepost(num postid) {
     if (state is GetAllPostsSuccessState) {
       final successState = state as GetAllPostsSuccessState;
-        List<PostEntity> oldPost = List<PostEntity>.from(successState.post);
-       oldPost.removeWhere((item) => item.id == postid);
+      List<PostEntity> oldPost = List<PostEntity>.from(successState.post);
+      oldPost.removeWhere((item) => item.id == postid);
       emit(GetAllPostsSuccessState(post: oldPost));
     }
   }

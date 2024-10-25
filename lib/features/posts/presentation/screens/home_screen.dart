@@ -118,6 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
 // set current location city name
   setCityCurrentName() async {
     List<double> location = ShardPrefHelper.getLocation();
+    print('current cord in city set: $location');
     List<Placemark> placemarks = await placemarkFromCoordinates(
       location[0],
       location[1],
@@ -197,21 +198,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print(
           'Lat Long in Home Screen: ${position.latitude}, ${position.longitude}');
-      setState(() {});
-      //bool? isVerified = await ShardPrefHelper.getIsVerified();
-      ///remove this code because we will only update the location only from settings
-      // Map<String, List<num>> locationDetail = {
-      //   isVerified ? 'homeLocation' : 'userLocation': [
-      //     position.latitude,
-      //     position.longitude
-      //   ]
-      // };
-
-      // BlocProvider.of<UpdateLocationBloc>(context).add(
-      //   UpdateLocationButtonPressedEvent(
-      //     location: locationDetail,
-      //   ),
-      // );
     } catch (e) {
       debugPrint('Error getting location: $e');
     }
@@ -225,12 +211,12 @@ class _HomeScreenState extends State<HomeScreen> {
         if (mounted) {
           setState(() {
             unreadNotificationCount = value;
-            print('UnreadNotificationCount Count: $unreadNotificationCount');
+            print('Unread Notification Count: $unreadNotificationCount');
           });
         }
       }
     }).catchError((error) {
-      print("Error in getUnreadNotificationCount: $error");
+      print("Error in getUnread Notification Count: $error");
     });
   }
 
@@ -273,15 +259,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ShardPrefHelper.setIsLocationOn(false);
                         handleToggle(true);
                       },
-                      child: Container(
+                      child: SizedBox(
                         height: 35,
                         width: 60,
-                        // decoration: BoxDecoration(
-                        //   shape: BoxShape.circle,
-                        //   color: isHome
-                        //       ? const Color(0xff635BFF)
-                        //       : const Color(0xffC5C2FF),
-                        // ),
                         child: Center(
                           child: Text(
                             _selectedCity,
@@ -371,143 +351,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        // title: Row(
-        //   children: [
-        //     SvgPicture.asset(
-        //       'assets/logo.svg',
-        //       width: 30,
-        //       height: 34,
-        //     ),
-        //     const SizedBox(width: 10),
-        //     Container(
-        //       height: 40,
-        //       width: 120,
-        //       decoration: BoxDecoration(
-        //         color: Color(0xffC5C2FF),
-        //         borderRadius: BorderRadius.circular(100),
-        //       ),
-        //       child: Row(
-        //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        //         children: [
-        //           InkWell(
-        //             onTap: () {
-        //               ShardPrefHelper.setIsLocationOn(false);
-        //               handleToggle(true);
-        //             },
-        //             child: Container(
-        //               height: 35,
-        //               width: 35,
-        //               decoration: BoxDecoration(
-        //                 shape: BoxShape.circle,
-        //                 color: isHome ? Color(0xff635BFF) : Color(0xffC5C2FF),
-        //               ),
-        //               child: Center(
-        //                 child: SvgPicture.asset(
-        //                   'assets/home.svg',
-        //                   height: 25,
-        //                   width: 25,
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //           // SizedBox(
-        //           //   width: 10,
-        //           // ),
-        //           Container(
-        //             height: 20,
-        //             width: 2,
-        //             color: Color(0xff2E2E2E),
-        //           ),
-        //           Expanded(
-        //             child: SizedBox(
-        //               width: 30,
-        //               height: 25,
-        //               child: BlocProvider(
-        //                 create: (context) => CityBloc(sl<
-        //                     CityRepository>()), // Create and provide the CityBloc.
-        //                 child: BlocListener<CityBloc, CityState>(
-        //                   listener: (context, state) {
-        //                     if (state is CityUpdatedState) {
-        //                       print("yes");
-        //                       ScaffoldMessenger.of(context).showSnackBar(
-        //                         SnackBar(
-        //                             content: Text(
-        //                                 'City updated to ${state.city} successfully!')),
-        //                       );
-        //                     } else if (state is CityErrorState) {
-        //                       ScaffoldMessenger.of(context).showSnackBar(
-        //                         SnackBar(
-        //                             content: Text(
-        //                                 'Failed to update city: ${state.errorMessage}')),
-        //                       );
-        //                     }
-        //                   },
-        //                   child: SizedBox(
-        //                     width: 20,
-        //                     child: CityDropdownHome(
-        //                       selectCity: _selectedCity,
-        //                       onChanged: (String? newValue) {
-        //                         setState(() {
-        //                           _selectedCity = newValue!;
-        //                         });
-
-        //                         // Trigger the BLoC event only for the CityDropdown button.
-        //                         if (newValue != null) {
-        //                           // Add the UpdateCityEvent to the CityBloc when a new city is selected.
-        //                           context
-        //                               .read<CityBloc>()
-        //                               .add(UpdateCityEvent(newValue));
-        //                         }
-        //                       },
-        //                     ),
-        //                   ),
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //           // Container(
-        //           //     height: 35,
-        //           //     // width: 50,
-        //           //     decoration: BoxDecoration(
-        //           //         color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
-        //           //         borderRadius: BorderRadius.circular(10)),
-        //           //     child: Icon(Icons.arrow_drop_down_circle)),
-
-        //           InkWell(
-        //             onTap: () {
-        //               ShardPrefHelper.setIsLocationOn(true);
-        //               handleToggle(false);
-        //             },
-        //             child: Container(
-        //               height: 35,
-        //               width: 35,
-        //               decoration: BoxDecoration(
-        //                 shape: BoxShape.circle,
-        //                 color: isHome ? Color(0xffC5C2FF) : Color(0xff635BFF),
-        //                 // color: isHome ? Color(0xff635BFF) : Color(0xffC5C2FF),
-        //                 // borderRadius: BorderRadius.circular(10)
-        //               ),
-        //               child: Center(
-        //                 child: SvgPicture.asset(
-        //                   'assets/location.svg',
-        //                   height: 25,
-        //                   width: 25,
-        //                   // color: Color(0xff635BFF),
-        //                 ),
-        //               ),
-        //             ),
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-
-        //     // CustomToggleSwitch(
-        //     //   imagePath1: 'assets/home.svg',
-        //     //   imagePath2: 'assets/location.svg',
-        //     //   onToggle: handleToggle,
-        //     // ),
-        //   ],
-        // ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
@@ -515,22 +358,40 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 context.push('/notifications');
               },
-              child: badges.Badge(
-                badgeContent: unreadNotificationCount > 0
-                    ? Text(
-                        "$unreadNotificationCount",
-                        style: TextStyle(color: Colors.white),
-                      )
-                    : null,
-                badgeStyle: BadgeStyle(badgeColor: AppColors.primaryColor),
-                position: badges.BadgePosition.custom(end: 0, top: -8),
-                child: SvgPicture.asset(
-                  'assets/alarm.svg',
-                  fit: BoxFit.contain,
-                  width: 30,
-                  height: 30,
-                ),
-              ),
+              child: unreadNotificationCount > 0
+                  ? badges.Badge(
+                      badgeContent: unreadNotificationCount > 0
+                          ? Text(
+                              "$unreadNotificationCount",
+                              style: TextStyle(color: Colors.white),
+                            )
+                          : null,
+                      badgeStyle:
+                          BadgeStyle(badgeColor: AppColors.primaryColor),
+                      position: badges.BadgePosition.custom(end: 0, top: -8),
+                      child: SvgPicture.asset(
+                        'assets/alarm.svg',
+                        fit: BoxFit.contain,
+                        width: 30,
+                        height: 30,
+                      ),
+                    )
+                  : badges.Badge(
+                      showBadge: false,
+                      badgeStyle: BadgeStyle(
+                        badgeColor: AppColors.primaryColor,
+                      ),
+                      position: badges.BadgePosition.custom(
+                        end: 0,
+                        top: -8,
+                      ),
+                      child: SvgPicture.asset(
+                        'assets/alarm.svg',
+                        fit: BoxFit.contain,
+                        width: 30,
+                        height: 30,
+                      ),
+                    ),
             ),
           ),
         ],
@@ -578,17 +439,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       ),
                     )
-                  // ? Center(
-                  //     child: InkWell(
-                  //       onTap: () {
-                  //         context.go('/create');
-                  //       },
-                  //       child: Text(
-                  //         'Create your first post',
-                  //         style: bluemediumTextStyleBlack,
-                  //       ),
-                  //     ),
-                  //   )
                   : ListView.separated(
                       itemCount: posts.length,
                       itemBuilder: (context, index) {
@@ -597,7 +447,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           return PostWidget(
                               post: post,
                               onDelete: () {
-                                print('this one is called');
                                 //context.read<GetAllPostsBloc>().deletepost(post.id);
                                 _onRefresh();
                               });
@@ -605,7 +454,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           return PollWidget(
                               post: post,
                               onDelete: () {
-                                print('this one is called');
                                 //context.read<GetAllPostsBloc>().deletepost(post.id);
                                 _onRefresh();
                               });
@@ -695,57 +543,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: onboardingHeading2Style,
                           ),
                         ),
-                        // const SizedBox(height: 25),
-                        // Text('1. Select your Gender',
-                        //     style: blackonboardingBody1Style),
-                        // const SizedBox(height: 8),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: <Widget>[
-                        //     Row(
-                        //       children: [
-                        //         Radio<String>(
-                        //           value: 'Male',
-                        //           groupValue: selectedGender,
-                        //           onChanged: (String? value) {
-                        //             setState(() {
-                        //               selectedGender = value!;
-                        //             });
-                        //           },
-                        //         ),
-                        //         const Text('Male'),
-                        //       ],
-                        //     ),
-                        //     Row(
-                        //       children: [
-                        //         Radio<String>(
-                        //           value: 'Female',
-                        //           groupValue: selectedGender,
-                        //           onChanged: (String? value) {
-                        //             setState(() {
-                        //               selectedGender = value!;
-                        //             });
-                        //           },
-                        //         ),
-                        //         const Text('Female'),
-                        //       ],
-                        //     ),
-                        //     Row(
-                        //       children: [
-                        //         Radio<String>(
-                        //           value: 'Others',
-                        //           groupValue: selectedGender,
-                        //           onChanged: (String? value) {
-                        //             setState(() {
-                        //               selectedGender = value!;
-                        //             });
-                        //           },
-                        //         ),
-                        //         const Text('Others'),
-                        //       ],
-                        //     ),
-                        //   ],
-                        // ),
                         const Divider(color: Colors.grey),
                         Text('Date of Birth', style: blackonboardingBody1Style),
                         const SizedBox(height: 8),

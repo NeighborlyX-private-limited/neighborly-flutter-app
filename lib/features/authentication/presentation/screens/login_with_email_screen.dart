@@ -159,10 +159,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     }
                   } else if (state is LoginSuccessState) {
                     bool isEmailVerified = state.authResponseEntity.isVerified!;
-                    // bool isSkippedTutorial =
-                    //     state.authResponseEntity.isSkippedTutorial!;
-                    // bool isViewedTutorial =
-                    //     state.authResponseEntity.isViewedTutorial!;
+                   
                     bool isSkippedTutorial =
                         ShardPrefHelper.getIsSkippedTutorial();
                     bool isViewedTutorial =

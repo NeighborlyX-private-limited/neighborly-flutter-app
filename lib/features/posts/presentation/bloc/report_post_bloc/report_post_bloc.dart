@@ -17,11 +17,19 @@ class ReportPostBloc extends Bloc<ReportPostEvent, ReportPostState> {
       emit(ReportPostLoadingState());
 
       final result = await _reportPostUsecase.call(
-          reason: event.reason, type: event.type, postId: event.postId);
+        reason: event.reason,
+        type: event.type,
+        postId: event.postId,
+      );
+      print('...Result in ReportPostBloc $result');
 
-      result.fold(
-          (error) => emit(ReportPostFailureState(error: error.toString())),
-          (response) => emit(ReportPostSuccessState()));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(ReportPostFailureState(error: error.toString()));
+      }, (response) {
+        //print('fold response: ${response.toString()}');
+        emit(ReportPostSuccessState());
+      });
     });
   }
 }

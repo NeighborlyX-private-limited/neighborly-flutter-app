@@ -17,11 +17,18 @@ class VotePollBloc extends Bloc<VotePollEvent, VotePollState> {
       emit(VotePollLoadingState());
 
       final result = await _votePollUsecase.call(
-          pollId: event.pollId, optionId: event.optionId);
+        pollId: event.pollId,
+        optionId: event.optionId,
+      );
+      print('...Result in VotePollBloc $result');
 
-      result.fold(
-          (error) => emit(VotePollFailureState(error: error.toString())),
-          (response) => emit(VotePollSuccessState()));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(VotePollFailureState(error: error.toString()));
+      }, (response) {
+        // print('fold response: ${response.toString()}');
+        emit(VotePollSuccessState());
+      });
     });
   }
 }

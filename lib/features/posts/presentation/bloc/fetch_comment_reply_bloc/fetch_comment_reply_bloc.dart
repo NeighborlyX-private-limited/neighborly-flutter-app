@@ -23,12 +23,26 @@ class FetchCommentReplyBloc
       final result = await _fetchCommentReplyUsecase.call(
         commentId: event.commentId,
       );
+      print('...Result in FetchCommentReplyBloc $result');
 
-      result.fold(
-          (error) => emit(FetchCommentReplyFailureState(
-              error: error.toString(), commentId: event.commentId)),
-          (response) => emit(FetchCommentReplySuccessState(
-              reply: response, commentId: event.commentId)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(
+          FetchCommentReplyFailureState(
+            error: error.toString(),
+            commentId: event.commentId,
+          ),
+        );
+      }, (response) {
+        print('fold response: ${response.toString()}');
+
+        emit(
+          FetchCommentReplySuccessState(
+            reply: response,
+            commentId: event.commentId,
+          ),
+        );
+      });
     });
   }
 }

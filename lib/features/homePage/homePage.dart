@@ -60,7 +60,7 @@ class _MainPageState extends State<MainPage> {
             try {
               context.push(linksplit[1]);
             } catch (e) {
-              print("error aaya kch $e");
+              print("error in deep link $e");
             }
             // }
             // else{
@@ -78,7 +78,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    //fetchLocationAndUpdate();
     ShardPrefHelper.removeImageUrl();
   }
 

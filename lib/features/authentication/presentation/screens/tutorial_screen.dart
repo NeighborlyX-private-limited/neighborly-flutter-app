@@ -113,12 +113,7 @@ class TutorialScreenState extends State<TutorialScreen> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    // Positioned.fill(
-                    //   child: Image.asset(
-                    //     tutorialImages[index],
-                    //     fit: BoxFit.cover,
-                    //   ),
-                    // ),
+                  
                     // Overlay container with title, description, and buttons
                     Positioned.fill(
                       top: 50,

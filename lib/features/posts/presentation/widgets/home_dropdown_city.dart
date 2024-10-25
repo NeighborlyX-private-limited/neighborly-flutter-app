@@ -39,10 +39,6 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
   }
 
   OverlayEntry _createOverlay() {
-    RenderBox renderBox =
-        _dropdownKey.currentContext!.findRenderObject() as RenderBox;
-    Offset position = renderBox.localToGlobal(Offset.zero);
-
     return OverlayEntry(
       builder: (context) => GestureDetector(
         behavior: HitTestBehavior.translucent,

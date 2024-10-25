@@ -9,7 +9,7 @@ class UpdateLocationUsecase {
   UpdateLocationUsecase(this.repository);
 
   Future<Either<Failure, void>> call({
-    required Map<String,List<num>> location,
+    required Map<String, List<num>> location,
   }) async {
     return await repository.updateLocation(location: location);
   }

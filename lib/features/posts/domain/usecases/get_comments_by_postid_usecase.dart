@@ -14,6 +14,8 @@ class GetCommentsByPostIdUsecase {
     required String commentId,
   }) async {
     return await repository.getCommentsByPostId(
-        postId: id, commentId: commentId);
+      postId: id,
+      commentId: commentId,
+    );
   }
 }

@@ -53,7 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   GoogleSignInAccount? _currentUser;
-  bool _isAuthorized = false; // has granted permissions?
+  bool _isAuthorized = false;
   String _contactText = '';
 
   late TextEditingController _controller;
