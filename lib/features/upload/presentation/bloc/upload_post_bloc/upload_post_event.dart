@@ -6,7 +6,6 @@ class UploadPostPressedEvent extends UploadPostEvent {
   final List<double> location;
   final String? content;
   final List<File>? multimedia;
-  //final File? multimedia;
   final String title;
   final String type;
   final String city;

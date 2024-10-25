@@ -164,6 +164,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool isImageUploading = false;
   List<File>? _selectedImages = [];
 
+  /// pic one image or multiple images from gallary
   Future<void> _pickImages() async {
     final ImagePicker picker = ImagePicker();
 
@@ -180,12 +181,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     try {
       setState(() {
-        isImagePicking = true; // Start loading
+        isImagePicking = true;
       });
 
       // Pick multiple images
-      List<XFile>? images =
-          await picker.pickMultiImage(imageQuality: 95, limit: 5);
+      List<XFile>? images = await picker.pickMultiImage(
+        imageQuality: 95,
+        limit: 5,
+      );
 
       if (images.isNotEmpty) {
         for (XFile imageFile in images) {
@@ -193,15 +196,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           if (_selectedImages!.length < 5) {
             XFile compressedImage = await compressImage(imageFileX: imageFile);
             setState(() {
-              // _selectedImage = File(compressedImage.path);
               _selectedImages!.add(
-                  File(compressedImage.path)); // Update selected images list
+                File(
+                  compressedImage.path,
+                ),
+              ); // Update selected images list
             });
             print(_selectedImages);
           } else {
             // Show a message if the user tries to select more than 5 images
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('You can select up to 5 images.')),
+              SnackBar(content: Text('You can select up to 5 images only.')),
             );
             setState(() {
               _selectedImages = [];
@@ -210,7 +215,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           }
         }
         setState(() {
-          isImagePicking = false; // End loading
+          isImagePicking = false;
         });
         return;
       }
@@ -218,47 +223,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       print("Error picking multiple images: $e");
     } finally {
       setState(() {
-        isImagePicking = false; // End loading
+        isImagePicking = false;
       });
     }
   }
 
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    XFile? image;
-
-    try {
-      setState(() {
-        isImagePicking = true; // Start loading
-      });
-
-      // Pick image and then compress
-      image = await picker.pickImage(source: ImageSource.gallery).then((file) {
-        return compressImage(imageFileX: file);
-      });
-
-      if (image != null) {
-        setState(() {
-          _selectedImage = File(image!.path); // Update selected image
-          print('_selectedImage path in pic image fn: $_selectedImage');
-        });
-      }
-    } catch (e) {
-      print("Error picking image: $e");
-    } finally {
-      setState(() {
-        isImagePicking = false; // End loading
-      });
-    }
-  }
-
+  /// pic image  images from camera
   Future<void> _pickImageFromCamera() async {
     final ImagePicker picker = ImagePicker();
     XFile? image;
 
     try {
       setState(() {
-        isImagePicking = true; // Start loading
+        isImagePicking = true;
       });
 
       // Pick image and then compress
@@ -269,31 +246,28 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (image != null) {
         setState(() {
           _selectedImages!.add(File(image!.path));
-          // _selectedImage = File(image!.path); // Update selected image
         });
       }
     } catch (e) {
       print("Error picking image: $e");
     } finally {
       setState(() {
-        isImagePicking = false; // End loading
+        isImagePicking = false;
       });
     }
   }
 
+  ///remove image
   void _removeImage() {
     setState(() {
-      // _selectedImages.removeAt(index);
       _selectedImage = null;
-      //_selectedImages = [];
     });
   }
 
+  ///remove images from multiple images
   void _removeImages(int index) {
     setState(() {
       _selectedImages!.removeAt(index);
-      // _selectedImage = null;
-      // _selectedImages = [];
     });
   }
 
@@ -346,14 +320,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   }
                                   if (state is UploadPostFailureState) {
                                     ///chnage error msg error
-                                    print("here ${state.error}");
+
                                     if (state.error
                                         .contains("Sorry, you are banned")) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
-                                            content:
-                                                Text("Sorry, you are banned")),
+                                          content:
+                                              Text("Sorry, you are banned"),
+                                        ),
                                       );
                                     } else {
                                       ScaffoldMessenger.of(context)
@@ -419,11 +394,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         city = placemarks[0].locality ?? '';
                                       }
 
-                                      print("post city ====== $city");
-                                      print(
-                                          "post city cord ====== $locationCord");
-                                      print(
-                                          '_selectedImage path in on tap fn: $_selectedImage');
+                                      print("...post city:$city");
+                                      print("...post city cord:$locationCord");
+                                      print('selectedImage: $_selectedImage');
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
@@ -433,7 +406,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           title: _titleController.text.trim(),
                                           type: 'post',
                                           multimedia: _selectedImages,
-                                          // multimedia: _selectedImage,
                                           allowMultipleVotes: false,
                                           location: locationCord,
                                         ),
@@ -446,7 +418,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             : BlocConsumer<UploadPostBloc, UploadPostState>(
                                 listener: (context, state) {
                                   if (state is UploadPostFailureState) {
-                                    print("here is am ${state.error}");
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text(state.error)),
                                     );
@@ -507,15 +478,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         city = placemarks[0].locality ?? '';
                                       }
 
-                                      print("city during post ====== $city");
-                                      print(
-                                          "cord during post ====== $locationCord");
+                                      print("city during post:$city");
+                                      print("cord during post :$locationCord");
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
                                           city: city,
                                           multimedia: _selectedImages,
-                                          // multimedia: _selectedImage,
                                           title:
                                               _questionController.text.trim(),
                                           options: List.generate(
@@ -541,48 +510,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ],
                     ),
                   ),
-                  // if (_selectedImage != null)
-                  //   Padding(
-                  //     padding: const EdgeInsets.all(8.0),
-                  //     child: Stack(
-                  //       children: [
-                  //         ClipRRect(
-                  //           borderRadius: const BorderRadius.all(
-                  //             Radius.circular(16),
-                  //           ),
-                  //           child: Image.file(
-                  //             _selectedImage!,
-                  //             width: double.infinity,
-                  //             height: 260,
-                  //             fit: BoxFit.cover,
-                  //           ),
-                  //         ),
-                  //         Positioned(
-                  //           top: 8,
-                  //           right: 8,
-                  //           child: GestureDetector(
-                  //             onTap: () {
-                  //               _removeImage();
-                  //             },
-                  //             child: Container(
-                  //               decoration: const BoxDecoration(
-                  //                 color: Colors.red,
-                  //                 shape: BoxShape.circle,
-                  //               ),
-                  //               child: const Icon(
-                  //                 Icons.close,
-                  //                 color: Colors.white,
-                  //                 size: 24,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-
-                  if (_selectedImages!
-                      .isNotEmpty) // You can check for empty images list
+                  if (_selectedImages!.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
@@ -591,7 +519,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           scrollDirection: Axis.horizontal,
                           itemCount: _selectedImages!.length,
                           itemBuilder: (context, index) {
-                            // Ensure the index is accessible here
                             return Stack(
                               children: [
                                 ClipRRect(
@@ -607,8 +534,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   top: 8,
                                   right: 8,
                                   child: GestureDetector(
-                                    onTap: () => _removeImages(
-                                        index), // Pass the correct index
+                                    onTap: () => _removeImages(index),
                                     child: Container(
                                       decoration: const BoxDecoration(
                                         color: Colors.red,
@@ -628,7 +554,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ),
                     ),
-
                   if (_condition == 'post')
                     Padding(
                       padding: const EdgeInsets.only(
@@ -688,9 +613,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               });
                             },
                             controller: _questionController,
-
-                            focusNode:
-                                _contentFocusNode, // Attach the FocusNode
+                            focusNode: _contentFocusNode,
                             decoration: const InputDecoration(
                               hintText: 'Write your question here...',
                               border: InputBorder.none,
@@ -700,7 +623,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             minLines: 1,
                           ),
                           const SizedBox(height: 12),
-                          ..._buildOptionFields(), // Build option fields
+                          ..._buildOptionFields(),
                           InkWell(
                             onTap: _addOption,
                             child: Row(
@@ -743,15 +666,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ],
                       ),
                     ),
-                  const SizedBox(
-                      height: 200), // Space to accommodate the bottom sheet
+                  const SizedBox(height: 200),
                 ],
               ),
             ),
           ),
           bottomSheet: !_isKeyboardVisible
               ? Container(
-                  // color: Colors.red,
                   color: Colors.white,
                   height: 220,
                   padding:
@@ -761,13 +682,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     children: [
                       InkWell(
                         onTap: _pickImages,
-                        // onTap: _pickImage,
                         child: Row(
                           children: [
                             SvgPicture.asset('assets/add_a_photo.svg'),
                             const SizedBox(width: 10),
-                            Text('Add a Photo or GIF',
-                                style: mediumTextStyleBlack),
+                            Text(
+                              'Add a Photo or GIF',
+                              style: mediumTextStyleBlack,
+                            ),
                           ],
                         ),
                       ),
@@ -789,7 +711,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 color: const Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
-                            //Image.asset('assets/camera_icon.png'),
                             const SizedBox(width: 10),
                             Text('Take a Picture', style: mediumTextStyleBlack)
                           ],
@@ -858,7 +779,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       InkWell(
                         onTap: () {
                           _pickImages();
-                          // _pickImage();
                         },
                         child: Row(
                           children: [
@@ -867,12 +787,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ],
                         ),
                       ),
-                      // Row(
-                      //   children: [
-                      //     SvgPicture.asset('assets/communities.svg'),
-                      //     const SizedBox(width: 10),
-                      //   ],
-                      // ),
                       InkWell(
                         onTap: () {
                           _pickImageFromCamera();
@@ -891,17 +805,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 color: const Color.fromARGB(255, 195, 0, 255),
                               ),
                             ),
-                            //Image.asset('assets/camera_icon.png'),
                             const SizedBox(width: 10),
                           ],
                         ),
                       ),
-                      // Row(
-                      //   children: [
-                      //     SvgPicture.asset('assets/create_an_event.svg'),
-                      //     const SizedBox(width: 10),
-                      //   ],
-                      // ),
                       InkWell(
                         onTap: () {
                           setState(() {
@@ -946,14 +853,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   });
                 },
                 controller: _optionControllers[index],
-                focusNode: _optionFocusNodes[index], // Attach the FocusNode
+                focusNode: _optionFocusNodes[index],
                 decoration: InputDecoration(
                   labelText: 'Option ${index + 1}',
                   border: const OutlineInputBorder(),
                 ),
               ),
-              if (index >=
-                  2) // Adding the X button for options after the first two
+              if (index >= 2)
                 Positioned(
                   right: 0,
                   top: 8,

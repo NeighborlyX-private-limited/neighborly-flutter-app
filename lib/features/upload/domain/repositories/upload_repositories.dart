@@ -10,7 +10,6 @@ abstract class UploadRepositories {
     String? content,
     required String type,
     List<File>? multimedia,
-    // File? multimedia,
     required String city,
     List<dynamic>? options,
     required bool allowMultipleVotes,
