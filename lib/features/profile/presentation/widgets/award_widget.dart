@@ -43,7 +43,7 @@ class AwardWidget extends StatelessWidget {
               Text(
                 description,
                 style: mediumGreyTextStyleBlack,
-                softWrap: true, // Enables text wrapping
+                softWrap: true,
               ),
             ],
           ),

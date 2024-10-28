@@ -61,6 +61,7 @@ class UploadRepositoriesImpl implements UploadRepositories {
       try {
         final result = await remoteDataSource.uploadFile(file: file);
         print('result in uploadPost UploadRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
         print(

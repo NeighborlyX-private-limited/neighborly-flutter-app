@@ -52,15 +52,16 @@ class NotificationModel extends NotificationEntity {
       triggerType: map['triggerType'] ?? '',
       title: map['title'] ?? '',
       message: map['message'] ?? '',
-      postId: map['data'] !=null? map['data']['postId'] ?? '':'',
-      eventId: map['data'] !=null? map['data']['eventId']?? '':'',
-      messageId: map['data'] !=null? map['data']['messageId']?? '':'',
-      commentId: map['data'] !=null? map['data']['commentId']?? '':'',
-      groupId: map['data'] !=null? map['data']['groupId']?? '':'',
-      notificationImage: map['data'] !=null? map['data']['notificationImage']?? '':'',
-      userId: map['data'] !=null? map['data']['userId']?? '' :'',
-      userName: map['data'] !=null? map['data']['userName'] ?? '':'',
-      date:  map['date'] ?? '',
+      postId: map['data'] != null ? map['data']['postId'] ?? '' : '',
+      eventId: map['data'] != null ? map['data']['eventId'] ?? '' : '',
+      messageId: map['data'] != null ? map['data']['messageId'] ?? '' : '',
+      commentId: map['data'] != null ? map['data']['commentId'] ?? '' : '',
+      groupId: map['data'] != null ? map['data']['groupId'] ?? '' : '',
+      notificationImage:
+          map['data'] != null ? map['data']['notificationImage'] ?? '' : '',
+      userId: map['data'] != null ? map['data']['userId'] ?? '' : '',
+      userName: map['data'] != null ? map['data']['userName'] ?? '' : '',
+      date: map['date'] ?? '',
       status: map['status'] ?? '',
       posttype: map['data'] != null ? map['data']['type'] ?? '' : '',
     );
@@ -73,7 +74,6 @@ class NotificationModel extends NotificationEntity {
 
   static List<NotificationModel> fromJsonList(List<dynamic> json) {
     var list = <NotificationModel>[];
-    // print('list: ${json}');
 
     if (json.isNotEmpty) {
       list = json

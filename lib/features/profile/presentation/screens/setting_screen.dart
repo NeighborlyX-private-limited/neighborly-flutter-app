@@ -209,7 +209,6 @@ class SettingScreen extends StatelessWidget {
             InkWell(
               onTap: () {
                 showVerifyUsernameBottomSheet();
-                // showdeleteBottomSheet();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -265,7 +264,7 @@ class SettingScreen extends StatelessWidget {
       deleteBottomSheet(context);
     }
 
-    TextEditingController _userNameController = TextEditingController();
+    TextEditingController userNameController = TextEditingController();
     bool isUserNameFilled = false;
     bool isUsernameWrong = false;
 
@@ -316,12 +315,11 @@ class SettingScreen extends StatelessWidget {
                           onChanged: (value) {
                             setState(() {
                               isUserNameFilled =
-                                  _userNameController.text.trim().isNotEmpty;
-                              isUsernameWrong =
-                                  false; // Reset error message on change
+                                  userNameController.text.trim().isNotEmpty;
+                              isUsernameWrong = false;
                             });
                           },
-                          controller: _userNameController,
+                          controller: userNameController,
                           lableText: 'Enter your username',
                           isPassword: false,
                         ),
@@ -353,7 +351,7 @@ class SettingScreen extends StatelessWidget {
                                 String? userName =
                                     ShardPrefHelper.getUsername();
 
-                                if (_userNameController.text.trim() ==
+                                if (userNameController.text.trim() ==
                                     userName) {
                                   Navigator.pop(context);
                                   showDeleteBottomSheet();
@@ -436,7 +434,6 @@ class SettingScreen extends StatelessWidget {
                           ),
                         );
                       } else if (state is LogoutSuccessState) {
-                        // remove the user info from the shared preferences
                         ShardPrefHelper.removeUserID();
                         ShardPrefHelper.removeCookie();
                         if (ShardPrefHelper.getEmail() != null) {

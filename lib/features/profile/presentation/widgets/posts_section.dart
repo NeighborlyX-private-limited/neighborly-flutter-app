@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-
-import '../../../../core/theme/text_style.dart';
 import '../../../posts/presentation/widgets/poll_widget.dart';
 import '../../../posts/presentation/widgets/post_sheemer_widget.dart';
 import '../../../posts/presentation/widgets/post_widget.dart';
@@ -91,22 +89,6 @@ class _PostSectionState extends State<PostSection> {
                             ],
                           ),
                         )
-                        // Text(
-                        //   'Welcome! Your space is empty.',
-                        //   style: onboardingHeading2Style,
-                        // ),
-                        // const SizedBox(
-                        //   height: 10,
-                        // ),
-                        // InkWell(
-                        //   onTap: () {
-                        //     context.go('/create');
-                        //   },
-                        //   child: Text(
-                        //     'Create your first post',
-                        //     style: bluemediumTextStyleBlack,
-                        //   ),
-                        // ),
                       ],
                     ),
                   );

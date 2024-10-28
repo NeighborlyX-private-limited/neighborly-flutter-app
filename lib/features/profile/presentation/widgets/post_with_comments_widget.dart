@@ -240,8 +240,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           widget.post.content.multimedia!.isNotEmpty &&
                           widget.post.content.multimedia!.length > 1
                       ? ImageSlider(
-                          multimedia: widget.post.content.multimedia ??
-                              [], // Provide the list of image URLs
+                          multimedia: widget.post.content.multimedia ?? [],
                         )
                       : Container(),
                   widget.post.content.multimedia != null &&
@@ -255,9 +254,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                               borderRadius: BorderRadius.circular(4),
                               child: Image.network(
                                 width: double.infinity,
-                                // height: 200,
                                 widget.post.content.multimedia![0],
-                                // widget.post.content.multimedia!,
                                 fit: BoxFit.contain,
                               )),
                         )

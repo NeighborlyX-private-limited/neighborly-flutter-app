@@ -4,14 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:neighborly_flutter_app/core/constants/constants.dart';
-import 'package:neighborly_flutter_app/core/widgets/dropdown_search_field.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/city_dropdown.dart';
-
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -22,8 +19,6 @@ import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 import '../widgets/gender_dropdown_widget.dart';
 import '../../../authentication/presentation/screens/otp_screen_profile_update.dart';
 import '../../../authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
-import '../../../../core/constants/imagepickercompress.dart';
-
 import 'package:image_cropper/image_cropper.dart';
 
 class CropAspectRatioPresetCustom implements CropAspectRatioPresetData {
@@ -51,17 +46,17 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
   late TextEditingController _emailController;
   late TextEditingController _phoneNumberController;
   late TextEditingController _bioController;
-  late TextEditingController _locationController;
+  // late TextEditingController _locationController;
   late String _selectedGender;
   late String _selectedCity;
   bool isPhoneVerified = true;
   bool isOTPSent = false;
 
-  File? _selectedImage; // Store the selected image
+  File? _selectedImage;
 
   @override
   void initState() {
-    _locationController = TextEditingController();
+    // _locationController = TextEditingController();
     _usernameController = TextEditingController();
     _emailController = TextEditingController();
     _phoneNumberController = TextEditingController();
@@ -129,23 +124,9 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
     if (croppedFile != null) {
       return File(croppedFile.path);
     } else {
-      return null; // The user cancelled the cropping
+      return null;
     }
   }
-
-  // Future<void> _pickImage() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? image =
-  //       await picker.pickImage(source: ImageSource.gallery).then((file) {
-  //     return compressImage(imageFileX: file);
-  //   });
-
-  //   if (image != null) {
-  //     setState(() {
-  //       _selectedImage = File(image.path);
-  //     });
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -244,26 +225,13 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               return PostButtonWidget(
                                 title: 'Save',
                                 onTapListener: () async {
-                                  // List<double> location =
-                                  //     ShardPrefHelper.getLocation();
-
-                                  // List<Placemark> placemarks =
-                                  //     await placemarkFromCoordinates(
-                                  //   location[0],
-                                  //   location[1],
-                                  // );
-
                                   _phoneNumberController.text.trim().isNotEmpty
                                       ? ShardPrefHelper.setPhoneNumber(
                                           _phoneNumberController.text.trim())
                                       : ShardPrefHelper.setPhoneNumber('');
-
                                   ShardPrefHelper.setGender(_selectedGender);
-                                  //ShardPrefHelper.setHomeCity(_selectedCity);
-
                                   ShardPrefHelper.setUsername(
                                       _usernameController.text.trim());
-
                                   if (isPhoneVerified) {
                                     BlocProvider.of<EditProfileBloc>(context)
                                         .add(
@@ -275,8 +243,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                             _usernameController.text.trim(),
                                         image: _selectedImage,
                                         gender: _selectedGender,
-
-                                        // homeCoordinates: location,
                                       ),
                                     );
                                   } else {
@@ -304,7 +270,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                                 .trim(),
                                             verificationFor: 'phone-register',
                                             onVerifiedSuccessfully: () {
-                                              // This function is executed after verification
                                               BlocProvider.of<EditProfileBloc>(
                                                       context)
                                                   .add(
@@ -326,9 +291,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                           ),
                                         ),
                                       );
-
-                                      //}
-                                      //navigate to otp screen;
                                     } else {
                                       BlocProvider.of<EditProfileBloc>(context)
                                           .add(
@@ -341,7 +303,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                               _usernameController.text.trim(),
                                           image: _selectedImage,
                                           gender: _selectedGender,
-                                          // homeCoordinates: location,
                                         ),
                                       );
                                     }
@@ -358,7 +319,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                   BlocBuilder<GetProfileBloc, GetProfileState>(
                     builder: (context, state) {
                       if (state is GetProfileSuccessState) {
-                        // Set initial values when the state is fetched successfully
                         _bioController.text = state.profile.bio ?? '';
                         String checkEmailVerified =
                             state.profile.isEmailVerified != null &&
@@ -567,8 +527,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               // Wrap the dropdown button inside BlocListener and BlocProvider if necessary.
 
                               BlocProvider(
-                                create: (context) => CityBloc(sl<
-                                    CityRepository>()), // Create and provide the CityBloc.
+                                create: (context) =>
+                                    CityBloc(sl<CityRepository>()),
                                 child: BlocListener<CityBloc, CityState>(
                                   listener: (context, state) {
                                     if (state is CityUpdatedState) {
@@ -607,24 +567,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 ),
                               ),
 
-                              // CityDropdown(
-                              //   selectCity: _selectedCity,
-                              //   onChanged: (String? newValue) {
-                              //     setState(() {
-                              //       _selectedCity = newValue!;
-                              //     });
-                              //   },
-                              // ),
-                              // DropdownSearchField(
-                              //   label: 'City',
-                              //   items: kCityList,
-                              //   onChanged: (value) {
-                              //     _locationController.text = value ?? '';
-                              //   },
-                              //   initialValue: _locationController.text,
-                              //   placeholder: _locationController.text,
-                              //   // validator: Validatorless.required('Preenchimento é obrigatório'),
-                              // ),
                               const SizedBox(
                                 height: 10,
                               ),

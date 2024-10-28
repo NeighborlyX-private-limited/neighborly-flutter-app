@@ -75,7 +75,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           });
                         },
                         controller: _contentController,
-                        // focusNode: _contentFocusNode, // Attach the FocusNode
                         decoration: const InputDecoration(
                           hintText: 'Your feedback',
                           border: InputBorder.none,

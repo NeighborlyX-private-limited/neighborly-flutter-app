@@ -6,24 +6,18 @@ class NotificationsEmptyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // color: AppColors.lightBackgroundColor,
+    return SizedBox(
       width: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          //
-          //
           SvgPicture.asset(
             'assets/notification_empty.svg',
             width: MediaQuery.of(context).size.width * 0.60,
-            // height: 84,
           ),
           const SizedBox(height: 20),
-          //
-          //
           Text(
             'No New Notifications',
             textAlign: TextAlign.center,
@@ -33,8 +27,6 @@ class NotificationsEmptyWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          //
-          //
           Text(
             'There are currently no notifications to display.',
             textAlign: TextAlign.center,
@@ -43,8 +35,6 @@ class NotificationsEmptyWidget extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-          //
-          //
         ],
       ),
     );

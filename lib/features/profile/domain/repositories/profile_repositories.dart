@@ -15,7 +15,7 @@ abstract class ProfileRepositories {
     required bool flag,
   });
   Future<Either<Failure, void>> updateLocation({
-    required Map<String,List<num>> location,
+    required Map<String, List<num>> location,
   });
   Future<Either<Failure, void>> getGenderAndDOB({
     String? gender,
@@ -40,14 +40,13 @@ abstract class ProfileRepositories {
   Future<Either<Failure, AuthResponseEntity>> getProfile();
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, void>> deleteAccount();
-  Future<Either<Failure, void>> editProfile(
-      {String? username,
-      String? gender,
-      String? bio,
-      File? image,
-      String? phoneNumber,
-      bool? toggleFindMe
-
-      // required List<double> homeCoordinates,
-      });
+  Future<Either<Failure, void>> editProfile({
+    String? username,
+    String? gender,
+    String? bio,
+    File? image,
+    String? phoneNumber,
+    bool? toggleFindMe,
+    // required List<double> homeCoordinates,
+  });
 }

@@ -7,25 +7,21 @@ class CityBloc extends Bloc<CityEvent, CityState> {
   final CityRepository cityRepository;
 
   CityBloc(this.cityRepository) : super(CityInitialState()) {
-    // Register the event handler for UpdateCityEvent
     on<UpdateCityEvent>(_onUpdateCity);
   }
 
-  // Handler method for UpdateCityEvent
   Future<void> _onUpdateCity(
-      UpdateCityEvent event, Emitter<CityState> emit) async {
-    print("this is call finally CityLoadingState");
-    emit(CityLoadingState()); // Emit loading state if needed
+    UpdateCityEvent event,
+    Emitter<CityState> emit,
+  ) async {
+    emit(CityLoadingState());
 
     try {
-      // Call the repository to update the city
       await cityRepository.updateCity(event.city);
-      print("this is call finally CityUpdatedState");
-
-      // If successful, emit CityUpdatedState
+      print('Result in CityBloc...');
       emit(CityUpdatedState(event.city));
     } catch (e) {
-      // Emit CityErrorState if an error occurs
+      print('error in CityBloc:${e.toString()}');
       emit(CityErrorState(e.toString()));
     }
   }

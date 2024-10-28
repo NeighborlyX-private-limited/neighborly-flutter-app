@@ -16,7 +16,7 @@ class NotificationListScreen extends StatefulWidget {
 
 class _NotificationListScreenState extends State<NotificationListScreen> {
   late NotificationListCubit notificationsListCubit;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   bool _shouldScrollToBottom = true;
   double _previousScrollOffset = 0.0;
@@ -27,7 +27,6 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     notificationsListCubit = BlocProvider.of<NotificationListCubit>(context);
     notificationsListCubit.init();
     _scrollController.addListener(() {
-      // Check if the scroll is near the top
       if (_scrollController.position.pixels <= 100 && !_isLoadingMore) {
         _loadMoreMessages();
       }
@@ -47,7 +46,6 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     notificationsListCubit = BlocProvider.of<NotificationListCubit>(context);
     notificationsListCubit.init();
     _scrollController.addListener(() {
-      // Check if the scroll is near the top
       if (_scrollController.position.pixels <= 100 && !_isLoadingMore) {
         _loadMoreMessages();
       }
@@ -140,13 +138,10 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
             }
           },
           builder: (context, state) {
-            //
-            //
             return BlocBuilder<NotificationListCubit, NotificationListState>(
               bloc: notificationsListCubit,
               builder: (context, state) {
                 if (state.status == Status.loading) {
-                  // return const NotificationMainSheemer();
                   return Center(
                     child: SizedBox(
                       height: 40,
@@ -159,7 +154,7 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                 }
 
                 if (state.status != Status.loading &&
-                    state.notifications.length == 0) {
+                    state.notifications.isEmpty) {
                   return Center(
                     child: NotificationsEmptyWidget(),
                   );

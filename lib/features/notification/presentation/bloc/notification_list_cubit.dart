@@ -20,55 +20,68 @@ class NotificationListCubit extends Cubit<NotificationListState> {
 
   Future getNotifications({String? page}) async {
     emit(state.copyWith(status: Status.loading));
-    print("getting notification first ${state.page} time $page");
+
     final result =
         await getAllNotificationsUsecase(page: state.page.toString());
+    print('...Result in NotificationListCubit getNotifications: $result');
 
     result.fold(
       (failure) {
-        print('BLOC getNotifications ERROR: ' + failure.message);
-        emit(state.copyWith(
+        print('fold failure: ${failure.toString()}');
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (notificationsList) {
-        emit(state.copyWith(
+        print('fold notificationsList: ${notificationsList.toString()}');
+        emit(
+          state.copyWith(
             status: Status.success,
             page: state.page + 1,
-            notifications: notificationsList));
+            notifications: notificationsList,
+          ),
+        );
       },
     );
   }
 
   Future<void> fetchOlderNotification() async {
     try {
-      // Simulate fetching older messages from the server (implement API call)
-      print('state.page ${state.page}');
-      print(state.page + 1);
       final result =
           await getAllNotificationsUsecase(page: state.page.toString());
-
+      print(
+          '...Result in NotificationListCubit fetchOlderNotification: $result');
       result.fold(
         (failure) {
-          print('BLOC getNotifications ERROR: ' + failure.message);
-          emit(state.copyWith(
+          print('fold failure: ${failure.toString()}');
+          emit(
+            state.copyWith(
               status: Status.failure,
               failure: failure,
-              errorMessage: failure.message));
+              errorMessage: failure.message,
+            ),
+          );
         },
         (notificationsList) {
+          print('fold notificationsList: ${notificationsList.toString()}');
           List<NotificationModel> olderMessages = state.notifications;
-
           final updatedMessages = [...notificationsList, ...olderMessages];
-          emit(state.copyWith(
+          emit(
+            state.copyWith(
               status: Status.success,
               page: state.page + 1,
-              notifications: updatedMessages));
+              notifications: updatedMessages,
+            ),
+          );
         },
       );
     } catch (e) {
-      print('Error fetching older messages: $e');
+      print(
+          'Error fetching older messages in NotificationListCubit fetchOlderNotification: $e');
     }
   }
 

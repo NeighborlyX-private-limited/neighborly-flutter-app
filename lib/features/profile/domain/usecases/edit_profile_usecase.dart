@@ -17,17 +17,16 @@ class EditProfileUsecase {
       File? image,
       String? phoneNumber,
       bool? toggleFindMe
-
       //  List<double> homeCoordinates,
       }) async {
     return await repository.editProfile(
-        username: username,
-        gender: gender,
-
-        // homeCoordinates: homeCoordinates,
-        bio: bio,
-        phoneNumber: phoneNumber,
-        toggleFindMe: toggleFindMe,
-        image: image);
+      username: username,
+      gender: gender,
+      // homeCoordinates: homeCoordinates,
+      bio: bio,
+      phoneNumber: phoneNumber,
+      toggleFindMe: toggleFindMe,
+      image: image,
+    );
   }
 }

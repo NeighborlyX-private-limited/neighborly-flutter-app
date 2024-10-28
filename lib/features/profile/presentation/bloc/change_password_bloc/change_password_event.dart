@@ -8,12 +8,18 @@ class ChangePasswordButtonPressedEvent extends ChangePasswordEvent {
   final String newPassword;
   final bool flag;
 
-  ChangePasswordButtonPressedEvent(
-      {required this.email,
-      this.currentPassword,
-      required this.newPassword,
-      required this.flag});
+  ChangePasswordButtonPressedEvent({
+    required this.email,
+    this.currentPassword,
+    required this.newPassword,
+    required this.flag,
+  });
 
   @override
-  List<Object?> get props => [email, currentPassword, newPassword, flag];
+  List<Object?> get props => [
+        email,
+        currentPassword,
+        newPassword,
+        flag,
+      ];
 }

@@ -21,11 +21,9 @@ class _FindMeScreenState extends State<FindMeScreen> {
   @override
   void initState() {
     super.initState();
-    // var postState = context.read<GetProfileBloc>().state;
-    // if (postState is! GetProfileSuccessState) {
+
     BlocProvider.of<GetProfileBloc>(context)
         .add(GetProfileButtonPressedEvent());
-    // }
   }
 
   @override
@@ -86,7 +84,7 @@ class _FindMeScreenState extends State<FindMeScreen> {
                             Text(
                               'You will automatically join the community group when it is created.',
                               style: mediumGreyTextStyleBlack,
-                              softWrap: true, // Enables text wrapping
+                              softWrap: true,
                             ),
                           ],
                         ),

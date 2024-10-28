@@ -4,28 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
-import '../../../chat/data/model/chat_room_model.dart';
 import '../../data/model/notification_model.dart';
-//import '../../../data/model/notification_model.dart';
 import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
 
 class NotificationTileWidget extends StatelessWidget {
   final NotificationModel notification;
 
   NotificationTileWidget({
-    Key? key,
+    super.key,
     required this.notification,
-  }) : super(key: key);
+  });
 
   List<Widget> listWidgets = [];
 
   Widget leftAvatar() {
-    //print('notification.user=${notification.notificationImage}');
-    // if (notification.notificationImage == null)
-    //   return SizedBox(width: 30, height: 30);
-
     return UserAvatarStyledWidget(
       avatarUrl: notification.notificationImage == null ||
               notification.notificationImage == ''
@@ -69,8 +62,6 @@ class NotificationTileWidget extends StatelessWidget {
   }
 
   void buildMainArea(BuildContext context) {
-    // if (notification.messageId != null)
-
     if (notification.messageId != null) {
       listWidgets.add(GestureDetector(
         onTap: () {
@@ -100,8 +91,7 @@ class NotificationTileWidget extends StatelessWidget {
       child: Row(
         children: [
           leftAvatar(),
-          //
-          //
+
           Expanded(
               child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -125,7 +115,7 @@ class NotificationTileWidget extends StatelessWidget {
                   print(
                       '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
                 }
-                //context.push('/userProfileScreen/${notification.userId}');
+
                 /*
                 TODO: Vinay here you have to add navigation for profile. Check with bharat whether we will get profile notification or not
                 only then its required to implment 
@@ -163,8 +153,7 @@ class NotificationTileWidget extends StatelessWidget {
               ),
             ),
           )),
-          //
-          //
+
           // rightAvatar(),
         ],
       ),

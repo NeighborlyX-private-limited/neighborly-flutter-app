@@ -12,7 +12,7 @@ abstract class ProfileRemoteDataSource {
     required bool flag,
   });
   Future<void> updateLocation({
-    required Map<String,List<num>> location,
+    required Map<String, List<num>> location,
   });
   Future<void> getGenderAndDOB({
     String? gender,
@@ -37,14 +37,13 @@ abstract class ProfileRemoteDataSource {
   });
   Future<void> logout();
   Future<void> deleteAccount();
-  Future<void> editProfile(
-      {String? username,
-      String? gender,
-      String? bio,
-      File? image,
-      String? phoneNumber,
-      bool? toggleFindMe
-
-      // required List<double> homeCoordinates,
-      });
+  Future<void> editProfile({
+    String? username,
+    String? gender,
+    String? bio,
+    File? image,
+    String? phoneNumber,
+    bool? toggleFindMe,
+    // required List<double> homeCoordinates,
+  });
 }

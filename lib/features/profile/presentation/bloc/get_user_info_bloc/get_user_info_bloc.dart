@@ -13,15 +13,22 @@ class GetUserInfoBloc extends Bloc<GetUserInfoEvent, GetUserInfoState> {
   GetUserInfoBloc({required GetUserInfoUsecase getUserInfoUsecase})
       : _getUserInfoUsecase = getUserInfoUsecase,
         super(GetUserInfoInitialState()) {
-    on<GetUserInfoButtonPressedEvent>((GetUserInfoButtonPressedEvent event,
-        Emitter<GetUserInfoState> emit) async {
+    on<GetUserInfoButtonPressedEvent>((
+      GetUserInfoButtonPressedEvent event,
+      Emitter<GetUserInfoState> emit,
+    ) async {
       emit(GetUserInfoLoadingState());
 
       final result = await _getUserInfoUsecase.call(userId: event.userId);
+      print('...Result in GetUserInfoBloc: $result');
 
-      result.fold(
-          (error) => emit(GetUserInfoFailureState(error: error.toString())),
-          (response) => emit(GetUserInfoSuccessState(profile: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(GetUserInfoFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(GetUserInfoSuccessState(profile: response));
+      });
     });
   }
 }

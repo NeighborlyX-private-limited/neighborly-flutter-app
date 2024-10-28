@@ -15,9 +15,10 @@ class ChangePasswordUsecase {
     required bool flag,
   }) async {
     return await repository.changePassword(
-        newPassword: newPassword,
-        email: email,
-        flag: flag,
-        currentPassword: currentPassword);
+      newPassword: newPassword,
+      email: email,
+      flag: flag,
+      currentPassword: currentPassword,
+    );
   }
 }

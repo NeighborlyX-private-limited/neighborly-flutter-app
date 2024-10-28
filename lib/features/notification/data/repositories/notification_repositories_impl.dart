@@ -20,13 +20,19 @@ class NotificationRepositoriesImpl implements NotificationRepositories {
     if (await networkInfo.isConnected) {
       try {
         var result = await remoteDataSource.updateFCMtoken();
+        print('result in updateFCMtoken NotificationRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
+        print(
+            'Server Failure in updateFCMtoken NotificationRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in updateFCMtoken NotificationRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
+      print('else error in updateFCMtoken NotificationRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -36,14 +42,22 @@ class NotificationRepositoriesImpl implements NotificationRepositories {
       {String? page}) async {
     if (await networkInfo.isConnected) {
       try {
-        List<NotificationModel> result = await remoteDataSource.getAllNotification(page: page);
+        List<NotificationModel> result =
+            await remoteDataSource.getAllNotification(page: page);
+        print(
+            'result in getAllNotification NotificationRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
+        print(
+            'Server Failure in getAllNotification NotificationRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in getAllNotification NotificationRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
+      print('else error in getAllNotification NotificationRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }

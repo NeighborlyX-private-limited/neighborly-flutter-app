@@ -60,84 +60,87 @@ class LocaleNotificationManager {
   }
 
   static void displayNotification(
-      RemoteMessage _notification,
+      RemoteMessage notification,
       String? androidChannelId,
       String? androidChannelName,
       String? androidChannelDescription,
       [int? id]) {
-    if (_notification.notification == null) return;
+    if (notification.notification == null) return;
 
-    print('...displayNotification notification ${_notification.toString()}');
-    var _localeNotification = FlutterLocalNotificationsPlugin();
-    var smallIcon = _notification.notification?.android?.smallIcon;
+    print(
+        '... LocaleNotificationManager displayNotification notification: ${notification.toString()}');
+    var localeNotification = FlutterLocalNotificationsPlugin();
+    var smallIcon = notification.notification?.android?.smallIcon;
 
     //! Android settings
     var _android = AndroidNotificationDetails(
       androidChannelId ??
-          _notification.notification?.android?.channelId ??
+          notification.notification?.android?.channelId ??
           'FCM_Config',
       androidChannelName ??
-          _notification.notification?.android?.channelId ??
+          notification.notification?.android?.channelId ??
           'FCM_Config',
-      // androidChannelDescription ?? _notification.notification?.android?.channelId ?? 'FCM_Config',
-      importance: _getImportance(_notification.notification!),
+      // androidChannelDescription ?? notification.notification?.android?.channelId ?? 'FCM_Config',
+      importance: _getImportance(notification.notification!),
       priority: Priority.high,
       styleInformation: BigTextStyleInformation(
-        _notification.notification?.body ?? '',
+        notification.notification?.body ?? '',
         htmlFormatBigText: true,
       ),
-      ticker: _notification.notification?.android?.ticker,
+      ticker: notification.notification?.android?.ticker,
       icon: smallIcon == 'default' ? null : smallIcon,
-      // category: _notification.category,
-      groupKey: _notification.collapseKey,
+      // category: notification.category,
+      groupKey: notification.collapseKey,
       showProgress: false,
-      sound: _notification.isDefaultAndroidSound
+      sound: notification.isDefaultAndroidSound
           ? null
-          : (_notification.isAndroidRemoteSound
+          : (notification.isAndroidRemoteSound
               ? UriAndroidNotificationSound(
-                  _notification.notification!.android!.sound!)
+                  notification.notification!.android!.sound!)
               : RawResourceAndroidNotificationSound(
-                  _notification.notification!.android!.sound)),
+                  notification.notification!.android!.sound)),
     );
-    var badge = int.tryParse(_notification.notification?.apple?.badge ?? '');
+    var badge = int.tryParse(notification.notification?.apple?.badge ?? '');
     var _ios = DarwinNotificationDetails(
-      threadIdentifier: _notification.collapseKey,
-      sound: _notification.notification?.apple?.sound?.name,
+      threadIdentifier: notification.collapseKey,
+      sound: notification.notification?.apple?.sound?.name,
       badgeNumber: badge,
-      subtitle: _notification.notification?.apple?.subtitle,
+      subtitle: notification.notification?.apple?.subtitle,
       presentBadge: badge == null ? null : true,
     );
     var _mac = DarwinNotificationDetails(
-      threadIdentifier: _notification.collapseKey,
-      sound: _notification.notification?.apple?.sound?.name,
+      threadIdentifier: notification.collapseKey,
+      sound: notification.notification?.apple?.sound?.name,
       badgeNumber: badge,
-      subtitle: _notification.notification?.apple?.subtitle,
+      subtitle: notification.notification?.apple?.subtitle,
       presentBadge: badge == null ? null : true,
     );
-    var _details = NotificationDetails(
+    var details = NotificationDetails(
       android: _android,
       iOS: _ios,
       macOS: _mac,
     );
     var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
 
-    print('... displayNotification _id: ${_id}');
+    print('...LocaleNotificationManager displayNotification _id: $_id');
     print(
-        '... displayNotification title: ${_notification.notification!.title}');
-    print('... displayNotification body: ${_notification.notification!.body}');
-    print('... displayNotification _details: ${_details}');
+        '...LocaleNotificationManager displayNotification title: ${notification.notification!.title}');
     print(
-        '... displayNotification payload: ${jsonEncode(_notification.toMap())}');
+        '...LocaleNotificationManager displayNotification body: ${notification.notification!.body}');
+    print(
+        '...LocaleNotificationManager displayNotification _details: $details');
+    print(
+        '...LocaleNotificationManager displayNotification payload: ${jsonEncode(notification.toMap())}');
     try {
-      _localeNotification.show(
+      localeNotification.show(
         _id,
-        _notification.notification!.title,
-        _notification.notification!.body,
-        _details,
-        payload: jsonEncode(_notification.toMap()),
+        notification.notification!.title,
+        notification.notification!.body,
+        details,
+        payload: jsonEncode(notification.toMap()),
       );
     } catch (e) {
-      print('ERROR? ${e}');
+      print('LocaleNotificationManager ERROR: $e');
     }
   }
 

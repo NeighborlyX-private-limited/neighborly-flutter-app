@@ -12,15 +12,22 @@ class GetMyAwardsBloc extends Bloc<GetMyAwardsEvent, GetMyAwardsState> {
   GetMyAwardsBloc({required GetMyAwardsUsecase getMyAwardsUsecase})
       : _getMyAwardsUsecase = getMyAwardsUsecase,
         super(GetMyAwardsInitialState()) {
-    on<GetMyAwardsButtonPressedEvent>((GetMyAwardsButtonPressedEvent event,
-        Emitter<GetMyAwardsState> emit) async {
+    on<GetMyAwardsButtonPressedEvent>((
+      GetMyAwardsButtonPressedEvent event,
+      Emitter<GetMyAwardsState> emit,
+    ) async {
       emit(GetMyAwardsLoadingState());
 
       final result = await _getMyAwardsUsecase.call();
+      print('...Result in GetMyAwardsBloc $result');
 
-      result.fold(
-          (error) => emit(GetMyAwardsFailureState(error: error.toString())),
-          (response) => emit(GetMyAwardsSuccessState(awards: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(GetMyAwardsFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(GetMyAwardsSuccessState(awards: response));
+      });
     });
   }
 }

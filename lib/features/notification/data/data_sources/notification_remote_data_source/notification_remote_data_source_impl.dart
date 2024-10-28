@@ -16,16 +16,20 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 
   @override
   Future<String> updateFCMtoken() async {
+    print('...updateFCMtoken start');
     var currentToken = await FirebaseMessaging.instance.getToken();
-    print('...currentToken=${currentToken}');
+    print('currentToken: $currentToken');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      print('cookies not found in updateFCMtoken');
+      throw const ServerException(message: 'Someting went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/user/save-fcm-token';
+    print('url: $url');
     String currentUser = ShardPrefHelper.getUserID() ?? '';
+    print('currentUser: $currentUser');
 
     final response =
         await client.post(Uri.parse(url), headers: <String, String>{
@@ -34,118 +38,105 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       "fcmToken": currentToken,
       "userId": currentUser,
     });
-
+    print('updateFCMtoken api response status code: ${response.statusCode}');
+    print('updateFCMtoken api response: ${response.body}');
     if (response.statusCode == 200) {
       // ignore: unused_local_variable
       final jsonData = jsonDecode(response.body);
-
-      print('...jsonData=${jsonData}');
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      print('else error in updateFCMtoken: $message');
       // throw ServerException(message: message);
-      print('...error=${message}');
     }
-
     return currentToken ?? '';
   }
 
   @override
   Future<List<NotificationModel>> getAllNotification({String? page}) async {
-    print('... getAllNotification page=$page ');
+    print('...getAllNotification start with...');
+    print('page: $page');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      print('cookies not found in getAllNotification');
+      throw const ServerException(message: 'Someting went wrong');
     }
-    print('cookies list $cookies');
+
     String cookieHeader = cookies.join('; ');
     String url =
         '$kBaseUrlNotification/notifications/fetch-notification?page=1&limit=10';
-
-    print('cookie $cookieHeader');
+    print('url: $url');
 
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
         'Cookie': cookieHeader,
-        //'Cookie': 'connect.sid=s%3ATNsUxcpmB530JPuGonUAMDf7UM75k6Q4.mxgR3Q0l1w8bXnJiiZlxe76Dlme%2FOEHdlLkM4ZHRoFA; refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2N2QwZDZkNjIxMDQxZGEyYzdiNzllOCIsImlhdCI6MTcyNjE1MTY5OCwiZXhwIjoxNzM5MTExNjk4fQ.nVVIIKSfktYn64zktVqexxi86sfXqkuKRjp9g13fuM0',
       },
     );
-    print("message response api $response");
+    print(
+        'getAllNotification api response status code: ${response.statusCode}');
+    print('getAllNotification api response: ${response.body}');
 
     if (response.statusCode == 200) {
-      print('without decode ${jsonDecode(response.body)["notifications"]}');
-      print("message API else ${jsonDecode(response.body)}");
-      final fakeJson = jsonDecode(response.body)["notifications"];
-      final length = jsonDecode(response.body)["total"];
-      print(length);
-      return NotificationModel.fromJsonList(fakeJson);
-      // return jsonDecode(response.body)["notifications"];
+      final notifications = jsonDecode(response.body)["notifications"];
+      return NotificationModel.fromJsonList(notifications);
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
-      print("message API else $message");
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      print('else error in getAllNotification: $message');
       throw ServerException(message: message);
     }
   }
 }
 
 Future<int> getAllNotificationCount({String? page}) async {
+  print('...getAllNotificationCount start with...');
+  print('page: $page');
   final http.Client client = http.Client();
-  ;
-  print('... getAllNotification page=$page ');
-
   List<String>? cookies = ShardPrefHelper.getCookie();
   if (cookies == null || cookies.isEmpty) {
-    throw const ServerException(message: 'No cookies found');
+    print('cookies not found in getAllNotificationCount');
+    throw const ServerException(message: 'Someting went wrong');
   }
-  print('cookies list $cookies');
+
   String cookieHeader = cookies.join('; ');
   String url =
       '$kBaseUrlNotification/notifications/fetch-notification?page=$page&limit=100';
-  // String url = '$kBaseUrlNotification/notifications/fetch-notification?status=unread&page=$page&limit=100';
-
-  print('cookie $cookieHeader');
+  print('url: $url');
 
   final response = await client.get(
     Uri.parse(url),
     headers: <String, String>{
       'Cookie': cookieHeader,
-      //'Cookie': 'connect.sid=s%3ATNsUxcpmB530JPuGonUAMDf7UM75k6Q4.mxgR3Q0l1w8bXnJiiZlxe76Dlme%2FOEHdlLkM4ZHRoFA; refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2N2QwZDZkNjIxMDQxZGEyYzdiNzllOCIsImlhdCI6MTcyNjE1MTY5OCwiZXhwIjoxNzM5MTExNjk4fQ.nVVIIKSfktYn64zktVqexxi86sfXqkuKRjp9g13fuM0',
     },
   );
-  print("message response api $response");
-
+  print(
+      'getAllNotificationCount api response status code: ${response.statusCode}');
+  print('getAllNotificationCount api response: ${response.body}');
   if (response.statusCode == 200) {
-    print('without decode ${jsonDecode(response.body)["notifications"]}');
-    print("message API else ${jsonDecode(response.body)}");
-    final fakeJson = jsonDecode(response.body)["total"];
-    print(fakeJson);
-    return fakeJson != null ? fakeJson : 0;
-    // return jsonDecode(response.body)["notifications"];
+    final notificationCount = jsonDecode(response.body)["total"];
+    return notificationCount ?? 0;
   } else {
-    final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
-    print("message API else $message");
+    final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+    print('else error in getAllNotificationCount: $message');
     throw ServerException(message: message);
   }
 }
 
 Future<int> getNotificationUnreadCount() async {
+  print('...getNotificationUnreadCount start...');
   final http.Client client = http.Client();
-
   List<String>? cookies = ShardPrefHelper.getCookie();
-
   String? getAccessToken = ShardPrefHelper.getAccessToken();
-
   if (cookies == null || cookies.isEmpty) {
-    throw const ServerException(message: 'No cookies found');
+    print('cookies not found in getNotificationUnreadCount');
+    throw const ServerException(message: 'Someting went wrong');
   }
 
   String cookieHeader = cookies.join('; ');
   String url =
       '$kBaseUrlNotification/notifications/get-unread-notification-count';
+  print('url: $url');
 
-  print('cookie $cookieHeader');
-  //var currentToken = await FirebaseMessaging.instance.getToken();
   final response = await client.get(
     Uri.parse(url),
     headers: <String, String>{
@@ -154,33 +145,36 @@ Future<int> getNotificationUnreadCount() async {
       'Cookie': cookieHeader,
     },
   );
-  print('unread count -- ${response.body}');
+  print(
+      'getNotificationUnreadCount api response status code: ${response.statusCode}');
+  print('getNotificationUnreadCount api response: ${response.body}');
   if (response.statusCode == 200) {
-    final count = jsonDecode(response.body)["unreadCount"];
-    return count ?? 0;
-    // return fakeJson;
+    final unreadCount = jsonDecode(response.body)["unreadCount"];
+    return unreadCount ?? 0;
   } else {
-    final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
-    print("message API else in count $message");
+    final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+    print('else error in getNotificationUnreadCount: $message');
     throw ServerException(message: message);
   }
 }
 
 Future<void> updateNotificationStatus(String notificationId) async {
+  print('...updateNotificationStatus start with');
+  print('notificationId $notificationId');
   final http.Client client = http.Client();
-
   List<String>? cookies = ShardPrefHelper.getCookie();
   String? getAccessToken = ShardPrefHelper.getAccessToken();
 
   if (cookies == null || cookies.isEmpty) {
-    throw const ServerException(message: 'No cookies found');
+    print('cookies not found in updateNotificationStatus');
+    throw const ServerException(message: 'Someting went wrong');
   }
 
   String cookieHeader = cookies.join('; ');
   String url =
       '$kBaseUrlNotification/notifications/update-notification-status?notificationId=$notificationId';
 
-  print('cookie $cookieHeader');
+  print('url $url');
 
   final response = await client.put(
     Uri.parse(url),
@@ -190,14 +184,16 @@ Future<void> updateNotificationStatus(String notificationId) async {
       'Cookie': cookieHeader,
     },
   );
-
+  print(
+      'updateNotificationStatus api response status code: ${response.statusCode}');
+  print('updateNotificationStatus api response: ${response.body}');
   if (response.statusCode == 200 ||
       jsonDecode(response.body)['message'] ==
           "Notification not found or already read") {
     print("Notification status updated successfully.");
   } else {
-    final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
-    print("Error updating notification status: $message");
+    final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+    print('else error in updateNotificationStatus: $message');
     throw ServerException(message: message);
   }
 }

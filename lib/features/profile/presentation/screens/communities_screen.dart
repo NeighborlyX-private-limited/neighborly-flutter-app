@@ -131,12 +131,6 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
               }
             },
           )),
-      // Column(
-      //   children: [
-      //     Column(
-      //         crossAxisAlignment: CrossAxisAlignment.start, children: []),
-      //   ],
-      // )
     ));
   }
 }

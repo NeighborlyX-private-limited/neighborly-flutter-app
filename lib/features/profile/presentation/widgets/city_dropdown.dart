@@ -5,11 +5,12 @@ class CityDropdown extends StatelessWidget {
   final String? selectCity;
   final Function(String?) onChanged;
 
-  const CityDropdown(
-      {super.key,
-      required this.selectCity,
-      required this.onChanged,
-      this.isHome = false});
+  const CityDropdown({
+    super.key,
+    required this.selectCity,
+    required this.onChanged,
+    this.isHome = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +23,6 @@ class CityDropdown extends StatelessWidget {
                 size: 30,
               )
             : null,
-        //hintText: 'City',
         border: isHome == true
             ? InputBorder.none
             : OutlineInputBorder(
@@ -43,10 +43,6 @@ class CityDropdown extends StatelessWidget {
           value: 'Gurugram',
           child: Text('Gurugram'),
         ),
-        // DropdownMenuItem(
-        //   value: 'Kannauj',
-        //   child: Text('Kannauj'),
-        // ),
         DropdownMenuItem(
           value: 'New Delhi',
           child: Text('New Delhi'),

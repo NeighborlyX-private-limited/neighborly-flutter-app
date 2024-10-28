@@ -7,10 +7,9 @@ class MessageHandlerHelper {
   });
 
   void doTheJump() {
-    print('...MessageHandlerHelper data: ${messageData}');
-
-    print(
-        '...doTheJump userId? ${(messageData["userId"] != null)} ${messageData["userId"]}');
+    print('...MessageHandlerHelper start with');
+    print('messageData:$messageData');
+    print('messageData userId: ${messageData["userId"]}');
 
     if (messageData['userId'] != null) {
       router.push('/userProfileScreen/${messageData['userId']}');

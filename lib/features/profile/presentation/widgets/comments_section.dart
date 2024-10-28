@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-
-import '../../../../core/theme/text_style.dart';
 import '../bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
 import 'post_with_comments_sheemer_widget.dart';
 import 'post_with_comments_widget.dart';
@@ -88,36 +86,6 @@ class _CommentSectionState extends State<CommentSection> {
                       ],
                     ),
                   );
-                  //   return Center(
-                  //     child: Column(
-                  //       mainAxisAlignment: MainAxisAlignment.center,
-                  //       children: [
-                  //         Text(
-                  //           'No comments yet.',
-                  //           style: onboardingHeading2Style,
-                  //         ),
-                  //         const SizedBox(
-                  //           height: 10,
-                  //         ),
-                  //         Text(
-                  //           'When you comment on photos and polls, your comments will appear here.',
-                  //           style: mediumTextStyleBlack,
-                  //         ),
-                  //         const SizedBox(
-                  //           height: 10,
-                  //         ),
-                  //         InkWell(
-                  //           onTap: () {
-                  //             context.go('/home/false');
-                  //           },
-                  //           child: Text(
-                  //             'Go on, interact with stuff!',
-                  //             style: bluemediumTextStyleBlack,
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   );
                 }
                 return ListView.separated(
                   itemCount: state.post.length,
