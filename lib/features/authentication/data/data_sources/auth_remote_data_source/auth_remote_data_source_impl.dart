@@ -240,35 +240,37 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       /// extract data from response
-      List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
-      String userID = jsonDecode(response.body)['user']['_id'];
-      String username = jsonDecode(response.body)['user']['username'];
-      String proPic = jsonDecode(response.body)['user']['picture'];
-      List<dynamic> location = jsonDecode(response.body)['user']
-          ['current_coordinates']['coordinates'];
-      List<dynamic> homeLocation =
-          jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
-      String? email = jsonDecode(response.body)['user']['email'];
-      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
-      bool isPhoneVerified =
-          jsonDecode(response.body)['user']['isPhoneVerified'];
-      bool isSkippedTutorial =
-          jsonDecode(response.body)['user']['skippedTutorial'];
-      bool isViewedTutorial =
-          jsonDecode(response.body)['user']['viewedTutorial'];
+      if (verificationFor != 'forgot-password') {
+        List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+        String userID = jsonDecode(response.body)['user']['_id'];
+        String username = jsonDecode(response.body)['user']['username'];
+        String proPic = jsonDecode(response.body)['user']['picture'];
+        List<dynamic> location = jsonDecode(response.body)['user']
+            ['current_coordinates']['coordinates'];
+        List<dynamic> homeLocation = jsonDecode(response.body)['user']
+            ['home_coordinates']['coordinates'];
+        String? email = jsonDecode(response.body)['user']['email'];
+        bool isVerified = jsonDecode(response.body)['user']['isVerified'];
+        bool isPhoneVerified =
+            jsonDecode(response.body)['user']['isPhoneVerified'];
+        bool isSkippedTutorial =
+            jsonDecode(response.body)['user']['skippedTutorial'];
+        bool isViewedTutorial =
+            jsonDecode(response.body)['user']['viewedTutorial'];
 
-      /// set data to local
-      ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
-      ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
-      ShardPrefHelper.setIsVerified(isVerified);
-      ShardPrefHelper.setIsPhoneVerified(isPhoneVerified);
-      ShardPrefHelper.setCookie(cookies);
-      ShardPrefHelper.setUserID(userID);
-      ShardPrefHelper.setEmail(email ?? '');
-      ShardPrefHelper.setUsername(username);
-      ShardPrefHelper.setUserProfilePicture(proPic);
-      ShardPrefHelper.setLocation([location[0], location[1]]);
-      ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+        /// set data to local
+        ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
+        ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
+        ShardPrefHelper.setIsVerified(isVerified);
+        ShardPrefHelper.setIsPhoneVerified(isPhoneVerified);
+        ShardPrefHelper.setCookie(cookies);
+        ShardPrefHelper.setUserID(userID);
+        ShardPrefHelper.setEmail(email ?? '');
+        ShardPrefHelper.setUsername(username);
+        ShardPrefHelper.setUserProfilePicture(proPic);
+        ShardPrefHelper.setLocation([location[0], location[1]]);
+        ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+      }
 
       return 'Account is verified';
     } else {
@@ -348,6 +350,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         String userID = jsonDecode(response.body)['user']['_id'];
         String username = jsonDecode(response.body)['user']['username'];
         String proPic = jsonDecode(response.body)['user']['picture'];
+        bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         List<dynamic> location = jsonDecode(response.body)['user']
             ['current_coordinates']['coordinates'];
         List<dynamic> homeLocation = jsonDecode(response.body)['user']
@@ -356,6 +359,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         /// set data to local
         ShardPrefHelper.setCookie(cookies);
+        ShardPrefHelper.setIsVerified(isVerified);
         ShardPrefHelper.setUserID(userID);
         ShardPrefHelper.setEmail(email ?? '');
         ShardPrefHelper.setUsername(username);

@@ -180,7 +180,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       },
     );
     print("logout response status code: ${response.statusCode}");
-    print("logout response: ${jsonDecode(response.body)}");
+    print("logout response: ${response.body}}");
     if (response.statusCode == 200) {
       ShardPrefHelper.setIsLocationOn(false);
     }

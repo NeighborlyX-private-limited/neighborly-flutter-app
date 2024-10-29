@@ -37,8 +37,10 @@ class LoginWithEmailBloc
     });
 
     ///GoogleLoginEvent
-    on<GoogleLoginEvent>(
-        (GoogleLoginEvent event, Emitter<LoginWithEmailState> emit) async {
+    on<GoogleLoginEvent>((
+      GoogleLoginEvent event,
+      Emitter<LoginWithEmailState> emit,
+    ) async {
       emit(LoginLoadingState());
 
       final result = await _googleLogin.call();

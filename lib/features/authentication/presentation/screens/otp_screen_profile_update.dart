@@ -36,14 +36,14 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
     _otpController = TextEditingController();
     if (widget.verificationFor == 'phone-login' ||
         widget.verificationFor == 'phone-register') {
+      print('phone-otp called: ${widget.data}');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           phone: widget.data,
         ),
       );
-      print('phone-verify called: ${widget.data}');
     } else {
-      print('widget.data=$widget.data');
+      print('email-otp called: ${widget.data}');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           email: widget.data,

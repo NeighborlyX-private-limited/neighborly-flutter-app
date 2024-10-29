@@ -32,24 +32,36 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   void initState() {
+    print('data:${widget.data}');
+    print('verificationFor:${widget.verificationFor}');
     _otpController = TextEditingController();
-    if (widget.verificationFor == 'phone-login' ||
-        widget.verificationFor == 'phone-register') {
-      print('phone-resend otp called: ${widget.data}');
+    // if (widget.verificationFor == 'phone-login') {
+    //   BlocProvider.of<ResendOtpBloc>(context).add(
+    //     ResendOTPButtonPressedEvent(
+    //       phone: widget.data,
+    //     ),
+    //   );
+    // }
+
+    if (widget.verificationFor == 'phone-login') {
+      print('phone-resend verify called: ${widget.data}');
+
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           phone: widget.data,
         ),
       );
-    } else {
-      print('email-resend verify called = $widget.data');
-      BlocProvider.of<ResendOtpBloc>(context).add(
-        ResendOTPButtonPressedEvent(
-          email: widget.data,
-        ),
-      );
     }
+    // else {
+    //   print('email-resend verify called: ${widget.data}');
+    //   BlocProvider.of<ResendOtpBloc>(context).add(
+    //     ResendOTPButtonPressedEvent(
+    //       email: widget.data,
+    //     ),
+    //   );
+    // }
 
+    print('email-resend verify called: ${widget.data}');
     super.initState();
   }
 
@@ -200,6 +212,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         SnackBar(content: Text(state.message)),
                       );
                     } else if (widget.verificationFor == 'forgot-password') {
+                      print('New password...');
                       context.push('/newPassword/${widget.data}');
                     }
                   }
@@ -227,9 +240,10 @@ class _OtpScreenState extends State<OtpScreen> {
                       } else {
                         BlocProvider.of<OtpBloc>(context).add(
                           OtpSubmitted(
-                              otp: _otpController.text,
-                              email: widget.data,
-                              verificationFor: widget.verificationFor),
+                            otp: _otpController.text,
+                            email: widget.data,
+                            verificationFor: widget.verificationFor,
+                          ),
                         );
                       }
                     },

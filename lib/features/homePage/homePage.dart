@@ -279,3 +279,215 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
+
+// ignore_for_file: unused_field
+
+// import 'dart:async';
+// import 'package:flutter/services.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
+// import 'package:flutter_svg/flutter_svg.dart';
+// import 'package:geolocator/geolocator.dart';
+// import 'package:go_router/go_router.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import '../../core/theme/colors.dart';
+// import '../../core/utils/shared_preference.dart';
+// import '../notification/presentation/bloc/notification_general_cubit.dart';
+
+// class MainPage extends StatefulWidget {
+//   final Widget child;
+
+//   const MainPage({
+//     super.key,
+//     required this.child,
+//   });
+
+//   @override
+//   State<MainPage> createState() => _MainPageState();
+// }
+
+// class _MainPageState extends State<MainPage> {
+//   ///bool variable
+//   bool isDayFilled = false;
+//   bool isMonthFilled = false;
+//   bool isYearFilled = false;
+
+//   ///string variable
+//   String? _currentAddress;
+//   String? _deepLink;
+
+//   static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
+
+//   ///controllers
+//   late PageController pageController;
+
+//   /// tracking the current tab index
+//   int _currentIndex = 0;
+
+//   @override
+//   void initState() {
+//     pageController = PageController();
+//     fetchLocationAndUpdate();
+//     updateFCMtokenNotification();
+//     _setDeepLinkListener();
+//     super.initState();
+//   }
+
+//   Future<void> _setDeepLinkListener() async {
+//     platform.setMethodCallHandler((MethodCall call) async {
+//       if (call.method == "onDeepLink") {
+//         print("deep link received");
+//         setState(() {
+//           _deepLink = call.arguments;
+//           List? linksplit = _deepLink?.split('neighborly.in');
+//           if (linksplit != null && linksplit.length > 1) {
+//             try {
+//               context.push(linksplit[1]);
+//             } catch (e) {
+//               print("error in deep link $e");
+//             }
+//           } else {
+//             print("Empty means open default page");
+//           }
+//         });
+//       }
+//     });
+//   }
+
+//   @override
+//   void didChangeDependencies() {
+//     super.didChangeDependencies();
+//     ShardPrefHelper.removeImageUrl();
+//   }
+
+//   @override
+//   void dispose() {
+//     pageController.dispose();
+//     super.dispose();
+//   }
+
+//   Future<bool> _handleLocationPermission() async {
+//     LocationPermission permission;
+
+//     var checkPushPermission = await Permission.notification.isDenied;
+//     print('...checkPushPermission: $checkPushPermission');
+//     if (checkPushPermission) {
+//       await Permission.notification.request();
+//     }
+
+//     permission = await Geolocator.checkPermission();
+//     if (permission == LocationPermission.denied) {
+//       permission = await Geolocator.requestPermission();
+//       if (permission == LocationPermission.denied) {
+//         ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(content: Text('Location permissions are denied')));
+//         return false;
+//       }
+//     }
+//     if (permission == LocationPermission.deniedForever) {
+//       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+//           content: Text(
+//               'Location permissions are permanently denied, we cannot request permissions.')));
+//       return false;
+//     }
+//     return true;
+//   }
+
+//   Future<void> updateFCMtokenNotification() async {
+//     print('...updateFCMtokenNotification running');
+//     try {
+//       var result = await BlocProvider.of<NotificationGeneralCubit>(context)
+//           .updateFCMTokenUsecase();
+//       result.fold(
+//         (failure) {},
+//         (currentFCMtoken) {
+//           print('...updateFCMtokenNotification FCM token: $currentFCMtoken');
+//           ShardPrefHelper.setFCMtoken(currentFCMtoken);
+//         },
+//       );
+//     } catch (e) {
+//       debugPrint('Error getting FCM token: $e');
+//     }
+//   }
+
+//   Future<void> fetchLocationAndUpdate() async {
+//     final hasPermission = await _handleLocationPermission();
+//     if (!hasPermission) return;
+
+//     try {
+//       Position position = await Geolocator.getCurrentPosition(
+//         desiredAccuracy: LocationAccuracy.high,
+//       );
+
+//       print('Lat Long Home Page: ${position.latitude} ${position.longitude}');
+//       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
+//     } catch (e) {
+//       debugPrint('Error getting location: $e');
+//     }
+//   }
+
+//   void _onItemTapped(int index) {
+//     setState(() {
+//       _currentIndex = index;
+//     });
+//     switch (index) {
+//       case 0:
+//         context.go('/home/false');
+//         break;
+//       case 1:
+//         context.go('/create');
+//         break;
+//       case 2:
+//         context.go('/profile');
+//         break;
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return WillPopScope(
+//       onWillPop: () async {
+//         // Handle back navigation by resetting to the correct tab
+//         if (_currentIndex != 0) {
+//           setState(() {
+//             _currentIndex = 0;
+//           });
+//           context.go('/home/false');
+//           return false; // Prevent default back navigation
+//         }
+//         return true;
+//       },
+//       child: SafeArea(
+//         child: Scaffold(
+//           backgroundColor: const Color(0xFFF5F5FF),
+//           bottomNavigationBar: BottomNavigationBar(
+//             backgroundColor: const Color(0xFFF5F5FF),
+//             type: BottomNavigationBarType.fixed,
+//             selectedItemColor: AppColors.primaryColor,
+//             unselectedItemColor: Colors.grey,
+//             items: <BottomNavigationBarItem>[
+//               const BottomNavigationBarItem(
+//                 icon: Icon(Icons.home),
+//                 label: 'Home',
+//               ),
+//               BottomNavigationBarItem(
+//                 icon: SvgPicture.asset(
+//                   'assets/add.svg',
+//                   fit: BoxFit.contain,
+//                 ),
+//                 label: '',
+//               ),
+//               const BottomNavigationBarItem(
+//                 icon: Icon(Icons.person),
+//                 label: 'Profile',
+//               ),
+//             ],
+//             currentIndex: _currentIndex,
+//             onTap: _onItemTapped,
+//           ),
+//           body: widget.child,
+//         ),
+//       ),
+//     );
+//   }
+// }
