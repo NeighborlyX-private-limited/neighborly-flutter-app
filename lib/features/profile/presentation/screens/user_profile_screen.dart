@@ -28,7 +28,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _fetchProfile();
   }
 
@@ -229,7 +229,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                             tabs: const [
                               Tab(text: 'Posts'),
                               Tab(text: 'Comments'),
-                              Tab(text: 'Communities'),
+
+                              /// we do not have Communities right now
+                              //Tab(text: 'Communities'),
                             ],
                           ),
                         ),
@@ -242,7 +244,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                     children: [
                       PostSection(userId: widget.userId),
                       CommentSection(userId: widget.userId),
-                      GroupSection(userId: widget.userId),
+
+                      /// we do not have Communities right now s
+                      //GroupSection(userId: widget.userId),
                     ],
                   ),
                 );

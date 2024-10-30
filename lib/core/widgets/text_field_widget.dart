@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import for input formatter
 import '../theme/colors.dart';
 
 class TextFieldWidget extends StatefulWidget {
@@ -8,19 +9,22 @@ class TextFieldWidget extends StatefulWidget {
   final TextEditingController controller;
   final void Function(String) onChanged;
   final double? height;
-
   final FocusNode? focusNode;
   final bool border;
-  const TextFieldWidget(
-      {super.key,
-      required this.border,
-      this.isPassword = false,
-      required this.lableText,
-      required this.controller,
-      this.focusNode,
-      required this.onChanged,
-      this.inputType,
-      this.height});
+  final bool digitsOnly;
+
+  const TextFieldWidget({
+    super.key,
+    required this.border,
+    this.isPassword = false,
+    required this.lableText,
+    required this.controller,
+    this.focusNode,
+    required this.onChanged,
+    this.inputType,
+    this.height,
+    this.digitsOnly = false,
+  });
 
   @override
   State<TextFieldWidget> createState() => _TextFieldWidgetState();
@@ -28,6 +32,7 @@ class TextFieldWidget extends StatefulWidget {
 
 class _TextFieldWidgetState extends State<TextFieldWidget> {
   bool _isObscured = true;
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -39,6 +44,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         obscureText: widget.isPassword ? _isObscured : false,
         controller: widget.controller,
         focusNode: widget.focusNode,
+        inputFormatters:
+            widget.digitsOnly ? [FilteringTextInputFormatter.digitsOnly] : null,
         decoration: InputDecoration(
           labelText: widget.lableText,
           border: widget.border

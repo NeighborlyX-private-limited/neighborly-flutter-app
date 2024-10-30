@@ -48,6 +48,11 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['msg'];
+    } else if (response.statusCode == 401) {
+      print(
+          'changePassword else if error: ${jsonDecode(response.body)['msg']}');
+      throw ServerException(
+          message: jsonDecode(response.body)['msg'] ?? 'Something went wrong');
     } else {
       print('changePassword else error: ${jsonDecode(response.body)['error']}');
       throw ServerException(

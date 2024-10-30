@@ -87,6 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// set the location of  user whether their home location is on or current location in
   setIsHome() {
+    print('setIsHome...');
     var isLocationOn = ShardPrefHelper.getIsLocationOn();
     setState(() {
       isHome = isLocationOn ? false : true;
@@ -95,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// refersh the home screen
   Future<void> _onRefresh() async {
+    print('this is call....');
     setIsHome();
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
@@ -206,10 +208,15 @@ class _HomeScreenState extends State<HomeScreen> {
   ///fetch the unread notification count
   int unreadNotificationCount = 0;
   Future<void> getUnreadNotificationCount() async {
+    print('getUnreadNotificationCount call..');
     getNotificationUnreadCount().then((value) {
-      if (value > 0) {
+      print('getUnreadNotificationCount call again here.. $value');
+      if (value >= 0) {
+        print('getUnreadNotificationCount call again here2.. $value');
         if (mounted) {
+          print('getUnreadNotificationCount call again here3.. $value');
           setState(() {
+            print('getUnreadNotificationCount result here4..');
             unreadNotificationCount = value;
             print('Unread Notification Count: $unreadNotificationCount');
           });
@@ -222,183 +229,184 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5FF),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SvgPicture.asset(
-              'assets/logo.svg',
-              width: 30,
-              height: 34,
-            ),
-            const SizedBox(width: 10),
-            Flexible(
-              child: Container(
-                height: 40,
-                width: 160,
-                decoration: BoxDecoration(
-                  color: const Color(0xffC5C2FF),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: isHome
-                          ? const Color(0xff635BFF)
-                          : const Color.fromARGB(255, 65, 65, 70),
-                    ),
-                    // Home Button
-                    InkWell(
-                      onTap: () {
-                        ShardPrefHelper.setIsLocationOn(false);
-                        handleToggle(true);
-                      },
-                      child: SizedBox(
-                        height: 35,
-                        width: 60,
-                        child: Center(
-                          child: Text(
-                            _selectedCity,
-                            style: TextStyle(
-                              fontWeight:
-                                  isHome ? FontWeight.w900 : FontWeight.normal,
-                              fontSize: 16,
-                              color: isHome
-                                  ? const Color(0xff635BFF)
-                                  : const Color.fromARGB(255, 65, 65, 70),
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF5F5FF),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SvgPicture.asset(
+                'assets/logo.svg',
+                width: 30,
+                height: 34,
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Container(
+                  height: 40,
+                  width: 160,
+                  decoration: BoxDecoration(
+                    color: const Color(0xffC5C2FF),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: isHome
+                            ? const Color(0xff635BFF)
+                            : const Color.fromARGB(255, 65, 65, 70),
+                      ),
+                      // Home Button
+                      InkWell(
+                        onTap: () {
+                          ShardPrefHelper.setIsLocationOn(false);
+                          handleToggle(true);
+                        },
+                        child: SizedBox(
+                          height: 35,
+                          width: 60,
+                          child: Center(
+                            child: Text(
+                              _selectedCity,
+                              style: TextStyle(
+                                fontWeight: isHome
+                                    ? FontWeight.w900
+                                    : FontWeight.normal,
+                                fontSize: 16,
+                                color: isHome
+                                    ? const Color(0xff635BFF)
+                                    : const Color.fromARGB(255, 65, 65, 70),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    // Dropdown for city selection
-                    BlocListener<CityBloc, CityState>(
-                      listener: (context, state) {
-                        if (state is CityUpdatedState) {
-                          if (isHome) {
+                      SizedBox(
+                        width: 5,
+                      ),
+                      // Dropdown for city selection
+                      BlocListener<CityBloc, CityState>(
+                        listener: (context, state) {
+                          if (state is CityUpdatedState) {
+                            ShardPrefHelper.setIsLocationOn(false);
+                            handleToggle(true);
                             _fetchPosts();
-                          }
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('City updated to ${state.city}!'),
-                            ),
-                          );
-                        } else if (state is CityErrorState) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Error: ${state.errorMessage}'),
-                            ),
-                          );
-                        }
-                      },
-                      child: HomeDropdownCity(
-                        selectCity: _selectedCity,
-                        onChanged: (String? newValue) {
-                          if (newValue != null) {
-                            context
-                                .read<CityBloc>()
-                                .add(UpdateCityEvent(newValue));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('City updated to ${state.city}!'),
+                              ),
+                            );
+                          } else if (state is CityErrorState) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: ${state.errorMessage}'),
+                              ),
+                            );
                           }
                         },
-                      ),
-                    ),
-                    // Vertical Divider
-                    Container(
-                      height: 25,
-                      width: 1,
-                      color: const Color(0xff2E2E2E),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    // Location Button
-                    InkWell(
-                      onTap: () {
-                        ShardPrefHelper.setIsLocationOn(true);
-                        handleToggle(false);
-                      },
-                      child: Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isHome
-                              ? const Color(0xffC5C2FF)
-                              : const Color(0xff635BFF),
+                        child: HomeDropdownCity(
+                          selectCity: _selectedCity,
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              context
+                                  .read<CityBloc>()
+                                  .add(UpdateCityEvent(newValue));
+                            }
+                          },
                         ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/location.svg',
-                            height: 25,
-                            width: 25,
+                      ),
+                      // Vertical Divider
+                      Container(
+                        height: 25,
+                        width: 1,
+                        color: const Color(0xff2E2E2E),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      // Location Button
+                      InkWell(
+                        onTap: () {
+                          ShardPrefHelper.setIsLocationOn(true);
+                          handleToggle(false);
+                        },
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isHome
+                                ? const Color(0xffC5C2FF)
+                                : const Color(0xff635BFF),
+                          ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              'assets/location.svg',
+                              height: 25,
+                              width: 25,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              ),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: GestureDetector(
+                onTap: () {
+                  context.push('/notifications');
+                },
+                child: unreadNotificationCount > 0
+                    ? badges.Badge(
+                        badgeContent: unreadNotificationCount > 0
+                            ? Text(
+                                "$unreadNotificationCount",
+                                style: TextStyle(color: Colors.white),
+                              )
+                            : null,
+                        badgeStyle:
+                            BadgeStyle(badgeColor: AppColors.primaryColor),
+                        position: badges.BadgePosition.custom(end: 0, top: -8),
+                        child: SvgPicture.asset(
+                          'assets/alarm.svg',
+                          fit: BoxFit.contain,
+                          width: 30,
+                          height: 30,
+                        ),
+                      )
+                    : badges.Badge(
+                        showBadge: false,
+                        badgeStyle: BadgeStyle(
+                          badgeColor: AppColors.primaryColor,
+                        ),
+                        position: badges.BadgePosition.custom(
+                          end: 0,
+                          top: -8,
+                        ),
+                        child: SvgPicture.asset(
+                          'assets/alarm.svg',
+                          fit: BoxFit.contain,
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
               ),
             ),
           ],
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: GestureDetector(
-              onTap: () {
-                context.push('/notifications');
-              },
-              child: unreadNotificationCount > 0
-                  ? badges.Badge(
-                      badgeContent: unreadNotificationCount > 0
-                          ? Text(
-                              "$unreadNotificationCount",
-                              style: TextStyle(color: Colors.white),
-                            )
-                          : null,
-                      badgeStyle:
-                          BadgeStyle(badgeColor: AppColors.primaryColor),
-                      position: badges.BadgePosition.custom(end: 0, top: -8),
-                      child: SvgPicture.asset(
-                        'assets/alarm.svg',
-                        fit: BoxFit.contain,
-                        width: 30,
-                        height: 30,
-                      ),
-                    )
-                  : badges.Badge(
-                      showBadge: false,
-                      badgeStyle: BadgeStyle(
-                        badgeColor: AppColors.primaryColor,
-                      ),
-                      position: badges.BadgePosition.custom(
-                        end: 0,
-                        top: -8,
-                      ),
-                      child: SvgPicture.asset(
-                        'assets/alarm.svg',
-                        fit: BoxFit.contain,
-                        width: 30,
-                        height: 30,
-                      ),
-                    ),
-            ),
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
+        body: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
           builder: (context, state) {
             print('state changed $state');
             if (state is GetAllPostsLoadingState) {

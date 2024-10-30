@@ -128,15 +128,17 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                       height: 5,
                                     ),
                                     Text(
-                                      'Your Karma score reflects your engagement within the community. Share, help, and connect to build your score.',
+                                      'Your Karma score reflects your engagement within the community. Share, help, and connect to build your score.',
                                       style: mediumGreyTextStyleBlack,
                                       softWrap: true,
                                     ),
                                   ],
                                 ),
                               ),
-                              Text(widget.karma.toString(),
-                                  style: onboardingBlackBody2Style)
+                              Text(
+                                widget.karma.toString(),
+                                style: onboardingBlackBody2Style,
+                              )
                             ],
                           ),
                         ])),
