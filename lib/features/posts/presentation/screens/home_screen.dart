@@ -210,13 +210,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> getUnreadNotificationCount() async {
     print('getUnreadNotificationCount call..');
     getNotificationUnreadCount().then((value) {
-      print('getUnreadNotificationCount call again here.. $value');
       if (value >= 0) {
-        print('getUnreadNotificationCount call again here2.. $value');
         if (mounted) {
-          print('getUnreadNotificationCount call again here3.. $value');
           setState(() {
-            print('getUnreadNotificationCount result here4..');
             unreadNotificationCount = value;
             print('Unread Notification Count: $unreadNotificationCount');
           });

@@ -27,12 +27,13 @@ class PostDetailScreen extends StatefulWidget {
   final String userId;
   final String commentId;
 
-  const PostDetailScreen(
-      {super.key,
-      required this.postId,
-      required this.userId,
-      required this.isPost,
-      required this.commentId});
+  const PostDetailScreen({
+    super.key,
+    required this.postId,
+    required this.userId,
+    required this.isPost,
+    required this.commentId,
+  });
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -321,7 +322,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             InkWell(
               onTap: () {
-                context.push('/userProfileScreen/${postState.post.userId}');
+                if (postState.post.userName.contains('[deleted]')) {
+                  print('here....');
+                  context.push('/deleted-user');
+                } else {
+                  context.push('/userProfileScreen/${postState.post.userId}');
+                }
               },
               child: Row(
                 children: [
@@ -791,7 +797,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             InkWell(
               onTap: () {
-                context.push('/userProfileScreen/${post.userId}');
+                if (post.userName.contains('[deleted]')) {
+                  context.push('/deleted-user');
+                } else {
+                  context.push('/userProfileScreen/${post.userId}');
+                }
               },
               child: Row(
                 children: [

@@ -65,7 +65,12 @@ class _PollWidgetState extends State<PollWidget> {
                 children: [
                   InkWell(
                     onTap: () {
-                      context.push('/userProfileScreen/${widget.post.userId}');
+                      if (widget.post.userName.contains('[deleted]')) {
+                        context.push('/deleted-user');
+                      } else {
+                        context
+                            .push('/userProfileScreen/${widget.post.userId}');
+                      }
                     },
                     child: Row(
                       children: [

@@ -179,10 +179,11 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                             award['type'])['imageUrl'];
 
                                         return AwardWidget(
-                                            imageUrl: imageUrl,
-                                            title: title,
-                                            description: description,
-                                            count: award['count'].toString());
+                                          imageUrl: imageUrl,
+                                          title: title,
+                                          description: description,
+                                          count: award['count'].toString(),
+                                        );
                                       },
                                       separatorBuilder:
                                           (BuildContext context, int index) {

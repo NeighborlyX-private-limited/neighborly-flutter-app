@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/deletd_user_profile_screen.dart';
 
 import '../../features/authentication/presentation/screens/forgot_password_screen.dart';
 import '../../features/authentication/presentation/screens/login_screen.dart';
@@ -63,6 +64,7 @@ String setInitialLocation() {
     return '/';
   } else {
     if (IsPhoneVarify || IsVarify) {
+      // return '/deleted-user';
       return '/home/false';
     }
     return '/';
@@ -141,15 +143,13 @@ final GoRouter router = GoRouter(
           return const ForgotPasswordScreen();
         },
       ),
-      // GoRoute(
-      //   path: '/homescreen/',
-      //   name: RouteConstants.homeScreenRouteName,
-      //   builder: (BuildContext context, GoRouterState state) {
-      //     return const MainPage(
-      //       isFirstTime: true,
-      //     );
-      //   },
-      // ),
+      GoRoute(
+        path: '/deleted-user',
+        name: RouteConstants.deletedUserRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const DeletedUserProfileScreen();
+        },
+      ),
       ShellRoute(
         builder: (context, state, child) {
           return MainPage(
