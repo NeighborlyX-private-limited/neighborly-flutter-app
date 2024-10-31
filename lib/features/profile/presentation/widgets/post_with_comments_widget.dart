@@ -66,7 +66,11 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
           children: [
             InkWell(
               onTap: () {
-                context.push('/userProfileScreen/${widget.post.userId}');
+                if (widget.post.userName.contains('[deleted]')) {
+                  context.push('/deleted-user');
+                } else {
+                  context.push('/userProfileScreen/${widget.post.userId}');
+                }
               },
               child: Row(
                 children: [
@@ -120,8 +124,14 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                     children: [
                       InkWell(
                         onTap: () {
-                          context
-                              .push('/userProfileScreen/${widget.post.userId}');
+                          print('pic ${widget.post.content.proPic}');
+                          if (widget.post.content.userName
+                              .contains('[deleted]')) {
+                            context.push('/deleted-user');
+                          } else {
+                            context.push(
+                                '/userProfileScreen/${widget.post.userId}');
+                          }
                         },
                         child: Row(
                           children: [
@@ -132,7 +142,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                   ),
-                                  child: widget.post.content.proPic != null
+                                  child: widget.post.content.proPic != null &&
+                                          widget.post.content.proPic != ''
                                       ? Image.network(
                                           widget.post.content.proPic!,
                                           fit: BoxFit.contain,

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +6,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
@@ -44,6 +44,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   void initState() {
     super.initState();
+    if (isLocationOn()) {
+      fetchLocationAndUpdate();
+    }
     _contentController = TextEditingController();
     _titleController = TextEditingController();
     _questionController = TextEditingController();
@@ -74,6 +77,125 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     _contentFocusNode.dispose();
   }
 
+  bool isLocationOn() {
+    bool isLocationOn = ShardPrefHelper.getIsLocationOn();
+    if (isLocationOn) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    // bool serviceEnabled;
+    LocationPermission permission;
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Location permissions are denied.'),
+            ),
+          );
+        }
+        return false;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Location permissions are permanently denied, we cannot request permissions.'),
+          ),
+        );
+      }
+      return false;
+    }
+    return true;
+  }
+
+  /// fetch the user location and upldate it.
+  Future<void> fetchLocationAndUpdate() async {
+    final hasPermission = await _handleLocationPermission();
+    if (!hasPermission) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+                'Location permissions are permanently denied, we cannot request permissions.'),
+          ),
+        );
+      }
+
+      return;
+    }
+
+    try {
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      ShardPrefHelper.setLocation([position.latitude, position.longitude]);
+      print(
+          'Lat Long in create post Screen: ${position.latitude}, ${position.longitude}');
+    } catch (e) {
+      if (mounted) {
+        showLocationAccessDialog(context);
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+          ),
+        );
+      }
+      debugPrint('Error getting location in create post: $e');
+    }
+  }
+
+  AlertDialog buildLocationAccessDialog(BuildContext context) {
+    return AlertDialog(
+      surfaceTintColor: Colors.white,
+      backgroundColor: Colors.white,
+      title: Text("No Location Access"),
+      content: Text(
+          "Device location is turned off, and if you don't turn on your location then last location will be used."),
+      actions: [
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: AppColors.primaryColor,
+            side: BorderSide(color: AppColors.primaryColor),
+            elevation: 0,
+            backgroundColor: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text("OK"),
+        ),
+      ],
+    );
+  }
+
+  void showLocationAccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return buildLocationAccessDialog(context);
+      },
+    );
+  }
+
+  bool checkIsHome() {
+    bool isLocationOn = ShardPrefHelper.getIsLocationOn();
+    if (isLocationOn) {
+      return true;
+    }
+    return false;
+  }
+
   /// Function to fetch the current city name
   Future<String?> getCityName() async {
     try {
@@ -91,11 +213,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       // Get the current position (latitude and longitude)
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
 
       // Use the coordinates to get the address details
-      List<Placemark> placemarks =
-          await placemarkFromCoordinates(position.latitude, position.longitude);
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        position.latitude,
+        position.longitude,
+      );
 
       // Extract the city name from the first placemark
       if (placemarks.isNotEmpty) {
@@ -359,6 +484,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {
+                                      await fetchLocationAndUpdate();
                                       bool iaLocationOn =
                                           ShardPrefHelper.getIsLocationOn();
 

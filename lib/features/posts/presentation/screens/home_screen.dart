@@ -195,12 +195,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
 
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
       print(
           'Lat Long in Home Screen: ${position.latitude}, ${position.longitude}');
     } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+          ),
+        );
+      }
       debugPrint('Error getting location: $e');
     }
   }

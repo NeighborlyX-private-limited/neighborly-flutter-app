@@ -64,7 +64,6 @@ String setInitialLocation() {
     return '/';
   } else {
     if (IsPhoneVarify || IsVarify) {
-      // return '/deleted-user';
       return '/home/false';
     }
     return '/';
