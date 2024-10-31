@@ -24,6 +24,7 @@ class _SecurityPageState extends State<SecurityPage> {
   bool noConnection = false;
   bool isWrongCurrentPassword = false;
   bool isNewPasswordShoart = false;
+  bool isPasswordMismatch = false;
 
   late TextEditingController _currentPasswordController;
   late TextEditingController _passwordController;
@@ -112,6 +113,7 @@ class _SecurityPageState extends State<SecurityPage> {
                     border: true,
                     onChanged: (value) {
                       setState(() {
+                        isNewPasswordShoart = value.length < 6 ? true : false;
                         isPasswordFilled =
                             _passwordController.text.trim().isNotEmpty;
                       });
@@ -129,6 +131,7 @@ class _SecurityPageState extends State<SecurityPage> {
                       setState(() {
                         isConfirmPasswordFilled =
                             _confirmPasswordController.text.trim().isNotEmpty;
+                        isPasswordMismatch = _passwordController.text != value;
                       });
                     },
                     controller: _confirmPasswordController,
@@ -141,6 +144,11 @@ class _SecurityPageState extends State<SecurityPage> {
                           style: TextStyle(color: Colors.red),
                         )
                       : const SizedBox(),
+                  if (isPasswordMismatch)
+                    const Text(
+                      'Passwords do not match.',
+                      style: TextStyle(color: Colors.red),
+                    ),
                   const SizedBox(
                     height: 45,
                   ),
