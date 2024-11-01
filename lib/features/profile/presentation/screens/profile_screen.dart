@@ -45,8 +45,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         .add(GetMyPostsButtonPressedEvent());
     BlocProvider.of<GetMyCommentsBloc>(context)
         .add(GetMyCommentsButtonPressedEvent());
-    BlocProvider.of<GetMyGroupsBloc>(context)
-        .add(GetMyGroupsButtonPressedEvent());
+    // BlocProvider.of<GetMyGroupsBloc>(context)
+    //     .add(GetMyGroupsButtonPressedEvent());
   }
 
   String checkStringInList(String str) {

@@ -130,7 +130,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                             context.push('/deleted-user');
                           } else {
                             context.push(
-                                '/userProfileScreen/${widget.post.userId}');
+                                '/userProfileScreen/${widget.post.content.userId}');
                           }
                         },
                         child: Row(

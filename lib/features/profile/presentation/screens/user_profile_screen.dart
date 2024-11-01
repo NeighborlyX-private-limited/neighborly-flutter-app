@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:share_it/share_it.dart';
 
 import '../../../../core/theme/colors.dart';
@@ -41,6 +44,13 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   void _fetchProfile() {
     BlocProvider.of<GetUserInfoBloc>(context)
         .add(GetUserInfoButtonPressedEvent(userId: widget.userId));
+    BlocProvider.of<GetMyPostsBloc>(context).add(GetMyPostsButtonPressedEvent(
+      userId: widget.userId,
+    ));
+    BlocProvider.of<GetMyCommentsBloc>(context)
+        .add(GetMyCommentsButtonPressedEvent(
+      userId: widget.userId,
+    ));
   }
 
   String checkStringInList(String str) {
