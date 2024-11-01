@@ -56,17 +56,17 @@ class _MainPageState extends State<MainPage> {
           _deepLink = call.arguments;
           List? linksplit = _deepLink?.split('neighborly.in');
           if (linksplit != null && linksplit.length > 1) {
-            //if(linksplit[1].contains('post-detail/')){
-            try {
-              context.push(linksplit[1]);
-            } catch (e) {
-              print("error in deep link $e");
+            if (linksplit[1].contains('post-detail/')) {
+              try {
+                context.push(linksplit[1]);
+              } catch (e) {
+                print("error in deep link $e");
+              }
+            } else {
+              //context.push('/userProfileScreen/${widget.post.userId}');
+              print(
+                  'here you have to handle other navigation for url based on if condition');
             }
-            // }
-            // else{
-            //   context.push('/userProfileScreen/${widget.post.userId}');
-            //   print('here you have to handle other navigation for url based on if condition');
-            // }
           } else {
             print("Empty means open default page");
           }

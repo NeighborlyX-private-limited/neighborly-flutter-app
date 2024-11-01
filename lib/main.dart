@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
+import 'package:uni_links/uni_links.dart';
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
 import 'dependency_injection.dart' as di;
@@ -72,104 +76,123 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  // String? _linkMessage;
-  // StreamSubscription? _sub;
-  // static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
-  // String? _deepLink;
+  String? _linkMessage;
+  StreamSubscription? _sub;
+  static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
+  String? _deepLink;
 
   @override
   void initState() {
     super.initState();
-    //_initUniLinks();
-    //_setDeepLinkListener();
+    _init();
+    _setDeepLinkListener();
   }
 
-  // Future<void> _setDeepLinkListener() async{
-  //   platform.setMethodCallHandler((MethodCall call) async {
-  //     if (call.method == "onDeepLink"){
-  //       print("deep link received by harsh");
-  //       setState((){
-  //         _deepLink = call.arguments;
-  //         print('deep link aaya $_deepLink');
-  //         List? linksplit = _deepLink?.split('neighborly.in/');
-  //         if (linksplit != null && linksplit.length > 1) {
-  //           if(linksplit[1].contains('posts/')){
-  //               print('this is post');
-  //               try{
-  //                               Navigator.of(context).push(MaterialPageRoute(
-  //                 builder: (context) => PostDetailScreen(
-  //                   postId: '201',
-  //                   isPost: false,
-  //                   userId: '667d0d6d621041da2c7b79e8'
-  //                 ),));
-  //               }catch(e){
-  //                 print("error aaya kch $e");
-  //                 //handle default page if error
-  //               }
-  //           }
-  //           else{
-  //             print('here you have to handle other navigation for url based on if condition');
-  //           }
-  //         }else{
-  //           print("Empty means open default page");
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
+  Future<void> _setDeepLinkListener() async {
+    print("deep link received by vinay");
+    try {
+      print("deep link received by vinay:");
+      platform.setMethodCallHandler((MethodCall call) async {
+        print("deep link received by vinay :${call.method}");
+        if (call.method == "onDeepLink") {
+          print("deep link received by vinay");
+          setState(() {
+            _deepLink = call.arguments;
+            print('deep link aaya $_deepLink');
+            List? linksplit = _deepLink?.split('neighborly.in/');
+            if (linksplit != null && linksplit.length > 1) {
+              if (linksplit[1].contains('posts/')) {
+                print('this is post');
+                try {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => PostDetailScreen(
+                      postId: '201',
+                      isPost: false,
+                      userId: '667d0d6d621041da2c7b79e8',
+                      commentId: '',
+                    ),
+                  ));
+                } catch (e) {
+                  print("error aaya kch: $e");
+                  //handle default page if error
+                }
+              } else {
+                print(
+                    'here you have to handle other navigation for url based on if condition.');
+              }
+            } else {
+              print("Empty means open default page.");
+            }
+          });
+        }
+      });
+    } catch (e) {
+      print('error in deep: $e');
+    }
+  }
 
-  // Future<void> _initUniLinks() async {
-  //   try{
-  //   _sub = linkStream.listen((String? link) {
-  //     print('is link fetched');
-  //     print('link $link');
-  //     if (link != null) {
-  //       setState(() {
-  //         _linkMessage = link;
-  //         // Handle navigation based on the link
-  //         _navigateToDeepLink(link);
-  //       });
-  //     }
-  //   }, onError: (err) {
-  //     print('Error: $err');
-  //   });
-  //   }catch(e){
-  //     print('error in main $e');
-  //   }
-  // }
+  Future<void> _init() async {
+    print("init...");
+    await _initUniLinks();
+  }
 
-  // void _navigateToDeepLink(String link) {
-  //   try{
-  //   // Parse the link and navigate to the corresponding screen
-  //   // Example: If the link is "myapp://profile/123", navigate to profile screen
-  //   final uri = Uri.parse(link);
-  //   if (uri.pathSegments.length > 1) {
-  //     final path = uri.pathSegments[0];
-  //     final id = uri.pathSegments[1];
+  Future<void> _initUniLinks() async {
+    print("inside _initUniLinks...");
+    try {
+      _sub = linkStream.listen((String? link) {
+        print('is link fetched');
+        print('link $link');
+        if (link != null) {
+          setState(() {
+            _linkMessage = link;
+            // Handle navigation based on the link
+            _navigateToDeepLink(link);
+          });
+        }
+      }, onError: (err) {
+        print('Error in deep link: $err');
+      });
+    } catch (e) {
+      print('error in main: $e');
+    }
+  }
 
-  //     switch (path) {
-  //       case 'profile':
-  //         // Navigate to Profile screen
-  //        // Navigator.of(context).pushNamed('/profile', arguments: id);
-  //         break;
-  //       // Add more cases as needed
-  //     }
-  //   }
-  //   }catch(e){
-  //     print("error in navigate $e");
-  //   }
-  // }
+  void _navigateToDeepLink(String link) {
+    print('is link fetched ....');
+    try {
+      print('is link fetched..');
+      // Parse the link and navigate to the corresponding screen
+      // Example: If the link is "myapp://profile/123", navigate to profile screen
+      final uri = Uri.parse(link);
+      if (uri.pathSegments.length > 1) {
+        final path = uri.pathSegments[0];
+        final id = uri.pathSegments[1];
 
-  // @override
-  // void dispose() {
-  //   _sub?.cancel();
-  //   super.dispose();
-  // }
+        switch (path) {
+          case 'profile':
+            print('is link fetched profile');
+            // Navigate to Profile screen
+            Navigator.of(context).pushNamed('/profile', arguments: id);
+            break;
+          // Add more cases as needed
+        }
+      }
+    } catch (e) {
+      print("error in navigate $e");
+    }
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
+  }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // if(_deepLink != null){
-    //   print("deeplink null nahi hai");
+    // if (_deepLink != null) {
+    //   print("deeplink null nahi hai...");
     // }
     return MultiBlocProvider(
         providers: [

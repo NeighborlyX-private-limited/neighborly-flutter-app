@@ -53,27 +53,28 @@ class _HomeScreenState extends State<HomeScreen> {
         showBottomSheet(context);
       });
     }
-    //_handleDeepLink('https://prod.neighborly.in/posts/12345');
+    // _handleDeepLink('https://prod.neighborly.in/posts/12345');
   }
 
   // void _handleDeepLink(String deepLink) {
-  // // Parse the deep link
-  // try {
-  // print('callifng deeplink $deepLink');
-  // Uri uri = Uri.parse(deepLink);
+  //   // Parse the deep link
+  //   try {
+  //     print('callifng deeplink $deepLink');
+  //     Uri uri = Uri.parse(deepLink);
 
-  // // // Check the scheme and host
-  //  if (uri.scheme == 'myapp' && uri.host == 'posts') {
-  // //   // Extract the post ID from the path
-  // //   String postId = uri.pathSegments[1]; // Assuming the path is like /posts/12345
+  //     // // Check the scheme and host
+  //     if (uri.scheme == 'myapp' && uri.host == 'posts') {
+  //       //   // Extract the post ID from the path
+  //       String postId =
+  //           uri.pathSegments[1]; // Assuming the path is like /posts/12345
 
-  // //   // Navigate to the post detail screen
-
-  //  }
-  // }catch(e){
-  //   print("getting error");
+  //       //   // Navigate to the post detail screen
+  //     }
+  //   } catch (e) {
+  //     print("getting error");
+  //   }
   // }
-// }
+
   void onNotificationRead() {
     getUnreadNotificationCount();
   }
