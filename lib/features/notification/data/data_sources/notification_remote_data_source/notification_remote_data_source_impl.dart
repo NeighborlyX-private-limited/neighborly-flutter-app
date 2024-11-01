@@ -64,7 +64,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 
     String cookieHeader = cookies.join('; ');
     String url =
-        '$kBaseUrlNotification/notifications/fetch-notification?page=1&limit=10';
+        '$kBaseUrlNotification/notifications/fetch-notification?page=$page&limit=100';
     print('url: $url');
 
     final response = await client.get(

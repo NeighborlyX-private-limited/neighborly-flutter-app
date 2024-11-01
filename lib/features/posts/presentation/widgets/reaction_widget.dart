@@ -68,46 +68,49 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   getmyawards() async {
     List responseMessage = await profileRemoteDataSource.getMyAwards();
+
+    bool localLegendAvailable = false;
+    bool parkBenchAvailable = false;
+    bool sunflowerAvailable = false;
+    bool streetlightAvailable = false;
+    bool mapAvailable = false;
+
     if (responseMessage.isEmpty) {
-      isLocalLegendAwardAvailable = false;
-      isParkBenchAwardAvailable = false;
-      isSunflowerAwardAvailable = false;
-      isStreetlightAwardAvailable = false;
-      isMapAwardAvailable = false;
+      localLegendAvailable = false;
+      parkBenchAvailable = false;
+      sunflowerAvailable = false;
+      streetlightAvailable = false;
+      mapAvailable = false;
     } else {
-      for (int i = 0; i < responseMessage.length; i++) {
-        if (responseMessage[i]['type'] == 'Local Legend' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isLocalLegendAwardAvailable = true;
-          });
+      for (var award in responseMessage) {
+        if (award['type'] == 'Local Legend' && award['count'] > 0) {
+          localLegendAvailable = true;
         }
-        if (responseMessage[i]['type'] == 'Park Bench' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isParkBenchAwardAvailable = true;
-          });
+        if (award['type'] == 'Park Bench' && award['count'] > 0) {
+          parkBenchAvailable = true;
         }
-        if (responseMessage[i]['type'] == 'Sunflower' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isSunflowerAwardAvailable = true;
-          });
+        if (award['type'] == 'Sunflower' && award['count'] > 0) {
+          print('Setting Sunflower Award as available');
+          sunflowerAvailable = true;
         }
-        if (responseMessage[i]['type'] == 'Streetlight' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isStreetlightAwardAvailable = true;
-          });
+        if (award['type'] == 'Streetlight' && award['count'] > 0) {
+          streetlightAvailable = true;
         }
-        if (responseMessage[i]['type'] == 'Map' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isMapAwardAvailable = true;
-          });
+        if (award['type'] == 'Map' && award['count'] > 0) {
+          mapAvailable = true;
         }
       }
     }
+
+    // Update state once after the loop
+    setState(() {
+      print('here..');
+      isLocalLegendAwardAvailable = localLegendAvailable;
+      isParkBenchAwardAvailable = parkBenchAvailable;
+      isSunflowerAwardAvailable = sunflowerAvailable;
+      isStreetlightAwardAvailable = streetlightAvailable;
+      isMapAwardAvailable = mapAvailable;
+    });
   }
 
   Future<void> _saveReactionState() async {
@@ -306,10 +309,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           height: 32,
           width: 60,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(21),
-              )),
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(21),
+            ),
+          ),
           child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -335,10 +339,12 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           ),
         ),
         InkWell(
-          onTap: () {
+          onTap: () async {
+            await getmyawards();
             // BlocProvider.of<GetMyAwardsBloc>(context).add(
             //     GetMyAwardsButtonPressedEvent(),
             // );
+            print('then this call...');
             showBottomSheet().then((value) {
               if (value != null) {
                 setState(() {
@@ -352,10 +358,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             height: 32,
             width: 65,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(21),
+              ),
+            ),
             child: Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -492,69 +499,66 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                   const SizedBox(
                     height: 5,
                   ),
-                  Container(
-                    decoration: BoxDecoration(),
-                    child: InkWell(
-                      onTap: !isLocalLegendAwardAvailable
-                          ? null
-                          : () {
-                              BlocProvider.of<GiveAwardBloc>(context).add(
-                                GiveAwardButtonPressedEvent(
-                                  id: widget.post.id,
-                                  awardType: 'Local Legend',
-                                  type: 'post',
+                  InkWell(
+                    onTap: !isLocalLegendAwardAvailable
+                        ? null
+                        : () {
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                              GiveAwardButtonPressedEvent(
+                                id: widget.post.id,
+                                awardType: 'Local Legend',
+                                type: 'post',
+                              ),
+                            );
+                          },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/Local_Legend.svg',
+                          width: 84,
+                          height: 84,
+                          color: isLocalLegendAwardAvailable
+                              ? null
+                              : Colors.grey.withOpacity(0.5),
+                          colorBlendMode: BlendMode.modulate,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Local Legend',
+                                style: GoogleFonts.roboto(
+                                  color: isLocalLegendAwardAvailable
+                                      ? Color(0xff3D3D3D)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              );
-                            },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SvgPicture.asset(
-                            'assets/Local_Legend.svg',
-                            width: 84,
-                            height: 84,
-                            color: isLocalLegendAwardAvailable
-                                ? null
-                                : Colors.grey.withOpacity(0.5),
-                            colorBlendMode: BlendMode.modulate,
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                'Recognizing users who consistently contribute high-quality content.',
+                                style: GoogleFonts.roboto(
+                                  color: isLocalLegendAwardAvailable
+                                      ? Color(0xff2E2E2E)
+                                      : Colors.grey.withOpacity(0.5),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                softWrap: true,
+                              ),
+                            ],
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Local Legend',
-                                  style: GoogleFonts.roboto(
-                                    color: isLocalLegendAwardAvailable
-                                        ? Color(0xff3D3D3D)
-                                        : Colors.grey.withOpacity(0.5),
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                Text(
-                                  'Recognizing users who consistently contribute high-quality content.',
-                                  style: GoogleFonts.roboto(
-                                    color: isLocalLegendAwardAvailable
-                                        ? Color(0xff2E2E2E)
-                                        : Colors.grey.withOpacity(0.5),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                  softWrap: true,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   InkWell(
