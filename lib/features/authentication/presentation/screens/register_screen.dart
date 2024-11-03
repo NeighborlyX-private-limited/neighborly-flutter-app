@@ -144,7 +144,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       print('OAuth Success State in regester');
                       context.go('/tutorialScreen');
                     } else {
-                      context.push('/home/true');
+                      context.push('/home/false');
                     }
                   }
                 },
@@ -177,6 +177,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               TextFieldWidget(
                 border: true,
                 inputType: TextInputType.phone,
+                maxLength: 10,
                 onChanged: (value) {
                   setState(() {
                     isPhoneFilled = _controller.text.isNotEmpty;

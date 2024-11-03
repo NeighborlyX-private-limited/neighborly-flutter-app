@@ -51,7 +51,7 @@ class _PostWidgetState extends State<PostWidget> {
                 InkWell(
                   onTap: () {
                     if (widget.post.userName.contains('[deleted]')) {
-                      print('deleted-user..');
+                      
                       context.push('/deleted-user');
                     } else {
                       context.push('/userProfileScreen/${widget.post.userId}');

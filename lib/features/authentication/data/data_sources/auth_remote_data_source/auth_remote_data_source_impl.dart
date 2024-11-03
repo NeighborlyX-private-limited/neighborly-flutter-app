@@ -69,9 +69,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           jsonDecode(response.body)['user']['skippedTutorial'];
       bool isViewedTutorial =
           jsonDecode(response.body)['user']['viewedTutorial'];
+      bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
 
       /// set data to local
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
+      ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setAccessToken(accessToken);
       ShardPrefHelper.setRefreshToken(refreshToken);
@@ -181,8 +183,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           jsonDecode(response.body)['user']['skippedTutorial'];
       bool isViewedTutorial =
           jsonDecode(response.body)['user']['viewedTutorial'];
+      bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
 
       /// set data to local
+      ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setIsVerified(isVerified);
@@ -257,8 +261,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             jsonDecode(response.body)['user']['skippedTutorial'];
         bool isViewedTutorial =
             jsonDecode(response.body)['user']['viewedTutorial'];
+        bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
 
         /// set data to local
+        ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
         ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
         ShardPrefHelper.setIsVerified(isVerified);
@@ -274,8 +280,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return 'Account is verified';
     } else {
-      print('otp varify error: ${jsonDecode(response.body)['message']}');
-      throw ServerException(message: jsonDecode(response.body)['message']);
+      print('otp varify error: ${jsonDecode(response.body)['error']}');
+      throw ServerException(message: jsonDecode(response.body)['error']);
     }
   }
 
@@ -356,8 +362,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         List<dynamic> homeLocation = jsonDecode(response.body)['user']
             ['home_coordinates']['coordinates'];
         String? email = jsonDecode(response.body)['user']['email'];
+        bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
 
         /// set data to local
+        ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setCookie(cookies);
         ShardPrefHelper.setIsVerified(isVerified);
         ShardPrefHelper.setUserID(userID);

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/notification_model.dart';
@@ -77,7 +78,7 @@ class NotificationTileWidget extends StatelessWidget {
 
     listWidgets.add(Text(notification.message));
 
-    listWidgets.add(Text(timeAgoArea(notification.date)));
+    //listWidgets.add(Text(timeAgoArea('2024-10-31T19:30:15.359Z')));
   }
 
   Color tileColor = Color(0xFFF0F0F0);
@@ -91,7 +92,6 @@ class NotificationTileWidget extends StatelessWidget {
       child: Row(
         children: [
           leftAvatar(),
-
           Expanded(
               child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -153,8 +153,13 @@ class NotificationTileWidget extends StatelessWidget {
               ),
             ),
           )),
-
-          // rightAvatar(),
+          Text(
+            formatTimeDifference(notification.timestamp),
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontSize: 14,
+            ),
+          ),
         ],
       ),
     );

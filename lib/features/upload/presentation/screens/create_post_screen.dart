@@ -32,6 +32,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool isTitleFilled = false;
   bool isQuestionFilled = false;
   bool allowMultipleVotes = false;
+  bool _isButtonActive = true;
 
   late String _condition;
 
@@ -413,7 +414,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   isImageUploading ? LinearProgressIndicator() : SizedBox(),
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 14.0, left: 14.0, right: 14.0),
+                      top: 14.0,
+                      left: 14.0,
+                      right: 14.0,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -484,6 +488,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {
+                                      if (!_isButtonActive) {
+                                        return; // Prevent multiple taps
+                                      }
+                                      setState(() {
+                                        _isButtonActive =
+                                            false; // Disable the button
+                                      });
+
                                       await fetchLocationAndUpdate();
                                       bool iaLocationOn =
                                           ShardPrefHelper.getIsLocationOn();
@@ -569,6 +581,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {
+                                      if (!_isButtonActive) {
+                                        return; // Prevent multiple taps
+                                      }
+                                      setState(() {
+                                        _isButtonActive =
+                                            false; // Disable the button
+                                      });
                                       bool iaLocationOn =
                                           ShardPrefHelper.getIsLocationOn();
 

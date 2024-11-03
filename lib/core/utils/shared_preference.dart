@@ -78,6 +78,13 @@ class ShardPrefHelper {
   static String? getUsername() => _preferences.getString('username');
   static Future removeUsername() async => await _preferences.remove('username');
 
+  ///.... save dob
+  static Future setDob(bool isSet) async =>
+      await _preferences.setBool('dob', isSet);
+  static bool getDob() => _preferences.getBool('dob') ?? false;
+  // static bool getDob() => false;
+  static Future removeDob() async => await _preferences.remove('dob');
+
   ///.... save phoneNumber
   static Future setPhoneNumber(String phoneNumber) async =>
       await _preferences.setString('phoneNumber', phoneNumber);

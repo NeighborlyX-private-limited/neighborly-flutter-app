@@ -5,7 +5,7 @@ import '../../domain/entities/notification_entity.dart';
 class NotificationModel extends NotificationEntity {
   const NotificationModel({
     required super.id,
-    required super.date,
+    required super.timestamp,
     super.postId,
     super.eventId,
     super.messageId,
@@ -23,7 +23,7 @@ class NotificationModel extends NotificationEntity {
 
   @override
   String toString() {
-    return 'NotificationModel(id: $id, triggerType: $triggerType, title: $title, message: $message, postId: $postId, eventId: $eventId, messageId: $messageId, commentId: $commentId, groupId: $groupId, notificationImage: $notificationImage, userId: $userId, userName: $userName, date: $date, status: $status, posttype: $posttype)';
+    return 'NotificationModel(id: $id, triggerType: $triggerType, title: $title, message: $message, postId: $postId, eventId: $eventId, messageId: $messageId, commentId: $commentId, groupId: $groupId, notificationImage: $notificationImage, userId: $userId, userName: $userName, timestamp: $timestamp, status: $status, posttype: $posttype)';
   }
 
   Map<String, dynamic> toMap() {
@@ -40,7 +40,7 @@ class NotificationModel extends NotificationEntity {
       'notificationImage': notificationImage,
       'userId': userId,
       'userName': userName,
-      'date': date,
+      'timestamp': timestamp,
       'status': status,
       'posttype': posttype
     };
@@ -61,7 +61,7 @@ class NotificationModel extends NotificationEntity {
           map['data'] != null ? map['data']['notificationImage'] ?? '' : '',
       userId: map['data'] != null ? map['data']['userId'] ?? '' : '',
       userName: map['data'] != null ? map['data']['userName'] ?? '' : '',
-      date: map['date'] ?? '',
+      timestamp: map['timestamp'] ?? '',
       status: map['status'] ?? '',
       posttype: map['data'] != null ? map['data']['type'] ?? '' : '',
     );

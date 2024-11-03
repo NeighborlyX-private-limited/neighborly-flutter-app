@@ -15,7 +15,7 @@ class NotificationEntity extends Equatable {
   final String? userId;
   final String? userName;
 
-  final String date;
+  final String timestamp;
   final String status;
   final String posttype;
 
@@ -32,7 +32,7 @@ class NotificationEntity extends Equatable {
     this.notificationImage,
     this.userId,
     this.userName,
-    required this.date,
+    required this.timestamp,
     required this.status,
     required this.posttype,
   });

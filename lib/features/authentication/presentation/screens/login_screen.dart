@@ -127,6 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   TextFieldWidget(
                     border: true,
                     inputType: TextInputType.phone,
+                    maxLength: 10,
                     onChanged: (value) {
                       setState(() {
                         isPhoneFilled = _controller.text.isNotEmpty;

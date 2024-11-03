@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -596,15 +597,15 @@ class SettingScreen extends StatelessWidget {
                     },
                     isActive: true,
                   ),
-                  BlocConsumer<LogoutBloc, LogoutState>(
+                  BlocConsumer<DeleteAccountBloc, DeleteAccountState>(
                     listener: (context, state) {
-                      if (state is LogoutFailureState) {
+                      if (state is DeleteAccountFailureState) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(state.error),
                           ),
                         );
-                      } else if (state is LogoutSuccessState) {
+                      } else if (state is DeleteAccountSuccessState) {
                         // remove the user info from the shared preferences
                         deleteUserPostData(ShardPrefHelper.getUserID()!);
                         deleteUserCommentData(ShardPrefHelper.getUserID()!);
@@ -626,7 +627,7 @@ class SettingScreen extends StatelessWidget {
                       }
                     },
                     builder: (context, state) {
-                      if (state is LogoutLoadingState) {
+                      if (state is DeleteAccountLoadingState) {
                         return const Center(child: CircularProgressIndicator());
                       }
                       return ButtonWidget(
@@ -634,8 +635,8 @@ class SettingScreen extends StatelessWidget {
                         text: 'Delete',
                         textColor: Colors.white,
                         onTapListener: () {
-                          context.read<LogoutBloc>().add(
-                                LogoutButtonPressedEvent(),
+                          context.read<DeleteAccountBloc>().add(
+                                DeleteAccountButtonPressedEvent(),
                               );
                         },
                         isActive: true,

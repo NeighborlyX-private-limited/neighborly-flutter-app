@@ -174,10 +174,10 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
               controller: _tabController,
               children: const [
                 Center(
-                  child: Text('No Post'),
+                  child: Text('No posts to haunt this profile!'),
                 ),
                 Center(
-                  child: Text('No Comments'),
+                  child: Text('Comments have drifted away!'),
                 ),
               ],
             ),

@@ -124,7 +124,15 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     );
     print("getGenderAndDOB response status code: ${response.statusCode}");
     print("getGenderAndDOB response: ${jsonDecode(response.body)}");
+    if (response.statusCode == 200) {
+      ShardPrefHelper.setDob(true);
+    }
     if (response.statusCode != 200) {
+      if (jsonDecode(response.body)['message']
+          .toString()
+          .contains('DOB can only be set once.')) {
+        ShardPrefHelper.setDob(true);
+      }
       print(
           'getGenderAndDOB else error: ${jsonDecode(response.body)['message']}');
 
@@ -281,6 +289,9 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     );
     print("deleteAccount response status code: ${response.statusCode}");
     print("deleteAccount response: ${jsonDecode(response.body)}");
+    if (response.statusCode == 200) {
+      print('account deleted...');
+    }
     if (response.statusCode != 200) {
       print('deleteAccount else error: ${jsonDecode(response.body)['error']}');
       final message =

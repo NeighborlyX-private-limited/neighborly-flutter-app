@@ -51,17 +51,15 @@ class _OtpScreenState extends State<OtpScreen> {
           phone: widget.data,
         ),
       );
+    } else if (widget.verificationFor == 'email-verify') {
+      print('email-resend verify called: ${widget.data}');
+      BlocProvider.of<ResendOtpBloc>(context).add(
+        ResendOTPButtonPressedEvent(
+          email: widget.data,
+        ),
+      );
     }
-    // else {
-    //   print('email-resend verify called: ${widget.data}');
-    //   BlocProvider.of<ResendOtpBloc>(context).add(
-    //     ResendOTPButtonPressedEvent(
-    //       email: widget.data,
-    //     ),
-    //   );
-    // }
 
-    print('email-resend verify called: ${widget.data}');
     super.initState();
   }
 
@@ -194,7 +192,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/true');
+                          context.go('/home/false');
                         }
                       } else {
                         bool isSkippedTutorial =

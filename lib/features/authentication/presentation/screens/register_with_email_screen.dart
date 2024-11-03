@@ -130,7 +130,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 ),
                 isPasswordShort
                     ? const Text(
-                        'Password must be at least 8 characters long',
+                        'Password must be at least 6 characters long',
                         style: TextStyle(color: Colors.red),
                       )
                     : const SizedBox(),
@@ -189,7 +189,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                             });
                             return;
                           }
-                          if (_passwordController.text.length < 8) {
+                          if (_passwordController.text.length < 6) {
                             setState(() {
                               isPasswordShort = true;
                             });

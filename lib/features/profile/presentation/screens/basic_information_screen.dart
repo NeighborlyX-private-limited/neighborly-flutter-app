@@ -486,6 +486,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           ),
                           TextFieldWidget(
                             inputType: TextInputType.phone,
+                            maxLength: 10,
                             border: true,
                             onChanged: (value) {},
                             controller: _phoneNumberController,

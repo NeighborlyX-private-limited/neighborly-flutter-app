@@ -36,7 +36,23 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isHome = true;
+  bool isDobSet = true;
   late String _selectedCity;
+  String? selectedDay;
+  String? selectedMonth;
+  String? selectedYear;
+  bool isDobBtnActive = false;
+
+  // Generate lists for day, month, and year
+
+  List<String> days =
+      List.generate(31, (index) => (index + 1).toString().padLeft(2, '0'));
+  List<String> months =
+      List.generate(12, (index) => (index + 1).toString().padLeft(2, '0'));
+  List<String> years = List.generate(
+    DateTime.now().year - 16 - 1900 + 1,
+    (index) => (DateTime.now().year - 16 - index).toString(),
+  );
 
   @override
   void initState() {
@@ -47,10 +63,13 @@ class _HomeScreenState extends State<HomeScreen> {
     setCityCurrentName();
     getUnreadNotificationCount();
     _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
+    isDobSet = ShardPrefHelper.getDob();
+    print('dob...$isDobSet');
     _fetchPosts();
-    if (widget.isFirstTime) {
+    if (!isDobSet) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showBottomSheet(context);
+        _openBottomSheet();
+        // showBottomSheet(context);
       });
     }
     // _handleDeepLink('https://prod.neighborly.in/posts/12345');
@@ -509,129 +528,325 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> showBottomSheet(BuildContext context) {
-    TextEditingController dateController = TextEditingController();
-    TextEditingController monthController = TextEditingController();
-    TextEditingController yearController = TextEditingController();
-
-    return showModalBottomSheet<num>(
-      isScrollControlled: true,
+  void _openBottomSheet() {
+    showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
         return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return DraggableScrollableSheet(
-              expand: false,
-              builder:
-                  (BuildContext context, ScrollController scrollController) {
-                return SingleChildScrollView(
-                  controller: scrollController,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        topRight: Radius.circular(20),
+          // Use StatefulBuilder to handle setState within the bottom sheet context
+          builder: (BuildContext context, StateSetter setModalState) {
+            void checkIfDobBtnShouldBeActive() {
+              // Evaluate if all dropdowns have values
+              setModalState(() {
+                isDobBtnActive = selectedDay != null &&
+                    selectedMonth != null &&
+                    selectedYear != null;
+              });
+            }
+
+            return FractionallySizedBox(
+              heightFactor: 0.5,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: const Color(0xffB8B8B8),
+                          borderRadius: BorderRadius.circular(40),
+                        ),
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    const SizedBox(height: 15),
+                    Center(
+                      child: Text(
+                        'One last thing before we get started!!',
+                        style: onboardingHeading2Style,
+                      ),
+                    ),
+                    const Divider(color: Colors.grey),
+                    Text('Date of Birth', style: blackonboardingBody1Style),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Center(
-                          child: Container(
-                            width: 40,
-                            height: 5,
-                            decoration: BoxDecoration(
-                              color: const Color(0xffB8B8B8),
-                              borderRadius: BorderRadius.circular(40),
+                        // Day Dropdown
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedDay,
+                            hint: Text("Day"),
+                            items: days.map((day) {
+                              return DropdownMenuItem(
+                                value: day,
+                                child: Text(day),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setModalState(() {
+                                selectedDay = value;
+                              });
+                              checkIfDobBtnShouldBeActive();
+                            },
+                            decoration: InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 12),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
                             ),
+                            dropdownColor: Colors.white,
+                            icon: Icon(Icons.arrow_drop_down),
                           ),
                         ),
-                        const SizedBox(height: 15),
-                        Center(
-                          child: Text(
-                            'One last thing before we get started!!',
-                            style: onboardingHeading2Style,
+                        SizedBox(width: 8),
+                        // Month Dropdown
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedMonth,
+                            hint: Text("Month"),
+                            items: months.map((month) {
+                              return DropdownMenuItem(
+                                value: month,
+                                child: Text(month),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setModalState(() {
+                                selectedMonth = value;
+                              });
+                              checkIfDobBtnShouldBeActive();
+                            },
+                            decoration: InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 12),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            dropdownColor: Colors.white,
+                            icon: Icon(Icons.arrow_drop_down),
                           ),
                         ),
-                        const Divider(color: Colors.grey),
-                        Text('Date of Birth', style: blackonboardingBody1Style),
-                        const SizedBox(height: 8),
-                        DOBPickerWidget(
-                          dateController: dateController,
-                          monthController: monthController,
-                          yearController: yearController,
-                          isDayFilled: true,
-                          isMonthFilled: true,
-                          isYearFilled: true,
-                        ),
-                        const SizedBox(height: 45),
-                        BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
-                          listener: (BuildContext context,
-                              GetGenderAndDOBState state) {
-                            if (state is GetGenderAndDOBFailureState) {
-                              if (state.error
-                                  .contains('DOB can only be set once.')) {
-                                context.pop();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'User Info saved successfully.')),
-                                );
-                              } else {
-                                context.pop();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(state.error)),
-                                );
-                              }
-                            } else if (state is GetGenderAndDOBSuccessState) {
-                              print('User Info saved successfully.');
-                              context.pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('User Info saved successfully.')),
+                        SizedBox(width: 8),
+                        // Year Dropdown
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            value: selectedYear,
+                            hint: Text("Year"),
+                            items: years.map((year) {
+                              return DropdownMenuItem(
+                                value: year,
+                                child: Text(year),
                               );
-                            }
-                          },
-                          builder: (context, state) {
-                            if (state is GetGenderAndDOBLoadingState) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            }
-                            return ButtonContainerWidget(
-                              isActive: true,
-                              color: AppColors.primaryColor,
-                              text: 'Save',
-                              isFilled: true,
-                              onTapListener: () {
-                                BlocProvider.of<GetGenderAndDOBBloc>(context)
-                                    .add(
-                                  GetGenderAndDOBButtonPressedEvent(
-                                    dob: formatDOB(
-                                      dateController.text.trim(),
-                                      monthController.text.trim(),
-                                      yearController.text.trim(),
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          },
+                            }).toList(),
+                            onChanged: (value) {
+                              setModalState(() {
+                                selectedYear = value;
+                              });
+                              checkIfDobBtnShouldBeActive();
+                            },
+                            decoration: InputDecoration(
+                              contentPadding:
+                                  EdgeInsets.symmetric(horizontal: 12),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            dropdownColor: Colors.white,
+                            icon: Icon(Icons.arrow_drop_down),
+                          ),
                         ),
-                        const SizedBox(height: 15),
                       ],
                     ),
-                  ),
-                );
-              },
+                    SizedBox(height: 30),
+                    BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
+                      listener:
+                          (BuildContext context, GetGenderAndDOBState state) {
+                        if (state is GetGenderAndDOBFailureState) {
+                          context.pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error
+                                      .contains('DOB can only be set once.')
+                                  ? 'User DOB already saved.'
+                                  : state.error),
+                            ),
+                          );
+                        } else if (state is GetGenderAndDOBSuccessState) {
+                          print('User Info saved successfully.');
+                          context.pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('User Info saved successfully.'),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is GetGenderAndDOBLoadingState) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        return ButtonContainerWidget(
+                          isActive: isDobBtnActive,
+                          color: AppColors.primaryColor,
+                          text: 'Save',
+                          isFilled: true,
+                          onTapListener: () {
+                            BlocProvider.of<GetGenderAndDOBBloc>(context).add(
+                              GetGenderAndDOBButtonPressedEvent(
+                                dob:
+                                    '$selectedYear-$selectedMonth-$selectedDay',
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                  ],
+                ),
+              ),
             );
           },
         );
       },
     );
   }
+
+  // Future<void> showBottomSheet(BuildContext context) {
+  //   TextEditingController dateController = TextEditingController();
+  //   TextEditingController monthController = TextEditingController();
+  //   TextEditingController yearController = TextEditingController();
+
+  //   return showModalBottomSheet<num>(
+  //     isScrollControlled: true,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return StatefulBuilder(
+  //         builder: (BuildContext context, StateSetter setState) {
+  //           return DraggableScrollableSheet(
+  //             expand: false,
+  //             builder:
+  //                 (BuildContext context, ScrollController scrollController) {
+  //               return SingleChildScrollView(
+  //                 controller: scrollController,
+  //                 child: Container(
+  //                   decoration: const BoxDecoration(
+  //                     color: Colors.white,
+  //                     borderRadius: BorderRadius.only(
+  //                       topLeft: Radius.circular(20),
+  //                       topRight: Radius.circular(20),
+  //                     ),
+  //                   ),
+  //                   padding: const EdgeInsets.symmetric(
+  //                       horizontal: 12, vertical: 16),
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Center(
+  //                         child: Container(
+  //                           width: 40,
+  //                           height: 5,
+  //                           decoration: BoxDecoration(
+  //                             color: const Color(0xffB8B8B8),
+  //                             borderRadius: BorderRadius.circular(40),
+  //                           ),
+  //                         ),
+  //                       ),
+  //                       const SizedBox(height: 15),
+  //                       Center(
+  //                         child: Text(
+  //                           'One last thing before we get started!!',
+  //                           style: onboardingHeading2Style,
+  //                         ),
+  //                       ),
+  //                       const Divider(color: Colors.grey),
+  //                       Text('Date of Birth', style: blackonboardingBody1Style),
+  //                       const SizedBox(height: 8),
+  //                       DOBPickerWidget(
+  //                         dateController: dateController,
+  //                         monthController: monthController,
+  //                         yearController: yearController,
+  //                         isDayFilled: true,
+  //                         isMonthFilled: true,
+  //                         isYearFilled: true,
+  //                       ),
+  //                       const SizedBox(height: 45),
+  //                       BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
+  //                         listener: (BuildContext context,
+  //                             GetGenderAndDOBState state) {
+  //                           if (state is GetGenderAndDOBFailureState) {
+  //                             if (state.error
+  //                                 .contains('DOB can only be set once.')) {
+  //                               context.pop();
+  //                               ScaffoldMessenger.of(context).showSnackBar(
+  //                                 const SnackBar(
+  //                                     content: Text(
+  //                                         'User Info saved successfully.')),
+  //                               );
+  //                             } else {
+  //                               context.pop();
+  //                               ScaffoldMessenger.of(context).showSnackBar(
+  //                                 SnackBar(content: Text(state.error)),
+  //                               );
+  //                             }
+  //                           } else if (state is GetGenderAndDOBSuccessState) {
+  //                             print('User Info saved successfully.');
+  //                             context.pop();
+  //                             ScaffoldMessenger.of(context).showSnackBar(
+  //                               const SnackBar(
+  //                                   content:
+  //                                       Text('User Info saved successfully.')),
+  //                             );
+  //                           }
+  //                         },
+  //                         builder: (context, state) {
+  //                           if (state is GetGenderAndDOBLoadingState) {
+  //                             return const Center(
+  //                               child: CircularProgressIndicator(),
+  //                             );
+  //                           }
+  //                           return ButtonContainerWidget(
+  //                             isActive: true,
+  //                             color: AppColors.primaryColor,
+  //                             text: 'Save',
+  //                             isFilled: true,
+  //                             onTapListener: () {
+  //                               BlocProvider.of<GetGenderAndDOBBloc>(context)
+  //                                   .add(
+  //                                 GetGenderAndDOBButtonPressedEvent(
+  //                                   dob: formatDOB(
+  //                                     dateController.text.trim(),
+  //                                     monthController.text.trim(),
+  //                                     yearController.text.trim(),
+  //                                   ),
+  //                                 ),
+  //                               );
+  //                             },
+  //                           );
+  //                         },
+  //                       ),
+  //                       const SizedBox(height: 15),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               );
+  //             },
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
 }
