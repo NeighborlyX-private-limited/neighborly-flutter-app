@@ -55,6 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   GoogleSignInAccount? _currentUser;
   bool _isAuthorized = false;
   String _contactText = '';
+  bool _isButtonActive = true;
 
   late TextEditingController _controller;
 
@@ -153,6 +154,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     image: Image.asset('assets/google_icon.png'),
                     title: 'Continue with Google',
                     onTap: () {
+                      if (!_isButtonActive) return; // Prevent multiple taps
+                      setState(() {
+                        _isButtonActive = false; // Disable the button
+                      });
                       print('GoogleSignUpEvent press...');
                       BlocProvider.of<RegisterBloc>(context).add(
                         GoogleSignUpEvent(),

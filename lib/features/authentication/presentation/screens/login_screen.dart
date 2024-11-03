@@ -20,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _controller;
+  bool _isButtonActive = true;
   @override
   void initState() {
     super.initState();
@@ -100,6 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     image: Image.asset('assets/google_icon.png'),
                     title: 'Continue with Google',
                     onTap: () {
+                      if (!_isButtonActive) return; // Prevent multiple taps
+                      setState(() {
+                        _isButtonActive = false; // Disable the button
+                      });
                       BlocProvider.of<LoginWithEmailBloc>(context).add(
                         GoogleLoginEvent(),
                       );
