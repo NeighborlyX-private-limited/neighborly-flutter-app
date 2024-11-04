@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -180,9 +181,14 @@ class _SecurityPageState extends State<SecurityPage> {
                     },
                     builder: (context, state) {
                       if (state is ChangePasswordLoadingState) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                        return Center(
+                          child: BouncingLogoIndicator(
+                            logo: 'images/logo.svg',
+                          ),
                         );
+                        // return const Center(
+                        //   child: CircularProgressIndicator(),
+                        // );
                       }
                       return ButtonContainerWidget(
                         isActive: checkIsActive(),

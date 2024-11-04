@@ -377,6 +377,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_list_cubit.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_list_state.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/widgets/notification_tile_widget.dart';
@@ -431,7 +432,13 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
         body: BlocBuilder<NotificationListCubit, NotificationListState>(
           builder: (context, state) {
             if (state.status == Status.loading) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                child: BouncingLogoIndicator(
+                  logo: 'images/logo.svg',
+                ),
+              );
+
+              // return Center(child: CircularProgressIndicator());
             } else if (state.status == Status.failure) {
               return Center(child: Text("Failed to load notifications"));
             } else {
@@ -444,7 +451,12 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                     // This is the loader at the bottom of the list
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
+                      ),
+                      // Center(child: CircularProgressIndicator()),
                     );
                   }
                   return NotificationTileWidget(

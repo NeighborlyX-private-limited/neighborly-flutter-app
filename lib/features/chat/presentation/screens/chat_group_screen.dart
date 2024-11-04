@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
@@ -411,10 +412,17 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     if (_isLoadingMore)
                       Padding(
                         padding: const EdgeInsets.all(
-                            6.0), // You can change this value
-                        child: Container(
-                          child: Center(child: CircularProgressIndicator()),
+                          6.0,
                         ),
+                        child: Center(
+                          child: BouncingLogoIndicator(
+                            logo: 'images/logo.svg',
+                          ),
+                        ),
+
+                        // child: Center(
+                        //   child: CircularProgressIndicator(),
+                        // ),
                       ),
                     // Show loading indicator at the top when fetching more messages
 

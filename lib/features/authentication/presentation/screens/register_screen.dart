@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -228,9 +229,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
                 builder: (context, state) {
                   if (state is RegisterLoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Center(
+                      child: BouncingLogoIndicator(
+                        logo: 'images/logo.svg',
+                      ),
                     );
+                    // return const Center(
+                    //   child: CircularProgressIndicator(),
+                    // );
                   }
                   return ButtonContainerWidget(
                     color: AppColors.primaryColor,

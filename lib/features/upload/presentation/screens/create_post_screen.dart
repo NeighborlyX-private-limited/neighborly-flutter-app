@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
+import '../../../../core/widgets/bouncing_logo_indicator.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
 import '../widgets/post_button_widget.dart';
 import '../../../../core/constants/imagepickercompress.dart';
@@ -576,8 +577,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 },
                                 builder: (context, state) {
                                   if (state is UploadPostLoadingState) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
+                                    return Center(
+                                      child: BouncingLogoIndicator(
+                                        logo: 'images/logo.svg',
+                                      ),
+                                    );
+                                    // return const Center(
+                                    //   child: CircularProgressIndicator(),
+                                    // );
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {

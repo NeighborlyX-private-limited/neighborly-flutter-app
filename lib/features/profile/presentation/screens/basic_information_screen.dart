@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
@@ -607,9 +608,14 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                       ),
                     );
                   } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Center(
+                      child: BouncingLogoIndicator(
+                        logo: 'images/logo.svg',
+                      ),
                     );
+                    // return const Center(
+                    //   child: CircularProgressIndicator(),
+                    // );
                   }
                 },
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import '../bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
 import 'post_with_comments_sheemer_widget.dart';
 import 'post_with_comments_widget.dart';
@@ -46,84 +47,90 @@ class _CommentSectionState extends State<CommentSection> {
         color: Color(0xFFF5F5FF),
       ),
       child: RefreshIndicator(
-          onRefresh: _onRefresh,
-          child: BlocBuilder<GetMyCommentsBloc, GetMyCommentsState>(
-            builder: (context, state) {
-              if (state is GetMyCommentsLoadingState) {
-                return const PostWithCommentsShimmer();
-              } else if (state is GetMyCommentsSuccessState) {
-                if (state.post.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        SvgPicture.asset(
-                          'assets/nothing.svg',
-                          height: 150.0,
-                          width: 150.0,
+        onRefresh: _onRefresh,
+        child: BlocBuilder<GetMyCommentsBloc, GetMyCommentsState>(
+          builder: (context, state) {
+            if (state is GetMyCommentsLoadingState) {
+              return const PostWithCommentsShimmer();
+            } else if (state is GetMyCommentsSuccessState) {
+              if (state.post.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.asset(
+                        'assets/nothing.svg',
+                        height: 150.0,
+                        width: 150.0,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text("No comments?"),
+                      Text(
+                          'That’s an opportunity! Go ahead, make the first move.'),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor),
+                        onPressed: () {
+                          context.go('/home/false');
+                        },
+                        child: Text(
+                          'Start the Discussion',
+                          style: TextStyle(color: Colors.white),
                         ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text("No comments?"),
-                        Text(
-                            'That’s an opportunity! Go ahead, make the first move.'),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryColor),
-                          onPressed: () {
-                            context.go('/home/false');
-                          },
-                          child: Text(
-                            'Start the Discussion',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                }
-                return ListView.separated(
-                  itemCount: state.post.length,
-                  itemBuilder: (context, index) {
-                    final post = state.post[index];
-
-                    return PostWithCommentsWidget(
-                      post: post,
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 5.0),
-                    );
-                  },
-                );
-              } else if (state is GetMyCommentsFailureState) {
-                if (state.error.contains('Invalid Token')) {
-                  context.go('/loginScreengin');
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                if (state.error.contains('Internal server error')) {
-                  return const Center(
-                      child: Text(
-                    'oops something went wrong',
-                    style: TextStyle(color: Colors.red),
-                  ));
-                }
-                return Center(child: Text(state.error));
-              } else {
-                return const Center(
-                  child: Text('No data'),
+                      )
+                    ],
+                  ),
                 );
               }
-            },
-          ),),
+              return ListView.separated(
+                itemCount: state.post.length,
+                itemBuilder: (context, index) {
+                  final post = state.post[index];
+
+                  return PostWithCommentsWidget(
+                    post: post,
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 5.0),
+                  );
+                },
+              );
+            } else if (state is GetMyCommentsFailureState) {
+              if (state.error.contains('Invalid Token')) {
+                context.go('/loginScreengin');
+                return Center(
+                  child: BouncingLogoIndicator(
+                    logo: 'images/logo.svg',
+                  ),
+                );
+                // return const Center(
+                //   child: CircularProgressIndicator(),
+                // );
+              }
+              if (state.error.contains('Internal server error')) {
+                return const Center(
+                    child: Text(
+                  'oops something went wrong',
+                  style: TextStyle(color: Colors.red),
+                ));
+              }
+              return Center(child: Text(state.error));
+            } else {
+              return const Center(
+                child: Text('No data'),
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 }

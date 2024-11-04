@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
@@ -693,9 +694,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       builder: (context, state) {
                         if (state is GetGenderAndDOBLoadingState) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return Center(
+                            child: BouncingLogoIndicator(
+                              logo: 'images/logo.svg',
+                            ),
                           );
+                          // return const Center(
+                          //   child: CircularProgressIndicator(),
+                          // );
                         }
                         return ButtonContainerWidget(
                           isActive: isDobBtnActive,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/theme/text_style.dart';
@@ -468,9 +469,14 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
             },
             builder: (context, state) {
               if (state is DeletePostLoadingState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return Center(
+                  child: BouncingLogoIndicator(
+                    logo: 'images/logo.svg',
+                  ),
                 );
+                // return const Center(
+                //   child: CircularProgressIndicator(),
+                // );
               }
               return InkWell(
                 onTap: () {

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/entities/post_enitity.dart';
@@ -362,9 +363,14 @@ class _PollWidgetState extends State<PollWidget> {
                   },
                   builder: (context, state) {
                     if (state is DeletePostLoadingState) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
                       );
+                      // return const Center(
+                      //   child: CircularProgressIndicator(),
+                      // );
                     }
                     return InkWell(
                       onTap: () {
@@ -488,9 +494,14 @@ class _PollWidgetState extends State<PollWidget> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
-                        ? const Center(
-                            child: CircularProgressIndicator(),
+                        ? Center(
+                            child: BouncingLogoIndicator(
+                              logo: 'images/logo.svg',
+                            ),
                           )
+                        // ? const Center(
+                        //     child: CircularProgressIndicator(),
+                        //   )
                         : Center(
                             child: Text(
                               'Reason to Report',

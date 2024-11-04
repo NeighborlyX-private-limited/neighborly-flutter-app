@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 
 import '../../../../core/theme/colors.dart';
@@ -454,7 +455,12 @@ class SettingScreen extends StatelessWidget {
                         return const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Center(child: CircularProgressIndicator()),
+                            Center(
+                              child: BouncingLogoIndicator(
+                                logo: 'images/logo.svg',
+                              ),
+                            ),
+                            // Center(child: CircularProgressIndicator()),
                           ],
                         );
                       }
@@ -628,7 +634,12 @@ class SettingScreen extends StatelessWidget {
                     },
                     builder: (context, state) {
                       if (state is DeleteAccountLoadingState) {
-                        return const Center(child: CircularProgressIndicator());
+                        return Center(
+                          child: BouncingLogoIndicator(
+                            logo: 'images/logo.svg',
+                          ),
+                        );
+                        // return const Center(child: CircularProgressIndicator());
                       }
                       return ButtonWidget(
                         color: const Color(0xffFD1D1D),
