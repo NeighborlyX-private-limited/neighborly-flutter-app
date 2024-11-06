@@ -88,7 +88,6 @@ class ShardPrefHelper {
   static Future setDob(bool isSet) async =>
       await _preferences.setBool('dob', isSet);
   static bool getDob() => _preferences.getBool('dob') ?? false;
-  // static bool getDob() => false;
   static Future removeDob() async => await _preferences.remove('dob');
 
   ///.... save phoneNumber
@@ -218,7 +217,7 @@ class ShardPrefHelper {
 ////.... clear
   static Future<bool> clear() async {
     await _preferences.clear();
-    print('SharedPref cleared');
+    print('SharedPref cleared....');
     return true;
   }
 }

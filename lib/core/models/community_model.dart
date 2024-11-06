@@ -70,7 +70,6 @@ class CommunityModel extends CommunityEntity {
               map['blockList']?.map((x) => UserSimpleModel.fromMap(x)))
           : [],
       locationStr: map['locationStr'] ?? '',
-      // latLong: map['latLong']["coordinates"] ? List<double>.from(map['latLong']["coordinates"]) : [],
     );
   }
 

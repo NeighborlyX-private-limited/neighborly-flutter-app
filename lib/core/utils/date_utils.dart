@@ -141,7 +141,6 @@ class DateUtilsHelper {
   static int extractYearFromIsodateString(String dateString) {
     final DateFormat dateFormat = DateFormat('yyyy');
     final DateTime parsedDate = dateFormat.parse(dateString);
-    print('extract Year From Iso date String = ${parsedDate.year}');
     return parsedDate.year;
   }
 }

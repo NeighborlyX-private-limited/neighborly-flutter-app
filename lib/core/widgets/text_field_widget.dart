@@ -91,7 +91,7 @@ class TextFieldWidget extends StatefulWidget {
   final FocusNode? focusNode;
   final bool border;
   final bool digitsOnly;
-  final int? maxLength; // Add maxLength as an optional parameter
+  final int? maxLength;
 
   const TextFieldWidget({
     super.key,
@@ -104,7 +104,7 @@ class TextFieldWidget extends StatefulWidget {
     this.inputType,
     this.height,
     this.digitsOnly = false,
-    this.maxLength, // Initialize maxLength
+    this.maxLength,
   });
 
   @override
@@ -127,7 +127,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         focusNode: widget.focusNode,
         inputFormatters:
             widget.digitsOnly ? [FilteringTextInputFormatter.digitsOnly] : null,
-        maxLength: widget.maxLength, // Set maxLength if provided
+        maxLength: widget.maxLength,
         decoration: InputDecoration(
           counterText: '',
           labelText: widget.lableText,

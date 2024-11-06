@@ -8,7 +8,7 @@ class GoogleSignInService {
 
   static Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
-      print('start signInWithGoogle...');
+      print('start signInWithGoogle in GoogleSignInService...');
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       print('googleUser: $googleUser');
 

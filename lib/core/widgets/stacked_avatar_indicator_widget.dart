@@ -47,27 +47,6 @@ class StackedAvatarIndicator extends StatelessWidget {
                   ),
                 ),
               ),
-            // if (counterOut > 0)
-            //   Positioned(
-            //     right: (showOnly! * avatarSize!) - 3,
-            //     child: Container(
-            //       padding: EdgeInsets.all(2),
-            //       decoration: BoxDecoration(
-            //         // color:AppColors.primaryColor, // Cor do indicador
-            //         color: Colors.white, // Cor do indicador
-            //         shape: BoxShape.circle,
-            //       ),
-            //       child: Center(
-            //         child: Text(
-            //           '+${counterOut}',
-            //           style: TextStyle(
-            //             color: Colors.white,
-            //             fontWeight: FontWeight.bold,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
           ],
         ),
       ),

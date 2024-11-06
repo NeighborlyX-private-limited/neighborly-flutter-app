@@ -32,12 +32,12 @@ class UserAvatarSquareWidget extends StatelessWidget {
                 fit: BoxFit.cover,
                 image: CachedNetworkImageProvider(imageUrl!),
               )
-            : (imageAssetPath != null
+            : imageAssetPath != null
                 ? DecorationImage(
                     fit: BoxFit.cover,
                     image: AssetImage(imageAssetPath!),
                   )
-                : null),
+                : null,
       ),
     );
   }
