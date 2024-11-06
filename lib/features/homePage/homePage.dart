@@ -212,10 +212,10 @@ class _MainPageState extends State<MainPage> {
         context.go('/home/false');
         break;
       case 1:
-        context.go('/create');
+        context.push('/create');
         break;
       case 2:
-        context.go('/profile');
+        context.push('/profile');
         break;
       // case 3:
       //   context.go('/groups');

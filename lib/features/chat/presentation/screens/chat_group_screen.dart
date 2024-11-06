@@ -414,15 +414,15 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                         padding: const EdgeInsets.all(
                           6.0,
                         ),
-                        child: Center(
-                          child: BouncingLogoIndicator(
-                            logo: 'images/logo.svg',
-                          ),
-                        ),
-
                         // child: Center(
-                        //   child: CircularProgressIndicator(),
+                        //   child: BouncingLogoIndicator(
+                        //     logo: 'images/logo.svg',
+                        //   ),
                         // ),
+
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
                       ),
                     // Show loading indicator at the top when fetching more messages
 

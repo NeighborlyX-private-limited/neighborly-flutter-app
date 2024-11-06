@@ -146,11 +146,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       print('OAuth Success State in regester');
                       context.go('/tutorialScreen');
                     } else {
-                      context.push('/home/false');
+                      context.go('/home/false');
                     }
                   }
                 },
                 builder: (context, state) {
+                  // if (state is RegisterLoadingState) {
+                  //   return Center(
+                  //     child: BouncingLogoIndicator(
+                  //       logo: 'images/logo.svg',
+                  //     ),
+                  //   );
+                  // }
                   return RegisterOption(
                     image: Image.asset('assets/google_icon.png'),
                     title: 'Continue with Google',

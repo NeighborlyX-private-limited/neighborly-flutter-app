@@ -83,31 +83,31 @@ class SettingScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            // InkWell(
-            //   onTap: () {
-            //     context.push('/communitiesScreen');
-            //   },
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     children: [
-            //       SvgPicture.asset(
-            //         'assets/community.svg',
-            //         height: 24,
-            //         width: 24,
-            //       ),
-            //       const SizedBox(
-            //         width: 10,
-            //       ),
-            //       Text(
-            //         'Communities',
-            //         style: blackonboardingBody1Style,
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
+            InkWell(
+              onTap: () {
+                context.push('/radiusScreen');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    'assets/menu_location.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Set Radius',
+                    style: blackonboardingBody1Style,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             InkWell(
               onTap: () {
                 context.push('/activityAndStatsScreen/$karma');
@@ -455,12 +455,12 @@ class SettingScreen extends StatelessWidget {
                         return const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Center(
-                              child: BouncingLogoIndicator(
-                                logo: 'images/logo.svg',
-                              ),
-                            ),
-                            // Center(child: CircularProgressIndicator()),
+                            // Center(
+                            //   child: BouncingLogoIndicator(
+                            //     logo: 'images/logo.svg',
+                            //   ),
+                            // ),
+                            Center(child: CircularProgressIndicator()),
                           ],
                         );
                       }
@@ -606,9 +606,10 @@ class SettingScreen extends StatelessWidget {
                   BlocConsumer<DeleteAccountBloc, DeleteAccountState>(
                     listener: (context, state) {
                       if (state is DeleteAccountFailureState) {
+                        context.pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(state.error),
+                            content: Text('Something went wrong'),
                           ),
                         );
                       } else if (state is DeleteAccountSuccessState) {
@@ -628,7 +629,7 @@ class SettingScreen extends StatelessWidget {
                         ShardPrefHelper.removeUsername();
                         ShardPrefHelper.removePhoneNumber();
                         ShardPrefHelper.removeGender();
-
+                        context.pop();
                         context.go('/registerScreen');
                       }
                     },

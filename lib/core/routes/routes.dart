@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/deletd_user_profile_screen.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/radius_screen.dart';
 
 import '../../features/authentication/presentation/screens/forgot_password_screen.dart';
 import '../../features/authentication/presentation/screens/login_screen.dart';
@@ -63,10 +64,11 @@ String setInitialLocation() {
   if (cookies == null || cookies!.isEmpty) {
     return '/';
   } else {
-    if (IsPhoneVarify || IsVarify) {
+    if (IsPhoneVarify || IsVarify || cookies!.isNotEmpty) {
       return '/home/false';
+    } else {
+      return '/';
     }
-    return '/';
   }
 }
 
@@ -388,6 +390,13 @@ final GoRouter router = GoRouter(
         name: RouteConstants.basicInformationScreenRouteName,
         builder: (BuildContext context, GoRouterState state) {
           return const BasicInformationScreen();
+        },
+      ),
+      GoRoute(
+        path: '/radiusScreen',
+        name: RouteConstants.radiusScreenRouteName,
+        builder: (BuildContext context, GoRouterState state) {
+          return const RadiusScreen();
         },
       ),
     ]);

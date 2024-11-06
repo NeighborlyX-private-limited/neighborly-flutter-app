@@ -363,6 +363,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             ['home_coordinates']['coordinates'];
         String? email = jsonDecode(response.body)['user']['email'];
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
+        bool authType = jsonDecode(response.body)['user']['auth_type'];
+        print('auth tpye...$authType');
 
         /// set data to local
         ShardPrefHelper.setDob(isDobSet);

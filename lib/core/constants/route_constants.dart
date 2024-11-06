@@ -27,4 +27,5 @@ class RouteConstants {
   static const String basicInformationScreenRouteName =
       'basicInformationScreen';
   static const String deletedUserRouteName = 'deletedUserScreen';
+  static const String radiusScreenRouteName = 'radiusScreen';
 }

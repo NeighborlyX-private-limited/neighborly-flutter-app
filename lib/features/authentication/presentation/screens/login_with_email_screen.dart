@@ -173,8 +173,8 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                       print('...isEmailVerified: $isEmailVerified');
                       isEmailVerified
                           ? context.go('/home/false')
-                          : context.push(
-                              '/otp/${_emailController.text}/email-verify');
+                          : context
+                              .go('/otp/${_emailController.text}/email-verify');
                     }
                   }
                 },

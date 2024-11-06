@@ -344,10 +344,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               postState.post.proPic!,
                               fit: BoxFit.contain,
                             )
-                          : Image.asset(
-                              'assets/second_pro_pic.png',
-                              fit: BoxFit.contain,
-                            )),
+                          : postState.post.userName.contains('[deleted]')
+                              ? Image.asset(
+                                  'assets/deleted_user.png',
+                                  fit: BoxFit.contain,
+                                )
+                              : Image.asset(
+                                  'assets/second_pro_pic.png',
+                                  fit: BoxFit.contain,
+                                )),
                   const SizedBox(
                     width: 12,
                   ),
@@ -356,11 +361,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            postState.post.userName,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 14),
-                          ),
+                          postState.post.userName.contains('[deleted]')
+                              ? Text(
+                                  'Neighborly user',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14),
+                                )
+                              : Text(
+                                  postState.post.userName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14),
+                                ),
                           const SizedBox(
                             width: 6,
                           ),
@@ -665,14 +678,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
-                        ? Center(
-                            child: BouncingLogoIndicator(
-                              logo: 'images/logo.svg',
-                            ),
-                          )
-                        // ? const Center(
-                        //     child: CircularProgressIndicator(),
+                        // ? Center(
+                        //     child: BouncingLogoIndicator(
+                        //       logo: 'images/logo.svg',
+                        //     ),
                         //   )
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
                         : Center(
                             child: Text(
                               'Reason to Report',
@@ -838,16 +851,32 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               errorWidget: (context, url, error) =>
                                   Icon(Icons.error),
                             )
-                          : const Image(
-                              image: AssetImage('assets/second_pro_pic.png'),
-                              fit: BoxFit.contain,
-                            ),
+                          : post.userName.contains('[deleted]')
+                              ? Image.asset(
+                                  'assets/deleted_user.png',
+                                  fit: BoxFit.contain,
+                                )
+                              : const Image(
+                                  image:
+                                      AssetImage('assets/second_pro_pic.png'),
+                                  fit: BoxFit.contain,
+                                ),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(post.userName,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14)),
+                  post.userName.contains('[deleted]')
+                      ? Text(
+                          'Neighborly user',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 14),
+                        )
+                      : Text(
+                          post.userName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
                 ],
               ),
             ),

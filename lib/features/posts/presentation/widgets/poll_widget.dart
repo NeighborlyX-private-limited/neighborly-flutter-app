@@ -100,10 +100,15 @@ class _PollWidgetState extends State<PollWidget> {
                                     errorWidget: (context, url, error) =>
                                         Icon(Icons.error),
                                   )
-                                : Image.asset(
-                                    'assets/second_pro_pic.png',
-                                    fit: BoxFit.contain,
-                                  ),
+                                : widget.post.userName.contains('[deleted]')
+                                    ? Image.asset(
+                                        'assets/deleted_user.png',
+                                        fit: BoxFit.contain,
+                                      )
+                                    : Image.asset(
+                                        'assets/second_pro_pic.png',
+                                        fit: BoxFit.contain,
+                                      ),
                           ),
                         ),
                         const SizedBox(
@@ -114,12 +119,19 @@ class _PollWidgetState extends State<PollWidget> {
                           children: [
                             Row(
                               children: [
-                                Text(
-                                  widget.post.userName,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14),
-                                ),
+                                widget.post.userName.contains('[deleted]')
+                                    ? Text(
+                                        'Neighborly user',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14),
+                                      )
+                                    : Text(
+                                        widget.post.userName,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14),
+                                      ),
                                 const SizedBox(
                                   width: 6,
                                 ),
@@ -494,14 +506,14 @@ class _PollWidgetState extends State<PollWidget> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
-                        ? Center(
-                            child: BouncingLogoIndicator(
-                              logo: 'images/logo.svg',
-                            ),
-                          )
-                        // ? const Center(
-                        //     child: CircularProgressIndicator(),
+                        // ? Center(
+                        //     child: BouncingLogoIndicator(
+                        //       logo: 'images/logo.svg',
+                        //     ),
                         //   )
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
                         : Center(
                             child: Text(
                               'Reason to Report',

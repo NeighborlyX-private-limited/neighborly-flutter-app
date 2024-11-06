@@ -294,8 +294,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
     if (response.statusCode != 200) {
       print('deleteAccount else error: ${jsonDecode(response.body)['error']}');
-      final message =
-          jsonDecode(response.body)['error'] ?? 'Someting went wrong';
+      print('deleteAccount else msg: ${jsonDecode(response.body)['msg']}');
+      final message = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['msg'] ??
+          'Someting went wrong';
       throw ServerException(message: message);
     }
   }

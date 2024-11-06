@@ -78,6 +78,12 @@ class ShardPrefHelper {
   static String? getUsername() => _preferences.getString('username');
   static Future removeUsername() async => await _preferences.remove('username');
 
+  ///.... save radius
+  static Future setRadius(double radius) async =>
+      await _preferences.setDouble('radius', radius);
+  static double? getRadius() => _preferences.getDouble('radius');
+  static Future removeRadius() async => await _preferences.remove('radius');
+
   ///.... save dob
   static Future setDob(bool isSet) async =>
       await _preferences.setBool('dob', isSet);

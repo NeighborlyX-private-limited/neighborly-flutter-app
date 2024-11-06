@@ -141,7 +141,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(state.message)),
                     );
-                    context.push('/loginScreen');
+                    context.go('/loginScreen');
                   }
                 },
                 builder: (context, state) {

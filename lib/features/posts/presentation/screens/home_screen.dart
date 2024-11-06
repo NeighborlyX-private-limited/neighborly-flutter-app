@@ -462,7 +462,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primaryColor),
                             onPressed: () {
-                              context.go('/create');
+                              context.push('/create');
                             },
                             child: Text(
                               'Create a Post',

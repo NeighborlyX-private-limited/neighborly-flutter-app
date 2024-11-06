@@ -21,13 +21,14 @@ class CommentWidget extends StatefulWidget {
   final bool isPost;
   final Function onDelete;
 
-  const CommentWidget(
-      {super.key,
-      required this.comment,
-      required this.commentFocusNode,
-      required this.onReplyTap,
-      required this.isPost,
-      required this.onDelete});
+  const CommentWidget({
+    super.key,
+    required this.comment,
+    required this.commentFocusNode,
+    required this.onReplyTap,
+    required this.isPost,
+    required this.onDelete,
+  });
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -83,10 +84,15 @@ class _CommentWidgetState extends State<CommentWidget> {
                         widget.comment.proPic!,
                         fit: BoxFit.cover,
                       )
-                    : Image.asset(
-                        'assets/second_pro_pic.png',
-                        fit: BoxFit.cover,
-                      ),
+                    : widget.comment.userName.contains('[deleted]')
+                        ? Image.asset(
+                            'assets/deleted_user.png',
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            'assets/second_pro_pic.png',
+                            fit: BoxFit.cover,
+                          ),
               ),
             ),
             const SizedBox(
@@ -99,13 +105,19 @@ class _CommentWidgetState extends State<CommentWidget> {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          widget.comment.userName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: screenWidth * 0.035,
-                          ),
-                        ),
+                        child: widget.comment.userName.contains('[deleted]')
+                            ? Text(
+                                'Neighborly user',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 14),
+                              )
+                            : Text(
+                                widget.comment.userName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: screenWidth * 0.035,
+                                ),
+                              ),
                       ),
                       const Spacer(),
                       InkWell(
@@ -390,14 +402,14 @@ class _CommentWidgetState extends State<CommentWidget> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
-                        ? Center(
-                            child: BouncingLogoIndicator(
-                              logo: 'images/logo.svg',
-                            ),
-                          )
-                        // ? const Center(
-                        //     child: CircularProgressIndicator(),
+                        // ? Center(
+                        //     child: BouncingLogoIndicator(
+                        //       logo: 'images/logo.svg',
+                        //     ),
                         //   )
+                        ? const Center(
+                            child: CircularProgressIndicator(),
+                          )
                         : Center(
                             child: Text(
                               'Reason to Report',

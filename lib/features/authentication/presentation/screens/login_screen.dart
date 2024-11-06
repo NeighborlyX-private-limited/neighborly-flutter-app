@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -75,12 +76,19 @@ class _LoginScreenState extends State<LoginScreen> {
               if (!isSkippedTutorial && !isViewedTutorial) {
                 context.go('/tutorialScreen');
               } else {
-                context.push('/home/false');
+                context.go('/home/false');
               }
             });
           }
         },
         builder: (context, state) {
+          if (state is LoginLoadingState) {
+            return Center(
+              child: BouncingLogoIndicator(
+                logo: 'images/logo.svg',
+              ),
+            );
+          }
           return SingleChildScrollView(
             child: Padding(
               padding:
@@ -101,9 +109,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     image: Image.asset('assets/google_icon.png'),
                     title: 'Continue with Google',
                     onTap: () {
-                      if (!_isButtonActive) return; // Prevent multiple taps
+                      if (!_isButtonActive) return;
                       setState(() {
-                        _isButtonActive = false; // Disable the button
+                        _isButtonActive = false;
                       });
                       BlocProvider.of<LoginWithEmailBloc>(context).add(
                         GoogleLoginEvent(),
@@ -154,6 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
 
                   ///continue button
+
                   ButtonContainerWidget(
                     color: AppColors.primaryColor,
                     isActive: isPhoneFilled,
@@ -167,7 +176,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return;
                       }
 
-                      context.push('/otp/${_controller.text}/phone-login');
+                      context.go('/otp/${_controller.text}/phone-login');
                     },
                   ),
 
