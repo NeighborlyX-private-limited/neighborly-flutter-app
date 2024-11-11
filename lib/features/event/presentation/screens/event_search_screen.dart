@@ -54,14 +54,14 @@ class _EventSearchScreenState extends State<EventSearchScreen>
       minDate: DateTime.now(),
       maxDate: DateTime.now().add(const Duration(days: 365)),
       onRangeSelected: (firstDate, secondDate) {
-        print('StartDate: ${firstDate}');
-        print('endDate: ${secondDate}');
+        print('StartDate: $firstDate');
+        print('endDate: $secondDate');
         setState(() {
           startDate = firstDate;
         });
       },
       onDayTapped: (date) {
-        print('selectedDate: ${selectedDate}');
+        print('selectedDate: $selectedDate');
         setState(() {
           selectedDate = date;
         });
@@ -273,7 +273,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
     String formattedDateStart = DateFormat('dd/MM').format(dateTimeStart);
     String formattedDateEnd = DateFormat('dd/MM').format(dateTimeEnd);
 
-    return '${formattedDateStart} - ${formattedDateEnd}';
+    return '$formattedDateStart - $formattedDateEnd';
   }
 
   Widget searchElement(
@@ -339,7 +339,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
               onTapOutside: (event) => FocusScope.of(context).unfocus(),
               textAlignVertical: TextAlignVertical.center,
               onFieldSubmitted: (value) {
-                print('submited: ' + searchTermEC.text.trim());
+                print('submited: ${searchTermEC.text.trim()}');
                 eventSearchCubit.onPressSearch(searchTermEC.text.trim());
               },
               onChanged: (value) {
@@ -420,7 +420,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
 
                     if (response == null) return;
 
-                    print('...onPressOpenDatesSelection response=${response}');
+                    print('...onPressOpenDatesSelection response=$response');
 
                     eventSearchCubit.onUpdateDate(
                         response['startDateRaw'].toString(),
@@ -563,7 +563,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
                                 EventMainSheemer(),
 
                               if (state.status != Status.loading &&
-                                  state.eventsLocal.length == 0) ...[
+                                  state.eventsLocal.isEmpty) ...[
                                 if (searchTermEC.text != '') EventEmptyResult(),
 
                                 if (searchTermEC.text == '')
@@ -576,7 +576,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
                                 //
                               ],
                               if (state.status != Status.loading &&
-                                  state.eventsLocal.length > 0) ...[
+                                  state.eventsLocal.isNotEmpty) ...[
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 18),
@@ -607,11 +607,11 @@ class _EventSearchScreenState extends State<EventSearchScreen>
                                                     .width *
                                                 0.9,
                                             onSelect: (EventModel) {
-                                              print('selected: ${EventModel}');
+                                              print('selected: $EventModel');
                                             },
                                           ),
                                         ))
-                                    .toList(),
+                                    ,
 
                                 // Container(
                                 //   height: 300,

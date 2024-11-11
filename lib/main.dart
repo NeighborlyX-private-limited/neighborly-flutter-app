@@ -8,7 +8,7 @@ import 'package:neighborly_flutter_app/dependency_injection.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
-import 'package:uni_links/uni_links.dart';
+// import 'package:uni_links/uni_links.dart';
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
 import 'dependency_injection.dart' as di;
@@ -84,7 +84,7 @@ class MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _init();
+    // _init();
     _setDeepLinkListener();
   }
 
@@ -131,56 +131,56 @@ class MyAppState extends State<MyApp> {
     }
   }
 
-  Future<void> _init() async {
-    print("init...");
-    await _initUniLinks();
-  }
+  // Future<void> _init() async {
+  //   print("init...");
+  //   await _initUniLinks();
+  // }
 
-  Future<void> _initUniLinks() async {
-    print("inside _initUniLinks...");
-    try {
-      _sub = linkStream.listen((String? link) {
-        print('is link fetched');
-        print('link $link');
-        if (link != null) {
-          setState(() {
-            _linkMessage = link;
-            // Handle navigation based on the link
-            _navigateToDeepLink(link);
-          });
-        }
-      }, onError: (err) {
-        print('Error in deep link: $err');
-      });
-    } catch (e) {
-      print('error in main: $e');
-    }
-  }
+  // Future<void> _initUniLinks() async {
+  //   print("inside _initUniLinks...");
+  //   try {
+  //     _sub = linkStream.listen((String? link) {
+  //       print('is link fetched');
+  //       print('link $link');
+  //       if (link != null) {
+  //         setState(() {
+  //           _linkMessage = link;
+  //           // Handle navigation based on the link
+  //           _navigateToDeepLink(link);
+  //         });
+  //       }
+  //     }, onError: (err) {
+  //       print('Error in deep link: $err');
+  //     });
+  //   } catch (e) {
+  //     print('error in main: $e');
+  //   }
+  // }
 
-  void _navigateToDeepLink(String link) {
-    print('is link fetched ....');
-    try {
-      print('is link fetched..');
-      // Parse the link and navigate to the corresponding screen
-      // Example: If the link is "myapp://profile/123", navigate to profile screen
-      final uri = Uri.parse(link);
-      if (uri.pathSegments.length > 1) {
-        final path = uri.pathSegments[0];
-        final id = uri.pathSegments[1];
+  // void _navigateToDeepLink(String link) {
+  //   print('is link fetched ....');
+  //   try {
+  //     print('is link fetched..');
+  //     // Parse the link and navigate to the corresponding screen
+  //     // Example: If the link is "myapp://profile/123", navigate to profile screen
+  //     final uri = Uri.parse(link);
+  //     if (uri.pathSegments.length > 1) {
+  //       final path = uri.pathSegments[0];
+  //       final id = uri.pathSegments[1];
 
-        switch (path) {
-          case 'profile':
-            print('is link fetched profile');
-            // Navigate to Profile screen
-            Navigator.of(context).pushNamed('/profile', arguments: id);
-            break;
-          // Add more cases as needed
-        }
-      }
-    } catch (e) {
-      print("error in navigate $e");
-    }
-  }
+  //       switch (path) {
+  //         case 'profile':
+  //           print('is link fetched profile');
+  //           // Navigate to Profile screen
+  //           Navigator.of(context).pushNamed('/profile', arguments: id);
+  //           break;
+  //         // Add more cases as needed
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print("error in navigate $e");
+  //   }
+  // }
 
   @override
   void dispose() {

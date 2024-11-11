@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:share_it/share_it.dart';
 
@@ -11,7 +10,6 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import '../widgets/comments_section.dart';
-import '../widgets/groups_section.dart';
 import '../widgets/posts_section.dart';
 import '../widgets/profile_sheemer_widget.dart';
 

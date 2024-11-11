@@ -55,7 +55,7 @@ class ChatGroupCubitThread extends Cubit<ChatGroupStateThread> {
             errorMessage: failure.message));
       },
       (messageList) {
-        print('...BLOC getGroupRoomMessages list: ${messageList}');
+        print('...BLOC getGroupRoomMessages list: $messageList');
         emit(state.copyWith(status: Status.success, messages: messageList));
       },
     );

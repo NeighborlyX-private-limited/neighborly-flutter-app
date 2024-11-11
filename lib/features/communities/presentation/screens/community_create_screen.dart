@@ -223,7 +223,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             color: Colors.black,
           ),
           onTap: () {
-            print('currentStep=${currentStep}');
+            print('currentStep=$currentStep');
 
             if (currentStep == 1) {
               bottomSheetConfirmNotSaved(context);
@@ -371,10 +371,10 @@ class Step1area extends StatefulWidget {
   final TextEditingController nameController;
   final TextEditingController typeController;
   const Step1area({
-    Key? key,
+    super.key,
     required this.nameController,
     required this.typeController,
-  }) : super(key: key);
+  });
 
   @override
   State<Step1area> createState() => _Step1areaState();
@@ -425,9 +425,9 @@ class _Step1areaState extends State<Step1area> {
 class Step2area extends StatefulWidget {
   final TextEditingController descriptionController;
   const Step2area({
-    Key? key,
+    super.key,
     required this.descriptionController,
-  }) : super(key: key);
+  });
 
   @override
   State<Step2area> createState() => _Step2areaState();
@@ -484,10 +484,10 @@ class Step3area extends StatefulWidget {
   final TextEditingController locationController;
   final TextEditingController radiusController;
   const Step3area({
-    Key? key,
+    super.key,
     required this.locationController,
     required this.radiusController,
-  }) : super(key: key);
+  });
 
   @override
   State<Step3area> createState() => _Step3areaState();
@@ -527,7 +527,7 @@ class _Step3areaState extends State<Step3area> {
             min: kMinRadius,
             onDragging: (handlerIndex, lowerValue, upperValue) {
               setState(() {
-                widget.radiusController.text = '${lowerValue}';
+                widget.radiusController.text = '$lowerValue';
               });
             },
           ),
@@ -555,11 +555,11 @@ class Step4area extends StatefulWidget {
   final bool? isLoading;
   final Function(File) onSelectImage;
   const Step4area({
-    Key? key,
+    super.key,
     this.currentFile,
     required this.onSelectImage,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   State<Step4area> createState() => _Step4areaState();

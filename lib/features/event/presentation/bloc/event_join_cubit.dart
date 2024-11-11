@@ -15,7 +15,7 @@ class EventJoinCubit extends Cubit<EventJoinState> {
   ) : super(const EventJoinState());
 
   void init(EventModel event) async {
-    print('... BLOC - INIT event?=${event}');
+    print('... BLOC - INIT event?=$event');
 
     emit(state.copyWith(eventJoin: event));
   }

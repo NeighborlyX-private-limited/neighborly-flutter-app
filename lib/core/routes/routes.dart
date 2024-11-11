@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/not_found_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_of_specific_comment.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/deletd_user_profile_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/radius_screen.dart';
 import '../../features/authentication/presentation/screens/forgot_password_screen.dart';
@@ -60,15 +62,23 @@ List<String>? cookies = ShardPrefHelper.getCookie();
 String setInitialLocation() {
   var IsPhoneVarify = ShardPrefHelper.getIsPhoneVerified();
   var IsVarify = ShardPrefHelper.getIsVerified();
+  var authType = ShardPrefHelper.getAuthtype();
   if (cookies == null || cookies!.isEmpty) {
     return '/';
-  } else {
-    if (IsPhoneVarify || IsVarify || cookies!.isNotEmpty) {
-      return '/home/false';
+  } else if (authType == 'phone') {
+    if (IsPhoneVarify && cookies!.isNotEmpty) {
+      return '/home/Home';
+    } else {
+      return '/';
+    }
+  } else if (authType == 'email') {
+    if (IsVarify && cookies!.isNotEmpty) {
+      return '/home/Home';
     } else {
       return '/';
     }
   }
+  return '/';
 }
 
 final GoRouter router = GoRouter(
@@ -123,6 +133,9 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final String data = state.pathParameters['data']!;
         final String verificationFor = state.pathParameters['verificationFor']!;
+        print('data:$data');
+        print('verificationFor:$verificationFor');
+
         return OtpScreen(data: data, verificationFor: verificationFor);
       },
     ),
@@ -151,18 +164,19 @@ final GoRouter router = GoRouter(
     ),
     ShellRoute(
       builder: (context, state, child) {
+        final String? childId = state.pathParameters['Home'];
         return MainPage(
+          childId: childId ?? '',
           child: child,
         );
       },
       routes: [
         GoRoute(
-          path: '/home/:isFirstTime',
+          path: '/home/:Home',
           builder: (context, state) {
-            final bool isFirstTime =
-                state.pathParameters['isFirstTime'] == 'true';
+            final String tabIndex = state.pathParameters['Home'] ?? "Home";
             return HomeScreen(
-              isFirstTime: isFirstTime,
+              tabIndex: tabIndex,
             );
           },
         ),
@@ -314,6 +328,17 @@ final GoRouter router = GoRouter(
       },
     ),
     GoRoute(
+      path: '/post-detail-of-specific-comment/:commentId',
+      name: RouteConstants.postDetailOfSpecificCommentScreenRouteName,
+      builder: (BuildContext context, GoRouterState state) {
+        print('here');
+        final String commentId = state.pathParameters['commentId'] ?? '0';
+        return PostDetailOfSpecificComment(
+          commentId: commentId,
+        );
+      },
+    ),
+    GoRoute(
       path: '/settingsScreen/:karma/:findMe',
       name: RouteConstants.settingsScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
@@ -396,4 +421,10 @@ final GoRouter router = GoRouter(
       },
     ),
   ],
+  errorPageBuilder: (context, state) {
+    return MaterialPage(
+      key: state.pageKey,
+      child: NotFoundWidget(),
+    );
+  },
 );

@@ -455,7 +455,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 GiveAwardButtonPressedEvent(
                                   id: widget.reply.id,
                                   awardType: 'Local Legend',
-                                  type: 'post',
+                                  type: 'comment',
                                 ),
                               );
                             },
@@ -518,7 +518,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 .add(GiveAwardButtonPressedEvent(
                               id: widget.reply.id,
                               awardType: 'Sunflower',
-                              type: 'post',
+                              type: 'comment',
                             ));
                           },
                     child: Row(
@@ -579,7 +579,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 .add(GiveAwardButtonPressedEvent(
                               id: widget.reply.id,
                               awardType: 'Streetlight',
-                              type: 'post',
+                              type: 'comment',
                             ));
                           },
                     child: Row(
@@ -640,7 +640,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 .add(GiveAwardButtonPressedEvent(
                               id: widget.reply.id,
                               awardType: 'Park Bench',
-                              type: 'post',
+                              type: 'comment',
                             ));
                           },
                     child: Row(
@@ -701,7 +701,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 .add(GiveAwardButtonPressedEvent(
                               id: widget.reply.id,
                               awardType: 'Map',
-                              type: 'post',
+                              type: 'comment',
                             ));
                           },
                     child: Row(

@@ -19,7 +19,7 @@ class ChatMessageEntity extends Equatable {
   final String? pictureUrl;
   final UserSimpleModel? author;
 
-  ChatMessageEntity({
+  const ChatMessageEntity({
     required this.id,
     required this.text,
     required this.date,

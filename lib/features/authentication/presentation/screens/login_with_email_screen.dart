@@ -165,16 +165,16 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                         ShardPrefHelper.getIsSkippedTutorial();
                     bool isViewedTutorial =
                         ShardPrefHelper.getIsViewedTutorial();
-                    print(isSkippedTutorial);
-                    print(isViewedTutorial);
-                    if ((!isSkippedTutorial) && (!isViewedTutorial)) {
+                    print(
+                        'isSkippedTutorial in login with email:$isSkippedTutorial');
+                    print(
+                        'isViewedTutorial in login with email:$isViewedTutorial');
+                    if (!isEmailVerified) {
+                      context.go('/otp/${_emailController.text}/email-verify');
+                    } else if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                       context.go('/tutorialScreen');
                     } else {
-                      print('...isEmailVerified: $isEmailVerified');
-                      isEmailVerified
-                          ? context.go('/home/false')
-                          : context
-                              .go('/otp/${_emailController.text}/email-verify');
+                      context.go('/home/Home');
                     }
                   }
                 },
@@ -231,9 +231,11 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
               ),
               const SizedBox(height: 15),
               noConnection
-                  ? const Text(
-                      'No Internet Connection',
-                      style: TextStyle(color: Colors.red),
+                  ? Center(
+                      child: const Text(
+                        'No Internet Connection',
+                        style: TextStyle(color: Colors.red),
+                      ),
                     )
                   : const SizedBox(),
             ],

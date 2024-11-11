@@ -22,10 +22,10 @@ class EventDetailScreen extends StatefulWidget {
   final EventModel? event;
 
   const EventDetailScreen({
-    Key? key,
+    super.key,
     required this.eventId,
     this.event,
-  }) : super(key: key);
+  });
 
   @override
   State<EventDetailScreen> createState() => _EventDetailScreenState();
@@ -182,7 +182,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               //   return Text('loading');
               // }
 
-              print('...state.event:${state}');
+              print('...state.event:$state');
               return Container(
                 // padding: EdgeInsets.only(top: 15),
                 width: double.infinity,
@@ -303,10 +303,10 @@ class TitleArea extends StatelessWidget {
   final String locationStr;
 
   const TitleArea({
-    Key? key,
+    super.key,
     required this.title,
     required this.locationStr,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -357,12 +357,12 @@ class DateArea extends StatelessWidget {
   final String hourEnd;
 
   const DateArea({
-    Key? key,
+    super.key,
     required this.dateStart,
     required this.dateEnd,
     required this.hourStart,
     required this.hourEnd,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -386,12 +386,12 @@ class DateArea extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                '${dateStart} - ${dateEnd}',
+                '$dateStart - $dateEnd',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 5),
               Text(
-                '${hourStart} - ${hourEnd}',
+                '$hourStart - $hourEnd',
                 style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -416,10 +416,10 @@ class ChatArea extends StatelessWidget {
   final bool? allowTap;
 
   const ChatArea({
-    Key? key,
+    super.key,
     required this.event,
     this.allowTap = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -502,9 +502,9 @@ class AboutArea extends StatelessWidget {
   final String description;
 
   const AboutArea({
-    Key? key,
+    super.key,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -550,10 +550,10 @@ class LocationDetailArea extends StatelessWidget {
   final String address;
 
   const LocationDetailArea({
-    Key? key,
+    super.key,
     required this.locationStr,
     required this.address,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -622,10 +622,10 @@ class JoinArea extends StatefulWidget {
   final bool isLoading;
 
   const JoinArea({
-    Key? key,
+    super.key,
     required this.onJoin,
     required this.isLoading,
-  }) : super(key: key);
+  });
 
   @override
   State<JoinArea> createState() => _JoinAreaState();
@@ -670,7 +670,7 @@ class _JoinAreaState extends State<JoinArea> {
           //
           //
 
-          Container(
+          SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
@@ -727,9 +727,9 @@ class HostArea extends StatelessWidget {
   final UserSimpleModel host;
 
   const HostArea({
-    Key? key,
+    super.key,
     required this.host,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -814,10 +814,10 @@ class AuthorArea extends StatelessWidget {
   final VoidCallback onEdit;
 
   const AuthorArea({
-    Key? key,
+    super.key,
     required this.onCancel,
     required this.onEdit,
-  }) : super(key: key);
+  });
 
   Future<dynamic> bottomSheetConfirmCancelEvent(BuildContext context) {
     return showModalBottomSheet(

@@ -152,7 +152,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 BlocConsumer<RegisterBloc, RegisterState>(
                   listener: (BuildContext context, RegisterState state) {
                     if (state is RegisterFailureState) {
-                      if (state.error.contains('email')) {
+                      if (state.error.contains('email') ||
+                          state.error.contains('registered')) {
                         setState(() {
                           emailAlreadyExists = true;
                         });
@@ -168,8 +169,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                         SnackBar(content: Text(state.error)),
                       );
                     } else if (state is RegisterSuccessState) {
-                      context
-                          .push('/otp/${_emailController.text}/email-verify');
+                      print('GOTO: otp varification...');
+                      context.go('/otp/${_emailController.text}/email-verify');
                     }
                   },
                   builder: (context, state) {

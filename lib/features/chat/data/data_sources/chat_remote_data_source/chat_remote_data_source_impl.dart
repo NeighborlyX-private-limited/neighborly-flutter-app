@@ -145,7 +145,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
    String cookieHeader = cookies.join('; ');
-      String url = '$kBaseUrl/chat/fetch-group-messages/'+'$roomId'+'?page=$page&limit=30';
+      String url = '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=30';
 
       print('cookie $cookieHeader');
 

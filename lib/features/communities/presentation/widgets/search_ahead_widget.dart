@@ -32,7 +32,7 @@ import '../../../../core/widgets/user_avatar_styled_widget.dart';
 */
 class SearchAheadElement extends StatefulWidget {
   const SearchAheadElement({
-    Key? key,
+    super.key,
     required this.onFocusChange,
     required this.onSearchTextChange,
     required this.onSuggestionSelected,
@@ -44,7 +44,7 @@ class SearchAheadElement extends StatefulWidget {
     this.lintText = '',
     this.icon = Icons.search,
     this.showBackButton = false,
-  }) : super(key: key);
+  });
 
   final Function(bool) onFocusChange;
   final Function(String) onSearchTextChange;
@@ -112,7 +112,7 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                   onFieldSubmitted: (value) {
                     if (widget.onSubmit == null) return;
 
-                    print('...PRESS ENTER? ${value}');
+                    print('...PRESS ENTER? $value');
                     widget.onSubmit!(value);
                   },
                   decoration: InputDecoration(

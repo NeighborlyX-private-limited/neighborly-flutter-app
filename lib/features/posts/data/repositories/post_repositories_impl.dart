@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
 
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/error/failures.dart';
@@ -116,6 +117,28 @@ class PostRepositoriesImpl implements PostRepositories {
       }
     } else {
       print('No Internet Connection in getPostById PostRepositoriesImpl');
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SpecificCommentModel>> getCommentById(
+      {required String id}) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getCommentById(id: id);
+        print('result in getCommentById PostRepositoriesImpl: $result');
+        return Right(result);
+      } on ServerFailure catch (e) {
+        print(
+            'Server Failure in getCommentById PostRepositoriesImpl: ${e.message}');
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        print('catch in getCommentById PostRepositoriesImpl: $e');
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      print('No Internet Connection in getCommentById PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }

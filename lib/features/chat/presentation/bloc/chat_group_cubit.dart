@@ -84,7 +84,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
             errorMessage: failure.message));
       },
       (messageList) {
-        print('...BLOC getGroupRoomMessages list: ${messageList}');
+        print('...BLOC getGroupRoomMessages list: $messageList');
         emit(state.copyWith(status: Status.success, messages: messageList));
       },
     );
@@ -111,7 +111,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
               errorMessage: failure.message));
         },
         (messageList) {
-          print('...BLOC getGroupRoomMessages list: ${messageList}');
+          print('...BLOC getGroupRoomMessages list: $messageList');
           final updatedMessages = [...messageList, ...olderMessages];
 
           emit(state.copyWith(messages: updatedMessages, page: state.page + 1));

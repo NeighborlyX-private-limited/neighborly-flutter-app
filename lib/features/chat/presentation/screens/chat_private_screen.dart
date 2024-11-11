@@ -322,8 +322,8 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
                                     (lineCount == state.messages.length) &&
                                         msg.isMine,
                                 onTap: (msgSelected) {
-                                  print('....selected=${msgSelected}');
-                                  print('lineCount=${lineCount}');
+                                  print('....selected=$msgSelected');
+                                  print('lineCount=$lineCount');
                                 });
 
                             if (lastDate != dateSummary) {

@@ -70,8 +70,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       bool isViewedTutorial =
           jsonDecode(response.body)['user']['viewedTutorial'];
       bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
+      String authType = jsonDecode(response.body)['user']['auth_type'];
 
       /// set data to local
+
+      ShardPrefHelper.setIsEmailLogin(true);
+      ShardPrefHelper.setAuthtype(authType);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
@@ -184,8 +188,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       bool isViewedTutorial =
           jsonDecode(response.body)['user']['viewedTutorial'];
       bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
+      String authType = jsonDecode(response.body)['user']['auth_type'];
 
       /// set data to local
+      if (email != null) {
+        ShardPrefHelper.setIsEmailLogin(true);
+      } else {
+        ShardPrefHelper.setIsEmailLogin(false);
+      }
+      ShardPrefHelper.setAuthtype(authType);
       ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
@@ -200,6 +211,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 400) {
+      print("sign up else if error: ${jsonDecode(response.body)['error']}");
+      throw ServerException(message: jsonDecode(response.body)['error']);
     } else {
       print("sign up error: ${jsonDecode(response.body)['message']}");
       throw ServerException(message: jsonDecode(response.body)['message']);
@@ -262,8 +276,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         bool isViewedTutorial =
             jsonDecode(response.body)['user']['viewedTutorial'];
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
+        String authType = jsonDecode(response.body)['user']['auth_type'];
 
         /// set data to local
+        if (email != null) {
+          ShardPrefHelper.setIsEmailLogin(true);
+        } else {
+          ShardPrefHelper.setIsEmailLogin(false);
+        }
+        ShardPrefHelper.setAuthtype(authType);
         ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
         ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
@@ -279,6 +300,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       return 'Account is verified';
+    } else if (response.statusCode == 401) {
+      print(
+          'else if otp varify error: ${jsonDecode(response.body)['message']}');
+      throw ServerException(message: jsonDecode(response.body)['message']);
     } else {
       print('otp varify error: ${jsonDecode(response.body)['error']}');
       throw ServerException(message: jsonDecode(response.body)['error']);
@@ -301,6 +326,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'email': email,
       }),
     );
+
     print('forgotPassword response status code:${response.statusCode}');
     print('forgotPassword response ${response.body}');
     if (response.statusCode == 200) {
@@ -363,10 +389,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             ['home_coordinates']['coordinates'];
         String? email = jsonDecode(response.body)['user']['email'];
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
-        bool authType = jsonDecode(response.body)['user']['auth_type'];
-        print('auth tpye...$authType');
+        String authType = 'email';
+        // String authType = jsonDecode(response.body)['user']['auth_type'];
+        print('isVerified$isVerified');
+        print('authType$authType');
 
         /// set data to local
+        ///
+        ShardPrefHelper.setIsEmailLogin(false);
+        ShardPrefHelper.setAuthtype(authType);
         ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setCookie(cookies);
         ShardPrefHelper.setIsVerified(isVerified);

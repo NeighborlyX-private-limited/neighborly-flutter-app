@@ -72,11 +72,12 @@ class _LoginScreenState extends State<LoginScreen> {
             Future.delayed(Duration(seconds: 5)).then((_) {
               bool isSkippedTutorial = ShardPrefHelper.getIsSkippedTutorial();
               bool isViewedTutorial = ShardPrefHelper.getIsViewedTutorial();
-
+              print('isSkippedTutorial in login:$isSkippedTutorial');
+              print('isViewedTutorial in login:$isViewedTutorial');
               if (!isSkippedTutorial && !isViewedTutorial) {
                 context.go('/tutorialScreen');
               } else {
-                context.go('/home/false');
+                context.go('/home/Home');
               }
             });
           }

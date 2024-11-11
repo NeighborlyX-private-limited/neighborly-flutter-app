@@ -9,9 +9,9 @@ import '../../../chat/data/model/chat_room_model.dart';
 class CommunitySectionChat extends StatelessWidget {
   final CommunityModel community;
   const CommunitySectionChat({
-    Key? key,
+    super.key,
     required this.community,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -63,12 +63,12 @@ class TileChat extends StatelessWidget {
   final String name;
   final String avatarUrl;
   final VoidCallback onTap;
-  TileChat({
-    Key? key,
+  const TileChat({
+    super.key,
     required this.name,
     required this.avatarUrl,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

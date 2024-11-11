@@ -378,6 +378,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_list_cubit.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_list_state.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/screens/notification_empty_widget.dart';
@@ -411,6 +412,12 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     }
   }
 
+  void _fetchProfile() {
+    notificationsListCubit = BlocProvider.of<NotificationListCubit>(context);
+    notificationsListCubit.init();
+    //_scrollController.addListener(_scrollListener);
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -441,7 +448,18 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
 
               // return Center(child: CircularProgressIndicator());
             } else if (state.status == Status.failure) {
-              return Center(child: Text("Failed to load notifications"));
+              return SomethingWentWrong(
+                imagePath: 'assets/something_went_wrong.svg',
+                title: 'Aaah! Something went wrong',
+                message:
+                    "We couldn't fetch your notification.\nPlease try starting it again",
+                buttonText: 'Retry',
+                onButtonPressed: () {
+                  _fetchProfile();
+
+                  print("Retry pressed");
+                },
+              );
             }
             if (state.status != Status.loading && state.notifications.isEmpty) {
               return Center(

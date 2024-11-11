@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
-import '../bloc/get_my_groups_bloc/get_my_groups_bloc.dart';
 import '../bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 import '../widgets/comments_section.dart';
@@ -27,6 +27,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
+    print('here 2');
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _fetchProfile();
@@ -68,6 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    print('here 3');
     return Directionality(
       textDirection: TextDirection.ltr,
       child: SafeArea(
@@ -90,7 +92,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         leading: IconButton(
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () {
-                            context.go('/home/false');
+                            context.go('/home/Home');
                           },
                         ),
                         title: _isTabBarVisible
@@ -292,6 +294,20 @@ class _ProfileScreenState extends State<ProfileScreen>
               } else if (state is GetProfileFailureState) {
                 if (state.error.contains('Invalid Token')) {
                   context.go('/loginScreen');
+                } else if (state.error.contains('Internet') ||
+                    state.error.contains('internet')) {
+                  return SomethingWentWrong(
+                    imagePath: 'assets/something_went_wrong.svg',
+                    title: 'Aaah! Something went wrong',
+                    message:
+                        "We couldn't start your program.\nPlease try starting it again",
+                    buttonText: 'Retry',
+                    onButtonPressed: () {
+                      _fetchProfile();
+
+                      print("Retry pressed");
+                    },
+                  );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(state.error)),

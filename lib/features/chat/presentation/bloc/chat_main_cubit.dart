@@ -34,13 +34,13 @@ class ChatMainCubit extends Cubit<ChatMainState> {
 
     var cookieData = ShardPrefHelper.getCookie();
 
-    print('...cookieData=${cookieData}');
+    print('...cookieData=$cookieData');
   }
 
   void initSocket() {
     var cookieData = ShardPrefHelper.getCookie();
 
-    print('...cookieData=${cookieData}');
+    print('...cookieData=$cookieData');
 
     _setupChatSocket();
   }
@@ -86,8 +86,8 @@ class ChatMainCubit extends Cubit<ChatMainState> {
   void _setupChatSocket() {
     var baseUrlSocket = kBaseSocketUrl;
     print(
-        '... CUBIT init _setupChatSocket baseUrlSocket=$baseUrlSocket _currentUser=${this._currentUser}');
-    if (baseUrlSocket == '' || this._currentUser == null) return;
+        '... CUBIT init _setupChatSocket baseUrlSocket=$baseUrlSocket _currentUser=${_currentUser}');
+    if (baseUrlSocket == '' || _currentUser == null) return;
 
     if (socketChat != null) return;
 
@@ -97,7 +97,7 @@ class ChatMainCubit extends Cubit<ChatMainState> {
             .setTransports(['websocket']) // for Flutter or Dart VM
             .disableAutoConnect() // disable auto-connection
             .setExtraHeaders({
-              'Authorization': 'Bearer ' + this._currentUser!.token
+              'Authorization': 'Bearer ' + _currentUser!.token
             }) // optional
             .build());
 
@@ -133,7 +133,7 @@ class ChatMainCubit extends Cubit<ChatMainState> {
       var message = ChatMessageModel.fromMap(data);
 
       print(
-          '... SOCK_CHAT message=${message} state.appIsOpen=${state.appIsOpen}');
+          '... SOCK_CHAT message=$message state.appIsOpen=${state.appIsOpen}');
 
       emit(state.copyWith(messages: [...state.messages, message]));
 
@@ -144,7 +144,7 @@ class ChatMainCubit extends Cubit<ChatMainState> {
 
     socketChat!.onDisconnect((_) => print('... SOCK_CHAT: disconnect'));
     socketChat!
-        .onConnectError((data) => print('... SOCK_CHAT: error: ${data}'));
+        .onConnectError((data) => print('... SOCK_CHAT: error: $data'));
 
     socketChat!.connect();
     socketChat!.emit('getConversations');
@@ -185,10 +185,10 @@ class ChatMainCubit extends Cubit<ChatMainState> {
   }
 
   Future<void> showLocalNotification(String title, String body) async {
-    final appName = 'Neighborly';
+    const appName = 'Neighborly';
     var androidChannelId = appName;
     var androidChannelName = '$appName Channel';
-    var _localeNotification = FlutterLocalNotificationsPlugin();
+    var localeNotification = FlutterLocalNotificationsPlugin();
 
     Random random = Random(DateTime.now().millisecondsSinceEpoch);
     int randomNumber = random.nextInt(100);
@@ -208,7 +208,7 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    await _localeNotification.show(
+    await localeNotification.show(
       randomNumber, // ID da notificação
       title,
       body,

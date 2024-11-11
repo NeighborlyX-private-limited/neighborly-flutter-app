@@ -23,10 +23,10 @@ class ChatGroupScreen extends StatefulWidget {
   final ChatRoomModel room;
 
   const ChatGroupScreen({
-    Key? key,
+    super.key,
     required this.roomId,
     required this.room,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatGroupScreen> createState() => _ChatGroupScreenState();
@@ -40,7 +40,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   bool isCommentFilled = false;
   bool showPinned = true;
   File? fileToUpload;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   bool _shouldScrollToBottom = true;
   double _previousScrollOffset = 0.0;
@@ -231,7 +231,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 // #send
                 // XXX
                 final payload = {
-                  'group_id': '${widget.roomId}',
+                  'group_id': widget.roomId,
                   'msg': messageEC.text
                 };
                 context.read<ChatGroupCubit>().sendMessage(payload, true);
@@ -401,7 +401,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     //
                     //
                     // #pinned #pin
-                    if (showPinned && pinnedMessages.length != 0)
+                    if (showPinned && pinnedMessages.isNotEmpty)
                       pinnedMessageArea(
                         pinnedMessages,
                       ),
@@ -462,8 +462,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                   (lineCount == state.messages.length) &&
                                       msg.isMine,
                               onTap: (msgSelected) {
-                                print('....selected=${msgSelected}');
-                                print('lineCount=${lineCount}');
+                                print('....selected=$msgSelected');
+                                print('lineCount=$lineCount');
                               },
                               onReply: (msgIdToSendReply, message) {
                                 print('#send reply');
@@ -488,8 +488,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 print(
                                     '#onTap cheer - send to remote ${state.messages[index]})');
                                 final payload = {
-                                  'group_id': '${widget.roomId}',
-                                  'message_id': '${state.messages[index].id}',
+                                  'group_id': widget.roomId,
+                                  'message_id': state.messages[index].id,
                                   'action': 'cheer'
                                 };
                                 context
@@ -498,8 +498,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               },
                               onTapBool: () {
                                 final payload = {
-                                  'group_id': '${widget.roomId}',
-                                  'message_id': '${state.messages[index].id}',
+                                  'group_id': widget.roomId,
+                                  'message_id': state.messages[index].id,
                                   'action': 'boo'
                                 };
                                 context

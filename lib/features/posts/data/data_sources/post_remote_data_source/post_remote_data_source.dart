@@ -1,3 +1,5 @@
+import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
+
 import '../../../../../core/models/post_model.dart';
 import '../../model/comments_model.dart';
 import '../../model/reply_model.dart';
@@ -44,6 +46,7 @@ abstract class PostRemoteDataSource {
   Future<List<ReplyModel>> fetchCommentReply({
     required num commentId,
   });
+  Future<SpecificCommentModel> getCommentById({required String id});
   // Future<void> replyComment(
   //     {required num commentId, required String text, required num postId,});
 }

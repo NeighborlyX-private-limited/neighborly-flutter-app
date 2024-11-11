@@ -181,7 +181,9 @@ class _CommentWidgetState extends State<CommentWidget> {
                     height: 10,
                   ),
                   ReactionCommentWidget(
-                      comment: widget.comment, isPost: widget.isPost),
+                    comment: widget.comment,
+                    isPost: widget.isPost,
+                  ),
                   const SizedBox(
                     height: 10,
                   ),

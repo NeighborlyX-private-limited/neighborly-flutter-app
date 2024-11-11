@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
 
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
@@ -183,6 +184,42 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       print('else error in getPostById: $message');
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<SpecificCommentModel> getCommentById({required String id}) async {
+    print('....getCommentById start with');
+    print('id:$id');
+
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      print('cookies not found in getCommentById');
+      throw const ServerException(message: 'Something went wrong');
+    }
+    String cookieHeader = cookies.join('; ');
+    String url = '$kBaseUrl/posts/get-comment/$id';
+    print('url:$url');
+    //Map<String, dynamic> queryParameters = {'home': 'true'};
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+    print('getCommentById api response status code: ${response.statusCode}');
+    print('getCommentById api response: ${response.body}');
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonData = jsonDecode(response.body);
+
+      // final String postId =
+      //     jsonDecode(response.body)['content']['contentid'].toString();
+      // return postId;
+      return SpecificCommentModel.fromJson(jsonData);
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      print('else error in getCommentById: $message');
       throw ServerException(message: message);
     }
   }
@@ -381,10 +418,11 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<void> giveAward(
-      {required num id,
-      required String awardType,
-      required String type}) async {
+  Future<void> giveAward({
+    required num id,
+    required String awardType,
+    required String type,
+  }) async {
     print('....giveAward start with');
     print('id:$id');
     print('awardType:$awardType');

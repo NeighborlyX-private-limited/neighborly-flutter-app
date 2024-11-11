@@ -15,9 +15,12 @@ import '../notification/presentation/bloc/notification_general_cubit.dart';
 class MainPage extends StatefulWidget {
   final Widget child;
 
+  final String childId;
+
   const MainPage({
     super.key,
     required this.child,
+    required this.childId,
   });
 
   @override
@@ -204,18 +207,28 @@ class _MainPageState extends State<MainPage> {
 
   int _currentIndex = 0;
   void _onItemTapped(int index) {
+    print('index:$index');
     setState(() {
       _currentIndex = index;
     });
     switch (index) {
       case 0:
-        context.go('/home/false');
+        setState(() {
+          _currentIndex = 0;
+        });
+        context.go('/home/Home');
         break;
       case 1:
-        context.push('/create');
+        setState(() {
+          _currentIndex = 1;
+        });
+        context.go('/create');
         break;
       case 2:
-        context.push('/profile');
+        setState(() {
+          _currentIndex = 2;
+        });
+        context.go('/profile');
         break;
       // case 3:
       //   context.go('/groups');
@@ -228,7 +241,13 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('i am called...');
+    print('widget.child:${widget.childId}');
+    if (widget.childId == 'Home') {
+      setState(() {
+        _currentIndex = 0;
+      });
+    }
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xFFF5F5FF),

@@ -44,7 +44,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
         emit(state.copyWith(
             status: Status.success,
             dashData: dashData,
-            histories: [...dashData.history.map((e) => e.term).toList()]));
+            histories: [...dashData.history.map((e) => e.term)]));
       },
     );
   }
@@ -81,7 +81,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
   // ignore: body_might_complete_norminqueuey_nullable
   FutureOr<List<dynamic>?> suggestionCallback(String searchStr) async {
-    print('CUBIT suggestionCinqueueback searchStr=${searchStr} ');
+    print('CUBIT suggestionCinqueueback searchStr=$searchStr ');
     if (searchStr == "") return <dynamic>[];
     var response = <dynamic>[];
 
@@ -97,7 +97,7 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
         print('...ERROR ${failure.message}');
       },
       (searchResultes) {
-        print('..RESPONSE: ${searchResultes}');
+        print('..RESPONSE: $searchResultes');
         response = [...searchResultes.communities, ...searchResultes.people];
       },
     );

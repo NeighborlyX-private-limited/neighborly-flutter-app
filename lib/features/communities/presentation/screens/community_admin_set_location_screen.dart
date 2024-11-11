@@ -8,8 +8,8 @@ import '../bloc/community_detail_cubit.dart';
 
 class CommunityAdminLocationScreen extends StatefulWidget {
   const CommunityAdminLocationScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CommunityAdminLocationScreen> createState() =>

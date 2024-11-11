@@ -16,7 +16,7 @@ class CommunitySectionPosts extends StatelessWidget {
   final Function(String) onReact;
 
   const CommunitySectionPosts({
-    Key? key,
+    super.key,
     required this.isLoading,
     required this.isEmpty,
     required this.posts,
@@ -24,7 +24,7 @@ class CommunitySectionPosts extends StatelessWidget {
     required this.onDelete,
     required this.onTap,
     required this.onReact,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class PostListEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       // color: Colors.grey,
       height: 500,
       child: Column(

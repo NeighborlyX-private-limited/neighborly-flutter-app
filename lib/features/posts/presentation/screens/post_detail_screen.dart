@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/entities/post_enitity.dart';
@@ -176,8 +177,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ],
                   );
                 } else if (postState is GetPostByIdFailureState) {
-                  return Center(
-                    child: Text(postState.error),
+                  return SomethingWentWrong(
+                    imagePath: 'assets/not_found.svg',
+                    title: 'Aaah! Something went wrong',
+                    message: "Post not found",
+                    buttonText: 'Go Back',
+                    onButtonPressed: () {
+                      context.pop();
+                    },
                   );
                 } else {
                   return const SizedBox();

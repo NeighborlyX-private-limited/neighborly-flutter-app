@@ -73,7 +73,7 @@ class LocaleNotificationManager {
     var smallIcon = notification.notification?.android?.smallIcon;
 
     //! Android settings
-    var _android = AndroidNotificationDetails(
+    var android = AndroidNotificationDetails(
       androidChannelId ??
           notification.notification?.android?.channelId ??
           'FCM_Config',
@@ -101,14 +101,14 @@ class LocaleNotificationManager {
                   notification.notification!.android!.sound)),
     );
     var badge = int.tryParse(notification.notification?.apple?.badge ?? '');
-    var _ios = DarwinNotificationDetails(
+    var ios = DarwinNotificationDetails(
       threadIdentifier: notification.collapseKey,
       sound: notification.notification?.apple?.sound?.name,
       badgeNumber: badge,
       subtitle: notification.notification?.apple?.subtitle,
       presentBadge: badge == null ? null : true,
     );
-    var _mac = DarwinNotificationDetails(
+    var mac = DarwinNotificationDetails(
       threadIdentifier: notification.collapseKey,
       sound: notification.notification?.apple?.sound?.name,
       badgeNumber: badge,
@@ -116,13 +116,13 @@ class LocaleNotificationManager {
       presentBadge: badge == null ? null : true,
     );
     var details = NotificationDetails(
-      android: _android,
-      iOS: _ios,
-      macOS: _mac,
+      android: android,
+      iOS: ios,
+      macOS: mac,
     );
-    var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
+    var id0 = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
 
-    print('...LocaleNotificationManager displayNotification _id: $_id');
+    print('...LocaleNotificationManager displayNotification _id: $id0');
     print(
         '...LocaleNotificationManager displayNotification title: ${notification.notification!.title}');
     print(
@@ -133,7 +133,7 @@ class LocaleNotificationManager {
         '...LocaleNotificationManager displayNotification payload: ${jsonEncode(notification.toMap())}');
     try {
       localeNotification.show(
-        _id,
+        id0,
         notification.notification!.title,
         notification.notification!.body,
         details,

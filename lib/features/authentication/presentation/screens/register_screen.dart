@@ -55,7 +55,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   GoogleSignInAccount? _currentUser;
   bool _isAuthorized = false;
-  String _contactText = '';
+  final String _contactText = '';
   bool _isButtonActive = true;
 
   late TextEditingController _controller;
@@ -142,6 +142,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ShardPrefHelper.getIsSkippedTutorial();
                     bool isViewedTutorial =
                         ShardPrefHelper.getIsViewedTutorial();
+                    print('isViewedTutorial:$isViewedTutorial');
+                    print('isSkippedTutorial:$isSkippedTutorial');
                     if (!isSkippedTutorial && !isViewedTutorial) {
                       print('OAuth Success State in regester');
                       context.go('/tutorialScreen');
@@ -217,7 +219,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               BlocConsumer<RegisterBloc, RegisterState>(
                 listener: (context, state) {
                   if (state is RegisterFailureState) {
-                    if (state.error.contains('exists')) {
+                    if (state.error.contains('exists') ||
+                        state.error.contains('registered')) {
                       setState(() {
                         phoneAlreadyExists = true;
                       });
@@ -231,7 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       );
                     }
                   } else if (state is RegisterSuccessState) {
-                    context.push('/otp/${_controller.text}/phone-register');
+                    context.go('/otp/${_controller.text}/phone-register');
                   }
                 },
                 builder: (context, state) {

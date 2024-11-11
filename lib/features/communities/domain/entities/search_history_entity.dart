@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 class SearchHistoryEntity extends Equatable {
   final String term;
 
-  SearchHistoryEntity({
+  const SearchHistoryEntity({
     required this.term,
   });
 

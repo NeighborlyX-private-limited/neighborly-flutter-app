@@ -44,7 +44,8 @@ class _OtpScreenState extends State<OtpScreen> {
     //   );
     // }
 
-    if (widget.verificationFor == 'phone-login') {
+    if (widget.verificationFor == 'phone-login' ||
+        widget.verificationFor == 'phone-register') {
       print('phone-resend verify called: ${widget.data}');
 
       BlocProvider.of<ResendOtpBloc>(context).add(
@@ -52,7 +53,7 @@ class _OtpScreenState extends State<OtpScreen> {
           phone: widget.data,
         ),
       );
-    } else if (widget.verificationFor == 'email-verify') {
+    } else {
       print('email-resend verify called: ${widget.data}');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
@@ -193,7 +194,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/false');
+                          context.go('/home/Home');
                         }
                       } else {
                         bool isSkippedTutorial =
@@ -203,7 +204,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/false');
+                          context.go('/home/Home');
                         }
                       }
 

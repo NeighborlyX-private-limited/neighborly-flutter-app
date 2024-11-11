@@ -1,9 +1,13 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
+import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comment_by_comment_id_bloc/get_comments_by_commentId_bloc.dart';
+
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/notification_model.dart';
@@ -109,11 +113,32 @@ class NotificationTileWidget extends StatelessWidget {
                 if (notification.title == 'You’ve Got a Comment!') {
                   commentid = notification.commentId ?? '0';
                 }
-                if (notification.postId != null) {
+                if (notification.triggerType == 'AwardTrigger' &&
+                    (notification.postId == null ||
+                        notification.postId == '') &&
+                    notification.commentId != null) {
+                  print('click');
+                  context.push(
+                      '/post-detail-of-specific-comment/${notification.commentId}');
+                  // if (context.mounted) {
+                  //   BlocConsumer<GetCommentByCommentIdBloc,
+                  //       GetCommentByCommentIdState>(
+                  //     builder: (context, state) {
+                  //       return SizedBox();
+                  //     },
+                  //     listener: (context, GetCommentByCommentIdState state) {},
+                  //   );
+                  //   BlocProvider.of<GetCommentByCommentIdBloc>(context).add(
+                  //     GetCommentByCommentIdButtonPressedEvent(
+                  //       commentId: notification.commentId.toString(),
+                  //     ),
+                  //   );
+                  // }
+                } else if (notification.postId != null) {
                   context.push(
                       '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
-                  print(
-                      '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
+                  //print(
+                  //'/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
                 }
 
                 /*

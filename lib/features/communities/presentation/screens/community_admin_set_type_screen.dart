@@ -7,8 +7,8 @@ import '../bloc/community_detail_cubit.dart';
 
 class CommunityAdminTypeScreen extends StatefulWidget {
   const CommunityAdminTypeScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CommunityAdminTypeScreen> createState() =>
@@ -172,14 +172,14 @@ class MenuIconItem extends StatelessWidget {
   final VoidCallback onTap;
   final Color? textColor;
   const MenuIconItem({
-    Key? key,
+    super.key,
     required this.title,
     this.icon = Icons.abc,
     this.iconSize = 20,
     this.svgPath = '',
     this.textColor = Colors.black,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +200,7 @@ class MenuIconItem extends StatelessWidget {
                   ),
             const SizedBox(width: 10),
             Text(
-              '${title}',
+              title,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: textColor,

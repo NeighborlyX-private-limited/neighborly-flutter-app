@@ -267,13 +267,13 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
       subText: subTitle,
     );
     var details = NotificationDetails(android: android, iOS: iOS);
-    var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
+    var id0 = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
     var notify = RemoteMessage(
         data: data ?? {},
         from: 'locale',
         sentTime: DateTime.now(),
         collapseKey: collapseKey,
-        messageId: _id.toString(),
+        messageId: id0.toString(),
         category: category,
         contentAvailable: true,
         notification: RemoteNotification(
@@ -282,7 +282,7 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
         ));
 
     localeNotification.show(
-      _id,
+      id0,
       title,
       body,
       details,
@@ -318,13 +318,13 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
       styleInformation: styleInformation,
     );
     var details = NotificationDetails(android: android, iOS: iOS);
-    var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
+    var id0 = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
     var notify = RemoteMessage(
         data: data ?? {},
         from: 'locale',
         category: category,
         collapseKey: collapseKey,
-        messageId: _id.toString(),
+        messageId: id0.toString(),
         sentTime: DateTime.now(),
         contentAvailable: true,
         notification: RemoteNotification(
@@ -332,7 +332,7 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
           body: body,
         ));
     localeNotification.show(
-      _id,
+      id0,
       title,
       body,
       details,
@@ -351,20 +351,20 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
   }) {
     var localeNotification = FlutterLocalNotificationsPlugin();
     var details = NotificationDetails(android: android, iOS: iOS);
-    var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
+    var id0 = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
     var notify = RemoteMessage(
         data: data ?? {},
         from: 'locale',
         sentTime: DateTime.now(),
         contentAvailable: true,
         collapseKey: Platform.isIOS ? iOS.threadIdentifier : android.groupKey,
-        messageId: _id.toString(),
+        messageId: id0.toString(),
         notification: RemoteNotification(
           title: title,
           body: body,
         ));
     localeNotification.show(
-      _id,
+      id0,
       title,
       body,
       details,

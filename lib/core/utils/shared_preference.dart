@@ -78,6 +78,12 @@ class ShardPrefHelper {
   static String? getUsername() => _preferences.getString('username');
   static Future removeUsername() async => await _preferences.remove('username');
 
+  ///.... save Authtype
+  static Future setAuthtype(String authtype) async =>
+      await _preferences.setString('authtype', authtype);
+  static String? getAuthtype() => _preferences.getString('authtype');
+  static Future removeAuthtype() async => await _preferences.remove('authtype');
+
   ///.... save radius
   static Future setRadius(double radius) async =>
       await _preferences.setDouble('radius', radius);
@@ -135,6 +141,12 @@ class ShardPrefHelper {
 
   static Future removeHomeLocation() async =>
       await _preferences.remove(_homeListKey);
+
+  ///... set is email password login
+  static Future setIsEmailLogin(bool isEmailLogin) async =>
+      await _preferences.setBool('isEmailLogin', isEmailLogin);
+  static bool getIsEmailLogin() =>
+      _preferences.getBool('isEmailLogin') ?? false;
 
   ///... set is currect location is on
   static Future setIsLocationOn(bool isLocationOn) async =>

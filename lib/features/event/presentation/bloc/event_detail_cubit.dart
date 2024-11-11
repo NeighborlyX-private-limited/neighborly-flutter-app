@@ -39,7 +39,7 @@ class EventDetailCubit extends Cubit<EventDetailState> {
             isJoined: event.isJoined,
             isMine: event.isMine),
         newEventId: event.id));
-    print('...BLOC eventDetail eventId=${eventId} event=${event}');
+    print('...BLOC eventDetail eventId=$eventId event=$event');
     print('\n\n\n... BLOC - EVENT name=${state.eventDetails!.title}');
     print('... BLOC - EVENT isMine=${state.eventDetails!.isMine}');
     print('... BLOC - EVENT isJoined=${state.eventDetails!.isJoined}');

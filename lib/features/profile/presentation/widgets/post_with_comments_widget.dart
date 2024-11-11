@@ -417,10 +417,11 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                         height: 10,
                                       ),
                                       ProfileReactionCommentWidget(
-                                          postComment: widget.post,
-                                          isPost: widget.post.content.type ==
-                                              'post',
-                                          postId: widget.post.commentId),
+                                        postComment: widget.post,
+                                        isPost:
+                                            widget.post.content.type == 'post',
+                                        postId: widget.post.commentId,
+                                      ),
                                     ],
                                   ),
                                 ),

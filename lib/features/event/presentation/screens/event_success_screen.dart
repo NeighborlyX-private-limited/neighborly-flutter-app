@@ -11,10 +11,10 @@ class EventSuccessSuccessScreen extends StatelessWidget {
   final EventModel event;
   final String type; // create | join
   const EventSuccessSuccessScreen({
-    Key? key,
+    super.key,
     required this.event,
     required this.type,
-  }) : super(key: key);
+  });
 
   String titleSelector() {
     switch (type) {
@@ -67,7 +67,7 @@ class EventSuccessSuccessScreen extends StatelessWidget {
       // appBar: AppBar(
       //   title: const Text('Success'),
       // ),
-      body: Container(
+      body: SizedBox(
         width: double.infinity,
         child: Column(
           mainAxisSize: MainAxisSize.max,

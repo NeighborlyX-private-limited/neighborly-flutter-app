@@ -28,9 +28,9 @@ import '../../../../core/constants/imagepickercompress.dart';
 class EventCreateScreen extends StatefulWidget {
   final EventModel? eventToUpdate;
   const EventCreateScreen({
-    Key? key,
+    super.key,
     this.eventToUpdate,
-  }) : super(key: key);
+  });
 
   @override
   State<EventCreateScreen> createState() => _EventCreateScreenState();
@@ -233,7 +233,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
     if (locationEC.text.trim() == '') errors.add('Location');
     if (addressEC.text.trim() == '') errors.add('Address');
 
-    if (errors.length == 0) {
+    if (errors.isEmpty) {
       setState(() => isValidForm = true);
       return true;
     } else {
@@ -241,13 +241,12 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
         setState(() => isValidForm = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ops, you forgot to fill: \n' +
-                errors
+            content: Text('Ops, you forgot to fill: \n${errors
                     .map((e) => '\n${e}')
                     .toList()
                     .toString()
                     .replaceAll('[', '')
-                    .replaceAll(']', '')),
+                    .replaceAll(']', '')}'),
           ),
         );
       }
@@ -352,7 +351,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
             case Status.success:
               var message = state.successMessage ?? 'success';
 
-              print('...success? ${message}');
+              print('...success? $message');
 
               //  XXX   go to success page
               if (state.isUpdate == false) {
@@ -437,8 +436,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                           onChange: (dateStart, hourStart, dateEnd, hourEnd,
                               category) {
                             print(
-                                'dateStart=${dateStart} hourStart=${hourStart}');
-                            print('dateStart=${dateEnd} hourStart=${hourEnd}');
+                                'dateStart=$dateStart hourStart=$hourStart');
+                            print('dateStart=$dateEnd hourStart=$hourEnd');
 
                             // updateDates(String dateStart, String hourStart, String dateEnd, String hourEnd)
                             eventCreateCubit.updateDates(dateStart, hourStart,
@@ -508,13 +507,13 @@ class Step1area extends StatefulWidget {
   final String currentUrl;
 
   const Step1area({
-    Key? key,
+    super.key,
     required this.nameController,
     required this.descriptionController,
     this.currentFile,
     required this.onSelectImage,
     required this.currentUrl,
-  }) : super(key: key);
+  });
 
   @override
   State<Step1area> createState() => _Step1areaState();
@@ -607,6 +606,10 @@ class _Step1areaState extends State<Step1area> {
                         // height: 20,
                         padding:
                             EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightBackgroundColor,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -622,10 +625,6 @@ class _Step1areaState extends State<Step1area> {
                               ),
                             ),
                           ],
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.lightBackgroundColor,
-                          borderRadius: BorderRadius.circular(50),
                         ),
                       ),
                     ),
@@ -696,14 +695,14 @@ class Step2area extends StatefulWidget {
   final TextEditingController category;
   final Function(String, String, String, String, String) onChange;
   const Step2area({
-    Key? key,
+    super.key,
     required this.dateStart,
     required this.hourStart,
     required this.dateEnd,
     required this.hourEnd,
     required this.category,
     required this.onChange,
-  }) : super(key: key);
+  });
 
   @override
   State<Step2area> createState() => _Step2areaState();
@@ -759,7 +758,7 @@ class _Step2areaState extends State<Step2area> {
                         DateUtilsHelper.simplifyISOtimeString(
                             response['startDateRaw'].toIso8601String());
 
-                    print('...onPressOpenDatesSelection response=${response}');
+                    print('...onPressOpenDatesSelection response=$response');
                     widget.onChange(response['startDateRaw'].toIso8601String(),
                         '', '', '', '');
                   },
@@ -774,7 +773,7 @@ class _Step2areaState extends State<Step2area> {
                   // label: 'Choose your location',
                   items: [...kHoursOfDay],
                   onChanged: (value) {
-                    print('start hour: ${value}');
+                    print('start hour: $value');
                     widget.hourStart.text = value ?? '';
                     widget.onChange('', value ?? '', '', '', '');
                   },
@@ -831,7 +830,7 @@ class _Step2areaState extends State<Step2area> {
                             'startDateRaw']
                         .toIso8601String()); // really start on this point, since dialog return a range
 
-                    print('...onPressOpenDatesSelection response=${response}');
+                    print('...onPressOpenDatesSelection response=$response');
                     widget.onChange('', '',
                         response['startDateRaw'].toIso8601String(), '', '');
                   },
@@ -844,7 +843,7 @@ class _Step2areaState extends State<Step2area> {
                   // label: 'Choose your location',
                   items: [...kHoursOfDay],
                   onChanged: (value) {
-                    print('end hour: ${value}');
+                    print('end hour: $value');
                     widget.hourEnd.text = value ?? '';
                     widget.onChange('', '', '', value ?? '', '');
                   },
@@ -864,7 +863,7 @@ class _Step2areaState extends State<Step2area> {
             label: 'Category',
             items: [...kEventCategories],
             onChanged: (value) {
-              print('category: ${value}');
+              print('category: $value');
               widget.category.text = value ?? '';
               widget.onChange('', '', '', '', value ?? '');
             },
@@ -890,10 +889,10 @@ class Step3area extends StatelessWidget {
   final TextEditingController locationController;
   final TextEditingController addressController;
   const Step3area({
-    Key? key,
+    super.key,
     required this.locationController,
     required this.addressController,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -961,11 +960,11 @@ class Step4area extends StatelessWidget {
   final File? currentImageFile;
   final EventModel event;
   const Step4area({
-    Key? key,
+    super.key,
     this.currentImageFile,
     required this.event,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   Widget topElementLocal(BuildContext context) {
     return Container(

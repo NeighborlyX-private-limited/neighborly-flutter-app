@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
@@ -14,7 +15,6 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
-import '../../../homePage/widgets/dob_picker_widget.dart';
 import '../../../profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
 import '../bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import '../widgets/poll_widget.dart';
@@ -28,8 +28,8 @@ import '../../../../core/utils/shared_preference.dart';
 import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
 
 class HomeScreen extends StatefulWidget {
-  final bool isFirstTime;
-  const HomeScreen({super.key, required this.isFirstTime});
+  final String tabIndex;
+  const HomeScreen({super.key, required this.tabIndex});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -433,7 +433,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
           builder: (context, state) {
-            print('state changed $state');
             if (state is GetAllPostsLoadingState) {
               return const PostSheemerWidget();
             } else if (state is GetAllPostsSuccessState) {
@@ -504,19 +503,26 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.go('/loginScreen');
               }
               if (state.error.contains('Internal server error')) {
+                // return SomethingWentWrong();
                 return const Center(
                     child: Text(
                   'oops something went wrong',
                   style: TextStyle(color: Colors.red),
                 ));
               }
-              if (state.error.contains('No Internet Connection')) {
-                return const Center(
-                    child: Text(
-                  'No Internet Connection',
-                  style: TextStyle(color: Colors.red),
-                ));
+              if (state.error.contains('No internet connection')) {
+                return SomethingWentWrong(
+                  imagePath: 'assets/something_went_wrong.svg',
+                  title: 'Aaah! Something went wrong',
+                  message:
+                      "We couldn't start your program.\nPlease try starting it again",
+                  buttonText: 'Retry',
+                  onButtonPressed: () {
+                    _onRefresh();
+                  },
+                );
               }
+
               return Center(child: Text(state.error));
             } else {
               return const Center(

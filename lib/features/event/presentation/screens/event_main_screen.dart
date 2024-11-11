@@ -212,7 +212,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                         ),
                         // const SizedBox(height: 5),
 
-                        if (state.eventsLocal.length == 0)
+                        if (state.eventsLocal.isEmpty)
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 10.0),
@@ -220,7 +220,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                           ),
                         //
                         //
-                        if (state.eventsLocal.length > 0) ...[
+                        if (state.eventsLocal.isNotEmpty) ...[
                           Container(
                             height: 300,
                             margin: EdgeInsets.only(top: 10),
@@ -237,7 +237,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                                     width:
                                         MediaQuery.of(context).size.width * 0.9,
                                     onSelect: (EventModel) {
-                                      print('selected: ${EventModel}');
+                                      print('selected: $EventModel');
                                     },
                                   ),
                                 );
@@ -334,7 +334,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                             //
                             if (selectedTab == 0) ...[
                               // MY EVENTS
-                              if (state.eventsMine.length > 0)
+                              if (state.eventsMine.isNotEmpty)
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10.0),
@@ -342,7 +342,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                                 ),
                               //
                               //
-                              if (state.eventsMine.length == 0) ...[
+                              if (state.eventsMine.isEmpty) ...[
                                 EventEmptyMy(),
                               ],
                             ],
@@ -350,7 +350,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                             //
                             if (selectedTab == 1) ...[
                               // GOING
-                              if (state.eventsGoing.length > 0)
+                              if (state.eventsGoing.isNotEmpty)
                                 ...state.eventsGoing
                                     .map((event) => Padding(
                                           padding:
@@ -362,11 +362,11 @@ class _EventMainScreenState extends State<EventMainScreen>
                                                     .width *
                                                 0.9,
                                             onSelect: (EventModel) {
-                                              print('selected: ${EventModel}');
+                                              print('selected: $EventModel');
                                             },
                                           ),
                                         ))
-                                    .toList(),
+                                    ,
 
                               // Expanded(
                               //   child: ListView.builder(
@@ -390,7 +390,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                               // ),
                               //
                               //
-                              if (state.eventsGoing.length == 0) ...[
+                              if (state.eventsGoing.isEmpty) ...[
                                 EventEmptyGoing(),
                               ],
                             ],

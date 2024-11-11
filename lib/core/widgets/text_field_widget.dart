@@ -83,6 +83,7 @@ import '../theme/colors.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final bool isPassword;
+  final bool enabled;
   final String lableText;
   final TextInputType? inputType;
   final TextEditingController controller;
@@ -104,6 +105,7 @@ class TextFieldWidget extends StatefulWidget {
     this.inputType,
     this.height,
     this.digitsOnly = false,
+    this.enabled = true,
     this.maxLength,
   });
 
@@ -119,6 +121,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
     return SizedBox(
       height: widget.height ?? 60,
       child: TextField(
+        enabled: widget.enabled,
         textCapitalization: TextCapitalization.sentences,
         keyboardType: widget.inputType,
         onChanged: widget.onChanged,

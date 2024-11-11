@@ -432,7 +432,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               _contentController.clear();
                               _selectedImages = [];
                               _selectedImage = null;
-                              context.go('/home/false');
+                              context.go('/home/Home');
+                              // context.go('/MainPage');
                             } else {
                               setState(() {
                                 _condition = 'post';
@@ -453,6 +454,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                                     if (state.error
                                         .contains("Sorry, you are banned")) {
+                                      isImageUploading = false;
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(
@@ -461,6 +463,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         ),
                                       );
                                     } else {
+                                      isImageUploading = false;
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         SnackBar(content: Text(state.error)),
@@ -479,7 +482,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                       ),
                                     );
 
-                                    context.go('/home/false');
+                                    context.go('/home/Home');
                                   }
                                 },
                                 builder: (context, state) {
@@ -572,7 +575,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         content: Text('Poll Created'),
                                       ),
                                     );
-                                    context.go('/home/false');
+                                    context.go('/home/Home');
                                   }
                                 },
                                 builder: (context, state) {
