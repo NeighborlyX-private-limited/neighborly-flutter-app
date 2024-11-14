@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 class NotificationEntity extends Equatable {
   final String id;
-  final String triggerType; // awar|boos|cheer|comment
+  final String triggerType;
   final String title;
   final String message;
 
@@ -15,11 +15,11 @@ class NotificationEntity extends Equatable {
   final String? userId;
   final String? userName;
 
-  final String date;
+  final String timestamp;
   final String status;
   final String posttype;
 
-  NotificationEntity({
+  const NotificationEntity({
     required this.id,
     required this.triggerType,
     required this.title,
@@ -32,32 +32,10 @@ class NotificationEntity extends Equatable {
     this.notificationImage,
     this.userId,
     this.userName,
-    required this.date,
+    required this.timestamp,
     required this.status,
-    required this.posttype
+    required this.posttype,
   });
-
-  /* 
-  {
-    "_id": "ObjectId",
-    "userId": "String",
-    "title": "String",
-    "message": "String",
-    "triggerType": "String",
-    "data": {
-      "postId": "String",
-      "eventId": "String",
-      "messageId": "String",
-      "commentId": "String",
-      "groupId": "String",
-      "notificationImage": "String",
-      "userId": "String",
-      "userName": "String"
-    },
-    "timestamp": "ISODate",
-    "status": "String"
-}
-  */
 
   @override
   List<Object?> get props => [id];

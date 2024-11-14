@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/theme/text_style.dart';
@@ -66,7 +67,11 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
           children: [
             InkWell(
               onTap: () {
-                context.push('/userProfileScreen/${widget.post.userId}');
+                if (widget.post.userName.contains('[deleted]')) {
+                  context.push('/deleted-user');
+                } else {
+                  context.push('/userProfileScreen/${widget.post.userId}');
+                }
               },
               child: Row(
                 children: [
@@ -120,8 +125,14 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                     children: [
                       InkWell(
                         onTap: () {
-                          context
-                              .push('/userProfileScreen/${widget.post.userId}');
+                          print('pic ${widget.post.content.proPic}');
+                          if (widget.post.content.userName
+                              .contains('[deleted]')) {
+                            context.push('/deleted-user');
+                          } else {
+                            context.push(
+                                '/userProfileScreen/${widget.post.content.userId}');
+                          }
                         },
                         child: Row(
                           children: [
@@ -132,7 +143,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                   ),
-                                  child: widget.post.content.proPic != null
+                                  child: widget.post.content.proPic != null &&
+                                          widget.post.content.proPic != ''
                                       ? Image.network(
                                           widget.post.content.proPic!,
                                           fit: BoxFit.contain,
@@ -240,8 +252,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           widget.post.content.multimedia!.isNotEmpty &&
                           widget.post.content.multimedia!.length > 1
                       ? ImageSlider(
-                          multimedia: widget.post.content.multimedia ??
-                              [], // Provide the list of image URLs
+                          multimedia: widget.post.content.multimedia ?? [],
                         )
                       : Container(),
                   widget.post.content.multimedia != null &&
@@ -255,9 +266,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                               borderRadius: BorderRadius.circular(4),
                               child: Image.network(
                                 width: double.infinity,
-                                // height: 200,
                                 widget.post.content.multimedia![0],
-                                // widget.post.content.multimedia!,
                                 fit: BoxFit.contain,
                               )),
                         )
@@ -408,10 +417,11 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                         height: 10,
                                       ),
                                       ProfileReactionCommentWidget(
-                                          postComment: widget.post,
-                                          isPost: widget.post.content.type ==
-                                              'post',
-                                          postId: widget.post.commentId),
+                                        postComment: widget.post,
+                                        isPost:
+                                            widget.post.content.type == 'post',
+                                        postId: widget.post.commentId,
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -460,9 +470,14 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
             },
             builder: (context, state) {
               if (state is DeletePostLoadingState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return Center(
+                  child: BouncingLogoIndicator(
+                    logo: 'images/logo.svg',
+                  ),
                 );
+                // return const Center(
+                //   child: CircularProgressIndicator(),
+                // );
               }
               return InkWell(
                 onTap: () {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -36,14 +37,14 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
     _otpController = TextEditingController();
     if (widget.verificationFor == 'phone-login' ||
         widget.verificationFor == 'phone-register') {
+      print('phone-otp called: ${widget.data}');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           phone: widget.data,
         ),
       );
-      print('phone-verify called: ${widget.data}');
     } else {
-      print('widget.data=$widget.data');
+      print('email-otp called: ${widget.data}');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           email: widget.data,
@@ -185,7 +186,7 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
                         if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/true');
+                          context.go('/home/Home');
                         }
                       } else {
                         bool isSkippedTutorial =
@@ -195,7 +196,7 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/false');
+                          context.go('/home/Home');
                         }
                       }
                       widget.onVerifiedSuccessfully();
@@ -210,9 +211,14 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
                 },
                 builder: (context, state) {
                   if (state is OtpLoadInProgress) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Center(
+                      child: BouncingLogoIndicator(
+                        logo: 'images/logo.svg',
+                      ),
                     );
+                    // return const Center(
+                    //   child: CircularProgressIndicator(),
+                    // );
                   }
                   return ButtonContainerWidget(
                     isActive: isOtpFilled,

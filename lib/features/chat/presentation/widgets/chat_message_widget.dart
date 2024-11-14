@@ -11,11 +11,11 @@ class ChatMessageWidget extends StatefulWidget {
   final Function(ChatMessageModel) onTap;
 
   const ChatMessageWidget({
-    Key? key,
+    super.key,
     required this.message,
     this.showIsReaded = false,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatMessageWidget> createState() => _ChatMessageWidgetState();

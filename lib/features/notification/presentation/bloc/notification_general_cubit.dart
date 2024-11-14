@@ -22,19 +22,28 @@ class NotificationGeneralCubit extends Cubit<NotificationGeneralState> {
 
   Future<void> updateFCMtokenWithReturn() async {
     final result = await updateFCMTokenUsecase();
+    print('...Result in NotificationGeneralCubit $result');
 
     result.fold(
       (failure) {
-        print('BLOC updateFCMtoken ERROR: ' + failure.message);
-        emit(state.copyWith(
+        print('fold failure: ${failure.toString()}');
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
         return '';
       },
       (currentFCMtoken) {
-        emit(state.copyWith(
-            status: Status.success, currentFCMtoken: currentFCMtoken));
+        print('fold currentFCMtoken: ${currentFCMtoken.toString()}');
+        emit(
+          state.copyWith(
+            status: Status.success,
+            currentFCMtoken: currentFCMtoken,
+          ),
+        );
         return currentFCMtoken;
       },
     );

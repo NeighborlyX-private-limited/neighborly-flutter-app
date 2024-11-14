@@ -127,8 +127,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   return const CommunityMainSheemer();
                 }
 
-                if (state.communities.length > 0)
-
+                if (state.communities.isNotEmpty) {
                   // return CommunityEmptyWidget();
 
                   return LayoutBuilder(builder: (context, constraints) {
@@ -201,8 +200,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
                           ],
                         ));
                   });
+                }
 
-                if (state.communities.length > 0 &&
+                if (state.communities.isNotEmpty &&
                     state.status != Status.initial) {
                   return Text('empty');
                 }

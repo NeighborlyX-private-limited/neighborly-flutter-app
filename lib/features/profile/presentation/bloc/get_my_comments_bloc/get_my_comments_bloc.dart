@@ -13,17 +13,24 @@ class GetMyCommentsBloc extends Bloc<GetMyCommentsEvent, GetMyCommentsState> {
   GetMyCommentsBloc({required GetMyCommentsUsecase getMyCommentsUsecase})
       : _getMyCommentsUsecase = getMyCommentsUsecase,
         super(GetMyCommentsInitialState()) {
-    on<GetMyCommentsButtonPressedEvent>((GetMyCommentsButtonPressedEvent event,
-        Emitter<GetMyCommentsState> emit) async {
+    on<GetMyCommentsButtonPressedEvent>((
+      GetMyCommentsButtonPressedEvent event,
+      Emitter<GetMyCommentsState> emit,
+    ) async {
       emit(GetMyCommentsLoadingState());
 
       final result = await _getMyCommentsUsecase.call(
         userId: event.userId,
       );
+      print('...Result in GetMyCommentsBloc: $result');
 
-      result.fold(
-          (error) => emit(GetMyCommentsFailureState(error: error.toString())),
-          (response) => emit(GetMyCommentsSuccessState(post: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(GetMyCommentsFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(GetMyCommentsSuccessState(post: response));
+      });
     });
   }
 }

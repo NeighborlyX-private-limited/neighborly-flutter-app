@@ -46,7 +46,7 @@ class EventCreateCubit extends Cubit<EventCreateState> {
             errorMessage: failure.message));
       },
       (imageUrl) {
-        print('... BLOC imageUrl=${imageUrl}');
+        print('... BLOC imageUrl=$imageUrl');
         emit(state.copyWith(imageToUpload: fileToUpload, imageUrl: imageUrl));
       },
     );
@@ -57,7 +57,7 @@ class EventCreateCubit extends Cubit<EventCreateState> {
     final datePart = date.split('T')[0];
     final timePart = time.replaceAll(' AM', ':00').replaceAll(' PM', ':00');
 
-    return '${datePart}T${timePart}';
+    return '${datePart}T$timePart';
   }
 
   Future saveEvent(EventModel newEvent, File? pictureFile) async {

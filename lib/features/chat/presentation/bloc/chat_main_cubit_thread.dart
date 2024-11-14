@@ -32,7 +32,7 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
 
     var cookieData = ShardPrefHelper.getCookie();
 
-    print('...cookieData=${cookieData}');
+    print('...cookieData=$cookieData');
   }
 
   Future getAllRooms() async {
@@ -175,10 +175,10 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
   // }
 
   Future<void> showLocalNotification(String title, String body) async {
-    final appName = 'Neighborly';
+    const appName = 'Neighborly';
     var androidChannelId = appName;
     var androidChannelName = '$appName Channel';
-    var _localeNotification = FlutterLocalNotificationsPlugin();
+    var localeNotification = FlutterLocalNotificationsPlugin();
 
     Random random = Random(DateTime.now().millisecondsSinceEpoch);
     int randomNumber = random.nextInt(100);
@@ -198,7 +198,7 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
     NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
-    await _localeNotification.show(
+    await localeNotification.show(
       randomNumber, // ID da notificação
       title,
       body,

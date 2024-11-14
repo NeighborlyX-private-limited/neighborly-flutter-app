@@ -18,7 +18,7 @@ class EventEntity extends Equatable {
   final bool isJoined;
   final bool isMine;
 
-  EventEntity({
+  const EventEntity({
     required this.id,
     required this.title,
     required this.description,

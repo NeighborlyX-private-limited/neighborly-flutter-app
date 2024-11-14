@@ -18,26 +18,25 @@ class ChatGroupCubitThread extends Cubit<ChatGroupStateThread> {
   ChatGroupCubitThread(
     this.getChatGroupRoomMessagesUseCase,
     this.socketService,
-  ) : super(const ChatGroupStateThread()){
+  ) : super(const ChatGroupStateThread()) {
     // // Initialize socket connection
     //  socketService.connect();
-     
   }
   String? userName = '';
   String? userImage = '';
 
   void init(String roomId) async {
     print('... BLOC CHAT GROUP init');
-    emit(state.copyWith(roomId: roomId)); 
+    emit(state.copyWith(roomId: roomId));
     await getGroupRoomMessages();
   }
 
   Future getGroupRoomMessages(
       {bool? hideLoading = false, String? dateFrom}) async {
-            String? userN = ShardPrefHelper.getUsername();
-        String? userI = ShardPrefHelper.getUserProfilePicture();
-userName = userN;
-userImage = userI;
+    String? userN = ShardPrefHelper.getUsername();
+    String? userI = ShardPrefHelper.getUserProfilePicture();
+    userName = userN;
+    userImage = userI;
 
     print(
         '... BLOC getGroupRoomMessages hideLoading=$hideLoading dateFrom=$dateFrom');
@@ -56,31 +55,50 @@ userImage = userI;
             errorMessage: failure.message));
       },
       (messageList) {
-        print('...BLOC getGroupRoomMessages list: ${messageList}');
+        print('...BLOC getGroupRoomMessages list: $messageList');
         emit(state.copyWith(status: Status.success, messages: messageList));
       },
     );
   }
+
   void sendMessage(var message, [bool isMsg = false]) {
     socketService.sendMessage(state.roomId, message, isMsg);
     if (isMsg) {
-      ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([{'id':DateTime.now().toString(), 'date': DateTime.now().toString(), 'isMine': true, 'readByuser': true, 'isAdmin': true, 'isPinned': false,
-      'repliesCount': 0, 'cheers': 0, 'boos': 0, 'booOrCheer': '', 'pictureUrl' : '','text': message['msg'], 'author': {
-                "userId": "1111",
-                "userName": "$userName",
-                "picture":"$userImage",
-                "karma": 1
-            } 
-      }])[0];
+      ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
+        {
+          'id': DateTime.now().toString(),
+          'date': DateTime.now().toString(),
+          'isMine': true,
+          'readByuser': true,
+          'isAdmin': true,
+          'isPinned': false,
+          'repliesCount': 0,
+          'cheers': 0,
+          'boos': 0,
+          'booOrCheer': '',
+          'pictureUrl': '',
+          'text': message['msg'],
+          'author': {
+            "userId": "1111",
+            "userName": "$userName",
+            "picture": "$userImage",
+            "karma": 1
+          }
+        }
+      ])[0];
       addMessage(chatmodel);
     }
   }
 
   addMessage(ChatMessageModel message) {
-    List<ChatMessageModel> updatedMessages = List<ChatMessageModel>.from(state.messages);
+    List<ChatMessageModel> updatedMessages =
+        List<ChatMessageModel>.from(state.messages);
 
-  // Emit the updated state with the new list of messages
-  final updatedMessagesList = [...updatedMessages, ...[message]];
+    // Emit the updated state with the new list of messages
+    final updatedMessagesList = [
+      ...updatedMessages,
+      ...[message]
+    ];
     emit(state.copyWith(status: Status.success, messages: updatedMessagesList));
   }
 

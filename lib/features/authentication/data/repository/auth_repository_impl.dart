@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/entities/auth_response_entity.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
@@ -21,15 +20,21 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.loginWithEmail(
-            email: email, password: password);
+          email: email,
+          password: password,
+        );
+        print('loginWithEmail result in auth repo impl: $result');
 
         return Right(result);
       } on ServerFailure catch (e) {
+        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
+      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -47,13 +52,17 @@ class AuthRepositoryImpl implements AuthRepository {
           password: password,
           phone: phone,
         );
+        print('signup result in auth repo impl: $result');
         return Right(result);
       } on ServerFailure catch (e) {
+        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        return Left(ServerFailure(message: '$e'));
+        print('catch in auth repo impl: $e');
+        return Left(ServerFailure(message: e.toString()));
       }
     } else {
+      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -65,15 +74,21 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     if (await networkInfo.isConnected) {
       try {
-        final result =
-            await remoteDataSource.resendOtp(email: email, phone: phone);
+        final result = await remoteDataSource.resendOtp(
+          email: email,
+          phone: phone,
+        );
+        print('resendOtp result in auth repo impl: $result');
         return Right(result);
       } on ServerFailure catch (e) {
+        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
+      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -93,13 +108,17 @@ class AuthRepositoryImpl implements AuthRepository {
           verificationFor: verificationFor,
           phone: phone,
         );
+        print('verifyOtp result in auth repo impl: $result');
         return Right(result);
       } on ServerFailure catch (e) {
+        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
+      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -110,10 +129,13 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.forgotPassword(email: email);
+        print('forgotPassword result in auth repo impl: $result');
         return Right(result);
       } on ServerFailure catch (e) {
+        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -125,17 +147,18 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, dynamic>> googleAuthentication() async {
     if (await networkInfo.isConnected) {
       try {
-        print('GoogleAuthenticationButtonPressedEvent in repository');
         final result = await remoteDataSource.googleAuthentication();
-        print('GoogleAuthenticationButtonPressedEvent success');
-        print(result);
+        print('googleAuthentication result in auth repo impl: $result');
         return Right(result);
       } on ServerFailure catch (e) {
+        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
+      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }

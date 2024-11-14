@@ -10,7 +10,7 @@ class ChatRoomEntity extends Equatable {
   final bool isGroup;
   final int unreadCount;
 
-  ChatRoomEntity({
+  const ChatRoomEntity({
     required this.id,
     required this.name,
     required this.avatarUrl,

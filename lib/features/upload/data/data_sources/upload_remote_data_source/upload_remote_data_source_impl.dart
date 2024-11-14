@@ -18,29 +18,36 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     required List<double> location,
     String? content,
     required String type,
-    List<File>? multimedia, // List of File objects directly from the device
+    List<File>? multimedia,
     required String city,
     List<dynamic>? options,
     required bool allowMultipleVotes,
   }) async {
-    // Retrieve cookies
+    print('...uploadPost start with');
+    print('title:$title');
+    print('content:$content');
+    print('type:$type');
+    print('location:$location');
+    print('city:$city');
+    print('options:$options');
+    print('allowMultipleVotes:$allowMultipleVotes');
+    print('multimedia:$multimedia');
+
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      print('No cookies found in uploadPost ');
+      throw const ServerException(message: 'Something went wrong');
     }
 
-    print('_selectedImage path in uploadPost fn: $multimedia');
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/create-post';
+    print('url:$url');
     var isLocationOn = ShardPrefHelper.getIsLocationOn();
     var isHome = isLocationOn ? 'false' : 'true';
 
-    print('isHome in uploadPost ==> $isHome');
+    print('isHome in uploadPost: $isHome');
     Map<String, dynamic> queryParameters = {'home': isHome};
-    print("City from post upload: $city");
-    print("Location: $location");
 
-    // Create a multipart request
     final request = http.MultipartRequest(
       'POST',
       Uri.parse(url).replace(queryParameters: queryParameters),
@@ -60,17 +67,15 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       for (var file in multimedia) {
         request.files.add(
           http.MultipartFile(
-            'files', // Ensure this field name matches what your backend expects for files
+            'files',
             file.readAsBytes().asStream(),
             file.lengthSync(),
-            filename:
-                file.path.split('/').last, // Get the filename from the path
+            filename: file.path.split('/').last,
           ),
         );
       }
     }
 
-    // Debug: Print the request fields for verification
     print('Request Fields:');
     request.fields.forEach((key, value) {
       print('$key: $value');
@@ -80,29 +85,35 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     final response = await request.send();
     final responseString = await response.stream.bytesToString();
 
+    print('Post uploaded response status code: ${response.statusCode}');
     print('Post uploaded response: $responseString');
     if (response.statusCode == 403) {
       throw responseString;
     }
     if (response.statusCode == 200) {
-      print('Post uploaded successfully');
+      print('Post uploaded successfully...');
     } else {
-      print('Post uploaded error');
+      print(
+          'else error in Post uploaded: ${jsonDecode(responseString)['message']}');
       final errorMessage =
-          jsonDecode(responseString)['message'] ?? 'Unknown error';
+          jsonDecode(responseString)['message'] ?? 'Something went wrong';
       throw ServerException(message: errorMessage);
     }
   }
 
   @override
   Future<String> uploadFile({required File file}) async {
-    print('uploadFile fun call');
+    print('...uploadFile start with');
+    print('file:$file');
+
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      print('No cookies found in uploadFile ');
+      throw const ServerException(message: 'Something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/user/upload-file';
+    print('url:$url');
 
     final request = http.MultipartRequest('POST', Uri.parse(url))
       ..headers['Cookie'] = cookieHeader
@@ -117,12 +128,17 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
 
     final response = await request.send();
     final responseString = await response.stream.bytesToString();
+    print('uploadFile response status code: ${response.statusCode}');
+    print('uploadFile response: $responseString');
 
     if (response.statusCode == 200) {
-      print('image s3 url: ${jsonDecode(responseString)['url']}');
       return jsonDecode(responseString)['url'];
     } else {
-      throw ServerException(message: jsonDecode(responseString)['message']);
+      print(
+          'else error in uploadFile: ${jsonDecode(responseString)['message']}');
+      throw ServerException(
+          message:
+              jsonDecode(responseString)['message'] ?? 'Something went wrong');
     }
   }
 }

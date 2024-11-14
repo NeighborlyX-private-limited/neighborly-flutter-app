@@ -11,11 +11,11 @@ class EventCardWidget extends StatelessWidget {
   final double width;
   final Function(EventModel) onSelect;
   const EventCardWidget({
-    Key? key,
+    super.key,
     required this.event,
     required this.width,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   void openCommunity(BuildContext context) {
     // Navigator.of(context).push(

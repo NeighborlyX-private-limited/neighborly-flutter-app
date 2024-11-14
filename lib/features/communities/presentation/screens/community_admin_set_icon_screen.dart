@@ -10,8 +10,8 @@ import '../../../../core/constants/imagepickercompress.dart';
 
 class CommunityAdminIconScreen extends StatefulWidget {
   const CommunityAdminIconScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CommunityAdminIconScreen> createState() =>

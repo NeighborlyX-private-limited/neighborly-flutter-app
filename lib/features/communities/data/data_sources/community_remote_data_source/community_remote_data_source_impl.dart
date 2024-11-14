@@ -307,7 +307,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   Future<void> reportCommunity(
       {required String communityId, required String reason}) async {
     print('... reportCommunity community=$communityId');
-    print('... reportCommunity reason=${reason}');
+    print('... reportCommunity reason=$reason');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -338,7 +338,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   Future<void> updateDescription(
       {required String communityId, required String newDescription}) async {
     print('... updateDescription community=$communityId');
-    print('... updateDescription newDescription=${newDescription}');
+    print('... updateDescription newDescription=$newDescription');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -373,7 +373,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       String? imageUrl}) async {
     print('... updateIcon community=$communityId');
     print('... updateIcon pictureFile=${pictureFile?.path}');
-    print('... updateIcon imageUrl=${imageUrl}');
+    print('... updateIcon imageUrl=$imageUrl');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -439,7 +439,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   Future<void> updateLocation(
       {required String communityId, required String newLocation}) async {
     print('... updateLocation community=$communityId');
-    print('... updateLocation newDescription=${newLocation}');
+    print('... updateLocation newDescription=$newLocation');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -471,7 +471,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   Future<void> updateMute(
       {required String communityId, required bool newValue}) async {
     print('... updateMute community=$communityId');
-    print('... updateMute newValue=${newValue}');
+    print('... updateMute newValue=$newValue');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -502,7 +502,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   Future<void> updateRadius(
       {required String communityId, required num newRadius}) async {
     print('... updateRadius community=$communityId');
-    print('... updateRadius newValue=${newRadius}');
+    print('... updateRadius newValue=$newRadius');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {

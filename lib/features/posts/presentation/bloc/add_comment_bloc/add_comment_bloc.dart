@@ -1,9 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/add_comment_usecase.dart';
-
-import '../../../domain/entities/comment_entity.dart';
 part 'add_comment_event.dart';
 part 'add_comment_state.dart';
 
@@ -22,12 +19,15 @@ class AddCommentBloc extends Bloc<AddCommentEvent, AddCommentState> {
         text: event.text,
         commentId: event.commentId,
       );
+      print('...Result in ForgotPasswordBloc $result');
 
-      result.fold(
-          (error) => emit(AddCommentFailureState(error: error.toString())),
-          (response) => emit(AddCommentSuccessState()));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(AddCommentFailureState(error: error.toString()));
+      }, (response) {
+        // print('fold response: ${response.toString()}');
+        emit(AddCommentSuccessState());
+      });
     });
   }
-
-  
 }

@@ -10,7 +10,6 @@ class GoogleAuthenticationUsecase {
   GoogleAuthenticationUsecase(this.repository);
 
   Future<Either<Failure, dynamic>> call() async {
-    print('GoogleAuthenticationButtonPressedEvent');
     return await repository.googleAuthentication();
   }
 }

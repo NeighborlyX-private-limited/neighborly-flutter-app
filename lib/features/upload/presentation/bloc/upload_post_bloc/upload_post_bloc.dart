@@ -28,10 +28,15 @@ class UploadPostBloc extends Bloc<UploadPostEvent, UploadPostState> {
         options: event.options,
         location: event.location,
       );
+      print('...Result in UploadPostBloc $result');
 
-      result.fold(
-          (error) => emit(UploadPostFailureState(error: error.toString())),
-          (user) => emit(UploadPostSuccessState()));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(UploadPostFailureState(error: error.toString()));
+      }, (user) {
+        // print('fold user: ${user.toString()}');
+        emit(UploadPostSuccessState());
+      });
     });
   }
 }

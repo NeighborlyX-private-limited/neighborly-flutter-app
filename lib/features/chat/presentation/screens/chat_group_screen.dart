@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
@@ -22,10 +23,10 @@ class ChatGroupScreen extends StatefulWidget {
   final ChatRoomModel room;
 
   const ChatGroupScreen({
-    Key? key,
+    super.key,
     required this.roomId,
     required this.room,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatGroupScreen> createState() => _ChatGroupScreenState();
@@ -39,7 +40,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   bool isCommentFilled = false;
   bool showPinned = true;
   File? fileToUpload;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   bool _shouldScrollToBottom = true;
   double _previousScrollOffset = 0.0;
@@ -230,7 +231,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 // #send
                 // XXX
                 final payload = {
-                  'group_id': '${widget.roomId}',
+                  'group_id': widget.roomId,
                   'msg': messageEC.text
                 };
                 context.read<ChatGroupCubit>().sendMessage(payload, true);
@@ -400,7 +401,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     //
                     //
                     // #pinned #pin
-                    if (showPinned && pinnedMessages.length != 0)
+                    if (showPinned && pinnedMessages.isNotEmpty)
                       pinnedMessageArea(
                         pinnedMessages,
                       ),
@@ -411,9 +412,16 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     if (_isLoadingMore)
                       Padding(
                         padding: const EdgeInsets.all(
-                            6.0), // You can change this value
-                        child: Container(
-                          child: Center(child: CircularProgressIndicator()),
+                          6.0,
+                        ),
+                        // child: Center(
+                        //   child: BouncingLogoIndicator(
+                        //     logo: 'images/logo.svg',
+                        //   ),
+                        // ),
+
+                        child: Center(
+                          child: CircularProgressIndicator(),
                         ),
                       ),
                     // Show loading indicator at the top when fetching more messages
@@ -454,8 +462,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                   (lineCount == state.messages.length) &&
                                       msg.isMine,
                               onTap: (msgSelected) {
-                                print('....selected=${msgSelected}');
-                                print('lineCount=${lineCount}');
+                                print('....selected=$msgSelected');
+                                print('lineCount=$lineCount');
                               },
                               onReply: (msgIdToSendReply, message) {
                                 print('#send reply');
@@ -480,8 +488,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 print(
                                     '#onTap cheer - send to remote ${state.messages[index]})');
                                 final payload = {
-                                  'group_id': '${widget.roomId}',
-                                  'message_id': '${state.messages[index].id}',
+                                  'group_id': widget.roomId,
+                                  'message_id': state.messages[index].id,
                                   'action': 'cheer'
                                 };
                                 context
@@ -490,8 +498,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               },
                               onTapBool: () {
                                 final payload = {
-                                  'group_id': '${widget.roomId}',
-                                  'message_id': '${state.messages[index].id}',
+                                  'group_id': widget.roomId,
+                                  'message_id': state.messages[index].id,
                                   'action': 'boo'
                                 };
                                 context

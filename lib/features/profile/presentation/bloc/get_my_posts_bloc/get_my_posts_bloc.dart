@@ -12,17 +12,24 @@ class GetMyPostsBloc extends Bloc<GetMyPostsEvent, GetMyPostsState> {
   GetMyPostsBloc({required GetMyPostsUsecase getMyPostsUsecase})
       : _getMyPostsUsecase = getMyPostsUsecase,
         super(GetMyPostsInitialState()) {
-    on<GetMyPostsButtonPressedEvent>((GetMyPostsButtonPressedEvent event,
-        Emitter<GetMyPostsState> emit) async {
+    on<GetMyPostsButtonPressedEvent>((
+      GetMyPostsButtonPressedEvent event,
+      Emitter<GetMyPostsState> emit,
+    ) async {
       emit(GetMyPostsLoadingState());
 
       final result = await _getMyPostsUsecase.call(
         userId: event.userId,
       );
+      print('...Result in GetMyPostsBloc: $result');
 
-      result.fold(
-          (error) => emit(GetMyPostsFailureState(error: error.toString())),
-          (response) => emit(GetMyPostsSuccessState(post: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(GetMyPostsFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(GetMyPostsSuccessState(post: response));
+      });
     });
   }
 }

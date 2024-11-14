@@ -15,14 +15,14 @@ class ChatReactionWidget extends StatefulWidget {
   final Function(PostEntity) onTapMessage;
 
   const ChatReactionWidget({
-    Key? key,
+    super.key,
     required this.post,
     this.repliesAvatar,
     required this.onTapReply,
     required this.onTapCheer,
     required this.onTapBool,
     required this.onTapMessage,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatReactionWidget> createState() => _ChatReactionWidgetState();

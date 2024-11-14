@@ -19,10 +19,10 @@ class ChatPrivateScreen extends StatefulWidget {
   final ChatRoomModel room;
 
   const ChatPrivateScreen({
-    Key? key,
+    super.key,
     required this.roomId,
     required this.room,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatPrivateScreen> createState() => _ChatPrivateScreenState();
@@ -322,8 +322,8 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
                                     (lineCount == state.messages.length) &&
                                         msg.isMine,
                                 onTap: (msgSelected) {
-                                  print('....selected=${msgSelected}');
-                                  print('lineCount=${lineCount}');
+                                  print('....selected=$msgSelected');
+                                  print('lineCount=$lineCount');
                                 });
 
                             if (lastDate != dateSummary) {

@@ -74,18 +74,6 @@ class _ReplyWidgetState extends State<ReplyWidget> {
                     height: 1.3,
                   ),
                 ),
-                // const SizedBox(
-                //   width: 10,
-                // ),
-                // const Text(
-                //   'Reply',
-                //   style: TextStyle(
-                //     color: Colors.grey,
-                //     fontWeight: FontWeight.w500,
-                //     fontSize: 14,
-                //     height: 1.3,
-                //   ),
-                // ),
               ],
             ),
             const SizedBox(

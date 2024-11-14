@@ -38,7 +38,7 @@ class CommunityCreateCubit extends Cubit<CommunityCreateState> {
             uploadIsLoading: false));
       },
       (imageUrl) {
-        print('... BLOC imageUrl=${imageUrl}');
+        print('... BLOC imageUrl=$imageUrl');
         emit(state.copyWith(
             imageToUpload: fileToUpload,
             imageUrl: imageUrl,

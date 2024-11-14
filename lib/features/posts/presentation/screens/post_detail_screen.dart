@@ -1,8 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/video_widget.dart';
 
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
@@ -27,12 +32,13 @@ class PostDetailScreen extends StatefulWidget {
   final String userId;
   final String commentId;
 
-  const PostDetailScreen(
-      {super.key,
-      required this.postId,
-      required this.userId,
-      required this.isPost,
-      required this.commentId});
+  const PostDetailScreen({
+    super.key,
+    required this.postId,
+    required this.userId,
+    required this.isPost,
+    required this.commentId,
+  });
 
   @override
   State<PostDetailScreen> createState() => _PostDetailScreenState();
@@ -43,9 +49,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   bool isCommentFilled = false;
   final FocusNode _commentFocusNode = FocusNode();
   List<dynamic> comments = [];
-
-  dynamic
-      commentToReply; // Union type for storing either CommentEntity or ReplyEntity
+// Union type for storing either CommentEntity or ReplyEntity
+  dynamic commentToReply;
 
   @override
   void initState() {
@@ -76,13 +81,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     BlocProvider.of<GetPostByIdBloc>(context)
         .add(GetPostByIdButtonPressedEvent(postId: postId));
     BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
-        GetCommentsByPostIdButtonPressedEvent(
-            postId: postId, commentId: widget.commentId));
+      GetCommentsByPostIdButtonPressedEvent(
+        postId: postId,
+        commentId: widget.commentId,
+      ),
+    );
   }
 
   void _handleReplyTap(dynamic commentOrReply) {
     setState(() {
-      commentToReply = commentOrReply; // Set the comment or reply to reply to
+      // Set the comment or reply to reply to
+      commentToReply = commentOrReply;
     });
   }
 
@@ -171,8 +180,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ],
                   );
                 } else if (postState is GetPostByIdFailureState) {
-                  return Center(
-                    child: Text(postState.error),
+                  return SomethingWentWrong(
+                    imagePath: 'assets/not_found.svg',
+                    title: 'Aaah! Something went wrong',
+                    message: "Post not found",
+                    buttonText: 'Go Back',
+                    onButtonPressed: () {
+                      context.pop();
+                    },
                   );
                 } else {
                   return const SizedBox();
@@ -184,7 +199,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   Widget _buildCommentInputSection() {
-    bool isReply = commentToReply != null; // Check if it's a reply
+    bool isReply = commentToReply != null;
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -213,11 +228,139 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             const SizedBox(width: 10),
             BlocConsumer<AddCommentBloc, AddCommentState>(
               listener: (context, state) {
+                // if (state is AddCommentSuccessState) {
+                //   showDialog(
+                //     context: context,
+                //     builder: (BuildContext context) {
+                //       return Dialog(
+                //         shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(20),
+                //         ),
+                //         child: Padding(
+                //           padding: const EdgeInsets.all(20.0),
+                //           child: Column(
+                //             mainAxisSize: MainAxisSize.min,
+                //             children: <Widget>[
+                //               // Placeholder for the image
+                //               SvgPicture.asset(
+                //                 'assets/something_went_wrong.svg',
+                //                 width: 150,
+                //                 height: 130,
+                //               ),
+                //               const SizedBox(height: 20),
+                //               const Text(
+                //                 'Aaah! Something went wrong',
+                //                 style: TextStyle(
+                //                   fontSize: 18,
+                //                   fontWeight: FontWeight.bold,
+                //                 ),
+                //                 textAlign: TextAlign.center,
+                //               ),
+                //               const SizedBox(height: 10),
+                //               const Text(
+                //                 "Sorry,You are banned.\nPlease try it after some time",
+                //                 style: TextStyle(
+                //                   fontSize: 14,
+                //                   color: Colors.grey,
+                //                 ),
+                //                 textAlign: TextAlign.center,
+                //               ),
+                //               const SizedBox(height: 20),
+                //               ElevatedButton(
+                //                 onPressed: () {
+                //                   Navigator.of(context).pop();
+                //                 },
+                //                 style: ElevatedButton.styleFrom(
+                //                   backgroundColor: AppColors.primaryColor,
+                //                   shape: RoundedRectangleBorder(
+                //                     borderRadius: BorderRadius.circular(20),
+                //                   ),
+                //                 ),
+                //                 child: const Padding(
+                //                   padding: EdgeInsets.symmetric(
+                //                       horizontal: 20, vertical: 10),
+                //                   child: Text(
+                //                     'Go Back',
+                //                     style: TextStyle(
+                //                         fontSize: 16, color: Colors.white),
+                //                   ),
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       );
+                //     },
+                //   );
+                // }
                 if (state is AddCommentFailureState) {
                   if (state.error.contains("Sorry, you are banned")) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Sorry, you are banned")),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                // Placeholder for the image
+                                SvgPicture.asset(
+                                  'assets/something_went_wrong.svg',
+                                  width: 150,
+                                  height: 130,
+                                ),
+                                const SizedBox(height: 20),
+                                const Text(
+                                  'Aaah! Something went wrong',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  "Sorry,You are banned.\nPlease try it after some time",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 20),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    child: Text(
+                                      'Go Back',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     );
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   SnackBar(content: Text("Sorry, you are banned")),
+                    // );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -238,8 +381,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
                         BlocProvider.of<AddCommentBloc>(context).add(
                           AddCommentButtonPressedEvent(
-                            commentId: commentToReply
-                                .commentid, // Adjusted for dynamic type
+                            commentId: commentToReply.commentid,
                             text: _commentController.text,
                             postId: postId,
                           ),
@@ -255,8 +397,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               0,
                               CommentModel(
                                   userId: userId,
-                                  userName: username, // Use actual user name
-                                  proPic: propic, // Use actual profile picture
+                                  userName: username,
+                                  proPic: propic,
                                   text: _commentController.text,
                                   createdAt: DateTime.now().toString(),
                                   awardType: const [],
@@ -319,7 +461,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             InkWell(
               onTap: () {
-                context.push('/userProfileScreen/${postState.post.userId}');
+                if (postState.post.userName.contains('[deleted]')) {
+                  print('here....');
+                  context.push('/deleted-user');
+                } else {
+                  context.push('/userProfileScreen/${postState.post.userId}');
+                }
               },
               child: Row(
                 children: [
@@ -335,10 +482,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               postState.post.proPic!,
                               fit: BoxFit.contain,
                             )
-                          : Image.asset(
-                              'assets/second_pro_pic.png',
-                              fit: BoxFit.contain,
-                            )),
+                          : postState.post.userName.contains('[deleted]')
+                              ? Image.asset(
+                                  'assets/deleted_user.png',
+                                  fit: BoxFit.contain,
+                                )
+                              : Image.asset(
+                                  'assets/second_pro_pic.png',
+                                  fit: BoxFit.contain,
+                                )),
                   const SizedBox(
                     width: 12,
                   ),
@@ -347,11 +499,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     children: [
                       Row(
                         children: [
-                          Text(
-                            postState.post.userName,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 14),
-                          ),
+                          postState.post.userName.contains('[deleted]')
+                              ? Text(
+                                  'Neighborly user',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14),
+                                )
+                              : Text(
+                                  postState.post.userName,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14),
+                                ),
                           const SizedBox(
                             width: 6,
                           ),
@@ -406,27 +566,52 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             color: Colors.grey[800],
           ),
         ),
-        postState.post.multimedia != null && postState.post.multimedia != ''
+        postState.post.multimedia!.isNotEmpty
             ? const SizedBox(
                 height: 10,
               )
             : Container(),
-        postState.post.multimedia != null && postState.post.multimedia != ''
+        postState.post.multimedia != null &&
+                postState.post.multimedia!.isNotEmpty &&
+                postState.post.multimedia!.length > 1
+            ? ImageSlider(
+                multimedia: postState.post.multimedia ?? [],
+              )
+            : Container(),
+        postState.post.multimedia != null &&
+                postState.post.multimedia!.isNotEmpty &&
+                postState.post.multimedia!.length == 1
             ? Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: Image.network(
-                      width: double.infinity,
-                      //height: 200,
-                      //i have to use some widget to dispay all image logic
-                      postState.post.multimedia![0],
-                      // postState.post.multimedia!,
-                      fit: BoxFit.contain,
-                    )),
-              )
+                  borderRadius: BorderRadius.circular(4),
+                  child: CachedNetworkImage(
+                    imageUrl: postState.post.multimedia![0],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    placeholder: (context, url) => Center(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 125),
+                        height: 300,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                          ),
+                          padding: EdgeInsets.all(10),
+                          height: 50,
+                          width: 50,
+                          child: CircularProgressIndicator(
+                            color: Colors.blue,
+                            strokeWidth: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
+                ))
             : Container(),
         const SizedBox(
           height: 10,
@@ -435,8 +620,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           OptionCard(
             key: UniqueKey(),
             onSelectOptionCallback: () {},
-            // selectedOptions: selectedOptions,
-            // isMultipleVotesAllowed: postState.post.allowMultipleVotes!,
             option: option,
             totalVotes: calculateTotalVotes(postState.post.pollOptions!),
             pollId: postState.post.id,
@@ -500,9 +683,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   },
                   builder: (context, state) {
                     if (state is DeletePostLoadingState) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
                       );
+                      // return const Center(
+                      //   child: CircularProgressIndicator(),
+                      // );
                     }
                     return InkWell(
                       onTap: () {
@@ -628,6 +816,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
+                        // ? Center(
+                        //     child: BouncingLogoIndicator(
+                        //       logo: 'images/logo.svg',
+                        //     ),
+                        //   )
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )
@@ -766,7 +959,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           children: [
             InkWell(
               onTap: () {
-                context.push('/userProfileScreen/${post.userId}');
+                if (post.userName.contains('[deleted]')) {
+                  context.push('/deleted-user');
+                } else {
+                  context.push('/userProfileScreen/${post.userId}');
+                }
               },
               child: Row(
                 children: [
@@ -787,22 +984,37 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     child: CircularProgressIndicator(
                                       color: Colors.blue,
                                       strokeWidth: 2,
-                                    )), // Show loading indicator while image loads
+                                    )),
                               ),
-                              errorWidget: (context, url, error) => Icon(Icons
-                                  .error), // Show error icon if image fails to load
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
                             )
-                          // ? Image.network(post.proPic!, fit: BoxFit.contain)
-                          : const Image(
-                              image: AssetImage('assets/second_pro_pic.png'),
-                              fit: BoxFit.contain,
-                            ),
+                          : post.userName.contains('[deleted]')
+                              ? Image.asset(
+                                  'assets/deleted_user.png',
+                                  fit: BoxFit.contain,
+                                )
+                              : const Image(
+                                  image:
+                                      AssetImage('assets/second_pro_pic.png'),
+                                  fit: BoxFit.contain,
+                                ),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Text(post.userName,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 14)),
+                  post.userName.contains('[deleted]')
+                      ? Text(
+                          'Neighborly user',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w600, fontSize: 14),
+                        )
+                      : Text(
+                          post.userName,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -840,25 +1052,30 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 post.multimedia!.isNotEmpty &&
                 post.multimedia!.length > 1
             ? ImageSlider(
-                multimedia:
-                    post.multimedia ?? [], // Provide the list of image URLs
+                multimedia: post.multimedia ?? [],
               )
             : Container(),
         post.multimedia != null &&
                 post.multimedia!.isNotEmpty &&
-                post.multimedia!.length == 1
+                post.multimedia!.length == 1 &&
+                post.multimedia![0].contains('.mp4')
+            ? VideoDisplayWidget(
+                videoUrl: post.multimedia![0],
+              )
+            : Container(),
+        post.multimedia != null &&
+                post.multimedia!.isNotEmpty &&
+                post.multimedia!.length == 1 &&
+                (!post.multimedia![0].contains('.mp4'))
             ? Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(8)),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(4),
                   child: CachedNetworkImage(
-                    // todo: here also change toshow all images
                     imageUrl: post.multimedia![0],
-                    // imageUrl: post.multimedia!,
                     fit: BoxFit.contain,
                     width: double.infinity,
-                    //height: 200,
                     placeholder: (context, url) => Center(
                       child: SizedBox(
                           height: 16,
@@ -866,41 +1083,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           child: CircularProgressIndicator(
                             color: Colors.blue,
                             strokeWidth: 2,
-                          )), // Show loading indicator while image loads
+                          )),
                     ),
-                    errorWidget: (context, url, error) => Icon(
-                        Icons.error), // Show error icon if image fails to load
+                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
               )
             : Container(),
-        // if (post.multimedia != null && post.multimedia!= '')
-        //   Container(
-        //     decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
-        //     child: ClipRRect(
-        //       borderRadius: BorderRadius.circular(4),
-        //       child: CachedNetworkImage(
-        //         // todo: here also change toshow all images
-        //         imageUrl: post.multimedia![0],
-        //         // imageUrl: post.multimedia!,
-        //         fit: BoxFit.contain,
-        //         width: double.infinity,
-        //         //height: 200,
-        //         placeholder: (context, url) => Center(
-        //           child: SizedBox(
-        //               height: 16,
-        //               width: 16,
-        //               child: CircularProgressIndicator(
-        //                 color: Colors.blue,
-        //                 strokeWidth: 2,
-        //               )), // Show loading indicator while image loads
-        //         ),
-        //         errorWidget: (context, url, error) =>
-        //             Icon(Icons.error), // Show error icon if image fails to load
-        //       ),
-
-        //     ),
-        //   ),
         const SizedBox(height: 10),
         Text(
           convertDateString(post.createdAt),

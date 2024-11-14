@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -75,7 +76,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           });
                         },
                         controller: _contentController,
-                        // focusNode: _contentFocusNode, // Attach the FocusNode
                         decoration: const InputDecoration(
                           hintText: 'Your feedback',
                           border: InputBorder.none,
@@ -118,9 +118,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       },
                       builder: (context, state) {
                         if (state is SendFeedbackLoadingState) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
+                          return Center(
+                            child: BouncingLogoIndicator(
+                              logo: 'images/logo.svg',
+                            ),
                           );
+                          // return const Center(
+                          //   child: CircularProgressIndicator(),
+                          // );
                         }
                         return ButtonContainerWidget(
                           isActive: isSendFeedbackFilled,

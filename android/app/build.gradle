@@ -1,8 +1,6 @@
 plugins {
     id "com.android.application"
-    // START: FlutterFire Configuration
     id 'com.google.gms.google-services'
-    // END: FlutterFire Configuration
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -32,7 +30,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.example.neighborly_flutter_app"
+    namespace "com.neighborlyx.neighborlysocial"
     compileSdkVersion 34
     ndkVersion flutter.ndkVersion
 
@@ -51,12 +49,9 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.example.neighborly_flutter_app"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
-        minSdkVersion  23 // flutter.minSdkVersion
-        targetSdkVersion 33
+        applicationId "com.neighborlyx.neighborlysocial"
+        minSdkVersion  23 
+        targetSdkVersion 34
         compileSdkVersion 34
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
@@ -74,9 +69,8 @@ android {
 
     buildTypes {
         release {
-            // shrinkResources false
-            //  minifyEnabled false
-            // signingConfig signingConfigs.debug
+             shrinkResources false
+             minifyEnabled false
             signingConfig signingConfigs.release
         }
     }

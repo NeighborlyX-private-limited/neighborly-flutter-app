@@ -6,8 +6,8 @@ import '../bloc/community_detail_cubit.dart';
 
 class CommunityAdminDescriptionScreen extends StatefulWidget {
   const CommunityAdminDescriptionScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CommunityAdminDescriptionScreen> createState() =>

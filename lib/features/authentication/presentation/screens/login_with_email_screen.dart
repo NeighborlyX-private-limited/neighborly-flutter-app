@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -159,31 +160,34 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     }
                   } else if (state is LoginSuccessState) {
                     bool isEmailVerified = state.authResponseEntity.isVerified!;
-                    // bool isSkippedTutorial =
-                    //     state.authResponseEntity.isSkippedTutorial!;
-                    // bool isViewedTutorial =
-                    //     state.authResponseEntity.isViewedTutorial!;
+
                     bool isSkippedTutorial =
                         ShardPrefHelper.getIsSkippedTutorial();
                     bool isViewedTutorial =
                         ShardPrefHelper.getIsViewedTutorial();
-                    print(isSkippedTutorial);
-                    print(isViewedTutorial);
-                    if ((!isSkippedTutorial) && (!isViewedTutorial)) {
+                    print(
+                        'isSkippedTutorial in login with email:$isSkippedTutorial');
+                    print(
+                        'isViewedTutorial in login with email:$isViewedTutorial');
+                    if (!isEmailVerified) {
+                      context.go('/otp/${_emailController.text}/email-verify');
+                    } else if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                       context.go('/tutorialScreen');
                     } else {
-                      isEmailVerified
-                          ? context.go('/home/false')
-                          : context.push(
-                              '/otp/${_emailController.text}/email-verify');
+                      context.go('/home/Home');
                     }
                   }
                 },
                 builder: (context, state) {
                   if (state is LoginLoadingState) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Center(
+                      child: BouncingLogoIndicator(
+                        logo: 'images/logo.svg',
+                      ),
                     );
+                    // return const Center(
+                    //   child: CircularProgressIndicator(),
+                    // );
                   }
                   return ButtonContainerWidget(
                     isActive: checkIsActive(),
@@ -227,9 +231,11 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
               ),
               const SizedBox(height: 15),
               noConnection
-                  ? const Text(
-                      'No Internet Connection',
-                      style: TextStyle(color: Colors.red),
+                  ? Center(
+                      child: const Text(
+                        'No Internet Connection',
+                        style: TextStyle(color: Colors.red),
+                      ),
                     )
                   : const SizedBox(),
             ],

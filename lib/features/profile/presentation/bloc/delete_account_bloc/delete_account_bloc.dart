@@ -11,14 +11,21 @@ class DeleteAccountBloc extends Bloc<DeleteAccountEvent, DeleteAccountState> {
   DeleteAccountBloc({required DeleteAccountUsecase deleteAccountUsecase})
       : _deleteAccountUsecase = deleteAccountUsecase,
         super(DeleteAccountInitialState()) {
-    on<DeleteAccountButtonPressedEvent>((DeleteAccountButtonPressedEvent event,
-        Emitter<DeleteAccountState> emit) async {
+    on<DeleteAccountButtonPressedEvent>((
+      DeleteAccountButtonPressedEvent event,
+      Emitter<DeleteAccountState> emit,
+    ) async {
       emit(DeleteAccountLoadingState());
-
       final result = await _deleteAccountUsecase();
-      result.fold(
-          (error) => emit(DeleteAccountFailureState(error: error.toString())),
-          (response) => emit(DeleteAccountSuccessState()));
+      print('...Result in DeleteAccountBloc $result');
+
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(DeleteAccountFailureState(error: error.toString()));
+      }, (response) {
+        // print('fold response: ${response.toString()}');
+        emit(DeleteAccountSuccessState());
+      });
     });
   }
 }

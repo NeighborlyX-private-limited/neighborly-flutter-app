@@ -8,8 +8,8 @@ import '../bloc/community_detail_cubit.dart';
 
 class CommunityAdminRadiusScreen extends StatefulWidget {
   const CommunityAdminRadiusScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CommunityAdminRadiusScreen> createState() =>
@@ -104,7 +104,7 @@ class _CommunityAdminRadiusScreenState
                 min: kMinRadius,
                 onDragging: (handlerIndex, lowerValue, upperValue) {
                   setState(() {
-                    newRadiusEC.text = '${lowerValue}';
+                    newRadiusEC.text = '$lowerValue';
                   });
                 },
               ),

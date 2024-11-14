@@ -41,7 +41,7 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
             errorMessage: failure.message));
       },
       (messageList) {
-        print('...BLOC getRoomMessages list: ${messageList}');
+        print('...BLOC getRoomMessages list: $messageList');
         emit(state.copyWith(status: Status.success, messages: messageList));
       },
     );

@@ -7,6 +7,8 @@ class CacheException extends Equatable implements Exception {
 
   @override
   List<Object> get props => [message];
+  @override
+  String toString() => message;
 }
 
 class ServerException extends Equatable implements Exception {
@@ -16,6 +18,8 @@ class ServerException extends Equatable implements Exception {
 
   @override
   List<Object> get props => [message];
+  @override
+  String toString() => message;
 }
 
 class NetworkException extends Equatable implements Exception {
@@ -25,4 +29,6 @@ class NetworkException extends Equatable implements Exception {
 
   @override
   List<Object> get props => [message];
+  @override
+  String toString() => message;
 }

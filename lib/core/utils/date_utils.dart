@@ -7,30 +7,26 @@ class DateUtilsHelper {
   static DateTime dateFormatterJustDate(String date) =>
       DateFormat('dd/MM/yyyy').parse(date);
 
-  // static DateTime dateFormatterJustDateDots(String date) => DateFormat('dd/MM/yyyy').parse(date);
-
   static String simplifyISOtimeStringStartEnd(
       String dateStart, String dateEnd) {
     DateTime dateTimeStart = DateTime.parse(dateStart);
     DateTime dateTimeEnd = DateTime.parse(dateEnd);
 
-    // Formata a data no formato desejado (dd/MM)
     String formattedDateStart = DateFormat('dd/MM').format(dateTimeStart);
     String formattedDateEnd = DateFormat('dd/MM').format(dateTimeEnd);
 
-    return '${formattedDateStart} - ${formattedDateEnd}';
+    return '$formattedDateStart - $formattedDateEnd';
   }
 
   static String simplifyISOtimeString(String date) {
     try {
       DateTime dateTimeStart = DateTime.parse(date);
 
-      // Formata a data no formato desejado (dd/MM)
       String formattedDate = DateFormat('MMMM d, yyyy').format(dateTimeStart);
 
       return formattedDate;
     } catch (e) {
-      print('simplifyISOtimeString ERROR: ${e} [data: $date]');
+      print('simplifyISOtimeString ERROR: $e [data: $date]');
       return '';
     }
   }
@@ -63,7 +59,7 @@ class DateUtilsHelper {
 
     try {
       DateTime dateTime = DateTime.parse(dateString);
-      DateFormat formatter = DateFormat('dd/MM/yy'); // Format for "Jun/24"
+      DateFormat formatter = DateFormat('dd/MM/yy');
       String formattedDate =
           formatter.format(dateTime).replaceAll('/', separator);
 
@@ -78,7 +74,7 @@ class DateUtilsHelper {
 
     try {
       DateTime dateTime = DateTime.parse(dateString);
-      DateFormat formatter = DateFormat('MMM-yy'); // Format for "Jun/24"
+      DateFormat formatter = DateFormat('MMM-yy');
       String formattedDate = formatter.format(dateTime);
 
       return formattedDate.replaceAll('-', '');
@@ -86,16 +82,6 @@ class DateUtilsHelper {
       return null;
     }
   }
-
-  // static String getVerboseDesc(DateTime date, DateFormat fallbackFormat) {
-  //   if (isToday(date)) {
-  //     return CoreStrings.dates.today;
-  //   } else if (isYesterday(date)) {
-  //     return CoreStrings.dates.yesterday;
-  //   } else {
-  //     return fallbackFormat.format(date);
-  //   }
-  // }
 
   static bool isToday(DateTime date) {
     final now = DateTime.now();
@@ -123,7 +109,6 @@ class DateUtilsHelper {
     final months = <DateTime>[];
     months.add(since ?? DateTime.now());
 
-    // print('zzz monthsToReturn=$monthsToReturn  months.length=${months.length}');
     while (months.length < monthsToReturn) {
       final lastDate = months.last;
       months.add(DateTime(lastDate.year, lastDate.month - 1));
@@ -154,10 +139,8 @@ class DateUtilsHelper {
   }
 
   static int extractYearFromIsodateString(String dateString) {
-    //  final String dateString = '2024-03-01';
     final DateFormat dateFormat = DateFormat('yyyy');
     final DateTime parsedDate = dateFormat.parse(dateString);
-    print('extractYearFromIsodateString=${parsedDate.year}');
     return parsedDate.year;
   }
 }

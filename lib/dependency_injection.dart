@@ -2,6 +2,8 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
+import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_comment_by_comment_id.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comment_by_comment_id_bloc/get_comments_by_commentId_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 
@@ -172,7 +174,7 @@ void init() async {
       () => EventRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
   sl.registerLazySingleton<NotificationRepositories>(() =>
       NotificationRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
-  // sl.registerLazySingleton<CityRepository>(() => CityRepository());
+
   sl.registerLazySingleton<CityRepository>(() => CityRepository());
 
   // register datasource
@@ -257,6 +259,7 @@ void init() async {
   sl.registerLazySingleton(() => JoinEventUsecase(sl()));
   sl.registerLazySingleton(() => UpdateFCMTokenUsecase(sl()));
   sl.registerLazySingleton(() => GetAllNotificationsUsecase(sl()));
+  sl.registerLazySingleton(() => GetCommentByCommentIdUsecase(sl()));
 
   // register bloc
   sl.registerFactory(
@@ -276,6 +279,10 @@ void init() async {
   sl.registerFactory(() => GetPostByIdBloc(getPostByIdUsecase: sl()));
   sl.registerFactory(
       () => GetCommentsByPostIdBloc(getCommentsByPostIdUsecase: sl()));
+  sl.registerFactory(
+      () => GetCommentByCommentIdBloc(commentByCommentIdUsecase: sl()));
+  // sl.registerFactory(
+  //     () => GetCommentByCommentIdBloc(commentByCommentIdUsecase: sl()));
   sl.registerFactory(() => UpdateLocationBloc(updateLocationUsecase: sl()));
   sl.registerFactory(() => DeletePostBloc(deletePostUsecase: sl()));
   sl.registerFactory(() => UploadFileBloc(uploadFileUsecase: sl()));
@@ -312,8 +319,6 @@ void init() async {
   sl.registerFactory(() => NotificationGeneralCubit(sl()));
   sl.registerFactory(() => NotificationListCubit(sl()));
   sl.registerFactory<TutorialCubit>(() => TutorialCubit(sl()));
-  // sl.registerFactory(
-  //     () => CityBloc(sl<CityRepository>(), cityRepository: null));
   sl.registerFactory(() => CityBloc(sl<CityRepository>()));
 
   // register network info

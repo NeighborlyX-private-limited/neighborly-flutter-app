@@ -9,8 +9,8 @@ import '../bloc/community_detail_cubit.dart';
 
 class CommunityAdminMembersUsersScreen extends StatefulWidget {
   const CommunityAdminMembersUsersScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CommunityAdminMembersUsersScreen> createState() =>
@@ -53,7 +53,7 @@ class _CommunityAdminMembersUsersScreenState
     communityCubit.makeAdmin(communityId, userId);
     var newAdmin = members.firstWhere((element) => element.id == userId);
 
-    print('newAdmin=${newAdmin}');
+    print('newAdmin=$newAdmin');
 
     setState(() {
       members = members.where((element) => element.id != userId).toList();

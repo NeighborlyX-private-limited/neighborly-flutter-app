@@ -44,7 +44,7 @@ class _ProfileReactionCommentWidgetState
     cheersCount = widget.postComment.cheers;
     boolsCount = widget.postComment.bools;
     awardsCount = widget.postComment.awardType.length;
-    // Load persisted state
+
     _loadReactionState();
   }
 
@@ -154,9 +154,10 @@ class _ProfileReactionCommentWidgetState
                 // Trigger BLoC event for cheers
                 BlocProvider.of<FeedbackBloc>(context).add(
                   FeedbackButtonPressedEvent(
-                      postId: widget.postComment.commentId,
-                      feedback: 'cheer',
-                      type: 'comment'), // Corrected type to 'comment'
+                    postId: widget.postComment.commentId,
+                    feedback: 'cheer',
+                    type: 'comment',
+                  ),
                 );
               },
               child: Container(
@@ -329,30 +330,29 @@ class _ProfileReactionCommentWidgetState
           ),
         ),
         InkWell(
-         onTap:(){
-          String link = 'https://prod.neighborly.in/post-detail/${widget.postId}/${widget.isPost}/${widget.postComment.userId}/${widget.postComment.commentId}';
-            ShareIt.text(
-                content: link,
-                androidSheetTitle: 'Cool Post');
-         },
-
-         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          height: 32,
-          width: 56,
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(21),
-              )),
-          child: Center(
-            child: SvgPicture.asset(
-              'assets/react4.svg',
-              width: 20,
-              height: 24,
+          onTap: () {
+            String link =
+                'https://prod.neighborly.in/post-detail/${widget.postId}/${widget.isPost}/${widget.postComment.userId}/${widget.postComment.commentId}';
+            ShareIt.text(content: link, androidSheetTitle: 'Cool Post');
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            height: 32,
+            width: 56,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                )),
+            child: Center(
+              child: SvgPicture.asset(
+                'assets/react4.svg',
+                width: 20,
+                height: 24,
+              ),
             ),
           ),
-        ),),
+        ),
       ],
     );
   }

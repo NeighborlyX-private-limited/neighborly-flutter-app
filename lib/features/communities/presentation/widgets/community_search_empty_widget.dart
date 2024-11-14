@@ -6,9 +6,9 @@ import '../../../../core/theme/colors.dart';
 class CommunitySearchEmptyWidget extends StatelessWidget {
   final String searchTem;
   const CommunitySearchEmptyWidget({
-    Key? key,
+    super.key,
     required this.searchTem,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class CommunitySearchEmptyWidget extends StatelessWidget {
           //
           //
           Text(
-            'No results for "${searchTem}"',
+            'No results for "$searchTem"',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,

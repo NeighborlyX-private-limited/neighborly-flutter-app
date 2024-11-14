@@ -21,10 +21,15 @@ class UploadFileBloc extends Bloc<UploadFileEvent, UploadFileState> {
       final result = await _uploadFileUsecase.call(
         file: event.file,
       );
+      print('...Result in UploadFileBloc $result');
 
-      result.fold(
-          (error) => emit(UploadFileFailureState(error: error.toString())),
-          (url) => emit(UploadFileSuccessState(url: url)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(UploadFileFailureState(error: error.toString()));
+      }, (url) {
+        print('fold url: ${url.toString()}');
+        emit(UploadFileSuccessState(url: url));
+      });
     });
   }
 }

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -11,10 +13,22 @@ import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/logout_bloc.dart/logout_bloc.dart';
 import '../widgets/button_widget.dart';
 
-class SettingScreen extends StatelessWidget {
+class SettingScreen extends StatefulWidget {
   final String karma;
   final bool findMe;
   const SettingScreen({super.key, required this.karma, required this.findMe});
+
+  @override
+  State<SettingScreen> createState() => _SettingScreenState();
+}
+
+class _SettingScreenState extends State<SettingScreen> {
+  late bool isShowSecurityOption;
+  @override
+  void initState() {
+    super.initState();
+    isShowSecurityOption = ShardPrefHelper.getIsEmailLogin();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,34 +95,34 @@ class SettingScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            // InkWell(
-            //   onTap: () {
-            //     context.push('/communitiesScreen');
-            //   },
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.start,
-            //     children: [
-            //       SvgPicture.asset(
-            //         'assets/community.svg',
-            //         height: 24,
-            //         width: 24,
-            //       ),
-            //       const SizedBox(
-            //         width: 10,
-            //       ),
-            //       Text(
-            //         'Communities',
-            //         style: blackonboardingBody1Style,
-            //       ),
-            //     ],
-            //   ),
-            // ),
-            // const SizedBox(
-            //   height: 20,
-            // ),
             InkWell(
               onTap: () {
-                context.push('/activityAndStatsScreen/$karma');
+                context.push('/radiusScreen');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    'assets/menu_location.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Set Radius',
+                    style: blackonboardingBody1Style,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () {
+                context.push('/activityAndStatsScreen/${widget.karma}');
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -131,31 +145,35 @@ class SettingScreen extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-            InkWell(
-              onTap: () {
-                context.push('/securityScreen');
-              },
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SvgPicture.asset(
-                    'assets/security.svg',
-                    height: 24,
-                    width: 24,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    'Security',
-                    style: blackonboardingBody1Style,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
+            isShowSecurityOption
+                ? InkWell(
+                    onTap: () {
+                      context.push('/securityScreen');
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(
+                          'assets/security.svg',
+                          height: 24,
+                          width: 24,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Text(
+                          'Security',
+                          style: blackonboardingBody1Style,
+                        ),
+                      ],
+                    ),
+                  )
+                : const SizedBox(),
+            isShowSecurityOption
+                ? const SizedBox(
+                    height: 20,
+                  )
+                : SizedBox(),
             InkWell(
               onTap: () {
                 context.push('/findMeScreen');
@@ -209,7 +227,6 @@ class SettingScreen extends StatelessWidget {
             InkWell(
               onTap: () {
                 showVerifyUsernameBottomSheet();
-                // showdeleteBottomSheet();
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -265,7 +282,7 @@ class SettingScreen extends StatelessWidget {
       deleteBottomSheet(context);
     }
 
-    TextEditingController _userNameController = TextEditingController();
+    TextEditingController userNameController = TextEditingController();
     bool isUserNameFilled = false;
     bool isUsernameWrong = false;
 
@@ -316,12 +333,11 @@ class SettingScreen extends StatelessWidget {
                           onChanged: (value) {
                             setState(() {
                               isUserNameFilled =
-                                  _userNameController.text.trim().isNotEmpty;
-                              isUsernameWrong =
-                                  false; // Reset error message on change
+                                  userNameController.text.trim().isNotEmpty;
+                              isUsernameWrong = false;
                             });
                           },
-                          controller: _userNameController,
+                          controller: userNameController,
                           lableText: 'Enter your username',
                           isPassword: false,
                         ),
@@ -353,7 +369,7 @@ class SettingScreen extends StatelessWidget {
                                 String? userName =
                                     ShardPrefHelper.getUsername();
 
-                                if (_userNameController.text.trim() ==
+                                if (userNameController.text.trim() ==
                                     userName) {
                                   Navigator.pop(context);
                                   showDeleteBottomSheet();
@@ -436,7 +452,6 @@ class SettingScreen extends StatelessWidget {
                           ),
                         );
                       } else if (state is LogoutSuccessState) {
-                        // remove the user info from the shared preferences
                         ShardPrefHelper.removeUserID();
                         ShardPrefHelper.removeCookie();
                         if (ShardPrefHelper.getEmail() != null) {
@@ -456,6 +471,11 @@ class SettingScreen extends StatelessWidget {
                         return const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            // Center(
+                            //   child: BouncingLogoIndicator(
+                            //     logo: 'images/logo.svg',
+                            //   ),
+                            // ),
                             Center(child: CircularProgressIndicator()),
                           ],
                         );
@@ -599,15 +619,16 @@ class SettingScreen extends StatelessWidget {
                     },
                     isActive: true,
                   ),
-                  BlocConsumer<LogoutBloc, LogoutState>(
+                  BlocConsumer<DeleteAccountBloc, DeleteAccountState>(
                     listener: (context, state) {
-                      if (state is LogoutFailureState) {
+                      if (state is DeleteAccountFailureState) {
+                        context.pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(state.error),
+                            content: Text('Something went wrong'),
                           ),
                         );
-                      } else if (state is LogoutSuccessState) {
+                      } else if (state is DeleteAccountSuccessState) {
                         // remove the user info from the shared preferences
                         deleteUserPostData(ShardPrefHelper.getUserID()!);
                         deleteUserCommentData(ShardPrefHelper.getUserID()!);
@@ -624,21 +645,26 @@ class SettingScreen extends StatelessWidget {
                         ShardPrefHelper.removeUsername();
                         ShardPrefHelper.removePhoneNumber();
                         ShardPrefHelper.removeGender();
-
+                        context.pop();
                         context.go('/registerScreen');
                       }
                     },
                     builder: (context, state) {
-                      if (state is LogoutLoadingState) {
-                        return const Center(child: CircularProgressIndicator());
+                      if (state is DeleteAccountLoadingState) {
+                        return Center(
+                          child: BouncingLogoIndicator(
+                            logo: 'images/logo.svg',
+                          ),
+                        );
+                        // return const Center(child: CircularProgressIndicator());
                       }
                       return ButtonWidget(
                         color: const Color(0xffFD1D1D),
                         text: 'Delete',
                         textColor: Colors.white,
                         onTapListener: () {
-                          context.read<LogoutBloc>().add(
-                                LogoutButtonPressedEvent(),
+                          context.read<DeleteAccountBloc>().add(
+                                DeleteAccountButtonPressedEvent(),
                               );
                         },
                         isActive: true,

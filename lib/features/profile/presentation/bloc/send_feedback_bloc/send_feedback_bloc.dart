@@ -12,18 +12,24 @@ class SendFeedbackBloc extends Bloc<SendFeedbackEvent, SendFeedbackState> {
   SendFeedbackBloc({required SendFeedbackUsecase sendFeedbackUsecase})
       : _sendFeedbackUsecase = sendFeedbackUsecase,
         super(SendFeedbackInitialState()) {
-    on<SendFeedbackEventButtonPressedEvent>(
-        (SendFeedbackEventButtonPressedEvent event,
-            Emitter<SendFeedbackState> emit) async {
+    on<SendFeedbackEventButtonPressedEvent>((
+      SendFeedbackEventButtonPressedEvent event,
+      Emitter<SendFeedbackState> emit,
+    ) async {
       emit(SendFeedbackLoadingState());
 
       final result = await _sendFeedbackUsecase.call(
         feedback: event.feedback,
       );
+      print('...Result in SendFeedbackBloc: $result');
 
-      result.fold(
-          (error) => emit(SendFeedbackFailureState(error: error.toString())),
-          (response) => emit(SendFeedbackSuccessState()));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(SendFeedbackFailureState(error: error.toString()));
+      }, (response) {
+        // print('fold response: ${response.toString()}');
+        emit(SendFeedbackSuccessState());
+      });
     });
   }
 }

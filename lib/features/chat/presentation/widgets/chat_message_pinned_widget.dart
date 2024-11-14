@@ -11,25 +11,25 @@ class ChatMessagePinnedWidget extends StatelessWidget {
   final Function(ChatMessageModel) onUnpin;
   final bool? isAdmin;
   const ChatMessagePinnedWidget({
-    Key? key,
+    super.key,
     required this.message,
     required this.onClose,
     required this.onUnpin,
     this.isAdmin = false,
-  }) : super(key: key);
+  });
 
-  void _removeOverlay(OverlayEntry _overlayEntry) {
-    _overlayEntry.remove();
+  void _removeOverlay(OverlayEntry overlayEntry) {
+    overlayEntry.remove();
     // _overlayEntry = null;
   }
 
-  void _showOverlay(BuildContext context, OverlayEntry? _overlayEntry) {
+  void _showOverlay(BuildContext context, OverlayEntry? overlayEntry) {
     print('Showing overlay');
 
-    _overlayEntry = OverlayEntry(
+    overlayEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         onTap: () {
-          _removeOverlay(_overlayEntry!);
+          _removeOverlay(overlayEntry!);
         },
         child: Container(
           color: Colors.black54,
@@ -81,7 +81,7 @@ class ChatMessagePinnedWidget extends StatelessWidget {
                             textColor: Colors.black,
                             onTap: () {
                               onUnpin(message);
-                              _removeOverlay(_overlayEntry!);
+                              _removeOverlay(overlayEntry!);
                             }),
                       ),
                       //
@@ -98,7 +98,7 @@ class ChatMessagePinnedWidget extends StatelessWidget {
       ),
     );
 
-    Overlay.of(context).insert(_overlayEntry);
+    Overlay.of(context).insert(overlayEntry);
   }
 
   @override

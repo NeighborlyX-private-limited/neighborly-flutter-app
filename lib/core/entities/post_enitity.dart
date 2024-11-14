@@ -9,7 +9,6 @@ class PostEntity extends Equatable {
   final String? title;
   final String? content;
   final List<String>? multimedia;
-  //final String? multimedia;
   final String createdAt;
   final num cheers;
   final num bools;
@@ -49,7 +48,6 @@ class PostEntity extends Equatable {
     String? title,
     String? content,
     List<String>? multimedia,
-    // String? multimedia,
     String? createdAt,
     num? cheers,
     num? bools,

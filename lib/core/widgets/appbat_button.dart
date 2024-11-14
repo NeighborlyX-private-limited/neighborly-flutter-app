@@ -8,14 +8,14 @@ class AppbatButton extends StatelessWidget {
   final double? opacity;
   final double? size;
   const AppbatButton({
-    Key? key,
+    super.key,
     required this.onTap,
     required this.icon,
     this.iconColor = Colors.white,
     this.iconSize = 20,
     this.opacity = 0.5,
     this.size = 40,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +23,11 @@ class AppbatButton extends StatelessWidget {
       height: size!,
       width: size!,
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(opacity!), // Cor de fundo
+        color: Colors.black.withOpacity(opacity!),
         shape: BoxShape.circle,
       ),
       child: GestureDetector(
+        onTap: onTap,
         child: Center(
           child: Icon(
             icon,
@@ -34,7 +35,6 @@ class AppbatButton extends StatelessWidget {
             size: iconSize!,
           ),
         ),
-        onTap: onTap,
       ),
     );
   }

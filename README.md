@@ -116,7 +116,7 @@ The FCM message payload looks like this:
   {
     "senderId":null,
     "category":null,
-    "collapseKey":"com.example.neighborly_flutter_app",
+    "collapseKey":"com.neighborlyx.neighborlysocial",
     "contentAvailable":false,
     "data":{
         "userId":"669bfe2c8486500123a10754",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -12,8 +13,11 @@ import '../widgets/button_widget.dart';
 class OtpScreen extends StatefulWidget {
   final String data;
   final String verificationFor;
-  const OtpScreen(
-      {super.key, required this.data, required this.verificationFor});
+  const OtpScreen({
+    super.key,
+    required this.data,
+    required this.verificationFor,
+  });
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -29,17 +33,28 @@ class _OtpScreenState extends State<OtpScreen> {
 
   @override
   void initState() {
+    print('data:${widget.data}');
+    print('verificationFor:${widget.verificationFor}');
     _otpController = TextEditingController();
+    // if (widget.verificationFor == 'phone-login') {
+    //   BlocProvider.of<ResendOtpBloc>(context).add(
+    //     ResendOTPButtonPressedEvent(
+    //       phone: widget.data,
+    //     ),
+    //   );
+    // }
+
     if (widget.verificationFor == 'phone-login' ||
         widget.verificationFor == 'phone-register') {
+      print('phone-resend verify called: ${widget.data}');
+
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           phone: widget.data,
         ),
       );
-      print('phone-verify called: ${widget.data}');
     } else {
-      print('widget.data=$widget.data');
+      print('email-resend verify called: ${widget.data}');
       BlocProvider.of<ResendOtpBloc>(context).add(
         ResendOTPButtonPressedEvent(
           email: widget.data,
@@ -154,7 +169,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       setState(() {
                         isExpiredOtp = true;
                       });
-                    } else if (state.error.contains('Invalid OTP')) {
+                    } else if (state.error.contains('Invalid')) {
                       setState(() {
                         isInvalidOtp = true;
                       });
@@ -179,7 +194,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/true');
+                          context.go('/home/Home');
                         }
                       } else {
                         bool isSkippedTutorial =
@@ -189,7 +204,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/false');
+                          context.go('/home/Home');
                         }
                       }
 
@@ -197,15 +212,21 @@ class _OtpScreenState extends State<OtpScreen> {
                         SnackBar(content: Text(state.message)),
                       );
                     } else if (widget.verificationFor == 'forgot-password') {
+                      print('New password...');
                       context.push('/newPassword/${widget.data}');
                     }
                   }
                 },
                 builder: (context, state) {
                   if (state is OtpLoadInProgress) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
+                    return Center(
+                      child: BouncingLogoIndicator(
+                        logo: 'images/logo.svg',
+                      ),
                     );
+                    // return const Center(
+                    //   child: CircularProgressIndicator(),
+                    // );
                   }
                   return ButtonContainerWidget(
                     isActive: isOtpFilled,
@@ -224,9 +245,10 @@ class _OtpScreenState extends State<OtpScreen> {
                       } else {
                         BlocProvider.of<OtpBloc>(context).add(
                           OtpSubmitted(
-                              otp: _otpController.text,
-                              email: widget.data,
-                              verificationFor: widget.verificationFor),
+                            otp: _otpController.text,
+                            email: widget.data,
+                            verificationFor: widget.verificationFor,
+                          ),
                         );
                       }
                     },
@@ -302,6 +324,7 @@ class _OtpScreenState extends State<OtpScreen> {
               ),
               isUserNotFound
                   ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const Text(
                           'User not found, please ',

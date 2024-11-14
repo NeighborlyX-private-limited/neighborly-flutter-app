@@ -130,25 +130,26 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
 
     Future<void> handleMessage(RemoteMessage message) async {
       // this part works with the app in BACKGROUND
-      print('...handleMessage ${message}');
+      print('...FCMConfig handleMessage: $message');
       print(
-          '...handleMessage existe order? ${(message.data["order"] != null)}');
-      print('...handleMessage existe valor? order? ${message.data["order"]}');
+          '...FCMConfig handleMessage existe order?: ${(message.data["order"] != null)}');
+      print(
+          '...FCMConfig handleMessage existe valor? order?: ${message.data["order"]}');
 
       MessageHandlerHelper(messageData: message.data).doTheJump();
     }
 
     FirebaseMessaging.onMessage.listen((notification) {
-      print('...listen - displayInForeground=${displayInForeground}');
-      print('...listen - notification=${notification}');
+      print('...FCMConfig listen - displayInForeground=$displayInForeground');
+      print('...FCMConfig listen - notification=$notification');
       print(
-          '...listen - notification.notification=${notification.notification}');
+          '...FCMConfig listen - notification.notification:${notification.notification}');
       print(
-          '...listen - notification.notificationBODY=${notification.notification?.body}');
+          '...FCMConfig listen - notification.notificationBODY:${notification.notification?.body}');
       print(
-          '...listen - notification.notificationTITLE=${notification.notification?.title}');
+          '...FCMConfig listen - notification.notificationTITLE:${notification.notification?.title}');
       print(
-          '...listen - notification.notificationDATA=${notification.notification}');
+          '...FCMConfig listen - notification.notificationDATA:${notification.notification}');
       if (displayInForeground && notification.notification != null) {
         // MessageHandlerHelper(messageData: notification.data).doTheJump();
 
@@ -162,17 +163,15 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
     });
     LocaleNotificationManager.onLocaleClick.stream
         .listen((message) => handleMessage(message), onError: (error) {
-      print('...onLocaleClick');
-      print(error);
+      print('...FCMConfig onLocaleClick error: $error');
     }, onDone: () {
-      print('...onLocaleClick DONE');
+      print('...FCMConfig onLocaleClick DONE');
     });
     FirebaseMessaging.onMessageOpenedApp.listen(handleMessage,
         onError: (error) {
-      print('...onMessageOpenedApp');
-      print(error);
+      print('...FCMConfig onMessageOpenedApp error:$error');
     }, onDone: () {
-      print('...onMessageOpenedApp DONE');
+      print('...FCMConfig onMessageOpenedApp DONE');
     });
   }
 
@@ -253,9 +252,9 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
     String? androidChannelDescription,
     Map<String, dynamic>? data,
   }) {
-    var _localeNotification = FlutterLocalNotificationsPlugin();
-    var _iOS = DarwinNotificationDetails(subtitle: subTitle);
-    var _android = AndroidNotificationDetails(
+    var localeNotification = FlutterLocalNotificationsPlugin();
+    var iOS = DarwinNotificationDetails(subtitle: subTitle);
+    var android = AndroidNotificationDetails(
       androidChannelId ?? 'FCM_Config',
       androidChannelName ?? 'FCM_Config',
       // androidChannelDescription ?? 'FCM_Config',
@@ -267,14 +266,14 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
       sound: sound,
       subText: subTitle,
     );
-    var _details = NotificationDetails(android: _android, iOS: _iOS);
-    var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
+    var details = NotificationDetails(android: android, iOS: iOS);
+    var id0 = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
     var notify = RemoteMessage(
         data: data ?? {},
         from: 'locale',
         sentTime: DateTime.now(),
         collapseKey: collapseKey,
-        messageId: _id.toString(),
+        messageId: id0.toString(),
         category: category,
         contentAvailable: true,
         notification: RemoteNotification(
@@ -282,11 +281,11 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
           body: body,
         ));
 
-    _localeNotification.show(
-      _id,
+    localeNotification.show(
+      id0,
       title,
       body,
-      _details,
+      details,
       payload: jsonEncode(notify.toMap()),
     );
   }
@@ -306,39 +305,37 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
     String? androidChannelDescription,
     Map<String, dynamic>? data,
   }) {
-    var _localeNotification = FlutterLocalNotificationsPlugin();
-    var _iOS = DarwinNotificationDetails(subtitle: subTitle);
-    var _android = AndroidNotificationDetails(
+    var localeNotification = FlutterLocalNotificationsPlugin();
+    var iOS = DarwinNotificationDetails(subtitle: subTitle);
+    var android = AndroidNotificationDetails(
       androidChannelId ?? 'FCM_Config',
       androidChannelName ?? 'FCM_Config',
-      // androidChannelDescription ?? 'FCM_Config',
       importance: Importance.high,
       priority: Priority.high,
-      // category: category,
       groupKey: collapseKey,
       sound: sound,
       subText: subTitle,
       styleInformation: styleInformation,
     );
-    var _details = NotificationDetails(android: _android, iOS: _iOS);
-    var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
+    var details = NotificationDetails(android: android, iOS: iOS);
+    var id0 = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
     var notify = RemoteMessage(
         data: data ?? {},
         from: 'locale',
         category: category,
         collapseKey: collapseKey,
-        messageId: _id.toString(),
+        messageId: id0.toString(),
         sentTime: DateTime.now(),
         contentAvailable: true,
         notification: RemoteNotification(
           title: title,
           body: body,
         ));
-    _localeNotification.show(
-      _id,
+    localeNotification.show(
+      id0,
       title,
       body,
-      _details,
+      details,
       payload: jsonEncode(notify.toMap()),
     );
   }
@@ -351,28 +348,26 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
     Map<String, dynamic>? data,
     required AndroidNotificationDetails android,
     required DarwinNotificationDetails iOS,
-    // required WebNotificationDetails? web,
   }) {
-    var _localeNotification = FlutterLocalNotificationsPlugin();
-    var _details = NotificationDetails(android: android, iOS: iOS);
-    var _id = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
+    var localeNotification = FlutterLocalNotificationsPlugin();
+    var details = NotificationDetails(android: android, iOS: iOS);
+    var id0 = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
     var notify = RemoteMessage(
         data: data ?? {},
         from: 'locale',
         sentTime: DateTime.now(),
         contentAvailable: true,
-        // category: android.category,
         collapseKey: Platform.isIOS ? iOS.threadIdentifier : android.groupKey,
-        messageId: _id.toString(),
+        messageId: id0.toString(),
         notification: RemoteNotification(
           title: title,
           body: body,
         ));
-    _localeNotification.show(
-      _id,
+    localeNotification.show(
+      id0,
       title,
       body,
-      _details,
+      details,
       payload: jsonEncode(notify.toMap()),
     );
   }
@@ -385,6 +380,11 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
     String? androidChannelName,
     String? androidChannelDescription,
   }) =>
-      LocaleNotificationManager.displayNotification(notification,
-          androidChannelId, androidChannelName, androidChannelDescription, id);
+      LocaleNotificationManager.displayNotification(
+        notification,
+        androidChannelId,
+        androidChannelName,
+        androidChannelDescription,
+        id,
+      );
 }

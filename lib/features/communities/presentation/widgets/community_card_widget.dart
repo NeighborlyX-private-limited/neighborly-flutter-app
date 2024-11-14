@@ -8,9 +8,9 @@ import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
 class CommunityCardWidget extends StatelessWidget {
   final CommunityModel community;
   const CommunityCardWidget({
-    Key? key,
+    super.key,
     required this.community,
-  }) : super(key: key);
+  });
 
   void openCommunity(BuildContext context) {
     // Navigator.of(context).push(

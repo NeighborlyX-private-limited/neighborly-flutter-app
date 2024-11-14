@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -130,7 +131,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 ),
                 isPasswordShort
                     ? const Text(
-                        'Password must be at least 8 characters long',
+                        'Password must be at least 6 characters long',
                         style: TextStyle(color: Colors.red),
                       )
                     : const SizedBox(),
@@ -151,7 +152,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 BlocConsumer<RegisterBloc, RegisterState>(
                   listener: (BuildContext context, RegisterState state) {
                     if (state is RegisterFailureState) {
-                      if (state.error.contains('email')) {
+                      if (state.error.contains('email') ||
+                          state.error.contains('registered')) {
                         setState(() {
                           emailAlreadyExists = true;
                         });
@@ -167,15 +169,20 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                         SnackBar(content: Text(state.error)),
                       );
                     } else if (state is RegisterSuccessState) {
-                      context
-                          .push('/otp/${_emailController.text}/email-verify');
+                      print('GOTO: otp varification...');
+                      context.go('/otp/${_emailController.text}/email-verify');
                     }
                   },
                   builder: (context, state) {
                     if (state is RegisterLoadingState) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
                       );
+                      // return const Center(
+                      //   child: CircularProgressIndicator(),
+                      // );
                     }
                     return ButtonContainerWidget(
                         isActive: checkIsActive(),
@@ -189,7 +196,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                             });
                             return;
                           }
-                          if (_passwordController.text.length < 8) {
+                          if (_passwordController.text.length < 6) {
                             setState(() {
                               isPasswordShort = true;
                             });

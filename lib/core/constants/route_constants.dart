@@ -12,6 +12,8 @@ class RouteConstants {
   static const String homeScreenRouteName = 'homeScreen';
   static const String uploadPostScreenRouteName = 'uploadPostScreen';
   static const String postDetailScreenRouteName = 'postDetailScreen';
+  static const String postDetailOfSpecificCommentScreenRouteName =
+      'postDetailOfSpecificCommentScreen';
   static const String newPasswordScreenRouteName = 'newPasswordScreen';
   static const String mediaPreviewScreenRouteName = 'mediaPreviewScreen';
   static const String uploadFileScreenRouteName = 'uploadFileScreen';
@@ -26,4 +28,6 @@ class RouteConstants {
   static const String communitiesScreenRouteName = 'communitiesScreen';
   static const String basicInformationScreenRouteName =
       'basicInformationScreen';
+  static const String deletedUserRouteName = 'deletedUserScreen';
+  static const String radiusScreenRouteName = 'radiusScreen';
 }

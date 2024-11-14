@@ -36,10 +36,10 @@ class FCMNotificationListener extends StatefulWidget {
       onNotification;
 
   const FCMNotificationListener({
-    Key? key,
+    super.key,
     required this.child,
     required this.onNotification,
-  }) : super(key: key);
+  });
 
   @override
   _FCMNotificationListenerState createState() =>

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
@@ -112,9 +113,14 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
               } else if (state is GetMyGroupsFailureState) {
                 if (state.error.contains('Invalid Token')) {
                   context.go('/loginScreen');
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: BouncingLogoIndicator(
+                      logo: 'images/logo.svg',
+                    ),
                   );
+                  // return const Center(
+                  //   child: CircularProgressIndicator(),
+                  // );
                 }
                 if (state.error.contains('Internal server error')) {
                   return const Center(
@@ -131,12 +137,6 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
               }
             },
           )),
-      // Column(
-      //   children: [
-      //     Column(
-      //         crossAxisAlignment: CrossAxisAlignment.start, children: []),
-      //   ],
-      // )
     ));
   }
 }

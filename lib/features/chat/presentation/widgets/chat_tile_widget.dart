@@ -12,10 +12,10 @@ class ChatTileWidget extends StatelessWidget {
   final Function(ChatRoomModel) onTap;
 
   const ChatTileWidget({
-    Key? key,
+    super.key,
     required this.room,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   Widget unreadCounter(int value) {
     return Padding(
@@ -32,7 +32,7 @@ class ChatTileWidget extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4.0),
             child: Text(
-              '${value}',
+              '$value',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 12,

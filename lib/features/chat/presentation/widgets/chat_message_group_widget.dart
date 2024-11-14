@@ -32,7 +32,7 @@ class ChatMessageGroupWidget extends StatefulWidget {
   final VoidCallback onTapBool;
 
   const ChatMessageGroupWidget({
-    Key? key,
+    super.key,
     required this.message,
     this.showIsReaded = false,
     this.showReply = true,
@@ -46,7 +46,7 @@ class ChatMessageGroupWidget extends StatefulWidget {
     required this.onTapReply,
     required this.onTapCheer,
     required this.onTapBool,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatMessageGroupWidget> createState() => _ChatMessageGroupWidgetState();
@@ -238,8 +238,9 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
               onTap: () {
                 // #send
 
-                if (widget.onReply != null)
+                if (widget.onReply != null) {
                   widget.onReply!(widget.message, messageEC.text);
+                }
 
                 messageEC.clear();
                 setState(() {
@@ -362,7 +363,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                               //
                               //
                               // message AREA
-                              Container(
+                              SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 child: widget.message.pictureUrl != '' &&
                                         widget.message.text == ''
@@ -712,7 +713,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                             ),
                           ),
                         )
-                        .toList(),
+                        ,
                     const SizedBox(height: 10),
                   ],
                 ),
@@ -971,7 +972,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     //
                     //
                     // message AREA
-                    Container(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: GestureDetector(
                         onTap: () {

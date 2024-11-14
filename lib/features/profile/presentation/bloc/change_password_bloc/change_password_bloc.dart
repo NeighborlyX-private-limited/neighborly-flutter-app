@@ -13,20 +13,27 @@ class ChangePasswordBloc
   ChangePasswordBloc({required ChangePasswordUsecase changePasswordUsecase})
       : _changePasswordUsecase = changePasswordUsecase,
         super(ChangePasswordInitialState()) {
-    on<ChangePasswordButtonPressedEvent>(
-        (ChangePasswordButtonPressedEvent event,
-            Emitter<ChangePasswordState> emit) async {
+    on<ChangePasswordButtonPressedEvent>((
+      ChangePasswordButtonPressedEvent event,
+      Emitter<ChangePasswordState> emit,
+    ) async {
       emit(ChangePasswordLoadingState());
 
       final result = await _changePasswordUsecase.call(
-          email: event.email,
-          currentPassword: event.currentPassword,
-          newPassword: event.newPassword,
-          flag: event.flag);
+        email: event.email,
+        currentPassword: event.currentPassword,
+        newPassword: event.newPassword,
+        flag: event.flag,
+      );
+      print('...Result in ChangePasswordBloc $result');
 
-      result.fold(
-          (error) => emit(ChangePasswordFailureState(error: error.toString())),
-          (response) => emit(ChangePasswordSuccessState(message: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(ChangePasswordFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(ChangePasswordSuccessState(message: response));
+      });
     });
   }
 }

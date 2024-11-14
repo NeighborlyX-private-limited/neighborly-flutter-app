@@ -8,9 +8,9 @@ class CommunityAdminSetScreen extends StatelessWidget {
   final CommunityModel community;
 
   const CommunityAdminSetScreen({
-    Key? key,
+    super.key,
     required this.community,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -153,13 +153,13 @@ class MenuIconItem extends StatelessWidget {
   final String? svgPath;
   final VoidCallback onTap;
   const MenuIconItem({
-    Key? key,
+    super.key,
     required this.title,
     this.icon = Icons.abc,
     this.iconSize = 20,
     this.svgPath = '',
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +180,7 @@ class MenuIconItem extends StatelessWidget {
                   ),
             const SizedBox(width: 10),
             Text(
-              '${title}',
+              title,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.black,

@@ -115,7 +115,6 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                 width: 10,
                               ),
                               Expanded(
-                                // Ensures the text wraps within the available space
                                 child: Column(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -129,15 +128,17 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                       height: 5,
                                     ),
                                     Text(
-                                      'Your Karma score reflects your engagement within the community. Share, help, and connect to build your score.',
+                                      'Your Karma score reflects your engagement within the community. Share, help, and connect to build your score.',
                                       style: mediumGreyTextStyleBlack,
-                                      softWrap: true, // Enables text wrapping
+                                      softWrap: true,
                                     ),
                                   ],
                                 ),
                               ),
-                              Text(widget.karma.toString(),
-                                  style: onboardingBlackBody2Style)
+                              Text(
+                                widget.karma.toString(),
+                                style: onboardingBlackBody2Style,
+                              )
                             ],
                           ),
                         ])),
@@ -163,7 +164,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                 const SizedBox(
                                   height: 10,
                                 ),
-                                if (state.awards.length != 0)
+                                if (state.awards.isNotEmpty)
                                   SizedBox(
                                     height: 500,
                                     child: ListView.separated(
@@ -178,10 +179,11 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                             award['type'])['imageUrl'];
 
                                         return AwardWidget(
-                                            imageUrl: imageUrl,
-                                            title: title,
-                                            description: description,
-                                            count: award['count'].toString());
+                                          imageUrl: imageUrl,
+                                          title: title,
+                                          description: description,
+                                          count: award['count'].toString(),
+                                        );
                                       },
                                       separatorBuilder:
                                           (BuildContext context, int index) {
@@ -193,39 +195,43 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                     ),
                                   )
                                 else
-                                  Container(
-                                      child: Column(children: [
+                                  Column(children: [
                                     AwardWidget(
-                                        imageUrl: 'assets/Local_Legend.svg',
-                                        title: 'Local Legend',
-                                        description:
-                                            'Recognizing users who consistently contribute high-quality content.',
-                                        count: '0'),
+                                      imageUrl: 'assets/Local_Legend.svg',
+                                      title: 'Local Legend',
+                                      description:
+                                          'Recognizing users who consistently contribute high-quality content.',
+                                      count: '0',
+                                    ),
                                     AwardWidget(
-                                        imageUrl: 'assets/Sunflower.svg',
-                                        title: 'Sunflower',
-                                        description:
-                                            'For bringing positivity and cheerfulness to the community.',
-                                        count: '0'),
+                                      imageUrl: 'assets/Sunflower.svg',
+                                      title: 'Sunflower',
+                                      description:
+                                          'For bringing positivity and cheerfulness to the community.',
+                                      count: '0',
+                                    ),
                                     AwardWidget(
-                                        imageUrl: 'assets/Streetlight.svg',
-                                        title: 'Streetlight',
-                                        description:
-                                            'For providing clear guidance and valuable insights.',
-                                        count: '0'),
+                                      imageUrl: 'assets/Streetlight.svg',
+                                      title: 'Streetlight',
+                                      description:
+                                          'For providing clear guidance and valuable insights.',
+                                      count: '0',
+                                    ),
                                     AwardWidget(
-                                        imageUrl: 'assets/Park_Bench.svg',
-                                        title: 'Park Bench',
-                                        description:
-                                            'For offering comforting and supportive posts.',
-                                        count: '0'),
+                                      imageUrl: 'assets/Park_Bench.svg',
+                                      title: 'Park Bench',
+                                      description:
+                                          'For offering comforting and supportive posts.',
+                                      count: '0',
+                                    ),
                                     AwardWidget(
-                                        imageUrl: 'assets/Map.svg',
-                                        title: 'Map',
-                                        description:
-                                            'For creating informative and detailed content.',
-                                        count: '0'),
-                                  ]))
+                                      imageUrl: 'assets/Map.svg',
+                                      title: 'Map',
+                                      description:
+                                          'For creating informative and detailed content.',
+                                      count: '0',
+                                    ),
+                                  ])
                               ]));
                     } else {
                       return const SizedBox();

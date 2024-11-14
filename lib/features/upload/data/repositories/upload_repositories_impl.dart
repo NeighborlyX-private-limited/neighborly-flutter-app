@@ -22,7 +22,6 @@ class UploadRepositoriesImpl implements UploadRepositories {
     String? content,
     required String type,
     List<File>? multimedia,
-    // File? multimedia,
     required String city,
     List<dynamic>? options,
     required List<double> location,
@@ -40,13 +39,18 @@ class UploadRepositoriesImpl implements UploadRepositories {
           options: options,
           location: location,
         );
+
         return Right(result);
       } on ServerFailure catch (e) {
+        print(
+            'Server Failure in uploadPost UploadRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in uploadPost UploadRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
+      print('No Internet Connection in uploadPost uploadPost');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -56,13 +60,19 @@ class UploadRepositoriesImpl implements UploadRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.uploadFile(file: file);
+        print('result in uploadPost UploadRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
+        print(
+            'Server Failure in uploadFile UploadRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch in uploadFile UploadRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
+      print('No Internet Connection in uploadFile uploadPost');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }

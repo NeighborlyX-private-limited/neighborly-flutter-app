@@ -2,17 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/delete_post_bloc/delete_post_bloc.dart';
-import '../bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'option_card.dart';
 import '../../../../core/entities/option_entity.dart';
-import '../../../../core/models/option_model.dart';
 import 'reaction_widget.dart';
 
 class PollWidget extends StatefulWidget {
@@ -66,43 +66,50 @@ class _PollWidgetState extends State<PollWidget> {
                 children: [
                   InkWell(
                     onTap: () {
-                      context.push('/userProfileScreen/${widget.post.userId}');
+                      if (widget.post.userName.contains('[deleted]')) {
+                        context.push('/deleted-user');
+                      } else {
+                        context
+                            .push('/userProfileScreen/${widget.post.userId}');
+                      }
                     },
                     child: Row(
                       children: [
                         ClipOval(
                           child: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                              ),
-                              child: widget.post.proPic != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: widget.post.proPic!,
-                                      fit: BoxFit.contain,
-                                      width: double.infinity,
-                                      placeholder: (context, url) => Center(
-                                        child: SizedBox(
-                                            height: 16,
-                                            width: 16,
-                                            child: CircularProgressIndicator(
-                                              color: Colors.blue,
-                                              strokeWidth: 2,
-                                            )), // Show loading indicator while image loads
+                            width: 40,
+                            height: 40,
+                            decoration: const BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: widget.post.proPic != null
+                                ? CachedNetworkImage(
+                                    imageUrl: widget.post.proPic!,
+                                    fit: BoxFit.contain,
+                                    width: double.infinity,
+                                    placeholder: (context, url) => Center(
+                                      child: SizedBox(
+                                        height: 16,
+                                        width: 16,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.blue,
+                                          strokeWidth: 2,
+                                        ),
                                       ),
-                                      errorWidget: (context, url, error) =>
-                                          Icon(Icons
-                                              .error), // Show error icon if image fails to load
-                                    )
-                                  // ? Image.network(
-                                  //     widget.post.proPic!,
-                                  //     fit: BoxFit.contain,
-                                  //   )
-                                  : Image.asset(
-                                      'assets/second_pro_pic.png',
-                                      fit: BoxFit.contain,
-                                    )),
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Icon(Icons.error),
+                                  )
+                                : widget.post.userName.contains('[deleted]')
+                                    ? Image.asset(
+                                        'assets/deleted_user.png',
+                                        fit: BoxFit.contain,
+                                      )
+                                    : Image.asset(
+                                        'assets/second_pro_pic.png',
+                                        fit: BoxFit.contain,
+                                      ),
+                          ),
                         ),
                         const SizedBox(
                           width: 12,
@@ -112,12 +119,19 @@ class _PollWidgetState extends State<PollWidget> {
                           children: [
                             Row(
                               children: [
-                                Text(
-                                  widget.post.userName,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14),
-                                ),
+                                widget.post.userName.contains('[deleted]')
+                                    ? Text(
+                                        'Neighborly user',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14),
+                                      )
+                                    : Text(
+                                        widget.post.userName,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14),
+                                      ),
                                 const SizedBox(
                                   width: 6,
                                 ),
@@ -176,12 +190,21 @@ class _PollWidgetState extends State<PollWidget> {
                   color: Colors.grey[800],
                 ),
               ),
-              widget.post.multimedia != null
+              widget.post.multimedia!.isNotEmpty
                   ? const SizedBox(
                       height: 10,
                     )
                   : Container(),
-              widget.post.multimedia != null && widget.post.multimedia != ''
+              widget.post.multimedia != null &&
+                      widget.post.multimedia!.isNotEmpty &&
+                      widget.post.multimedia!.length > 1
+                  ? ImageSlider(
+                      multimedia: widget.post.multimedia ?? [],
+                    )
+                  : Container(),
+              widget.post.multimedia != null &&
+                      widget.post.multimedia!.isNotEmpty &&
+                      widget.post.multimedia!.length == 1
                   ? Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
@@ -190,37 +213,38 @@ class _PollWidgetState extends State<PollWidget> {
                         borderRadius: BorderRadius.circular(4),
                         child: CachedNetworkImage(
                           imageUrl: widget.post.multimedia![0],
-                          // imageUrl: widget.post.multimedia!,
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
                           width: double.infinity,
                           placeholder: (context, url) => Center(
-                            child: SizedBox(
-                                height: 16,
-                                width: 16,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 125),
+                              height: 300,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: EdgeInsets.all(10),
+                                height: 50,
+                                width: 50,
                                 child: CircularProgressIndicator(
                                   color: Colors.blue,
                                   strokeWidth: 2,
-                                )), // Show loading indicator while image loads
+                                ),
+                              ),
+                            ),
                           ),
-                          errorWidget: (context, url, error) => Icon(Icons
-                              .error), // Show error icon if image fails to load
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                         ),
-                        // child: Image.network(
-                        //   width: double.infinity,
-                        //   //height: 200,
-                        //   widget.post.multimedia!,
-                        //   fit: BoxFit.contain,
-                        // )
                       ),
                     )
                   : Container(),
               const SizedBox(
                 height: 10,
               ),
-              //   if(!isrefresh)
               for (var option in post?.pollOptions ?? [])
                 OptionCard(
-                  key: UniqueKey(), // Add this line to force rebuild
+                  key: UniqueKey(),
                   onSelectOptionCallback: onSelectOptionCallback,
                   option: option,
                   totalVotes: calculateTotalVotes(post?.pollOptions! ?? []),
@@ -246,22 +270,19 @@ class _PollWidgetState extends State<PollWidget> {
     if (widget.post.allowMultipleVotes ?? false) {
       print("ALLOW MULTI");
       List<OptionEntity>? newOptions =
-          List<OptionEntity>.from(post?.pollOptions ?? []); //post?.pollOptions;
+          List<OptionEntity>.from(post?.pollOptions ?? []);
 
       for (int i = 0; i < newOptions.length; i++) {
         newOptions[i] = newOptions[i].copyWith(
           userVoted: newOptions[i].optionId == optionid
-              ? true // Mark selected option as voted
-              : newOptions[i]
-                  .userVoted, // Keep the previous state for other options
+              ? true
+              : newOptions[i].userVoted,
           votes: newOptions[i].optionId == optionid
-              ? (newOptions[i].votes ?? 0) +
-                  1 // Increment votes for the selected option
-              : newOptions[i].votes, // Keep votes unchanged for other options
+              ? (newOptions[i].votes ?? 0) + 1
+              : newOptions[i].votes,
         );
       }
 
-      // Update the post with the new options
       setState(() {
         post = post?.copyWith(
           pollOptions: newOptions,
@@ -269,7 +290,6 @@ class _PollWidgetState extends State<PollWidget> {
         isrefresh = true;
       });
 
-      // Delay to stop the refresh state
       Future.delayed(Duration(milliseconds: 10), () {
         setState(() {
           isrefresh = false;
@@ -277,22 +297,19 @@ class _PollWidgetState extends State<PollWidget> {
       });
     } else {
       List<OptionEntity>? newOptions =
-          List<OptionEntity>.from(post?.pollOptions ?? []); //post?.pollOptions;
+          List<OptionEntity>.from(post?.pollOptions ?? []);
 
       for (int i = 0; i < newOptions.length; i++) {
         newOptions[i] = newOptions[i].copyWith(
           userVoted: newOptions[i].optionId == optionid
-              ? true // Mark selected option as voted
-              : newOptions[i]
-                  .userVoted, // Keep the previous state for other options
+              ? true
+              : newOptions[i].userVoted,
           votes: newOptions[i].optionId == optionid
-              ? (newOptions[i].votes ?? 0) +
-                  1 // Increment votes for the selected option
-              : newOptions[i].votes, // Keep votes unchanged for other options
+              ? (newOptions[i].votes ?? 0) + 1
+              : newOptions[i].votes,
         );
       }
 
-      // Update the post with the new options
       setState(() {
         post = post?.copyWith(
           pollOptions: newOptions,
@@ -300,7 +317,6 @@ class _PollWidgetState extends State<PollWidget> {
         isrefresh = true;
       });
 
-      // Delay to stop the refresh state
       Future.delayed(Duration(milliseconds: 10), () {
         setState(() {
           isrefresh = false;
@@ -359,9 +375,14 @@ class _PollWidgetState extends State<PollWidget> {
                   },
                   builder: (context, state) {
                     if (state is DeletePostLoadingState) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
                       );
+                      // return const Center(
+                      //   child: CircularProgressIndicator(),
+                      // );
                     }
                     return InkWell(
                       onTap: () {
@@ -485,6 +506,11 @@ class _PollWidgetState extends State<PollWidget> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
+                        // ? Center(
+                        //     child: BouncingLogoIndicator(
+                        //       logo: 'images/logo.svg',
+                        //     ),
+                        //   )
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )

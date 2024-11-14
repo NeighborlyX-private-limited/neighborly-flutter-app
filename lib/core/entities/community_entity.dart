@@ -11,12 +11,12 @@ class CommunityEntity extends Equatable {
   final num karma;
   final num? radius;
   final num membersCount;
-  final bool isPublic; // isOpen
-  final bool isJoined; // ??
-  final bool isMuted; // ??
-  final List<UserSimpleModel> users; // members
-  final List<UserSimpleModel> admins; // admin
-  final List<UserSimpleModel> blockList; // blockList
+  final bool isPublic;
+  final bool isJoined;
+  final bool isMuted;
+  final List<UserSimpleModel> users;
+  final List<UserSimpleModel> admins;
+  final List<UserSimpleModel> blockList;
 
   final String? locationStr;
   final List<double>? latLong;

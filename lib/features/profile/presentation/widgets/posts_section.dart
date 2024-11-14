@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-
-import '../../../../core/theme/text_style.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import '../../../posts/presentation/widgets/poll_widget.dart';
 import '../../../posts/presentation/widgets/post_sheemer_widget.dart';
 import '../../../posts/presentation/widgets/post_widget.dart';
@@ -81,7 +80,7 @@ class _PostSectionState extends State<PostSection> {
                                 style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primaryColor),
                                 onPressed: () {
-                                  context.go('/create');
+                                  context.push('/create');
                                 },
                                 child: Text(
                                   'Create a Post',
@@ -91,22 +90,6 @@ class _PostSectionState extends State<PostSection> {
                             ],
                           ),
                         )
-                        // Text(
-                        //   'Welcome! Your space is empty.',
-                        //   style: onboardingHeading2Style,
-                        // ),
-                        // const SizedBox(
-                        //   height: 10,
-                        // ),
-                        // InkWell(
-                        //   onTap: () {
-                        //     context.go('/create');
-                        //   },
-                        //   child: Text(
-                        //     'Create your first post',
-                        //     style: bluemediumTextStyleBlack,
-                        //   ),
-                        // ),
                       ],
                     ),
                   );
@@ -143,9 +126,14 @@ class _PostSectionState extends State<PostSection> {
               } else if (state is GetMyPostsFailureState) {
                 if (state.error.contains('Invalid Token')) {
                   context.go('/loginScreen');
-                  return const Center(
-                    child: CircularProgressIndicator(),
+                  return Center(
+                    child: BouncingLogoIndicator(
+                      logo: 'images/logo.svg',
+                    ),
                   );
+                  // return const Center(
+                  //   child: CircularProgressIndicator(),
+                  // );
                 }
                 if (state.error.contains('Internal server error')) {
                   return const Center(

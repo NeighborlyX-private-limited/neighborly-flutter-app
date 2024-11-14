@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -15,8 +16,8 @@ import 'reply_widget.dart';
 
 class CommentWidget extends StatefulWidget {
   final CommentEntity comment;
-  final FocusNode commentFocusNode; // Step 1: Define a FocusNode
-  final Function(dynamic) onReplyTap; // Callback for reply tap
+  final FocusNode commentFocusNode;
+  final Function(dynamic) onReplyTap;
   final bool isPost;
   final Function onDelete;
 
@@ -26,7 +27,7 @@ class CommentWidget extends StatefulWidget {
     required this.commentFocusNode,
     required this.onReplyTap,
     required this.isPost,
-    required this.onDelete
+    required this.onDelete,
   });
 
   @override
@@ -34,8 +35,8 @@ class CommentWidget extends StatefulWidget {
 }
 
 class _CommentWidgetState extends State<CommentWidget> {
-  bool _showReplies = false; // To track if replies are shown
-  List<ReplyEntity> _replies = []; // To store fetched replies
+  bool _showReplies = false;
+  List<ReplyEntity> _replies = [];
   late FetchCommentReplyBloc _fetchCommentReplyBloc;
 
   @override
@@ -46,12 +47,13 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   void _fetchReplies() {
     setState(() {
-      _showReplies = !_showReplies; // Toggle the showReplies state
+      _showReplies = !_showReplies;
     });
     if (_showReplies) {
       _fetchCommentReplyBloc.add(
         FetchCommentReplyButtonPressedEvent(
-            commentId: widget.comment.commentid),
+          commentId: widget.comment.commentid,
+        ),
       );
     }
   }
@@ -82,10 +84,15 @@ class _CommentWidgetState extends State<CommentWidget> {
                         widget.comment.proPic!,
                         fit: BoxFit.cover,
                       )
-                    : Image.asset(
-                        'assets/second_pro_pic.png',
-                        fit: BoxFit.cover,
-                      ),
+                    : widget.comment.userName.contains('[deleted]')
+                        ? Image.asset(
+                            'assets/deleted_user.png',
+                            fit: BoxFit.contain,
+                          )
+                        : Image.asset(
+                            'assets/second_pro_pic.png',
+                            fit: BoxFit.cover,
+                          ),
               ),
             ),
             const SizedBox(
@@ -98,13 +105,19 @@ class _CommentWidgetState extends State<CommentWidget> {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(
-                          widget.comment.userName,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: screenWidth * 0.035,
-                          ),
-                        ),
+                        child: widget.comment.userName.contains('[deleted]')
+                            ? Text(
+                                'Neighborly user',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 14),
+                              )
+                            : Text(
+                                widget.comment.userName,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: screenWidth * 0.035,
+                                ),
+                              ),
                       ),
                       const Spacer(),
                       InkWell(
@@ -150,10 +163,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          widget.onReplyTap(
-                              widget.comment); // Set the comment to reply
-                          widget.commentFocusNode
-                              .requestFocus(); // Request focus for the comment text field
+                          widget.onReplyTap(widget.comment);
+                          widget.commentFocusNode.requestFocus();
                         },
                         child: const Text(
                           'Reply',
@@ -171,7 +182,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                   ),
                   ReactionCommentWidget(
                     comment: widget.comment,
-                    isPost: widget.isPost
+                    isPost: widget.isPost,
                   ),
                   const SizedBox(
                     height: 10,
@@ -210,9 +221,14 @@ class _CommentWidgetState extends State<CommentWidget> {
                           builder: (context, state) {
                             if (state is FetchCommentReplyLoadingState &&
                                 state.commentId == widget.comment.commentid) {
-                              return const Center(
-                                child: CircularProgressIndicator(),
+                              return Center(
+                                child: BouncingLogoIndicator(
+                                  logo: 'images/logo.svg',
+                                ),
                               );
+                              // return const Center(
+                              //   child: CircularProgressIndicator(),
+                              // );
                             } else {
                               return _replies.isNotEmpty
                                   ? ListView.builder(
@@ -296,9 +312,14 @@ class _CommentWidgetState extends State<CommentWidget> {
                   },
                   builder: (context, state) {
                     if (state is DeletePostLoadingState) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                      return Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
                       );
+                      // return const Center(
+                      //   child: CircularProgressIndicator(),
+                      // );
                     }
                     return InkWell(
                       onTap: () {
@@ -383,6 +404,11 @@ class _CommentWidgetState extends State<CommentWidget> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
+                        // ? Center(
+                        //     child: BouncingLogoIndicator(
+                        //       logo: 'images/logo.svg',
+                        //     ),
+                        //   )
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )

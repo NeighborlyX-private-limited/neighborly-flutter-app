@@ -55,10 +55,11 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
         title: SearchAheadElement(
           showTitle: true,
           isDarkmode: false,
+          showBackButton: true,
           lintText: 'Search',
           icon: Icons.search,
           onSearchTextChange: (currentStrSearchValue) {
-            print('... currentStrSearchValue=${currentStrSearchValue}');
+            print('... currentStrSearchValue=$currentStrSearchValue');
             print('... SHOW? ${(currentStrSearchValue == '')}');
             // if (currentStrSearchValue == '') {
             setState(() {
@@ -71,7 +72,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
             }
           },
           onFocusChange: (newFocusValie) {
-            print('... newFocusValie=${newFocusValie}');
+            print('... newFocusValie=$newFocusValie');
           },
           onSuggestionSelected: (selectedItem) {
             // widget.onSuggestionSelected(selectedItem);
@@ -93,7 +94,6 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
             print('... SEARCH = $searchTerm');
             communitySearchCubit.getSearchResultBySumit(searchTerm);
           },
-          showBackButton: true,
         ),
       ),
       body: BlocConsumer<CommunitySearchCubit, CommunitySearchState>(
@@ -129,10 +129,11 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
               //
               // RESULTS by submit/enter
               if (state.searchTerm != '' && state.status != Status.loading) {
-                if (state.communities.length == 0 && state.people.length == 0)
+                if (state.communities.isEmpty && state.people.isEmpty) {
                   return CommunitySearchEmptyWidget(
                     searchTem: state.searchTerm,
                   );
+                }
 
                 return ResultArea(
                   communities: state.communities,
@@ -181,7 +182,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                           onSelect: (communityId) {
                             // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
                             Navigator.of(context).pop();
-                            context.push('/groups/${communityId}');
+                            context.push('/groups/$communityId');
                           },
                         ),
                       //
@@ -209,11 +210,11 @@ class HistoryListArea extends StatelessWidget {
   final Function(String) onDelete;
   final Function(String) onSelect;
   const HistoryListArea({
-    Key? key,
+    super.key,
     required this.terms,
     required this.onDelete,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   Widget historyTile(String term) {
     return Container(
@@ -253,7 +254,7 @@ class HistoryListArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (terms.length == 0) return SizedBox.shrink();
+    if (terms.isEmpty) return SizedBox.shrink();
 
     return Container(
       color: Colors.white,
@@ -275,10 +276,10 @@ class TrendListArea extends StatelessWidget {
   final List<CommunityModel> communities;
   final Function(String) onSelect;
   const TrendListArea({
-    Key? key,
+    super.key,
     required this.communities,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   Widget trendTile(CommunityModel community) {
     return Container(
@@ -325,7 +326,7 @@ class TrendListArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (communities.length == 0) return SizedBox.shrink();
+    if (communities.isEmpty) return SizedBox.shrink();
 
     return Container(
       color: Colors.white,
@@ -364,11 +365,11 @@ class ResultArea extends StatefulWidget {
   final List<UserSimpleModel> people;
   final Function(dynamic) onSelect; // type is CommunityModel or UserSimpleModel
   const ResultArea({
-    Key? key,
+    super.key,
     required this.communities,
     required this.people,
     required this.onSelect,
-  }) : super(key: key);
+  });
 
   @override
   State<ResultArea> createState() => _ResultAreaState();
@@ -479,7 +480,7 @@ class _ResultAreaState extends State<ResultArea>
   }
 
   Widget listArea(List<dynamic> list) {
-    if (list.length == 0) return Text('vazio');
+    if (list.isEmpty) return Text('vazio');
 
     return Container(
       color: Colors.white,
@@ -494,7 +495,7 @@ class _ResultAreaState extends State<ResultArea>
 
   @override
   Widget build(BuildContext context) {
-    if (widget.communities.length == 0) return SizedBox.shrink();
+    if (widget.communities.isEmpty) return SizedBox.shrink();
 
     return Container(
       color: Colors.white,

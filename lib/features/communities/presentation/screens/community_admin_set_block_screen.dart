@@ -8,8 +8,8 @@ import '../bloc/community_detail_cubit.dart';
 
 class CommunityAdminBlockedUsersScreen extends StatefulWidget {
   const CommunityAdminBlockedUsersScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<CommunityAdminBlockedUsersScreen> createState() =>

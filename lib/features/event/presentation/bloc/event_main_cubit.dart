@@ -34,14 +34,14 @@ class EventMainCubit extends Cubit<EventMainState> {
 
     result.fold(
       (failure) {
-        print('... BLOC GetLocalEvents error: ${failure}');
+        print('... BLOC GetLocalEvents error: $failure');
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (eventsLocalList) {
-        print('... BLOC GetLocalEvents results: ${eventsLocalList}');
+        print('... BLOC GetLocalEvents results: $eventsLocalList');
         emit(state.copyWith(
             status: Status.success, eventsLocal: eventsLocalList));
       },

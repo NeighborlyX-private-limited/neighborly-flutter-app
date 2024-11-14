@@ -22,9 +22,9 @@ class CommunityDetailsScreen extends StatefulWidget {
   final String communityId;
 
   const CommunityDetailsScreen({
-    Key? key,
+    super.key,
     required this.communityId,
-  }) : super(key: key);
+  });
 
   @override
   State<CommunityDetailsScreen> createState() => _CommunityDetailsScreenState();
@@ -304,7 +304,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               MenuIconItem(
-                  title: 'Leave ${communityName}',
+                  title: 'Leave $communityName',
                   svgPath: 'assets/menu_leave.svg',
                   iconSize: 25,
                   onTap: () {
@@ -437,7 +437,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                             ),
                           ),
                         )
-                        .toList(),
+                        ,
                     const SizedBox(height: 10),
                   ],
                 ),

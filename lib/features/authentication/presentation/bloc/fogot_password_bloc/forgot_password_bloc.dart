@@ -13,16 +13,22 @@ class ForgotPasswordBloc
   ForgotPasswordBloc({required ForgotPasswordUsecase forgotPasswordUsecase})
       : _forgotPasswordUsecase = forgotPasswordUsecase,
         super(ForgotPasswordInitialState()) {
+    ///ForgotPasswordButtonPressedEvent
     on<ForgotPasswordButtonPressedEvent>(
         (ForgotPasswordButtonPressedEvent event,
             Emitter<ForgotPasswordState> emit) async {
       emit(ForgotPasswordLoadingState());
 
       final result = await _forgotPasswordUsecase.call(event.email);
+      print('...Result in ForgotPasswordBloc $result');
 
-      result.fold(
-          (error) => emit(ForgotPasswordFailureState(error: error.toString())),
-          (response) => emit(ForgotPasswordSuccessState(message: response)));
+      result.fold((error) {
+        print('fold error: ${error.toString()}');
+        emit(ForgotPasswordFailureState(error: error.toString()));
+      }, (response) {
+        print('fold response: ${response.toString()}');
+        emit(ForgotPasswordSuccessState(message: response));
+      });
     });
   }
 }

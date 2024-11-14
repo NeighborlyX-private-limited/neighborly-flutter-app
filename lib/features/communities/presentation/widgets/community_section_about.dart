@@ -10,9 +10,9 @@ import '../../../../core/widgets/user_avatar_styled_widget.dart';
 class CommunitySectionAbout extends StatelessWidget {
   final CommunityModel community;
   const CommunitySectionAbout({
-    Key? key,
+    super.key,
     required this.community,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -63,9 +63,9 @@ class CommunitySectionAbout extends StatelessWidget {
 class DescriptionArea extends StatelessWidget {
   final String description;
   const DescriptionArea({
-    Key? key,
+    super.key,
     required this.description,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -117,13 +117,13 @@ class TextAndIconArea extends StatelessWidget {
   final double? iconSize;
   final String? svgPath;
   const TextAndIconArea({
-    Key? key,
+    super.key,
     required this.title,
     required this.text,
     this.icon = Icons.abc,
     this.svgPath = '',
     this.iconSize = 20,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +134,7 @@ class TextAndIconArea extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${title}',
+            title,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.black,
@@ -156,7 +156,7 @@ class TextAndIconArea extends StatelessWidget {
                     ),
               const SizedBox(width: 5),
               Text(
-                '${text}',
+                text,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.black,
@@ -182,10 +182,10 @@ class MembersList extends StatefulWidget {
   final List<UserSimpleModel> admins;
 
   const MembersList({
-    Key? key,
+    super.key,
     required this.members,
     required this.admins,
-  }) : super(key: key);
+  });
 
   @override
   State<MembersList> createState() => _MembersListState();

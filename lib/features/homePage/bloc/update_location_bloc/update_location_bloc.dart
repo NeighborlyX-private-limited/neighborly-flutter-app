@@ -13,9 +13,10 @@ class UpdateLocationBloc
   UpdateLocationBloc({required UpdateLocationUsecase updateLocationUsecase})
       : _updateLocationUsecase = updateLocationUsecase,
         super(UpdateLocationInitialState()) {
-    on<UpdateLocationButtonPressedEvent>(
-        (UpdateLocationButtonPressedEvent event,
-            Emitter<UpdateLocationState> emit) async {
+    on<UpdateLocationButtonPressedEvent>((
+      UpdateLocationButtonPressedEvent event,
+      Emitter<UpdateLocationState> emit,
+    ) async {
       emit(UpdateLocationLoadingState());
 
       final result =

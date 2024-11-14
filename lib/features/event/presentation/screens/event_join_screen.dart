@@ -14,9 +14,9 @@ import '../bloc/event_join_cubit.dart';
 class EventJoinScreen extends StatefulWidget {
   final EventModel? eventToJoin;
   const EventJoinScreen({
-    Key? key,
+    super.key,
     this.eventToJoin,
-  }) : super(key: key);
+  });
 
   @override
   State<EventJoinScreen> createState() => _EventJoinScreenState();
@@ -138,7 +138,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
     if (emailEC.text.trim() == '') errors.add('Email');
     if (phoneEC.text.trim() == '') errors.add('Phone');
 
-    if (errors.length == 0) {
+    if (errors.isEmpty) {
       setState(() => isValidForm = true);
       return true;
     } else {
@@ -146,13 +146,12 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
         setState(() => isValidForm = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ops, you forgot to fill: \n' +
-                errors
+            content: Text('Ops, you forgot to fill: \n${errors
                     .map((e) => '\n${e}')
                     .toList()
                     .toString()
                     .replaceAll('[', '')
-                    .replaceAll(']', '')),
+                    .replaceAll(']', '')}'),
           ),
         );
       }
@@ -206,7 +205,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
             case Status.success:
               var message = state.successMessage ?? 'success';
 
-              print('...success? ${message}');
+              print('...success? $message');
 
               Navigator.of(context).pop();
               context.push('/events/success/join', extra: state.eventJoin);
@@ -304,7 +303,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                               label: 'Gender',
                               items: [...kGender],
                               onChanged: (value) {
-                                print('gender: ${value}');
+                                print('gender: $value');
                                 genderEC.text = value ?? '';
                               },
                               initialValue: kGender[0],
@@ -354,7 +353,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                           //
                           //
 
-                          Container(
+                          SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {

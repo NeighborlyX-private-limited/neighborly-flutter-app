@@ -12,10 +12,10 @@ class ManageDatesDialog extends StatefulWidget {
   final String? startDateStr;
   final String? endDateStr;
   const ManageDatesDialog({
-    Key? key,
+    super.key,
     this.startDateStr,
     this.endDateStr,
-  }) : super(key: key);
+  });
 
   @override
   State<ManageDatesDialog> createState() => _ManageDatesDialogState();
@@ -35,10 +35,10 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
       endDateFormated = DateFormat('dd/MM/yyyy').format(endDate!);
     }
 
-    print('startDateFormated: ${startDateFormated}');
-    print('endDateFormated: ${endDateFormated}');
-    print('startDateRaw: ${startDate}');
-    print('endDateRaw: ${endDate}');
+    print('startDateFormated: $startDateFormated');
+    print('endDateFormated: $endDateFormated');
+    print('startDateRaw: $startDate');
+    print('endDateRaw: $endDate');
     Navigator.pop(context, {
       'startDate': startDateFormated,
       'endDate': endDateFormated,
@@ -69,8 +69,8 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
       minDate: DateTime.now(),
       maxDate: DateTime.now().add(const Duration(days: 365)),
       onRangeSelected: (firstDate, secondDate) {
-        print('StartDate: ${firstDate}');
-        print('endDate: ${secondDate}');
+        print('StartDate: $firstDate');
+        print('endDate: $secondDate');
         setState(() {
           startDate = firstDate;
           endDate = secondDate;
@@ -178,8 +178,8 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
                   child: ElevatedButton(
                     onPressed: () {
                       // handleSave(false);
-                      print('startDateSelected: ${startDate}');
-                      print('endDateSelected: ${endDate}');
+                      print('startDateSelected: $startDate');
+                      print('endDateSelected: $endDate');
 
                       handleReturn();
                     },

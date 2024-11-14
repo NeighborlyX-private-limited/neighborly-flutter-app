@@ -34,7 +34,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
 
     // FAKE example
     await Future.delayed(Duration(seconds: 3));
-    var fakeDataFinal;
+    String fakeDataFinal;
 
     String fakeData1 = '''
       [
@@ -223,7 +223,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   Future<void> createEvent(
       {required EventModel event, File? imageCover}) async {
     print('...DATASOURCE createEvent ');
-    print('...DATASOURCE createEvent event=${event}');
+    print('...DATASOURCE createEvent event=$event');
     print('...DATASOURCE createEvent imageCover=${imageCover?.path}');
 
     await Future.delayed(Duration(seconds: 3));
@@ -254,7 +254,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<void> joinEvent({required EventModel event}) async {
     print('...DATASOURCE joinEvent ');
-    print('...DATASOURCE joinEvent event=${event}');
+    print('...DATASOURCE joinEvent event=$event');
 
     await Future.delayed(Duration(seconds: 3));
     // List<String>? cookies = ShardPrefHelper.getCookie();
@@ -285,7 +285,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   Future<void> updateEvent(
       {required EventModel event, File? imageCover}) async {
     print('...DATASOURCE createEvent ');
-    print('...DATASOURCE createEvent event=${event}');
+    print('...DATASOURCE createEvent event=$event');
     print('...DATASOURCE createEvent imageCover=${imageCover?.path}');
 
     await Future.delayed(Duration(seconds: 3));

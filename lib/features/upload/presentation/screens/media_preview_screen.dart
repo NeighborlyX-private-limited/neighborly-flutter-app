@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../core/utils/shared_preference.dart';
@@ -130,14 +131,16 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
           }
         });
       } else {
-        final XFile? pickedFile = await _picker.pickImage(
+        final XFile? pickedFile = await _picker
+            .pickImage(
           source: source,
           maxWidth: double.tryParse(maxWidthController.text),
           maxHeight: double.tryParse(maxHeightController.text),
           imageQuality: int.tryParse(qualityController.text),
-        ).then((file){
-      return compressImage(imageFileX: file);
-    });
+        )
+            .then((file) {
+          return compressImage(imageFileX: file);
+        });
         if (pickedFile != null) {
           setState(() {
             _setImageFileListFromFile(pickedFile);
@@ -320,9 +323,14 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
             },
             builder: (context, state) {
               if (state is UploadFileLoadingState) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return Center(
+                  child: BouncingLogoIndicator(
+                    logo: 'images/logo.svg',
+                  ),
                 );
+                // return const Center(
+                //   child: CircularProgressIndicator(),
+                // );
               }
               return Padding(
                 padding: const EdgeInsets.only(right: 20.0),
