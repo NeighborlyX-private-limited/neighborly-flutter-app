@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:video_player/video_player.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/bouncing_logo_indicator.dart';
@@ -66,6 +68,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   void dispose() {
     super.dispose();
+    _videoController?.dispose();
     _contentController.dispose();
     _titleController.dispose();
     _questionController.dispose();
@@ -289,19 +292,84 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   // }
   bool isImagePicking = false;
   bool isImageUploading = false;
-  List<File>? _selectedImages = [];
+  List<File>? _selectedMedia = [];
+  File? _videoFile;
+  bool isImage = false;
+  bool isPollOptionShow = true;
+  VideoPlayerController? _videoController;
+
+  Future<void> _pickVideoFromGallery() async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      setState(() {
+        isImagePicking = true;
+      });
+      final XFile? pickedFile =
+          await picker.pickVideo(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          isPollOptionShow = false;
+          _videoFile = File(pickedFile.path);
+          _selectedMedia!.add(_videoFile!);
+          _videoController = VideoPlayerController.file(
+            File(pickedFile.path),
+          )..initialize().then((_) {
+              setState(() {}); // Ensure UI updates when the video is loaded
+              _videoController!.pause();
+            });
+        });
+      }
+    } catch (e) {
+      print('error in video picking');
+    } finally {
+      setState(() {
+        isImagePicking = false;
+      });
+    }
+  }
+
+  Future<void> _pickVideoFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+    try {
+      setState(() {
+        isImagePicking = true;
+      });
+      final XFile? pickedFile =
+          await picker.pickVideo(source: ImageSource.camera);
+      if (pickedFile != null) {
+        setState(() {
+          isPollOptionShow = false;
+          _videoFile = File(pickedFile.path);
+          _selectedMedia!.add(_videoFile!);
+          _videoController = VideoPlayerController.file(
+            File(pickedFile.path),
+          )..initialize().then((_) {
+              setState(() {}); // Ensure UI updates when the video is loaded
+              _videoController!.play();
+            });
+        });
+      }
+    } catch (e) {
+      print('error in video picking');
+    } finally {
+      setState(() {
+        isImagePicking = false;
+      });
+    }
+  }
 
   /// pic one image or multiple images from gallary
   Future<void> _pickImages() async {
     final ImagePicker picker = ImagePicker();
 
     // Check if the user already has 5 images selected
-    if (_selectedImages!.length >= 5) {
+    if (_selectedMedia!.length >= 5) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('You can select up to 5 images.')),
       );
       setState(() {
-        _selectedImages = [];
+        isImage = false;
+        _selectedMedia = [];
       });
       return;
     }
@@ -320,23 +388,25 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (images.isNotEmpty) {
         for (XFile imageFile in images) {
           // Check if adding this image exceeds the limit
-          if (_selectedImages!.length < 5) {
+          if (_selectedMedia!.length < 5) {
             XFile compressedImage = await compressImage(imageFileX: imageFile);
             setState(() {
-              _selectedImages!.add(
+              isImage = true;
+              _selectedMedia!.add(
                 File(
                   compressedImage.path,
                 ),
               ); // Update selected images list
             });
-            print(_selectedImages);
+            print(_selectedMedia);
           } else {
             // Show a message if the user tries to select more than 5 images
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('You can select up to 5 images only.')),
             );
             setState(() {
-              _selectedImages = [];
+              isImage = false;
+              _selectedMedia = [];
             });
             break; // Exit the loop if the limit is reached
           }
@@ -372,7 +442,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       if (image != null) {
         setState(() {
-          _selectedImages!.add(File(image!.path));
+          _selectedMedia!.add(File(image!.path));
         });
       }
     } catch (e) {
@@ -394,7 +464,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   ///remove images from multiple images
   void _removeImages(int index) {
     setState(() {
-      _selectedImages!.removeAt(index);
+      _selectedMedia!.removeAt(index);
+      if (_selectedMedia!.isEmpty) {
+        isImage = false;
+      }
     });
   }
 
@@ -428,9 +501,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             print(
                                 '_selectedImage path in on tap fn: $_selectedImage');
                             if (_condition == 'post') {
+                              isImageUploading = false;
                               _titleController.clear();
                               _contentController.clear();
-                              _selectedImages = [];
+                              _selectedMedia = [];
+                              isImage = false;
                               _selectedImage = null;
                               context.go('/home/Home');
                               // context.go('/MainPage');
@@ -455,13 +530,89 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     if (state.error
                                         .contains("Sorry, you are banned")) {
                                       isImageUploading = false;
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content:
-                                              Text("Sorry, you are banned"),
-                                        ),
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Dialog(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: <Widget>[
+                                                  // Placeholder for the image
+                                                  SvgPicture.asset(
+                                                    'assets/something_went_wrong.svg',
+                                                    width: 150,
+                                                    height: 130,
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  const Text(
+                                                    'Aaah! Something went wrong',
+                                                    style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  const Text(
+                                                    "Sorry,You are banned.\nPlease try it after some time",
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.grey,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                                  const SizedBox(height: 20),
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor: AppColors
+                                                          .primaryColor,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                      ),
+                                                    ),
+                                                    child: const Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal: 20,
+                                                              vertical: 10),
+                                                      child: Text(
+                                                        'Go Back',
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            color:
+                                                                Colors.white),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       );
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(
+                                      //   SnackBar(
+                                      //     content:
+                                      //         Text("Sorry, you are banned"),
+                                      //   ),
+                                      // );
                                     } else {
                                       isImageUploading = false;
                                       ScaffoldMessenger.of(context)
@@ -547,7 +698,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                               _contentController.text.trim(),
                                           title: _titleController.text.trim(),
                                           type: 'post',
-                                          multimedia: _selectedImages,
+                                          multimedia: _selectedMedia,
                                           allowMultipleVotes: false,
                                           location: locationCord,
                                         ),
@@ -639,7 +790,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           .add(
                                         UploadPostPressedEvent(
                                           city: city,
-                                          multimedia: _selectedImages,
+                                          multimedia: _selectedMedia,
                                           title:
                                               _questionController.text.trim(),
                                           options: List.generate(
@@ -665,21 +816,42 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ],
                     ),
                   ),
-                  if (_selectedImages!.isNotEmpty)
+                  if (_videoController != null &&
+                      _videoController!.value.isInitialized)
+                    SizedBox(
+                      height: 10,
+                    ),
+                  if (_videoController != null &&
+                      _videoController!.value.isInitialized)
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 260,
+                      // color: Colors.redAccent,
+                      child: Center(
+                        child: Transform.rotate(
+                          angle: pi / 2,
+                          child: AspectRatio(
+                            aspectRatio: 1 / 1,
+                            child: VideoPlayer(_videoController!),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (isImage)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
                         height: 260,
                         child: PageView.builder(
                           scrollDirection: Axis.horizontal,
-                          itemCount: _selectedImages!.length,
+                          itemCount: _selectedMedia!.length,
                           itemBuilder: (context, index) {
                             return Stack(
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(16),
                                   child: Image.file(
-                                    _selectedImages![index],
+                                    _selectedMedia![index],
                                     width: double.infinity,
                                     height: 260,
                                     fit: BoxFit.cover,
@@ -842,7 +1014,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             SvgPicture.asset('assets/add_a_photo.svg'),
                             const SizedBox(width: 10),
                             Text(
-                              'Add a Photo or GIF',
+                              'Add a Photo',
                               style: mediumTextStyleBlack,
                             ),
                           ],
@@ -863,7 +1035,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                               child: Icon(
                                 Icons.camera_alt_outlined,
-                                color: const Color.fromARGB(255, 0, 0, 0),
+                                color: const Color.fromARGB(255, 57, 167, 14),
                               ),
                             ),
                             const SizedBox(width: 10),
@@ -871,6 +1043,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ],
                         ),
                       ),
+                      _condition == 'poll'
+                          ? SizedBox()
+                          : InkWell(
+                              onTap: () {
+                                _showVideoPickerOptions();
+                                // _pickImageFromCamera();
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: const Color.fromARGB(
+                                          255, 224, 238, 206),
+                                    ),
+                                    child: Icon(
+                                      Icons.video_chat,
+                                      color: const Color.fromARGB(
+                                          255, 57, 167, 14),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text('Add a video',
+                                      style: mediumTextStyleBlack)
+                                ],
+                              ),
+                            ),
                       // InkWell(
                       //   onTap: () {
                       //     context.push('/groups/create');
@@ -907,20 +1108,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       //     ],
                       //   ),
                       // ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _condition = 'poll';
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            SvgPicture.asset('assets/create_a_poll.svg'),
-                            const SizedBox(width: 10),
-                            Text('Create a Poll', style: mediumTextStyleBlack),
-                          ],
-                        ),
-                      ),
+                      isPollOptionShow
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _condition = 'poll';
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset('assets/create_a_poll.svg'),
+                                  const SizedBox(width: 10),
+                                  Text('Create a Poll',
+                                      style: mediumTextStyleBlack),
+                                ],
+                              ),
+                            )
+                          : SizedBox()
                     ],
                   ),
                 )
@@ -957,26 +1161,55 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                               child: Icon(
                                 Icons.camera_alt_outlined,
-                                color: const Color.fromARGB(255, 195, 0, 255),
+                                color: const Color.fromARGB(255, 57, 167, 14),
                               ),
                             ),
                             const SizedBox(width: 10),
                           ],
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _condition = 'poll';
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            SvgPicture.asset('assets/create_a_poll.svg'),
-                            const SizedBox(width: 10),
-                          ],
-                        ),
-                      ),
+                      _condition == 'poll'
+                          ? SizedBox()
+                          : InkWell(
+                              onTap: () {
+                                _showVideoPickerOptions();
+                                // _pickImageFromCamera();
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: const Color.fromARGB(
+                                          255, 224, 238, 206),
+                                    ),
+                                    child: Icon(
+                                      Icons.video_chat,
+                                      color: const Color.fromARGB(
+                                          255, 57, 167, 14),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                ],
+                              ),
+                            ),
+                      isPollOptionShow
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _condition = 'poll';
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset('assets/create_a_poll.svg'),
+                                  const SizedBox(width: 10),
+                                ],
+                              ),
+                            )
+                          : SizedBox()
                     ],
                   ),
                 )),
@@ -1031,5 +1264,40 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ],
       );
     });
+  }
+
+  void _showVideoPickerOptions() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.video_library),
+                title: const Text("Pick Video from Gallery"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickVideoFromGallery();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.videocam),
+                title: const Text("Record a Video"),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _pickVideoFromCamera();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

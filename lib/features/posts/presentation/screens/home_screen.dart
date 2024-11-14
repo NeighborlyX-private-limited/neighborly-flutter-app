@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
@@ -36,6 +37,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isHome = true;
   bool isDobSet = true;
   late String _selectedCity;
@@ -256,281 +258,300 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: _onRefresh,
-      child: Scaffold(
-        backgroundColor: const Color(0xFFF5F5FF),
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              SvgPicture.asset(
-                'assets/logo.svg',
-                width: 30,
-                height: 34,
-              ),
-              const SizedBox(width: 10),
-              Flexible(
-                child: Container(
-                  height: 40,
-                  width: 160,
-                  decoration: BoxDecoration(
-                    color: const Color(0xffC5C2FF),
-                    borderRadius: BorderRadius.circular(100),
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, result) {
+          _scaffoldKey.currentState?.closeEndDrawer();
+        },
+        child: Builder(builder: (BuildContext context) {
+          return Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: const Color(0xFFF5F5FF),
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    'assets/logo.svg',
+                    width: 30,
+                    height: 34,
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.location_on,
-                        size: 16,
-                        color: isHome
-                            ? const Color(0xff635BFF)
-                            : const Color.fromARGB(255, 65, 65, 70),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: Container(
+                      height: 40,
+                      width: 160,
+                      decoration: BoxDecoration(
+                        color: const Color(0xffC5C2FF),
+                        borderRadius: BorderRadius.circular(100),
                       ),
-                      // Home Button
-                      InkWell(
-                        onTap: () {
-                          ShardPrefHelper.setIsLocationOn(false);
-                          handleToggle(true);
-                        },
-                        child: SizedBox(
-                          height: 35,
-                          width: 60,
-                          child: Center(
-                            child: Text(
-                              _selectedCity,
-                              style: TextStyle(
-                                fontWeight: isHome
-                                    ? FontWeight.w900
-                                    : FontWeight.normal,
-                                fontSize: 16,
-                                color: isHome
-                                    ? const Color(0xff635BFF)
-                                    : const Color.fromARGB(255, 65, 65, 70),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      // Dropdown for city selection
-                      BlocListener<CityBloc, CityState>(
-                        listener: (context, state) {
-                          if (state is CityUpdatedState) {
-                            ShardPrefHelper.setIsLocationOn(false);
-                            handleToggle(true);
-                            _fetchPosts();
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('City updated to ${state.city}!'),
-                              ),
-                            );
-                          } else if (state is CityErrorState) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error: ${state.errorMessage}'),
-                              ),
-                            );
-                          }
-                        },
-                        child: HomeDropdownCity(
-                          selectCity: _selectedCity,
-                          onChanged: (String? newValue) {
-                            if (newValue != null) {
-                              context
-                                  .read<CityBloc>()
-                                  .add(UpdateCityEvent(newValue));
-                            }
-                          },
-                        ),
-                      ),
-                      // Vertical Divider
-                      Container(
-                        height: 25,
-                        width: 1,
-                        color: const Color(0xff2E2E2E),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      // Location Button
-                      InkWell(
-                        onTap: () {
-                          ShardPrefHelper.setIsLocationOn(true);
-                          handleToggle(false);
-                        },
-                        child: Container(
-                          height: 35,
-                          width: 35,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isHome
-                                ? const Color(0xffC5C2FF)
-                                : const Color(0xff635BFF),
-                          ),
-                          child: Center(
-                            child: SvgPicture.asset(
-                              'assets/location.svg',
-                              height: 25,
-                              width: 25,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: GestureDetector(
-                onTap: () {
-                  context.push('/notifications');
-                },
-                child: unreadNotificationCount > 0
-                    ? badges.Badge(
-                        badgeContent: unreadNotificationCount > 0
-                            ? Text(
-                                "$unreadNotificationCount",
-                                style: TextStyle(color: Colors.white),
-                              )
-                            : null,
-                        badgeStyle:
-                            BadgeStyle(badgeColor: AppColors.primaryColor),
-                        position: badges.BadgePosition.custom(end: 0, top: -8),
-                        child: SvgPicture.asset(
-                          'assets/alarm.svg',
-                          fit: BoxFit.contain,
-                          width: 30,
-                          height: 30,
-                        ),
-                      )
-                    : badges.Badge(
-                        showBadge: false,
-                        badgeStyle: BadgeStyle(
-                          badgeColor: AppColors.primaryColor,
-                        ),
-                        position: badges.BadgePosition.custom(
-                          end: 0,
-                          top: -8,
-                        ),
-                        child: SvgPicture.asset(
-                          'assets/alarm.svg',
-                          fit: BoxFit.contain,
-                          width: 30,
-                          height: 30,
-                        ),
-                      ),
-              ),
-            ),
-          ],
-        ),
-        body: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
-          builder: (context, state) {
-            if (state is GetAllPostsLoadingState) {
-              return const PostSheemerWidget();
-            } else if (state is GetAllPostsSuccessState) {
-              final posts = state.post;
-              return posts.isEmpty
-                  ? Center(
-                      child: Column(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SvgPicture.asset(
-                            'assets/nothing.svg',
-                            height: 200.0,
-                            width: 200.0,
+                          Icon(
+                            Icons.location_on,
+                            size: 16,
+                            color: isHome
+                                ? const Color(0xff635BFF)
+                                : const Color.fromARGB(255, 65, 65, 70),
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                              "Time to be the hero this wall needs, start the"),
-                          Text('Conversation!'),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryColor),
-                            onPressed: () {
-                              context.push('/create');
+                          // Home Button
+                          InkWell(
+                            onTap: () {
+                              ShardPrefHelper.setIsLocationOn(false);
+                              handleToggle(true);
                             },
-                            child: Text(
-                              'Create a Post',
-                              style: TextStyle(color: Colors.white),
+                            child: SizedBox(
+                              height: 35,
+                              width: 60,
+                              child: Center(
+                                child: Text(
+                                  _selectedCity,
+                                  style: TextStyle(
+                                    fontWeight: isHome
+                                        ? FontWeight.w900
+                                        : FontWeight.normal,
+                                    fontSize: 16,
+                                    color: isHome
+                                        ? const Color(0xff635BFF)
+                                        : const Color.fromARGB(255, 65, 65, 70),
+                                  ),
+                                ),
+                              ),
                             ),
-                          )
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          // Dropdown for city selection
+                          BlocListener<CityBloc, CityState>(
+                            listener: (context, state) {
+                              if (state is CityUpdatedState) {
+                                ShardPrefHelper.setIsLocationOn(false);
+                                handleToggle(true);
+                                _fetchPosts();
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('City updated to ${state.city}!'),
+                                  ),
+                                );
+                              } else if (state is CityErrorState) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('Error: ${state.errorMessage}'),
+                                  ),
+                                );
+                              }
+                            },
+                            child: HomeDropdownCity(
+                              selectCity: _selectedCity,
+                              onChanged: (String? newValue) {
+                                if (newValue != null) {
+                                  context
+                                      .read<CityBloc>()
+                                      .add(UpdateCityEvent(newValue));
+                                }
+                              },
+                            ),
+                          ),
+                          // Vertical Divider
+                          Container(
+                            height: 25,
+                            width: 1,
+                            color: const Color(0xff2E2E2E),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          // Location Button
+                          InkWell(
+                            onTap: () {
+                              ShardPrefHelper.setIsLocationOn(true);
+                              handleToggle(false);
+                            },
+                            child: Container(
+                              height: 35,
+                              width: 35,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isHome
+                                    ? const Color(0xffC5C2FF)
+                                    : const Color(0xff635BFF),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/location.svg',
+                                  height: 25,
+                                  width: 25,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                    )
-                  : ListView.separated(
-                      itemCount: posts.length,
-                      itemBuilder: (context, index) {
-                        final post = posts[index];
-                        if (post.type == 'post') {
-                          return PostWidget(
-                              post: post,
-                              onDelete: () {
-                                //context.read<GetAllPostsBloc>().deletepost(post.id);
-                                _onRefresh();
-                              });
-                        } else if (post.type == 'poll') {
-                          return PollWidget(
-                              post: post,
-                              onDelete: () {
-                                //context.read<GetAllPostsBloc>().deletepost(post.id);
-                                _onRefresh();
-                              });
-                        }
-                        return const SizedBox();
-                      },
-                      separatorBuilder: (BuildContext context, int index) {
-                        return const Padding(
-                          padding: EdgeInsets.only(bottom: 10.0),
+                    ),
+                  ),
+                ],
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      context.push('/notifications');
+                    },
+                    child: unreadNotificationCount > 0
+                        ? badges.Badge(
+                            badgeContent: unreadNotificationCount > 0
+                                ? Text(
+                                    "$unreadNotificationCount",
+                                    style: TextStyle(color: Colors.white),
+                                  )
+                                : null,
+                            badgeStyle:
+                                BadgeStyle(badgeColor: AppColors.primaryColor),
+                            position:
+                                badges.BadgePosition.custom(end: 0, top: -8),
+                            child: SvgPicture.asset(
+                              'assets/alarm.svg',
+                              fit: BoxFit.contain,
+                              width: 30,
+                              height: 30,
+                            ),
+                          )
+                        : badges.Badge(
+                            showBadge: false,
+                            badgeStyle: BadgeStyle(
+                              badgeColor: AppColors.primaryColor,
+                            ),
+                            position: badges.BadgePosition.custom(
+                              end: 0,
+                              top: -8,
+                            ),
+                            child: SvgPicture.asset(
+                              'assets/alarm.svg',
+                              fit: BoxFit.contain,
+                              width: 30,
+                              height: 30,
+                            ),
+                          ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.menu, color: Colors.black),
+                  onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+                ),
+              ],
+            ),
+            endDrawer: CustomDrawer(
+              scaffoldKey: _scaffoldKey,
+            ),
+            body: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
+              builder: (context, state) {
+                if (state is GetAllPostsLoadingState) {
+                  return const PostSheemerWidget();
+                } else if (state is GetAllPostsSuccessState) {
+                  final posts = state.post;
+                  return posts.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                'assets/nothing.svg',
+                                height: 200.0,
+                                width: 200.0,
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                  "Time to be the hero this wall needs, start the"),
+                              Text('Conversation!'),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryColor),
+                                onPressed: () {
+                                  context.push('/create');
+                                },
+                                child: Text(
+                                  'Create a Post',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      : ListView.separated(
+                          itemCount: posts.length,
+                          itemBuilder: (context, index) {
+                            final post = posts[index];
+                            if (post.type == 'post') {
+                              return PostWidget(
+                                  post: post,
+                                  onDelete: () {
+                                    //context.read<GetAllPostsBloc>().deletepost(post.id);
+                                    _onRefresh();
+                                  });
+                            } else if (post.type == 'poll') {
+                              return PollWidget(
+                                  post: post,
+                                  onDelete: () {
+                                    //context.read<GetAllPostsBloc>().deletepost(post.id);
+                                    _onRefresh();
+                                  });
+                            }
+                            return const SizedBox();
+                          },
+                          separatorBuilder: (BuildContext context, int index) {
+                            return const Padding(
+                              padding: EdgeInsets.only(bottom: 10.0),
+                            );
+                          },
                         );
+                } else if (state is GetAllPostsFailureState) {
+                  if (state.error.contains('Invalid Token')) {
+                    context.go('/loginScreen');
+                  }
+                  if (state.error.contains('Internal server error')) {
+                    // return SomethingWentWrong();
+                    return const Center(
+                        child: Text(
+                      'oops something went wrong',
+                      style: TextStyle(color: Colors.red),
+                    ));
+                  }
+                  if (state.error.contains('No internet connection')) {
+                    return SomethingWentWrong(
+                      imagePath: 'assets/something_went_wrong.svg',
+                      title: 'Aaah! Something went wrong',
+                      message:
+                          "We couldn't start your program.\nPlease try starting it again",
+                      buttonText: 'Retry',
+                      onButtonPressed: () {
+                        _onRefresh();
                       },
                     );
-            } else if (state is GetAllPostsFailureState) {
-              if (state.error.contains('Invalid Token')) {
-                context.go('/loginScreen');
-              }
-              if (state.error.contains('Internal server error')) {
-                // return SomethingWentWrong();
-                return const Center(
-                    child: Text(
-                  'oops something went wrong',
-                  style: TextStyle(color: Colors.red),
-                ));
-              }
-              if (state.error.contains('No internet connection')) {
-                return SomethingWentWrong(
-                  imagePath: 'assets/something_went_wrong.svg',
-                  title: 'Aaah! Something went wrong',
-                  message:
-                      "We couldn't start your program.\nPlease try starting it again",
-                  buttonText: 'Retry',
-                  onButtonPressed: () {
-                    _onRefresh();
-                  },
-                );
-              }
+                  }
 
-              return Center(child: Text(state.error));
-            } else {
-              return const Center(
-                child: Text('No data'),
-              );
-            }
-          },
-        ),
+                  return Center(child: Text(state.error));
+                } else {
+                  return const Center(
+                    child: Text('No data'),
+                  );
+                }
+              },
+            ),
+          );
+        }),
       ),
     );
   }

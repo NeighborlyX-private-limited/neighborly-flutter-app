@@ -186,7 +186,7 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
                         if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/false');
+                          context.go('/home/Home');
                         }
                       } else {
                         bool isSkippedTutorial =
@@ -196,7 +196,7 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/false');
+                          context.go('/home/Home');
                         }
                       }
                       widget.onVerifiedSuccessfully();

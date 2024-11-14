@@ -77,7 +77,7 @@ class _CommentSectionState extends State<CommentSection> {
                         style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryColor),
                         onPressed: () {
-                          context.go('/home/false');
+                          context.go('/home/Home');
                         },
                         child: Text(
                           'Start the Discussion',

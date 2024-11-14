@@ -158,9 +158,11 @@ Future<int> getNotificationUnreadCount() async {
   }
 }
 
-Future<void> updateNotificationStatus(String notificationId) async {
+Future<void> updateNotificationStatus(List<String> notificationIds) async {
   print('...updateNotificationStatus start with');
-  print('notificationId $notificationId');
+  print('notificationIds: $notificationIds');
+  // print('notificationIds $notificationId');
+
   final http.Client client = http.Client();
   List<String>? cookies = ShardPrefHelper.getCookie();
   String? getAccessToken = ShardPrefHelper.getAccessToken();
@@ -172,7 +174,8 @@ Future<void> updateNotificationStatus(String notificationId) async {
 
   String cookieHeader = cookies.join('; ');
   String url =
-      '$kBaseUrlNotification/notifications/update-notification-status?notificationId=$notificationId';
+      // '$kBaseUrlNotification/notifications/update-notification-status?notificationId=$notificationId';
+      '$kBaseUrlNotification/notifications/update-notification-status';
 
   print('url $url');
 
@@ -183,6 +186,9 @@ Future<void> updateNotificationStatus(String notificationId) async {
       'Authorization': 'Bearer $getAccessToken',
       'Cookie': cookieHeader,
     },
+    body: jsonEncode({
+      'notificationIds': notificationIds,
+    }),
   );
   print(
       'updateNotificationStatus api response status code: ${response.statusCode}');

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/video_widget.dart';
 
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
@@ -30,6 +31,7 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
+    //print('video url HAI:${widget.post.multimedia![0]}');
     void showBottomSheet() {
       bottomSheet(context);
     }
@@ -208,7 +210,16 @@ class _PostWidgetState extends State<PostWidget> {
                 : Container(),
             widget.post.multimedia != null &&
                     widget.post.multimedia!.isNotEmpty &&
-                    widget.post.multimedia!.length == 1
+                    widget.post.multimedia!.length == 1 &&
+                    widget.post.multimedia![0].contains('.mp4')
+                ? VideoDisplayWidget(
+                    videoUrl: widget.post.multimedia![0],
+                  )
+                : Container(),
+            widget.post.multimedia != null &&
+                    widget.post.multimedia!.isNotEmpty &&
+                    widget.post.multimedia!.length == 1 &&
+                    (!widget.post.multimedia![0].contains('.mp4'))
                 ? Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),

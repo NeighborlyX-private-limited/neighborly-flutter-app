@@ -100,7 +100,7 @@ class TutorialScreenState extends State<TutorialScreen> {
           bloc: _tutorialCubit,
           listener: (context, state) {
             if (state is TutorialUpdateSuccess) {
-              context.go('/home/false');
+              context.go('/home/Home');
             } else if (state is TutorialUpdateFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:share_it/share_it.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -43,6 +44,11 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
   bool isSunflowerAwardAvailable = false;
   bool isStreetlightAwardAvailable = false;
   bool isMapAwardAvailable = false;
+  int localLegendCount = 0;
+  int parkBenchCount = 0;
+  int sunflowerCount = 0;
+  int streetlightCount = 0;
+  int mapCount = 0;
 
   @override
   void initState() {
@@ -73,46 +79,85 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
 
   getmyawards() async {
     List responseMessage = await profileRemoteDataSource.getMyAwards();
+    bool localLegendAvailable = false;
+    bool parkBenchAvailable = false;
+    bool sunflowerAvailable = false;
+    bool streetlightAvailable = false;
+    bool mapAvailable = false;
+    int _localLegendCount = 0;
+    int _parkBenchCount = 0;
+    int _sunflowerCount = 0;
+    int _streetlightCount = 0;
+    int _mapCount = 0;
     if (responseMessage.isEmpty) {
-      isLocalLegendAwardAvailable = false;
-      isParkBenchAwardAvailable = false;
-      isSunflowerAwardAvailable = false;
-      isStreetlightAwardAvailable = false;
-      isMapAwardAvailable = false;
+      localLegendAvailable = false;
+      parkBenchAvailable = false;
+      sunflowerAvailable = false;
+      streetlightAvailable = false;
+      mapAvailable = false;
+      _localLegendCount = 0;
+      _parkBenchCount = 0;
+      _sunflowerCount = 0;
+      _streetlightCount = 0;
+      _mapCount = 0;
     } else {
       for (int i = 0; i < responseMessage.length; i++) {
-        if (responseMessage[i]['type'] == 'Local Legend' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isLocalLegendAwardAvailable = true;
-          });
+        if (responseMessage[i]['type'] == 'Local Legend') {
+          if (responseMessage[i]['count'] > 0) {
+            localLegendAvailable = true;
+            _localLegendCount = responseMessage[i]['count'];
+          } else {
+            _localLegendCount = 0;
+          }
         }
-        if (responseMessage[i]['type'] == 'Park Bench' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isParkBenchAwardAvailable = true;
-          });
+
+        if (responseMessage[i]['type'] == 'Park Bench') {
+          if (responseMessage[i]['count'] > 0) {
+            parkBenchAvailable = true;
+            _parkBenchCount = responseMessage[i]['count'];
+          } else {
+            _parkBenchCount = 0;
+          }
         }
-        if (responseMessage[i]['type'] == 'Sunflower' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isSunflowerAwardAvailable = true;
-          });
+        if (responseMessage[i]['type'] == 'Sunflower') {
+          if (responseMessage[i]['count'] > 0) {
+            sunflowerAvailable = true;
+            _sunflowerCount = responseMessage[i]['count'];
+          } else {
+            _sunflowerCount = 0;
+          }
         }
-        if (responseMessage[i]['type'] == 'Streetlight' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isStreetlightAwardAvailable = true;
-          });
+        if (responseMessage[i]['type'] == 'Streetlight') {
+          if (responseMessage[i]['count'] > 0) {
+            streetlightAvailable = true;
+            _streetlightCount = responseMessage[i]['count'];
+          } else {
+            _streetlightCount = 0;
+          }
         }
-        if (responseMessage[i]['type'] == 'Map' &&
-            responseMessage[i]['count'] > 0) {
-          setState(() {
-            isMapAwardAvailable = true;
-          });
+        if (responseMessage[i]['type'] == 'Map') {
+          if (responseMessage[i]['count'] > 0) {
+            mapAvailable = true;
+            _mapCount = responseMessage[i]['count'];
+          } else {
+            _mapCount = 0;
+          }
         }
       }
     }
+    // Update state once after the loop
+    setState(() {
+      isLocalLegendAwardAvailable = localLegendAvailable;
+      isParkBenchAwardAvailable = parkBenchAvailable;
+      isSunflowerAwardAvailable = sunflowerAvailable;
+      isStreetlightAwardAvailable = streetlightAvailable;
+      isMapAwardAvailable = mapAvailable;
+      localLegendCount = _localLegendCount;
+      parkBenchCount = _parkBenchCount;
+      sunflowerCount = _sunflowerCount;
+      streetlightCount = _streetlightCount;
+      mapCount = _mapCount;
+    });
   }
 
   Future<void> _saveReactionState() async {
@@ -316,7 +361,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
           width: 12,
         ),
         InkWell(
-          onTap: () {
+          onTap: () async {
+            await getmyawards();
             //  BlocProvider.of<GetMyAwardsBloc>(context).add(
             //     GetMyAwardsButtonPressedEvent(),);
             showBottomSheet().then((value) {
@@ -494,14 +540,43 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Local_Legend.svg',
-                          width: 84,
-                          height: 84,
-                          color: isLocalLegendAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
-                          colorBlendMode: BlendMode.modulate,
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Local_Legend.svg',
+                              width: 84,
+                              height: 84,
+                              color: isLocalLegendAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                              colorBlendMode: BlendMode.modulate,
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    localLegendCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,
@@ -555,14 +630,43 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Sunflower.svg',
-                          width: 84,
-                          height: 84,
-                          colorBlendMode: BlendMode.modulate,
-                          color: isSunflowerAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Sunflower.svg',
+                              width: 84,
+                              height: 84,
+                              colorBlendMode: BlendMode.modulate,
+                              color: isSunflowerAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    sunflowerCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,
@@ -616,14 +720,43 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Streetlight.svg',
-                          width: 84,
-                          height: 84,
-                          colorBlendMode: BlendMode.modulate,
-                          color: isStreetlightAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Streetlight.svg',
+                              width: 84,
+                              height: 84,
+                              colorBlendMode: BlendMode.modulate,
+                              color: isStreetlightAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    streetlightCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,
@@ -677,14 +810,43 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Park_Bench.svg',
-                          width: 84,
-                          height: 84,
-                          colorBlendMode: BlendMode.modulate,
-                          color: isParkBenchAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Park_Bench.svg',
+                              width: 84,
+                              height: 84,
+                              colorBlendMode: BlendMode.modulate,
+                              color: isParkBenchAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    parkBenchCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,
@@ -738,14 +900,43 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Map.svg',
-                          width: 84,
-                          height: 84,
-                          colorBlendMode: BlendMode.modulate,
-                          color: isMapAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Map.svg',
+                              width: 84,
+                              height: 84,
+                              colorBlendMode: BlendMode.modulate,
+                              color: isMapAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    mapCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,

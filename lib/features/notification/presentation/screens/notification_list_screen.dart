@@ -379,6 +379,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
+import 'package:neighborly_flutter_app/features/notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_list_cubit.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_list_state.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/screens/notification_empty_widget.dart';
@@ -416,6 +417,10 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
     notificationsListCubit = BlocProvider.of<NotificationListCubit>(context);
     notificationsListCubit.init();
     //_scrollController.addListener(_scrollListener);
+  }
+
+  void _readAllNotification(var ids) async {
+    await updateNotificationStatus(ids);
   }
 
   @override
@@ -466,6 +471,14 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                 child: NotificationsEmptyWidget(),
               );
             } else {
+              //get all the unread notification id
+              List<String> unreadIds = state.notifications
+                  .where((item) => item.status == 'unread')
+                  .map((item) => item.id)
+                  .toList();
+              _readAllNotification(unreadIds);
+              //getUnreadNotificationCount();
+              print(unreadIds);
               return ListView.builder(
                 controller: _scrollController,
                 itemCount: state.notifications.length +
@@ -483,8 +496,11 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                       // child: Center(child: CircularProgressIndicator()),
                     );
                   }
-                  return NotificationTileWidget(
-                    notification: state.notifications[index],
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: NotificationTileWidget(
+                      notification: state.notifications[index],
+                    ),
                   );
                 },
               );

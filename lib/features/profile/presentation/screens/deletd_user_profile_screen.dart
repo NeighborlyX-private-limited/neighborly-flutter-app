@@ -52,7 +52,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
                     onPressed: () {
-                      context.go('/home/false');
+                      context.go('/home/Home');
                     },
                   ),
                   title: Text(

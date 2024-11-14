@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:share_it/share_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,6 +37,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   bool isSunflowerAwardAvailable = false;
   bool isStreetlightAwardAvailable = false;
   bool isMapAwardAvailable = false;
+  int localLegendCount = 0;
+  int parkBenchCount = 0;
+  int sunflowerCount = 0;
+  int streetlightCount = 0;
+  int mapCount = 0;
   late ProfileRemoteDataSourceImpl profileRemoteDataSource;
   // State variables to track counts
   late num cheersCount;
@@ -74,6 +80,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     bool sunflowerAvailable = false;
     bool streetlightAvailable = false;
     bool mapAvailable = false;
+    int _localLegendCount = 0;
+    int _parkBenchCount = 0;
+    int _sunflowerCount = 0;
+    int _streetlightCount = 0;
+    int _mapCount = 0;
 
     if (responseMessage.isEmpty) {
       localLegendAvailable = false;
@@ -81,35 +92,69 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       sunflowerAvailable = false;
       streetlightAvailable = false;
       mapAvailable = false;
+      _localLegendCount = 0;
+      _parkBenchCount = 0;
+      _sunflowerCount = 0;
+      _streetlightCount = 0;
+      _mapCount = 0;
     } else {
       for (var award in responseMessage) {
-        if (award['type'] == 'Local Legend' && award['count'] > 0) {
-          localLegendAvailable = true;
+        if (award['type'] == 'Local Legend') {
+          if (award['count'] > 0) {
+            localLegendAvailable = true;
+            _localLegendCount = award['count'];
+          } else {
+            _localLegendCount = 0;
+          }
         }
-        if (award['type'] == 'Park Bench' && award['count'] > 0) {
-          parkBenchAvailable = true;
+
+        if (award['type'] == 'Park Bench') {
+          if (award['count'] > 0) {
+            parkBenchAvailable = true;
+            _parkBenchCount = award['count'];
+          } else {
+            _parkBenchCount = 0;
+          }
         }
-        if (award['type'] == 'Sunflower' && award['count'] > 0) {
-          print('Setting Sunflower Award as available');
-          sunflowerAvailable = true;
+        if (award['type'] == 'Sunflower') {
+          if (award['count'] > 0) {
+            sunflowerAvailable = true;
+            _sunflowerCount = award['count'];
+          } else {
+            _sunflowerCount = 0;
+          }
         }
-        if (award['type'] == 'Streetlight' && award['count'] > 0) {
-          streetlightAvailable = true;
+        if (award['type'] == 'Streetlight') {
+          if (award['count'] > 0) {
+            streetlightAvailable = true;
+            _streetlightCount = award['count'];
+          } else {
+            _streetlightCount = 0;
+          }
         }
-        if (award['type'] == 'Map' && award['count'] > 0) {
-          mapAvailable = true;
+        if (award['type'] == 'Map') {
+          if (award['count'] > 0) {
+            mapAvailable = true;
+            _mapCount = award['count'];
+          } else {
+            _mapCount = 0;
+          }
         }
       }
     }
 
     // Update state once after the loop
     setState(() {
-      print('here..');
       isLocalLegendAwardAvailable = localLegendAvailable;
       isParkBenchAwardAvailable = parkBenchAvailable;
       isSunflowerAwardAvailable = sunflowerAvailable;
       isStreetlightAwardAvailable = streetlightAvailable;
       isMapAwardAvailable = mapAvailable;
+      localLegendCount = _localLegendCount;
+      parkBenchCount = _parkBenchCount;
+      sunflowerCount = _sunflowerCount;
+      streetlightCount = _streetlightCount;
+      mapCount = _mapCount;
     });
   }
 
@@ -514,14 +559,43 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Local_Legend.svg',
-                          width: 84,
-                          height: 84,
-                          color: isLocalLegendAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
-                          colorBlendMode: BlendMode.modulate,
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Local_Legend.svg',
+                              width: 84,
+                              height: 84,
+                              color: isLocalLegendAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                              colorBlendMode: BlendMode.modulate,
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    localLegendCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,
@@ -575,14 +649,43 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Sunflower.svg',
-                          width: 84,
-                          height: 84,
-                          colorBlendMode: BlendMode.modulate,
-                          color: isSunflowerAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Sunflower.svg',
+                              width: 84,
+                              height: 84,
+                              colorBlendMode: BlendMode.modulate,
+                              color: isSunflowerAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    sunflowerCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,
@@ -636,14 +739,43 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Streetlight.svg',
-                          width: 84,
-                          height: 84,
-                          colorBlendMode: BlendMode.modulate,
-                          color: isStreetlightAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Streetlight.svg',
+                              width: 84,
+                              height: 84,
+                              colorBlendMode: BlendMode.modulate,
+                              color: isStreetlightAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    streetlightCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,
@@ -697,14 +829,43 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Park_Bench.svg',
-                          width: 84,
-                          height: 84,
-                          colorBlendMode: BlendMode.modulate,
-                          color: isParkBenchAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Park_Bench.svg',
+                              width: 84,
+                              height: 84,
+                              colorBlendMode: BlendMode.modulate,
+                              color: isParkBenchAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    parkBenchCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,
@@ -758,14 +919,43 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(
-                          'assets/Map.svg',
-                          width: 84,
-                          height: 84,
-                          colorBlendMode: BlendMode.modulate,
-                          color: isMapAwardAvailable
-                              ? null
-                              : Colors.grey.withOpacity(0.5),
+                        Stack(
+                          children: [
+                            SvgPicture.asset(
+                              'assets/Map.svg',
+                              width: 84,
+                              height: 84,
+                              colorBlendMode: BlendMode.modulate,
+                              color: isMapAwardAvailable
+                                  ? null
+                                  : Colors.grey.withOpacity(0.5),
+                            ),
+                            Positioned(
+                              top: 0,
+                              right: 4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 24,
+                                  minHeight: 24,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    mapCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           width: 10,

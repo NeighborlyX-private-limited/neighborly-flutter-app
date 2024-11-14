@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/widgets/video_widget.dart';
 
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
@@ -225,11 +228,139 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             const SizedBox(width: 10),
             BlocConsumer<AddCommentBloc, AddCommentState>(
               listener: (context, state) {
+                // if (state is AddCommentSuccessState) {
+                //   showDialog(
+                //     context: context,
+                //     builder: (BuildContext context) {
+                //       return Dialog(
+                //         shape: RoundedRectangleBorder(
+                //           borderRadius: BorderRadius.circular(20),
+                //         ),
+                //         child: Padding(
+                //           padding: const EdgeInsets.all(20.0),
+                //           child: Column(
+                //             mainAxisSize: MainAxisSize.min,
+                //             children: <Widget>[
+                //               // Placeholder for the image
+                //               SvgPicture.asset(
+                //                 'assets/something_went_wrong.svg',
+                //                 width: 150,
+                //                 height: 130,
+                //               ),
+                //               const SizedBox(height: 20),
+                //               const Text(
+                //                 'Aaah! Something went wrong',
+                //                 style: TextStyle(
+                //                   fontSize: 18,
+                //                   fontWeight: FontWeight.bold,
+                //                 ),
+                //                 textAlign: TextAlign.center,
+                //               ),
+                //               const SizedBox(height: 10),
+                //               const Text(
+                //                 "Sorry,You are banned.\nPlease try it after some time",
+                //                 style: TextStyle(
+                //                   fontSize: 14,
+                //                   color: Colors.grey,
+                //                 ),
+                //                 textAlign: TextAlign.center,
+                //               ),
+                //               const SizedBox(height: 20),
+                //               ElevatedButton(
+                //                 onPressed: () {
+                //                   Navigator.of(context).pop();
+                //                 },
+                //                 style: ElevatedButton.styleFrom(
+                //                   backgroundColor: AppColors.primaryColor,
+                //                   shape: RoundedRectangleBorder(
+                //                     borderRadius: BorderRadius.circular(20),
+                //                   ),
+                //                 ),
+                //                 child: const Padding(
+                //                   padding: EdgeInsets.symmetric(
+                //                       horizontal: 20, vertical: 10),
+                //                   child: Text(
+                //                     'Go Back',
+                //                     style: TextStyle(
+                //                         fontSize: 16, color: Colors.white),
+                //                   ),
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       );
+                //     },
+                //   );
+                // }
                 if (state is AddCommentFailureState) {
                   if (state.error.contains("Sorry, you are banned")) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Sorry, you are banned")),
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                // Placeholder for the image
+                                SvgPicture.asset(
+                                  'assets/something_went_wrong.svg',
+                                  width: 150,
+                                  height: 130,
+                                ),
+                                const SizedBox(height: 20),
+                                const Text(
+                                  'Aaah! Something went wrong',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  "Sorry,You are banned.\nPlease try it after some time",
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 20),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryColor,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                  ),
+                                  child: const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 10),
+                                    child: Text(
+                                      'Go Back',
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
                     );
+                    // ScaffoldMessenger.of(context).showSnackBar(
+                    //   SnackBar(content: Text("Sorry, you are banned")),
+                    // );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -926,7 +1057,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             : Container(),
         post.multimedia != null &&
                 post.multimedia!.isNotEmpty &&
-                post.multimedia!.length == 1
+                post.multimedia!.length == 1 &&
+                post.multimedia![0].contains('.mp4')
+            ? VideoDisplayWidget(
+                videoUrl: post.multimedia![0],
+              )
+            : Container(),
+        post.multimedia != null &&
+                post.multimedia!.isNotEmpty &&
+                post.multimedia!.length == 1 &&
+                (!post.multimedia![0].contains('.mp4'))
             ? Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(8)),

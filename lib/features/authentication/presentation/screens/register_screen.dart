@@ -148,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       print('OAuth Success State in regester');
                       context.go('/tutorialScreen');
                     } else {
-                      context.go('/home/false');
+                      context.go('/home/Home');
                     }
                   }
                 },

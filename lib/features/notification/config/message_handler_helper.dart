@@ -12,6 +12,7 @@ class MessageHandlerHelper {
     print('messageData userId: ${messageData["userId"]}');
 
     if (messageData['userId'] != null) {
+      print('evertime this is called');
       router.push('/userProfileScreen/${messageData['userId']}');
     }
 

@@ -176,7 +176,7 @@ class EventSuccessSuccessScreen extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
               child: ElevatedButton(
                 onPressed: () {
-                  context.go('/home/false');
+                  context.go('/home/Home');
                   //  back Home
                   // Navigator.of(context).pop();
                   // if (Navigator.canPop(context)) {
