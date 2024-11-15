@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../dependency_injection.dart' as di;
 import '../../features/notification/config/fcm_config.dart';
 import '../../features/notification/config/message_behaviors/order_message_behavior.dart';

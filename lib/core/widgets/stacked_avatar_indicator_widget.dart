@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 class StackedAvatarIndicator extends StatelessWidget {
   final List<String> avatarUrls;
@@ -32,7 +33,7 @@ class StackedAvatarIndicator extends StatelessWidget {
       child: Container(
         width: (21 * widthMultiplier!) + 4,
         height: avatarSize! + 6,
-        color: Colors.transparent,
+        color: AppColors.transparentColor,
         child: Stack(
           children: [
             for (int i = 0; i < min(avatarUrls.length, showOnly!); i++)
@@ -40,7 +41,7 @@ class StackedAvatarIndicator extends StatelessWidget {
                 left: i.toDouble() * avatarSize!,
                 child: CircleAvatar(
                   radius: radius! + 1,
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.whiteColor,
                   child: CircleAvatar(
                     radius: radius,
                     backgroundImage: NetworkImage(avatarUrls[i]),
