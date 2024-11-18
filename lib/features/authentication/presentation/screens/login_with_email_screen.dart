@@ -55,9 +55,9 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         leading: InkWell(
           child: const Icon(
             Icons.arrow_back_ios,
@@ -117,7 +117,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
               !isEmailValid
                   ? const Text(
                       'Please enter a valid email address',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: AppColors.redColor),
                     )
                   : const SizedBox(),
               const SizedBox(
@@ -137,7 +137,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
               isPasswordWrong
                   ? const Text(
                       'Wrong password. Try again or click Forgot password to reset it.',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: AppColors.redColor),
                     )
                   : const SizedBox(),
               const SizedBox(
@@ -234,7 +234,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   ? Center(
                       child: const Text(
                         'No Internet Connection',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: AppColors.redColor),
                       ),
                     )
                   : const SizedBox(),

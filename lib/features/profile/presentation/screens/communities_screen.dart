@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/theme/text_style.dart';
@@ -45,9 +46,9 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      backgroundColor: const Color(0xFFF5F5FF),
+      backgroundColor: AppColors.lightBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         leading: InkWell(
           child: const Icon(Icons.arrow_back_ios, size: 20),
           onTap: () => context.pop(),
@@ -126,7 +127,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
                   return const Center(
                       child: Text(
                     'oops something went wrong',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: AppColors.redColor),
                   ));
                 }
                 return Center(child: Text(state.error));

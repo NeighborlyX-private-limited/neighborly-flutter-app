@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/edit_profile_bloc/edit_profile_bloc.dart';
@@ -30,9 +31,9 @@ class _FindMeScreenState extends State<FindMeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(Icons.arrow_back_ios, size: 20),
             onTap: () => context.pop(),
@@ -46,7 +47,7 @@ class _FindMeScreenState extends State<FindMeScreen> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: AppColors.whiteColor,
             ),
             child: BlocConsumer<GetProfileBloc, GetProfileState>(
               listener: (context, state) {
@@ -95,14 +96,14 @@ class _FindMeScreenState extends State<FindMeScreen> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 content: Text('Find me updated successfully'),
-                                backgroundColor: Colors.green,
+                                backgroundColor: AppColors.greenColor,
                               ),
                             );
                           } else if (state is EditProfileFailureState) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(state.error),
-                                backgroundColor: Colors.red,
+                                backgroundColor: AppColors.redColor,
                               ),
                             );
                           }
@@ -125,10 +126,10 @@ class _FindMeScreenState extends State<FindMeScreen> {
                               ),
                             );
                           },
-                          inactiveThumbColor: Colors.white,
-                          inactiveTrackColor: Colors.grey,
-                          activeTrackColor: const Color(0xff635BFF),
-                          activeColor: Colors.white,
+                          inactiveThumbColor: AppColors.whiteColor,
+                          inactiveTrackColor: AppColors.greyColor,
+                          activeTrackColor: AppColors.primaryColor,
+                          activeColor: AppColors.whiteColor,
                         ),
                       ),
                     ],

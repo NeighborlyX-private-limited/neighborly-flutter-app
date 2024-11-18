@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
@@ -64,7 +65,7 @@ class _PostWithCommentsWidgetState
         // context.push('/post-detail/${post.}/${true}/${post.userId}');
       },
       child: Container(
-        color: Colors.white,
+        color: AppColors.whiteColor,
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -409,7 +410,7 @@ class _PostWithCommentsWidgetState
                                           Text(
                                             timeAgo(widget.post.createdAt),
                                             style: TextStyle(
-                                              color: Colors.grey,
+                                              color: AppColors.greyColor,
                                               fontWeight: FontWeight.w400,
                                               fontSize: screenWidth * 0.035,
                                               height: 1.3,

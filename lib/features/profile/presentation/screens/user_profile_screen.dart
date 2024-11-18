@@ -145,7 +145,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                         height: 24,
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Colors.white,
+                                          color: AppColors.whiteColor,
                                         ),
                                         child: SvgPicture.asset(
                                           checkStringInList(state
@@ -277,7 +277,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -346,7 +346,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: Colors.white,
+      color: AppColors.whiteColor,
       child: _tabBar,
     );
   }

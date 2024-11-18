@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
 import 'package:share_it/share_it.dart';
 import '../../../../core/theme/text_style.dart';
@@ -392,7 +393,7 @@ class _PostReactionSpecificCommentWidgetState
           },
           child: Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: AppColors.whiteColor,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),

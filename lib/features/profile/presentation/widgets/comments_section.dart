@@ -44,7 +44,7 @@ class _CommentSectionState extends State<CommentSection> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFFF5F5FF),
+        color: AppColors.lightBackgroundColor,
       ),
       child: RefreshIndicator(
         onRefresh: _onRefresh,
@@ -81,7 +81,7 @@ class _CommentSectionState extends State<CommentSection> {
                         },
                         child: Text(
                           'Start the Discussion',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: AppColors.whiteColor,),
                         ),
                       )
                     ],
@@ -119,7 +119,7 @@ class _CommentSectionState extends State<CommentSection> {
                 return const Center(
                     child: Text(
                   'oops something went wrong',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: AppColors.redColor),
                 ));
               }
               return Center(child: Text(state.error));

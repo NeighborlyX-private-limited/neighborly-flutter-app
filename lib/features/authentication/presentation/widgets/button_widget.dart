@@ -26,14 +26,14 @@ class ButtonContainerWidget extends StatelessWidget {
           height: 48,
           decoration: BoxDecoration(
             border: isFilled ? null : Border.all(color: color, width: 1),
-            color: isFilled ? color : Colors.white,
+            color: isFilled ? color : AppColors.whiteColor,
             borderRadius: BorderRadius.circular(32),
           ),
           child: Center(
             child: Text(
               "$text",
               style: TextStyle(
-                color: isFilled ? Colors.white : AppColors.primaryColor,
+                color: isFilled ? AppColors.whiteColor : AppColors.primaryColor,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),

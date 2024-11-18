@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProfileShimmerWidget extends StatelessWidget {
@@ -101,7 +102,7 @@ class ProfileShimmerWidget extends StatelessWidget {
           const SizedBox(height: 20),
           // Posts Section Shimmer
           Container(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

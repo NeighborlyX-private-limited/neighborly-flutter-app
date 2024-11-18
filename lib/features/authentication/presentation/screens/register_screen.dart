@@ -98,9 +98,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         leading: InkWell(
           child: const Icon(
             Icons.arrow_back_ios,
@@ -207,12 +207,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ? SizedBox()
                   : Text(
                       'Please enter a valid phone number.',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: AppColors.redColor),
                     ),
               phoneAlreadyExists
                   ? const Text(
                       'Phone Number already exists. Please login.',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: AppColors.redColor),
                     )
                   : const SizedBox(),
               const SizedBox(height: 15),
@@ -276,7 +276,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ? Center(
                       child: const Text(
                         'No Internet Connection, Please try again.',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: AppColors.redColor),
                       ),
                     )
                   : const SizedBox(),
@@ -287,7 +287,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     text:
                         'By clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
                     style: const TextStyle(
-                      color: Color(0xFF666666),
+                      color: AppColors.lightGreyColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       height: 1.3,

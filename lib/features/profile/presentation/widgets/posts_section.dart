@@ -43,7 +43,7 @@ class _PostSectionState extends State<PostSection> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFFF5F5FF),
+        color: AppColors.lightBackgroundColor,
       ),
       child: RefreshIndicator(
           onRefresh: _onRefresh,
@@ -84,7 +84,7 @@ class _PostSectionState extends State<PostSection> {
                                 },
                                 child: Text(
                                   'Create a Post',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: AppColors.whiteColor,),
                                 ),
                               )
                             ],
@@ -139,7 +139,7 @@ class _PostSectionState extends State<PostSection> {
                   return const Center(
                       child: Text(
                     'oops something went wrong',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: AppColors.redColor),
                   ));
                 }
                 return Center(child: Text(state.error));

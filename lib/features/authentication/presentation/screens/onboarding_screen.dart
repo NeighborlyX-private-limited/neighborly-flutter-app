@@ -12,7 +12,7 @@ class OnBoardingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.whiteColor,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 70.0),
         child: Column(

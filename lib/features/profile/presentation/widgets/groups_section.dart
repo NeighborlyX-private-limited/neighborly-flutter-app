@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
 import '../../../../core/theme/text_style.dart';
@@ -43,7 +44,7 @@ class _GroupSectionState extends State<GroupSection> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: Color(0xFFF5F5FF),
+        color: AppColors.lightBackgroundColor,
       ),
       child: RefreshIndicator(
           onRefresh: _onRefresh,
@@ -121,7 +122,7 @@ class _GroupSectionState extends State<GroupSection> {
                   return const Center(
                       child: Text(
                     'oops something went wrong',
-                    style: TextStyle(color: Colors.red),
+                    style: TextStyle(color: AppColors.redColor),
                   ));
                 }
                 return Center(child: Text(state.error));
