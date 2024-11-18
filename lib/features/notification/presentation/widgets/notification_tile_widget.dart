@@ -91,7 +91,7 @@ class NotificationTileWidget extends StatelessWidget {
     buildMainArea(context);
     return Container(
       color: notification.status == "unread" ? Color(0xFFF0F0F0) : Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
       width: double.infinity,
       child: Row(
         children: [
@@ -101,9 +101,9 @@ class NotificationTileWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: GestureDetector(
               onTap: () async {
-                if (notification.status == "unread") {
-                  await updateNotificationStatus([notification.id]);
-                }
+                // if (notification.status == "unread") {
+                //   await updateNotificationStatus([notification.id]);
+                // }
 
                 print(notification);
                 bool ispost = notification.posttype == 'post';
