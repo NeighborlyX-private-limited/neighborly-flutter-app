@@ -8,6 +8,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/video_compresser.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
@@ -24,6 +25,7 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
+  /// text editing controllers
   late TextEditingController _contentController;
   late TextEditingController _titleController;
   late TextEditingController _questionController;
@@ -38,13 +40,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool _isButtonActive = true;
 
   late String _condition;
-
   late FocusNode _titleFocusNode;
   late FocusNode _contentFocusNode;
-  bool _isKeyboardVisible = false; // Track keyboard visibility
+  bool _isKeyboardVisible = false;
 
-  File? _selectedImage; // Store the selected image
+  // Store the selected image
+  File? _selectedImage;
 
+  /// initstate
   @override
   void initState() {
     super.initState();
@@ -65,6 +68,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     _contentFocusNode.addListener(_onContentFocusChange);
   }
 
+  /// dispose
   @override
   void dispose() {
     super.dispose();
@@ -82,6 +86,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     _contentFocusNode.dispose();
   }
 
+  /// is location on
   bool isLocationOn() {
     bool isLocationOn = ShardPrefHelper.getIsLocationOn();
     if (isLocationOn) {
@@ -90,8 +95,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return false;
   }
 
+  /// handle location
   Future<bool> _handleLocationPermission() async {
-    // bool serviceEnabled;
     LocationPermission permission;
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -160,6 +165,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
+  /// location access dialog
   AlertDialog buildLocationAccessDialog(BuildContext context) {
     return AlertDialog(
       surfaceTintColor: Colors.white,
@@ -184,6 +190,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
+  /// show location access dialog
   void showLocationAccessDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -193,6 +200,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
+  /// check is home
   bool checkIsHome() {
     bool isLocationOn = ShardPrefHelper.getIsLocationOn();
     if (isLocationOn) {
@@ -229,8 +237,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       // Extract the city name from the first placemark
       if (placemarks.isNotEmpty) {
-        return placemarks
-            .first.locality; // City name is stored in the 'locality' field
+        return placemarks.first.locality;
       } else {
         return 'No city found at this location';
       }
@@ -250,6 +257,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return false;
   }
 
+  /// check is active
   bool checkIsActive() {
     if (isTitleFilled) {
       return true;
@@ -257,6 +265,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return false;
   }
 
+  /// add option
   void _addOption() {
     setState(() {
       _optionControllers.add(TextEditingController());
@@ -264,6 +273,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
+  /// remove option
   void _removeOption(int index) {
     setState(() {
       _optionControllers[index].dispose();
@@ -285,19 +295,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
-  // void _onOptionFocusChange(int index) {
-  //   setState(() {
-  //     _isKeyboardVisible = _optionFocusNodes[index].hasFocus;
-  //   });
-  // }
+  /// image and video picking variables
   bool isImagePicking = false;
   bool isImageUploading = false;
-  List<File>? _selectedMedia = [];
-  File? _videoFile;
   bool isImage = false;
   bool isPollOptionShow = true;
+  bool isShowLoading = false;
+  bool _isPlaying = false;
+  List<File>? _selectedMedia = [];
+  File? _videoFile;
   VideoPlayerController? _videoController;
 
+  /// pic video from gallery
   Future<void> _pickVideoFromGallery() async {
     final ImagePicker picker = ImagePicker();
     try {
@@ -307,14 +316,40 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       final XFile? pickedFile =
           await picker.pickVideo(source: ImageSource.gallery);
       if (pickedFile != null) {
-        setState(() {
+        _videoFile = File(pickedFile.path);
+        int fileSizeInBytes = _videoFile!.lengthSync();
+        double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+        print(
+            'Video size before compression: ${fileSizeInMB.toStringAsFixed(2)} MB');
+
+        if (fileSizeInMB > 50) {
+          // Replace 100 with your size limit if needed
+          print('The video is too large.');
+          // Optionally show an alert to the user about the video size
+          return;
+        }
+        setState(() async {
           isPollOptionShow = false;
           _videoFile = File(pickedFile.path);
+          _videoFile = await compressVideo(_videoFile!);
+          int fileSizeInBytes = _videoFile!.lengthSync();
+          double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+          print(
+              'Video size AFTER compression: ${fileSizeInMB.toStringAsFixed(2)} MB');
+
+          if (fileSizeInMB > 15) {
+            // Replace 100 with your size limit if needed
+            print('The video is too large AFTER COMPRESS.');
+            // Optionally show an alert to the user about the video size
+            return;
+          }
           _selectedMedia!.add(_videoFile!);
           _videoController = VideoPlayerController.file(
             File(pickedFile.path),
           )..initialize().then((_) {
-              setState(() {}); // Ensure UI updates when the video is loaded
+              setState(() {});
               _videoController!.pause();
             });
         });
@@ -324,28 +359,45 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     } finally {
       setState(() {
         isImagePicking = false;
+        isPollOptionShow = true;
       });
     }
   }
 
+  /// pic video from camera
   Future<void> _pickVideoFromCamera() async {
     final ImagePicker picker = ImagePicker();
     try {
       setState(() {
         isImagePicking = true;
       });
-      final XFile? pickedFile =
-          await picker.pickVideo(source: ImageSource.camera);
+      final XFile? pickedFile = await picker.pickVideo(
+        source: ImageSource.camera,
+      );
       if (pickedFile != null) {
-        setState(() {
+        File file = File(pickedFile.path);
+
+        // Get the size of the file in bytes
+        int fileSizeInBytes = await file.length();
+
+        // Convert the size to a more readable format (e.g., MB)
+        double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+        print('File size: ${fileSizeInMB.toStringAsFixed(2)} MB');
+        setState(() async {
+          //isImagePicking = true;
+          isShowLoading = false;
           isPollOptionShow = false;
           _videoFile = File(pickedFile.path);
+
+          _videoFile = await compressVideo(_videoFile!);
           _selectedMedia!.add(_videoFile!);
           _videoController = VideoPlayerController.file(
             File(pickedFile.path),
           )..initialize().then((_) {
-              setState(() {}); // Ensure UI updates when the video is loaded
-              _videoController!.play();
+              setState(() {});
+              _videoController!.pause();
+              isShowLoading = false;
             });
         });
       }
@@ -354,6 +406,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     } finally {
       setState(() {
         isImagePicking = false;
+        isPollOptionShow = true;
       });
     }
   }
@@ -471,6 +524,37 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
+  /// is playing video
+  void _togglePlayPause() {
+    setState(() {
+      if (_videoController!.value.isPlaying) {
+        _videoController!.pause();
+        _isPlaying = false;
+      } else {
+        _videoController!.play();
+        _isPlaying = true;
+      }
+    });
+  }
+
+  /// clear video controller
+  void clearVideoController() {
+    if (_videoController != null) {
+      _videoController!.pause();
+      _videoController!.dispose();
+      _videoController = null;
+    }
+
+    _videoFile = null;
+    _selectedMedia!.removeAt(0);
+
+    setState(() {
+      isPollOptionShow = true;
+    });
+
+    print('Video and controller cleared.');
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -478,7 +562,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           backgroundColor: Colors.white,
           body: GestureDetector(
             onTap: () {
-              // Close the keyboard when tapping outside of the input field
               FocusScope.of(context).unfocus();
             },
             child: SingleChildScrollView(
@@ -821,22 +904,71 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     SizedBox(
                       height: 10,
                     ),
-                  if (_videoController != null &&
-                      _videoController!.value.isInitialized)
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 260,
-                      // color: Colors.redAccent,
-                      child: Center(
-                        child: Transform.rotate(
-                          angle: pi / 2,
-                          child: AspectRatio(
-                            aspectRatio: 1 / 1,
-                            child: VideoPlayer(_videoController!),
-                          ),
-                        ),
-                      ),
-                    ),
+                  // (_videoController != null &&
+                  //         _videoController!.value.isInitialized)?
+                  (_videoController != null &&
+                          _videoController!.value.isInitialized)
+                      ? Stack(
+                          children: [
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: 260,
+                              // color: Colors.redAccent,
+                              child: Center(
+                                child: Transform.rotate(
+                                  angle: pi / 2,
+                                  child: AspectRatio(
+                                    aspectRatio: 1 / 1,
+                                    child: VideoPlayer(_videoController!),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned.fill(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: IconButton(
+                                  iconSize: 60,
+                                  icon: Icon(
+                                    _isPlaying
+                                        ? Icons.pause_circle_filled
+                                        : Icons.play_circle_filled,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: _togglePlayPause,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: GestureDetector(
+                                onTap: () {
+                                  clearVideoController();
+                                  // here i have write the code clear the controller
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    color: Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.close,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : _videoController == null
+                          ? SizedBox()
+                          : Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
                   if (isImage)
                     Padding(
                       padding: const EdgeInsets.all(8.0),

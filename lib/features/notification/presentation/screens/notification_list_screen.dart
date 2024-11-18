@@ -496,11 +496,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
                       // child: Center(child: CircularProgressIndicator()),
                     );
                   }
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
-                    child: NotificationTileWidget(
-                      notification: state.notifications[index],
-                    ),
+                  return NotificationTileWidget(
+                    notification: state.notifications[index],
                   );
                 },
               );

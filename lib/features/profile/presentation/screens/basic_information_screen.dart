@@ -47,6 +47,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
   bool isEmailFilled = false;
   bool noConnection = false;
   bool isUserNameShort = false;
+  bool isUserHasSpaces = false;
   bool invalidPhone = false;
 
   late TextEditingController _usernameController;
@@ -260,6 +261,12 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 });
                                 return;
                               }
+                              if (userName.contains(' ')) {
+                                setState(() {
+                                  isUserHasSpaces = true;
+                                });
+                                return;
+                              }
                               if (phoneNumber.isNotEmpty &&
                                   !isValidPhoneNumber(phoneNumber)) {
                                 setState(() {
@@ -447,6 +454,15 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   'Username should be at least 6 character long.',
                                   style: TextStyle(
                                     color: AppColors.redColor,
+                                    fontSize: 15,
+                                  ),
+                                )
+                              : Container(),
+                          isUserHasSpaces
+                              ? const Text(
+                                  'Username cannot contain spaces.',
+                                  style: TextStyle(
+                                    color: Colors.red,
                                     fontSize: 15,
                                   ),
                                 )

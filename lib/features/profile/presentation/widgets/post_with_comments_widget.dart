@@ -256,6 +256,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           multimedia: widget.post.content.multimedia ?? [],
                         )
                       : Container(),
+                      
                   widget.post.content.multimedia != null &&
                           widget.post.content.multimedia!.isNotEmpty &&
                           widget.post.content.multimedia!.length == 1
