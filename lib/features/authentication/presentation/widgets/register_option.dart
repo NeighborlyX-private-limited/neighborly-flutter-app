@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/colors.dart';
+
 class RegisterOption extends StatelessWidget {
   final Image image;
   final String title;
@@ -21,8 +23,8 @@ class RegisterOption extends StatelessWidget {
           width: double.infinity,
           height: 48,
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 1),
-              color: Colors.white,
+              border: Border.all(color:  AppColors.blackColor, width: 1),
+              color:  AppColors.whiteColor,
               borderRadius: BorderRadius.circular(40)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -32,7 +34,7 @@ class RegisterOption extends StatelessWidget {
               Text(
                 title,
                 style: const TextStyle(
-                  color: Colors.black,
+                  color:  AppColors.blackColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),

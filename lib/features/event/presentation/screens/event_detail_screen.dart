@@ -58,7 +58,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.30,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.whiteColor,
         // borderRadius: BorderRadius.circular(10),
         image: DecorationImage(
           fit: BoxFit.cover,
@@ -86,7 +86,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             iconSize: 30,
           ),
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.transparentColor,
         // title: const Text('community create'),
         actions: [
           Row(
@@ -186,7 +186,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               return Container(
                 // padding: EdgeInsets.only(top: 15),
                 width: double.infinity,
-                color: Colors.white,
+                color: AppColors.whiteColor,
                 child: state.eventDetails == null
                     ? Center(
                         child: Text('LOAD THIS'),
@@ -442,7 +442,8 @@ class ChatArea extends StatelessWidget {
             },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-        color: Colors.white,
+        color: AppColors.whiteColor,
+
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -528,11 +529,11 @@ class AboutArea extends StatelessWidget {
             moreStyle: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
-                color: Colors.blue),
+                color:AppColors.blueColor),
             lessStyle: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
-                color: Colors.blue),
+                color: AppColors.blueColor),
           ),
           const SizedBox(height: 4),
         ],
@@ -697,13 +698,13 @@ class _JoinAreaState extends State<JoinArea> {
                         height: 22,
                         width: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: AppColors.whiteColor,
                         ),
                       )
                     : Text(
                         'Join',
                         style: TextStyle(
-                            color: _isChecked ? Colors.white : Colors.grey,
+                            color: _isChecked ? AppColors.whiteColor :AppColors.greyColor,
                             fontSize: 18,
                             height: 0.3),
                       ),
@@ -793,7 +794,7 @@ class HostArea extends StatelessWidget {
                   child: Text(
                     'Message',
                     style: TextStyle(
-                        color: Colors.black, fontSize: 18, height: 0.3),
+                        color: AppColors.blackColor, fontSize: 18, height: 0.3),
                   ),
                 ),
               )
@@ -825,7 +826,7 @@ class AuthorArea extends StatelessWidget {
       builder: (BuildContext context) {
         // String? userId = ShardPrefHelper.getUserID();
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 120,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
@@ -857,7 +858,7 @@ class AuthorArea extends StatelessWidget {
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                              color: Colors.black, fontSize: 18, height: 0.3),
+                              color: AppColors.blackColor, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -874,7 +875,7 @@ class AuthorArea extends StatelessWidget {
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: AppColors.redColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(
                               50), // Ajuste o raio conforme necessário
@@ -886,7 +887,7 @@ class AuthorArea extends StatelessWidget {
                         child: Text(
                           'Yes',
                           style: TextStyle(
-                              color: Colors.white, fontSize: 18, height: 0.3),
+                              color: AppColors.whiteColor,fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -928,7 +929,7 @@ class AuthorArea extends StatelessWidget {
                 child: Text(
                   'Cancel Event',
                   style:
-                      TextStyle(color: Colors.black, fontSize: 18, height: 0.3),
+                      TextStyle(color: AppColors.blackColor, fontSize: 18, height: 0.3),
                 ),
               ),
             ),
@@ -960,7 +961,7 @@ class AuthorArea extends StatelessWidget {
                 child: Text(
                   'Edit Event',
                   style:
-                      TextStyle(color: Colors.white, fontSize: 18, height: 0.3),
+                      TextStyle(color: AppColors.whiteColor, fontSize: 18, height: 0.3),
                 ),
               ),
             ),

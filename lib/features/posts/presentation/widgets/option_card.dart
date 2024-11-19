@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 import '../../../../core/entities/option_entity.dart';
 import '../../../../core/utils/shared_preference.dart';
@@ -156,7 +157,7 @@ class _OptionCardState extends State<OptionCard> {
                   Text(
                     widget.option.option,
                     style: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
+                      color: isSelected ? AppColors.whiteColor : AppColors.blackColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -164,7 +165,7 @@ class _OptionCardState extends State<OptionCard> {
                   Text(
                     '${(filledPercentage * 100).toStringAsFixed(2)}%',
                     style: const TextStyle(
-                      color: Colors.black,
+                      color: AppColors.blackColor,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                     ),

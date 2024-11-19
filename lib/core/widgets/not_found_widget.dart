@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../theme/colors.dart';
+
 class NotFoundWidget extends StatelessWidget {
   const NotFoundWidget({super.key});
 
@@ -14,7 +16,7 @@ class NotFoundWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, color: Colors.red, size: 64),
+            Icon(Icons.error_outline, color: AppColors.redColor, size: 64),
             SizedBox(height: 16),
             Text(
               '404 - Page Not Found',

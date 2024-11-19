@@ -35,9 +35,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.whiteColor,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.whiteColor,
               leading: InkWell(
                 child: const Icon(Icons.arrow_back_ios, size: 20),
                 onTap: () => context.pop(),
@@ -64,7 +64,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                        border: Border.all(color: AppColors.greyColor),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: TextField(

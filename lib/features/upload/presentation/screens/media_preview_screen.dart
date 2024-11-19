@@ -10,6 +10,7 @@ import 'package:mime/mime.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../../../core/theme/colors.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/upload_file_bloc/upload_file_bloc.dart';
 import '../../../../core/constants/imagepickercompress.dart';
@@ -420,7 +421,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: FloatingActionButton(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.redColor,
               onPressed: () {
                 isVideo = true;
                 _onImageButtonPressed(ImageSource.gallery, context: context);
@@ -434,7 +435,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
               child: FloatingActionButton(
-                backgroundColor: Colors.red,
+                backgroundColor: AppColors.redColor,
                 onPressed: () {
                   isVideo = true;
                   _onImageButtonPressed(ImageSource.camera, context: context);

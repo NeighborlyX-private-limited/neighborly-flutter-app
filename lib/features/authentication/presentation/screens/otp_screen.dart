@@ -75,9 +75,9 @@ class _OtpScreenState extends State<OtpScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         leading: InkWell(
           child: const Icon(
             Icons.arrow_back_ios,
@@ -141,7 +141,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   ? const Text(
                       'The OTP entered is incorrect. Please try again.',
                       style: TextStyle(
-                        color: Colors.red,
+                        color: AppColors.redColor,
                         fontSize: 12,
                       ),
                     )
@@ -150,7 +150,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   ? const Text(
                       'OTP has expired',
                       style: TextStyle(
-                        color: Colors.red,
+                        color: AppColors.redColor,
                         fontSize: 12,
                       ),
                     )
@@ -329,7 +329,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         const Text(
                           'User not found, please ',
                           style: TextStyle(
-                            color: Colors.red,
+                            color: AppColors.redColor,
                             fontSize: 17,
                           ),
                         ),

@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
 
 import '../theme/text_style.dart';
@@ -79,7 +80,7 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-              border: Border.all(width: 1, color: Colors.black),
+              border: Border.all(width: 1, color: AppColors.blackColor),
             ),
             width: double.infinity,
             child: DropdownButton2<String>(

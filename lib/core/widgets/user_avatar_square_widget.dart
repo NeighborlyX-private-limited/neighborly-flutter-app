@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 import '../constants/core_dimens.dart';
 
@@ -25,7 +26,7 @@ class UserAvatarSquareWidget extends StatelessWidget {
       height: size,
       width: size,
       decoration: BoxDecoration(
-        color: Colors.black,
+        color: AppColors.blackColor,
         borderRadius: BorderRadius.circular(borderRadius!),
         image: imageUrl != null
             ? DecorationImage(

@@ -64,7 +64,7 @@ class _EventMainScreenState extends State<EventMainScreen>
         decoration: BoxDecoration(
             border: BorderDirectional(
                 bottom: BorderSide(
-          color: isSelected ? AppColors.primaryColor : Colors.white,
+          color: isSelected ? AppColors.primaryColor : AppColors.whiteColor,
           width: 2,
         ))),
         child: Text(
@@ -73,7 +73,7 @@ class _EventMainScreenState extends State<EventMainScreen>
           style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 19,
-            color: isSelected ? Colors.black : Colors.grey,
+            color: isSelected ? AppColors.blackColor : AppColors.greyColor
           ),
         ),
       ),
@@ -100,7 +100,7 @@ class _EventMainScreenState extends State<EventMainScreen>
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           title: Row(
             children: [
               SvgPicture.asset(
@@ -203,7 +203,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16,
-                                    color: Color(0xff635BFF),
+                                    color: AppColors.primaryColor,
                                   ),
                                 ),
                               ),

@@ -142,13 +142,13 @@ class _SecurityPageState extends State<SecurityPage> {
                   isNewPasswordShoart
                       ? const Text(
                           'New password should be atleast 6 character long.',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: AppColors.redColor),
                         )
                       : const SizedBox(),
                   if (isPasswordMismatch)
                     const Text(
                       'Passwords do not match.',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: AppColors.redColor),
                     ),
                   const SizedBox(
                     height: 45,
@@ -237,7 +237,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   noConnection
                       ? const Text(
                           'No Internet Connection',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: AppColors.redColor),
                         )
                       : const SizedBox(),
                 ],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../theme/colors.dart';
+
 class MenuIconItem extends StatelessWidget {
   final String title;
   final IconData? icon;
@@ -14,7 +16,7 @@ class MenuIconItem extends StatelessWidget {
     this.icon = Icons.abc,
     this.iconSize = 20,
     this.svgPath = '',
-    this.textColor = Colors.black,
+    this.textColor =  AppColors.blackColor,
     required this.onTap,
   });
 

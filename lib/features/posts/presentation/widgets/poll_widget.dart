@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
@@ -335,7 +336,7 @@ class _PollWidgetState extends State<PollWidget> {
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: userId != widget.post.userId
@@ -395,7 +396,7 @@ class _PollWidgetState extends State<PollWidget> {
                         children: [
                           const Icon(
                             Icons.delete,
-                            color: Colors.red,
+                            color: AppColors.redColor,
                           ),
                           const SizedBox(
                             width: 10,
@@ -419,7 +420,7 @@ class _PollWidgetState extends State<PollWidget> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 240,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
@@ -486,7 +487,7 @@ class _PollWidgetState extends State<PollWidget> {
           builder: (context, state) {
             return SingleChildScrollView(
               child: Container(
-                color: Colors.white,
+                color: AppColors.whiteColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(

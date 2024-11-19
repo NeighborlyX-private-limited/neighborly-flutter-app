@@ -37,7 +37,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
       textDirection: TextDirection.ltr,
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           body: NestedScrollView(
             headerSliverBuilder: (
               BuildContext context,
@@ -47,7 +47,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
               return <Widget>[
                 SliverAppBar(
                   pinned: true,
-                  backgroundColor: Colors.white,
+                  backgroundColor: AppColors.whiteColor,
                   expandedHeight: 300.0,
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
@@ -70,7 +70,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                             height: 90,
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: Colors.black,
+                                color: AppColors.blackColor,
                                 width: 2.0,
                               ),
                               shape: BoxShape.circle,
@@ -202,7 +202,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: Colors.white,
+      color: AppColors.whiteColor,
       child: _tabBar,
     );
   }

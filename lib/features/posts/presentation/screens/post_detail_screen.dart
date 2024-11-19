@@ -796,7 +796,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           builder: (context, state) {
             return SingleChildScrollView(
               child: Container(
-                color: Colors.white,
+                color: AppColors.whiteColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(
@@ -982,7 +982,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     height: 16,
                                     width: 16,
                                     child: CircularProgressIndicator(
-                                      color: Colors.blue,
+                                      color: AppColors.blueColor,
                                       strokeWidth: 2,
                                     )),
                               ),
@@ -1082,7 +1082,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           height: 16,
                           width: 16,
                           child: CircularProgressIndicator(
-                            color: Colors.blue,
+                            color: AppColors.blueColor,
                             strokeWidth: 2,
                           )),
                     ),

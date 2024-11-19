@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 import '../../../../core/theme/text_style.dart';
 import '../bloc/get_my_awards_bloc/get_my_awards_bloc.dart';
@@ -71,7 +72,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
         child: Scaffold(
             backgroundColor: const Color(0xFFF5F5FF),
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.whiteColor,
               leading: InkWell(
                 child: const Icon(Icons.arrow_back_ios, size: 20),
                 onTap: () => context.pop(),
@@ -88,7 +89,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 12),
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                     ),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -152,7 +153,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 12),
                           decoration: const BoxDecoration(
-                            color: Colors.white,
+                            color: AppColors.whiteColor,
                           ),
                           child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
