@@ -1061,6 +1061,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 post.multimedia![0].contains('.mp4')
             ? VideoDisplayWidget(
                 videoUrl: post.multimedia![0],
+                thumbnailUrl: post.thumbnail!,
               )
             : Container(),
         post.multimedia != null &&

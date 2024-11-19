@@ -11,6 +11,7 @@ class UploadPostPressedEvent extends UploadPostEvent {
   final String city;
   final List<dynamic>? options;
   final bool allowMultipleVotes;
+  final File? thumbnail;
 
   UploadPostPressedEvent({
     required this.location,
@@ -18,6 +19,7 @@ class UploadPostPressedEvent extends UploadPostEvent {
     this.content,
     required this.type,
     this.multimedia,
+    this.thumbnail,
     required this.city,
     this.options,
     required this.allowMultipleVotes,
@@ -33,5 +35,6 @@ class UploadPostPressedEvent extends UploadPostEvent {
         allowMultipleVotes,
         city,
         options,
+        thumbnail,
       ];
 }

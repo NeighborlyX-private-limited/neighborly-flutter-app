@@ -10,6 +10,7 @@ abstract class UploadRemoteDataSource {
     required String city,
     List<dynamic>? options,
     required bool allowMultipleVotes,
+    File? thumbnail,
   });
 
   Future<String> uploadFile({required File file});

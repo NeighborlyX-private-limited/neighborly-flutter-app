@@ -9,6 +9,7 @@ class PostEntity extends Equatable {
   final String? title;
   final String? content;
   final List<String>? multimedia;
+  final String? thumbnail;
   final String createdAt;
   final num cheers;
   final num bools;
@@ -38,6 +39,7 @@ class PostEntity extends Equatable {
     required this.bools,
     this.proPic,
     this.multimedia,
+    this.thumbnail,
     required this.userFeedback,
   });
 
@@ -47,6 +49,7 @@ class PostEntity extends Equatable {
     String? userName,
     String? title,
     String? content,
+    String? thumbnail,
     List<String>? multimedia,
     String? createdAt,
     num? cheers,
@@ -66,6 +69,7 @@ class PostEntity extends Equatable {
       userName: userName ?? this.userName,
       title: title ?? this.title,
       content: content ?? this.content,
+      thumbnail: thumbnail ?? this.thumbnail,
       multimedia: multimedia ?? this.multimedia,
       createdAt: createdAt ?? this.createdAt,
       cheers: cheers ?? this.cheers,
@@ -100,5 +104,6 @@ class PostEntity extends Equatable {
         bools,
         multimedia,
         userFeedback,
+        thumbnail,
       ];
 }

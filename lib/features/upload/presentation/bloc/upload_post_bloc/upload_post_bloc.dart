@@ -27,6 +27,7 @@ class UploadPostBloc extends Bloc<UploadPostEvent, UploadPostState> {
         allowMultipleVotes: event.allowMultipleVotes,
         options: event.options,
         location: event.location,
+        thumbnail: event.thumbnail,
       );
       print('...Result in UploadPostBloc $result');
 

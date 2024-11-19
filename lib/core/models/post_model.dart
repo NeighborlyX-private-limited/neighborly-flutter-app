@@ -7,6 +7,7 @@ class PostModel extends PostEntity {
     required super.userName,
     required super.type,
     super.title,
+    super.thumbnail,
     super.content,
     super.pollOptions,
     required super.createdAt,
@@ -35,6 +36,7 @@ class PostModel extends PostEntity {
           : [],
       userName: json['username'] as String? ?? '',
       title: json['title'] as String? ?? '',
+      thumbnail: json['thumbnail'] != null ? json['thumbnail'] as String? : '',
       content: json['body'] as String? ?? '',
       createdAt: json['createdat'] as String? ?? '',
       cheers: json['cheers'] ?? 0,
@@ -66,7 +68,8 @@ class PostModel extends PostEntity {
       'boos': bools,
       'multimedia': multimedia,
       'awards': awardType,
-      'userFeedback': userFeedback
+      'userFeedback': userFeedback,
+      'thumbnail': thumbnail
     };
   }
 }

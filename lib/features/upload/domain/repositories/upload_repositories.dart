@@ -13,6 +13,7 @@ abstract class UploadRepositories {
     required String city,
     List<dynamic>? options,
     required bool allowMultipleVotes,
+    File? thumbnail,
   });
   Future<Either<Failure, String>> uploadFile({required File file});
 }

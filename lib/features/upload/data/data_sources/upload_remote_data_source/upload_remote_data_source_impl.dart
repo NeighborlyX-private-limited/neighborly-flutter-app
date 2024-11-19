@@ -22,6 +22,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     required String city,
     List<dynamic>? options,
     required bool allowMultipleVotes,
+    File? thumbnail,
   }) async {
     print('...uploadPost start with');
     print('title:$title');
@@ -32,6 +33,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     print('options:$options');
     print('allowMultipleVotes:$allowMultipleVotes');
     print('multimedia:$multimedia');
+    print('thumbnail:$thumbnail');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -56,6 +58,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       ..fields['title'] = title
       ..fields['content'] = content ?? ''
       ..fields['type'] = type
+      // ..fields['thumbnail'] = thumbnail.toString()
       ..fields['city'] = city
       ..fields['pollOptions'] = jsonEncode(options ?? [])
       ..fields['location[0]'] = location[0].toString()
@@ -76,6 +79,17 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       }
     }
 
+    // // Add the thumbnail file if available
+    if (thumbnail != null) {
+      request.files.add(
+        http.MultipartFile(
+          'thumbnail',
+          thumbnail.readAsBytes().asStream(),
+          thumbnail.lengthSync(),
+          filename: thumbnail.path.split('/').last,
+        ),
+      );
+    }
     print('Request Fields:');
     request.fields.forEach((key, value) {
       print('$key: $value');

@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -9,7 +11,9 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/video_compresser.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/bouncing_logo_indicator.dart';
@@ -300,63 +304,130 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool isImageUploading = false;
   bool isImage = false;
   bool isPollOptionShow = true;
-  bool isShowLoading = false;
   bool _isPlaying = false;
+  File? _thumbnail;
   List<File>? _selectedMedia = [];
   File? _videoFile;
   VideoPlayerController? _videoController;
 
-  /// pic video from gallery
+  /// get thumbnail
+
+  Future<void> _generateVideoThumbnail(String videoPath) async {
+    try {
+      // Generate the thumbnail
+      Uint8List? thumbnail = await VideoThumbnail.thumbnailData(
+        video: videoPath,
+        imageFormat: ImageFormat.JPEG,
+        maxWidth: 400,
+        quality: 75,
+      );
+
+      if (thumbnail != null) {
+        // Get the directory to store the thumbnail
+        final directory = await getApplicationDocumentsDirectory();
+        final thumbnailPath = '${directory.path}/thumbnail.jpeg';
+
+        // Save the thumbnail as a file
+        File thumbnailFile = File(thumbnailPath);
+        await thumbnailFile.writeAsBytes(thumbnail);
+
+        // Get the path of the saved thumbnail
+        String filePath = thumbnailFile.path;
+
+        // Now you can send the file as part of your API request
+        print('Thumbnail saved at: $filePath');
+
+        // Optionally, create a File object and send it to your API
+        _thumbnail = File(filePath);
+        // Pass this `thumbnailForApi` to your API method as required
+
+        setState(() {}); // Trigger UI update if necessary
+      }
+    } catch (e) {
+      print('Error generating thumbnail: $e');
+    }
+  }
+
+  // Future<void> _generateVideoThumbnail(String videoPath) async {
+  //   try {
+  //     Uint8List? thumbnail = await VideoThumbnail.thumbnailData(
+  //       video: videoPath,
+  //       imageFormat: ImageFormat.JPEG,
+  //       maxWidth: 400,
+  //       quality: 75,
+  //     );
+
+  //     if (thumbnail != null) {
+  //       String base64Thumbnail = base64Encode(thumbnail);
+  //       print('Base64 Encoded Thumbnail: $base64Thumbnail');
+  //       setState(() {});
+  //     }
+  //   } catch (e) {
+  //     print('Error generating thumbnail: $e');
+  //   }
+  // }
+
+  // Pick video from gallery
   Future<void> _pickVideoFromGallery() async {
     final ImagePicker picker = ImagePicker();
     try {
+      // Start loading
       setState(() {
         isImagePicking = true;
       });
-      final XFile? pickedFile =
-          await picker.pickVideo(source: ImageSource.gallery);
+
+      // Pick video from gallery
+      final XFile? pickedFile = await picker.pickVideo(
+        source: ImageSource.gallery,
+      );
+
+      // Check if a video is picked
       if (pickedFile != null) {
+        // Get picked video path
         _videoFile = File(pickedFile.path);
+        await _generateVideoThumbnail(_videoFile!.path);
+
+        // Calculate video size
         int fileSizeInBytes = _videoFile!.lengthSync();
         double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-
-        print(
-            'Video size before compression: ${fileSizeInMB.toStringAsFixed(2)} MB');
+        print('Video size before: ${fileSizeInMB.toStringAsFixed(2)} MB');
 
         if (fileSizeInMB > 50) {
-          // Replace 100 with your size limit if needed
           print('The video is too large.');
-          // Optionally show an alert to the user about the video size
           return;
         }
-        setState(() async {
-          isPollOptionShow = false;
-          _videoFile = File(pickedFile.path);
-          _videoFile = await compressVideo(_videoFile!);
-          int fileSizeInBytes = _videoFile!.lengthSync();
-          double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
 
-          print(
-              'Video size AFTER compression: ${fileSizeInMB.toStringAsFixed(2)} MB');
+        // Compress video
+        _videoFile = await compressVideo(_videoFile!);
 
-          if (fileSizeInMB > 15) {
-            // Replace 100 with your size limit if needed
-            print('The video is too large AFTER COMPRESS.');
-            // Optionally show an alert to the user about the video size
-            return;
-          }
-          _selectedMedia!.add(_videoFile!);
-          _videoController = VideoPlayerController.file(
-            File(pickedFile.path),
-          )..initialize().then((_) {
-              setState(() {});
-              _videoController!.pause();
-            });
-        });
+        // Validate compressed video size
+        int compressedFileSizeInBytes = _videoFile!.lengthSync();
+        double compressedFileSizeInMB =
+            compressedFileSizeInBytes / (1024 * 1024);
+        print(
+            'Video size after: ${compressedFileSizeInMB.toStringAsFixed(2)} MB');
+
+        if (compressedFileSizeInMB > 15) {
+          print('The video is too large after compression.');
+          return;
+        }
+
+        // Add compressed video to selected media
+        _selectedMedia!.add(_videoFile!);
+
+        // Initialize video controller
+        _videoController = VideoPlayerController.file(_videoFile!)
+          ..initialize().then((_) {
+            setState(() {}); // Refresh the UI after initialization
+            _videoController!.pause();
+          });
+      } else {
+        print('Please pick a video.');
       }
     } catch (e) {
-      print('error in video picking');
+      print('Error in video picking: $e');
     } finally {
+      // Stop loading
       setState(() {
         isImagePicking = false;
         isPollOptionShow = true;
@@ -364,46 +435,71 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
-  /// pic video from camera
+  /// Pick a video from the camera
   Future<void> _pickVideoFromCamera() async {
     final ImagePicker picker = ImagePicker();
     try {
+      // Start loading
       setState(() {
         isImagePicking = true;
       });
+
+      // Pick video from camera
       final XFile? pickedFile = await picker.pickVideo(
         source: ImageSource.camera,
       );
+
+      // Check if a video is picked
       if (pickedFile != null) {
-        File file = File(pickedFile.path);
+        // Get picked video path
+        _videoFile = File(pickedFile.path);
+        await _generateVideoThumbnail(_videoFile!.path);
 
-        // Get the size of the file in bytes
-        int fileSizeInBytes = await file.length();
+        // Calculate initial video size
+        int initialFileSizeInBytes = _videoFile!.lengthSync();
+        double initialFileSizeInMB = initialFileSizeInBytes / (1024 * 1024);
+        print(
+            'Initial file size: ${initialFileSizeInMB.toStringAsFixed(2)} MB');
 
-        // Convert the size to a more readable format (e.g., MB)
-        double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+        // Check if the video size is too large
+        if (initialFileSizeInMB > 15) {
+          print('The video is too large.');
+          return;
+        }
 
-        print('File size: ${fileSizeInMB.toStringAsFixed(2)} MB');
-        setState(() async {
-          //isImagePicking = true;
-          isShowLoading = false;
+        // Compress video
+        _videoFile = await compressVideo(_videoFile!);
+
+        // Calculate compressed video size
+        int compressedFileSizeInBytes = _videoFile!.lengthSync();
+        double compressedFileSizeInMB =
+            compressedFileSizeInBytes / (1024 * 1024);
+        print(
+            'Compressed video size: ${compressedFileSizeInMB.toStringAsFixed(2)} MB');
+
+        if (compressedFileSizeInMB > 15) {
+          print('The compressed video is still too large.');
+          return;
+        }
+
+        // Add compressed video to selected media and initialize video controller
+        setState(() {
           isPollOptionShow = false;
-          _videoFile = File(pickedFile.path);
-
-          _videoFile = await compressVideo(_videoFile!);
           _selectedMedia!.add(_videoFile!);
-          _videoController = VideoPlayerController.file(
-            File(pickedFile.path),
-          )..initialize().then((_) {
-              setState(() {});
+
+          _videoController = VideoPlayerController.file(_videoFile!)
+            ..initialize().then((_) {
+              setState(() {}); // Refresh UI after initialization
               _videoController!.pause();
-              isShowLoading = false;
             });
         });
+      } else {
+        print('No video was picked.');
       }
     } catch (e) {
-      print('error in video picking');
+      print('Error in video picking: $e');
     } finally {
+      // Stop loading
       setState(() {
         isImagePicking = false;
         isPollOptionShow = true;
@@ -495,6 +591,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       if (image != null) {
         setState(() {
+          isImage = true;
           _selectedMedia!.add(File(image!.path));
         });
       }
@@ -782,6 +879,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           title: _titleController.text.trim(),
                                           type: 'post',
                                           multimedia: _selectedMedia,
+                                          thumbnail: _thumbnail,
                                           allowMultipleVotes: false,
                                           location: locationCord,
                                         ),
@@ -889,6 +987,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           allowMultipleVotes:
                                               allowMultipleVotes,
                                           location: locationCord,
+                                          thumbnail: _thumbnail,
                                         ),
                                       );
                                     },
@@ -899,6 +998,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ],
                     ),
                   ),
+
                   if (_videoController != null &&
                       _videoController!.value.isInitialized)
                     SizedBox(
@@ -915,14 +1015,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               height: 260,
                               // color: Colors.redAccent,
                               child: Center(
-                                child: Transform.rotate(
-                                  angle: pi / 2,
-                                  child: AspectRatio(
-                                    aspectRatio: 1 / 1,
-                                    child: VideoPlayer(_videoController!),
-                                  ),
+                                child: AspectRatio(
+                                  aspectRatio: 1 / 1,
+                                  child: VideoPlayer(_videoController!),
                                 ),
                               ),
+                              // child: Center(
+                              //   child: Transform.rotate(
+                              //     angle: pi / 2,
+                              //     child: AspectRatio(
+                              //       aspectRatio: 1 / 1,
+                              //       child: VideoPlayer(_videoController!),
+                              //     ),
+                              //   ),
+                              // ),
                             ),
                             Positioned.fill(
                               child: Align(
@@ -962,13 +1068,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             ),
                           ],
                         )
-                      : _videoController == null
-                          ? SizedBox()
-                          : Center(
+                      : _videoController != null
+                          ? Center(
                               child: CircularProgressIndicator(
                                 color: AppColors.primaryColor,
                               ),
-                            ),
+                            )
+                          : SizedBox(),
                   if (isImage)
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -1016,7 +1122,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   if (_condition == 'post')
                     Padding(
                       padding: const EdgeInsets.only(
-                          top: 14.0, left: 14.0, right: 14.0),
+                        top: 14.0,
+                        left: 14.0,
+                        right: 14.0,
+                      ),
                       child: Column(
                         children: [
                           TextField(

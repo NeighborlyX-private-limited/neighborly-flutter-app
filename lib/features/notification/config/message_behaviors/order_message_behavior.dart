@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../message_behavior.dart';
 
 class OrderMessageBehavior implements MessageBehavior {

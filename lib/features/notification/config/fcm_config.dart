@@ -167,12 +167,18 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
     }, onDone: () {
       print('...FCMConfig onLocaleClick DONE');
     });
-    FirebaseMessaging.onMessageOpenedApp.listen(handleMessage,
-        onError: (error) {
+    FirebaseMessaging.onMessageOpenedApp
+        .listen((message) => handleMessage(message), onError: (error) {
       print('...FCMConfig onMessageOpenedApp error:$error');
     }, onDone: () {
       print('...FCMConfig onMessageOpenedApp DONE');
     });
+    // FirebaseMessaging.onMessageOpenedApp.listen(handleMessage,
+    //     onError: (error) {
+    //   print('...FCMConfig onMessageOpenedApp error:$error');
+    // }, onDone: () {
+    //   print('...FCMConfig onMessageOpenedApp DONE');
+    // });
   }
 
   ///Call to FirebaseMessaging.instance.deleteToken();

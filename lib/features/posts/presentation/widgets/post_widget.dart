@@ -214,6 +214,7 @@ class _PostWidgetState extends State<PostWidget> {
                     widget.post.multimedia![0].contains('.mp4')
                 ? VideoDisplayWidget(
                     videoUrl: widget.post.multimedia![0],
+                    thumbnailUrl: widget.post.thumbnail!,
                   )
                 : Container(),
             widget.post.multimedia != null &&

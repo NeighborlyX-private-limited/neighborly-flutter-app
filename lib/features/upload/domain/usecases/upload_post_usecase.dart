@@ -19,6 +19,7 @@ class UploadPostUsecase {
     required String city,
     List<dynamic>? options,
     required bool allowMultipleVotes,
+    File? thumbnail,
   }) async {
     return await repository.uploadPost(
       title: title,
@@ -29,6 +30,7 @@ class UploadPostUsecase {
       city: city,
       options: options,
       location: location,
+      thumbnail: thumbnail,
     );
   }
 }
