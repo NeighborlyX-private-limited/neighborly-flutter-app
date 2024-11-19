@@ -250,12 +250,12 @@ class _MainPageState extends State<MainPage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFFF5F5FF),
+        backgroundColor: AppColors.lightBackgroundColor,
         bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color(0xFFF5F5FF),
           type: BottomNavigationBarType.fixed,
           selectedItemColor: AppColors.primaryColor,
-          unselectedItemColor: Colors.grey,
+          unselectedItemColor: AppColors.greyColor,
           items: <BottomNavigationBarItem>[
             const BottomNavigationBarItem(
               icon: Icon(

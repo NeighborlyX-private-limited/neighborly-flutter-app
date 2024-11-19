@@ -117,7 +117,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                         child: Text(
                           'Yes',
                           style: TextStyle(
-                              color: Colors.white, fontSize: 18, height: 0.3),
+                              color:AppColors.whiteColor, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -180,7 +180,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
+            color: AppColors.blackColor,
           ),
           onTap: () {
             Navigator.pop(context);
@@ -239,7 +239,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
               return Container(
                 padding: EdgeInsets.all(15),
                 width: double.infinity,
-                color: Colors.white,
+                color: AppColors.whiteColor,
                 child: Column(
                   children: [
                     Expanded(
@@ -384,15 +384,15 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                                         height: 22,
                                         width: 22,
                                         child: CircularProgressIndicator(
-                                          color: Colors.white,
+                                          color: AppColors.whiteColor,
                                         ),
                                       )
                                     : Text(
                                         'Register',
                                         style: TextStyle(
                                             color: _isChecked
-                                                ? Colors.white
-                                                : Colors.grey,
+                                                ? AppColors.whiteColor
+                                                : AppColors.greyColor,
                                             fontSize: 18,
                                             height: 0.3),
                                       ),

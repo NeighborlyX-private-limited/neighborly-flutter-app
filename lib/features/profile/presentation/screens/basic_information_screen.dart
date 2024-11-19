@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
@@ -117,8 +118,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
         await ImageCropper().cropImage(sourcePath: imagePath, uiSettings: [
       AndroidUiSettings(
         toolbarTitle: 'Cropper',
-        toolbarColor: Colors.deepOrange,
-        toolbarWidgetColor: Colors.white,
+        toolbarColor: AppColors.deepOrangeColor,
+        toolbarWidgetColor: AppColors.whiteColor,
         aspectRatioPresets: [
           CropAspectRatioPreset.original,
           CropAspectRatioPreset.square,
@@ -138,7 +139,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,7 +428,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               ? const Text(
                                   'Username and gender cannot be empty',
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: AppColors.redColor,
                                     fontSize: 15,
                                   ),
                                 )
@@ -452,7 +453,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               ? const Text(
                                   'Username should be at least 6 character long.',
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: AppColors.redColor,
                                     fontSize: 15,
                                   ),
                                 )
@@ -461,7 +462,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               ? const Text(
                                   'Username cannot contain spaces.',
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: AppColors.redColor,
                                     fontSize: 15,
                                   ),
                                 )
@@ -493,7 +494,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                     vertical: 5,
                                   ),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
+                                    border: Border.all(color:AppColors.lightGreyColor),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: TextField(
@@ -544,7 +545,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               ? const Text(
                                   'Invalid Phone number.',
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: AppColors.redColor,
                                     fontSize: 15,
                                   ),
                                 )
@@ -631,7 +632,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
+                              border: Border.all(color: AppColors.lightGreyColor),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: TextField(

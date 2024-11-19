@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 
@@ -60,7 +61,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
         // context.push('/post-detail/${post.}/${true}/${post.userId}');
       },
       child: Container(
-        color: Colors.white,
+        color: AppColors.whiteColor,
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -406,7 +407,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                           Text(
                                             timeAgo(widget.post.createdAt),
                                             style: TextStyle(
-                                              color: Colors.grey,
+                                              color: AppColors.greyColor,
                                               fontWeight: FontWeight.w400,
                                               fontSize: screenWidth * 0.035,
                                               height: 1.3,
@@ -445,7 +446,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: BlocConsumer<DeletePostBloc, DeletePostState>(
@@ -493,7 +494,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                   children: [
                     const Icon(
                       Icons.delete,
-                      color: Colors.red,
+                      color:AppColors.redColor,
                     ),
                     const SizedBox(
                       width: 10,

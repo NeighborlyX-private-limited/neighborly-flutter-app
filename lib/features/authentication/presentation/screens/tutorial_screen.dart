@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_state.dart';
 
+import '../../../../core/theme/colors.dart';
+
 class TutorialScreen extends StatefulWidget {
   const TutorialScreen({super.key});
 
@@ -136,9 +138,9 @@ class TutorialScreenState extends State<TutorialScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: const [
+                      boxShadow:  [
                         BoxShadow(
-                          color: Colors.black26,
+                          color: AppColors.blackColor.withOpacity(0.26),
                           blurRadius: 6,
                           offset: Offset(0, 2),
                         ),

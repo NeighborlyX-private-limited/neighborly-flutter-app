@@ -42,9 +42,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
     return SafeArea(
         child: Scaffold(
-      backgroundColor: const Color(0xFFF5F5FF),
+      backgroundColor: AppColors.lightBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         leading: InkWell(
           child: const Icon(Icons.arrow_back_ios, size: 20),
           onTap: () => context.pop(),
@@ -58,7 +58,7 @@ class _SettingScreenState extends State<SettingScreen> {
       body: Container(
         padding: const EdgeInsets.all(16),
         decoration: const BoxDecoration(
-          color: Colors.white,
+          color: AppColors.whiteColor,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,7 +300,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   controller: scrollController,
                   child: Container(
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -345,7 +345,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             ? const Text(
                                 'Wrong username',
                                 textAlign: TextAlign.left,
-                                style: TextStyle(color: Colors.red),
+                                style: TextStyle(color: AppColors.redColor),
                               )
                             : const SizedBox(),
                         const SizedBox(height: 4),
@@ -355,7 +355,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             ButtonWidget(
                               color: const Color(0xffF5F5F5),
                               text: 'Cancel',
-                              textColor: Colors.black,
+                              textColor: AppColors.blackColor,
                               onTapListener: () {
                                 Navigator.pop(context);
                               },
@@ -364,7 +364,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             ButtonWidget(
                               color: AppColors.primaryColor,
                               text: 'Verify',
-                              textColor: Colors.white,
+                              textColor: AppColors.whiteColor,
                               onTapListener: () {
                                 String? userName =
                                     ShardPrefHelper.getUsername();
@@ -401,7 +401,7 @@ class _SettingScreenState extends State<SettingScreen> {
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -437,7 +437,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ButtonWidget(
                     color: const Color(0xffF5F5F5),
                     text: 'Cancel',
-                    textColor: Colors.black,
+                    textColor: AppColors.blackColor,
                     onTapListener: () {
                       context.pop();
                     },
@@ -481,9 +481,9 @@ class _SettingScreenState extends State<SettingScreen> {
                         );
                       }
                       return ButtonWidget(
-                        color: const Color(0xffFD1D1D),
+                        color: AppColors.redColor,
                         text: 'Logout',
-                        textColor: Colors.white,
+                        textColor: AppColors.whiteColor,
                         onTapListener: () {
                           context.read<LogoutBloc>().add(
                                 LogoutButtonPressedEvent(),
@@ -577,7 +577,7 @@ class _SettingScreenState extends State<SettingScreen> {
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -613,7 +613,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ButtonWidget(
                     color: const Color(0xffF5F5F5),
                     text: 'Cancel',
-                    textColor: Colors.black,
+                    textColor: AppColors.blackColor,
                     onTapListener: () {
                       context.pop();
                     },
@@ -659,9 +659,9 @@ class _SettingScreenState extends State<SettingScreen> {
                         // return const Center(child: CircularProgressIndicator());
                       }
                       return ButtonWidget(
-                        color: const Color(0xffFD1D1D),
+                        color: AppColors.redColor,
                         text: 'Delete',
-                        textColor: Colors.white,
+                        textColor: AppColors.whiteColor,
                         onTapListener: () {
                           context.read<DeleteAccountBloc>().add(
                                 DeleteAccountButtonPressedEvent(),

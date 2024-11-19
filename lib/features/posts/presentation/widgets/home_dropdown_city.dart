@@ -56,7 +56,7 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: ListView(
@@ -89,7 +89,7 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
             title: Text(
               city,
               style: TextStyle(
-                color: isSelected ? AppColors.primaryColor : Colors.black,
+                color: isSelected ? AppColors.primaryColor : AppColors.blackColor,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
@@ -101,7 +101,7 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
               _removeOverlay();
             },
           ),
-          Divider(height: 1, color: Colors.grey),
+          Divider(height: 1, color: AppColors.greyColor),
         ],
       );
     }).toList();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:share_it/share_it.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
@@ -189,7 +190,7 @@ class _ProfileReactionCommentWidgetState
                       Text(
                         cheersCount.toString(), // Use state variable for count
                         style: TextStyle(
-                          color: isCheered ? Colors.red : Colors.grey[900],
+                          color: isCheered ? AppColors.redColor : Colors.grey[900],
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -249,7 +250,7 @@ class _ProfileReactionCommentWidgetState
                     Text(
                       boolsCount.toString(), // Use state variable for count
                       style: TextStyle(
-                        color: isBooled ? Colors.blue : Colors.grey[600],
+                        color: isBooled ? AppColors.blueColor : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -391,7 +392,7 @@ class _ProfileReactionCommentWidgetState
           },
           child: Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: AppColors.whiteColor,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -407,7 +408,7 @@ class _ProfileReactionCommentWidgetState
                       width: 40,
                       height: 5,
                       decoration: BoxDecoration(
-                        color: const Color(0xffB8B8B8),
+                        color: AppColors.greyColor,
                         borderRadius: BorderRadius.circular(40),
                       ),
                     ),

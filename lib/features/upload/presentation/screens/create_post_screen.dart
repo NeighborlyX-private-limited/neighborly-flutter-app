@@ -168,8 +168,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   /// location access dialog
   AlertDialog buildLocationAccessDialog(BuildContext context) {
     return AlertDialog(
-      surfaceTintColor: Colors.white,
-      backgroundColor: Colors.white,
+      surfaceTintColor: AppColors.whiteColor,
+      backgroundColor: AppColors.whiteColor,
       title: Text("No Location Access"),
       content: Text(
           "Device location is turned off, and if you don't turn on your location then last location will be used."),
@@ -179,7 +179,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             foregroundColor: AppColors.primaryColor,
             side: BorderSide(color: AppColors.primaryColor),
             elevation: 0,
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.whiteColor,
           ),
           onPressed: () {
             Navigator.of(context).pop();
@@ -559,7 +559,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           body: GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
@@ -648,7 +648,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                     "Sorry,You are banned.\nPlease try it after some time",
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      color: Colors.grey,
+                                                      color: AppColors.greyColor,
                                                     ),
                                                     textAlign: TextAlign.center,
                                                   ),
@@ -679,7 +679,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                         style: TextStyle(
                                                             fontSize: 16,
                                                             color:
-                                                                Colors.white),
+                                                            AppColors.whiteColor),
                                                       ),
                                                     ),
                                                   ),
@@ -933,7 +933,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     _isPlaying
                                         ? Icons.pause_circle_filled
                                         : Icons.play_circle_filled,
-                                    color: Colors.white,
+                                    color: AppColors.whiteColor,
                                   ),
                                   onPressed: _togglePlayPause,
                                 ),
@@ -949,12 +949,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 },
                                 child: Container(
                                   decoration: const BoxDecoration(
-                                    color: Colors.red,
+                                    color: AppColors.redColor,
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
                                     Icons.close,
-                                    color: Colors.white,
+                                    color: AppColors.whiteColor,
                                     size: 24,
                                   ),
                                 ),
@@ -996,12 +996,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     onTap: () => _removeImages(index),
                                     child: Container(
                                       decoration: const BoxDecoration(
-                                        color: Colors.red,
+                                        color: AppColors.redColor,
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
                                         Icons.close,
-                                        color: Colors.white,
+                                        color: AppColors.whiteColor,
                                         size: 24,
                                       ),
                                     ),
@@ -1090,7 +1090,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               children: [
                                 const Icon(
                                   Icons.add,
-                                  color: Color(0xff635BFF),
+                                  color: AppColors.primaryColor,
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
@@ -1115,10 +1115,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     allowMultipleVotes = value;
                                   });
                                 },
-                                inactiveThumbColor: Colors.white,
-                                inactiveTrackColor: Colors.grey,
-                                activeTrackColor: const Color(0xff635BFF),
-                                activeColor: Colors.white,
+                                inactiveThumbColor: AppColors.whiteColor,
+                                inactiveTrackColor: AppColors.greyColor,
+                                activeTrackColor: AppColors.primaryColor,
+                                activeColor: AppColors.whiteColor,
                               ),
                             ],
                           ),
@@ -1132,7 +1132,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           ),
           bottomSheet: !_isKeyboardVisible
               ? Container(
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                   height: 220,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
@@ -1261,7 +1261,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   ),
                 )
               : Container(
-                  color: Colors.white,
+                  color: AppColors.whiteColor,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
                   child: Row(
@@ -1384,7 +1384,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   right: 0,
                   top: 8,
                   child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.red),
+                    icon: const Icon(Icons.close, color: AppColors.redColor),
                     onPressed: () {
                       _removeOption(index);
                     },

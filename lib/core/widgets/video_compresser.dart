@@ -1,5 +1,7 @@
 import 'dart:io';
+
 import 'package:video_compress/video_compress.dart';
+
 
 Future<File> compressVideo(File path) async {
   await VideoCompress.setLogLevel(0);

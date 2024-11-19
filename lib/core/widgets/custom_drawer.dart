@@ -52,7 +52,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SvgPicture.asset(
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                       'assets/logo.svg',
                       width: 30,
                       height: 30,
@@ -61,7 +61,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     Text(
                       'Neighborly', // Replace with your app name
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppColors.whiteColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -104,7 +104,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 Text(
                   userName!,
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.whiteColor,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -174,7 +174,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -208,9 +208,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ButtonWidget(
-                    color: const Color(0xffF5F5F5),
+                    color: AppColors.lightBackgroundColor,
                     text: 'Cancel',
-                    textColor: Colors.black,
+                    textColor: AppColors.blackColor,
                     onTapListener: () {
                       context.pop();
                     },
@@ -249,18 +249,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             //     logo: 'images/logo.svg',
                             //   ),
                             // ),
-                            Center(child: CircularProgressIndicator()),
+                            Center(child: CircularProgressIndicator(),),
                           ],
                         );
                       }
                       return ButtonWidget(
-                        color: const Color(0xffFD1D1D),
+                        color: AppColors.redColor,
                         text: 'Logout',
-                        textColor: Colors.white,
+                        textColor: AppColors.whiteColor,
                         onTapListener: () {
-                          context.read<LogoutBloc>().add(
-                                LogoutButtonPressedEvent(),
-                              );
+                          context
+                              .read<LogoutBloc>()
+                              .add(LogoutButtonPressedEvent(),);
                         },
                         isActive: true,
                       );

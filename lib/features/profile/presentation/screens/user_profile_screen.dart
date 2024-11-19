@@ -74,7 +74,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       textDirection: TextDirection.ltr,
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           body: BlocBuilder<GetUserInfoBloc, GetUserInfoState>(
             builder: (context, state) {
               if (state is GetUserInfoLoadingState) {
@@ -88,7 +88,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                       SliverAppBar(
                         pinned: true,
                         floating: true,
-                        backgroundColor: Colors.white,
+                        backgroundColor: AppColors.whiteColor,
                         expandedHeight: 300.0,
                         leading: IconButton(
                           icon: const Icon(Icons.arrow_back),
@@ -113,7 +113,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                             icon: const Icon(
                               Icons.more_vert,
                               size: 25,
-                              color: Colors.black,
+                              color: AppColors.blackColor,
                             ),
                           ),
                         ],
@@ -145,7 +145,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                         height: 24,
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Colors.white,
+                                          color: AppColors.whiteColor,
                                         ),
                                         child: SvgPicture.asset(
                                           checkStringInList(state
@@ -277,7 +277,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: AppColors.whiteColor,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
@@ -346,7 +346,7 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: Colors.white,
+      color: AppColors.whiteColor,
       child: _tabBar,
     );
   }

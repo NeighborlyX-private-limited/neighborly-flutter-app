@@ -83,8 +83,8 @@ class RadiusScreenState extends State<RadiusScreen> {
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("3 km", style: TextStyle(color: Colors.black)),
-                      Text("10 km", style: TextStyle(color: Colors.black)),
+                      Text("3 km", style: TextStyle(color: AppColors.blackColor)),
+                      Text("10 km", style: TextStyle(color: AppColors.blackColor)),
                     ],
                   ),
                 ],

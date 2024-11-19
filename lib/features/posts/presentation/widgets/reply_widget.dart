@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 import '../../../../core/utils/helpers.dart';
 import '../../domain/entities/reply_entity.dart';
@@ -68,7 +69,7 @@ class _ReplyWidgetState extends State<ReplyWidget> {
                 Text(
                   timeAgo(widget.reply.createdAt),
                   style: const TextStyle(
-                    color: Colors.grey,
+                    color: AppColors.greyColor,
                     fontWeight: FontWeight.w400,
                     fontSize: 14,
                     height: 1.3,

@@ -55,7 +55,7 @@ class EventEmptyGoing extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 1),
             child: Text(
               'Explore Events',
-              style: TextStyle(color: Colors.white, fontSize: 16, height: 0.3),
+              style: TextStyle(color: AppColors.whiteColor, fontSize: 16, height: 0.3),
             ),
           ),
         )

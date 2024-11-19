@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 class AppbatButton extends StatelessWidget {
   final VoidCallback onTap;
@@ -11,7 +12,7 @@ class AppbatButton extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.icon,
-    this.iconColor = Colors.white,
+    this.iconColor = AppColors.whiteColor,
     this.iconSize = 20,
     this.opacity = 0.5,
     this.size = 40,

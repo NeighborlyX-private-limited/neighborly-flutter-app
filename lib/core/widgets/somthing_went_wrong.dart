@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 class SomethingWentWrong extends StatelessWidget {
   final String imagePath; // Path to the image (SVG)
@@ -26,11 +27,11 @@ class SomethingWentWrong extends StatelessWidget {
         height: 300,
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black26,
+              color: AppColors.blackColor.withOpacity(0.26),
               blurRadius: 2,
               offset: Offset(1, 1),
             ),
@@ -52,7 +53,7 @@ class SomethingWentWrong extends StatelessWidget {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: AppColors.blackColor,
               ),
               textAlign: TextAlign.center,
             ),
@@ -60,7 +61,7 @@ class SomethingWentWrong extends StatelessWidget {
             // Message text
             Text(
               message,
-              style: TextStyle(fontSize: 14, color: Colors.grey),
+              style: TextStyle(fontSize: 14, color: AppColors.greyColor),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12),

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 import '../constants/core_dimens.dart';
 
@@ -36,10 +37,10 @@ class UserAvatarStyledWidget extends StatelessWidget {
         CoreDimens.proportionalWidth(context, avatarSize ?? 30);
     return CircleAvatar(
       radius: proportionalSize + avatarBorderSize!,
-      backgroundColor: Colors.green,
+      backgroundColor: AppColors.greenColor,
       child: CircleAvatar(
         radius: proportionalSize,
-        backgroundColor: isDarkmode! ? Colors.black : Colors.white,
+        backgroundColor: isDarkmode! ? AppColors.blackColor : AppColors.whiteColor,
         child: avatarUrl.contains('.')
             ? CircleAvatar(
                 radius: proportionalSize - avatarBorderSize!,

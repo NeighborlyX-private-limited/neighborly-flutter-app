@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 
+import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
@@ -333,7 +334,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         children: [
                           const Icon(
                             Icons.delete,
-                            color: Colors.red,
+                            color: AppColors.redColor,
                           ),
                           const SizedBox(
                             width: 10,
@@ -384,7 +385,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           builder: (context, state) {
             return SingleChildScrollView(
               child: Container(
-                color: Colors.white,
+                color: AppColors.whiteColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: Column(
@@ -538,7 +539,7 @@ class _CommentWidgetState extends State<CommentWidget> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 240,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(

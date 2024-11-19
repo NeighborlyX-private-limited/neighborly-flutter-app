@@ -62,9 +62,9 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
               Icons.arrow_back_ios,
@@ -114,7 +114,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 !isEmailValid
                     ? const Text(
                         'Please enter a valid email address',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
                 const SizedBox(height: 12),
@@ -132,7 +132,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 isPasswordShort
                     ? const Text(
                         'Password must be at least 6 characters long',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
                 const SizedBox(height: 12),
@@ -218,13 +218,13 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 emailAlreadyExists
                     ? const Text(
                         'Email already exists. Please login.',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
                 noConnection
                     ? const Text(
                         'No Internet Connection',
-                        style: TextStyle(color: Colors.red),
+                        style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:shimmer/shimmer.dart';
 
 class PostWithCommentsShimmer extends StatelessWidget {
@@ -23,7 +24,7 @@ class OnePostSheemer extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      color: Colors.white,
+      color: AppColors.whiteColor,
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
