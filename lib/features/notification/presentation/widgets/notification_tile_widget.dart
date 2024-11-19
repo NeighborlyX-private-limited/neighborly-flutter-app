@@ -99,16 +99,14 @@ class NotificationTileWidget extends StatelessWidget {
           Expanded(
               child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: GestureDetector(
-              onTap: () async {
+            child: InkWell(
+              onTap: () {
                 // if (notification.status == "unread") {
                 //   await updateNotificationStatus([notification.id]);
                 // }
 
-                print(notification);
                 bool ispost = notification.posttype == 'post';
-                print('notification ${notification.posttype}');
-                print('notification ${notification.userId}');
+
                 String commentid = '0';
                 if (notification.title == 'You’ve Got a Comment!') {
                   commentid = notification.commentId ?? '0';
@@ -117,7 +115,6 @@ class NotificationTileWidget extends StatelessWidget {
                     (notification.postId == null ||
                         notification.postId == '') &&
                     notification.commentId != null) {
-                  print('click');
                   context.push(
                       '/post-detail-of-specific-comment/${notification.commentId}');
                   // if (context.mounted) {
