@@ -462,7 +462,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               ? const Text(
                                   'Username cannot contain spaces.',
                                   style: TextStyle(
-                                    color: Colors.red,
+                                    color: AppColors.redColor,
                                     fontSize: 15,
                                   ),
                                 )

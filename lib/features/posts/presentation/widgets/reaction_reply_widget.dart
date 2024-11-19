@@ -288,7 +288,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                       Text(
                         cheersCount.toString(),
                         style: TextStyle(
-                          color: isCheered ? Colors.red : Colors.grey[900],
+                          color: isCheered ? AppColors.redColor : Colors.grey[900],
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -347,7 +347,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                     Text(
                       boolsCount.toString(),
                       style: TextStyle(
-                        color: isBooled ? Colors.blue : Colors.grey[600],
+                        color: isBooled ? AppColors.blueColor : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -459,7 +459,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
           },
           child: Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: AppColors.whiteColor,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
@@ -537,7 +537,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                     child: Text(
                                       localLegendCount.toString(),
                                       style: const TextStyle(
-                                        color: Colors.white,
+                                        color: AppColors.whiteColor,
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -560,7 +560,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                   style: GoogleFonts.roboto(
                                     color: isLocalLegendAwardAvailable
                                         ? Color(0xff3D3D3D)
-                                        : Colors.grey.withOpacity(0.5),
+                                        : AppColors.greyColor.withOpacity(0.5),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -573,7 +573,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                   style: GoogleFonts.roboto(
                                     color: isLocalLegendAwardAvailable
                                         ? Color(0xff2E2E2E)
-                                        : Colors.grey.withOpacity(0.5),
+                                        : AppColors.greyColor.withOpacity(0.5),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                   ),
@@ -628,7 +628,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                   child: Text(
                                     sunflowerCount.toString(),
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: AppColors.whiteColor,
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -651,7 +651,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 style: GoogleFonts.roboto(
                                   color: isSunflowerAwardAvailable
                                       ? Color(0xff3D3D3D)
-                                      : Colors.grey.withOpacity(0.5),
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -664,7 +664,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 style: GoogleFonts.roboto(
                                   color: isSunflowerAwardAvailable
                                       ? Color(0xff2E2E2E)
-                                      : Colors.grey.withOpacity(0.5),
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -718,7 +718,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                   child: Text(
                                     streetlightCount.toString(),
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: AppColors.whiteColor,
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -741,7 +741,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 style: GoogleFonts.roboto(
                                   color: isStreetlightAwardAvailable
                                       ? Color(0xff3D3D3D)
-                                      : Colors.grey.withOpacity(0.5),
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -754,7 +754,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 style: GoogleFonts.roboto(
                                   color: isStreetlightAwardAvailable
                                       ? Color(0xff2E2E2E)
-                                      : Colors.grey.withOpacity(0.5),
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -808,7 +808,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                   child: Text(
                                     parkBenchCount.toString(),
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: AppColors.whiteColor,
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -831,7 +831,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 style: GoogleFonts.roboto(
                                   color: isParkBenchAwardAvailable
                                       ? Color(0xff3D3D3D)
-                                      : Colors.grey.withOpacity(0.5),
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -844,7 +844,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 style: GoogleFonts.roboto(
                                   color: isParkBenchAwardAvailable
                                       ? Color(0xff2E2E2E)
-                                      : Colors.grey.withOpacity(0.5),
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -898,7 +898,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                   child: Text(
                                     mapCount.toString(),
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: AppColors.whiteColor,
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -921,7 +921,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 style: GoogleFonts.roboto(
                                   color: isMapAwardAvailable
                                       ? Color(0xff3D3D3D)
-                                      : Colors.grey.withOpacity(0.5),
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -934,7 +934,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 style: GoogleFonts.roboto(
                                   color: isMapAwardAvailable
                                       ? Color(0xff2E2E2E)
-                                      : Colors.grey.withOpacity(0.5),
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 class ImageSlider extends StatefulWidget {
   final List<String> multimedia;
@@ -39,7 +40,7 @@ class ImageSliderState extends State<ImageSlider> {
                   height: 350,
                   placeholder: (context, url) => Center(
                     child: CircularProgressIndicator(
-                      color: Colors.blue,
+                      color: AppColors.blueColor,
                       strokeWidth: 2,
                     ),
                   ),
@@ -59,7 +60,7 @@ class ImageSliderState extends State<ImageSlider> {
               margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _currentPage == index ? Colors.blueAccent : Colors.grey,
+                color: _currentPage == index ? AppColors.blueColor: AppColors.greyColor,
               ),
             );
           }).toList(),

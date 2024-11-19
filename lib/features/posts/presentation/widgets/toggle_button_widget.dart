@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -44,7 +45,7 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
       minWidth: 38,
       activeBgColor: [Color(0xff635BFF)],
       inactiveBgColor: const Color(0xffC5C2FF),
-      dividerColor: Colors.blue,
+      dividerColor: AppColors.blueColor,
       cornerRadius: 32.0,
       customWidgets: [
         SvgPicture.asset(

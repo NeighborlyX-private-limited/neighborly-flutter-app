@@ -247,8 +247,8 @@ class _VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                       _controller,
                       allowScrubbing: true,
                       colors: const VideoProgressColors(
-                        playedColor: Colors.blue,
-                        bufferedColor: Colors.grey,
+                        playedColor: AppColors.blueColor,
+                        bufferedColor: AppColors.greyColor,
                         backgroundColor: Colors.black12,
                       ),
                     ),
@@ -276,7 +276,7 @@ class _VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                         _isPlaying
                             ? Icons.pause_circle_filled
                             : Icons.play_circle_filled,
-                        color: Colors.white,
+                        color: AppColors.greyColor,
                       ),
                       onPressed: _togglePlayPause,
                     ),

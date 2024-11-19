@@ -190,7 +190,7 @@ class _ProfileReactionCommentWidgetState
                       Text(
                         cheersCount.toString(), // Use state variable for count
                         style: TextStyle(
-                          color: isCheered ? Colors.red : Colors.grey[900],
+                          color: isCheered ? AppColors.redColor : Colors.grey[900],
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -250,7 +250,7 @@ class _ProfileReactionCommentWidgetState
                     Text(
                       boolsCount.toString(), // Use state variable for count
                       style: TextStyle(
-                        color: isBooled ? Colors.blue : Colors.grey[600],
+                        color: isBooled ? AppColors.blueColor : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -408,7 +408,7 @@ class _ProfileReactionCommentWidgetState
                       width: 40,
                       height: 5,
                       decoration: BoxDecoration(
-                        color: const Color(0xffB8B8B8),
+                        color: AppColors.greyColor,
                         borderRadius: BorderRadius.circular(40),
                       ),
                     ),

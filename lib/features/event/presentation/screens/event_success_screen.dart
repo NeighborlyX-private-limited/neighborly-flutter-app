@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:share_it/share_it.dart';
 
+import '../../../../core/theme/colors.dart';
 import '../../data/model/event_model.dart';
 import '../widgets/event_card_widget.dart';
 
@@ -151,7 +152,7 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                   // print('shareResult: ${shareResult}');
                 },
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff635BFF),
+                    backgroundColor: AppColors.primaryColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                           50), // Ajuste o raio conforme necessário
@@ -162,7 +163,7 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                   child: Text(
                     'Share with Friends',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: AppColors.whiteColor,
                       fontSize: 18,
                     ),
                   ),
@@ -195,7 +196,7 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                   child: Text(
                     'Back to home',
                     style: TextStyle(
-                      color: Colors.black,
+                      color: AppColors.blackColor,
                       fontSize: 18,
                     ),
                   ),
