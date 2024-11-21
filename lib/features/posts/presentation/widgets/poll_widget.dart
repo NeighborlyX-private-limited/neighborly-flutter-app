@@ -56,7 +56,7 @@ class _PollWidgetState extends State<PollWidget> {
             '/post-detail/${widget.post.id}/${false}/${widget.post.userId}/0');
       },
       child: Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +93,7 @@ class _PollWidgetState extends State<PollWidget> {
                                         height: 16,
                                         width: 16,
                                         child: CircularProgressIndicator(
-                                          color: Colors.blue,
+                                          color: AppColors.primaryColor,
                                           strokeWidth: 2,
                                         ),
                                       ),
@@ -228,7 +228,7 @@ class _PollWidgetState extends State<PollWidget> {
                                 height: 50,
                                 width: 50,
                                 child: CircularProgressIndicator(
-                                  color: Colors.blue,
+                                  color: AppColors.primaryColor,
                                   strokeWidth: 2,
                                 ),
                               ),

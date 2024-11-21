@@ -70,7 +70,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
 
     return SafeArea(
         child: Scaffold(
-            backgroundColor: const Color(0xFFF5F5FF),
+            backgroundColor: AppColors.lightBackgroundColor,
             appBar: AppBar(
               backgroundColor: AppColors.whiteColor,
               leading: InkWell(

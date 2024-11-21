@@ -84,7 +84,7 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
           ListTile(
             leading: Icon(
               Icons.location_on,
-              color: isSelected ? AppColors.primaryColor : Colors.grey,
+              color: isSelected ? AppColors.primaryColor : AppColors.greyColor,
             ),
             title: Text(
               city,

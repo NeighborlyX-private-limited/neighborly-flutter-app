@@ -529,11 +529,11 @@ class AboutArea extends StatelessWidget {
             moreStyle: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
-                color:AppColors.blueColor),
+                color:Colors.blue),
             lessStyle: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
-                color: AppColors.blueColor),
+                color: Colors.blue),
           ),
           const SizedBox(height: 4),
         ],

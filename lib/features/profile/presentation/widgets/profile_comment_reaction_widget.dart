@@ -250,7 +250,7 @@ class _ProfileReactionCommentWidgetState
                     Text(
                       boolsCount.toString(), // Use state variable for count
                       style: TextStyle(
-                        color: isBooled ? AppColors.blueColor : Colors.grey[600],
+                        color: isBooled ? AppColors.primaryColor : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),

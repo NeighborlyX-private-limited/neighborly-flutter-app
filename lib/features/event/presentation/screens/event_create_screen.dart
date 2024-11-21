@@ -313,9 +313,9 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: currentStep == 3
                   ? isValidForm == true
-                      ? AppColors.primaryColor
+                      ? Colors.blue
                       : Colors.red
-                  : AppColors.primaryColor,
+                  : Colors.blue,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(
                     50), // Ajuste o raio conforme necessário
@@ -385,7 +385,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                     height: 80,
                     width: 80,
                     child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
+                      color: Colors.blue,
                     ),
                   ),
                 );
@@ -396,7 +396,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
               return Container(
                 padding: EdgeInsets.only(top: 15),
                 width: double.infinity,
-                color: Colors.white,
+                color: Colors.blue,
                 child: SingleChildScrollView(
                   child: Column(
                     // crossAxisAlignment: CrossAxisAlignment.center,
@@ -562,7 +562,7 @@ class _Step1areaState extends State<Step1area> {
               borderRadius: BorderRadius.circular(10),
               border: DashedBorder.fromBorderSide(
                 dashLength: 10,
-                side: BorderSide(color: AppColors.primaryColor, width: 1),
+                side: BorderSide(color: Colors.blue, width: 1),
               ),
             ),
             child: selectedImage != null && selectedImage?.path != null ||
@@ -607,7 +607,7 @@ class _Step1areaState extends State<Step1area> {
                         padding:
                             EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         decoration: BoxDecoration(
-                          color: AppColors.lightBackgroundColor,
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: Row(
@@ -620,7 +620,7 @@ class _Step1areaState extends State<Step1area> {
                             Text(
                               'Add Cover Photo',
                               style: TextStyle(
-                                color: AppColors.primaryColor,
+                                color: Colors.blue,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -658,7 +658,7 @@ class _Step1areaState extends State<Step1area> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             // margin: EdgeInsets.all(15),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
+              border: Border.all(color: Colors.grey,),
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(
@@ -1016,7 +1016,7 @@ class Step4area extends StatelessWidget {
           AboutArea(description: event.description),
           //
           //
-          Divider(thickness: 10, color: AppColors.lightBackgroundColor),
+          Divider(thickness: 10, color: Colors.white),
           LocationDetailArea(
             locationStr: event.locationStr,
             address: event.address,

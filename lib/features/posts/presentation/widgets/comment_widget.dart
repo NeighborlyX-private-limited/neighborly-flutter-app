@@ -153,7 +153,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       Text(
                         timeAgo(widget.comment.createdAt),
                         style: TextStyle(
-                          color: Colors.grey,
+                          color: AppColors.greyColor,
                           fontWeight: FontWeight.w400,
                           fontSize: screenWidth * 0.035,
                           height: 1.3,
@@ -193,7 +193,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                     child: Text(
                       _showReplies ? 'Hide replies' : 'View replies',
                       style: const TextStyle(
-                        color: Colors.grey,
+                        color: AppColors.greyColor,
                         fontWeight: FontWeight.w500,
                         fontSize: 14,
                         height: 1.3,
@@ -273,7 +273,7 @@ class _CommentWidgetState extends State<CommentWidget> {
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: userId != widget.comment.userId

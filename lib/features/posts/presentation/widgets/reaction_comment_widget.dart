@@ -346,7 +346,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                     Text(
                       boolsCount.toString(),
                       style: TextStyle(
-                        color: isBooled ? AppColors.blueColor : Colors.grey[600],
+                        color: isBooled ? AppColors.primaryColor : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -510,7 +510,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                       width: 40,
                       height: 5,
                       decoration: BoxDecoration(
-                        color: const Color(0xffB8B8B8),
+                        color: AppColors.greyColor,
                         borderRadius: BorderRadius.circular(40),
                       ),
                     ),
@@ -548,7 +548,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               height: 84,
                               color: isLocalLegendAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                               colorBlendMode: BlendMode.modulate,
                             ),
                             Positioned(
@@ -590,8 +590,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'Local Legend',
                                 style: GoogleFonts.roboto(
                                   color: isLocalLegendAwardAvailable
-                                      ? Color(0xff3D3D3D)
-                                      : Colors.grey.withOpacity(0.5),
+                                      ? AppColors.blackColor
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -603,8 +603,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'Recognizing users who consistently contribute high-quality content.',
                                 style: GoogleFonts.roboto(
                                   color: isLocalLegendAwardAvailable
-                                      ? Color(0xff2E2E2E)
-                                      : Colors.grey.withOpacity(0.5),
+                                      ? AppColors.blackColor
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -639,7 +639,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               colorBlendMode: BlendMode.modulate,
                               color: isSunflowerAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                             ),
                             Positioned(
                               top: 4,
@@ -680,8 +680,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'Sunflower',
                                 style: GoogleFonts.roboto(
                                   color: isSunflowerAwardAvailable
-                                      ? Color(0xff3D3D3D)
-                                      : Colors.grey.withOpacity(0.5),
+                                      ? AppColors.blackColor
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -693,8 +693,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'For bringing positivity and cheerfulness to the community.',
                                 style: GoogleFonts.roboto(
                                   color: isSunflowerAwardAvailable
-                                      ? Color(0xff2E2E2E)
-                                      : Colors.grey.withOpacity(0.5),
+                                      ? AppColors.blackColor
+                                      : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -729,7 +729,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               colorBlendMode: BlendMode.modulate,
                               color: isStreetlightAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                             ),
                             Positioned(
                               top: 4,
@@ -770,7 +770,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'Streetlight',
                                 style: GoogleFonts.roboto(
                                   color: isStreetlightAwardAvailable
-                                      ? Color(0xff3D3D3D)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -783,7 +783,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'For providing clear guidance and valuable insights.',
                                 style: GoogleFonts.roboto(
                                   color: isStreetlightAwardAvailable
-                                      ? Color(0xff2E2E2E)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -819,7 +819,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               colorBlendMode: BlendMode.modulate,
                               color: isParkBenchAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                             ),
                             Positioned(
                               top: 4,
@@ -860,7 +860,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'Park Bench',
                                 style: GoogleFonts.roboto(
                                   color: isParkBenchAwardAvailable
-                                      ? Color(0xff3D3D3D)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -873,7 +873,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'For offering comforting and supportive posts.',
                                 style: GoogleFonts.roboto(
                                   color: isParkBenchAwardAvailable
-                                      ? Color(0xff2E2E2E)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -909,7 +909,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                               colorBlendMode: BlendMode.modulate,
                               color: isMapAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                             ),
                             Positioned(
                               top: 4,
@@ -950,7 +950,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'Map',
                                 style: GoogleFonts.roboto(
                                   color: isMapAwardAvailable
-                                      ? Color(0xff3D3D3D)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -963,7 +963,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
                                 'For creating informative and detailed content.',
                                 style: GoogleFonts.roboto(
                                   color: isMapAwardAvailable
-                                      ? Color(0xff2E2E2E)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,

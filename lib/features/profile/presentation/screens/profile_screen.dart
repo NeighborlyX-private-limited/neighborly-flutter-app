@@ -74,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       textDirection: TextDirection.ltr,
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           body: BlocBuilder<GetProfileBloc, GetProfileState>(
             builder: (context, state) {
               if (state is GetProfileLoadingState) {
@@ -87,7 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     return <Widget>[
                       SliverAppBar(
                         pinned: true,
-                        backgroundColor: Colors.white,
+                        backgroundColor: AppColors.whiteColor,
                         expandedHeight: 300.0,
                         leading: IconButton(
                           icon: const Icon(Icons.arrow_back),
@@ -113,7 +113,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             icon: const Icon(
                               Icons.settings_outlined,
                               size: 25,
-                              color: Colors.black,
+                              color: AppColors.blackColor,
                             ),
                           ),
                         ],
@@ -140,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               width: 26,
                                               child: CircularProgressIndicator(
                                                 strokeWidth: 2,
-                                                color: Colors.blue,
+                                                color: AppColors.primaryColor,
                                               ),
                                             ),
                                           ),
@@ -157,7 +157,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         height: 24,
                                         decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
-                                          color: Colors.white,
+                                          color: AppColors.whiteColor,
                                         ),
                                         child: SvgPicture.asset(
                                           checkStringInList(state

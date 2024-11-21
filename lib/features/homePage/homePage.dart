@@ -252,7 +252,7 @@ class _MainPageState extends State<MainPage> {
       child: Scaffold(
         backgroundColor: AppColors.lightBackgroundColor,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color(0xFFF5F5FF),
+          backgroundColor: AppColors.lightBackgroundColor,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: AppColors.primaryColor,
           unselectedItemColor: AppColors.greyColor,

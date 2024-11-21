@@ -57,7 +57,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
       builder: (BuildContext context) {
         // String? userId = ShardPrefHelper.getUserID();
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 120,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
@@ -117,7 +117,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                         child: Text(
                           'Yes',
                           style: TextStyle(
-                              color:AppColors.whiteColor, fontSize: 18, height: 0.3),
+                              color:Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -180,7 +180,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
-            color: AppColors.blackColor,
+            color: Colors.black,
           ),
           onTap: () {
             Navigator.pop(context);
@@ -228,7 +228,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                     height: 80,
                     width: 80,
                     child: CircularProgressIndicator(
-                      color: AppColors.primaryColor,
+                      color: Colors.blue,
                     ),
                   ),
                 );
@@ -239,7 +239,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
               return Container(
                 padding: EdgeInsets.all(15),
                 width: double.infinity,
-                color: AppColors.whiteColor,
+                color: Colors.white,
                 child: Column(
                   children: [
                     Expanded(
@@ -365,7 +365,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: _isChecked
-                                    ? AppColors.primaryColor
+                                    ? Colors.blue
                                     : Colors.grey[100],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
@@ -391,8 +391,8 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                                         'Register',
                                         style: TextStyle(
                                             color: _isChecked
-                                                ? AppColors.whiteColor
-                                                : AppColors.greyColor,
+                                                ? Colors.white
+                                                : Colors.grey,
                                             fontSize: 18,
                                             height: 0.3),
                                       ),

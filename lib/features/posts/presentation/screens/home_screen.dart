@@ -266,9 +266,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Builder(builder: (BuildContext context) {
           return Scaffold(
             key: _scaffoldKey,
-            backgroundColor: const Color(0xFFF5F5FF),
+            backgroundColor: AppColors.lightBackgroundColor,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.whiteColor,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -283,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 40,
                       width: 160,
                       decoration: BoxDecoration(
-                        color: const Color(0xffC5C2FF),
+                        color: AppColors.whiteColor,
                         borderRadius: BorderRadius.circular(100),
                       ),
                       child: Row(
@@ -293,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             Icons.location_on,
                             size: 16,
                             color: isHome
-                                ? const Color(0xff635BFF)
+                                ?  AppColors.primaryColor
                                 : const Color.fromARGB(255, 65, 65, 70),
                           ),
                           // Home Button
@@ -314,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         : FontWeight.normal,
                                     fontSize: 16,
                                     color: isHome
-                                        ? const Color(0xff635BFF)
+                                        ? AppColors.primaryColor
                                         : const Color.fromARGB(255, 65, 65, 70),
                                   ),
                                 ),
@@ -362,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                             height: 25,
                             width: 1,
-                            color: const Color(0xff2E2E2E),
+                            color: AppColors.greyColor
                           ),
                           SizedBox(
                             width: 5,
@@ -379,8 +379,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: isHome
-                                    ? const Color(0xffC5C2FF)
-                                    : const Color(0xff635BFF),
+                                    ? AppColors.inActivePrimaryColor
+                                    : AppColors.primaryColor,
                               ),
                               child: Center(
                                 child: SvgPicture.asset(
@@ -409,7 +409,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             badgeContent: unreadNotificationCount > 0
                                 ? Text(
                                     "$unreadNotificationCount",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: AppColors.whiteColor),
                                   )
                                 : null,
                             badgeStyle:
@@ -442,7 +442,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.menu, color: Colors.black),
+                  icon: Icon(Icons.menu, color: AppColors.blackColor),
                   onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
                 ),
               ],
@@ -484,7 +484,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                                 child: Text(
                                   'Create a Post',
-                                  style: TextStyle(color: Colors.white),
+                                  style: TextStyle(color: AppColors.whiteColor),
                                 ),
                               )
                             ],
@@ -526,7 +526,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     return const Center(
                         child: Text(
                       'oops something went wrong',
-                      style: TextStyle(color: Colors.red),
+                      style: TextStyle(color: AppColors.redColor),
                     ));
                   }
                   if (state.error.contains('No internet connection')) {
@@ -589,7 +589,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         width: 40,
                         height: 5,
                         decoration: BoxDecoration(
-                          color: const Color(0xffB8B8B8),
+                          color: AppColors.greyColor,
                           borderRadius: BorderRadius.circular(40),
                         ),
                       ),
@@ -601,7 +601,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: onboardingHeading2Style,
                       ),
                     ),
-                    const Divider(color: Colors.grey),
+                    const Divider(color: AppColors.greyColor,),
                     Text('Date of Birth', style: blackonboardingBody1Style),
                     const SizedBox(height: 8),
                     Row(
@@ -631,7 +631,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                            dropdownColor: Colors.white,
+                            dropdownColor: AppColors.whiteColor,
                             icon: Icon(Icons.arrow_drop_down),
                           ),
                         ),
@@ -660,7 +660,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                            dropdownColor: Colors.white,
+                            dropdownColor: AppColors.whiteColor,
                             icon: Icon(Icons.arrow_drop_down),
                           ),
                         ),
@@ -689,7 +689,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 borderRadius: BorderRadius.circular(8.0),
                               ),
                             ),
-                            dropdownColor: Colors.white,
+                            dropdownColor: AppColors.whiteColor,
                             icon: Icon(Icons.arrow_drop_down),
                           ),
                         ),
