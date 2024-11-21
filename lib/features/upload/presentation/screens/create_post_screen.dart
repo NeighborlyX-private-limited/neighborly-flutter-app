@@ -393,6 +393,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         print('Video size before: ${fileSizeInMB.toStringAsFixed(2)} MB');
 
         if (fileSizeInMB > 50) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('The video is too large..')),
+            );
+          }
+          setState(() {
+            _videoFile = null;
+          });
           print('The video is too large.');
           return;
         }
@@ -408,6 +416,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             'Video size after: ${compressedFileSizeInMB.toStringAsFixed(2)} MB');
 
         if (compressedFileSizeInMB > 15) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('The video is too large..')),
+            );
+          }
+          setState(() {
+            _videoFile = null;
+          });
           print('The video is too large after compression.');
           return;
         }
@@ -463,9 +479,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
         // Check if the video size is too large
         if (initialFileSizeInMB > 15) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('The video is too large..')),
+            );
+          }
+          setState(() {
+            _videoFile = null;
+          });
           print('The video is too large.');
           return;
         }
+        //      if (_selectedMedia!.length >= 5) {
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(content: Text('You can select up to 5 images.')),
+        //   );
+        //   setState(() {
+        //     isImage = false;
+        //     _selectedMedia = [];
+        //   });
+        //   return;
+        // }
 
         // Compress video
         _videoFile = await compressVideo(_videoFile!);
@@ -478,6 +512,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             'Compressed video size: ${compressedFileSizeInMB.toStringAsFixed(2)} MB');
 
         if (compressedFileSizeInMB > 15) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('The video is too large..')),
+            );
+          }
+          setState(() {
+            _videoFile = null;
+          });
           print('The compressed video is still too large.');
           return;
         }
@@ -745,7 +787,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                     "Sorry,You are banned.\nPlease try it after some time",
                                                     style: TextStyle(
                                                       fontSize: 14,
-                                                      color: AppColors.greyColor,
+                                                      color:
+                                                          AppColors.greyColor,
                                                     ),
                                                     textAlign: TextAlign.center,
                                                   ),
@@ -775,8 +818,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                         'Go Back',
                                                         style: TextStyle(
                                                             fontSize: 16,
-                                                            color:
-                                                            AppColors.whiteColor),
+                                                            color: AppColors
+                                                                .whiteColor),
                                                       ),
                                                     ),
                                                   ),
