@@ -143,7 +143,7 @@ class _OptionCardState extends State<OptionCard> {
             // Foreground container for text and styling
             Container(
               decoration: BoxDecoration(
-                color: Colors.transparent,
+                color: AppColors.transparentColor,
                 borderRadius: BorderRadius.circular(4),
                 border: Border.all(
                   color: Colors.grey[300]!,

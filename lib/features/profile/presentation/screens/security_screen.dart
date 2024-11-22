@@ -61,9 +61,9 @@ class _SecurityPageState extends State<SecurityPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(Icons.arrow_back_ios, size: 20),
             onTap: () => context.pop(),
@@ -77,7 +77,7 @@ class _SecurityPageState extends State<SecurityPage> {
           child: Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
-                color: Colors.white,
+                color: AppColors.whiteColor,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +104,7 @@ class _SecurityPageState extends State<SecurityPage> {
                   isWrongCurrentPassword
                       ? const Text(
                           'Wrong password. Try again or click Forgot password to reset it.',
-                          style: TextStyle(color: Colors.red),
+                          style: TextStyle(color: AppColors.redColor),
                         )
                       : const SizedBox(),
                   const SizedBox(

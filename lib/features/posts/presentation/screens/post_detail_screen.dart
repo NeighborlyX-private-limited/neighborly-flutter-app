@@ -99,9 +99,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.whiteColor,
             leading: InkWell(
               child: const Icon(Icons.arrow_back_ios, size: 15),
               onTap: () => context.pop(),
@@ -327,7 +327,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   "Sorry,You are banned.\nPlease try it after some time",
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: Colors.grey,
+                                    color: AppColors.greyColor,
                                   ),
                                   textAlign: TextAlign.center,
                                 ),
@@ -348,7 +348,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     child: Text(
                                       'Go Back',
                                       style: TextStyle(
-                                          fontSize: 16, color: Colors.white),
+                                          fontSize: 16, color: AppColors.whiteColor,),
                                     ),
                                   ),
                                 ),
@@ -428,12 +428,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       height: 48,
                       width: 48,
                       decoration: const BoxDecoration(
-                        color: Colors.blue,
+                        color: AppColors.primaryColor,
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
                         Icons.arrow_upward,
-                        color: Colors.white,
+                        color: AppColors.whiteColor,
                         size: 30,
                       ),
                     ),
@@ -603,7 +603,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           height: 50,
                           width: 50,
                           child: CircularProgressIndicator(
-                            color: Colors.blue,
+                            color: AppColors.primaryColor,
                             strokeWidth: 2,
                           ),
                         ),
@@ -641,7 +641,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 90,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: userId != widget.userId
@@ -705,7 +705,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         children: [
                           const Icon(
                             Icons.delete,
-                            color: Colors.red,
+                            color: AppColors.redColor,
                           ),
                           const SizedBox(
                             width: 10,
@@ -729,7 +729,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       context: context,
       builder: (BuildContext context) {
         return Container(
-          color: Colors.white,
+          color: AppColors.whiteColor,
           height: 240,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
@@ -807,7 +807,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         width: 40,
                         height: 5,
                         decoration: BoxDecoration(
-                          color: const Color(0xffB8B8B8),
+                          color: AppColors.greyColor,
                           borderRadius: BorderRadius.circular(40),
                         ),
                       ),
@@ -982,7 +982,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     height: 16,
                                     width: 16,
                                     child: CircularProgressIndicator(
-                                      color: AppColors.blueColor,
+                                      color: AppColors.primaryColor,
                                       strokeWidth: 2,
                                     )),
                               ),
@@ -1082,7 +1082,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           height: 16,
                           width: 16,
                           child: CircularProgressIndicator(
-                            color: AppColors.blueColor,
+                            color: AppColors.primaryColor,
                             strokeWidth: 2,
                           )),
                     ),

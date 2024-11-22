@@ -43,7 +43,7 @@ class _PostWidgetState extends State<PostWidget> {
             '/post-detail/${widget.post.id}/${true}/${widget.post.userId}/0');
       },
       child: Container(
-        color: Colors.white,
+        color: AppColors.whiteColor,
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -80,7 +80,7 @@ class _PostWidgetState extends State<PostWidget> {
                                       width: 16,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        color: Colors.blue,
+                                        color: AppColors.primaryColor,
                                       ),
                                     ),
                                   ),
@@ -244,7 +244,7 @@ class _PostWidgetState extends State<PostWidget> {
                               height: 50,
                               width: 50,
                               child: CircularProgressIndicator(
-                                color: AppColors.blueColor,
+                                color: AppColors.primaryColor,
                                 strokeWidth: 2,
                               ),
                             ),

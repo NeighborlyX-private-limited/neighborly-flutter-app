@@ -43,9 +43,9 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
       initialLabelIndex: currentIndex,
       minHeight: 35,
       minWidth: 38,
-      activeBgColor: [Color(0xff635BFF)],
-      inactiveBgColor: const Color(0xffC5C2FF),
-      dividerColor: AppColors.blueColor,
+      activeBgColor: [AppColors.primaryColor],
+      inactiveBgColor: AppColors.whiteColor,
+      dividerColor: AppColors.primaryColor,
       cornerRadius: 32.0,
       customWidgets: [
         SvgPicture.asset(

@@ -146,7 +146,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                     : Icon(
                         Icons.play_circle_filled,
                         color: widget.thumbnailUrl != ''
-                            ? Colors.white
+                            ? AppColors.whiteColor
                             : AppColors.primaryColor,
                         size: 60,
                       ),
@@ -172,7 +172,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                             IconButton(
                               icon: Icon(
                                 _isMuted ? Icons.volume_off : Icons.volume_up,
-                                color: Colors.white,
+                                color: AppColors.whiteColor,
                               ),
                               onPressed: () {
                                 setState(() {
@@ -209,14 +209,15 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                         child: VideoProgressIndicator(
                           _controller,
                           allowScrubbing: true,
-                          colors: const VideoProgressColors(
-                            playedColor: Colors.blue,
-                            bufferedColor: Colors.grey,
-                            backgroundColor: Colors.black12,
+                          colors: VideoProgressColors(
+                            playedColor: AppColors.primaryColor,
+                            bufferedColor: AppColors.greyColor,
+                            backgroundColor: AppColors.blackColor.withOpacity(0.12),
                           ),
                         ),
                       ),
                     ),
+
                     Positioned.fill(
                       child: Align(
                         alignment: Alignment.center,
@@ -226,7 +227,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                             _isPlaying
                                 ? Icons.pause_circle_filled
                                 : Icons.play_circle_filled,
-                            color: Colors.white,
+                            color: AppColors.whiteColor,
                           ),
                           onPressed: _togglePlayPause,
                         ),

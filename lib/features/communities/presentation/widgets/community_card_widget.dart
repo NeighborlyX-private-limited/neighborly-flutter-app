@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 import '../../../../core/models/community_model.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';

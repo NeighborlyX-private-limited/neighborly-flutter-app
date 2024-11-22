@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comment_by_comment_id_bloc/get_comments_by_commentId_bloc.dart';
@@ -85,12 +86,12 @@ class NotificationTileWidget extends StatelessWidget {
     //listWidgets.add(Text(timeAgoArea('2024-10-31T19:30:15.359Z')));
   }
 
-  Color tileColor = Color(0xFFF0F0F0);
+  Color tileColor = AppColors.lightGreyColor;
   @override
   Widget build(BuildContext context) {
     buildMainArea(context);
     return Container(
-      color: notification.status == "unread" ? Color(0xFFF0F0F0) : Colors.white,
+      color: notification.status == "unread" ? AppColors.lightGreyColor : AppColors.whiteColor,
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
       width: double.infinity,
       child: Row(

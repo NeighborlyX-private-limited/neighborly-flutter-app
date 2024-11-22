@@ -435,7 +435,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ButtonWidget(
-                    color: const Color(0xffF5F5F5),
+                    color: AppColors.lightBackgroundColor,
                     text: 'Cancel',
                     textColor: AppColors.blackColor,
                     onTapListener: () {
@@ -611,7 +611,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ButtonWidget(
-                    color: const Color(0xffF5F5F5),
+                    color: AppColors.lightBackgroundColor,
                     text: 'Cancel',
                     textColor: AppColors.blackColor,
                     onTapListener: () {

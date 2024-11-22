@@ -40,7 +40,7 @@ class ImageSliderState extends State<ImageSlider> {
                   height: 350,
                   placeholder: (context, url) => Center(
                     child: CircularProgressIndicator(
-                      color: AppColors.blueColor,
+                      color: AppColors.primaryColor,
                       strokeWidth: 2,
                     ),
                   ),
@@ -60,7 +60,7 @@ class ImageSliderState extends State<ImageSlider> {
               margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _currentPage == index ? AppColors.blueColor: AppColors.greyColor,
+                color: _currentPage == index ? AppColors.primaryColor: AppColors.greyColor,
               ),
             );
           }).toList(),

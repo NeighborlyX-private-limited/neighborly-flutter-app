@@ -347,7 +347,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                     Text(
                       boolsCount.toString(),
                       style: TextStyle(
-                        color: isBooled ? AppColors.blueColor : Colors.grey[600],
+                        color: isBooled ? AppColors.primaryColor : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -475,7 +475,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                       width: 40,
                       height: 5,
                       decoration: BoxDecoration(
-                        color: const Color(0xffB8B8B8),
+                        color: AppColors.greyColor,
                         borderRadius: BorderRadius.circular(40),
                       ),
                     ),
@@ -517,7 +517,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 height: 84,
                                 color: isLocalLegendAwardAvailable
                                     ? null
-                                    : Colors.grey.withOpacity(0.5),
+                                    : AppColors.greyColor.withOpacity(0.5),
                                 colorBlendMode: BlendMode.modulate,
                               ),
                               Positioned(
@@ -559,7 +559,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                   'Local Legend',
                                   style: GoogleFonts.roboto(
                                     color: isLocalLegendAwardAvailable
-                                        ? Color(0xff3D3D3D)
+                                        ? AppColors.greyColor
                                         : AppColors.greyColor.withOpacity(0.5),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -572,7 +572,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                   'Recognizing users who consistently contribute high-quality content.',
                                   style: GoogleFonts.roboto(
                                     color: isLocalLegendAwardAvailable
-                                        ? Color(0xff2E2E2E)
+                                        ? AppColors.greyColor
                                         : AppColors.greyColor.withOpacity(0.5),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
@@ -609,7 +609,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                               colorBlendMode: BlendMode.modulate,
                               color: isSunflowerAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                             ),
                             Positioned(
                               top: 4,
@@ -650,7 +650,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 'Sunflower',
                                 style: GoogleFonts.roboto(
                                   color: isSunflowerAwardAvailable
-                                      ? Color(0xff3D3D3D)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -663,7 +663,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 'For bringing positivity and cheerfulness to the community.',
                                 style: GoogleFonts.roboto(
                                   color: isSunflowerAwardAvailable
-                                      ? Color(0xff2E2E2E)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -699,7 +699,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                               colorBlendMode: BlendMode.modulate,
                               color: isStreetlightAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                             ),
                             Positioned(
                               top: 4,
@@ -740,7 +740,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 'Streetlight',
                                 style: GoogleFonts.roboto(
                                   color: isStreetlightAwardAvailable
-                                      ? Color(0xff3D3D3D)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -753,7 +753,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 'For providing clear guidance and valuable insights.',
                                 style: GoogleFonts.roboto(
                                   color: isStreetlightAwardAvailable
-                                      ? Color(0xff2E2E2E)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -789,7 +789,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                               colorBlendMode: BlendMode.modulate,
                               color: isParkBenchAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                             ),
                             Positioned(
                               top: 4,
@@ -830,7 +830,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 'Park Bench',
                                 style: GoogleFonts.roboto(
                                   color: isParkBenchAwardAvailable
-                                      ? Color(0xff3D3D3D)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -843,7 +843,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 'For offering comforting and supportive posts.',
                                 style: GoogleFonts.roboto(
                                   color: isParkBenchAwardAvailable
-                                      ? Color(0xff2E2E2E)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
@@ -879,7 +879,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                               colorBlendMode: BlendMode.modulate,
                               color: isMapAwardAvailable
                                   ? null
-                                  : Colors.grey.withOpacity(0.5),
+                                  : AppColors.greyColor.withOpacity(0.5),
                             ),
                             Positioned(
                               top: 4,
@@ -920,7 +920,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 'Map',
                                 style: GoogleFonts.roboto(
                                   color: isMapAwardAvailable
-                                      ? Color(0xff3D3D3D)
+                                      ? AppColors.greyColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -933,7 +933,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                                 'For creating informative and detailed content.',
                                 style: GoogleFonts.roboto(
                                   color: isMapAwardAvailable
-                                      ? Color(0xff2E2E2E)
+                                      ? AppColors.blackColor
                                       : AppColors.greyColor.withOpacity(0.5),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
