@@ -73,7 +73,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String authType = jsonDecode(response.body)['user']['auth_type'];
 
       /// set data to local
-
+      String gender = jsonDecode(response.body)['user']['gender'];
+      ShardPrefHelper.setGender(gender);
       ShardPrefHelper.setIsEmailLogin(true);
       ShardPrefHelper.setAuthtype(authType);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
@@ -189,6 +190,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           jsonDecode(response.body)['user']['viewedTutorial'];
       bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
       String authType = jsonDecode(response.body)['user']['auth_type'];
+      String gender = jsonDecode(response.body)['user']['gender'];
 
       /// set data to local
       if (email != null) {
@@ -197,6 +199,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ShardPrefHelper.setIsEmailLogin(false);
       }
       ShardPrefHelper.setAuthtype(authType);
+      ShardPrefHelper.setGender(gender);
       ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
@@ -277,6 +280,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             jsonDecode(response.body)['user']['viewedTutorial'];
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
         String authType = jsonDecode(response.body)['user']['auth_type'];
+        String gender = jsonDecode(response.body)['user']['gender'];
+        ShardPrefHelper.setGender(gender);
 
         /// set data to local
         if (email != null) {
@@ -395,7 +400,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         print('authType$authType');
 
         /// set data to local
-        ///
+        String gender = jsonDecode(response.body)['user']['gender'];
+        ShardPrefHelper.setGender(gender);
         ShardPrefHelper.setIsEmailLogin(false);
         ShardPrefHelper.setAuthtype(authType);
         ShardPrefHelper.setDob(isDobSet);

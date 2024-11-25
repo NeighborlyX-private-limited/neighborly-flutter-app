@@ -283,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 40,
                       width: 160,
                       decoration: BoxDecoration(
-                        color: AppColors.whiteColor,
+                        color: AppColors.inActivePrimaryColor,
                         borderRadius: BorderRadius.circular(100),
                       ),
                       child: Row(
@@ -293,8 +293,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             Icons.location_on,
                             size: 16,
                             color: isHome
-                                ?  AppColors.primaryColor
-                                : const Color.fromARGB(255, 65, 65, 70),
+                                ? AppColors.primaryColor
+                                : AppColors.blackColor,
                           ),
                           // Home Button
                           InkWell(
@@ -315,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     fontSize: 16,
                                     color: isHome
                                         ? AppColors.primaryColor
-                                        : const Color.fromARGB(255, 65, 65, 70),
+                                        : AppColors.blackColor,
                                   ),
                                 ),
                               ),
@@ -360,10 +360,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           // Vertical Divider
                           Container(
-                            height: 25,
-                            width: 1,
-                            color: AppColors.greyColor
-                          ),
+                              height: 25,
+                              width: 1,
+                              color: AppColors.blackColor),
                           SizedBox(
                             width: 5,
                           ),
@@ -409,7 +408,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             badgeContent: unreadNotificationCount > 0
                                 ? Text(
                                     "$unreadNotificationCount",
-                                    style: TextStyle(color: AppColors.whiteColor),
+                                    style:
+                                        TextStyle(color: AppColors.whiteColor),
                                   )
                                 : null,
                             badgeStyle:
@@ -419,8 +419,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: SvgPicture.asset(
                               'assets/alarm.svg',
                               fit: BoxFit.contain,
-                              width: 30,
-                              height: 30,
+                              width: 26,
+                              height: 26,
                             ),
                           )
                         : badges.Badge(
@@ -435,14 +435,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: SvgPicture.asset(
                               'assets/alarm.svg',
                               fit: BoxFit.contain,
-                              width: 30,
-                              height: 30,
+                              width: 26,
+                              height: 26,
                             ),
                           ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.menu, color: AppColors.blackColor),
+                  icon: Icon(
+                    Icons.menu,
+                    color: AppColors.greyColor,
+                    size: 26,
+                  ),
                   onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
                 ),
               ],
@@ -601,7 +605,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: onboardingHeading2Style,
                       ),
                     ),
-                    const Divider(color: AppColors.greyColor,),
+                    const Divider(
+                      color: AppColors.greyColor,
+                    ),
                     Text('Date of Birth', style: blackonboardingBody1Style),
                     const SizedBox(height: 8),
                     Row(
