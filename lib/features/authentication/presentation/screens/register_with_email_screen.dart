@@ -9,6 +9,7 @@ import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/register_bloc/register_bloc.dart';
 import '../widgets/button_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterWithEmailScreen extends StatefulWidget {
   const RegisterWithEmailScreen({super.key});
@@ -95,15 +96,23 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
               children: [
                 Image.asset('assets/big_email_icon.png'),
                 const SizedBox(height: 20),
-                Text('Continue with Email', style: onboardingHeading1Style),
+                Text(
+                  AppLocalizations.of(context)!.continue_with_email,
+                  // 'Continue with Email',
+                  style: onboardingHeading1Style,
+                ),
                 const SizedBox(height: 5),
-                Text('Join Neighborly with your email.',
-                    style: onboardingBodyStyle),
+                Text(
+                  AppLocalizations.of(context)!.join_neighborly_with_your_email,
+                  // 'Join Neighborly with your email.',
+                  style: onboardingBodyStyle,
+                ),
                 const SizedBox(height: 25),
                 TextFieldWidget(
                   border: true,
                   controller: _emailController,
-                  lableText: 'Enter Email Address',
+                  lableText: AppLocalizations.of(context)!.enter_email_address,
+                  // lableText: 'Enter Email Address',
                   isPassword: false,
                   onChanged: (value) {
                     setState(() {
@@ -112,8 +121,10 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                   },
                 ),
                 !isEmailValid
-                    ? const Text(
-                        'Please enter a valid email address',
+                    ? Text(
+                        AppLocalizations.of(context)!
+                            .please_enter_a_valid_email_address,
+                        // 'Please enter a valid email address',
                         style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
@@ -126,12 +137,15 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                     });
                   },
                   controller: _passwordController,
-                  lableText: 'Password',
+                  lableText: AppLocalizations.of(context)!.password,
+                  // lableText: 'Password',
                   isPassword: true,
                 ),
                 isPasswordShort
-                    ? const Text(
-                        'Password must be at least 6 characters long',
+                    ? Text(
+                        AppLocalizations.of(context)!
+                            .password_should_be_atleast_6_character_long,
+                        // 'Password must be at least 6 characters long',
                         style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
@@ -146,7 +160,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                   },
                   controller: _confirmPasswordController,
                   isPassword: true,
-                  lableText: 'Re-Password',
+                  lableText: AppLocalizations.of(context)!.confirm_password,
+                  // lableText: 'Re-Password',
                 ),
                 const SizedBox(height: 45),
                 BlocConsumer<RegisterBloc, RegisterState>(
@@ -187,7 +202,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                     return ButtonContainerWidget(
                         isActive: checkIsActive(),
                         color: AppColors.primaryColor,
-                        text: 'Sign Up',
+                        text: AppLocalizations.of(context)!.signup,
+                        // text: 'Sign Up',
                         isFilled: true,
                         onTapListener: () {
                           if (!isValidEmail(_emailController.text.trim())) {
@@ -216,14 +232,17 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 ),
                 const SizedBox(height: 15),
                 emailAlreadyExists
-                    ? const Text(
-                        'Email already exists. Please login.',
+                    ? Text(
+                        AppLocalizations.of(context)!
+                            .email_already_exists_please_login,
+                        // 'Email already exists. Please login.',
                         style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
                 noConnection
-                    ? const Text(
-                        'No Internet Connection',
+                    ? Text(
+                        AppLocalizations.of(context)!.no_internet_connection,
+                        // 'No Internet Connection',
                         style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),

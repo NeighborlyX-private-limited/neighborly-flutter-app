@@ -12,6 +12,7 @@ import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 import '../widgets/comments_section.dart';
 import '../widgets/posts_section.dart';
 import '../widgets/profile_sheemer_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -101,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 style: onboardingHeading2Style.copyWith(),
                               )
                             : Text(
-                                'Profile',
+                                AppLocalizations.of(context)!.profile,
                                 style: onboardingHeading2Style.copyWith(),
                               ),
                         actions: [
@@ -219,7 +220,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             ),
                                             const SizedBox(height: 5),
                                             Text(
-                                              'Posts',
+                                              AppLocalizations.of(context)!
+                                                  .posts,
+                                              // 'Posts',
                                               style: mediumGreyTextStyleBlack,
                                             ),
                                           ],
@@ -233,7 +236,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             ),
                                             const SizedBox(height: 5),
                                             Text(
-                                              'Karma',
+                                              AppLocalizations.of(context)!
+                                                  .karma,
+                                              // 'Karma',
                                               style: mediumGreyTextStyleBlack,
                                             ),
                                           ],
@@ -253,7 +258,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             ),
                                             const SizedBox(height: 5),
                                             Text(
-                                              'Awards',
+                                              AppLocalizations.of(context)!
+                                                  .awards,
+                                              // 'Awards',
                                               style: mediumGreyTextStyleBlack,
                                             ),
                                           ],
@@ -273,9 +280,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                             indicatorColor: AppColors.primaryColor,
                             labelColor: AppColors.primaryColor.withOpacity(0.8),
                             controller: _tabController,
-                            tabs: const [
-                              Tab(text: 'Posts'),
-                              Tab(text: 'Comments'),
+                            tabs: [
+                              Tab(text: AppLocalizations.of(context)!.posts),
+                              Tab(text: AppLocalizations.of(context)!.comments),
+                              // Tab(text: 'Posts'),
+                              // Tab(text: 'Comments'),
                             ],
                           ),
                         ),
@@ -298,10 +307,15 @@ class _ProfileScreenState extends State<ProfileScreen>
                     state.error.contains('internet')) {
                   return SomethingWentWrong(
                     imagePath: 'assets/something_went_wrong.svg',
-                    title: 'Aaah! Something went wrong',
-                    message:
-                        "We couldn't start your program.\nPlease try starting it again",
-                    buttonText: 'Retry',
+                    title:
+                        AppLocalizations.of(context)!.aaah_something_went_wrong,
+                    message: AppLocalizations.of(context)!
+                        .we_could_not_fetch_your_data_please_try_starting_it_again,
+                    buttonText: AppLocalizations.of(context)!.retry,
+                    // title: 'Aaah! Something went wrong',
+                    // message:
+                    //     "We couldn't start your program.\nPlease try starting it again",
+                    // buttonText: 'Retry',
                     onButtonPressed: () {
                       _fetchProfile();
 

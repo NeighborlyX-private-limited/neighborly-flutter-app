@@ -135,15 +135,18 @@ class _MainPageState extends State<MainPage> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context)!
+                .location_permissions_are_denied)));
+        // const SnackBar(content: Text('Location permissions are denied')));
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!
+              .location_permissions_are_permanently_denied_we_cannot_request_permissions)));
+      // 'Location permissions are permanently denied, we cannot request permissions.')));
       return false;
     }
     return true;
@@ -262,7 +265,7 @@ class _MainPageState extends State<MainPage> {
               icon: const Icon(
                 Icons.home,
               ),
-              label: AppLocalizations.of(context)!.hello,
+              label: AppLocalizations.of(context)!.home,
               // label: 'Home',
             ),
             // const BottomNavigationBarItem(
@@ -284,11 +287,11 @@ class _MainPageState extends State<MainPage> {
             //   ),
             //   label: 'Groups',
             // ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.person,
               ),
-              label: 'Profile',
+              label: AppLocalizations.of(context)!.profile,
             ),
           ],
           currentIndex: _currentIndex,

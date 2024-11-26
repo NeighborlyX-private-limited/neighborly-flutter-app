@@ -9,6 +9,7 @@ import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import '../bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import '../widgets/button_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OtpScreen extends StatefulWidget {
   final String data;
@@ -110,7 +111,8 @@ class _OtpScreenState extends State<OtpScreen> {
                 height: 20,
               ),
               Text(
-                'Enter Verification Code',
+                AppLocalizations.of(context)!.enter_verification_code,
+                // 'Enter Verification Code',
                 style: onboardingHeading1Style,
               ),
               const SizedBox(
@@ -119,8 +121,10 @@ class _OtpScreenState extends State<OtpScreen> {
               Text(
                 widget.verificationFor == 'phone-login' ||
                         widget.verificationFor == 'phone-register'
-                    ? 'We sent a verification code to your phone: ${widget.data}'
-                    : 'We sent a verification code to your email: ${widget.data}',
+                    ? '${AppLocalizations.of(context)!.we_sent_a_verification_code_to_your_phone}: ${widget.data}'
+                    : '${AppLocalizations.of(context)!.we_sent_a_verification_code_to_your_email}: ${widget.data}',
+                // ? 'We sent a verification code to your phone: ${widget.data}'
+                // : 'We sent a verification code to your email: ${widget.data}',
                 style: onboardingBodyStyle,
               ),
               const SizedBox(
@@ -129,7 +133,8 @@ class _OtpScreenState extends State<OtpScreen> {
               TextFieldWidget(
                 border: true,
                 controller: _otpController,
-                lableText: 'Enter OTP',
+                lableText: AppLocalizations.of(context)!.enter_otp,
+                // lableText: 'Enter OTP',
                 isPassword: false,
                 onChanged: (value) {
                   setState(() {
@@ -138,8 +143,10 @@ class _OtpScreenState extends State<OtpScreen> {
                 },
               ),
               isInvalidOtp
-                  ? const Text(
-                      'The OTP entered is incorrect. Please try again.',
+                  ? Text(
+                      AppLocalizations.of(context)!
+                          .the_otp_entered_is_incorrect_please_try_again,
+                      // 'The OTP entered is incorrect. Please try again.',
                       style: TextStyle(
                         color: AppColors.redColor,
                         fontSize: 12,
@@ -147,8 +154,9 @@ class _OtpScreenState extends State<OtpScreen> {
                     )
                   : Container(),
               isExpiredOtp
-                  ? const Text(
-                      'OTP has expired',
+                  ? Text(
+                      AppLocalizations.of(context)!.otp_has_expired,
+                      // 'OTP has expired',
                       style: TextStyle(
                         color: AppColors.redColor,
                         fontSize: 12,
@@ -231,7 +239,8 @@ class _OtpScreenState extends State<OtpScreen> {
                   return ButtonContainerWidget(
                     isActive: isOtpFilled,
                     color: AppColors.primaryColor,
-                    text: 'Verify',
+                    text: AppLocalizations.of(context)!.verify,
+                    // text: 'Verify',
                     isFilled: true,
                     onTapListener: () {
                       if (widget.verificationFor == 'phone-login' ||
@@ -311,7 +320,8 @@ class _OtpScreenState extends State<OtpScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Resend code?',
+                          AppLocalizations.of(context)!.resend_code,
+                          // 'Resend code?',
                           style: onboardingBody2Style,
                         )
                       ],
@@ -326,8 +336,10 @@ class _OtpScreenState extends State<OtpScreen> {
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
-                          'User not found, please ',
+                        Text(
+                          AppLocalizations.of(context)!
+                              .user_not_found_please_sign_up,
+                          // 'User not found, please ',
                           style: TextStyle(
                             color: AppColors.redColor,
                             fontSize: 17,
@@ -337,8 +349,9 @@ class _OtpScreenState extends State<OtpScreen> {
                           onTap: () {
                             context.go('/registerScreen');
                           },
-                          child: const Text(
-                            'Sign Up',
+                          child: Text(
+                            AppLocalizations.of(context)!.signup,
+                            // 'Sign Up',
                             style: TextStyle(
                               color: AppColors.primaryColor,
                               fontSize: 17,

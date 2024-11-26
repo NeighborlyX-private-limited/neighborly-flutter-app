@@ -11,6 +11,7 @@ import '../bloc/login_with_email_bloc/login_with_email_bloc.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/or_divider_widget.dart';
 import '../widgets/register_option.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -69,17 +70,15 @@ class _LoginScreenState extends State<LoginScreen> {
       body: BlocConsumer<LoginWithEmailBloc, LoginWithEmailState>(
         listener: (BuildContext context, LoginWithEmailState state) {
           if (state is OAuthSuccessState) {
-            Future.delayed(Duration(seconds: 5)).then((_) {
-              bool isSkippedTutorial = ShardPrefHelper.getIsSkippedTutorial();
-              bool isViewedTutorial = ShardPrefHelper.getIsViewedTutorial();
-              print('isSkippedTutorial in login:$isSkippedTutorial');
-              print('isViewedTutorial in login:$isViewedTutorial');
-              if (!isSkippedTutorial && !isViewedTutorial) {
-                context.go('/tutorialScreen');
-              } else {
-                context.go('/home/Home');
-              }
-            });
+            bool isSkippedTutorial = ShardPrefHelper.getIsSkippedTutorial();
+            bool isViewedTutorial = ShardPrefHelper.getIsViewedTutorial();
+            print('isSkippedTutorial in login:$isSkippedTutorial');
+            print('isViewedTutorial in login:$isViewedTutorial');
+            if (!isSkippedTutorial && !isViewedTutorial) {
+              context.go('/tutorialScreen');
+            } else {
+              context.go('/home/Home');
+            }
           }
         },
         builder: (context, state) {
@@ -99,7 +98,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Center(
                     child: Text(
-                      'Welcome back',
+                      AppLocalizations.of(context)!.welcome_back,
+                      //'Welcome back',
                       style: onboardingHeading1Style,
                     ),
                   ),
@@ -108,7 +108,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   RegisterOption(
                     image: Image.asset('assets/google_icon.png'),
-                    title: 'Continue with Google',
+                    title: AppLocalizations.of(context)!.continue_with_google,
+                    // title: 'Continue with Google',
                     onTap: () {
                       if (!_isButtonActive) return;
                       setState(() {
@@ -124,7 +125,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   RegisterOption(
                     image: Image.asset('assets/email_icon.png'),
-                    title: 'Continue with Email',
+                    title: AppLocalizations.of(context)!.continue_with_email,
+                    // title: 'Continue with Email',
                     onTap: () {
                       context.push("/loginWithEmailScreen");
                     },
@@ -149,13 +151,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                     controller: _controller,
                     isPassword: false,
-                    lableText: 'Enter Phone Number',
+                    lableText: AppLocalizations.of(context)!.enter_phone_number,
+                    // lableText: 'Enter Phone Number',
                   ),
 
                   isPhoneValid
                       ? SizedBox()
                       : Text(
-                          'Please enter a valid phone number.',
+                          AppLocalizations.of(context)!
+                              .please_enter_a_valid_phone_number,
+                          // 'Please enter a valid phone number.',
                           style: TextStyle(color: AppColors.redColor),
                         ),
                   const SizedBox(
@@ -167,7 +172,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ButtonContainerWidget(
                     color: AppColors.primaryColor,
                     isActive: isPhoneFilled,
-                    text: 'Continue',
+                    text: AppLocalizations.of(context)!.continues,
+                    // text: 'Continue',
                     isFilled: true,
                     onTapListener: () {
                       if (!isValidPhoneNumber(_controller.text.trim())) {
@@ -185,8 +191,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   Center(
                     child: RichText(
                       text: TextSpan(
-                        text:
-                            'By clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
+                        text: AppLocalizations.of(context)!.privacy_policy,
+                        // 'By clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
                         style: const TextStyle(
                           color: AppColors.lightGreyColor,
                           fontSize: 14,
@@ -195,7 +201,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: 'Terms of Service.',
+                            text:
+                                AppLocalizations.of(context)!.terms_of_service,
+                            // text: 'Terms of Service.',
                             style: TextStyle(
                               fontSize: 15,
                               height: 1.3,
