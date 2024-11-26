@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/not_found_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
+import 'package:neighborly_flutter_app/features/payment/payment.dart';
+import 'package:neighborly_flutter_app/features/payment/presentation/screens/payment_screen.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_of_specific_comment.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/deletd_user_profile_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/radius_screen.dart';
@@ -97,6 +99,14 @@ final GoRouter router = GoRouter(
       name: RouteConstants.reisterScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
         return const RegisterScreen();
+      },
+    ),
+    GoRoute(
+      path: '/payment',
+      //name: RouteConstants.reisterScreenRouteName,
+      builder: (BuildContext context, GoRouterState state) {
+        return const PaymentScreen();
+        // return const RazorpayIntegration();
       },
     ),
     GoRoute(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
@@ -196,6 +197,9 @@ class MyAppState extends State<MyApp> {
     // }
     return MultiBlocProvider(
         providers: [
+          BlocProvider<PaymentBloc>(
+            create: (context) => di.sl<PaymentBloc>(),
+          ),
           BlocProvider<RegisterBloc>(
             create: (context) => di.sl<RegisterBloc>(),
           ),
@@ -339,9 +343,6 @@ class MyAppState extends State<MyApp> {
           ),
         ],
         child: MaterialApp.router(
-          // theme: ThemeData.dark().copyWith(
-          //     //fontFamily: 'Roboto'
-          //     ),
           theme: ThemeData(
             fontFamily: 'Roboto',
           ),

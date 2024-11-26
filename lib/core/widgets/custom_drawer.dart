@@ -130,6 +130,14 @@ class _CustomDrawerState extends State<CustomDrawer> {
             },
           ),
           ListTile(
+            leading: Icon(Icons.payment),
+            title: Text('Payment'),
+            onTap: () {
+              widget.scaffoldKey.currentState?.closeEndDrawer();
+              context.push('/payment');
+            },
+          ),
+          ListTile(
             leading: Icon(Icons.edit),
             title: Text('Edit Profile Info'),
             onTap: () {
@@ -249,7 +257,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                             //     logo: 'images/logo.svg',
                             //   ),
                             // ),
-                            Center(child: CircularProgressIndicator(),),
+                            Center(
+                              child: CircularProgressIndicator(),
+                            ),
                           ],
                         );
                       }
@@ -258,9 +268,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         text: 'Logout',
                         textColor: AppColors.whiteColor,
                         onTapListener: () {
-                          context
-                              .read<LogoutBloc>()
-                              .add(LogoutButtonPressedEvent(),);
+                          context.read<LogoutBloc>().add(
+                                LogoutButtonPressedEvent(),
+                              );
                         },
                         isActive: true,
                       );

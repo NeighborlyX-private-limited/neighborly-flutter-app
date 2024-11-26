@@ -2,6 +2,12 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
+import 'package:neighborly_flutter_app/features/payment/data/datasources/payment_remote_data_source.dart';
+import 'package:neighborly_flutter_app/features/payment/data/repositories/payment_repository_impl.dart';
+import 'package:neighborly_flutter_app/features/payment/domain/repositories/payment_repository.dart';
+import 'package:neighborly_flutter_app/features/payment/domain/usecases/create_order_usecase.dart';
+import 'package:neighborly_flutter_app/features/payment/domain/usecases/verify_payment_usecase.dart';
+import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_comment_by_comment_id.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comment_by_comment_id_bloc/get_comments_by_commentId_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
@@ -155,6 +161,22 @@ import 'features/chat/Socket/socketService.dart';
 final sl = GetIt.instance;
 
 void init() async {
+  //payment di
+  // Data Sources
+  sl.registerLazySingleton(() => PaymentRemoteDataSource(client: sl()));
+
+  // Repositories
+  sl.registerLazySingleton<PaymentRepository>(
+      () => PaymentRepositoryImpl(remoteDataSource: sl()));
+
+  // Use Cases
+  sl.registerLazySingleton(() => CreateOrderUseCase(repository: sl()));
+  sl.registerLazySingleton(() => VerifyPaymentUseCase(repository: sl()));
+
+  // Bloc
+  sl.registerFactory(
+      () => PaymentBloc(createOrderUseCase: sl(), verifyPaymentUseCase: sl()));
+
   // register repository
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
