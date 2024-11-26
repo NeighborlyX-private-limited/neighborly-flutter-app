@@ -5,8 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
+import 'package:neighborly_flutter_app/l10n/language.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/button_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CustomDrawer extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -102,7 +105,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
                 SizedBox(height: 10),
                 Text(
-                  userName!,
+                  userName,
                   style: TextStyle(
                     color: AppColors.whiteColor,
                     fontSize: 16,
@@ -145,6 +148,27 @@ class _CustomDrawerState extends State<CustomDrawer> {
               context.push('/basicInformationScreen');
             },
           ),
+          Text(AppLocalizations.of(context)!.hello),
+          ListTile(
+            leading: Icon(Icons.language),
+            title: Text('english'),
+            onTap: () {
+              widget.scaffoldKey.currentState?.closeEndDrawer();
+              context
+                  .read<AppLocalizationBloc>()
+                  .add(ChangeAppLocalization(selectedLocale: Language[0]));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.language),
+            title: Text('hindi'),
+            onTap: () {
+              widget.scaffoldKey.currentState?.closeEndDrawer();
+              context
+                  .read<AppLocalizationBloc>()
+                  .add(ChangeAppLocalization(selectedLocale: Language[1]));
+            },
+          ),
           ListTile(
             leading: Icon(Icons.search),
             title: Text('Search'),
@@ -153,7 +177,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             },
           ),
           Divider(),
-
+          Text(AppLocalizations.of(context)!.hello),
           // Other Options
           ListTile(
             leading: Icon(Icons.help),

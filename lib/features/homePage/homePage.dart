@@ -11,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/shared_preference.dart';
 import '../notification/presentation/bloc/notification_general_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainPage extends StatefulWidget {
   final Widget child;
@@ -257,11 +258,12 @@ class _MainPageState extends State<MainPage> {
           selectedItemColor: AppColors.primaryColor,
           unselectedItemColor: AppColors.greyColor,
           items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(
-              icon: Icon(
+            BottomNavigationBarItem(
+              icon: const Icon(
                 Icons.home,
               ),
-              label: 'Home',
+              label: AppLocalizations.of(context)!.hello,
+              // label: 'Home',
             ),
             // const BottomNavigationBarItem(
             //   icon: Icon(

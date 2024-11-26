@@ -12,17 +12,28 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   cupertino_icons: ^1.0.6
+
   #to check the internet connection
   internet_connection_checker: ^1.0.0+1
+
   #for app routing
   go_router: ^14.1.4
+
   #for font of the app
   google_fonts: ^6.2.1
+
   equatable: ^2.0.5
   dartz: ^0.10.1
+
+  #for api calling
   http: ^1.2.1
+
+  #for di
   get_it: ^7.7.0
+
   flutter_bloc: ^8.1.5
   webview_flutter: ^4.8.0
   flutter_inappwebview: ^6.0.0
@@ -40,7 +51,7 @@ dependencies:
   share_it: ^0.7.0
   permission_handler: ^10.4.2             
   
-  # Notification 
+  # Notification firebase
   firebase_core: ^3.4.0
   flutter_local_notifications: ^17.2.2 
   firebase_messaging: ^15.0.4
@@ -85,6 +96,7 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  generate: true
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
