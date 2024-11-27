@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/language_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
 
 import '../../../../core/theme/colors.dart';
@@ -12,6 +13,7 @@ import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/logout_bloc.dart/logout_bloc.dart';
 import '../widgets/button_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingScreen extends StatefulWidget {
   final String karma;
@@ -51,7 +53,8 @@ class _SettingScreenState extends State<SettingScreen> {
         ),
         centerTitle: true,
         title: Text(
-          'Settings',
+          AppLocalizations.of(context)!.settings,
+          // 'Settings',
           style: blackNormalTextStyle,
         ),
       ),
@@ -64,7 +67,8 @@ class _SettingScreenState extends State<SettingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'General',
+              AppLocalizations.of(context)!.general,
+              // 'General',
               style: blackNormalTextStyle,
             ),
             const SizedBox(
@@ -86,7 +90,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     width: 10,
                   ),
                   Text(
-                    'Basic Information',
+                    AppLocalizations.of(context)!.basic_information,
+                    // 'Basic Information',
                     style: blackonboardingBody1Style,
                   ),
                 ],
@@ -111,7 +116,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     width: 10,
                   ),
                   Text(
-                    'Set Radius',
+                    AppLocalizations.of(context)!.set_radius,
+                    // 'Set Radius',
                     style: blackonboardingBody1Style,
                   ),
                 ],
@@ -136,7 +142,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     width: 10,
                   ),
                   Text(
-                    'Activity and Stats',
+                    AppLocalizations.of(context)!.activity_and_stats,
+                    // 'Activity and Stats',
                     style: blackonboardingBody1Style,
                   ),
                 ],
@@ -162,7 +169,8 @@ class _SettingScreenState extends State<SettingScreen> {
                           width: 10,
                         ),
                         Text(
-                          'Security',
+                          AppLocalizations.of(context)!.security,
+                          // 'Security',
                           style: blackonboardingBody1Style,
                         ),
                       ],
@@ -174,6 +182,33 @@ class _SettingScreenState extends State<SettingScreen> {
                     height: 20,
                   )
                 : SizedBox(),
+            InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                  backgroundColor: AppColors.whiteColor,
+                  showDragHandle: true,
+                  context: context,
+                  builder: (context) => LanguageBottomSheet(),
+                  isScrollControlled: true,
+                );
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Icon(Icons.language),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.language,
+                    style: blackonboardingBody1Style,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             InkWell(
               onTap: () {
                 context.push('/findMeScreen');
@@ -190,7 +225,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     width: 10,
                   ),
                   Text(
-                    'Find Me',
+                    AppLocalizations.of(context)!.find_me,
+                    // 'Find Me',
                     style: blackonboardingBody1Style,
                   ),
                 ],
@@ -215,7 +251,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     width: 10,
                   ),
                   Text(
-                    'Support And Feedback',
+                    AppLocalizations.of(context)!.support_and_feedback,
+                    // 'Support And Feedback',
                     style: blackonboardingBody1Style,
                   ),
                 ],
@@ -240,7 +277,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     width: 10,
                   ),
                   Text(
-                    'Delete account',
+                    AppLocalizations.of(context)!.delete_account,
+                    // 'Delete account',
                     style: redOnboardingBody1Style,
                   ),
                 ],
@@ -265,7 +303,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     width: 10,
                   ),
                   Text(
-                    'Logout',
+                    AppLocalizations.of(context)!.logout,
+                    // 'Logout',
                     style: redOnboardingBody1Style,
                   ),
                 ],
@@ -323,7 +362,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         const SizedBox(height: 4),
                         Center(
                           child: Text(
-                            'Verify your username.',
+                            AppLocalizations.of(context)!.verify_your_username,
+                            // 'Verify your username.',
                             style: onboardingHeading2Style,
                           ),
                         ),
@@ -338,12 +378,15 @@ class _SettingScreenState extends State<SettingScreen> {
                             });
                           },
                           controller: userNameController,
-                          lableText: 'Enter your username',
+                          lableText:
+                              AppLocalizations.of(context)!.enter_your_username,
+                          // lableText: 'Enter your username',
                           isPassword: false,
                         ),
                         isUsernameWrong
-                            ? const Text(
-                                'Wrong username',
+                            ? Text(
+                                AppLocalizations.of(context)!.wrong_username,
+                                // 'Wrong username',
                                 textAlign: TextAlign.left,
                                 style: TextStyle(color: AppColors.redColor),
                               )
@@ -354,7 +397,8 @@ class _SettingScreenState extends State<SettingScreen> {
                           children: [
                             ButtonWidget(
                               color: const Color(0xffF5F5F5),
-                              text: 'Cancel',
+                              text: AppLocalizations.of(context)!.cancel,
+                              // text: 'Cancel',
                               textColor: AppColors.blackColor,
                               onTapListener: () {
                                 Navigator.pop(context);
@@ -363,7 +407,8 @@ class _SettingScreenState extends State<SettingScreen> {
                             ),
                             ButtonWidget(
                               color: AppColors.primaryColor,
-                              text: 'Verify',
+                              text: AppLocalizations.of(context)!.verify,
+                              // text: 'Verify',
                               textColor: AppColors.whiteColor,
                               onTapListener: () {
                                 String? userName =
@@ -425,7 +470,9 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 4,
               ),
               Text(
-                'Leaving so soon? Confirm if you want to logout.',
+                AppLocalizations.of(context)!
+                    .leaving_so_soon_confirm_if_you_want_to_logout,
+                // 'Leaving so soon? Confirm if you want to logout.',
                 style: blackonboardingBody1Style,
               ),
               const SizedBox(
@@ -436,7 +483,8 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: [
                   ButtonWidget(
                     color: AppColors.lightBackgroundColor,
-                    text: 'Cancel',
+                    text: AppLocalizations.of(context)!.cancel,
+                    // text: 'Cancel',
                     textColor: AppColors.blackColor,
                     onTapListener: () {
                       context.pop();
@@ -482,7 +530,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       }
                       return ButtonWidget(
                         color: AppColors.redColor,
-                        text: 'Logout',
+                        text: AppLocalizations.of(context)!.logout,
+                        // text: 'Logout',
                         textColor: AppColors.whiteColor,
                         onTapListener: () {
                           context.read<LogoutBloc>().add(
@@ -601,7 +650,9 @@ class _SettingScreenState extends State<SettingScreen> {
                 height: 4,
               ),
               Text(
-                'Are you sure you want to delete your account? This action is irreversible.',
+                // 'Are you sure you want to delete your account? This action is irreversible.',
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_delete_your_account_this_action_is_irreversible,
                 style: blackonboardingBody1Style,
               ),
               const SizedBox(
@@ -612,7 +663,8 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: [
                   ButtonWidget(
                     color: AppColors.lightBackgroundColor,
-                    text: 'Cancel',
+                    text: AppLocalizations.of(context)!.cancel,
+                    // text: 'Cancel',
                     textColor: AppColors.blackColor,
                     onTapListener: () {
                       context.pop();
@@ -625,7 +677,9 @@ class _SettingScreenState extends State<SettingScreen> {
                         context.pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Something went wrong'),
+                            content: Text(AppLocalizations.of(context)!
+                                .oops_something_went_wrong),
+                            // content: Text('Something went wrong'),
                           ),
                         );
                       } else if (state is DeleteAccountSuccessState) {
@@ -660,7 +714,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       }
                       return ButtonWidget(
                         color: AppColors.redColor,
-                        text: 'Delete',
+                        text: AppLocalizations.of(context)!.delete,
+                        // text: 'Delete',
                         textColor: AppColors.whiteColor,
                         onTapListener: () {
                           context.read<DeleteAccountBloc>().add(

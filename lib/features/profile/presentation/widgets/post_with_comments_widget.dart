@@ -14,6 +14,7 @@ import '../../domain/entities/post_with_comments_entity.dart';
 import 'profile_comment_reaction_widget.dart';
 import '../../../posts/presentation/widgets/option_card.dart';
 import '../../../../core/entities/post_enitity.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostWithCommentsWidget extends StatefulWidget {
   final PostWithCommentsEntity post;
@@ -99,7 +100,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                     width: 12,
                   ),
                   Text(
-                    'Commented on this',
+                    AppLocalizations.of(context)!.commented_on_this,
+                    // 'Commented on this',
                     style: mediumGreyTextStyleBlack,
                   ),
                 ],
@@ -256,7 +258,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           multimedia: widget.post.content.multimedia ?? [],
                         )
                       : Container(),
-                      
+
                   widget.post.content.multimedia != null &&
                           widget.post.content.multimedia!.isNotEmpty &&
                           widget.post.content.multimedia!.length == 1
@@ -454,8 +456,10 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
               if (state is DeletePostSuccessState) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content:
-                        Text(isComment ? 'Comment Deleted' : 'Post Deleted'),
+                    content: Text(isComment
+                        ? AppLocalizations.of(context)!.comment_deleted
+                        : AppLocalizations.of(context)!.post_deleted),
+                    // Text(isComment ? 'Comment Deleted' : 'Post Deleted'),
                   ),
                 );
                 context.pop(context);
@@ -494,12 +498,13 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                   children: [
                     const Icon(
                       Icons.delete,
-                      color:AppColors.redColor,
+                      color: AppColors.redColor,
                     ),
                     const SizedBox(
                       width: 10,
                     ),
                     Text(
+                      // isComment ? AppLocalizations.of(context)!.de : 'Delete Post',
                       isComment ? 'Delete Comment' : 'Delete Post',
                       style: redOnboardingBody1Style,
                     )

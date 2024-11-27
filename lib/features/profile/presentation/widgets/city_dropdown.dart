@@ -31,10 +31,10 @@ class CityDropdown extends StatelessWidget {
       ),
       value: selectCity,
       items: const [
-        DropdownMenuItem(
-          value: 'Delhi',
-          child: Text('Delhi'),
-        ),
+        // DropdownMenuItem(
+        //   value: 'Delhi',
+        //   child: Text('Delhi'),
+        // ),
         DropdownMenuItem(
           value: 'Noida',
           child: Text('Noida'),

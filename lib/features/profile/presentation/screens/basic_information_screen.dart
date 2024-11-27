@@ -71,7 +71,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
     _phoneNumberController = TextEditingController();
     _bioController = TextEditingController();
     _selectedGender = ShardPrefHelper.getGender() ?? 'Male';
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
     authType = ShardPrefHelper.getAuthtype() ?? 'email';
 
     _fetchProfile();

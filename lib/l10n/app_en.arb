@@ -156,5 +156,25 @@
   "post": "Post",
   "poll": "Poll",
   "no_comments_yet":"No comments yet",
-  "post_not_found":"Post not found"
+  "post_not_found":"Post not found",
+  "delete_comment":"Delete Comment",
+  "delete_post":"Delete Post",
+  "payment":"Payment",
+  "english":"English",
+  "hindi":"Hindi",
+  "buy_awards":"Buy awards",
+  "add_some_awards_in_your_bag":"Add some awards in your bag",
+  "random_awards":"Random Awards",
+  "checkout":"Checkout",
+  "payment_successful":"Payment Successful",
+  "payment_failed":"Payment Failed",
+  "bag":"Bag",
+  "buy_now": "Buy Now",
+  "total_price": "Total Price",
+  "quantity": "Quantity",
+  "item": "Item",
+  "items": "Items",
+  "payment_verified": "Payment Verified"
+
+
 }

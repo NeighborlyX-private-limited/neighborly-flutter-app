@@ -5,8 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
-import 'package:neighborly_flutter_app/l10n/language.dart';
+import 'package:neighborly_flutter_app/core/widgets/language_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/button_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -22,12 +21,13 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   late String userName;
   late String userProPic;
+
+  /// init method
   @override
   void initState() {
     super.initState();
     userName = ShardPrefHelper.getUsername() ?? '';
     userProPic = ShardPrefHelper.getUserProfilePicture() ?? '';
-    print(userProPic);
   }
 
   @override
@@ -36,12 +36,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
       logoutBottomSheet(context);
     }
 
+    /// drawer
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.60,
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          // Custom Header with App Logo and User Info
           DrawerHeader(
             decoration: BoxDecoration(
               color: AppColors.primaryColor,
@@ -50,7 +50,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // App Logo
+                /// App Logo
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -61,8 +61,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       height: 30,
                     ),
                     SizedBox(width: 10),
+
+                    ///App Name
                     Text(
-                      'Neighborly', // Replace with your app name
+                      AppLocalizations.of(context)!.neighborly,
                       style: TextStyle(
                         color: AppColors.whiteColor,
                         fontSize: 18,
@@ -72,21 +74,28 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ],
                 ),
                 Spacer(),
-                // User Info
                 Container(
                   height: 60,
                   width: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                   ),
+
+                  /// User profile pic
                   child: ClipOval(
                     child: Image.network(
-                      userProPic, // Replace with your image URL
-                      loadingBuilder: (BuildContext context, Widget child,
-                          ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) return child;
+                      userProPic,
+                      loadingBuilder: (
+                        BuildContext context,
+                        Widget child,
+                        ImageChunkEvent? loadingProgress,
+                      ) {
+                        if (loadingProgress == null) {
+                          return child;
+                        }
                         return Center(
                           child: CircularProgressIndicator(
+                            color: AppColors.whiteColor,
                             value: loadingProgress.expectedTotalBytes != null
                                 ? loadingProgress.cumulativeBytesLoaded /
                                     (loadingProgress.expectedTotalBytes ?? 1)
@@ -94,16 +103,23 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           ),
                         );
                       },
-                      errorBuilder: (BuildContext context, Object exception,
-                          StackTrace? stackTrace) {
-                        return Text(
-                            'Failed to load image'); // Show an error message if the image fails to load
+                      errorBuilder: (
+                        BuildContext context,
+                        Object exception,
+                        StackTrace? stackTrace,
+                      ) {
+                        return CircleAvatar(
+                          radius: 40,
+                          child: Icon(Icons.person),
+                        );
                       },
                     ),
                   ),
                 ),
 
                 SizedBox(height: 10),
+
+                /// username
                 Text(
                   userName,
                   style: TextStyle(
@@ -116,80 +132,77 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
           ),
 
-          // // Navigation Items
-          // ListTile(
-          //   leading: Icon(Icons.person),
-          //   title: Text('Profile'),
-          //   onTap: () {
-          //     widget.scaffoldKey.currentState?.closeEndDrawer();
-          //   },
-          // ),
+          /// search
+          ListTile(
+            leading: Icon(Icons.search),
+            title: Text(AppLocalizations.of(context)!.search),
+            onTap: () {
+              widget.scaffoldKey.currentState?.closeEndDrawer();
+            },
+          ),
+
+          /// payment
+          ListTile(
+            leading: Icon(Icons.payment),
+            title: Text(AppLocalizations.of(context)!.buy_awards),
+            onTap: () {
+              widget.scaffoldKey.currentState?.closeEndDrawer();
+              //context.push('/payment');
+            },
+          ),
+
+          ///language
+          ListTile(
+            leading: Icon(Icons.language),
+            title: Text(AppLocalizations.of(context)!.language),
+            onTap: () {
+              widget.scaffoldKey.currentState?.closeEndDrawer();
+              showModalBottomSheet(
+                backgroundColor: AppColors.whiteColor,
+                showDragHandle: true,
+                context: context,
+                builder: (context) => LanguageBottomSheet(),
+                isScrollControlled: true,
+              );
+            },
+          ),
+
+          /// set radius
           ListTile(
             leading: Icon(Icons.location_on),
-            title: Text('Set Radius'),
+            title: Text(AppLocalizations.of(context)!.set_radius),
             onTap: () {
               widget.scaffoldKey.currentState?.closeEndDrawer();
               context.push('/radiusScreen');
             },
           ),
-          ListTile(
-            leading: Icon(Icons.payment),
-            title: Text('Payment'),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              context.push('/payment');
-            },
-          ),
+
+          /// edit profile info
           ListTile(
             leading: Icon(Icons.edit),
-            title: Text('Edit Profile Info'),
+            title: Text(AppLocalizations.of(context)!.edit_profile_info),
             onTap: () {
               widget.scaffoldKey.currentState?.closeEndDrawer();
               context.push('/basicInformationScreen');
             },
           ),
-          Text(AppLocalizations.of(context)!.hello),
-          ListTile(
-            leading: Icon(Icons.language),
-            title: Text('english'),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              context
-                  .read<AppLocalizationBloc>()
-                  .add(ChangeAppLocalization(selectedLocale: Language[0]));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.language),
-            title: Text('hindi'),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              context
-                  .read<AppLocalizationBloc>()
-                  .add(ChangeAppLocalization(selectedLocale: Language[1]));
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.search),
-            title: Text('Search'),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-            },
-          ),
+
           Divider(),
-          Text(AppLocalizations.of(context)!.hello),
-          // Other Options
+
+          /// support and feedback
           ListTile(
             leading: Icon(Icons.help),
-            title: Text('Support & Feedback'),
+            title: Text(AppLocalizations.of(context)!.support_and_feedback),
             onTap: () {
               widget.scaffoldKey.currentState?.closeEndDrawer();
               context.push('/feedbackScreen');
             },
           ),
+
+          ///logout
           ListTile(
             leading: Icon(Icons.logout),
-            title: Text('Logout'),
+            title: Text(AppLocalizations.of(context)!.logout),
             onTap: () {
               widget.scaffoldKey.currentState?.closeEndDrawer();
               showLogoutBottomSheet();
@@ -200,6 +213,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
     );
   }
 
+  /// logout bottom sheet
   Future<void> logoutBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
@@ -230,7 +244,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 height: 4,
               ),
               Text(
-                'Leaving so soon? Confirm if you want to logout.',
+                AppLocalizations.of(context)!
+                    .leaving_so_soon_confirm_if_you_want_to_logout,
                 style: blackonboardingBody1Style,
               ),
               const SizedBox(
@@ -241,7 +256,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                 children: [
                   ButtonWidget(
                     color: AppColors.lightBackgroundColor,
-                    text: 'Cancel',
+                    text: AppLocalizations.of(context)!.cancel,
                     textColor: AppColors.blackColor,
                     onTapListener: () {
                       context.pop();
@@ -276,11 +291,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                         return const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Center(
-                            //   child: BouncingLogoIndicator(
-                            //     logo: 'images/logo.svg',
-                            //   ),
-                            // ),
                             Center(
                               child: CircularProgressIndicator(),
                             ),
@@ -289,7 +299,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                       }
                       return ButtonWidget(
                         color: AppColors.redColor,
-                        text: 'Logout',
+                        text: AppLocalizations.of(context)!.logout,
                         textColor: AppColors.whiteColor,
                         onTapListener: () {
                           context.read<LogoutBloc>().add(

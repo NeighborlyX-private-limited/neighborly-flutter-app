@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
@@ -65,7 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
     setCityHomeName();
     setCityCurrentName();
     getUnreadNotificationCount();
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
+    if (_selectedCity.toLowerCase() == 'delhi') {
+      _selectedCity = 'New Delhi';
+    }
+    // _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
     isDobSet = ShardPrefHelper.getDob();
     print('dob...$isDobSet');
     _fetchPosts();
@@ -102,7 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _fetchPosts() {
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
+    if (_selectedCity.toLowerCase() == 'delhi') {
+      _selectedCity = 'New Delhi';
+    }
+    // _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
     setState(() {});
     BlocProvider.of<GetAllPostsBloc>(context)
         .add(GetAllPostsButtonPressedEvent(isHome: isHome));
@@ -135,7 +144,11 @@ class _HomeScreenState extends State<HomeScreen> {
       homeLocation[1],
     );
 
-    var city = placemarks[0].locality ?? 'Delhi';
+    var city = placemarks[0].locality ?? 'New Delhi';
+    if (city.toLowerCase() == 'delhi') {
+      city = 'New Delhi';
+    }
+    // var city = placemarks[0].locality ?? 'Delhi';
     print('home city $city');
     ShardPrefHelper.setHomeCity(city);
   }
@@ -149,12 +162,13 @@ class _HomeScreenState extends State<HomeScreen> {
       location[1],
     );
 
-    var city = placemarks[0].locality ?? 'Delhi';
+    var city = placemarks[0].locality ?? 'New Delhi';
+
     print('current city $city');
     ShardPrefHelper.setCurrentCity(city);
   }
 
-  void handleToggle(bool value) {
+  void handleToggle(bool value) async {
     if (mounted) {
       setState(() {
         isHome = value;
@@ -162,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (!isHome) {
-      fetchLocationAndUpdate();
+      await fetchLocationAndUpdate();
     }
     _fetchPosts();
   }
@@ -397,6 +411,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               actions: [
+                InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                      showDragHandle: true,
+                      backgroundColor: AppColors.whiteColor,
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (_) => const AwardSelectionScreen(),
+                    );
+                  },
+                  child: SvgPicture.asset(
+                    'assets/award.svg',
+                    height: 24.0,
+                    width: 24.0,
+                  ),
+                ),
+                SizedBox(
+                  width: 24,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0),
                   child: GestureDetector(
