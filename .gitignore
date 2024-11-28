@@ -143,3 +143,4 @@ coverage/
 
 # Other sensitive files
 **/secrets.json
+razorpay_constants.dart
