@@ -136,9 +136,9 @@ class TutorialScreenState extends State<TutorialScreen> {
                     width: screenWidth * 0.7,
                     padding: const EdgeInsets.all(16.0),
                     decoration: BoxDecoration(
-                      color:AppColors.whiteColor.withOpacity(0.9),
+                      color: AppColors.whiteColor.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow:  [
+                      boxShadow: [
                         BoxShadow(
                           color: AppColors.blackColor.withOpacity(0.26),
                           blurRadius: 6,

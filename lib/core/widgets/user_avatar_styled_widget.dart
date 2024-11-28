@@ -19,19 +19,6 @@ class UserAvatarStyledWidget extends StatelessWidget {
     this.isDarkmode = false,
   });
 
-  // Widget avatarArea(BuildContext context, String avatarUrl, double? size) {
-  //   final proportionalSize = CoreDimens.proportionalWidth(context, size ?? 30);
-  //   return CircleAvatar(
-  //     radius: proportionalSize,
-  //     backgroundColor: Colors.grey[400],
-  //     child: CircleAvatar(
-  //       radius: proportionalSize - borderSize!,
-  //       onBackgroundImageError: (_, __) => SvgPicture.asset('assets/vectors/my_profile_placeholder.svg'),
-  //       backgroundImage: CachedNetworkImageProvider(avatarUrl),
-  //     ),
-  //   );
-  // }
-
   Widget avatarArea(BuildContext context, String avatarUrl) {
     final proportionalSize =
         CoreDimens.proportionalWidth(context, avatarSize ?? 30);
@@ -40,7 +27,8 @@ class UserAvatarStyledWidget extends StatelessWidget {
       backgroundColor: AppColors.greenColor,
       child: CircleAvatar(
         radius: proportionalSize,
-        backgroundColor: isDarkmode! ? AppColors.blackColor : AppColors.whiteColor,
+        backgroundColor:
+            isDarkmode! ? AppColors.blackColor : AppColors.whiteColor,
         child: avatarUrl.contains('.')
             ? CircleAvatar(
                 radius: proportionalSize - avatarBorderSize!,

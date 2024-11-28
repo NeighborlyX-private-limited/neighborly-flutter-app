@@ -20,6 +20,7 @@ import '../../../../core/widgets/bouncing_logo_indicator.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
 import '../widgets/post_button_widget.dart';
 import '../../../../core/constants/imagepickercompress.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -108,8 +109,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       if (permission == LocationPermission.denied) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Location permissions are denied.'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!
+                  .location_permissions_are_denied),
+              // content: Text('Location permissions are denied.'),
             ),
           );
         }
@@ -119,9 +122,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Location permissions are permanently denied, we cannot request permissions.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!
+                .location_permissions_are_permanently_denied_we_cannot_request_permissions),
+            // 'Location permissions are permanently denied, we cannot request permissions.'),
           ),
         );
       }
@@ -136,9 +140,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (!hasPermission) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Location permissions are permanently denied, we cannot request permissions.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!
+                .location_permissions_are_permanently_denied_we_cannot_request_permissions),
+            // 'Location permissions are permanently denied, we cannot request permissions.'),
           ),
         );
       }
@@ -174,9 +179,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return AlertDialog(
       surfaceTintColor: AppColors.whiteColor,
       backgroundColor: AppColors.whiteColor,
-      title: Text("No Location Access"),
-      content: Text(
-          "Device location is turned off, and if you don't turn on your location then last location will be used."),
+      title: Text(AppLocalizations.of(context)!.no_location_access),
+      // title: Text("No Location Access"),
+      content: Text(AppLocalizations.of(context)!
+          .device_location_is_turned_off_and_if_you_donot_turn_on_your_location_then_last_location_will_be_used),
+      // "Device location is turned off, and if you don't turn on your location then last location will be used."),
       actions: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -188,7 +195,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text("OK"),
+          child: Text(AppLocalizations.of(context)!.ok),
+          // child: Text("OK"),
         ),
       ],
     );
@@ -395,7 +403,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         if (fileSizeInMB > 50) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('The video is too large..')),
+              SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.this_video_is_too_large)),
+              // SnackBar(content: Text('The video is too large..')),
             );
           }
           setState(() {
@@ -418,7 +429,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         if (compressedFileSizeInMB > 15) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('The video is too large..')),
+              SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.this_video_is_too_large)),
+              // SnackBar(content: Text('The video is too large..')),
             );
           }
           setState(() {
@@ -481,7 +495,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         if (initialFileSizeInMB > 15) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('The video is too large..')),
+              SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.this_video_is_too_large)),
+              // SnackBar(content: Text('The video is too large..')),
             );
           }
           setState(() {
@@ -514,7 +531,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         if (compressedFileSizeInMB > 15) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('The video is too large..')),
+              SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.this_video_is_too_large)),
+              // SnackBar(content: Text('The video is too large..')),
             );
           }
           setState(() {
@@ -556,7 +576,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     // Check if the user already has 5 images selected
     if (_selectedMedia!.length >= 5) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You can select up to 5 images.')),
+        SnackBar(
+            content: Text(
+                AppLocalizations.of(context)!.you_can_select_up_to_5_images)),
+        // SnackBar(content: Text('You can select up to 5 images.')),
       );
       setState(() {
         isImage = false;
@@ -593,7 +616,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           } else {
             // Show a message if the user tries to select more than 5 images
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('You can select up to 5 images only.')),
+              SnackBar(
+                  content: Text(AppLocalizations.of(context)!
+                      .you_can_select_up_to_5_images)),
+              // SnackBar(content: Text('You can select up to 5 images only.')),
             );
             setState(() {
               isImage = false;
@@ -773,8 +799,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                     height: 130,
                                                   ),
                                                   const SizedBox(height: 20),
-                                                  const Text(
-                                                    'Aaah! Something went wrong',
+                                                  Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .aaah_something_went_wrong,
+                                                    // 'Aaah! Something went wrong',
                                                     style: TextStyle(
                                                       fontSize: 18,
                                                       fontWeight:
@@ -783,8 +812,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                     textAlign: TextAlign.center,
                                                   ),
                                                   const SizedBox(height: 10),
-                                                  const Text(
-                                                    "Sorry,You are banned.\nPlease try it after some time",
+                                                  Text(
+                                                    AppLocalizations.of(
+                                                            context)!
+                                                        .sorry_you_are_banned_please_try_it_after_some_time,
+                                                    // "Sorry,You are banned.\nPlease try it after some time",
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       color:
@@ -809,13 +841,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                                 .circular(20),
                                                       ),
                                                     ),
-                                                    child: const Padding(
+                                                    child: Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
                                                               horizontal: 20,
                                                               vertical: 10),
                                                       child: Text(
-                                                        'Go Back',
+                                                        AppLocalizations.of(
+                                                                context)!
+                                                            .go_back,
+                                                        // 'Go Back',
                                                         style: TextStyle(
                                                             fontSize: 16,
                                                             color: AppColors
@@ -851,8 +886,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     _titleController.clear();
                                     _removeImage();
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Post Created'),
+                                      SnackBar(
+                                        content: Text(
+                                            AppLocalizations.of(context)!
+                                                .post_created),
+                                        // content: Text('Post Created'),
                                       ),
                                     );
 
@@ -861,8 +899,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 },
                                 builder: (context, state) {
                                   if (state is UploadPostLoadingState) {
-                                    return const Center(
-                                        child: Text('Uploading...'));
+                                    return Center(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .uploading));
+                                    // child: Text('Uploading...'));
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {
@@ -946,8 +987,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                       controller.clear();
                                     }
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Poll Created'),
+                                      SnackBar(
+                                        content: Text(
+                                            AppLocalizations.of(context)!
+                                                .poll_created),
+                                        // content: Text('Poll Created'),
                                       ),
                                     );
                                     context.go('/home/Home');
@@ -1053,7 +1097,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           _videoController!.value.isInitialized)
                       ? Stack(
                           children: [
-                            Container(
+                            SizedBox(
                               width: MediaQuery.of(context).size.width,
                               height: 260,
                               // color: Colors.redAccent,
@@ -1181,8 +1225,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             },
                             controller: _titleController,
                             focusNode: _titleFocusNode,
-                            decoration: const InputDecoration(
-                              hintText: 'Title (Required)',
+                            decoration: InputDecoration(
+                              hintText:
+                                  AppLocalizations.of(context)!.title_required,
+                              // hintText: 'Title (Required)',
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.multiline,
@@ -1198,8 +1244,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             },
                             controller: _contentController,
                             focusNode: _contentFocusNode,
-                            decoration: const InputDecoration(
-                              hintText: 'What\'s on your mind?',
+                            decoration: InputDecoration(
+                              hintText: AppLocalizations.of(context)!
+                                  .whats_on_your_mind,
+                              // hintText: 'What\'s on your mind?',
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.multiline,
@@ -1225,8 +1273,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             },
                             controller: _questionController,
                             focusNode: _contentFocusNode,
-                            decoration: const InputDecoration(
-                              hintText: 'Write your question here...',
+                            decoration: InputDecoration(
+                              hintText: AppLocalizations.of(context)!
+                                  .write_your_question_here,
+                              // hintText: 'Write your question here...',
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.multiline,
@@ -1246,7 +1296,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                  'Add Option',
+                                  AppLocalizations.of(context)!.add_option,
+                                  // 'Add Option',
                                   style: blueNormalTextStyle,
                                 ),
                               ],
@@ -1257,7 +1308,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Allow multiple votes',
+                                AppLocalizations.of(context)!
+                                    .allow_multiple_votes,
+                                // 'Allow multiple votes',
                                 style: greyonboardingBody1Style,
                               ),
                               Switch(
@@ -1298,7 +1351,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             SvgPicture.asset('assets/add_a_photo.svg'),
                             const SizedBox(width: 10),
                             Text(
-                              'Add a Photo',
+                              AppLocalizations.of(context)!.add_a_photo,
+                              // 'Add a Photo',
                               style: mediumTextStyleBlack,
                             ),
                           ],
@@ -1323,7 +1377,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            Text('Take a Picture', style: mediumTextStyleBlack)
+                            Text(AppLocalizations.of(context)!.take_a_picture,
+                                style: mediumTextStyleBlack)
+                            // Text('Take a Picture', style: mediumTextStyleBlack)
                           ],
                         ),
                       ),
@@ -1351,7 +1407,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     ),
                                   ),
                                   const SizedBox(width: 10),
-                                  Text('Add a video',
+                                  Text(
+                                      AppLocalizations.of(context)!.add_a_video,
+                                      // Text('Add a video',
                                       style: mediumTextStyleBlack)
                                 ],
                               ),
@@ -1403,7 +1461,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 children: [
                                   SvgPicture.asset('assets/create_a_poll.svg'),
                                   const SizedBox(width: 10),
-                                  Text('Create a Poll',
+                                  Text(
+                                      AppLocalizations.of(context)!
+                                          .create_a_poll,
+                                      // Text('Create a Poll',
                                       style: mediumTextStyleBlack),
                                 ],
                               ),
@@ -1527,7 +1588,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 controller: _optionControllers[index],
                 focusNode: _optionFocusNodes[index],
                 decoration: InputDecoration(
-                  labelText: 'Option ${index + 1}',
+                  labelText:
+                      '${AppLocalizations.of(context)!.option} ${index + 1}',
+                  // labelText: 'Option ${index + 1}',
                   border: const OutlineInputBorder(),
                 ),
               ),
@@ -1564,7 +1627,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             children: [
               ListTile(
                 leading: const Icon(Icons.video_library),
-                title: const Text("Pick Video from Gallery"),
+                title:
+                    Text(AppLocalizations.of(context)!.pick_video_from_gallery),
+                // title: const Text("Pick Video from Gallery"),
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickVideoFromGallery();
@@ -1572,7 +1637,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.videocam),
-                title: const Text("Record a Video"),
+                title: Text(AppLocalizations.of(context)!.record_a_video),
+                // title: const Text("Record a Video"),
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickVideoFromCamera();

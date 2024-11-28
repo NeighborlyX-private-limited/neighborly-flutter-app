@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/post_specific_comment_recation_widget.dart';
@@ -10,12 +8,10 @@ import 'package:neighborly_flutter_app/features/profile/presentation/widgets/pos
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
-import '../../../posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
 import '../../../posts/presentation/widgets/reaction_widget.dart';
-import '../../domain/entities/post_with_comments_entity.dart';
-import 'profile_comment_reaction_widget.dart';
 import '../../../posts/presentation/widgets/option_card.dart';
 import '../../../../core/entities/post_enitity.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostWithSpecificCommentsWidget extends StatefulWidget {
   final SpecificCommentModel post;
@@ -103,7 +99,8 @@ class _PostWithCommentsWidgetState
                     width: 12,
                   ),
                   Text(
-                    'Give award on your commente',
+                    AppLocalizations.of(context)!.give_award_on_your_commente,
+                    // 'Give award on your commente',
                     style: mediumGreyTextStyleBlack,
                   ),
                 ],

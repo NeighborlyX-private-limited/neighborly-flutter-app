@@ -25,6 +25,7 @@ import '../widgets/gender_dropdown_widget.dart';
 import '../../../authentication/presentation/screens/otp_screen_profile_update.dart';
 import '../../../authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CropAspectRatioPresetCustom implements CropAspectRatioPresetData {
   @override
@@ -70,7 +71,10 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
     _phoneNumberController = TextEditingController();
     _bioController = TextEditingController();
     _selectedGender = ShardPrefHelper.getGender() ?? 'Male';
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
+    if (_selectedCity.toLowerCase() == 'delhi') {
+      _selectedCity = 'New Delhi';
+    }
     authType = ShardPrefHelper.getAuthtype() ?? 'email';
 
     _fetchProfile();
@@ -163,7 +167,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           width: 10,
                         ),
                         Text(
-                          'Basic Information',
+                          AppLocalizations.of(context)!.basic_information,
+                          // 'Basic Information',
                           style: blackNormalTextStyle,
                         ),
                       ],
@@ -185,8 +190,10 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           _bioController.clear();
 
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Profile updated successfully'),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!
+                                  .profile_updated_successfully),
+                              // content: Text('Profile updated successfully'),
                             ),
                           );
                           //context.go(location)
@@ -248,7 +255,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           }
                         }, builder: (context, resentstate) {
                           return PostButtonWidget(
-                            title: 'Save',
+                            title: AppLocalizations.of(context)!.save,
+                            // title: 'Save',
                             onTapListener: () async {
                               var userName = _usernameController.text.trim();
                               var phoneNumber =
@@ -419,14 +427,17 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                             child: InkWell(
                               onTap: _pickImage,
                               child: Text(
-                                'Edit photo',
+                                AppLocalizations.of(context)!.edit_photo,
+                                // 'Edit photo',
                                 style: noUnderlineblueNormalTextStyle,
                               ),
                             ),
                           ),
                           isEmpty
-                              ? const Text(
-                                  'Username and gender cannot be empty',
+                              ? Text(
+                                  AppLocalizations.of(context)!
+                                      .uername_and_gender_cannot_be_empty,
+                                  // 'Username and gender cannot be empty',
                                   style: TextStyle(
                                     color: AppColors.redColor,
                                     fontSize: 15,
@@ -437,7 +448,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                             height: 5,
                           ),
                           Text(
-                            'Username',
+                            AppLocalizations.of(context)!.username,
                             style: greyonboardingBody1Style,
                           ),
                           const SizedBox(
@@ -450,8 +461,10 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                             lableText: '',
                           ),
                           isUserNameShort
-                              ? const Text(
-                                  'Username should be at least 6 character long.',
+                              ? Text(
+                                  AppLocalizations.of(context)!
+                                      .username_should_be_at_least_6_character_long,
+                                  // 'Username should be at least 6 character long.',
                                   style: TextStyle(
                                     color: AppColors.redColor,
                                     fontSize: 15,
@@ -459,8 +472,10 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                 )
                               : Container(),
                           isUserHasSpaces
-                              ? const Text(
-                                  'Username cannot contain spaces.',
+                              ? Text(
+                                  AppLocalizations.of(context)!
+                                      .username_cannot_contain_spaces,
+                                  // 'Username cannot contain spaces.',
                                   style: TextStyle(
                                     color: AppColors.redColor,
                                     fontSize: 15,
@@ -472,7 +487,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           ),
                           authType == 'email'
                               ? Text(
-                                  'Email Id',
+                                  AppLocalizations.of(context)!.email_id,
+                                  // 'Email Id',
                                   style: greyonboardingBody1Style,
                                 )
                               // ? Text(
@@ -494,7 +510,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                     vertical: 5,
                                   ),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color:AppColors.lightGreyColor),
+                                    border: Border.all(
+                                        color: AppColors.lightGreyColor),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: TextField(
@@ -520,7 +537,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               //     style: greyonboardingBody1Style,
                               //   )
                               ? Text(
-                                  'Phone number',
+                                  AppLocalizations.of(context)!.phone_number,
+                                  // 'Phone number',
                                   style: greyonboardingBody1Style,
                                 )
                               : SizedBox(),
@@ -537,13 +555,16 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   border: true,
                                   onChanged: (value) {},
                                   controller: _phoneNumberController,
-                                  lableText: 'Phone Number',
+                                  lableText: AppLocalizations.of(context)!
+                                      .phone_number,
                                   digitsOnly: true,
                                 )
                               : SizedBox(),
                           invalidPhone
-                              ? const Text(
-                                  'Invalid Phone number.',
+                              ? Text(
+                                  AppLocalizations.of(context)!
+                                      .invalid_phone_number,
+                                  // 'Invalid Phone number.',
                                   style: TextStyle(
                                     color: AppColors.redColor,
                                     fontSize: 15,
@@ -554,7 +575,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                             height: 10,
                           ),
                           Text(
-                            'Gender',
+                            AppLocalizations.of(context)!.gender,
+                            // 'Gender',
                             style: greyonboardingBody1Style,
                           ),
                           const SizedBox(
@@ -572,7 +594,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                             height: 10,
                           ),
                           Text(
-                            'City',
+                            AppLocalizations.of(context)!.city,
+                            // 'City',
                             style: greyonboardingBody1Style,
                           ),
                           const SizedBox(
@@ -588,7 +611,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
-                                          'City updated to ${state.city} successfully!'),
+                                          '${AppLocalizations.of(context)!.city_updated_to} ${state.city} ${AppLocalizations.of(context)!.successfully}'),
+                                      // 'City updated to ${state.city} successfully!'),
                                     ),
                                   );
                                 } else if (state is CityErrorState) {
@@ -620,7 +644,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                             height: 10,
                           ),
                           Text(
-                            'Bio',
+                            AppLocalizations.of(context)!.bio,
+                            // 'Bio',
                             style: greyonboardingBody1Style,
                           ),
                           const SizedBox(
@@ -632,7 +657,8 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               vertical: 5,
                             ),
                             decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.lightGreyColor),
+                              border:
+                                  Border.all(color: AppColors.lightGreyColor),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: TextField(

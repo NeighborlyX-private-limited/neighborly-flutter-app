@@ -377,6 +377,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/core/routes/routes.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
@@ -384,6 +385,7 @@ import 'package:neighborly_flutter_app/features/notification/presentation/bloc/n
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_list_state.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/screens/notification_empty_widget.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/widgets/notification_tile_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationListScreen extends StatefulWidget {
   const NotificationListScreen({super.key});
@@ -440,7 +442,8 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
       onRefresh: _onRefresh,
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Notifications"),
+          title: Text(AppLocalizations.of(context)!.notifications),
+          // title: Text("Notifications"),
         ),
         body: BlocBuilder<NotificationListCubit, NotificationListState>(
           builder: (context, state) {
@@ -455,10 +458,14 @@ class _NotificationListScreenState extends State<NotificationListScreen> {
             } else if (state.status == Status.failure) {
               return SomethingWentWrong(
                 imagePath: 'assets/something_went_wrong.svg',
-                title: 'Aaah! Something went wrong',
-                message:
-                    "We couldn't fetch your notification.\nPlease try starting it again",
-                buttonText: 'Retry',
+                title: AppLocalizations.of(context)!.aaah_something_went_wrong,
+                message: AppLocalizations.of(context)!
+                    .we_couldnot_fetch_your_notification_Please_try_starting_it_again,
+                buttonText: AppLocalizations.of(context)!.retry,
+                // title: 'Aaah! Something went wrong',
+                // message:
+                //     "We couldn't fetch your notification.\nPlease try starting it again",
+                // buttonText: 'Retry',
                 onButtonPressed: () {
                   _fetchProfile();
 

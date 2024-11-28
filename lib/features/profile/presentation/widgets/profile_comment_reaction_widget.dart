@@ -10,6 +10,7 @@ import '../../../posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import '../../../posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
 import '../../../posts/presentation/widgets/overlapping_images_widget.dart';
 import '../../domain/entities/post_with_comments_entity.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileReactionCommentWidget extends StatefulWidget {
   final PostWithCommentsEntity postComment;
@@ -190,7 +191,8 @@ class _ProfileReactionCommentWidgetState
                       Text(
                         cheersCount.toString(), // Use state variable for count
                         style: TextStyle(
-                          color: isCheered ? AppColors.redColor : Colors.grey[900],
+                          color:
+                              isCheered ? AppColors.redColor : Colors.grey[900],
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -250,7 +252,9 @@ class _ProfileReactionCommentWidgetState
                     Text(
                       boolsCount.toString(), // Use state variable for count
                       style: TextStyle(
-                        color: isBooled ? AppColors.primaryColor : Colors.grey[600],
+                        color: isBooled
+                            ? AppColors.primaryColor
+                            : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -368,9 +372,10 @@ class _ProfileReactionCommentWidgetState
               Navigator.pop(context, awardsCount);
               if (state.error.contains('Award not available')) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content:
-                        Text('Award not available. You run out of this award.'),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!
+                        .award_not_available_you_run_out_of_this_award),
+                    // Text('Award not available. You run out of this award.'),
                   ),
                 );
               }
@@ -383,8 +388,10 @@ class _ProfileReactionCommentWidgetState
               // }
             } else if (state is GiveAwardSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Award given successfully'),
+                SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.award_given_successfully),
+                  // content: Text('Award given successfully'),
                 ),
               );
               Navigator.pop(context, awardsCount + 1);
@@ -418,7 +425,8 @@ class _ProfileReactionCommentWidgetState
                   ),
                   Center(
                     child: Text(
-                      'Award this post',
+                      AppLocalizations.of(context)!.award_this_post,
+                      // 'Award this post',
                       style: onboardingHeading2Style,
                     ),
                   ),

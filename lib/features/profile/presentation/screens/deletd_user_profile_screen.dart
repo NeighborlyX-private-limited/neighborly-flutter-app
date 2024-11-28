@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DeletedUserProfileScreen extends StatefulWidget {
   const DeletedUserProfileScreen({super.key});
@@ -56,7 +57,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                     },
                   ),
                   title: Text(
-                    'Profile',
+                    AppLocalizations.of(context)!.profile,
                     style: onboardingHeading2Style.copyWith(),
                   ),
                   flexibleSpace: FlexibleSpaceBar(
@@ -86,13 +87,16 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Text(
-                            'Neighborly user',
+                            AppLocalizations.of(context)!.neighborly_user,
+                            // 'Neighborly user',
                             style: greyonboardingBody1Style,
                           ),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Boo! Looks like this profile is no longer with us.',
+                          AppLocalizations.of(context)!
+                              .looks_like_this_profile_is_no_longer_with_us,
+                          // 'Boo! Looks like this profile is no longer with us.',
                           style: mediumGreyTextStyleBlack,
                         ),
                         const SizedBox(height: 15),
@@ -112,7 +116,8 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        'Posts',
+                                        AppLocalizations.of(context)!.posts,
+                                        // 'Posts',
                                         style: mediumGreyTextStyleBlack,
                                       ),
                                     ],
@@ -126,7 +131,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        'Karma',
+                                        AppLocalizations.of(context)!.karma,
                                         style: mediumGreyTextStyleBlack,
                                       ),
                                     ],
@@ -140,7 +145,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        'Awards',
+                                        AppLocalizations.of(context)!.awards,
                                         style: mediumGreyTextStyleBlack,
                                       ),
                                     ],
@@ -160,9 +165,9 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                       indicatorColor: AppColors.primaryColor,
                       labelColor: AppColors.primaryColor.withOpacity(0.8),
                       controller: _tabController,
-                      tabs: const [
-                        Tab(text: 'Posts'),
-                        Tab(text: 'Comments'),
+                      tabs: [
+                        Tab(text: AppLocalizations.of(context)!.posts),
+                        Tab(text: AppLocalizations.of(context)!.comments),
                       ],
                     ),
                   ),
@@ -172,12 +177,16 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
             },
             body: TabBarView(
               controller: _tabController,
-              children: const [
+              children: [
                 Center(
-                  child: Text('No posts to haunt this profile!'),
+                  child: Text(AppLocalizations.of(context)!
+                      .no_posts_to_haunt_this_profile),
+                  // child: Text('No posts to haunt this profile!'),
                 ),
                 Center(
-                  child: Text('Comments have drifted away!'),
+                  child: Text(
+                      AppLocalizations.of(context)!.comments_have_drifted_away),
+                  // child: Text('Comments have drifted away!'),
                 ),
               ],
             ),

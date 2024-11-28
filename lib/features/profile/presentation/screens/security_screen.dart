@@ -9,6 +9,7 @@ import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
 import '../bloc/change_password_bloc/change_password_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SecurityPage extends StatefulWidget {
   const SecurityPage({super.key});
@@ -69,7 +70,8 @@ class _SecurityPageState extends State<SecurityPage> {
             onTap: () => context.pop(),
           ),
           title: Text(
-            'Security',
+            AppLocalizations.of(context)!.security,
+            // 'Security',
             style: blackNormalTextStyle,
           ),
         ),
@@ -83,7 +85,8 @@ class _SecurityPageState extends State<SecurityPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Change password',
+                    AppLocalizations.of(context)!.change_password,
+                    // 'Change password',
                     style: blackNormalTextStyle,
                   ),
                   const SizedBox(
@@ -98,12 +101,15 @@ class _SecurityPageState extends State<SecurityPage> {
                       });
                     },
                     controller: _currentPasswordController,
-                    lableText: 'Current Password',
+                    lableText: AppLocalizations.of(context)!.current_password,
+                    // lableText: 'Current Password',
                     isPassword: true,
                   ),
                   isWrongCurrentPassword
-                      ? const Text(
-                          'Wrong password. Try again or click Forgot password to reset it.',
+                      ? Text(
+                          AppLocalizations.of(context)!
+                              .wrong_password_Try_again_or_click_forgot_password_to_reset_it,
+                          // 'Wrong password. Try again or click Forgot password to reset it.',
                           style: TextStyle(color: AppColors.redColor),
                         )
                       : const SizedBox(),
@@ -120,7 +126,8 @@ class _SecurityPageState extends State<SecurityPage> {
                       });
                     },
                     controller: _passwordController,
-                    lableText: 'Password',
+                    lableText: AppLocalizations.of(context)!.password,
+                    // lableText: 'Password',
                     isPassword: true,
                   ),
                   const SizedBox(
@@ -137,17 +144,21 @@ class _SecurityPageState extends State<SecurityPage> {
                     },
                     controller: _confirmPasswordController,
                     isPassword: true,
-                    lableText: 'Confirm Password',
+                    lableText: AppLocalizations.of(context)!.confirm_password,
+                    // lableText: 'Confirm Password',
                   ),
                   isNewPasswordShoart
-                      ? const Text(
-                          'New password should be atleast 6 character long.',
+                      ? Text(
+                          AppLocalizations.of(context)!
+                              .new_password_should_be_atleast_6_character_long,
+                          // 'New password should be atleast 6 character long.',
                           style: TextStyle(color: AppColors.redColor),
                         )
                       : const SizedBox(),
                   if (isPasswordMismatch)
-                    const Text(
-                      'Passwords do not match.',
+                    Text(
+                      AppLocalizations.of(context)!.passwords_do_not_match,
+                      // 'Passwords do not match.',
                       style: TextStyle(color: AppColors.redColor),
                     ),
                   const SizedBox(
@@ -193,7 +204,8 @@ class _SecurityPageState extends State<SecurityPage> {
                       return ButtonContainerWidget(
                         isActive: checkIsActive(),
                         color: AppColors.primaryColor,
-                        text: 'Save Password',
+                        text: AppLocalizations.of(context)!.save_password,
+                        // text: 'Save Password',
                         isFilled: true,
                         onTapListener: () {
                           final String? email = ShardPrefHelper.getEmail();
@@ -227,7 +239,8 @@ class _SecurityPageState extends State<SecurityPage> {
                       InkWell(
                         onTap: () => context.push('/forgot-password'),
                         child: Text(
-                          'Forgot your password?',
+                          AppLocalizations.of(context)!.forgot_your_password,
+                          // 'Forgot your password?',
                           style: onboardingBody2Style,
                         ),
                       )
@@ -235,8 +248,9 @@ class _SecurityPageState extends State<SecurityPage> {
                   ),
                   const SizedBox(height: 15),
                   noConnection
-                      ? const Text(
-                          'No Internet Connection',
+                      ? Text(
+                          AppLocalizations.of(context)!.no_internet_connection,
+                          // 'No Internet Connection',
                           style: TextStyle(color: AppColors.redColor),
                         )
                       : const SizedBox(),

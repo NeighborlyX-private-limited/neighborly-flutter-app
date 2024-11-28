@@ -7,6 +7,7 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
 import '../bloc/send_feedback_bloc/send_feedback_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FeedbackScreen extends StatefulWidget {
   const FeedbackScreen({super.key});
@@ -43,7 +44,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                 onTap: () => context.pop(),
               ),
               title: Text(
-                'Support and Feedback',
+                AppLocalizations.of(context)!.support_and_feedback,
+                // 'Support and Feedback',
                 style: blackNormalTextStyle,
               ),
             ),
@@ -55,7 +57,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Write your feedback here',
+                      AppLocalizations.of(context)!.write_your_feedback_here,
+                      // 'Write your feedback here',
                       style: blackNormalTextStyle,
                     ),
                     const SizedBox(height: 20),
@@ -76,8 +79,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           });
                         },
                         controller: _contentController,
-                        decoration: const InputDecoration(
-                          hintText: 'Your feedback',
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.your_feedback,
+                          // hintText: 'Your feedback',
                           border: InputBorder.none,
                         ),
                         keyboardType: TextInputType.multiline,
@@ -108,9 +112,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           );
                         } else if (state is SendFeedbackSuccessState) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content:
-                                    Text('Feedback submitted successfully')),
+                            SnackBar(
+                                content: Text(AppLocalizations.of(context)!
+                                    .feedback_submitted_successfully)),
+                            // Text('Feedback submitted successfully')),
                           );
                           _contentController.clear();
                           context.pop();
@@ -130,7 +135,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         return ButtonContainerWidget(
                           isActive: isSendFeedbackFilled,
                           color: AppColors.primaryColor,
-                          text: 'Send',
+                          text: AppLocalizations.of(context)!.send,
+                          // text: 'Send',
                           isFilled: true,
                           onTapListener: () {
                             BlocProvider.of<SendFeedbackBloc>(context).add(

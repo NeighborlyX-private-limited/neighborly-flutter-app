@@ -74,7 +74,8 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
   }
 
   List<Widget> _buildMenuItems() {
-    List<String> cities = ['Delhi', 'Noida', 'Gurugram', 'New Delhi'];
+    List<String> cities = ['Noida', 'Gurugram', 'New Delhi'];
+    // List<String> cities = ['Delhi', 'Noida', 'Gurugram', 'New Delhi'];
 
     return cities.map((city) {
       bool isSelected = city == _selectedCity;
@@ -89,7 +90,8 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
             title: Text(
               city,
               style: TextStyle(
-                color: isSelected ? AppColors.primaryColor : AppColors.blackColor,
+                color:
+                    isSelected ? AppColors.primaryColor : AppColors.blackColor,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),

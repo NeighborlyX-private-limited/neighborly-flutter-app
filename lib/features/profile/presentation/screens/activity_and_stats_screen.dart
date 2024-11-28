@@ -8,6 +8,7 @@ import '../../../../core/theme/text_style.dart';
 import '../bloc/get_my_awards_bloc/get_my_awards_bloc.dart';
 import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 import '../widgets/award_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ActivityAndStatsScreen extends StatefulWidget {
   final String karma;
@@ -78,7 +79,8 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                 onTap: () => context.pop(),
               ),
               title: Text(
-                'Activity and Stats',
+                AppLocalizations.of(context)!.activity_and_stats,
+                // 'Activity and Stats',
                 style: blackNormalTextStyle,
               ),
             ),
@@ -95,7 +97,8 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Karma Score',
+                            AppLocalizations.of(context)!.karma_score,
+                            // 'Karma Score',
                             style: blackNormalTextStyle,
                           ),
                           const SizedBox(
@@ -122,14 +125,17 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Karma',
+                                      AppLocalizations.of(context)!.karma,
+                                      // 'Karma',
                                       style: blackNormalTextStyle,
                                     ),
                                     const SizedBox(
                                       height: 5,
                                     ),
                                     Text(
-                                      'Your Karma score reflects your engagement within the community. Share, help, and connect to build your score.',
+                                      AppLocalizations.of(context)!
+                                          .karma_description,
+                                      // 'Your Karma score reflects your engagement within the community. Share, help, and connect to build your score.',
                                       style: mediumGreyTextStyleBlack,
                                       softWrap: true,
                                     ),
@@ -159,7 +165,8 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Awards',
+                                  AppLocalizations.of(context)!.awards,
+                                  // 'Awards',
                                   style: blackNormalTextStyle,
                                 ),
                                 const SizedBox(

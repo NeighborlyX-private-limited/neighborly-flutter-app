@@ -10,6 +10,7 @@ import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/login_with_email_bloc/login_with_email_bloc.dart';
 import '../widgets/button_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LoginWithEmailScreen extends StatefulWidget {
   const LoginWithEmailScreen({super.key});
@@ -90,14 +91,17 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 height: 20,
               ),
               Text(
-                'Continue with Email',
+                AppLocalizations.of(context)!.continue_with_email,
+                //'Continue with Email',
                 style: onboardingHeading1Style,
               ),
               const SizedBox(
                 height: 5,
               ),
               Text(
-                'Join Neighborly with your email.',
+                AppLocalizations.of(context)!.join_neighborly_with_your_email,
+
+                /// 'Join Neighborly with your email.',
                 style: onboardingBodyStyle,
               ),
               const SizedBox(
@@ -106,7 +110,9 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
               TextFieldWidget(
                 border: true,
                 controller: _emailController,
-                lableText: 'Enter Email Address',
+                lableText: AppLocalizations.of(context)!.enter_email_address,
+
+                // lableText: 'Enter Email Address',
                 isPassword: false,
                 onChanged: (value) {
                   setState(() {
@@ -115,8 +121,10 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 },
               ),
               !isEmailValid
-                  ? const Text(
-                      'Please enter a valid email address',
+                  ? Text(
+                      AppLocalizations.of(context)!
+                          .please_enter_a_valid_email_address,
+                      // 'Please enter a valid email address',
                       style: TextStyle(color: AppColors.redColor),
                     )
                   : const SizedBox(),
@@ -131,12 +139,15 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   });
                 },
                 controller: _passwordController,
-                lableText: 'Password',
+                lableText: AppLocalizations.of(context)!.password,
+                // lableText: 'Password',
                 isPassword: true,
               ),
               isPasswordWrong
-                  ? const Text(
-                      'Wrong password. Try again or click Forgot password to reset it.',
+                  ? Text(
+                      AppLocalizations.of(context)!
+                          .wrong_password_Try_again_or_click_forgot_password_to_reset_it,
+                      // 'Wrong password. Try again or click Forgot password to reset it.',
                       style: TextStyle(color: AppColors.redColor),
                     )
                   : const SizedBox(),
@@ -192,7 +203,8 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   return ButtonContainerWidget(
                     isActive: checkIsActive(),
                     color: AppColors.primaryColor,
-                    text: 'Log in',
+                    text: AppLocalizations.of(context)!.login,
+                    // text: 'Log in',
                     isFilled: true,
                     onTapListener: () {
                       if (!isValidEmail(_emailController.text.trim())) {
@@ -223,7 +235,8 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   InkWell(
                     onTap: () => context.push('/forgot-password'),
                     child: Text(
-                      'Forgot your password?',
+                      AppLocalizations.of(context)!.forgot_your_password,
+                      // 'Forgot your password?',
                       style: onboardingBody2Style,
                     ),
                   )
@@ -232,8 +245,9 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
               const SizedBox(height: 15),
               noConnection
                   ? Center(
-                      child: const Text(
-                        'No Internet Connection',
+                      child: Text(
+                        AppLocalizations.of(context)!.no_internet_connection,
+                        // 'No Internet Connection',
                         style: TextStyle(color: AppColors.redColor),
                       ),
                     )

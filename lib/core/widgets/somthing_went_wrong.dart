@@ -3,13 +3,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 class SomethingWentWrong extends StatelessWidget {
-  final String imagePath; // Path to the image (SVG)
-  final String title; // Title text
-  final String message; // Message text
-  final String buttonText; // Text for the button
-  final VoidCallback onButtonPressed; // Button press callback
+  final String imagePath;
+  final String title;
+  final String message;
+  final String buttonText;
+  final VoidCallback onButtonPressed;
 
-  // Constructor to accept these values
   const SomethingWentWrong({
     super.key,
     required this.imagePath,
@@ -40,14 +39,15 @@ class SomethingWentWrong extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Displaying the image
+            /// Displaying the image
             SvgPicture.asset(
               imagePath,
               width: 150,
               height: 130,
             ),
             SizedBox(height: 8),
-            // Title text
+
+            /// Title text
             Text(
               title,
               style: TextStyle(
@@ -58,14 +58,16 @@ class SomethingWentWrong extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8),
-            // Message text
+
+            /// Message text
             Text(
               message,
               style: TextStyle(fontSize: 14, color: AppColors.greyColor),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12),
-            // Retry button
+
+            /// Retry or go back button
             ElevatedButton(
               onPressed: onButtonPressed,
               style: ElevatedButton.styleFrom(),

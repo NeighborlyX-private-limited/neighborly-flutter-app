@@ -8,6 +8,7 @@ import '../../../posts/presentation/widgets/poll_widget.dart';
 import '../../../posts/presentation/widgets/post_sheemer_widget.dart';
 import '../../../posts/presentation/widgets/post_widget.dart';
 import '../bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostSection extends StatefulWidget {
   final String? userId;
@@ -70,9 +71,12 @@ class _PostSectionState extends State<PostSection> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text(
-                                  "Time to be the hero this wall needs, start the"),
-                              Text('Conversation!'),
+                              // Text(
+                              //     "Time to be the hero this wall needs, start the"),
+                              // Text('Conversation!'),
+                              Text(AppLocalizations.of(context)!
+                                  .time_to_be_the_hero_this_wall_needs_start_the),
+                              //Text('Conversation!'),
                               SizedBox(
                                 height: 10,
                               ),
@@ -83,8 +87,11 @@ class _PostSectionState extends State<PostSection> {
                                   context.push('/create');
                                 },
                                 child: Text(
-                                  'Create a Post',
-                                  style: TextStyle(color: AppColors.whiteColor,),
+                                  AppLocalizations.of(context)!.create_a_post,
+                                  // 'Create a Post',
+                                  style: TextStyle(
+                                    color: AppColors.whiteColor,
+                                  ),
                                 ),
                               )
                             ],
@@ -136,9 +143,10 @@ class _PostSectionState extends State<PostSection> {
                   // );
                 }
                 if (state.error.contains('Internal server error')) {
-                  return const Center(
+                  return Center(
                       child: Text(
-                    'oops something went wrong',
+                    AppLocalizations.of(context)!.oops_something_went_wrong,
+                    // 'oops something went wrong',
                     style: TextStyle(color: AppColors.redColor),
                   ));
                 }

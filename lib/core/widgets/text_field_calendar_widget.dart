@@ -8,7 +8,6 @@ class TextFieldCalendarWidget extends StatefulWidget {
   final TextEditingController controller;
   final void Function(String) onChanged;
   final double? height;
-
   final FocusNode? focusNode;
   final bool border;
   final VoidCallback onTap;
@@ -51,7 +50,9 @@ class _TextFieldCalendarWidgetState extends State<TextFieldCalendarWidget> {
               labelText: widget.lableText,
               border: widget.border
                   ? const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(8.0),
+                      ),
                     )
                   : InputBorder.none,
               focusedBorder: OutlineInputBorder(

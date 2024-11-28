@@ -12,6 +12,7 @@ import '../bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import '../widgets/comments_section.dart';
 import '../widgets/posts_section.dart';
 import '../widgets/profile_sheemer_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final String userId;
@@ -102,7 +103,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                 style: onboardingHeading2Style,
                               )
                             : Text(
-                                'Profile',
+                                AppLocalizations.of(context)!.profile,
+                                // 'Profile',
                                 style: onboardingHeading2Style,
                               ),
                         actions: [
@@ -189,7 +191,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        'Post',
+                                        AppLocalizations.of(context)!.posts,
+                                        // 'Post',
                                         style: mediumGreyTextStyleBlack,
                                       ),
                                     ],
@@ -203,7 +206,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        'Karma',
+                                        AppLocalizations.of(context)!.karma,
+                                        // 'Karma',
                                         style: mediumGreyTextStyleBlack,
                                       ),
                                     ],
@@ -217,7 +221,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                       ),
                                       const SizedBox(height: 5),
                                       Text(
-                                        'Awards',
+                                        AppLocalizations.of(context)!.awards,
+                                        // 'Awards',
                                         style: mediumGreyTextStyleBlack,
                                       ),
                                     ],
@@ -234,9 +239,11 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                             indicatorColor: AppColors.primaryColor,
                             labelColor: AppColors.primaryColor.withOpacity(0.8),
                             controller: _tabController,
-                            tabs: const [
-                              Tab(text: 'Posts'),
-                              Tab(text: 'Comments'),
+                            tabs: [
+                              Tab(text: AppLocalizations.of(context)!.posts),
+                              Tab(text: AppLocalizations.of(context)!.comments),
+                              // Tab(text: 'Posts'),
+                              // Tab(text: 'Comments'),
 
                               /// we do not have Communities right now
                               //Tab(text: 'Communities'),
@@ -308,7 +315,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                   children: [
                     SvgPicture.asset('assets/react4.svg'),
                     const SizedBox(width: 10),
-                    Text('Share this profile', style: onboardingBodyStyle),
+                    Text(AppLocalizations.of(context)!.share_this_profile,
+                        style: onboardingBodyStyle),
+                    // Text('Share this profile', style: onboardingBodyStyle),
                   ],
                 ),
               ),
@@ -320,7 +329,9 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                   children: [
                     SvgPicture.asset('assets/block.svg'),
                     const SizedBox(width: 10),
-                    Text('Block', style: redOnboardingBody1Style),
+                    Text(AppLocalizations.of(context)!.block,
+                        style: redOnboardingBody1Style),
+                    // Text('Block', style: redOnboardingBody1Style),
                   ],
                 ),
               ),

@@ -13,6 +13,7 @@ import '../bloc/give_award_bloc/give_award_bloc.dart';
 import 'overlapping_images_widget.dart';
 import '../../../profile/data/data_sources/profile_remote_data_source/profile_remote_data_source_impl.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReactionReplyWidget extends StatefulWidget {
   final ReplyEntity reply;
@@ -77,11 +78,11 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
     bool sunflowerAvailable = false;
     bool streetlightAvailable = false;
     bool mapAvailable = false;
-    int _localLegendCount = 0;
-    int _parkBenchCount = 0;
-    int _sunflowerCount = 0;
-    int _streetlightCount = 0;
-    int _mapCount = 0;
+    int localLegendCt = 0;
+    int parkBenchCt = 0;
+    int sunflowerCt = 0;
+    int streetlightCt = 0;
+    int mapCt = 0;
 
     if (responseMessage.isEmpty) {
       localLegendAvailable = false;
@@ -89,52 +90,52 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
       sunflowerAvailable = false;
       streetlightAvailable = false;
       mapAvailable = false;
-      _localLegendCount = 0;
-      _parkBenchCount = 0;
-      _sunflowerCount = 0;
-      _streetlightCount = 0;
-      _mapCount = 0;
+      localLegendCt = 0;
+      parkBenchCt = 0;
+      sunflowerCt = 0;
+      streetlightCt = 0;
+      mapCt = 0;
     } else {
       for (int i = 0; i < responseMessage.length; i++) {
         if (responseMessage[i]['type'] == 'Local Legend') {
           if (responseMessage[i]['count'] > 0) {
             localLegendAvailable = true;
-            _localLegendCount = responseMessage[i]['count'];
+            localLegendCt = responseMessage[i]['count'];
           } else {
-            _localLegendCount = 0;
+            localLegendCt = 0;
           }
         }
 
         if (responseMessage[i]['type'] == 'Park Bench') {
           if (responseMessage[i]['count'] > 0) {
             parkBenchAvailable = true;
-            _parkBenchCount = responseMessage[i]['count'];
+            parkBenchCt = responseMessage[i]['count'];
           } else {
-            _parkBenchCount = 0;
+            parkBenchCt = 0;
           }
         }
         if (responseMessage[i]['type'] == 'Sunflower') {
           if (responseMessage[i]['count'] > 0) {
             sunflowerAvailable = true;
-            _sunflowerCount = responseMessage[i]['count'];
+            sunflowerCt = responseMessage[i]['count'];
           } else {
-            _sunflowerCount = 0;
+            sunflowerCt = 0;
           }
         }
         if (responseMessage[i]['type'] == 'Streetlight') {
           if (responseMessage[i]['count'] > 0) {
             streetlightAvailable = true;
-            _streetlightCount = responseMessage[i]['count'];
+            streetlightCt = responseMessage[i]['count'];
           } else {
-            _streetlightCount = 0;
+            streetlightCt = 0;
           }
         }
         if (responseMessage[i]['type'] == 'Map') {
           if (responseMessage[i]['count'] > 0) {
             mapAvailable = true;
-            _mapCount = responseMessage[i]['count'];
+            mapCt = responseMessage[i]['count'];
           } else {
-            _mapCount = 0;
+            mapCt = 0;
           }
         }
       }
@@ -146,11 +147,11 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
       isSunflowerAwardAvailable = sunflowerAvailable;
       isStreetlightAwardAvailable = streetlightAvailable;
       isMapAwardAvailable = mapAvailable;
-      localLegendCount = _localLegendCount;
-      parkBenchCount = _parkBenchCount;
-      sunflowerCount = _sunflowerCount;
-      streetlightCount = _streetlightCount;
-      mapCount = _mapCount;
+      localLegendCount = localLegendCt;
+      parkBenchCount = parkBenchCt;
+      sunflowerCount = sunflowerCt;
+      streetlightCount = streetlightCt;
+      mapCount = mapCt;
     });
   }
 
@@ -240,8 +241,9 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
               );
             } else if (state is FeedbackSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Feedback submitted successfully!'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context)!
+                      .feedback_submitted_successfully),
                 ),
               );
             }
@@ -288,7 +290,8 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                       Text(
                         cheersCount.toString(),
                         style: TextStyle(
-                          color: isCheered ? AppColors.redColor : Colors.grey[900],
+                          color:
+                              isCheered ? AppColors.redColor : Colors.grey[900],
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
@@ -347,7 +350,9 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                     Text(
                       boolsCount.toString(),
                       style: TextStyle(
-                        color: isBooled ? AppColors.primaryColor : Colors.grey[600],
+                        color: isBooled
+                            ? AppColors.primaryColor
+                            : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -442,16 +447,17 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
               Navigator.pop(context, awardsCount);
               if (state.error.contains('Award not available')) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content:
-                        Text('Award not available. You run out of this award.'),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!
+                        .award_not_available_you_run_out_of_this_award),
                   ),
                 );
               }
             } else if (state is GiveAwardSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Award given successfully'),
+                SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.award_given_successfully),
                 ),
               );
               Navigator.pop(context, awardsCount + 1);
@@ -485,7 +491,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                   ),
                   Center(
                     child: Text(
-                      'Award this post',
+                      AppLocalizations.of(context)!.award_this_post,
                       style: onboardingHeading2Style,
                     ),
                   ),

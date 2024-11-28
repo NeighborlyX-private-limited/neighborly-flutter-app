@@ -7,6 +7,7 @@ import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart
 import '../bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
 import 'post_with_comments_sheemer_widget.dart';
 import 'post_with_comments_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommentSection extends StatefulWidget {
   final String? userId;
@@ -67,9 +68,12 @@ class _CommentSectionState extends State<CommentSection> {
                       SizedBox(
                         height: 10,
                       ),
-                      Text("No comments?"),
-                      Text(
-                          'That’s an opportunity! Go ahead, make the first move.'),
+                      Text(AppLocalizations.of(context)!.no_comments),
+                      Text(AppLocalizations.of(context)!
+                          .that_is_an_opportunity_go_ahead_make_the_first_move),
+                      // Text("No comments?"),
+                      // Text(
+                      //     'That’s an opportunity! Go ahead, make the first move.'),
                       SizedBox(
                         height: 10,
                       ),
@@ -80,8 +84,11 @@ class _CommentSectionState extends State<CommentSection> {
                           context.go('/home/Home');
                         },
                         child: Text(
-                          'Start the Discussion',
-                          style: TextStyle(color: AppColors.whiteColor,),
+                          AppLocalizations.of(context)!.start_the_discussion,
+                          // 'Start the Discussion',
+                          style: TextStyle(
+                            color: AppColors.whiteColor,
+                          ),
                         ),
                       )
                     ],
@@ -116,16 +123,18 @@ class _CommentSectionState extends State<CommentSection> {
                 // );
               }
               if (state.error.contains('Internal server error')) {
-                return const Center(
+                return Center(
                     child: Text(
-                  'oops something went wrong',
+                  AppLocalizations.of(context)!.oops_something_went_wrong,
+                  // 'oops something went wrong',
                   style: TextStyle(color: AppColors.redColor),
                 ));
               }
               return Center(child: Text(state.error));
             } else {
-              return const Center(
-                child: Text('No data'),
+              return Center(
+                child: Text(AppLocalizations.of(context)!.no_data),
+                // child: Text('No data'),
               );
             }
           },

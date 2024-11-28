@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
+import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
@@ -59,6 +61,7 @@ import 'features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -196,6 +199,12 @@ class MyAppState extends State<MyApp> {
     // }
     return MultiBlocProvider(
         providers: [
+          BlocProvider<PaymentBloc>(
+            create: (context) => di.sl<PaymentBloc>(),
+          ),
+          BlocProvider<AppLocalizationBloc>(
+            create: (context) => AppLocalizationBloc()..add(GetLocale()),
+          ),
           BlocProvider<RegisterBloc>(
             create: (context) => di.sl<RegisterBloc>(),
           ),
@@ -338,16 +347,25 @@ class MyAppState extends State<MyApp> {
             create: (context) => CityBloc(sl<CityRepository>()),
           ),
         ],
-        child: MaterialApp.router(
-          // theme: ThemeData.dark().copyWith(
-          //     //fontFamily: 'Roboto'
-          //     ),
-          theme: ThemeData(
-            fontFamily: 'Roboto',
-          ),
-          debugShowCheckedModeBanner: false,
-          title: 'Neighborly',
-          routerConfig: router,
+        child: BlocBuilder<AppLocalizationBloc, AppLocalizationState>(
+          buildWhen: (previous, current) =>
+              previous.selectedLocale != current.selectedLocale,
+          builder: (context, state) {
+            return MaterialApp.router(
+              locale: state.selectedLocale,
+              supportedLocales: AppLocalizations.supportedLocales,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              // routeInformationParser: router.routeInformationParser,
+              // routerDelegate: router.routerDelegate,
+              // routeInformationProvider: router.routeInformationProvider,
+              theme: ThemeData(
+                fontFamily: 'Roboto',
+              ),
+              debugShowCheckedModeBanner: false,
+              title: 'Neighborly',
+              routerConfig: router,
+            );
+          },
         ));
   }
 }

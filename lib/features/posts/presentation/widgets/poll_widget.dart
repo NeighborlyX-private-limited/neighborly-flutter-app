@@ -15,6 +15,7 @@ import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'option_card.dart';
 import '../../../../core/entities/option_entity.dart';
 import 'reaction_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PollWidget extends StatefulWidget {
   final PostEntity post;
@@ -122,7 +123,8 @@ class _PollWidgetState extends State<PollWidget> {
                               children: [
                                 widget.post.userName.contains('[deleted]')
                                     ? Text(
-                                        'Neighborly user',
+                                        AppLocalizations.of(context)!
+                                            .neighborly_user,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14),
@@ -351,7 +353,7 @@ class _PollWidgetState extends State<PollWidget> {
                         width: 10,
                       ),
                       Text(
-                        'Report',
+                        AppLocalizations.of(context)!.report,
                         style: redOnboardingBody1Style,
                       )
                     ],
@@ -361,8 +363,9 @@ class _PollWidgetState extends State<PollWidget> {
                   listener: (context, state) {
                     if (state is DeletePostSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Poll Deleted'),
+                        SnackBar(
+                          content:
+                              Text(AppLocalizations.of(context)!.poll_deleted),
                         ),
                       );
                       context.pop(context);
@@ -402,7 +405,7 @@ class _PollWidgetState extends State<PollWidget> {
                             width: 10,
                           ),
                           Text(
-                            'Delete Poll',
+                            AppLocalizations.of(context)!.delete_poll,
                             style: redOnboardingBody1Style,
                           )
                         ],
@@ -440,12 +443,13 @@ class _PollWidgetState extends State<PollWidget> {
               ),
               Image.asset('assets/report_confirmation.png'),
               Text(
-                'Thanks for letting us know',
+                AppLocalizations.of(context)!.thanks_for_letting_us_know,
                 style: onboardingHeading2Style,
               ),
               Text(
                 textAlign: TextAlign.center,
-                'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
+                AppLocalizations.of(context)!
+                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
                 style: blackonboardingBody1Style,
               ),
             ],
@@ -461,12 +465,20 @@ class _PollWidgetState extends State<PollWidget> {
     }
 
     List<String> reportReasons = [
-      'Inappropriate content',
-      'Spam',
-      'Harassment or hate speech',
-      'Violence or dangerous organizations',
-      'Intellectual property violation',
+      AppLocalizations.of(context)!.inappropriate_content,
+      AppLocalizations.of(context)!.spam,
+      AppLocalizations.of(context)!.harassment_or_hate_speech,
+      AppLocalizations.of(context)!.violence_or_dangerous_organizations,
+      AppLocalizations.of(context)!.intellectual_property_violation,
     ];
+
+    // List<String> reportReasons = [
+    //   'Inappropriate content',
+    //   'Spam',
+    //   'Harassment or hate speech',
+    //   'Violence or dangerous organizations',
+    //   'Intellectual property violation',
+    // ];
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -517,7 +529,7 @@ class _PollWidgetState extends State<PollWidget> {
                           )
                         : Center(
                             child: Text(
-                              'Reason to Report',
+                              AppLocalizations.of(context)!.reason_to_report,
                               style: onboardingHeading2Style,
                             ),
                           ),

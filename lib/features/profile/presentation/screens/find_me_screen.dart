@@ -8,6 +8,7 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import '../bloc/get_profile_bloc/get_profile_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FindMeScreen extends StatefulWidget {
   const FindMeScreen({super.key});
@@ -39,7 +40,8 @@ class _FindMeScreenState extends State<FindMeScreen> {
             onTap: () => context.pop(),
           ),
           title: Text(
-            'Find Me',
+            AppLocalizations.of(context)!.find_me,
+            // 'Find Me',
             style: blackNormalTextStyle,
           ),
         ),
@@ -76,14 +78,17 @@ class _FindMeScreenState extends State<FindMeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Find me',
+                              AppLocalizations.of(context)!.find_me,
+                              // 'Find me',
                               style: blackonboardingBody2Style,
                             ),
                             const SizedBox(
                               height: 5,
                             ),
                             Text(
-                              'You will automatically join the community group when it is created.',
+                              AppLocalizations.of(context)!
+                                  .you_will_automatically_join_the_community_group_when_it_is_created,
+                              // 'You will automatically join the community group when it is created.',
                               style: mediumGreyTextStyleBlack,
                               softWrap: true,
                             ),
@@ -94,8 +99,10 @@ class _FindMeScreenState extends State<FindMeScreen> {
                         listener: (context, state) {
                           if (state is EditProfileSuccessState) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Find me updated successfully'),
+                              SnackBar(
+                                content: Text(AppLocalizations.of(context)!
+                                    .find_me_updated_successfully),
+                                // content: Text('Find me updated successfully'),
                                 backgroundColor: AppColors.greenColor,
                               ),
                             );

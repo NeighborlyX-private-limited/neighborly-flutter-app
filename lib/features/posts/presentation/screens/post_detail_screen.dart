@@ -25,6 +25,7 @@ import '../widgets/comment_widget.dart';
 import '../widgets/option_card.dart';
 import '../widgets/post_detail_sheemer.dart';
 import '../widgets/reaction_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final String postId;
@@ -107,7 +108,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               onTap: () => context.pop(),
             ),
             centerTitle: true,
-            title: Text(widget.isPost ? 'Post' : 'Poll'),
+            title: Text(widget.isPost
+                ? AppLocalizations.of(context)!.post
+                : AppLocalizations.of(context)!.poll),
           ),
           body: RefreshIndicator(
             onRefresh: _onRefresh,
@@ -137,8 +140,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     is GetcommentsByPostIdSuccessState) {
                                   comments = commentState.comments;
                                   if (comments.isEmpty) {
-                                    return const Center(
-                                      child: Text('No comments yet'),
+                                    return Center(
+                                      child: Text(AppLocalizations.of(context)!
+                                          .no_comments_yet),
                                     );
                                   }
 
@@ -182,9 +186,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 } else if (postState is GetPostByIdFailureState) {
                   return SomethingWentWrong(
                     imagePath: 'assets/not_found.svg',
-                    title: 'Aaah! Something went wrong',
-                    message: "Post not found",
-                    buttonText: 'Go Back',
+                    title:
+                        AppLocalizations.of(context)!.aaah_something_went_wrong,
+                    message: AppLocalizations.of(context)!.post_not_found,
+                    buttonText: AppLocalizations.of(context)!.go_back,
+                    // title: 'Aaah! Something went wrong',
+                    // message: "Post not found",
+                    // buttonText: 'Go Back',
                     onButtonPressed: () {
                       context.pop();
                     },
@@ -314,8 +322,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   height: 130,
                                 ),
                                 const SizedBox(height: 20),
-                                const Text(
-                                  'Aaah! Something went wrong',
+                                Text(
+                                  AppLocalizations.of(context)!
+                                      .aaah_something_went_wrong,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -323,8 +332,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 10),
-                                const Text(
-                                  "Sorry,You are banned.\nPlease try it after some time",
+                                Text(
+                                  AppLocalizations.of(context)!
+                                      .sorry_you_are_banned_please_try_it_after_some_time,
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: AppColors.greyColor,
@@ -342,13 +352,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                   ),
-                                  child: const Padding(
+                                  child: Padding(
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 20, vertical: 10),
                                     child: Text(
-                                      'Go Back',
+                                      AppLocalizations.of(context)!.go_back,
                                       style: TextStyle(
-                                          fontSize: 16, color: AppColors.whiteColor,),
+                                        fontSize: 16,
+                                        color: AppColors.whiteColor,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -501,7 +513,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         children: [
                           postState.post.userName.contains('[deleted]')
                               ? Text(
-                                  'Neighborly user',
+                                  AppLocalizations.of(context)!.neighborly_user,
                                   style: const TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14),
@@ -656,7 +668,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         width: 10,
                       ),
                       Text(
-                        'Report',
+                        AppLocalizations.of(context)!.report,
                         style: redOnboardingBody1Style,
                       )
                     ],
@@ -667,8 +679,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     if (state is DeletePostSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(
-                              widget.isPost ? 'Post Deleted' : 'Poll Deleted'),
+                          content: Text(widget.isPost
+                              ? AppLocalizations.of(context)!.post_deleted
+                              : AppLocalizations.of(context)!.poll_deleted),
                         ),
                       );
                       context.pop(context);
@@ -711,7 +724,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             width: 10,
                           ),
                           Text(
-                            'Delete Post',
+                            AppLocalizations.of(context)!.delete_post,
                             style: redOnboardingBody1Style,
                           )
                         ],
@@ -749,12 +762,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
               Image.asset('assets/report_confirmation.png'),
               Text(
-                'Thanks for letting us know',
+                AppLocalizations.of(context)!.thanks_for_letting_us_know,
                 style: onboardingHeading2Style,
               ),
               Text(
                 textAlign: TextAlign.center,
-                'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
+                AppLocalizations.of(context)!
+                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
                 style: blackonboardingBody1Style,
               ),
             ],
@@ -770,12 +784,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     }
 
     List<String> reportReasons = [
-      'Inappropriate content',
-      'Spam',
-      'Harassment or hate speech',
-      'Violence or dangerous organizations',
-      'Intellectual property violation',
+      AppLocalizations.of(context)!.inappropriate_content,
+      AppLocalizations.of(context)!.spam,
+      AppLocalizations.of(context)!.harassment_or_hate_speech,
+      AppLocalizations.of(context)!.violence_or_dangerous_organizations,
+      AppLocalizations.of(context)!.intellectual_property_violation,
     ];
+    // List<String> reportReasons = [
+    //   'Inappropriate content',
+    //   'Spam',
+    //   'Harassment or hate speech',
+    //   'Violence or dangerous organizations',
+    //   'Intellectual property violation',
+    // ];
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -826,7 +847,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           )
                         : Center(
                             child: Text(
-                              'Reason to Report',
+                              AppLocalizations.of(context)!.reason_to_report,
                               style: onboardingHeading2Style,
                             ),
                           ),
@@ -1004,7 +1025,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   const SizedBox(width: 12),
                   post.userName.contains('[deleted]')
                       ? Text(
-                          'Neighborly user',
+                          AppLocalizations.of(context)!.neighborly_user,
                           style: const TextStyle(
                               fontWeight: FontWeight.w600, fontSize: 14),
                         )

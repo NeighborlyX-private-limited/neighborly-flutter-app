@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:video_player/video_player.dart';
@@ -212,12 +211,12 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                           colors: VideoProgressColors(
                             playedColor: AppColors.primaryColor,
                             bufferedColor: AppColors.greyColor,
-                            backgroundColor: AppColors.blackColor.withOpacity(0.12),
+                            backgroundColor:
+                                AppColors.blackColor.withOpacity(0.12),
                           ),
                         ),
                       ),
                     ),
-
                     Positioned.fill(
                       child: Align(
                         alignment: Alignment.center,

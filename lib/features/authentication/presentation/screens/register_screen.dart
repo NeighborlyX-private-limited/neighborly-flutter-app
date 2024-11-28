@@ -14,6 +14,7 @@ import '../bloc/register_bloc/register_bloc.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/or_divider_widget.dart';
 import '../widgets/register_option.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 const List<String> scopes = <String>[
   'email',
@@ -130,7 +131,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
             children: [
               Center(
                 child: Text(
-                  'Sign up',
+                  AppLocalizations.of(context)!.signup,
+                  // 'Sign up',
                   style: onboardingHeading1Style,
                 ),
               ),
@@ -162,7 +164,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // }
                   return RegisterOption(
                     image: Image.asset('assets/google_icon.png'),
-                    title: 'Continue with Google',
+                    title: AppLocalizations.of(context)!.continue_with_google,
+                    // title: 'Continue with Google',
                     onTap: () {
                       if (!_isButtonActive) return; // Prevent multiple taps
                       setState(() {
@@ -179,7 +182,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 10),
               RegisterOption(
                 image: Image.asset('assets/email_icon.png'),
-                title: 'Continue with Email',
+                title: AppLocalizations.of(context)!.continue_with_email,
+                // title: 'Continue with Email',
                 onTap: () {
                   context.push("/registerWithEmailScreen");
                 },
@@ -200,18 +204,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
                 controller: _controller,
                 isPassword: false,
-                lableText: 'Enter Phone Number',
+                lableText: AppLocalizations.of(context)!.enter_phone_number,
+                // lableText: 'Enter Phone Number',
               ),
 
               isPhoneValid
                   ? SizedBox()
                   : Text(
-                      'Please enter a valid phone number.',
+                      AppLocalizations.of(context)!
+                          .please_enter_a_valid_phone_number,
+                      // 'Please enter a valid phone number.',
                       style: TextStyle(color: AppColors.redColor),
                     ),
               phoneAlreadyExists
-                  ? const Text(
-                      'Phone Number already exists. Please login.',
+                  ? Text(
+                      AppLocalizations.of(context)!
+                          .phone_number_already_exists_please_login,
+                      // 'Phone Number already exists. Please login.',
                       style: TextStyle(color: AppColors.redColor),
                     )
                   : const SizedBox(),
@@ -250,7 +259,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   }
                   return ButtonContainerWidget(
                     color: AppColors.primaryColor,
-                    text: 'Continue',
+                    text: AppLocalizations.of(context)!.continues,
+                    // text: 'Continue',
                     isActive: isPhoneFilled,
                     isFilled: true,
                     onTapListener: () {
@@ -274,8 +284,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               noConnection
                   ? Center(
-                      child: const Text(
-                        'No Internet Connection, Please try again.',
+                      child: Text(
+                        AppLocalizations.of(context)!.no_internet_connection,
+                        // 'No Internet Connection, Please try again.',
                         style: TextStyle(color: AppColors.redColor),
                       ),
                     )
@@ -284,8 +295,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Center(
                 child: RichText(
                   text: TextSpan(
-                    text:
-                        'By clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
+                    text: AppLocalizations.of(context)!.privacy_policy,
+                    // 'By clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
                     style: const TextStyle(
                       color: AppColors.lightGreyColor,
                       fontSize: 14,
@@ -294,7 +305,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     children: <TextSpan>[
                       TextSpan(
-                        text: 'Terms of Service.',
+                        text: AppLocalizations.of(context)!.terms_of_service,
+                        // text: 'Terms of Service.',
                         style: TextStyle(
                           fontSize: 15,
                           height: 1.3,

@@ -45,7 +45,7 @@ var onboardingBodyStyle = GoogleFonts.roboto(
 );
 
 var onboardingBody2Style = GoogleFonts.roboto(
-  color:  AppColors.primaryColor,
+  color: AppColors.primaryColor,
   fontSize: 16,
   fontWeight: FontWeight.w600,
 );
@@ -73,13 +73,13 @@ var blueNormalTextStyle = GoogleFonts.roboto(
   fontSize: 16,
   fontWeight: FontWeight.w500,
   decoration: TextDecoration.underline,
-  decorationColor:  AppColors.primaryColor,
+  decorationColor: AppColors.primaryColor,
 );
 var noUnderlineblueNormalTextStyle = GoogleFonts.roboto(
-  color:  AppColors.primaryColor,
+  color: AppColors.primaryColor,
   fontSize: 16,
   fontWeight: FontWeight.w500,
-  decorationColor:  AppColors.primaryColor,
+  decorationColor: AppColors.primaryColor,
 );
 
 var mediumTextStyleBlack = GoogleFonts.roboto(
@@ -89,7 +89,7 @@ var mediumTextStyleBlack = GoogleFonts.roboto(
 );
 
 var bluemediumTextStyleBlack = GoogleFonts.roboto(
-  color:  AppColors.primaryColor,
+  color: AppColors.primaryColor,
   fontSize: 14,
   fontWeight: FontWeight.w500,
 );

@@ -11,6 +11,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/shared_preference.dart';
 import '../notification/presentation/bloc/notification_general_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainPage extends StatefulWidget {
   final Widget child;
@@ -134,15 +135,18 @@ class _MainPageState extends State<MainPage> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context)!
+                .location_permissions_are_denied)));
+        // const SnackBar(content: Text('Location permissions are denied')));
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!
+              .location_permissions_are_permanently_denied_we_cannot_request_permissions)));
+      // 'Location permissions are permanently denied, we cannot request permissions.')));
       return false;
     }
     return true;
@@ -222,13 +226,13 @@ class _MainPageState extends State<MainPage> {
         setState(() {
           _currentIndex = 1;
         });
-        context.go('/create');
+        context.push('/create');
         break;
       case 2:
         setState(() {
           _currentIndex = 2;
         });
-        context.go('/profile');
+        context.push('/profile');
         break;
       // case 3:
       //   context.go('/groups');
@@ -250,18 +254,20 @@ class _MainPageState extends State<MainPage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.lightBackgroundColor,
+        backgroundColor: AppColors.whiteColor,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: AppColors.lightBackgroundColor,
+          elevation: 0,
+          backgroundColor: AppColors.whiteColor,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: AppColors.primaryColor,
-          unselectedItemColor: AppColors.greyColor,
+          unselectedItemColor: AppColors.blackColor,
           items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(
-              icon: Icon(
+            BottomNavigationBarItem(
+              icon: const Icon(
                 Icons.home,
               ),
-              label: 'Home',
+              label: AppLocalizations.of(context)!.home,
+              // label: 'Home',
             ),
             // const BottomNavigationBarItem(
             //   icon: Icon(
@@ -282,11 +288,11 @@ class _MainPageState extends State<MainPage> {
             //   ),
             //   label: 'Groups',
             // ),
-            const BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.person,
               ),
-              label: 'Profile',
+              label: AppLocalizations.of(context)!.profile,
             ),
           ],
           currentIndex: _currentIndex,

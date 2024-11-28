@@ -8,10 +8,18 @@ class ShardPrefHelper {
   static const String _userID = 'userID';
   static const String _doubleListKey = 'doubleList';
   static const String _homeListKey = 'homeList';
+  static const String _languageKey = 'languageKey';
 
   ///...init
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
+
+  ///...language
+  static Future setLanguage(String language) async =>
+      await _preferences.setString(_languageKey, language);
+  static String? getLanguage() => _preferences.getString(_languageKey) ?? 'en';
+  static Future removeLanguage() async =>
+      await _preferences.remove(_languageKey);
 
   ///...setAccessToken
   static Future setAccessToken(String accessToken) async =>

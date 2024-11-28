@@ -8,7 +8,6 @@ const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 
 /// socket base url
 const kBaseSocketUrl = "ws://s54.90.230.2:3001";
-
 const double kMaxRadius = 100;
 const double kMinRadius = 1;
 

@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RadiusScreen extends StatefulWidget {
   const RadiusScreen({super.key});
@@ -31,7 +32,10 @@ class RadiusScreenState extends State<RadiusScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Radius changed successfully!")),
+        SnackBar(
+            content: Text(
+                AppLocalizations.of(context)!.radius_changed_successfully)),
+        // const SnackBar(content: Text("Radius changed successfully!")),
       );
     }
     if (mounted) {
@@ -43,12 +47,14 @@ class RadiusScreenState extends State<RadiusScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Set Radius'),
+        title: Text(AppLocalizations.of(context)!.set_radius),
+        // title: const Text('Set Radius'),
         actions: [
           TextButton(
             onPressed: _saveRadius,
-            child: const Text(
-              'Save',
+            child: Text(
+              AppLocalizations.of(context)!.save,
+              // 'Save',
               style: TextStyle(color: AppColors.primaryColor, fontSize: 16),
             ),
           ),
@@ -60,7 +66,8 @@ class RadiusScreenState extends State<RadiusScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Your current radius ${_radius.toStringAsFixed(0)} km',
+              '${AppLocalizations.of(context)!.your_current_radius} ${_radius.toStringAsFixed(0)} ${AppLocalizations.of(context)!.km}',
+              // 'Your current radius ${_radius.toStringAsFixed(0)} km',
               style: onboardingHeading2Style,
             ),
             const SizedBox(height: 16),
@@ -73,39 +80,45 @@ class RadiusScreenState extends State<RadiusScreen> {
                     min: 3,
                     max: 10,
                     divisions: 7,
-                    label: '${_radius.toStringAsFixed(1)} km',
+                    label:
+                        '${_radius.toStringAsFixed(1)} ${AppLocalizations.of(context)!.km}',
                     onChanged: (value) {
                       setState(() {
                         _radius = value;
                       });
                     },
                   ),
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("3 km", style: TextStyle(color: AppColors.blackColor)),
-                      Text("10 km", style: TextStyle(color: AppColors.blackColor)),
+                      Text("3 ${AppLocalizations.of(context)!.km}",
+                          style: TextStyle(color: AppColors.blackColor)),
+                      Text("10 ${AppLocalizations.of(context)!.km}",
+                          style: TextStyle(color: AppColors.blackColor)),
                     ],
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              '1- Zoom In to Your Zone: Set how close or far you want to connect! '
-              'Keep it super local for nearby neighbors, or open up your radius to explore more communities.',
+            Text(
+              '1- ${AppLocalizations.of(context)!.radius_point_1}',
+              // '1- Zoom In to Your Zone: Set how close or far you want to connect! '
+              // 'Keep it super local for nearby neighbors, or open up your radius to explore more communities.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-            const Text(
-              '2- Find What’s Happening Around You: Slide to discover cool spots, events, and stories tailored just for you. '
-              'The closer you go, the more local the vibe!',
+            Text(
+              '2- ${AppLocalizations.of(context)!.radius_point_2}',
+              // '2- Find What’s Happening Around You: Slide to discover cool spots, events, and stories tailored just for you. '
+              // 'The closer you go, the more local the vibe!',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16),
-            const Text(
-              '3- Stay Local or Go Big: Tiny radius, cozy connections. Big radius, more possibilities! '
-              'Adjust the slider and see how your neighborhood grows.',
+            Text(
+              '3- ${AppLocalizations.of(context)!.radius_point_3}',
+              // '3- Stay Local or Go Big: Tiny radius, cozy connections. Big radius, more possibilities! '
+              // 'Adjust the slider and see how your neighborhood grows.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 32),

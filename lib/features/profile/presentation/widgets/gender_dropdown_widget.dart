@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class GenderDropdown extends StatelessWidget {
   final String? selectedGender;
@@ -11,7 +12,8 @@ class GenderDropdown extends StatelessWidget {
   Widget build(BuildContext context) {
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
-        hintText: 'Gender',
+        hintText: AppLocalizations.of(context)!.gender,
+        // hintText: 'Gender',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
         ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NotificationsEmptyWidget extends StatelessWidget {
   const NotificationsEmptyWidget({super.key});
@@ -19,7 +20,8 @@ class NotificationsEmptyWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'No New Notifications',
+            AppLocalizations.of(context)!.no_new_notifications,
+            // 'No New Notifications',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -28,7 +30,9 @@ class NotificationsEmptyWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'There are currently no notifications to display.',
+            AppLocalizations.of(context)!
+                .there_are_currently_no_notifications_to_display,
+            // 'There are currently no notifications to display.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w400,
