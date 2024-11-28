@@ -16,7 +16,7 @@ class MenuIconItem extends StatelessWidget {
     this.icon = Icons.abc,
     this.iconSize = 20,
     this.svgPath = '',
-    this.textColor =  AppColors.blackColor,
+    this.textColor = AppColors.blackColor,
     required this.onTap,
   });
 

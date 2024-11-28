@@ -34,6 +34,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     Map<String, dynamic> queryParameters;
     double radius = ShardPrefHelper.getRadius() ?? 1.0;
     print('radius:$radius');
+
     if (isHome) {
       List<double> location = ShardPrefHelper.getHomeLocation();
       double lat = location[0];
@@ -43,7 +44,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       queryParameters = {
         'latitude': '$lat',
         'longitude': '$long',
-        'home': '$isHome',
+        'home': 'false',
         'range': '$radius',
       };
     } else {
@@ -54,7 +55,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       print('lat in getAllPosts ==> $lat');
       print('long in getAllPosts ==> $long');
       queryParameters = {
-        'home': '$isHome',
+        'home': 'false',
         'latitude': '$lat',
         'longitude': '$long',
         'range': '$radius',

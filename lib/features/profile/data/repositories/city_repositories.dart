@@ -34,6 +34,9 @@ class CityRepository {
         String lastWord = words.last;
         print('Last word of update city: $lastWord');
         print('city coordinates: ${responseMap['user_coordinates']}');
+        if (lastWord.toLowerCase() == 'delhi') {
+          lastWord = "New Delhi";
+        }
         ShardPrefHelper.setHomeCity(lastWord);
         ShardPrefHelper.setHomeLocation([
           responseMap['user_coordinates'][0],

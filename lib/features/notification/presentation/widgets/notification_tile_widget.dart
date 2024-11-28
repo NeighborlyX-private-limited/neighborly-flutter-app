@@ -1,18 +1,14 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
-import 'package:neighborly_flutter_app/features/authentication/presentation/bloc/login_with_email_bloc/login_with_email_bloc.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comment_by_comment_id_bloc/get_comments_by_commentId_bloc.dart';
 
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/notification_model.dart';
-import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
 
 class NotificationTileWidget extends StatelessWidget {
   final NotificationModel notification;
@@ -91,7 +87,9 @@ class NotificationTileWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     buildMainArea(context);
     return Container(
-      color: notification.status == "unread" ? AppColors.lightGreyColor : AppColors.whiteColor,
+      color: notification.status == "unread"
+          ? Color(0xFFF0F0F0)
+          : AppColors.whiteColor,
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
       width: double.infinity,
       child: Row(

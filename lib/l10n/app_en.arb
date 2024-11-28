@@ -1,5 +1,4 @@
 {
-  "hello":"Hello",
   "set_radius": "Set Radius",
   "edit_profile_info": "Edit Profile Info",
   "search": "Search",
@@ -140,7 +139,7 @@
   "delete": "Delete",
   "award_not_available_you_run_out_of_this_award": "Award not available. You run out of this award.",
   "award_given_successfully": "Award given successfully",
-  "award_this_post": "award_this_post",
+  "award_this_post": "Award this post",
   "commented_on_this": "Commented on this",
   "comment_deleted": "Comment Deleted",
   "post_deleted": "Post Deleted",
@@ -174,7 +173,20 @@
   "quantity": "Quantity",
   "item": "Item",
   "items": "Items",
-  "payment_verified": "Payment Verified"
-
-
+  "payment_verified": "Payment Verified",
+  "reply":"Reply",
+  "view_replies":"View replies",
+  "hide_replies":"Hide replies",
+  "no_reply_yet":"No reply yet",
+  "report":"Report",
+  "poll_deleted":"Poll Deleted",
+  "delete_poll": "Delete Poll",
+  "inappropriate_content": "Inappropriate content",
+  "spam": "Spam",
+  "harassment_or_hate_speech": "Harassment or hate speech",
+  "violence_or_dangerous_organizations": "Violence or dangerous organizations",
+  "intellectual_property_violation": "Intellectual property violation",
+  "reason_to_report":"Reason to Report",
+  "thanks_for_letting_us_know":"Thanks for letting us know",
+  "we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly":"We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly."
 }

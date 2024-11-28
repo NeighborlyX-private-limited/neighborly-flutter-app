@@ -226,13 +226,13 @@ class _MainPageState extends State<MainPage> {
         setState(() {
           _currentIndex = 1;
         });
-        context.go('/create');
+        context.push('/create');
         break;
       case 2:
         setState(() {
           _currentIndex = 2;
         });
-        context.go('/profile');
+        context.push('/profile');
         break;
       // case 3:
       //   context.go('/groups');
@@ -254,12 +254,13 @@ class _MainPageState extends State<MainPage> {
 
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.lightBackgroundColor,
+        backgroundColor: AppColors.whiteColor,
         bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: AppColors.lightBackgroundColor,
+          elevation: 0,
+          backgroundColor: AppColors.whiteColor,
           type: BottomNavigationBarType.fixed,
           selectedItemColor: AppColors.primaryColor,
-          unselectedItemColor: AppColors.greyColor,
+          unselectedItemColor: AppColors.blackColor,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: const Icon(

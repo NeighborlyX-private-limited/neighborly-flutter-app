@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/core/widgets/language_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/button_widget.dart';
@@ -147,7 +148,13 @@ class _CustomDrawerState extends State<CustomDrawer> {
             title: Text(AppLocalizations.of(context)!.buy_awards),
             onTap: () {
               widget.scaffoldKey.currentState?.closeEndDrawer();
-              //context.push('/payment');
+              showModalBottomSheet(
+                showDragHandle: true,
+                backgroundColor: AppColors.whiteColor,
+                context: context,
+                isScrollControlled: true,
+                builder: (_) => const AwardSelectionScreen(),
+              );
             },
           ),
 

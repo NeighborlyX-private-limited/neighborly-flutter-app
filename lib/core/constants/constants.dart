@@ -8,10 +8,6 @@ const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 
 /// socket base url
 const kBaseSocketUrl = "ws://s54.90.230.2:3001";
-
-/// dev test key
-const razorpayTestKey = "rzp_test_38jm84lwfbySi0";
-
 const double kMaxRadius = 100;
 const double kMinRadius = 1;
 

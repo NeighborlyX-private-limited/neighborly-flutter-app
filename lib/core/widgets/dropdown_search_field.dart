@@ -2,23 +2,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:remove_diacritic/remove_diacritic.dart';
-
 import '../theme/text_style.dart';
-
-/*
-  Expanded(
-    child: DropdownSearchField(
-      label: 'Cidade Nascimento',
-      items: ['Sao Paulo', 'Campinas', 'Salvador', 'Sao Jose dos Campos', 'Pindorama'],
-      onChanged: (value) {
-        widget.birthCityEC.text = value ?? '';
-      },
-      initialValue: widget.birthCityEC.text,
-      placeholder: 'Selecione',
-      validator: Validatorless.required('Preenchimento é obrigatório'),
-    ),
-  ),
-*/
 
 class DropdownSearchField extends StatefulWidget {
   final List<String> items;
@@ -48,7 +32,6 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
 
   @override
   void initState() {
-    print('.... INIT DROPSEARCH widget.initialValue=${widget.initialValue}');
     if (widget.initialValue != null && widget.initialValue != '') {
       selectedValue = widget.initialValue;
     }
@@ -63,7 +46,6 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
 
   @override
   Widget build(BuildContext context) {
-    print('... BUILD selectedValue=$selectedValue');
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,15 +75,17 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
                 ),
               ),
               items: widget.items
-                  .map((item) => DropdownMenuItem(
-                        value: removeDiacritics(item),
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
+                  .map(
+                    (item) => DropdownMenuItem(
+                      value: removeDiacritics(item),
+                      child: Text(
+                        item,
+                        style: const TextStyle(
+                          fontSize: 14,
                         ),
-                      ))
+                      ),
+                    ),
+                  )
                   .toList(),
               value: selectedValue,
               onChanged: (value) {
@@ -121,7 +105,6 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
               menuItemStyleData: const MenuItemStyleData(
                 height: 40,
               ),
-
               dropdownSearchData: DropdownSearchData(
                 searchController: textEditingController,
                 searchInnerWidgetHeight: 50,
@@ -158,7 +141,6 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
                       .contains(searchValue.toLowerCase());
                 },
               ),
-              //This to clear the search value when you close the menu
               onMenuStateChange: (isOpen) {
                 if (!isOpen) {
                   textEditingController.clear();

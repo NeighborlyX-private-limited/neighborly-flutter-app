@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:neighborly_flutter_app/core/constants/razorpay_constants.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
@@ -25,6 +24,7 @@ class BagBottomSheet extends StatefulWidget {
 class _BagBottomSheetState extends State<BagBottomSheet> {
   late Razorpay _razorpay;
 
+  /// init method
   @override
   void initState() {
     super.initState();
@@ -34,25 +34,31 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
     _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
   }
 
+  /// dispose method
   @override
   void dispose() {
     _razorpay.clear();
     super.dispose();
   }
 
+  /// method to handle the payment success response
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     Navigator.pop(context);
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(AppLocalizations.of(context)!.payment_successful)),
     );
-    BlocProvider.of<PaymentBloc>(context).add(VerifyPaymentEvent({
-      "razorpay_order_id": response.orderId,
-      "razorpay_payment_id": response.paymentId,
-      "razorpay_signature": response.signature,
-    }));
+    BlocProvider.of<PaymentBloc>(context).add(
+      VerifyPaymentEvent(
+        {
+          "razorpay_order_id": response.orderId,
+          "razorpay_payment_id": response.paymentId,
+          "razorpay_signature": response.signature,
+        },
+      ),
+    );
   }
 
+  /// method to handle the failure response
   void _handlePaymentError(PaymentFailureResponse response) {
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -60,6 +66,7 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
     );
   }
 
+  /// method to handle external wallet response
   void _handleExternalWallet(ExternalWalletResponse response) {
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
@@ -69,9 +76,6 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    print("selectedAwards");
-    print(widget.selectedAwards);
-    print(widget.awardImages);
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: const BoxDecoration(
@@ -86,7 +90,10 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
             children: [
               Text(
                 AppLocalizations.of(context)!.bag,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(
                 width: 10,
@@ -105,7 +112,8 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
           const Divider(
             height: 30,
           ),
-          // Display Selected Awards
+
+          /// Display Selected Awards
           ListView.builder(
             shrinkWrap: true,
             itemCount: widget.selectedAwards.length,
@@ -120,7 +128,6 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
                     height: 70,
                     width: 70,
                   ),
-                  // backgroundImage: AssetImage(awardImages[award.key]!),
                 ),
                 title: Text(award.key),
                 subtitle: Text(
@@ -131,7 +138,8 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
             },
           ),
           const Divider(),
-          // Total Amount
+
+          /// Total Amount
           ListTile(
             title: Text(AppLocalizations.of(context)!.total_price),
             trailing: Text(
@@ -140,28 +148,30 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
             ),
           ),
           const SizedBox(height: 16),
-          //------------------------------------------------------
+
           BlocConsumer<PaymentBloc, PaymentState>(
             listener: (context, state) {
+              /// payment created state
               if (state is PaymentCreated) {
                 _razorpay.open({
-                  "key": razorpayTestKey,
+                  "key": razorpayKey,
                   "order_id": state.orderData['orderId'],
                   "amount": state.orderData['amount'],
-                  //"name": "Your Company Name",
-                  //"description": "Payment for Order",
-                  //"prefill": {"contact": "", "email": ""},
                 });
+
+                /// payment verified state
               } else if (state is PaymentVerified) {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content:
-                          Text(AppLocalizations.of(context)!.payment_verified)),
+                    content:
+                        Text(AppLocalizations.of(context)!.payment_verified),
+                  ),
                 );
               }
             },
             builder: (context, state) {
+              ///payment loading state
               if (state is PaymentLoading) {
                 return Center(
                   child: CircularProgressIndicator(
@@ -169,6 +179,8 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
                   ),
                 );
               }
+
+              /// buy now button
               return ElevatedButton(
                 onPressed: () {
                   BlocProvider.of<PaymentBloc>(context).add(
@@ -184,22 +196,14 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
                 child: Text(
                   AppLocalizations.of(context)!.buy_now,
                   style: TextStyle(
-                      color: AppColors.whiteColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
+                    color: AppColors.whiteColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               );
             },
           ),
-          //---------------------------------------------
-          // ElevatedButton(
-          //   onPressed: () => Navigator.pop(context),
-          //   style: ElevatedButton.styleFrom(
-          //     backgroundColor: Colors.green,
-          //     minimumSize: const Size.fromHeight(48),
-          //   ),
-          //   child: const Text("Buy"),
-          // ),
         ],
       ),
     );

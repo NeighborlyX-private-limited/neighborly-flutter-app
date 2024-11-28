@@ -1,5 +1,4 @@
 {
-  "hello": "रेडियस सेट करें",
   "set_radius": "रेडियस सेट करें",
   "edit_profile_info": "प्रोफ़ाइल जानकारी एडिट करें",
   "search": "सर्च",
@@ -175,6 +174,19 @@
   "item": "आइटम",
   "items": "आइटम्स",
   "payment_verified": "पेमेंट वेरिफाइड",
-
-
+  "reply":"रिप्लाई दें",
+  "view_replies":"रिप्लाई देखें",
+  "hide_replies":"रिप्लाई छिपाएँ",
+  "no_reply_yet":"अभी तक कोई रिप्लाई नहीं",
+  "report":"रिपोर्ट",
+  "poll_deleted":"पोल हटाया गया",
+  "delete_poll": "पोल हटाए",
+  "inappropriate_content": "अनुचित सामग्री",
+  "spam": "स्पैम",
+  "harassment_or_hate_speech": "उत्पीड़न या नफरत भरी भाषा",
+  "violence_or_dangerous_organizations": "हिंसा या खतरनाक संगठन",
+  "intellectual_property_violation": "बौद्धिक संपदा का उल्लंघन",
+  "reason_to_report":"रिपोर्ट करने का कारण",
+  "thanks_for_letting_us_know":"हमें बताने के लिए धन्यवाद",
+  "we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly":"हम अपने समुदाय को सुरक्षित और सम्मानजनक बनाए रखने में आपकी मदद की सराहना करते हैं। हमारी टीम शीघ्र ही सामग्री की समीक्षा करेगी।"
 }

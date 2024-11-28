@@ -12,7 +12,7 @@ class AwardSelectionScreen extends StatefulWidget {
 }
 
 class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
-  // Map to track counts of awards
+  /// Map to track counts of awards
   final Map<String, int> awardCounts = {
     "Local Legend": 0,
     "Sunflower": 0,
@@ -21,9 +21,10 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
     "Map": 0,
   };
 
-  int randomAwards = 0; // Count for random awards
+  /// Count for random awards
+  int randomAwards = 0;
 
-  // SVG Images for awards
+  /// SVG Images for awards
   final Map<String, String> awardImages = {
     "Local Legend": "assets/Local_Legend.svg",
     "Sunflower": "assets/Sunflower.svg",
@@ -33,7 +34,8 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
     "random": "assets/award.svg",
   };
 
-  // Award prices
+  /// Award prices currently all are same but in future
+  ///  we can add some new awards with diffrent diffrent prices
   final Map<String, int> awardPrices = {
     "Local Legend": 25,
     "Sunflower": 25,
@@ -42,7 +44,7 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
     "Map": 25,
   };
 
-  // Increment count
+  /// Increment award count method
   void _increment(String award) {
     setState(() {
       if (award == "random") {
@@ -53,7 +55,7 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
     });
   }
 
-  // Decrement count
+  /// Decrement award count method
   void _decrement(String award) {
     setState(() {
       if (award == "random") {
@@ -66,7 +68,7 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
     });
   }
 
-  // Prepare selected awards for backend
+  /// Prepare selected awards for backend
   List<Map<String, int>> _getSelectedAwards() {
     final List<Map<String, int>> selectedAwards = [];
     awardCounts.forEach((award, count) {
@@ -78,21 +80,23 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
     return selectedAwards;
   }
 
-  // On Buy Button Press
+  /// handle On Buy Button Press
   void _onBuyPressed() {
     final selectedAwards = _getSelectedAwards();
     if (selectedAwards.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(
-                AppLocalizations.of(context)!.add_some_awards_in_your_bag)),
+          content:
+              Text(AppLocalizations.of(context)!.add_some_awards_in_your_bag),
+        ),
       );
     } else {
-      Navigator.pop(context); // Close the current bottom sheet
-      _showBagBottomSheet(selectedAwards); // Open Bag bottom sheet
+      Navigator.pop(context);
+      _showBagBottomSheet(selectedAwards);
     }
   }
 
+  /// open bag bottom sheet method
   void _showBagBottomSheet(List<Map<String, int>> selectedAwards) {
     showModalBottomSheet(
       showDragHandle: true,
@@ -101,7 +105,7 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
       isScrollControlled: true,
       builder: (_) => BagBottomSheet(
         selectedAwards: selectedAwards,
-        awardImages: awardImages, // Pass images to the Bag Bottom Sheet
+        awardImages: awardImages,
       ),
     );
   }
@@ -121,7 +125,7 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SvgPicture.asset(
-                'assets/award.svg', // SVG for random
+                'assets/award.svg',
                 height: 60,
                 width: 60,
               ),
@@ -135,29 +139,29 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
             ],
           ),
           const Divider(height: 30),
-          // List of Awards in Grid View with Images and Prices
+
+          /// List of Awards in Grid View with Images and Prices
           GridView.builder(
             shrinkWrap: true,
             itemCount: awardCounts.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, // 3 awards per row
+              crossAxisCount: 3,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 0.8, // Adjust height-to-width ratio
+              childAspectRatio: 0.8,
             ),
             itemBuilder: (_, index) {
               final award = awardCounts.keys.elementAt(index);
               return Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // Award SVG with Add/Remove Buttons
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      /// award image
                       CircleAvatar(
                         radius: 40,
-                        backgroundColor:
-                            AppColors.whiteColor, // Optional background color
+                        backgroundColor: AppColors.whiteColor,
                         child: SvgPicture.asset(
                           awardImages[award]!,
                           height: 70,
@@ -175,8 +179,8 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          //mainAxisSize: MainAxisSize.min,
                           children: [
+                            /// decrement award count button
                             InkWell(
                               onTap: () => _decrement(award),
                               child: Icon(
@@ -184,10 +188,14 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
                                 size: 16,
                               ),
                             ),
+
+                            /// award count
                             Text(
                               "${awardCounts[award]}",
                               style: TextStyle(color: AppColors.blackColor),
                             ),
+
+                            /// increment award count button
                             InkWell(
                               onTap: () => _increment(award),
                               child: Icon(
@@ -200,7 +208,8 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
                       ),
                     ],
                   ),
-                  // Price at Top-Right
+
+                  /// award price
                   Positioned(
                     top: 0,
                     right: 15,
@@ -228,14 +237,14 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
             },
           ),
           const Divider(height: 30),
-          // random Awards Section
+
+          /// random Awards Section
           ListTile(
             leading: CircleAvatar(
               radius: 40,
-              backgroundColor:
-                  AppColors.whiteColor, // Optional background color
+              backgroundColor: AppColors.whiteColor,
               child: SvgPicture.asset(
-                'assets/award.svg', // SVG for random
+                'assets/award.svg',
                 height: 70,
                 width: 70,
               ),
@@ -253,7 +262,6 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //mainAxisSize: MainAxisSize.min,
                 children: [
                   InkWell(
                     onTap: () => _decrement("random"),
@@ -275,6 +283,8 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
             ),
           ),
           const SizedBox(height: 16),
+
+          /// checkout button
           ElevatedButton(
             onPressed: _onBuyPressed,
             style: ElevatedButton.styleFrom(
@@ -284,9 +294,10 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
             child: Text(
               AppLocalizations.of(context)!.checkout,
               style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
+                color: AppColors.whiteColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -294,4 +305,4 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
     );
   }
 }
-// 
+//

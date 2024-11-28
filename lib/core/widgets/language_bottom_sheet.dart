@@ -45,7 +45,7 @@ class LanguageBottomSheetState extends State<LanguageBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.only(
@@ -71,7 +71,6 @@ class LanguageBottomSheetState extends State<LanguageBottomSheet> {
                 if (value != null) _onLanguageSelected(value);
               },
             ),
-            // title:  Text(AppLocalizations.of(context)!.english),
             title: Text(AppLocalizations.of(context)!.english),
           ),
           ListTile(
@@ -82,7 +81,6 @@ class LanguageBottomSheetState extends State<LanguageBottomSheet> {
                 if (value != null) _onLanguageSelected(value);
               },
             ),
-            // title:  Text(AppLocalizations.of(context)!.hindi),
             title: Text(AppLocalizations.of(context)!.hindi),
           ),
         ],

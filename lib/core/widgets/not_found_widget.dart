@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../theme/colors.dart';
 
 class NotFoundWidget extends StatelessWidget {

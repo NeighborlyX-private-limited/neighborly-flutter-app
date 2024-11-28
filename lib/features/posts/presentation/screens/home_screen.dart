@@ -28,6 +28,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/utils/shared_preference.dart';
 import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   final String tabIndex;
@@ -128,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// refersh the home screen
   Future<void> _onRefresh() async {
-    print('this is call....');
+    print('_onRefresh....');
     setIsHome();
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
@@ -176,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     if (!isHome) {
-      await fetchLocationAndUpdate();
+      fetchLocationAndUpdate();
     }
     _fetchPosts();
   }
@@ -205,21 +206,26 @@ class _HomeScreenState extends State<HomeScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Location permissions are denied'),
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!
+                  .location_permissions_are_denied),
+            ),
+          );
+        }
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.'),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!
+                .location_permissions_are_permanently_denied_we_cannot_request_permissions),
+          ),
+        );
+      }
       return false;
     }
     return true;
@@ -348,8 +354,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content:
-                                        Text('City updated to ${state.city}!'),
+                                    content: Text(
+                                        '${AppLocalizations.of(context)!.city_updated_to} ${state.city}!'),
                                   ),
                                 );
                               } else if (state is CityErrorState) {
@@ -365,6 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               selectCity: _selectedCity,
                               onChanged: (String? newValue) {
                                 if (newValue != null) {
+                                  print('new city: $newValue');
                                   context
                                       .read<CityBloc>()
                                       .add(UpdateCityEvent(newValue));
@@ -507,9 +514,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               SizedBox(
                                 height: 10,
                               ),
-                              Text(
-                                  "Time to be the hero this wall needs, start the"),
-                              Text('Conversation!'),
+                              Text(AppLocalizations.of(context)!
+                                  .time_to_be_the_hero_this_wall_needs_start_the),
+                              //Text('Conversation!'),
                               SizedBox(
                                 height: 10,
                               ),
@@ -520,7 +527,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context.push('/create');
                                 },
                                 child: Text(
-                                  'Create a Post',
+                                  AppLocalizations.of(context)!.create_a_post,
                                   style: TextStyle(color: AppColors.whiteColor),
                                 ),
                               )
@@ -560,19 +567,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                   if (state.error.contains('Internal server error')) {
                     // return SomethingWentWrong();
-                    return const Center(
+                    return Center(
                         child: Text(
-                      'oops something went wrong',
+                      AppLocalizations.of(context)!.oops_something_went_wrong,
                       style: TextStyle(color: AppColors.redColor),
                     ));
                   }
                   if (state.error.contains('No internet connection')) {
                     return SomethingWentWrong(
                       imagePath: 'assets/something_went_wrong.svg',
-                      title: 'Aaah! Something went wrong',
-                      message:
-                          "We couldn't start your program.\nPlease try starting it again",
-                      buttonText: 'Retry',
+                      // title: 'Aaah! Something went wrong',
+                      // message:
+                      //     "We couldn't start your program.\nPlease try starting it again",
+                      // buttonText: 'Retry',
+                      title: AppLocalizations.of(context)!
+                          .aaah_something_went_wrong,
+                      message: AppLocalizations.of(context)!
+                          .we_could_not_fetch_your_data_please_try_starting_it_again,
+                      buttonText: AppLocalizations.of(context)!.retry,
                       onButtonPressed: () {
                         _onRefresh();
                       },
@@ -581,8 +593,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                   return Center(child: Text(state.error));
                 } else {
-                  return const Center(
-                    child: Text('No data'),
+                  return Center(
+                    child: Text(AppLocalizations.of(context)!.no_data),
                   );
                 }
               },
@@ -634,14 +646,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 15),
                     Center(
                       child: Text(
-                        'One last thing before we get started!!',
+                        AppLocalizations.of(context)!
+                            .one_last_thing_before_we_get_started,
                         style: onboardingHeading2Style,
                       ),
                     ),
                     const Divider(
                       color: AppColors.greyColor,
                     ),
-                    Text('Date of Birth', style: blackonboardingBody1Style),
+                    Text(AppLocalizations.of(context)!.date_of_birth,
+                        style: blackonboardingBody1Style),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -650,7 +664,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedDay,
-                            hint: Text("Day"),
+                            hint: Text(AppLocalizations.of(context)!.day),
                             items: days.map((day) {
                               return DropdownMenuItem(
                                 value: day,
@@ -679,7 +693,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedMonth,
-                            hint: Text("Month"),
+                            hint: Text(AppLocalizations.of(context)!.month),
                             items: months.map((month) {
                               return DropdownMenuItem(
                                 value: month,
@@ -708,7 +722,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedYear,
-                            hint: Text("Year"),
+                            hint: Text(AppLocalizations.of(context)!.year),
                             items: years.map((year) {
                               return DropdownMenuItem(
                                 value: year,
@@ -744,7 +758,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             SnackBar(
                               content: Text(state.error
                                       .contains('DOB can only be set once.')
-                                  ? 'User DOB already saved.'
+                                  ? AppLocalizations.of(context)!
+                                      .date_of_birth_saved_successfully
                                   : state.error),
                             ),
                           );
@@ -752,8 +767,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           print('User Info saved successfully.');
                           context.pop();
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('User Info saved successfully.'),
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!
+                                  .date_of_birth_saved_successfully),
                             ),
                           );
                         }
@@ -772,7 +788,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return ButtonContainerWidget(
                           isActive: isDobBtnActive,
                           color: AppColors.primaryColor,
-                          text: 'Save',
+                          text: AppLocalizations.of(context)!.save,
                           isFilled: true,
                           onTapListener: () {
                             BlocProvider.of<GetGenderAndDOBBloc>(context).add(

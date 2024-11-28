@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/domain/usecases/create_order_usecase.dart';
 import 'package:neighborly_flutter_app/features/payment/domain/usecases/verify_payment_usecase.dart';
 
+///event class
 abstract class PaymentEvent {}
 
 class CreateOrderEvent extends PaymentEvent {
@@ -14,6 +15,7 @@ class VerifyPaymentEvent extends PaymentEvent {
   VerifyPaymentEvent(this.params);
 }
 
+/// state class
 abstract class PaymentState {}
 
 class PaymentInitial extends PaymentState {}
@@ -32,6 +34,7 @@ class PaymentError extends PaymentState {
   PaymentError(this.message);
 }
 
+/// bloc class
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   final CreateOrderUseCase createOrderUseCase;
   final VerifyPaymentUseCase verifyPaymentUseCase;

@@ -15,6 +15,7 @@ import 'overlapping_images_widget.dart';
 
 import '../../../profile/data/data_sources/profile_remote_data_source/profile_remote_data_source_impl.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ReactionWidget extends StatefulWidget {
   final PostEntity post;
@@ -80,11 +81,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     bool sunflowerAvailable = false;
     bool streetlightAvailable = false;
     bool mapAvailable = false;
-    int _localLegendCount = 0;
-    int _parkBenchCount = 0;
-    int _sunflowerCount = 0;
-    int _streetlightCount = 0;
-    int _mapCount = 0;
+    int localLegendCt = 0;
+    int parkBenchCt = 0;
+    int sunflowerCt = 0;
+    int streetlightCt = 0;
+    int mapCt = 0;
 
     if (responseMessage.isEmpty) {
       localLegendAvailable = false;
@@ -92,52 +93,52 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       sunflowerAvailable = false;
       streetlightAvailable = false;
       mapAvailable = false;
-      _localLegendCount = 0;
-      _parkBenchCount = 0;
-      _sunflowerCount = 0;
-      _streetlightCount = 0;
-      _mapCount = 0;
+      localLegendCt = 0;
+      parkBenchCt = 0;
+      sunflowerCt = 0;
+      streetlightCt = 0;
+      mapCt = 0;
     } else {
       for (var award in responseMessage) {
         if (award['type'] == 'Local Legend') {
           if (award['count'] > 0) {
             localLegendAvailable = true;
-            _localLegendCount = award['count'];
+            localLegendCt = award['count'];
           } else {
-            _localLegendCount = 0;
+            localLegendCt = 0;
           }
         }
 
         if (award['type'] == 'Park Bench') {
           if (award['count'] > 0) {
             parkBenchAvailable = true;
-            _parkBenchCount = award['count'];
+            parkBenchCt = award['count'];
           } else {
-            _parkBenchCount = 0;
+            parkBenchCount = 0;
           }
         }
         if (award['type'] == 'Sunflower') {
           if (award['count'] > 0) {
             sunflowerAvailable = true;
-            _sunflowerCount = award['count'];
+            sunflowerCt = award['count'];
           } else {
-            _sunflowerCount = 0;
+            sunflowerCt = 0;
           }
         }
         if (award['type'] == 'Streetlight') {
           if (award['count'] > 0) {
             streetlightAvailable = true;
-            _streetlightCount = award['count'];
+            streetlightCt = award['count'];
           } else {
-            _streetlightCount = 0;
+            streetlightCt = 0;
           }
         }
         if (award['type'] == 'Map') {
           if (award['count'] > 0) {
             mapAvailable = true;
-            _mapCount = award['count'];
+            mapCt = award['count'];
           } else {
-            _mapCount = 0;
+            mapCt = 0;
           }
         }
       }
@@ -145,17 +146,33 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
     // Update state once after the loop
     setState(() {
+      print(localLegendCt);
+      print(parkBenchCt);
+      print(sunflowerCt);
+      print(streetlightCt);
+      print(mapCt);
+
+      print(localLegendCount);
+      print(parkBenchCount);
+      print(sunflowerCount);
+      print(streetlightCount);
+      print(mapCount);
       isLocalLegendAwardAvailable = localLegendAvailable;
       isParkBenchAwardAvailable = parkBenchAvailable;
       isSunflowerAwardAvailable = sunflowerAvailable;
       isStreetlightAwardAvailable = streetlightAvailable;
       isMapAwardAvailable = mapAvailable;
-      localLegendCount = _localLegendCount;
-      parkBenchCount = _parkBenchCount;
-      sunflowerCount = _sunflowerCount;
-      streetlightCount = _streetlightCount;
-      mapCount = _mapCount;
+      localLegendCount = localLegendCt;
+      parkBenchCount = parkBenchCt;
+      sunflowerCount = sunflowerCt;
+      streetlightCount = streetlightCt;
+      mapCount = mapCt;
     });
+    print(localLegendCount);
+    print(parkBenchCount);
+    print(sunflowerCount);
+    print(streetlightCount);
+    print(mapCount);
   }
 
   Future<void> _saveReactionState() async {
@@ -280,7 +297,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     Text(
                       cheersCount.toString(),
                       style: TextStyle(
-                        color: isCheered ? AppColors.redColor : Colors.grey[900],
+                        color:
+                            isCheered ? AppColors.redColor : Colors.grey[900],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -337,7 +355,9 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     Text(
                       boolsCount.toString(),
                       style: TextStyle(
-                        color: isBooled ? AppColors.primaryColor : Colors.grey[600],
+                        color: isBooled
+                            ? AppColors.primaryColor
+                            : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -393,6 +413,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             showBottomSheet().then((value) {
               if (value != null) {
                 setState(() {
+                  print('value: $value');
                   awardsCount = value;
                 });
               }
@@ -494,16 +515,17 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               Navigator.pop(context, awardsCount);
               if (state.error.contains('Award not available')) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content:
-                        Text('Award not available. You run out of this award.'),
+                  SnackBar(
+                    content: Text(AppLocalizations.of(context)!
+                        .award_not_available_you_run_out_of_this_award),
                   ),
                 );
               }
             } else if (state is GiveAwardSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Award given successfully'),
+                SnackBar(
+                  content: Text(
+                      AppLocalizations.of(context)!.award_given_successfully),
                 ),
               );
               Navigator.pop(context, awardsCount + 1);
@@ -527,7 +549,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       width: 40,
                       height: 5,
                       decoration: BoxDecoration(
-                        color:  AppColors.lightGreyColor,
+                        color: AppColors.lightGreyColor,
                         borderRadius: BorderRadius.circular(40),
                       ),
                     ),
@@ -537,7 +559,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                   ),
                   Center(
                     child: Text(
-                      'Award this post',
+                      AppLocalizations.of(context)!.award_this_post,
                       style: onboardingHeading2Style,
                     ),
                   ),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/language_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete_account_bloc/delete_account_bloc.dart';
@@ -201,6 +202,33 @@ class _SettingScreenState extends State<SettingScreen> {
                   ),
                   Text(
                     AppLocalizations.of(context)!.language,
+                    style: blackonboardingBody1Style,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                  showDragHandle: true,
+                  backgroundColor: AppColors.whiteColor,
+                  context: context,
+                  isScrollControlled: true,
+                  builder: (_) => const AwardSelectionScreen(),
+                );
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Icon(Icons.payment),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.buy_awards,
                     style: blackonboardingBody1Style,
                   ),
                 ],
