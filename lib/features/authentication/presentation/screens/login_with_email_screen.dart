@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -30,21 +29,24 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
 
+  /// init method
   @override
   void initState() {
+    super.initState();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
-
-    super.initState();
   }
 
+  /// dispose method
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 
+  /// check is active
+  /// it is for button enable or disable
   bool checkIsActive() {
     if (isEmailFilled && isPasswordFilled) {
       return true;
@@ -55,207 +57,208 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
+      child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        leading: InkWell(
-          child: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-          ),
-          onTap: () {
-            context.pop();
-          },
-        ),
-        centerTitle: true,
-        title: Row(
-          children: [
-            const SizedBox(width: 100),
-            Image.asset(
-              'assets/onboardingIcon.png',
-              width: 25,
-              height: 25,
+        appBar: AppBar(
+          backgroundColor: AppColors.whiteColor,
+          leading: InkWell(
+            child: const Icon(
+              Icons.arrow_back,
+              size: 20,
             ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            onTap: () {
+              context.pop();
+            },
+          ),
+          centerTitle: true,
+          title: Row(
             children: [
-              Image.asset('assets/big_email_icon.png'),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                AppLocalizations.of(context)!.continue_with_email,
-                //'Continue with Email',
-                style: onboardingHeading1Style,
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                AppLocalizations.of(context)!.join_neighborly_with_your_email,
-
-                /// 'Join Neighborly with your email.',
-                style: onboardingBodyStyle,
-              ),
-              const SizedBox(
+              const SizedBox(width: 100),
+              Image.asset(
+                'assets/onboardingIcon.png',
+                width: 25,
                 height: 25,
               ),
-              TextFieldWidget(
-                border: true,
-                controller: _emailController,
-                lableText: AppLocalizations.of(context)!.enter_email_address,
-
-                // lableText: 'Enter Email Address',
-                isPassword: false,
-                onChanged: (value) {
-                  setState(() {
-                    isEmailFilled = _emailController.text.isNotEmpty;
-                  });
-                },
-              ),
-              !isEmailValid
-                  ? Text(
-                      AppLocalizations.of(context)!
-                          .please_enter_a_valid_email_address,
-                      // 'Please enter a valid email address',
-                      style: TextStyle(color: AppColors.redColor),
-                    )
-                  : const SizedBox(),
-              const SizedBox(
-                height: 12,
-              ),
-              TextFieldWidget(
-                border: true,
-                onChanged: (value) {
-                  setState(() {
-                    isPasswordFilled = _passwordController.text.isNotEmpty;
-                  });
-                },
-                controller: _passwordController,
-                lableText: AppLocalizations.of(context)!.password,
-                // lableText: 'Password',
-                isPassword: true,
-              ),
-              isPasswordWrong
-                  ? Text(
-                      AppLocalizations.of(context)!
-                          .wrong_password_Try_again_or_click_forgot_password_to_reset_it,
-                      // 'Wrong password. Try again or click Forgot password to reset it.',
-                      style: TextStyle(color: AppColors.redColor),
-                    )
-                  : const SizedBox(),
-              const SizedBox(
-                height: 45,
-              ),
-              BlocConsumer<LoginWithEmailBloc, LoginWithEmailState>(
-                listener: (BuildContext context, LoginWithEmailState state) {
-                  if (state is LoginFailureState) {
-                    if (state.error.contains('Invalid Email or Password')) {
-                      setState(() {
-                        isPasswordWrong = true;
-                      });
-                      return;
-                    }
-                    if (state.error.contains('internet')) {
-                      setState(() {
-                        noConnection = true;
-                      });
-                      return;
-                    }
-                  } else if (state is LoginSuccessState) {
-                    bool isEmailVerified = state.authResponseEntity.isVerified!;
-
-                    bool isSkippedTutorial =
-                        ShardPrefHelper.getIsSkippedTutorial();
-                    bool isViewedTutorial =
-                        ShardPrefHelper.getIsViewedTutorial();
-                    print(
-                        'isSkippedTutorial in login with email:$isSkippedTutorial');
-                    print(
-                        'isViewedTutorial in login with email:$isViewedTutorial');
-                    if (!isEmailVerified) {
-                      context.go('/otp/${_emailController.text}/email-verify');
-                    } else if ((!isSkippedTutorial) && (!isViewedTutorial)) {
-                      context.go('/tutorialScreen');
-                    } else {
-                      context.go('/home/Home');
-                    }
-                  }
-                },
-                builder: (context, state) {
-                  if (state is LoginLoadingState) {
-                    return Center(
-                      child: BouncingLogoIndicator(
-                        logo: 'images/logo.svg',
-                      ),
-                    );
-                    // return const Center(
-                    //   child: CircularProgressIndicator(),
-                    // );
-                  }
-                  return ButtonContainerWidget(
-                    isActive: checkIsActive(),
-                    color: AppColors.primaryColor,
-                    text: AppLocalizations.of(context)!.login,
-                    // text: 'Log in',
-                    isFilled: true,
-                    onTapListener: () {
-                      if (!isValidEmail(_emailController.text.trim())) {
-                        setState(() {
-                          isEmailValid = false;
-                        });
-                        return;
-                      }
-                      setState(() {
-                        isEmailValid = true;
-                      });
-                      BlocProvider.of<LoginWithEmailBloc>(context).add(
-                        LoginButtonPressedEvent(
-                          email: _emailController.text.trim(),
-                          password: _passwordController.text.trim(),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () => context.push('/forgot-password'),
-                    child: Text(
-                      AppLocalizations.of(context)!.forgot_your_password,
-                      // 'Forgot your password?',
-                      style: onboardingBody2Style,
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(height: 15),
-              noConnection
-                  ? Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.no_internet_connection,
-                        // 'No Internet Connection',
-                        style: TextStyle(color: AppColors.redColor),
-                      ),
-                    )
-                  : const SizedBox(),
             ],
           ),
         ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 50.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset('assets/big_email_icon.png'),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.continue_with_email,
+                  style: onboardingHeading1Style,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  AppLocalizations.of(context)!.join_neighborly_with_your_email,
+                  style: onboardingBodyStyle,
+                ),
+                const SizedBox(
+                  height: 25,
+                ),
+
+                /// email text field
+                TextFieldWidget(
+                  border: true,
+                  controller: _emailController,
+                  lableText: AppLocalizations.of(context)!.enter_email_address,
+                  isPassword: false,
+                  onChanged: (value) {
+                    setState(() {
+                      isEmailFilled = _emailController.text.isNotEmpty;
+                    });
+                  },
+                ),
+                !isEmailValid
+                    ? Text(
+                        AppLocalizations.of(context)!
+                            .please_enter_a_valid_email_address,
+                        style: TextStyle(color: AppColors.redColor),
+                      )
+                    : const SizedBox(),
+                const SizedBox(
+                  height: 12,
+                ),
+
+                ///password text field
+                TextFieldWidget(
+                  border: true,
+                  onChanged: (value) {
+                    setState(() {
+                      isPasswordFilled = _passwordController.text.isNotEmpty;
+                    });
+                  },
+                  controller: _passwordController,
+                  lableText: AppLocalizations.of(context)!.password,
+                  isPassword: true,
+                ),
+                isPasswordWrong
+                    ? Text(
+                        AppLocalizations.of(context)!
+                            .wrong_password_Try_again_or_click_forgot_password_to_reset_it,
+                        style: TextStyle(color: AppColors.redColor),
+                      )
+                    : const SizedBox(),
+                const SizedBox(
+                  height: 45,
+                ),
+                BlocConsumer<LoginWithEmailBloc, LoginWithEmailState>(
+                  listener: (BuildContext context, LoginWithEmailState state) {
+                    /// failure state
+                    if (state is LoginFailureState) {
+                      if (state.error.contains('Invalid Email or Password')) {
+                        setState(() {
+                          isPasswordWrong = true;
+                        });
+                        return;
+                      }
+                      if (state.error.contains('internet')) {
+                        setState(() {
+                          noConnection = true;
+                        });
+                        return;
+                      }
+                    }
+
+                    ///success state
+                    else if (state is LoginSuccessState) {
+                      bool isEmailVerified =
+                          state.authResponseEntity.isVerified!;
+                      bool isSkippedTutorial =
+                          ShardPrefHelper.getIsSkippedTutorial();
+                      bool isViewedTutorial =
+                          ShardPrefHelper.getIsViewedTutorial();
+
+                      if (!isEmailVerified) {
+                        context
+                            .go('/otp/${_emailController.text}/email-verify');
+                      } else if ((!isSkippedTutorial) && (!isViewedTutorial)) {
+                        context.go('/tutorialScreen');
+                      } else {
+                        context.go('/home/Home');
+                      }
+                    }
+                  },
+                  builder: (context, state) {
+                    /// loading state
+                    if (state is LoginLoadingState) {
+                      return Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
+                      );
+                    }
+
+                    ///login button
+                    return ButtonContainerWidget(
+                      text: AppLocalizations.of(context)!.login,
+                      color: AppColors.primaryColor,
+                      isActive: checkIsActive(),
+                      isFilled: true,
+                      onTapListener: () {
+                        if (!isValidEmail(_emailController.text.trim())) {
+                          setState(() {
+                            isEmailValid = false;
+                          });
+                          return;
+                        }
+                        setState(() {
+                          isEmailValid = true;
+                        });
+                        BlocProvider.of<LoginWithEmailBloc>(context).add(
+                          LoginButtonPressedEvent(
+                            email: _emailController.text.trim(),
+                            password: _passwordController.text.trim(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                /// forgot password text button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () => context.push('/forgot-password'),
+                      child: Text(
+                        AppLocalizations.of(context)!.forgot_your_password,
+                        style: onboardingBody2Style,
+                      ),
+                    )
+                  ],
+                ),
+                const SizedBox(height: 15),
+                noConnection
+                    ? Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.no_internet_connection,
+                          style: TextStyle(color: AppColors.redColor),
+                        ),
+                      )
+                    : const SizedBox(),
+              ],
+            ),
+          ),
+        ),
       ),
-    ));
+    );
   }
 }

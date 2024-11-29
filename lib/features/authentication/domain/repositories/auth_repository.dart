@@ -14,8 +14,6 @@ abstract class AuthRepository {
     required String password,
   });
 
-  Future<Either<Failure, dynamic>> googleAuthentication();
-
   Future<Either<Failure, String>> verifyOtp({
     String? email,
     required String otp,
@@ -30,4 +28,5 @@ abstract class AuthRepository {
   Future<Either<Failure, String>> forgotPassword({
     required String email,
   });
+  Future<Either<Failure, dynamic>> googleAuthentication();
 }

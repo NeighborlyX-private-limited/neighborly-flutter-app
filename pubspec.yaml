@@ -4,7 +4,7 @@ publish_to: "none"
 
 # Version of the app
 # on every new release you have to updtae the version
-version: 1.0.1+14
+version: 1.0.2+15
 
 environment:
   sdk: ">=3.3.4 <4.0.0"

@@ -25,21 +25,23 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
 
+  /// init method
   @override
   void initState() {
+    super.initState();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
-    super.initState();
   }
 
+  ///dispose method
   @override
   void dispose() {
-    super.dispose();
-
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    super.dispose();
   }
 
+  /// is acitve method for button disable or enable
   bool checkIsActive() {
     if (isPasswordFilled &&
         isConfirmPasswordFilled &&
@@ -52,130 +54,142 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
+      child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        leading: InkWell(
-          child: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-          ),
-          onTap: () {
-            context.pop();
-          },
-        ),
-        centerTitle: true,
-        title: Row(
-          children: [
-            const SizedBox(width: 100),
-            Image.asset(
-              'assets/onboardingIcon.png',
-              width: 25,
-              height: 25,
+        appBar: AppBar(
+          backgroundColor: AppColors.whiteColor,
+          leading: InkWell(
+            child: const Icon(
+              Icons.arrow_back,
+              size: 20,
             ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            onTap: () {
+              context.pop();
+            },
+          ),
+          centerTitle: true,
+          title: Row(
             children: [
-              Image.asset('assets/big_lock_icon.png'),
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                'Create new Password',
-                style: onboardingHeading1Style,
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Text(
-                'Set a new password for your account',
-                style: onboardingBodyStyle,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              TextFieldWidget(
-                border: true,
-                onChanged: (value) {
-                  setState(() {
-                    isPasswordFilled =
-                        _passwordController.text.trim().isNotEmpty;
-                  });
-                },
-                controller: _passwordController,
-                lableText: 'Password',
-                isPassword: true,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              TextFieldWidget(
-                border: true,
-                onChanged: (value) {
-                  setState(() {
-                    isConfirmPasswordFilled =
-                        _confirmPasswordController.text.trim().isNotEmpty;
-                  });
-                },
-                controller: _confirmPasswordController,
-                isPassword: true,
-                lableText: 'Confirm Password',
-              ),
-              const SizedBox(
-                height: 45,
-              ),
-              BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
-                listener: (context, state) {
-                  if (state is ChangePasswordFailureState) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.error)),
-                    );
-                  } else if (state is ChangePasswordSuccessState) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.message)),
-                    );
-                    context.go('/loginScreen');
-                  }
-                },
-                builder: (context, state) {
-                  if (state is ChangePasswordLoadingState) {
-                    return Center(
-                      child: BouncingLogoIndicator(
-                        logo: 'images/logo.svg',
-                      ),
-                    );
-                    // return const Center(
-                    //   child: CircularProgressIndicator(),
-                    // );
-                  }
-                  return ButtonContainerWidget(
-                    isActive: checkIsActive(),
-                    color: AppColors.primaryColor,
-                    text: 'Set new password',
-                    isFilled: true,
-                    onTapListener: () {
-                      BlocProvider.of<ChangePasswordBloc>(context).add(
-                        ChangePasswordButtonPressedEvent(
-                          email: widget.data,
-                          newPassword: _passwordController.text.trim(),
-                          flag: false,
-                        ),
-                      );
-                    },
-                  );
-                },
+              const SizedBox(width: 100),
+              Image.asset(
+                'assets/onboardingIcon.png',
+                width: 25,
+                height: 25,
               ),
             ],
           ),
         ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 50.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.asset('assets/big_lock_icon.png'),
+                const SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  'Create new Password',
+                  style: onboardingHeading1Style,
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  'Set a new password for your account',
+                  style: onboardingBodyStyle,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+
+                ///password text field
+                TextFieldWidget(
+                  border: true,
+                  onChanged: (value) {
+                    setState(() {
+                      isPasswordFilled =
+                          _passwordController.text.trim().isNotEmpty;
+                    });
+                  },
+                  controller: _passwordController,
+                  lableText: 'Password',
+                  isPassword: true,
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+
+                /// confirm password text field
+                TextFieldWidget(
+                  border: true,
+                  onChanged: (value) {
+                    setState(() {
+                      isConfirmPasswordFilled =
+                          _confirmPasswordController.text.trim().isNotEmpty;
+                    });
+                  },
+                  controller: _confirmPasswordController,
+                  isPassword: true,
+                  lableText: 'Confirm Password',
+                ),
+                const SizedBox(
+                  height: 45,
+                ),
+                BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
+                  listener: (context, state) {
+                    ///failure state
+                    if (state is ChangePasswordFailureState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.error)),
+                      );
+                    }
+
+                    ///success state
+                    else if (state is ChangePasswordSuccessState) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(state.message)),
+                      );
+                      context.go('/loginScreen');
+                    }
+                  },
+                  builder: (context, state) {
+                    ///loading state
+                    if (state is ChangePasswordLoadingState) {
+                      return Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
+                      );
+                    }
+
+                    ///continue button
+                    return ButtonContainerWidget(
+                      text: 'Continue',
+                      color: AppColors.primaryColor,
+                      isActive: checkIsActive(),
+                      isFilled: true,
+                      onTapListener: () {
+                        BlocProvider.of<ChangePasswordBloc>(context).add(
+                          ChangePasswordButtonPressedEvent(
+                            email: widget.data,
+                            newPassword: _passwordController.text.trim(),
+                            flag: false,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-    ));
+    );
   }
 }

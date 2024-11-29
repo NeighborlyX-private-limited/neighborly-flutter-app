@@ -20,27 +20,29 @@ class RegisterOption extends StatelessWidget {
         onTap();
       },
       child: Container(
-          width: double.infinity,
-          height: 48,
-          decoration: BoxDecoration(
-              border: Border.all(color:  AppColors.blackColor, width: 1),
-              color:  AppColors.whiteColor,
-              borderRadius: BorderRadius.circular(40)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              image,
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: const TextStyle(
-                  color:  AppColors.blackColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+        width: double.infinity,
+        height: 48,
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.blackColor, width: 1),
+          color: AppColors.whiteColor,
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            image,
+            const SizedBox(width: 10),
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppColors.blackColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
-            ],
-          )),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

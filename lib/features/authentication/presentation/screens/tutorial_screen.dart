@@ -5,7 +5,6 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_state.dart';
-
 import '../../../../core/theme/colors.dart';
 
 class TutorialScreen extends StatefulWidget {
@@ -57,36 +56,41 @@ class TutorialScreenState extends State<TutorialScreen> {
     'assets/tute5.svg',
   ];
 
+  /// init method
   @override
   void initState() {
     super.initState();
     _tutorialCubit = GetIt.instance<TutorialCubit>();
   }
 
+  /// go to next page method
   void _nextPage() {
-    setState(() {
-      if (_currentPage < tutorialContent.length - 1) {
-        _currentPage++;
-        if (_currentPage == 1) {
-          leftPositionOffset = 0.2;
+    setState(
+      () {
+        if (_currentPage < tutorialContent.length - 1) {
+          _currentPage++;
+          if (_currentPage == 1) {
+            leftPositionOffset = 0.2;
+          }
+          if (_currentPage == 2) {
+            leftPositionOffset = 0.07;
+          }
+          if (_currentPage == 3) {
+            topPositionOffset = 0.1;
+            leftPositionOffset = 0.1;
+          }
+          if (_currentPage == 4) {
+            topPositionOffset = 0.1;
+            leftPositionOffset = 0.15;
+          }
+        } else {
+          _tutorialCubit.updateTutorialStatus(true, false);
         }
-        if (_currentPage == 2) {
-          leftPositionOffset = 0.07;
-        }
-        if (_currentPage == 3) {
-          topPositionOffset = 0.1;
-          leftPositionOffset = 0.1;
-        }
-        if (_currentPage == 4) {
-          topPositionOffset = 0.1;
-          leftPositionOffset = 0.15;
-        }
-      } else {
-        _tutorialCubit.updateTutorialStatus(true, false);
-      }
-    });
+      },
+    );
   }
 
+  /// skip button method
   void _skipTutorial() {
     _tutorialCubit.updateTutorialStatus(false, true);
   }
@@ -101,18 +105,19 @@ class TutorialScreenState extends State<TutorialScreen> {
         body: BlocListener<TutorialCubit, TutorialState>(
           bloc: _tutorialCubit,
           listener: (context, state) {
+            ///success state
             if (state is TutorialUpdateSuccess) {
               context.go('/home/Home');
             } else if (state is TutorialUpdateFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content: Text('Failed to update status: ${state.error}')),
+                  content: Text('Failed to update status: ${state.error}'),
+                ),
               );
             }
           },
           child: Stack(
             children: [
-              // Background image with fade transition
               AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
                 child: SvgPicture.asset(
@@ -123,8 +128,6 @@ class TutorialScreenState extends State<TutorialScreen> {
                   height: double.infinity,
                 ),
               ),
-
-              // Positioned pop-up box with animated offset
               Positioned(
                 top: screenHeight * topPositionOffset,
                 left: screenWidth * leftPositionOffset,
@@ -176,7 +179,9 @@ class TutorialScreenState extends State<TutorialScreen> {
                                 onPressed: _skipTutorial,
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 12),
+                                    horizontal: 24,
+                                    vertical: 12,
+                                  ),
                                 ),
                                 child: const Text('Skip'),
                               ),

@@ -2,9 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 class ResendOtpTimer extends StatefulWidget {
-  final int initialTime; // Time in seconds for the timer (e.g., 60 seconds)
-  final VoidCallback
-      onResend; // Callback function when the resend button is pressed
+  final int initialTime;
+  final VoidCallback onResend;
 
   const ResendOtpTimer({
     super.key,
@@ -13,10 +12,10 @@ class ResendOtpTimer extends StatefulWidget {
   });
 
   @override
-  _ResendOtpTimerState createState() => _ResendOtpTimerState();
+  ResendOtpTimerState createState() => ResendOtpTimerState();
 }
 
-class _ResendOtpTimerState extends State<ResendOtpTimer> {
+class ResendOtpTimerState extends State<ResendOtpTimer> {
   late Timer _timer;
   late int _remainingTime;
   bool _isResendButtonEnabled = false;
@@ -52,7 +51,7 @@ class _ResendOtpTimerState extends State<ResendOtpTimer> {
   }
 
   void _handleResend() {
-    widget.onResend(); // Trigger the callback
+    widget.onResend();
     _remainingTime = widget.initialTime;
     _startTimer();
   }

@@ -19,8 +19,6 @@ abstract class AuthRemoteDataSource {
     String? phone,
   });
 
-  Future<dynamic> googleAuthentication();
-
   Future<String> resendOtp({
     String? email,
     String? phone,
@@ -28,4 +26,5 @@ abstract class AuthRemoteDataSource {
   Future<String> forgotPassword({
     required String email,
   });
+  Future<dynamic> googleAuthentication();
 }

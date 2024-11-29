@@ -19,17 +19,19 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late bool isEmailFilled = false;
   late TextEditingController _emailController;
+
+  /// init method
   @override
   void initState() {
-    _emailController = TextEditingController();
-
     super.initState();
+    _emailController = TextEditingController();
   }
 
+  ///dispose method
   @override
   void dispose() {
-    super.dispose();
     _emailController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,7 +43,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
-              Icons.arrow_back_ios,
+              Icons.arrow_back,
               size: 20,
             ),
             onTap: () {
@@ -62,8 +64,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 50.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -73,7 +77,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 Text(
                   AppLocalizations.of(context)!.forgot_your_password,
-                  //'Forgot your Password?',
                   style: onboardingHeading1Style,
                 ),
                 const SizedBox(
@@ -82,7 +85,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 Text(
                   AppLocalizations.of(context)!
                       .enter_your_email_and_we_will_send_you_a_code_to_reset_your_password,
-                  //'Enter your email and we’ll send you a code to reset your password.',
                   style: onboardingBodyStyle,
                 ),
                 const SizedBox(
@@ -92,7 +94,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   border: true,
                   controller: _emailController,
                   lableText: AppLocalizations.of(context)!.enter_email_address,
-                  // lableText: 'Enter Email Address',
                   isPassword: false,
                   onChanged: (value) {
                     setState(() {
@@ -105,6 +106,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
                   listener: (BuildContext context, ForgotPasswordState state) {
+                    ///error state
                     if (state is ForgotPasswordFailureState) {
                       if (state.error.contains('Invalid Token')) {
                         context.go('/loginScreen');
@@ -113,7 +115,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                           SnackBar(content: Text(state.error)),
                         );
                       }
-                    } else if (state is ForgotPasswordSuccessState) {
+                    }
+
+                    ///success state
+                    else if (state is ForgotPasswordSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.message)),
                       );
@@ -122,21 +127,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     }
                   },
                   builder: (context, state) {
+                    /// loading state
                     if (state is ForgotPasswordLoadingState) {
                       return Center(
                         child: BouncingLogoIndicator(
                           logo: 'images/logo.svg',
                         ),
                       );
-                      // return const Center(
-                      //   child: CircularProgressIndicator(),
-                      // );
                     }
+
                     return ButtonContainerWidget(
-                      isActive: isEmailFilled,
-                      color: AppColors.primaryColor,
                       text: AppLocalizations.of(context)!.send,
-                      // text: 'Send',
+                      color: AppColors.primaryColor,
+                      isActive: isEmailFilled,
                       isFilled: true,
                       onTapListener: () {
                         BlocProvider.of<ForgotPasswordBloc>(context).add(

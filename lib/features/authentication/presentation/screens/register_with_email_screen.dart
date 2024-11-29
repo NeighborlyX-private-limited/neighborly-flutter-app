@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -34,24 +33,26 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
 
+  ///init method
   @override
   void initState() {
+    super.initState();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
-
-    super.initState();
   }
 
+  ///dispose method
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-
     super.dispose();
   }
 
+  ///check active method
+  ///for button enable or disable
   bool checkIsActive() {
     return isEmailFilled &&
         isPasswordFilled &&
@@ -68,7 +69,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
-              Icons.arrow_back_ios,
+              Icons.arrow_back,
               size: 20,
             ),
             onTap: () {
@@ -89,8 +90,10 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
         ),
         body: SingleChildScrollView(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 50.0,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -98,21 +101,20 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 const SizedBox(height: 20),
                 Text(
                   AppLocalizations.of(context)!.continue_with_email,
-                  // 'Continue with Email',
                   style: onboardingHeading1Style,
                 ),
                 const SizedBox(height: 5),
                 Text(
                   AppLocalizations.of(context)!.join_neighborly_with_your_email,
-                  // 'Join Neighborly with your email.',
                   style: onboardingBodyStyle,
                 ),
                 const SizedBox(height: 25),
+
+                ///email text field
                 TextFieldWidget(
-                  border: true,
                   controller: _emailController,
+                  border: true,
                   lableText: AppLocalizations.of(context)!.enter_email_address,
-                  // lableText: 'Enter Email Address',
                   isPassword: false,
                   onChanged: (value) {
                     setState(() {
@@ -124,48 +126,49 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                     ? Text(
                         AppLocalizations.of(context)!
                             .please_enter_a_valid_email_address,
-                        // 'Please enter a valid email address',
                         style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
                 const SizedBox(height: 12),
+
+                /// password text field
                 TextFieldWidget(
+                  controller: _passwordController,
                   border: true,
+                  lableText: AppLocalizations.of(context)!.password,
+                  isPassword: true,
                   onChanged: (value) {
                     setState(() {
                       isPasswordFilled = _passwordController.text.isNotEmpty;
                     });
                   },
-                  controller: _passwordController,
-                  lableText: AppLocalizations.of(context)!.password,
-                  // lableText: 'Password',
-                  isPassword: true,
                 ),
                 isPasswordShort
                     ? Text(
                         AppLocalizations.of(context)!
                             .password_should_be_atleast_6_character_long,
-                        // 'Password must be at least 6 characters long',
                         style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
                 const SizedBox(height: 12),
+
+                ///confirm password text field
                 TextFieldWidget(
+                  controller: _confirmPasswordController,
                   border: true,
+                  isPassword: true,
+                  lableText: AppLocalizations.of(context)!.confirm_password,
                   onChanged: (value) {
                     setState(() {
                       isConfirmPasswordFilled =
                           _confirmPasswordController.text.isNotEmpty;
                     });
                   },
-                  controller: _confirmPasswordController,
-                  isPassword: true,
-                  lableText: AppLocalizations.of(context)!.confirm_password,
-                  // lableText: 'Re-Password',
                 ),
                 const SizedBox(height: 45),
                 BlocConsumer<RegisterBloc, RegisterState>(
                   listener: (BuildContext context, RegisterState state) {
+                    ///failure state
                     if (state is RegisterFailureState) {
                       if (state.error.contains('email') ||
                           state.error.contains('registered')) {
@@ -183,53 +186,53 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(state.error)),
                       );
-                    } else if (state is RegisterSuccessState) {
-                      print('GOTO: otp varification...');
+                    }
+
+                    ///success state
+                    else if (state is RegisterSuccessState) {
                       context.go('/otp/${_emailController.text}/email-verify');
-                      //context
-                      //.push('/otp/${_emailController.text}/email-verify');
                     }
                   },
                   builder: (context, state) {
+                    ///loading state
                     if (state is RegisterLoadingState) {
                       return Center(
                         child: BouncingLogoIndicator(
                           logo: 'images/logo.svg',
                         ),
                       );
-                      // return const Center(
-                      //   child: CircularProgressIndicator(),
-                      // );
                     }
+
+                    ///signup button
                     return ButtonContainerWidget(
-                        isActive: checkIsActive(),
-                        color: AppColors.primaryColor,
-                        text: AppLocalizations.of(context)!.signup,
-                        // text: 'Sign Up',
-                        isFilled: true,
-                        onTapListener: () {
-                          if (!isValidEmail(_emailController.text.trim())) {
-                            setState(() {
-                              isEmailValid = false;
-                            });
-                            return;
-                          }
-                          if (_passwordController.text.length < 6) {
-                            setState(() {
-                              isPasswordShort = true;
-                            });
-                            return;
-                          }
+                      text: AppLocalizations.of(context)!.signup,
+                      color: AppColors.primaryColor,
+                      isActive: checkIsActive(),
+                      isFilled: true,
+                      onTapListener: () {
+                        if (!isValidEmail(_emailController.text.trim())) {
                           setState(() {
-                            isEmailValid = true;
+                            isEmailValid = false;
                           });
-                          BlocProvider.of<RegisterBloc>(context).add(
-                            RegisterButtonPressedEvent(
-                              email: _emailController.text.trim(),
-                              password: _passwordController.text.trim(),
-                            ),
-                          );
+                          return;
+                        }
+                        if (_passwordController.text.length < 6) {
+                          setState(() {
+                            isPasswordShort = true;
+                          });
+                          return;
+                        }
+                        setState(() {
+                          isEmailValid = true;
                         });
+                        BlocProvider.of<RegisterBloc>(context).add(
+                          RegisterButtonPressedEvent(
+                            email: _emailController.text.trim(),
+                            password: _passwordController.text.trim(),
+                          ),
+                        );
+                      },
+                    );
                   },
                 ),
                 const SizedBox(height: 15),
@@ -237,14 +240,12 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                     ? Text(
                         AppLocalizations.of(context)!
                             .email_already_exists_please_login,
-                        // 'Email already exists. Please login.',
                         style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),
                 noConnection
                     ? Text(
                         AppLocalizations.of(context)!.no_internet_connection,
-                        // 'No Internet Connection',
                         style: TextStyle(color: AppColors.redColor),
                       )
                     : const SizedBox(),

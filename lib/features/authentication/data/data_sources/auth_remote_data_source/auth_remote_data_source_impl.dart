@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/utils/google_auth_helper.dart';
@@ -32,7 +30,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    print('start login with...');
+    print('.....start login with');
     print('email: $email');
     print('password: $password');
     String url = '$kBaseUrl/authentication/login';
@@ -53,49 +51,49 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       /// Assuming the response headers contain the Set-Cookie header
       /// extract data from response
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
-      String userID = jsonDecode(response.body)['user']['_id'];
-      String username = jsonDecode(response.body)['user']['username'];
       String accessToken = jsonDecode(response.body)['refreshToken'];
       String refreshToken = jsonDecode(response.body)['refreshToken'];
+      String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
-      List<dynamic> location = jsonDecode(response.body)['user']
-          ['current_coordinates']['coordinates'];
+      String username = jsonDecode(response.body)['user']['username'];
+      String? email = jsonDecode(response.body)['user']['email'];
+      String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
+      bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
       List<dynamic> homeLocation =
           jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
-
-      String? email = jsonDecode(response.body)['user']['email'];
-      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
+      List<dynamic> location = jsonDecode(response.body)['user']
+          ['current_coordinates']['coordinates'];
       bool isSkippedTutorial =
           jsonDecode(response.body)['user']['skippedTutorial'];
       bool isViewedTutorial =
           jsonDecode(response.body)['user']['viewedTutorial'];
-      bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
       String authType = jsonDecode(response.body)['user']['auth_type'];
+      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
 
       /// set data to local
-      String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
-      print('gender: $gender');
-      ShardPrefHelper.setGender(gender);
-      ShardPrefHelper.setIsEmailLogin(true);
-      ShardPrefHelper.setAuthtype(authType);
-      ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
-      ShardPrefHelper.setDob(isDobSet);
-      ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
+      ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setAccessToken(accessToken);
       ShardPrefHelper.setRefreshToken(refreshToken);
-      ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
-      ShardPrefHelper.setEmail(email ?? '');
-      ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setUserProfilePicture(proPic);
-      ShardPrefHelper.setLocation([location[0], location[1]]);
+      ShardPrefHelper.setUsername(username);
+      ShardPrefHelper.setEmail(email ?? '');
+      ShardPrefHelper.setGender(gender);
+      ShardPrefHelper.setDob(isDobSet);
+      ShardPrefHelper.setIsEmailLogin(true);
       ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+      ShardPrefHelper.setLocation([location[0], location[1]]);
+      ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
+      ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
+      ShardPrefHelper.setAuthtype(authType);
       ShardPrefHelper.setIsVerified(isVerified);
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       print("login error: ${jsonDecode(response.body)['message']}");
-      throw ServerException(message: jsonDecode(response.body)['message']);
+      String error =
+          jsonDecode(response.body)['message'] ?? 'Something went wrong';
+      throw ServerException(message: error);
     }
   }
 
@@ -105,7 +103,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? email,
     String? phone,
   }) async {
-    print('...start resendOtp with');
+    print('.....start resendOtp with');
     print('email: $email');
     print('phone: $phone');
     String urlForEmail = '$kBaseUrl/authentication/send-otp';
@@ -132,12 +130,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } else {
       if (response.body ==
           'Too many requests, please try again after a minute.') {
-        print(response.body);
-        print('yes');
         throw ServerException(message: 'Please try again after 1 minute');
       }
-      print(response.body);
-      print('resendOtp error ${jsonDecode(response.body)['message']}');
+      print('resendOtp error: ${jsonDecode(response.body)['message']}');
       throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
@@ -149,7 +144,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? password,
     String? phone,
   }) async {
-    print('signup start with...');
+    print('......signup start with');
     print('email: $email');
     print('password: $password');
     print('phone: $phone');
@@ -182,52 +177,63 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       /// extract data from response
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
-      String username = jsonDecode(response.body)['user']['username'];
       String proPic = jsonDecode(response.body)['user']['picture'];
-      List<dynamic> location = jsonDecode(response.body)['user']
-          ['current_coordinates']['coordinates'];
-      List<dynamic> homeLocation =
-          jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
+      String username = jsonDecode(response.body)['user']['username'];
       String? email = jsonDecode(response.body)['user']['email'];
-      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
-      bool isPhoneVerified =
-          jsonDecode(response.body)['user']['isPhoneVerified'];
-      bool isSkippedTutorial =
-          jsonDecode(response.body)['user']['skippedTutorial'];
-      bool isViewedTutorial =
-          jsonDecode(response.body)['user']['viewedTutorial'];
       bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
-      String authType = jsonDecode(response.body)['user']['auth_type'];
       String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
 
+      List<dynamic> homeLocation =
+          jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
+
+      List<dynamic> location = jsonDecode(response.body)['user']
+          ['current_coordinates']['coordinates'];
+
+      bool isSkippedTutorial =
+          jsonDecode(response.body)['user']['skippedTutorial'];
+
+      bool isViewedTutorial =
+          jsonDecode(response.body)['user']['viewedTutorial'];
+
+      bool isPhoneVerified =
+          jsonDecode(response.body)['user']['isPhoneVerified'];
+
+      bool isVerified = jsonDecode(response.body)['user']['isVerified'];
+      String authType = jsonDecode(response.body)['user']['auth_type'];
+
       /// set data to local
+      ShardPrefHelper.setCookie(cookies);
+      ShardPrefHelper.setUserID(userID);
+      ShardPrefHelper.setUserProfilePicture(proPic);
+      ShardPrefHelper.setUsername(username);
+      ShardPrefHelper.setEmail(email ?? '');
+      ShardPrefHelper.setDob(isDobSet);
+      ShardPrefHelper.setGender(gender);
+      ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+      ShardPrefHelper.setLocation([location[0], location[1]]);
+      ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
+      ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
+
       if (email != null) {
         ShardPrefHelper.setIsEmailLogin(true);
       } else {
         ShardPrefHelper.setIsEmailLogin(false);
       }
-      ShardPrefHelper.setAuthtype(authType);
-      ShardPrefHelper.setGender(gender);
-      ShardPrefHelper.setDob(isDobSet);
-      ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
-      ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setIsVerified(isVerified);
-      ShardPrefHelper.setCookie(cookies);
-      ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setIsPhoneVerified(isPhoneVerified);
-      ShardPrefHelper.setEmail(email ?? '');
-      ShardPrefHelper.setUsername(username);
-      ShardPrefHelper.setUserProfilePicture(proPic);
-      ShardPrefHelper.setLocation([location[0], location[1]]);
-      ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+      ShardPrefHelper.setAuthtype(authType);
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else if (response.statusCode == 400) {
-      print("sign up else if error: ${jsonDecode(response.body)['error']}");
-      throw ServerException(message: jsonDecode(response.body)['error']);
+      String error =
+          jsonDecode(response.body)['error'] ?? 'Something went wrong';
+      print("sign up else if error: $error");
+      throw ServerException(message: error);
     } else {
-      print("sign up error: ${jsonDecode(response.body)['message']}");
-      throw ServerException(message: jsonDecode(response.body)['message']);
+      String error =
+          jsonDecode(response.body)['error'] ?? 'Something went wrong';
+      print("sign up error: $error");
+      throw ServerException(message: error);
     }
   }
 
@@ -239,7 +245,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? verificationFor,
     String? phone,
   }) async {
-    print('verifyOtp start with...');
+    print('.....verifyOtp start with');
     print('email: $email');
     print('phone: $phone');
     print('otp: $otp');
@@ -272,24 +278,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (verificationFor != 'forgot-password') {
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
         String userID = jsonDecode(response.body)['user']['_id'];
-        String username = jsonDecode(response.body)['user']['username'];
         String proPic = jsonDecode(response.body)['user']['picture'];
-        List<dynamic> location = jsonDecode(response.body)['user']
-            ['current_coordinates']['coordinates'];
+        String username = jsonDecode(response.body)['user']['username'];
+        String? email = jsonDecode(response.body)['user']['email'];
+        bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
+        String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
+
         List<dynamic> homeLocation = jsonDecode(response.body)['user']
             ['home_coordinates']['coordinates'];
-        String? email = jsonDecode(response.body)['user']['email'];
-        bool isVerified = jsonDecode(response.body)['user']['isVerified'];
-        bool isPhoneVerified =
-            jsonDecode(response.body)['user']['isPhoneVerified'];
+
+        List<dynamic> location = jsonDecode(response.body)['user']
+            ['current_coordinates']['coordinates'];
+
         bool isSkippedTutorial =
             jsonDecode(response.body)['user']['skippedTutorial'];
+
         bool isViewedTutorial =
             jsonDecode(response.body)['user']['viewedTutorial'];
-        bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
+
+        bool isPhoneVerified =
+            jsonDecode(response.body)['user']['isPhoneVerified'];
+
+        bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         String authType = jsonDecode(response.body)['user']['auth_type'];
-        String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
-        ShardPrefHelper.setGender(gender);
 
         /// set data to local
         if (email != null) {
@@ -297,36 +308,41 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         } else {
           ShardPrefHelper.setIsEmailLogin(false);
         }
-        ShardPrefHelper.setAuthtype(authType);
+        ShardPrefHelper.setCookie(cookies);
+        ShardPrefHelper.setUserID(userID);
+        ShardPrefHelper.setUserProfilePicture(proPic);
+        ShardPrefHelper.setUsername(username);
+        ShardPrefHelper.setEmail(email ?? '');
         ShardPrefHelper.setDob(isDobSet);
+        ShardPrefHelper.setGender(gender);
+        ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+        ShardPrefHelper.setLocation([location[0], location[1]]);
         ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
         ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
         ShardPrefHelper.setIsVerified(isVerified);
         ShardPrefHelper.setIsPhoneVerified(isPhoneVerified);
-        ShardPrefHelper.setCookie(cookies);
-        ShardPrefHelper.setUserID(userID);
-        ShardPrefHelper.setEmail(email ?? '');
-        ShardPrefHelper.setUsername(username);
-        ShardPrefHelper.setUserProfilePicture(proPic);
-        ShardPrefHelper.setLocation([location[0], location[1]]);
-        ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+        ShardPrefHelper.setAuthtype(authType);
       }
 
       return 'Account is verified';
     } else if (response.statusCode == 401) {
-      print(
-          'else if otp varify error: ${jsonDecode(response.body)['message']}');
-      throw ServerException(message: jsonDecode(response.body)['message']);
+      String error =
+          jsonDecode(response.body)['message'] ?? 'Something went wrong';
+      print('else if otp varify error: $error');
+      throw ServerException(message: error);
     } else {
-      print('otp varify error: ${jsonDecode(response.body)['error']}');
-      throw ServerException(message: jsonDecode(response.body)['error']);
+      String error =
+          jsonDecode(response.body)['error'] ?? 'Something went wrong';
+
+      print('otp varify error: $error');
+      throw ServerException(message: error);
     }
   }
 
   /// forgotPassword function
   @override
   Future<String> forgotPassword({required String email}) async {
-    print('...forgotPassword start with');
+    print('.....forgotPassword start with');
     print('email: $email');
     String url = '$kBaseUrl/authentication/forgot-password';
     print('url: $url');
@@ -345,8 +361,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['msg'];
     } else {
-      print('forgotPassword  error: ${jsonDecode(response.body)['message']}');
-      throw ServerException(message: jsonDecode(response.body)['error']);
+      String error =
+          jsonDecode(response.body)['message'] ?? 'Something went wrong';
+      print('forgotPassword  error: $error');
+      throw ServerException(message: error);
     }
   }
 
@@ -354,7 +372,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<dynamic> googleAuthentication() async {
     try {
-      print("...googleAuthentication start");
+      print(".....googleAuthentication start");
 
       String url = '$kBaseUrl/authentication/google/login';
       print("url: $url");
@@ -371,16 +389,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       var signInResult = await GoogleSignInService.signInWithGoogle();
       print('signInWithGoogle result: $signInResult');
       if (signInResult['error'] != null) {
-        print('some error:');
+        print('signInResult error: ${signInResult['error']}');
+        throw ServerException(message: signInResult['error']);
+      }
+      if (signInResult.containsKey('error')) {
+        print('signInResult: ${signInResult['error']}');
         throw ServerException(message: signInResult['error']);
       }
 
       String tokenID = signInResult['idToken'];
       print('signInWithGoogle tokenID: $tokenID');
-      if (signInResult.containsKey('error')) {
-        print('signInResult: ${signInResult['error']}');
-        return;
-      }
       final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
@@ -396,36 +414,35 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.statusCode == 200) {
         /// extract data from response
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
-        print("cookies:$cookies");
         String userID = jsonDecode(response.body)['user']['_id'];
-        String username = jsonDecode(response.body)['user']['username'];
         String proPic = jsonDecode(response.body)['user']['picture'];
-        bool isVerified = jsonDecode(response.body)['user']['isVerified'];
-        List<dynamic> location = jsonDecode(response.body)['user']
-            ['current_coordinates']['coordinates'];
-        List<dynamic> homeLocation = jsonDecode(response.body)['user']
-            ['home_coordinates']['coordinates'];
+        String username = jsonDecode(response.body)['user']['username'];
         String? email = jsonDecode(response.body)['user']['email'];
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
+        String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
+
+        List<dynamic> homeLocation = jsonDecode(response.body)['user']
+            ['home_coordinates']['coordinates'];
+
+        List<dynamic> location = jsonDecode(response.body)['user']
+            ['current_coordinates']['coordinates'];
+
+        bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         String authType = 'email';
-        // String authType = jsonDecode(response.body)['user']['auth_type'];
-        print('isVerified$isVerified');
-        print('authType$authType');
 
         /// set data to local
-        String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
-        ShardPrefHelper.setGender(gender);
-        ShardPrefHelper.setIsEmailLogin(false);
-        ShardPrefHelper.setAuthtype(authType);
-        ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setCookie(cookies);
-        ShardPrefHelper.setIsVerified(isVerified);
         ShardPrefHelper.setUserID(userID);
-        ShardPrefHelper.setEmail(email ?? '');
-        ShardPrefHelper.setUsername(username);
         ShardPrefHelper.setUserProfilePicture(proPic);
-        ShardPrefHelper.setLocation([location[0], location[1]]);
+        ShardPrefHelper.setUsername(username);
+        ShardPrefHelper.setEmail(email ?? '');
+        ShardPrefHelper.setDob(isDobSet);
+        ShardPrefHelper.setGender(gender);
         ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+        ShardPrefHelper.setLocation([location[0], location[1]]);
+        ShardPrefHelper.setIsVerified(isVerified);
+        ShardPrefHelper.setAuthtype(authType);
+        ShardPrefHelper.setIsEmailLogin(false);
 
         return jsonDecode(response.body);
       } else {
@@ -433,12 +450,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             'googleAuthentication  error: ${jsonDecode(response.body)['message']}');
         print(
             'googleAuthentication  error: ${jsonDecode(response.body)['error_description']}');
-        throw ServerException(
-            message: jsonDecode(response.body)['error_description']);
+        String error = jsonDecode(response.body)['error_description'] ??
+            'Something went wrong';
+        throw ServerException(message: error);
       }
     } catch (e) {
       print('googleAuthentication  catch error: ${e.toString()}');
-      debugPrint(e.toString());
       throw ServerException(message: e.toString());
     }
   }

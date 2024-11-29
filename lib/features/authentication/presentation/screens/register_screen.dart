@@ -1,9 +1,6 @@
-import 'dart:developer';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
@@ -16,19 +13,6 @@ import '../widgets/or_divider_widget.dart';
 import '../widgets/register_option.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-const List<String> scopes = <String>[
-  'email',
-  'https://www.googleapis.com/auth/contacts.readonly',
-];
-
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  // Optional clientId
-  serverClientId:
-      '805628551035-m915bsicvr5c2id664e8etia8ekmvot9.apps.googleusercontent.com',
-  // '805628551035-k20h8ab6vdvr8qth03hn0r53hdgh4vo4.apps.googleusercontent.com',
-  scopes: scopes,
-);
-
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
 
@@ -37,291 +21,243 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  Future<void> _handleSignIn() async {
-    try {
-      await _googleSignIn.signOut();
-      await _googleSignIn.signIn();
-
-      _googleSignIn.signIn().then((result) {
-        result?.authentication.then((googleKey) {
-          final token = googleKey.idToken.toString();
-          log(token);
-          print('Token: ${googleKey.idToken}');
-        });
-      });
-    } catch (error) {
-      print('Sign in error: $error');
-    }
-  }
-
-  GoogleSignInAccount? _currentUser;
-  bool _isAuthorized = false;
-  final String _contactText = '';
-  bool _isButtonActive = true;
-
   late TextEditingController _controller;
+  bool _isButtonActive = true;
+  bool noConnection = false;
+  bool isPhoneFilled = false;
+  bool phoneAlreadyExists = false;
+  bool isPhoneValid = true;
 
+  ///init method
   @override
   void initState() {
     super.initState();
-    _googleSignIn.onCurrentUserChanged
-        .listen((GoogleSignInAccount? account) async {
-      setState(() {
-        _currentUser = account;
-      });
-
-      if (account != null) {
-        // Optionally handle authorized scopes
-        bool isAuthorized =
-            kIsWeb ? await _googleSignIn.canAccessScopes(scopes) : true;
-        setState(() {
-          _isAuthorized = isAuthorized;
-        });
-      }
-    });
-
-    _googleSignIn.signInSilently();
     _controller = TextEditingController();
   }
 
+  ///dispose method
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
-  bool noConnection = false;
-  bool isPhoneFilled = false;
-  bool phoneAlreadyExists = false;
-  bool isPhoneValid = true;
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-        child: Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
+      child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        leading: InkWell(
-          child: const Icon(
-            Icons.arrow_back_ios,
-            size: 20,
-          ),
-          onTap: () {
-            context.pop();
-          },
-        ),
-        centerTitle: true,
-        title: Row(
-          children: [
-            SizedBox(width: 100),
-            Image.asset(
-              'assets/onboardingIcon.png',
-              width: 25,
-              height: 25,
+        appBar: AppBar(
+          backgroundColor: AppColors.whiteColor,
+          leading: InkWell(
+            child: const Icon(
+              Icons.arrow_back,
+              size: 20,
             ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 50.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            onTap: () {
+              context.pop();
+            },
+          ),
+          centerTitle: true,
+          title: Row(
             children: [
-              Center(
-                child: Text(
-                  AppLocalizations.of(context)!.signup,
-                  // 'Sign up',
-                  style: onboardingHeading1Style,
-                ),
-              ),
-              const SizedBox(height: 40),
-              BlocConsumer<RegisterBloc, RegisterState>(
-                listener: (BuildContext context, RegisterState state) {
-                  if (state is OAuthSuccessState) {
-                    bool isSkippedTutorial =
-                        ShardPrefHelper.getIsSkippedTutorial();
-                    bool isViewedTutorial =
-                        ShardPrefHelper.getIsViewedTutorial();
-                    print('isViewedTutorial:$isViewedTutorial');
-                    print('isSkippedTutorial:$isSkippedTutorial');
-                    if (!isSkippedTutorial && !isViewedTutorial) {
-                      print('OAuth Success State in regester');
-                      context.go('/tutorialScreen');
-                    } else {
-                      context.go('/home/Home');
-                    }
-                  }
-                },
-                builder: (context, state) {
-                  // if (state is RegisterLoadingState) {
-                  //   return Center(
-                  //     child: BouncingLogoIndicator(
-                  //       logo: 'images/logo.svg',
-                  //     ),
-                  //   );
-                  // }
-                  return RegisterOption(
-                    image: Image.asset('assets/google_icon.png'),
-                    title: AppLocalizations.of(context)!.continue_with_google,
-                    // title: 'Continue with Google',
-                    onTap: () {
-                      if (!_isButtonActive) return; // Prevent multiple taps
-                      setState(() {
-                        _isButtonActive = false; // Disable the button
-                      });
-                      print('GoogleSignUpEvent press...');
-                      BlocProvider.of<RegisterBloc>(context).add(
-                        GoogleSignUpEvent(),
-                      );
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 10),
-              RegisterOption(
-                image: Image.asset('assets/email_icon.png'),
-                title: AppLocalizations.of(context)!.continue_with_email,
-                // title: 'Continue with Email',
-                onTap: () {
-                  context.push("/registerWithEmailScreen");
-                },
-              ),
-              const SizedBox(height: 20),
-              const OrDividerWidget(),
-              const SizedBox(height: 20),
-
-              /// phone number text field
-              TextFieldWidget(
-                border: true,
-                inputType: TextInputType.phone,
-                maxLength: 10,
-                onChanged: (value) {
-                  setState(() {
-                    isPhoneFilled = _controller.text.isNotEmpty;
-                  });
-                },
-                controller: _controller,
-                isPassword: false,
-                lableText: AppLocalizations.of(context)!.enter_phone_number,
-                // lableText: 'Enter Phone Number',
-              ),
-
-              isPhoneValid
-                  ? SizedBox()
-                  : Text(
-                      AppLocalizations.of(context)!
-                          .please_enter_a_valid_phone_number,
-                      // 'Please enter a valid phone number.',
-                      style: TextStyle(color: AppColors.redColor),
-                    ),
-              phoneAlreadyExists
-                  ? Text(
-                      AppLocalizations.of(context)!
-                          .phone_number_already_exists_please_login,
-                      // 'Phone Number already exists. Please login.',
-                      style: TextStyle(color: AppColors.redColor),
-                    )
-                  : const SizedBox(),
-              const SizedBox(height: 15),
-              BlocConsumer<RegisterBloc, RegisterState>(
-                listener: (context, state) {
-                  if (state is RegisterFailureState) {
-                    if (state.error.contains('exists') ||
-                        state.error.contains('registered')) {
-                      setState(() {
-                        phoneAlreadyExists = true;
-                      });
-                    } else if (state.error.contains('internet')) {
-                      setState(() {
-                        noConnection = true;
-                      });
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.error)),
-                      );
-                    }
-                  } else if (state is RegisterSuccessState) {
-                    context.go('/otp/${_controller.text}/phone-register');
-                  }
-                },
-                builder: (context, state) {
-                  if (state is RegisterLoadingState) {
-                    return Center(
-                      child: BouncingLogoIndicator(
-                        logo: 'images/logo.svg',
-                      ),
-                    );
-                    // return const Center(
-                    //   child: CircularProgressIndicator(),
-                    // );
-                  }
-                  return ButtonContainerWidget(
-                    color: AppColors.primaryColor,
-                    text: AppLocalizations.of(context)!.continues,
-                    // text: 'Continue',
-                    isActive: isPhoneFilled,
-                    isFilled: true,
-                    onTapListener: () {
-                      if (!isValidPhoneNumber(_controller.text.trim())) {
-                        setState(() {
-                          isPhoneValid = false;
-                        });
-                        return;
-                      }
-
-                      BlocProvider.of<RegisterBloc>(context).add(
-                        RegisterButtonPressedEvent(
-                          phone: _controller.text.trim(),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 15),
-
-              noConnection
-                  ? Center(
-                      child: Text(
-                        AppLocalizations.of(context)!.no_internet_connection,
-                        // 'No Internet Connection, Please try again.',
-                        style: TextStyle(color: AppColors.redColor),
-                      ),
-                    )
-                  : const SizedBox(),
-              const SizedBox(height: 30),
-              Center(
-                child: RichText(
-                  text: TextSpan(
-                    text: AppLocalizations.of(context)!.privacy_policy,
-                    // 'By clicking the above button and creating an account, you have read and accepted the Terms of Service and acknowledged our Privacy Policy',
-                    style: const TextStyle(
-                      color: AppColors.lightGreyColor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      height: 1.3,
-                    ),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: AppLocalizations.of(context)!.terms_of_service,
-                        // text: 'Terms of Service.',
-                        style: TextStyle(
-                          fontSize: 15,
-                          height: 1.3,
-                          color: Colors.grey[700],
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              SizedBox(width: 100),
+              Image.asset(
+                'assets/onboardingIcon.png',
+                width: 25,
+                height: 25,
               ),
             ],
           ),
         ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 50.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.signup,
+                    style: onboardingHeading1Style,
+                  ),
+                ),
+                const SizedBox(height: 40),
+                BlocConsumer<RegisterBloc, RegisterState>(
+                  listener: (BuildContext context, RegisterState state) {
+                    ///Oauth success state
+                    if (state is OAuthSuccessState) {
+                      bool isSkippedTutorial =
+                          ShardPrefHelper.getIsSkippedTutorial();
+                      bool isViewedTutorial =
+                          ShardPrefHelper.getIsViewedTutorial();
+
+                      if (!isSkippedTutorial && !isViewedTutorial) {
+                        context.go('/tutorialScreen');
+                      } else {
+                        context.go('/home/Home');
+                      }
+                    }
+                  },
+                  builder: (context, state) {
+                    /// goolge login button
+                    return RegisterOption(
+                      title: AppLocalizations.of(context)!.continue_with_google,
+                      image: Image.asset('assets/google_icon.png'),
+                      onTap: () {
+                        if (!_isButtonActive) return;
+                        setState(() {
+                          _isButtonActive = false;
+                        });
+
+                        BlocProvider.of<RegisterBloc>(context).add(
+                          GoogleSignUpEvent(),
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+
+                /// email login button
+                RegisterOption(
+                  title: AppLocalizations.of(context)!.continue_with_email,
+                  image: Image.asset('assets/email_icon.png'),
+                  onTap: () {
+                    context.push("/registerWithEmailScreen");
+                  },
+                ),
+                const SizedBox(height: 20),
+                const OrDividerWidget(),
+                const SizedBox(height: 20),
+
+                /// phone number text field
+                /// phone signup
+                TextFieldWidget(
+                  controller: _controller,
+                  isPassword: false,
+                  lableText: AppLocalizations.of(context)!.enter_phone_number,
+                  border: true,
+                  inputType: TextInputType.phone,
+                  maxLength: 10,
+                  onChanged: (value) {
+                    setState(() {
+                      isPhoneFilled = _controller.text.isNotEmpty;
+                    });
+                  },
+                ),
+
+                isPhoneValid
+                    ? SizedBox()
+                    : Text(
+                        AppLocalizations.of(context)!
+                            .please_enter_a_valid_phone_number,
+                        style: TextStyle(color: AppColors.redColor),
+                      ),
+                phoneAlreadyExists
+                    ? Text(
+                        AppLocalizations.of(context)!
+                            .phone_number_already_exists_please_login,
+                        style: TextStyle(color: AppColors.redColor),
+                      )
+                    : const SizedBox(),
+                const SizedBox(height: 15),
+                BlocConsumer<RegisterBloc, RegisterState>(
+                  listener: (context, state) {
+                    ///failure state
+                    if (state is RegisterFailureState) {
+                      if (state.error.contains('exists') ||
+                          state.error.contains('registered')) {
+                        setState(() {
+                          phoneAlreadyExists = true;
+                        });
+                      } else if (state.error.contains('internet')) {
+                        setState(() {
+                          noConnection = true;
+                        });
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(state.error)),
+                        );
+                      }
+                    }
+
+                    ///success state
+                    else if (state is RegisterSuccessState) {
+                      context.go('/otp/${_controller.text}/phone-register');
+                    }
+                  },
+                  builder: (context, state) {
+                    ///loading state
+                    if (state is RegisterLoadingState) {
+                      return Center(
+                        child: BouncingLogoIndicator(
+                          logo: 'images/logo.svg',
+                        ),
+                      );
+                    }
+
+                    ///continue button
+                    return ButtonContainerWidget(
+                      text: AppLocalizations.of(context)!.continues,
+                      color: AppColors.primaryColor,
+                      isActive: isPhoneFilled,
+                      isFilled: true,
+                      onTapListener: () {
+                        if (!isValidPhoneNumber(_controller.text.trim())) {
+                          setState(() {
+                            isPhoneValid = false;
+                          });
+                          return;
+                        }
+
+                        BlocProvider.of<RegisterBloc>(context).add(
+                          RegisterButtonPressedEvent(
+                            phone: _controller.text.trim(),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 15),
+
+                noConnection
+                    ? Center(
+                        child: Text(
+                          AppLocalizations.of(context)!.no_internet_connection,
+                          style: TextStyle(color: AppColors.redColor),
+                        ),
+                      )
+                    : const SizedBox(),
+                const SizedBox(height: 30),
+                Center(
+                  child: RichText(
+                    text: TextSpan(
+                      text: AppLocalizations.of(context)!.privacy_policy,
+                      style: const TextStyle(
+                        color: AppColors.lightGreyColor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        height: 1.3,
+                      ),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: AppLocalizations.of(context)!.terms_of_service,
+                          style: onboardingBody2Style,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
-    ));
+    );
   }
 }

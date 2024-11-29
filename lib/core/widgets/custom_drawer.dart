@@ -276,41 +276,50 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   ),
                   BlocConsumer<LogoutBloc, LogoutState>(
                     listener: (context, state) {
+                      /// failure state
                       if (state is LogoutFailureState) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(state.error),
                           ),
                         );
-                      } else if (state is LogoutSuccessState) {
-                        ShardPrefHelper.removeUserID();
+                      }
+
+                      ///success state
+                      else if (state is LogoutSuccessState) {
                         ShardPrefHelper.removeCookie();
-                        if (ShardPrefHelper.getEmail() != null) {
-                          ShardPrefHelper.removeEmail();
-                        }
-                        ShardPrefHelper.removeImageUrl();
+                        ShardPrefHelper.removeUserID();
                         ShardPrefHelper.removeUserProfilePicture();
+                        ShardPrefHelper.removeImageUrl();
                         ShardPrefHelper.removeUsername();
                         ShardPrefHelper.removePhoneNumber();
                         ShardPrefHelper.removeGender();
+                        if (ShardPrefHelper.getEmail() != null) {
+                          ShardPrefHelper.removeEmail();
+                        }
 
                         context.go('/');
                       }
                     },
                     builder: (context, state) {
+                      ///loading state
                       if (state is LogoutLoadingState) {
                         return const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Center(
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator(
+                                color: AppColors.primaryColor,
+                              ),
                             ),
                           ],
                         );
                       }
+
+                      ///logout button
                       return ButtonWidget(
-                        color: AppColors.redColor,
                         text: AppLocalizations.of(context)!.logout,
+                        color: AppColors.redColor,
                         textColor: AppColors.whiteColor,
                         onTapListener: () {
                           context.read<LogoutBloc>().add(

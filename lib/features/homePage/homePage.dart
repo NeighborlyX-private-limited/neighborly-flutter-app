@@ -15,7 +15,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MainPage extends StatefulWidget {
   final Widget child;
-
   final String childId;
 
   const MainPage({
@@ -38,45 +37,19 @@ class _MainPageState extends State<MainPage> {
   String? _currentAddress;
   String? _deepLink;
 
-  static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
-
   ///controllers
   late PageController pageController;
 
+  static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
+
+  /// init method
   @override
   void initState() {
+    super.initState();
     pageController = PageController();
     fetchLocationAndUpdate();
     updateFCMtokenNotification();
     _setDeepLinkListener();
-    super.initState();
-  }
-
-  Future<void> _setDeepLinkListener() async {
-    platform.setMethodCallHandler((MethodCall call) async {
-      if (call.method == "onDeepLink") {
-        print("deep link received");
-        setState(() {
-          _deepLink = call.arguments;
-          List? linksplit = _deepLink?.split('neighborly.in');
-          if (linksplit != null && linksplit.length > 1) {
-            if (linksplit[1].contains('post-detail/')) {
-              try {
-                context.push(linksplit[1]);
-              } catch (e) {
-                print("error in deep link $e");
-              }
-            } else {
-              //context.push('/userProfileScreen/${widget.post.userId}');
-              print(
-                  'here you have to handle other navigation for url based on if condition');
-            }
-          } else {
-            print("Empty means open default page");
-          }
-        });
-      }
-    });
   }
 
   @override
@@ -85,90 +58,105 @@ class _MainPageState extends State<MainPage> {
     ShardPrefHelper.removeImageUrl();
   }
 
+  ///dispose method
   @override
   void dispose() {
     pageController.dispose();
     super.dispose();
   }
 
-  // void navigationTapped(int index) {
-  //   pageController.jumpToPage(index);
-  // }
+  /// deep link listner
+  Future<void> _setDeepLinkListener() async {
+    platform.setMethodCallHandler(
+      (MethodCall call) async {
+        if (call.method == "onDeepLink") {
+          print("deep link received");
+          setState(
+            () {
+              _deepLink = call.arguments;
+              List? linksplit = _deepLink?.split('neighborly.in');
+              if (linksplit != null && linksplit.length > 1) {
+                if (linksplit[1].contains('post-detail/')) {
+                  try {
+                    context.push(linksplit[1]);
+                  } catch (e) {
+                    print("error in deep link $e");
+                  }
+                } else {
+                  //context.push('/userProfileScreen/${widget.post.userId}');
+                  print(
+                      'here you have to handle other navigation for url based on if condition');
+                }
+              } else {
+                print("Empty means open default page");
+              }
+            },
+          );
+        }
+      },
+    );
+  }
 
-  // void onPageChanged(int index) {
-  //   setState(() {
-  //     _currentIndex = index;
-  //   });
-  // }
-
-  // Future<bool> _getDOBFilled() async {
-  //   final userID = ShardPrefHelper.getUserID();
-  //   final box = Hive.box('dobDatabse');
-
-  //   return box.get('${userID}_isFilled', defaultValue: false);
-  // }
-
-  // Future<void> _setDOBFilledTrue() async {
-  //   final userID = ShardPrefHelper.getUserID();
-  //   final box = Hive.box('dobDatabse');
-  //   await box.put('${userID}_isFilled', true);
-  // }
-
+  /// location permission method
   Future<bool> _handleLocationPermission() async {
-    // bool serviceEnabled;
     LocationPermission permission;
-
     var checkPushPermission = await Permission.notification.isDenied;
-    print('...checkPushPermission: $checkPushPermission');
     if (checkPushPermission) {
       await Permission.notification.request();
     }
 
-    // serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    // if (!serviceEnabled) {
-    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-    //       content: Text(
-    //           'Location services are disabled. Please enable the services')));
-    //   return false;
-    // }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
+
+      /// location permission denied
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .location_permissions_are_denied)));
-        // const SnackBar(content: Text('Location permissions are denied')));
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                AppLocalizations.of(context)!.location_permissions_are_denied),
+          ));
+        }
         return false;
       }
     }
+
+    /// location permission forever denied
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(AppLocalizations.of(context)!
-              .location_permissions_are_permanently_denied_we_cannot_request_permissions)));
-      // 'Location permissions are permanently denied, we cannot request permissions.')));
+              .location_permissions_are_permanently_denied_we_cannot_request_permissions),
+        ));
+      }
       return false;
     }
+
+    ///location permission granted
     return true;
   }
 
+  /// update fcm token method
   Future<void> updateFCMtokenNotification() async {
-    print('...updateFCMtokenNotification running');
     try {
       var result = await BlocProvider.of<NotificationGeneralCubit>(context)
           .updateFCMTokenUsecase();
       result.fold(
         (failure) {},
         (currentFCMtoken) {
-          print('...updateFCMtokenNotification FCM token: $currentFCMtoken');
           ShardPrefHelper.setFCMtoken(currentFCMtoken);
         },
       );
     } catch (e) {
-      debugPrint('Error getting FCM token: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('FCM token error: $e')),
+        );
+      }
     }
   }
 
+  /// fetch location and update
   Future<void> fetchLocationAndUpdate() async {
     final hasPermission = await _handleLocationPermission();
     if (!hasPermission) return;
@@ -177,41 +165,19 @@ class _MainPageState extends State<MainPage> {
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
-
-      print('Lat Long Home Page: ${position.latitude} ${position.longitude}');
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
-
-      // setState(() {
-      //   // _currentPosition = position;
-      // });
-      // bool? isVerified = await ShardPrefHelper.getIsVerified();
-      // Map<String, List<num>> userlocationDetail = {
-      //   'userLocation': [position.latitude, position.longitude]
-      // };
-      // print('update user location-------');
-      // BlocProvider.of<UpdateLocationBloc>(context).add(
-      //   UpdateLocationButtonPressedEvent(
-      //     location: userlocationDetail,
-      //   ),
-      // );
-
-      // Map<String, List<num>> homelocationDetail = {
-      //   'homeLocation': [position.latitude, position.longitude]
-      // };
-
-      // BlocProvider.of<UpdateLocationBloc>(context).add(
-      //   UpdateLocationButtonPressedEvent(
-      //     location: homelocationDetail,
-      //   ),
-      // );
     } catch (e) {
-      debugPrint('Error getting location: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error getting location: $e')),
+        );
+      }
     }
   }
 
   int _currentIndex = 0;
   void _onItemTapped(int index) {
-    print('index:$index');
+    print('Tab Index:$index');
     setState(() {
       _currentIndex = index;
     });
@@ -245,7 +211,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('widget.child:${widget.childId}');
+    print('Tab Id: ${widget.childId}');
     if (widget.childId == 'Home') {
       setState(() {
         _currentIndex = 0;
@@ -267,7 +233,6 @@ class _MainPageState extends State<MainPage> {
                 Icons.home,
               ),
               label: AppLocalizations.of(context)!.home,
-              // label: 'Home',
             ),
             // const BottomNavigationBarItem(
             //   icon: Icon(

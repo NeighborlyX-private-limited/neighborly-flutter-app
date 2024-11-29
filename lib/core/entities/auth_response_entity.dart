@@ -56,7 +56,6 @@ class AuthResponseEntity extends Equatable {
         karma,
         postCount,
         findMe,
-        // coordinates,
         picture,
         isSkippedTutorial,
         isViewedTutorial

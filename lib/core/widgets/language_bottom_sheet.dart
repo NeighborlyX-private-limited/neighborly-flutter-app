@@ -15,17 +15,20 @@ class LanguageBottomSheet extends StatefulWidget {
 class LanguageBottomSheetState extends State<LanguageBottomSheet> {
   late String _selectedLanguage;
 
+  /// init method
   @override
   void initState() {
     super.initState();
     _loadSelectedLanguage();
   }
 
+  /// fetch the selected language
   Future<void> _loadSelectedLanguage() async {
     _selectedLanguage = ShardPrefHelper.getLanguage() ?? 'en';
     setState(() {});
   }
 
+  /// select the language
   void _onLanguageSelected(String language) {
     setState(() {
       _selectedLanguage = language;
@@ -45,7 +48,10 @@ class LanguageBottomSheetState extends State<LanguageBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 10,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.only(
@@ -64,6 +70,7 @@ class LanguageBottomSheetState extends State<LanguageBottomSheet> {
             height: 25,
           ),
           ListTile(
+            title: Text(AppLocalizations.of(context)!.english),
             leading: Radio<String>(
               value: 'en',
               groupValue: _selectedLanguage,
@@ -71,9 +78,12 @@ class LanguageBottomSheetState extends State<LanguageBottomSheet> {
                 if (value != null) _onLanguageSelected(value);
               },
             ),
-            title: Text(AppLocalizations.of(context)!.english),
+            onTap: () {
+              _onLanguageSelected('en');
+            },
           ),
           ListTile(
+            title: Text(AppLocalizations.of(context)!.hindi),
             leading: Radio<String>(
               value: 'hi',
               groupValue: _selectedLanguage,
@@ -81,7 +91,9 @@ class LanguageBottomSheetState extends State<LanguageBottomSheet> {
                 if (value != null) _onLanguageSelected(value);
               },
             ),
-            title: Text(AppLocalizations.of(context)!.hindi),
+            onTap: () {
+              _onLanguageSelected('hi');
+            },
           ),
         ],
       ),

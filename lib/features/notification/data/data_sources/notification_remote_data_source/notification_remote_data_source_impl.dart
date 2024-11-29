@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
-
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/utils/shared_preference.dart';
@@ -53,7 +51,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 
   @override
   Future<List<NotificationModel>> getAllNotification({String? page}) async {
-    print('...getAllNotification start with...');
+    print('.....getAllNotification start with');
     print('page: $page');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
@@ -89,7 +87,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
 }
 
 Future<int> getAllNotificationCount({String? page}) async {
-  print('...getAllNotificationCount start with...');
+  print('.....getAllNotificationCount start with');
   print('page: $page');
   final http.Client client = http.Client();
   List<String>? cookies = ShardPrefHelper.getCookie();
@@ -123,7 +121,7 @@ Future<int> getAllNotificationCount({String? page}) async {
 }
 
 Future<int> getNotificationUnreadCount() async {
-  print('...getNotificationUnreadCount start...');
+  print('.....getNotificationUnreadCount start');
   final http.Client client = http.Client();
   List<String>? cookies = ShardPrefHelper.getCookie();
   String? getAccessToken = ShardPrefHelper.getAccessToken();

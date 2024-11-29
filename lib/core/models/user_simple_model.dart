@@ -22,13 +22,6 @@ class UserSimpleModel extends UserSimpleEntity {
   }
 
   factory UserSimpleModel.fromMap(Map<String, dynamic> map) {
-    /*
-      "userId": "666bfd0d440416d8916e7dde",
-      "userName": "perplexedpizza1554",
-      "picture": "https://api.multiavatar.com/selflessrebel2447.png?apikey=YqmMGaXpnwj9uh",
-      "karma": 1000,
-    */
-
     return UserSimpleModel(
       id: map['userId'] ?? "0",
       name: map['userName'] ?? '',
@@ -46,8 +39,6 @@ class UserSimpleModel extends UserSimpleEntity {
 
   static List<UserSimpleModel> fromJsonList(List<dynamic> json) {
     var list = <UserSimpleModel>[];
-
-    print('jsonUSER==${json.runtimeType}');
 
     if (json.isNotEmpty) {
       list =

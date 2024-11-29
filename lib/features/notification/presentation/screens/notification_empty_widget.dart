@@ -21,7 +21,6 @@ class NotificationsEmptyWidget extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             AppLocalizations.of(context)!.no_new_notifications,
-            // 'No New Notifications',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -32,7 +31,6 @@ class NotificationsEmptyWidget extends StatelessWidget {
           Text(
             AppLocalizations.of(context)!
                 .there_are_currently_no_notifications_to_display,
-            // 'There are currently no notifications to display.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w400,

@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/verify_otp_usecase.dart';
-
 part 'verify_otp_event.dart';
 part 'verify_otp_state.dart';
 

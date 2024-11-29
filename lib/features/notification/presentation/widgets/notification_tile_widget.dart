@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
-
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/notification_model.dart';
@@ -30,15 +29,6 @@ class NotificationTileWidget extends StatelessWidget {
       avatarBorderSize: 0,
     );
   }
-
-  // Widget rightAvatar() {
-  //   if (notification.notificationImage == null) return SizedBox(width: 30, height: 30);
-  //   return UserAvatarSquareWidget(
-  //     imageUrl: notification.notificationImage,
-  //     size: 50,
-  //     borderRadius: 10,
-  //   );
-  // }
 
   String timeAgoArea(String lastMessageDate) {
     if (lastMessageDate == '') return lastMessageDate;
@@ -66,10 +56,7 @@ class NotificationTileWidget extends StatelessWidget {
   void buildMainArea(BuildContext context) {
     if (notification.messageId != null) {
       listWidgets.add(GestureDetector(
-        onTap: () {
-          print('GOTO: /userProfileScreen/${notification.userId}');
-          // context.push('/userProfileScreen/${notification.userId}');
-        },
+        onTap: () {},
         child: Text(
           notification.userName ?? 'user',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -78,8 +65,6 @@ class NotificationTileWidget extends StatelessWidget {
     }
 
     listWidgets.add(Text(notification.message));
-
-    //listWidgets.add(Text(timeAgoArea('2024-10-31T19:30:15.359Z')));
   }
 
   Color tileColor = AppColors.lightGreyColor;
@@ -100,12 +85,7 @@ class NotificationTileWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: InkWell(
               onTap: () {
-                // if (notification.status == "unread") {
-                //   await updateNotificationStatus([notification.id]);
-                // }
-
                 bool ispost = notification.posttype == 'post';
-
                 String commentid = '0';
                 if (notification.title == 'You’ve Got a Comment!') {
                   commentid = notification.commentId ?? '0';
@@ -116,25 +96,9 @@ class NotificationTileWidget extends StatelessWidget {
                     notification.commentId != null) {
                   context.push(
                       '/post-detail-of-specific-comment/${notification.commentId}');
-                  // if (context.mounted) {
-                  //   BlocConsumer<GetCommentByCommentIdBloc,
-                  //       GetCommentByCommentIdState>(
-                  //     builder: (context, state) {
-                  //       return SizedBox();
-                  //     },
-                  //     listener: (context, GetCommentByCommentIdState state) {},
-                  //   );
-                  //   BlocProvider.of<GetCommentByCommentIdBloc>(context).add(
-                  //     GetCommentByCommentIdButtonPressedEvent(
-                  //       commentId: notification.commentId.toString(),
-                  //     ),
-                  //   );
-                  // }
                 } else if (notification.postId != null) {
                   context.push(
                       '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
-                  //print(
-                  //'/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/0');
                 }
 
                 /*

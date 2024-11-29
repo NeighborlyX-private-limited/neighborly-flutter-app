@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../core/theme/colors.dart';
 
 class ButtonContainerWidget extends StatelessWidget {
@@ -8,13 +7,14 @@ class ButtonContainerWidget extends StatelessWidget {
   final VoidCallback? onTapListener;
   final bool isActive;
   final bool isFilled;
-  const ButtonContainerWidget(
-      {super.key,
-      required this.color,
-      this.text,
-      this.isActive = false,
-      this.onTapListener,
-      required this.isFilled});
+  const ButtonContainerWidget({
+    super.key,
+    required this.color,
+    this.text,
+    this.isActive = false,
+    this.onTapListener,
+    required this.isFilled,
+  });
   @override
   Widget build(BuildContext context) {
     return InkWell(

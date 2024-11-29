@@ -16,11 +16,14 @@ class GoogleSignInService {
         print('googleUser is null...');
         return {'error': 'User cancelled sign in'};
       }
+
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
       print("googleAuth: $googleUser");
+
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
       print("fcmToken in Oauth: $fcmToken ");
+
       return {
         'idToken': googleAuth.idToken,
         'accessToken': googleAuth.accessToken,
