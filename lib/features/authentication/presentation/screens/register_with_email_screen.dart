@@ -186,6 +186,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                     } else if (state is RegisterSuccessState) {
                       print('GOTO: otp varification...');
                       context.go('/otp/${_emailController.text}/email-verify');
+                      //context
+                      //.push('/otp/${_emailController.text}/email-verify');
                     }
                   },
                   builder: (context, state) {

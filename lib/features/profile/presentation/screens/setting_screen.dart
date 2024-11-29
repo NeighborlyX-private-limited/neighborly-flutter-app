@@ -354,6 +354,8 @@ class _SettingScreenState extends State<SettingScreen> {
     bool isUsernameWrong = false;
 
     return showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
       context: context,
       isScrollControlled: true,
       builder: (BuildContext context) {
@@ -379,14 +381,6 @@ class _SettingScreenState extends State<SettingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Container(
-                          width: 40,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                        ),
                         const SizedBox(height: 4),
                         Center(
                           child: Text(
@@ -650,6 +644,8 @@ class _SettingScreenState extends State<SettingScreen> {
     }
 
     return showModalBottomSheet(
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -666,14 +662,6 @@ class _SettingScreenState extends State<SettingScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
               const SizedBox(
                 height: 4,
               ),

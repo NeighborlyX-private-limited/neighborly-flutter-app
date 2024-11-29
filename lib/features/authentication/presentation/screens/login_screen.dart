@@ -183,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         return;
                       }
 
-                      context.go('/otp/${_controller.text}/phone-login');
+                      context.push('/otp/${_controller.text}/phone-login');
                     },
                   ),
 

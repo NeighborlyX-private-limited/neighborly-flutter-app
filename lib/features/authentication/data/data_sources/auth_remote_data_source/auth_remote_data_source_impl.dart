@@ -73,7 +73,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String authType = jsonDecode(response.body)['user']['auth_type'];
 
       /// set data to local
-      String gender = jsonDecode(response.body)['user']['gender'];
+      String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
+      print('gender: $gender');
       ShardPrefHelper.setGender(gender);
       ShardPrefHelper.setIsEmailLogin(true);
       ShardPrefHelper.setAuthtype(authType);
@@ -129,6 +130,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200) {
       return "OTP sent successfully";
     } else {
+      if (response.body ==
+          'Too many requests, please try again after a minute.') {
+        print(response.body);
+        print('yes');
+        throw ServerException(message: 'Please try again after 1 minute');
+      }
+      print(response.body);
       print('resendOtp error ${jsonDecode(response.body)['message']}');
       throw ServerException(message: jsonDecode(response.body)['message']);
     }
@@ -190,7 +198,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           jsonDecode(response.body)['user']['viewedTutorial'];
       bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
       String authType = jsonDecode(response.body)['user']['auth_type'];
-      String gender = jsonDecode(response.body)['user']['gender'];
+      String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
 
       /// set data to local
       if (email != null) {
@@ -280,7 +288,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             jsonDecode(response.body)['user']['viewedTutorial'];
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
         String authType = jsonDecode(response.body)['user']['auth_type'];
-        String gender = jsonDecode(response.body)['user']['gender'];
+        String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
         ShardPrefHelper.setGender(gender);
 
         /// set data to local
@@ -362,6 +370,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       var signInResult = await GoogleSignInService.signInWithGoogle();
       print('signInWithGoogle result: $signInResult');
+      if (signInResult['error'] != null) {
+        print('some error:');
+        throw ServerException(message: signInResult['error']);
+      }
 
       String tokenID = signInResult['idToken'];
       print('signInWithGoogle tokenID: $tokenID');
@@ -384,6 +396,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.statusCode == 200) {
         /// extract data from response
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+        print("cookies:$cookies");
         String userID = jsonDecode(response.body)['user']['_id'];
         String username = jsonDecode(response.body)['user']['username'];
         String proPic = jsonDecode(response.body)['user']['picture'];
@@ -400,7 +413,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         print('authType$authType');
 
         /// set data to local
-        String gender = jsonDecode(response.body)['user']['gender'];
+        String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
         ShardPrefHelper.setGender(gender);
         ShardPrefHelper.setIsEmailLogin(false);
         ShardPrefHelper.setAuthtype(authType);
@@ -426,6 +439,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } catch (e) {
       print('googleAuthentication  catch error: ${e.toString()}');
       debugPrint(e.toString());
+      throw ServerException(message: e.toString());
     }
   }
 }

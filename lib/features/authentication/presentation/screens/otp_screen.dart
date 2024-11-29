@@ -347,7 +347,7 @@ class _OtpScreenState extends State<OtpScreen> {
                         ),
                         InkWell(
                           onTap: () {
-                            context.go('/registerScreen');
+                            context.push('/registerScreen');
                           },
                           child: Text(
                             AppLocalizations.of(context)!.signup,
