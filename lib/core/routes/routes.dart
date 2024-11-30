@@ -101,6 +101,7 @@ final GoRouter router = GoRouter(
       },
     ),
 
+    /// login screen route
     GoRoute(
       path: '/loginScreen',
       name: RouteConstants.loginScreenRouteName,
