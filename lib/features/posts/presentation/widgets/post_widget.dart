@@ -6,7 +6,6 @@ import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/video_widget.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -33,7 +32,6 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
-    //print('video url HAI:${widget.post.multimedia![0]}');
     void showBottomSheet() {
       bottomSheet(context);
     }
@@ -112,14 +110,16 @@ class _PostWidgetState extends State<PostWidget> {
                                       AppLocalizations.of(context)!
                                           .neighborly_user,
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
                                     )
                                   : Text(
                                       widget.post.userName,
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
                                     ),
                               const SizedBox(
                                 width: 6,
@@ -268,6 +268,7 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
+  ///bottomSheet
   Future<dynamic> bottomSheet(BuildContext context) {
     void showReportReasonBottomSheet() {
       reportReasonBottomSheet(context);
@@ -301,6 +302,7 @@ class _PostWidgetState extends State<PostWidget> {
                 )
               : BlocConsumer<DeletePostBloc, DeletePostState>(
                   listener: (context, state) {
+                    ///Delete Post Success State
                     if (state is DeletePostSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -310,7 +312,10 @@ class _PostWidgetState extends State<PostWidget> {
                       );
 
                       context.pop(context);
-                    } else if (state is DeletePostFailureState) {
+                    }
+
+                    ///Delete Post Failure State
+                    else if (state is DeletePostFailureState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(state.error),
@@ -319,21 +324,22 @@ class _PostWidgetState extends State<PostWidget> {
                     }
                   },
                   builder: (context, state) {
+                    ///Delete Post Loading State
                     if (state is DeletePostLoadingState) {
                       return Center(
                         child: BouncingLogoIndicator(
                           logo: 'images/logo.svg',
                         ),
                       );
-                      // return const Center(
-                      //   child: CircularProgressIndicator(),
-                      // );
                     }
                     return InkWell(
                       onTap: () {
                         context.read<DeletePostBloc>().add(
-                            DeletePostButtonPressedEvent(
-                                postId: widget.post.id, type: 'post'));
+                              DeletePostButtonPressedEvent(
+                                postId: widget.post.id,
+                                type: 'post',
+                              ),
+                            );
                         widget.onDelete();
                       },
                       child: Row(
@@ -359,6 +365,7 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
+  ///report Confirmation Bottom Sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
@@ -400,18 +407,12 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
+  ///report Reason Bottom Sheet
   Future<dynamic> reportReasonBottomSheet(BuildContext context) {
     void showReportConfirmationBottomSheet() {
       reportConfirmationBottomSheet(context);
     }
 
-    // List<String> reportReasons = [
-    //   'Inappropriate content',
-    //   'Spam',
-    //   'Harassment or hate speech',
-    //   'Violence or dangerous organizations',
-    //   'Intellectual property violation',
-    // ];
     List<String> reportReasons = [
       AppLocalizations.of(context)!.inappropriate_content,
       AppLocalizations.of(context)!.spam,
@@ -425,11 +426,15 @@ class _PostWidgetState extends State<PostWidget> {
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(
           listener: (context, state) {
+            ///Report Post Success State
             if (state is ReportPostSuccessState) {
               Navigator.pop(context);
               Navigator.pop(context);
               showReportConfirmationBottomSheet();
-            } else if (state is ReportPostFailureState) {
+            }
+
+            ///Report Post Failure State
+            else if (state is ReportPostFailureState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.error),
@@ -460,13 +465,10 @@ class _PostWidgetState extends State<PostWidget> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
-                        // ? Center(
-                        //     child: BouncingLogoIndicator(
-                        //       logo: 'images/logo.svg',
-                        //     ),
-                        //   )
                         ? const Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                            ),
                           )
                         : Center(
                             child: Text(
@@ -484,10 +486,12 @@ class _PostWidgetState extends State<PostWidget> {
                         InkWell(
                           onTap: () {
                             context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
+                                  ReportButtonPressedEvent(
                                     type: 'content',
                                     postId: widget.post.id,
-                                    reason: reportReasons[0]));
+                                    reason: reportReasons[0],
+                                  ),
+                                );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -505,10 +509,12 @@ class _PostWidgetState extends State<PostWidget> {
                         InkWell(
                           onTap: () {
                             context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
+                                  ReportButtonPressedEvent(
                                     type: 'content',
                                     postId: widget.post.id,
-                                    reason: reportReasons[1]));
+                                    reason: reportReasons[1],
+                                  ),
+                                );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -525,10 +531,12 @@ class _PostWidgetState extends State<PostWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'content',
                                   postId: widget.post.id,
-                                  reason: reportReasons[2])),
+                                  reason: reportReasons[2],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -544,10 +552,12 @@ class _PostWidgetState extends State<PostWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'content',
                                   postId: widget.post.id,
-                                  reason: reportReasons[3])),
+                                  reason: reportReasons[3],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -563,10 +573,12 @@ class _PostWidgetState extends State<PostWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'content',
                                   postId: widget.post.id,
-                                  reason: reportReasons[4])),
+                                  reason: reportReasons[4],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [

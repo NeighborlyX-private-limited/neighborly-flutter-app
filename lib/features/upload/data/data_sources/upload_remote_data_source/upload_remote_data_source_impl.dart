@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
-
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/utils/shared_preference.dart';
@@ -58,14 +56,13 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       ..fields['title'] = title
       ..fields['content'] = content ?? ''
       ..fields['type'] = type
-      // ..fields['thumbnail'] = thumbnail.toString()
       ..fields['city'] = city
       ..fields['pollOptions'] = jsonEncode(options ?? [])
       ..fields['location[0]'] = location[0].toString()
       ..fields['location[1]'] = location[1].toString()
       ..fields['allowMultipleVotes'] = allowMultipleVotes.toString();
 
-    // Add multimedia files if available
+    /// Add multimedia files if available
     if (multimedia != null && multimedia.isNotEmpty) {
       for (var file in multimedia) {
         request.files.add(
@@ -79,7 +76,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       }
     }
 
-    // // Add the thumbnail file if available
+    /// Add the thumbnail file if available
     if (thumbnail != null) {
       request.files.add(
         http.MultipartFile(
@@ -95,7 +92,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       print('$key: $value');
     });
 
-    // Send the request and handle the response
+    /// Send the request and handle the response
     final response = await request.send();
     final responseString = await response.stream.bytesToString();
 

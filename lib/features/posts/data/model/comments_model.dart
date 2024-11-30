@@ -31,7 +31,7 @@ class CommentModel extends CommentEntity {
         userFeedback: json['userFeedback'] as String?,
         postid: postid.toString());
   }
-  // Conversion from CommentEntity
+
   factory CommentModel.fromEntity(CommentEntity entity) {
     return CommentModel(
         commentid: entity.commentid,

@@ -13,7 +13,6 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
@@ -25,7 +24,6 @@ import '../widgets/post_widget.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../../../../core/utils/shared_preference.dart';
 import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -48,8 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? selectedYear;
   bool isDobBtnActive = false;
 
-  // Generate lists for day, month, and year
-
+  /// Generate lists for day, month, and year
   List<String> days =
       List.generate(31, (index) => (index + 1).toString().padLeft(2, '0'));
   List<String> months =
@@ -59,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     (index) => (DateTime.now().year - 16 - index).toString(),
   );
 
+  /// init method
   @override
   void initState() {
     super.initState();
@@ -67,52 +65,31 @@ class _HomeScreenState extends State<HomeScreen> {
     setCityHomeName();
     setCityCurrentName();
     getUnreadNotificationCount();
+    isDobSet = ShardPrefHelper.getDob();
     _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
     if (_selectedCity.toLowerCase() == 'delhi') {
       _selectedCity = 'New Delhi';
     }
-    // _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
-    isDobSet = ShardPrefHelper.getDob();
-    print('dob...$isDobSet');
     _fetchPosts();
+
     if (!isDobSet) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _openBottomSheet();
-        // showBottomSheet(context);
       });
     }
-    // _handleDeepLink('https://prod.neighborly.in/posts/12345');
   }
 
-  // void _handleDeepLink(String deepLink) {
-  //   // Parse the deep link
-  //   try {
-  //     print('callifng deeplink $deepLink');
-  //     Uri uri = Uri.parse(deepLink);
-
-  //     // // Check the scheme and host
-  //     if (uri.scheme == 'myapp' && uri.host == 'posts') {
-  //       //   // Extract the post ID from the path
-  //       String postId =
-  //           uri.pathSegments[1]; // Assuming the path is like /posts/12345
-
-  //       //   // Navigate to the post detail screen
-  //     }
-  //   } catch (e) {
-  //     print("getting error");
-  //   }
-  // }
-
+  /// on notification method
   void onNotificationRead() {
     getUnreadNotificationCount();
   }
 
+  /// fetch post method
   void _fetchPosts() {
     _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
     if (_selectedCity.toLowerCase() == 'delhi') {
       _selectedCity = 'New Delhi';
     }
-    // _selectedCity = ShardPrefHelper.getHomeCity() ?? 'Delhi';
     setState(() {});
     BlocProvider.of<GetAllPostsBloc>(context)
         .add(GetAllPostsButtonPressedEvent(isHome: isHome));
@@ -120,7 +97,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// set the location of  user whether their home location is on or current location in
   setIsHome() {
-    print('setIsHome...');
     var isLocationOn = ShardPrefHelper.getIsLocationOn();
     setState(() {
       isHome = isLocationOn ? false : true;
@@ -129,43 +105,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// refersh the home screen
   Future<void> _onRefresh() async {
-    print('_onRefresh....');
     setIsHome();
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
         .add(GetAllPostsButtonPressedEvent(isHome: isHome));
   }
 
-// set home location city name
+  /// set home location city name
   setCityHomeName() async {
     List<double> homeLocation = ShardPrefHelper.getHomeLocation();
-    print('home cord in city set: $homeLocation');
     List<Placemark> placemarks = await placemarkFromCoordinates(
       homeLocation[0],
       homeLocation[1],
     );
-
     var city = placemarks[0].locality ?? 'New Delhi';
     if (city.toLowerCase() == 'delhi') {
       city = 'New Delhi';
     }
-    // var city = placemarks[0].locality ?? 'Delhi';
-    print('home city $city');
     ShardPrefHelper.setHomeCity(city);
   }
 
-// set current location city name
+  /// set current location city name
   setCityCurrentName() async {
     List<double> location = ShardPrefHelper.getLocation();
-    print('current cord in city set: $location');
     List<Placemark> placemarks = await placemarkFromCoordinates(
       location[0],
       location[1],
     );
-
     var city = placemarks[0].locality ?? 'New Delhi';
-
-    print('current city $city');
     ShardPrefHelper.setCurrentCity(city);
   }
 
@@ -175,7 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
         isHome = value;
       });
     }
-
     if (!isHome) {
       fetchLocationAndUpdate();
     }
@@ -192,12 +158,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return '$year-$month-$day';
   }
 
+  /// location permission checker
   Future<bool> _handleLocationPermission() async {
-    // bool serviceEnabled;
     LocationPermission permission;
-
     var checkPushPermission = await Permission.notification.isDenied;
-    print('...checkPushPermission: $checkPushPermission');
     if (checkPushPermission) {
       await Permission.notification.request();
     }
@@ -205,6 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
+
+      /// if location is denied
       if (permission == LocationPermission.denied) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -217,6 +183,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return false;
       }
     }
+
+    /// if location is forever denied
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -228,6 +196,8 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       return false;
     }
+
+    /// if location is granted
     return true;
   }
 
@@ -242,8 +212,6 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
-      print(
-          'Lat Long in Home Screen: ${position.latitude}, ${position.longitude}');
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -252,25 +220,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       }
-      debugPrint('Error getting location: $e');
     }
   }
 
   ///fetch the unread notification count
   int unreadNotificationCount = 0;
   Future<void> getUnreadNotificationCount() async {
-    print('getUnreadNotificationCount call..');
     getNotificationUnreadCount().then((value) {
       if (value >= 0) {
         if (mounted) {
           setState(() {
             unreadNotificationCount = value;
-            print('Unread Notification Count: $unreadNotificationCount');
           });
         }
       }
     }).catchError((error) {
-      print("Error in getUnread Notification Count: $error");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(error.toString()),
+          ),
+        );
+      }
     });
   }
 
@@ -283,328 +254,347 @@ class _HomeScreenState extends State<HomeScreen> {
         onPopInvokedWithResult: (didPop, result) {
           _scaffoldKey.currentState?.closeEndDrawer();
         },
-        child: Builder(builder: (BuildContext context) {
-          return Scaffold(
-            key: _scaffoldKey,
-            backgroundColor: AppColors.lightBackgroundColor,
-            appBar: AppBar(
-              backgroundColor: AppColors.whiteColor,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  SvgPicture.asset(
-                    'assets/logo.svg',
-                    width: 30,
-                    height: 34,
-                  ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: Container(
-                      height: 40,
-                      width: 160,
-                      decoration: BoxDecoration(
-                        color: AppColors.inActivePrimaryColor,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.location_on,
-                            size: 16,
-                            color: isHome
-                                ? AppColors.primaryColor
-                                : AppColors.blackColor,
-                          ),
-                          // Home Button
-                          InkWell(
-                            onTap: () {
-                              ShardPrefHelper.setIsLocationOn(false);
-                              handleToggle(true);
-                            },
-                            child: SizedBox(
-                              height: 35,
-                              width: 60,
-                              child: Center(
-                                child: Text(
-                                  _selectedCity,
-                                  style: TextStyle(
-                                    fontWeight: isHome
-                                        ? FontWeight.w900
-                                        : FontWeight.normal,
-                                    fontSize: 16,
-                                    color: isHome
-                                        ? AppColors.primaryColor
-                                        : AppColors.blackColor,
-                                  ),
-                                ),
-                              ),
+        child: Builder(
+          builder: (BuildContext context) {
+            return Scaffold(
+              key: _scaffoldKey,
+              backgroundColor: AppColors.lightBackgroundColor,
+              appBar: AppBar(
+                backgroundColor: AppColors.whiteColor,
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/logo.svg',
+                      width: 30,
+                      height: 34,
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Container(
+                        height: 40,
+                        width: 160,
+                        decoration: BoxDecoration(
+                          color: AppColors.inActivePrimaryColor,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.location_on,
+                              size: 16,
+                              color: isHome
+                                  ? AppColors.primaryColor
+                                  : AppColors.blackColor,
                             ),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          // Dropdown for city selection
-                          BlocListener<CityBloc, CityState>(
-                            listener: (context, state) {
-                              if (state is CityUpdatedState) {
+
+                            /// Home Button
+                            InkWell(
+                              onTap: () {
                                 ShardPrefHelper.setIsLocationOn(false);
                                 handleToggle(true);
-                                _fetchPosts();
-
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                        '${AppLocalizations.of(context)!.city_updated_to} ${state.city}!'),
-                                  ),
-                                );
-                              } else if (state is CityErrorState) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text('Error: ${state.errorMessage}'),
-                                  ),
-                                );
-                              }
-                            },
-                            child: HomeDropdownCity(
-                              selectCity: _selectedCity,
-                              onChanged: (String? newValue) {
-                                if (newValue != null) {
-                                  print('new city: $newValue');
-                                  context
-                                      .read<CityBloc>()
-                                      .add(UpdateCityEvent(newValue));
-                                }
                               },
-                            ),
-                          ),
-                          // Vertical Divider
-                          Container(
-                              height: 25,
-                              width: 1,
-                              color: AppColors.blackColor),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          // Location Button
-                          InkWell(
-                            onTap: () {
-                              ShardPrefHelper.setIsLocationOn(true);
-                              handleToggle(false);
-                            },
-                            child: Container(
-                              height: 35,
-                              width: 35,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isHome
-                                    ? AppColors.inActivePrimaryColor
-                                    : AppColors.primaryColor,
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/location.svg',
-                                  height: 25,
-                                  width: 25,
+                              child: SizedBox(
+                                height: 35,
+                                width: 60,
+                                child: Center(
+                                  child: Text(
+                                    _selectedCity,
+                                    style: TextStyle(
+                                      fontWeight: isHome
+                                          ? FontWeight.w900
+                                          : FontWeight.normal,
+                                      fontSize: 16,
+                                      color: isHome
+                                          ? AppColors.primaryColor
+                                          : AppColors.blackColor,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              width: 5,
+                            ),
+
+                            /// Dropdown for city selection
+                            BlocListener<CityBloc, CityState>(
+                              listener: (context, state) {
+                                ///success state
+                                if (state is CityUpdatedState) {
+                                  ShardPrefHelper.setIsLocationOn(false);
+                                  handleToggle(true);
+                                  _fetchPosts();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                          '${AppLocalizations.of(context)!.city_updated_to} ${state.city}!'),
+                                    ),
+                                  );
+                                }
+
+                                /// failure state
+                                else if (state is CityErrorState) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text('Error: ${state.errorMessage}'),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: HomeDropdownCity(
+                                selectCity: _selectedCity,
+                                onChanged: (String? newValue) {
+                                  if (newValue != null) {
+                                    context
+                                        .read<CityBloc>()
+                                        .add(UpdateCityEvent(newValue));
+                                  }
+                                },
+                              ),
+                            ),
+
+                            /// Vertical Divider
+                            Container(
+                              height: 25,
+                              width: 1,
+                              color: AppColors.blackColor,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+
+                            /// Location Button
+                            InkWell(
+                              onTap: () {
+                                ShardPrefHelper.setIsLocationOn(true);
+                                handleToggle(false);
+                              },
+                              child: Container(
+                                height: 35,
+                                width: 35,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isHome
+                                      ? AppColors.inActivePrimaryColor
+                                      : AppColors.primaryColor,
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/location.svg',
+                                    height: 25,
+                                    width: 25,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                  ],
+                ),
+                actions: [
+                  /// buy awrad button
+                  InkWell(
+                    onTap: () {
+                      showModalBottomSheet(
+                        showDragHandle: true,
+                        backgroundColor: AppColors.whiteColor,
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (_) => const AwardSelectionScreen(),
+                      );
+                    },
+                    child: SvgPicture.asset(
+                      'assets/award.svg',
+                      height: 24.0,
+                      width: 24.0,
+                    ),
+                  ),
+                  SizedBox(
+                    width: 24,
+                  ),
+
+                  /// notification icon button
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        context.push('/notifications');
+                      },
+                      child: unreadNotificationCount > 0
+                          ? badges.Badge(
+                              badgeContent: unreadNotificationCount > 0
+                                  ? Text(
+                                      "$unreadNotificationCount",
+                                      style: TextStyle(
+                                          color: AppColors.whiteColor),
+                                    )
+                                  : null,
+                              badgeStyle: BadgeStyle(
+                                  badgeColor: AppColors.primaryColor),
+                              position:
+                                  badges.BadgePosition.custom(end: 0, top: -8),
+                              child: SvgPicture.asset(
+                                'assets/alarm.svg',
+                                fit: BoxFit.contain,
+                                width: 26,
+                                height: 26,
+                              ),
+                            )
+                          : badges.Badge(
+                              showBadge: false,
+                              badgeStyle: BadgeStyle(
+                                badgeColor: AppColors.primaryColor,
+                              ),
+                              position: badges.BadgePosition.custom(
+                                end: 0,
+                                top: -8,
+                              ),
+                              child: SvgPicture.asset(
+                                'assets/alarm.svg',
+                                fit: BoxFit.contain,
+                                width: 26,
+                                height: 26,
+                              ),
+                            ),
+                    ),
+                  ),
+
+                  /// drawer menu icon
+                  IconButton(
+                    icon: Icon(
+                      Icons.menu,
+                      color: AppColors.greyColor,
+                      size: 26,
+                    ),
+                    onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
                   ),
                 ],
               ),
-              actions: [
-                InkWell(
-                  onTap: () {
-                    showModalBottomSheet(
-                      showDragHandle: true,
-                      backgroundColor: AppColors.whiteColor,
-                      context: context,
-                      isScrollControlled: true,
-                      builder: (_) => const AwardSelectionScreen(),
-                    );
-                  },
-                  child: SvgPicture.asset(
-                    'assets/award.svg',
-                    height: 24.0,
-                    width: 24.0,
-                  ),
-                ),
-                SizedBox(
-                  width: 24,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: GestureDetector(
-                    onTap: () {
-                      context.push('/notifications');
-                    },
-                    child: unreadNotificationCount > 0
-                        ? badges.Badge(
-                            badgeContent: unreadNotificationCount > 0
-                                ? Text(
-                                    "$unreadNotificationCount",
-                                    style:
-                                        TextStyle(color: AppColors.whiteColor),
-                                  )
-                                : null,
-                            badgeStyle:
-                                BadgeStyle(badgeColor: AppColors.primaryColor),
-                            position:
-                                badges.BadgePosition.custom(end: 0, top: -8),
-                            child: SvgPicture.asset(
-                              'assets/alarm.svg',
-                              fit: BoxFit.contain,
-                              width: 26,
-                              height: 26,
-                            ),
-                          )
-                        : badges.Badge(
-                            showBadge: false,
-                            badgeStyle: BadgeStyle(
-                              badgeColor: AppColors.primaryColor,
-                            ),
-                            position: badges.BadgePosition.custom(
-                              end: 0,
-                              top: -8,
-                            ),
-                            child: SvgPicture.asset(
-                              'assets/alarm.svg',
-                              fit: BoxFit.contain,
-                              width: 26,
-                              height: 26,
-                            ),
-                          ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(
-                    Icons.menu,
-                    color: AppColors.greyColor,
-                    size: 26,
-                  ),
-                  onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
-                ),
-              ],
-            ),
-            endDrawer: CustomDrawer(
-              scaffoldKey: _scaffoldKey,
-            ),
-            body: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
-              builder: (context, state) {
-                if (state is GetAllPostsLoadingState) {
-                  return const PostSheemerWidget();
-                } else if (state is GetAllPostsSuccessState) {
-                  final posts = state.post;
-                  return posts.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SvgPicture.asset(
-                                'assets/nothing.svg',
-                                height: 200.0,
-                                width: 200.0,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(AppLocalizations.of(context)!
-                                  .time_to_be_the_hero_this_wall_needs_start_the),
-                              //Text('Conversation!'),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primaryColor),
-                                onPressed: () {
-                                  context.push('/create');
-                                },
-                                child: Text(
-                                  AppLocalizations.of(context)!.create_a_post,
-                                  style: TextStyle(color: AppColors.whiteColor),
-                                ),
-                              )
-                            ],
-                          ),
-                        )
-                      : ListView.separated(
-                          itemCount: posts.length,
-                          itemBuilder: (context, index) {
-                            final post = posts[index];
-                            if (post.type == 'post') {
-                              return PostWidget(
-                                  post: post,
-                                  onDelete: () {
-                                    //context.read<GetAllPostsBloc>().deletepost(post.id);
-                                    _onRefresh();
-                                  });
-                            } else if (post.type == 'poll') {
-                              return PollWidget(
-                                  post: post,
-                                  onDelete: () {
-                                    //context.read<GetAllPostsBloc>().deletepost(post.id);
-                                    _onRefresh();
-                                  });
-                            }
-                            return const SizedBox();
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const Padding(
-                              padding: EdgeInsets.only(bottom: 10.0),
-                            );
-                          },
-                        );
-                } else if (state is GetAllPostsFailureState) {
-                  if (state.error.contains('Invalid Token')) {
-                    context.go('/loginScreen');
-                  }
-                  if (state.error.contains('Internal server error')) {
-                    // return SomethingWentWrong();
-                    return Center(
-                        child: Text(
-                      AppLocalizations.of(context)!.oops_something_went_wrong,
-                      style: TextStyle(color: AppColors.redColor),
-                    ));
-                  }
-                  if (state.error.contains('No internet connection')) {
-                    return SomethingWentWrong(
-                      imagePath: 'assets/something_went_wrong.svg',
-                      // title: 'Aaah! Something went wrong',
-                      // message:
-                      //     "We couldn't start your program.\nPlease try starting it again",
-                      // buttonText: 'Retry',
-                      title: AppLocalizations.of(context)!
-                          .aaah_something_went_wrong,
-                      message: AppLocalizations.of(context)!
-                          .we_could_not_fetch_your_data_please_try_starting_it_again,
-                      buttonText: AppLocalizations.of(context)!.retry,
-                      onButtonPressed: () {
-                        _onRefresh();
-                      },
-                    );
+              endDrawer: CustomDrawer(
+                scaffoldKey: _scaffoldKey,
+              ),
+              body: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
+                builder: (context, state) {
+                  /// loading state
+                  if (state is GetAllPostsLoadingState) {
+                    return const PostSheemerWidget();
                   }
 
-                  return Center(child: Text(state.error));
-                } else {
-                  return Center(
-                    child: Text(AppLocalizations.of(context)!.no_data),
-                  );
-                }
-              },
-            ),
-          );
-        }),
+                  ///success state
+                  else if (state is GetAllPostsSuccessState) {
+                    final posts = state.post;
+                    return posts.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/nothing.svg',
+                                  height: 200.0,
+                                  width: 200.0,
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(AppLocalizations.of(context)!
+                                    .time_to_be_the_hero_this_wall_needs_start_the),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryColor,
+                                  ),
+                                  onPressed: () {
+                                    context.push('/create');
+                                  },
+                                  child: Text(
+                                    AppLocalizations.of(context)!.create_a_post,
+                                    style:
+                                        TextStyle(color: AppColors.whiteColor),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                        : ListView.separated(
+                            itemCount: posts.length,
+                            itemBuilder: (context, index) {
+                              final post = posts[index];
+                              if (post.type == 'post') {
+                                return PostWidget(
+                                    post: post,
+                                    onDelete: () {
+                                      _onRefresh();
+                                    });
+                              } else if (post.type == 'poll') {
+                                return PollWidget(
+                                    post: post,
+                                    onDelete: () {
+                                      _onRefresh();
+                                    });
+                              }
+                              return const SizedBox();
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return const Padding(
+                                padding: EdgeInsets.only(bottom: 10.0),
+                              );
+                            },
+                          );
+                  }
+
+                  /// failure state
+                  else if (state is GetAllPostsFailureState) {
+                    if (state.error.contains('Invalid Token')) {
+                      context.go('/loginScreen');
+                    }
+                    if (state.error.contains('Internal server error')) {
+                      return Center(
+                        child: Text(
+                          AppLocalizations.of(context)!
+                              .oops_something_went_wrong,
+                          style: TextStyle(color: AppColors.redColor),
+                        ),
+                      );
+                    }
+                    if (state.error.contains('No internet connection')) {
+                      return SomethingWentWrong(
+                        imagePath: 'assets/something_went_wrong.svg',
+                        title: AppLocalizations.of(context)!
+                            .aaah_something_went_wrong,
+                        message: AppLocalizations.of(context)!
+                            .we_could_not_fetch_your_data_please_try_starting_it_again,
+                        buttonText: AppLocalizations.of(context)!.retry,
+                        onButtonPressed: () {
+                          _onRefresh();
+                        },
+                      );
+                    }
+
+                    return Center(child: Text(state.error));
+                  } else {
+                    return Center(
+                      child: Text(AppLocalizations.of(context)!.no_data),
+                    );
+                  }
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }
 
+  /// bottom sheet
   void _openBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -614,10 +604,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       builder: (context) {
         return StatefulBuilder(
-          // Use StatefulBuilder to handle setState within the bottom sheet context
           builder: (BuildContext context, StateSetter setModalState) {
             void checkIfDobBtnShouldBeActive() {
-              // Evaluate if all dropdowns have values
               setModalState(() {
                 isDobBtnActive = selectedDay != null &&
                     selectedMonth != null &&
@@ -660,7 +648,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Day Dropdown
+                        /// Day Dropdown
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedDay,
@@ -689,7 +677,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         SizedBox(width: 8),
-                        // Month Dropdown
+
+                        /// Month Dropdown
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedMonth,
@@ -718,7 +707,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         SizedBox(width: 8),
-                        // Year Dropdown
+
+                        /// Year Dropdown
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedYear,
@@ -752,6 +742,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
                       listener:
                           (BuildContext context, GetGenderAndDOBState state) {
+                        ///failure state
                         if (state is GetGenderAndDOBFailureState) {
                           context.pop();
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -763,8 +754,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                   : state.error),
                             ),
                           );
-                        } else if (state is GetGenderAndDOBSuccessState) {
-                          print('User Info saved successfully.');
+                        }
+
+                        ///success state
+                        else if (state is GetGenderAndDOBSuccessState) {
                           context.pop();
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -775,20 +768,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
                       },
                       builder: (context, state) {
+                        ///loading state
                         if (state is GetGenderAndDOBLoadingState) {
                           return Center(
                             child: BouncingLogoIndicator(
                               logo: 'images/logo.svg',
                             ),
                           );
-                          // return const Center(
-                          //   child: CircularProgressIndicator(),
-                          // );
                         }
+
+                        ///save dob button
                         return ButtonContainerWidget(
-                          isActive: isDobBtnActive,
-                          color: AppColors.primaryColor,
                           text: AppLocalizations.of(context)!.save,
+                          color: AppColors.primaryColor,
+                          isActive: isDobBtnActive,
                           isFilled: true,
                           onTapListener: () {
                             BlocProvider.of<GetGenderAndDOBBloc>(context).add(
@@ -811,130 +804,4 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
-  // Future<void> showBottomSheet(BuildContext context) {
-  //   TextEditingController dateController = TextEditingController();
-  //   TextEditingController monthController = TextEditingController();
-  //   TextEditingController yearController = TextEditingController();
-
-  //   return showModalBottomSheet<num>(
-  //     isScrollControlled: true,
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return StatefulBuilder(
-  //         builder: (BuildContext context, StateSetter setState) {
-  //           return DraggableScrollableSheet(
-  //             expand: false,
-  //             builder:
-  //                 (BuildContext context, ScrollController scrollController) {
-  //               return SingleChildScrollView(
-  //                 controller: scrollController,
-  //                 child: Container(
-  //                   decoration: const BoxDecoration(
-  //                     color: Colors.white,
-  //                     borderRadius: BorderRadius.only(
-  //                       topLeft: Radius.circular(20),
-  //                       topRight: Radius.circular(20),
-  //                     ),
-  //                   ),
-  //                   padding: const EdgeInsets.symmetric(
-  //                       horizontal: 12, vertical: 16),
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Center(
-  //                         child: Container(
-  //                           width: 40,
-  //                           height: 5,
-  //                           decoration: BoxDecoration(
-  //                             color: const Color(0xffB8B8B8),
-  //                             borderRadius: BorderRadius.circular(40),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                       const SizedBox(height: 15),
-  //                       Center(
-  //                         child: Text(
-  //                           'One last thing before we get started!!',
-  //                           style: onboardingHeading2Style,
-  //                         ),
-  //                       ),
-  //                       const Divider(color: Colors.grey),
-  //                       Text('Date of Birth', style: blackonboardingBody1Style),
-  //                       const SizedBox(height: 8),
-  //                       DOBPickerWidget(
-  //                         dateController: dateController,
-  //                         monthController: monthController,
-  //                         yearController: yearController,
-  //                         isDayFilled: true,
-  //                         isMonthFilled: true,
-  //                         isYearFilled: true,
-  //                       ),
-  //                       const SizedBox(height: 45),
-  //                       BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
-  //                         listener: (BuildContext context,
-  //                             GetGenderAndDOBState state) {
-  //                           if (state is GetGenderAndDOBFailureState) {
-  //                             if (state.error
-  //                                 .contains('DOB can only be set once.')) {
-  //                               context.pop();
-  //                               ScaffoldMessenger.of(context).showSnackBar(
-  //                                 const SnackBar(
-  //                                     content: Text(
-  //                                         'User Info saved successfully.')),
-  //                               );
-  //                             } else {
-  //                               context.pop();
-  //                               ScaffoldMessenger.of(context).showSnackBar(
-  //                                 SnackBar(content: Text(state.error)),
-  //                               );
-  //                             }
-  //                           } else if (state is GetGenderAndDOBSuccessState) {
-  //                             print('User Info saved successfully.');
-  //                             context.pop();
-  //                             ScaffoldMessenger.of(context).showSnackBar(
-  //                               const SnackBar(
-  //                                   content:
-  //                                       Text('User Info saved successfully.')),
-  //                             );
-  //                           }
-  //                         },
-  //                         builder: (context, state) {
-  //                           if (state is GetGenderAndDOBLoadingState) {
-  //                             return const Center(
-  //                               child: CircularProgressIndicator(),
-  //                             );
-  //                           }
-  //                           return ButtonContainerWidget(
-  //                             isActive: true,
-  //                             color: AppColors.primaryColor,
-  //                             text: 'Save',
-  //                             isFilled: true,
-  //                             onTapListener: () {
-  //                               BlocProvider.of<GetGenderAndDOBBloc>(context)
-  //                                   .add(
-  //                                 GetGenderAndDOBButtonPressedEvent(
-  //                                   dob: formatDOB(
-  //                                     dateController.text.trim(),
-  //                                     monthController.text.trim(),
-  //                                     yearController.text.trim(),
-  //                                   ),
-  //                                 ),
-  //                               );
-  //                             },
-  //                           );
-  //                         },
-  //                       ),
-  //                       const SizedBox(height: 15),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               );
-  //             },
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 }

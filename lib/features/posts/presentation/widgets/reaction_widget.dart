@@ -5,14 +5,12 @@ import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:share_it/share_it.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/feedback_bloc/feedback_bloc.dart';
 import '../bloc/give_award_bloc/give_award_bloc.dart';
 import 'overlapping_images_widget.dart';
-
 import '../../../profile/data/data_sources/profile_remote_data_source/profile_remote_data_source_impl.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -44,28 +42,25 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   int streetlightCount = 0;
   int mapCount = 0;
   late ProfileRemoteDataSourceImpl profileRemoteDataSource;
-  // State variables to track counts
   late num cheersCount;
   late num boolsCount;
 
+  /// init state
   @override
   void initState() {
     super.initState();
-    // Initialize state variables with initial counts
     cheersCount = widget.post.cheers;
     boolsCount = widget.post.bools;
     awardsCount = widget.post.awardType.length;
     profileRemoteDataSource =
         ProfileRemoteDataSourceImpl(client: http.Client());
 
-    // Load persisted state
     _loadReactionState();
   }
 
+  /// _loadReactionState method
   Future<void> _loadReactionState() async {
     getmyawards();
-    // final userID = ShardPrefHelper.getUserID();
-    // final box = Hive.box('postReactions');
     setState(() {
       isCheered = widget.post.userFeedback == 'cheer';
 
@@ -73,9 +68,9 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     });
   }
 
+  ///getmyawards method
   getmyawards() async {
     List responseMessage = await profileRemoteDataSource.getMyAwards();
-
     bool localLegendAvailable = false;
     bool parkBenchAvailable = false;
     bool sunflowerAvailable = false;
@@ -144,19 +139,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       }
     }
 
-    // Update state once after the loop
+    /// Update state once after the loop
     setState(() {
-      print(localLegendCt);
-      print(parkBenchCt);
-      print(sunflowerCt);
-      print(streetlightCt);
-      print(mapCt);
-
-      print(localLegendCount);
-      print(parkBenchCount);
-      print(sunflowerCount);
-      print(streetlightCount);
-      print(mapCount);
       isLocalLegendAwardAvailable = localLegendAvailable;
       isParkBenchAwardAvailable = parkBenchAvailable;
       isSunflowerAwardAvailable = sunflowerAvailable;
@@ -168,13 +152,9 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       streetlightCount = streetlightCt;
       mapCount = mapCt;
     });
-    print(localLegendCount);
-    print(parkBenchCount);
-    print(sunflowerCount);
-    print(streetlightCount);
-    print(mapCount);
   }
 
+  ///_saveReactionState in local
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('postReactions');
@@ -182,6 +162,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     await box.put('${userID}_${widget.post.id}_isBooled', isBooled);
   }
 
+  ///_removeReactionState from  local
   Future<void> _removeReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('postReactions');
@@ -189,40 +170,42 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     await box.put('${userID}_${widget.post.id}_isBooled', false);
   }
 
+  ///_updateState
   void _updateState(String reaction) {
     setState(() {
       if (reaction == 'cheer') {
         if (isCheered) {
-          // User is un-cheering, decrement count
+          /// User is un-cheering, decrement count
           if (cheersCount > 0) cheersCount -= 1;
           isCheered = false;
         } else {
-          // User is cheering
+          /// User is cheering
           cheersCount += 1;
           isCheered = true;
           if (isBooled) {
-            // Reverse boo if it was already booed
+            /// Reverse boo if it was already booed
             if (boolsCount > 0) boolsCount -= 1;
             isBooled = false;
           }
         }
       } else if (reaction == 'boo') {
         if (isBooled) {
-          // User is un-booing, decrement count
+          /// User is un-booing, decrement count
           if (boolsCount > 0) boolsCount -= 1;
           isBooled = false;
         } else {
-          // User is booing
+          /// User is booing
           boolsCount += 1;
           isBooled = true;
           if (isCheered) {
-            // Reverse cheer if it was already cheered
+            /// Reverse cheer if it was already cheered
             if (cheersCount > 0) cheersCount -= 1;
             isCheered = false;
           }
         }
       }
-      // Save the new state
+
+      /// Save the new state
       _saveReactionState();
     });
   }
@@ -252,9 +235,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         // Cheers button
         BlocListener<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
-            print('bloclistener');
+            ///Feedback Failure State
             if (state is FeedbackFailureState) {
-              // remove the reaction from Hive
               _removeReactionState();
             }
           },
@@ -262,10 +244,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             onTap: () {
               _updateState('cheer');
 
-              // Trigger BLoC event for cheers
+              /// Trigger BLoC event for cheers
               BlocProvider.of<FeedbackBloc>(context).add(
                 FeedbackButtonPressedEvent(
-                    postId: widget.post.id, feedback: 'cheer', type: 'post'),
+                  postId: widget.post.id,
+                  feedback: 'cheer',
+                  type: 'post',
+                ),
               );
             },
             child: Container(
@@ -273,10 +258,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               height: 32,
               width: 60,
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(21),
-                  )),
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                ),
+              ),
               child: Center(
                 child: Row(
                   children: [
@@ -309,7 +295,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             ),
           ),
         ),
-        // Bools button
+
+        /// Bools button
         BlocListener<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
             if (state is FeedbackFailureState) {
@@ -320,10 +307,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             onTap: () {
               _updateState('boo');
 
-              // Trigger BLoC event for bools
+              /// Trigger BLoC event for bools
               BlocProvider.of<FeedbackBloc>(context).add(
                 FeedbackButtonPressedEvent(
-                    postId: widget.post.id, feedback: 'boo', type: 'post'),
+                  postId: widget.post.id,
+                  feedback: 'boo',
+                  type: 'post',
+                ),
               );
             },
             child: Container(
@@ -331,10 +321,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               height: 32,
               width: 60,
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(21),
-                  )),
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                ),
+              ),
               child: Center(
                 child: Row(
                   children: [
@@ -403,17 +394,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             ),
           ),
         ),
+
+        /// award button
         InkWell(
           onTap: () async {
             await getmyawards();
-            // BlocProvider.of<GetMyAwardsBloc>(context).add(
-            //     GetMyAwardsButtonPressedEvent(),
-            // );
-            print('then this call...');
             showBottomSheet().then((value) {
               if (value != null) {
                 setState(() {
-                  print('value: $value');
                   awardsCount = value;
                 });
               }
@@ -476,12 +464,10 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
         InkWell(
           onTap: () {
-            print('widget.post.id');
-            print(widget.post.type);
-            // #share
+            /// #share
             String link =
                 'https://prod.neighborly.in/post-detail/${widget.post.id}/${widget.post.type == 'post' ? 'true' : 'false'}/${widget.post.userId}/0';
-            ShareIt.text(content: link, androidSheetTitle: 'Cool Post');
+            ShareIt.text(content: link, androidSheetTitle: 'Share');
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -505,12 +491,14 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     );
   }
 
+  ///showBottomSheet
   Future<num?> showBottomSheet() {
     return showModalBottomSheet<num>(
       context: context,
       builder: (BuildContext context) {
         return BlocListener<GiveAwardBloc, GiveAwardState>(
           listener: (context, state) {
+            ///Give Award Failure State
             if (state is GiveAwardFailureState) {
               Navigator.pop(context, awardsCount);
               if (state.error.contains('Award not available')) {
@@ -521,7 +509,10 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                   ),
                 );
               }
-            } else if (state is GiveAwardSuccessState) {
+            }
+
+            ///Give Award Success State
+            else if (state is GiveAwardSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -661,12 +652,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     onTap: !isSunflowerAwardAvailable
                         ? null
                         : () {
-                            BlocProvider.of<GiveAwardBloc>(context)
-                                .add(GiveAwardButtonPressedEvent(
-                              id: widget.post.id,
-                              awardType: 'Sunflower',
-                              type: 'post',
-                            ));
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                              GiveAwardButtonPressedEvent(
+                                id: widget.post.id,
+                                awardType: 'Sunflower',
+                                type: 'post',
+                              ),
+                            );
                           },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -751,12 +743,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     onTap: !isStreetlightAwardAvailable
                         ? null
                         : () {
-                            BlocProvider.of<GiveAwardBloc>(context)
-                                .add(GiveAwardButtonPressedEvent(
-                              id: widget.post.id,
-                              awardType: 'Streetlight',
-                              type: 'post',
-                            ));
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                              GiveAwardButtonPressedEvent(
+                                id: widget.post.id,
+                                awardType: 'Streetlight',
+                                type: 'post',
+                              ),
+                            );
                           },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -841,12 +834,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     onTap: !isParkBenchAwardAvailable
                         ? null
                         : () {
-                            BlocProvider.of<GiveAwardBloc>(context)
-                                .add(GiveAwardButtonPressedEvent(
-                              id: widget.post.id,
-                              awardType: 'Park Bench',
-                              type: 'post',
-                            ));
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                              GiveAwardButtonPressedEvent(
+                                id: widget.post.id,
+                                awardType: 'Park Bench',
+                                type: 'post',
+                              ),
+                            );
                           },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,

@@ -13,23 +13,27 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
       : _feedbackUsecase = feedbackUsecase,
         super(FeedbackInitialState()) {
     on<FeedbackButtonPressedEvent>(
-        (FeedbackButtonPressedEvent event, Emitter<FeedbackState> emit) async {
-      emit(FeedbackLoadingState());
+      (FeedbackButtonPressedEvent event, Emitter<FeedbackState> emit) async {
+        emit(FeedbackLoadingState());
 
-      final result = await _feedbackUsecase.call(
-        id: event.postId,
-        feedback: event.feedback,
-        type: event.type,
-      );
-      print('...Result in FeedbackBloc $result');
+        final result = await _feedbackUsecase.call(
+          id: event.postId,
+          feedback: event.feedback,
+          type: event.type,
+        );
+        print('...Result in FeedbackBloc $result');
 
-      result.fold((error) {
-        print('fold error: ${error.toString()}');
-        emit(FeedbackFailureState(error: error.toString()));
-      }, (response) {
-        //print('fold response: ${response.toString()}');
-        emit(FeedbackSuccessState());
-      });
-    });
+        result.fold(
+          (error) {
+            print('fold error: ${error.toString()}');
+            emit(FeedbackFailureState(error: error.toString()));
+          },
+          (response) {
+            //print('fold response: ${response.toString()}');
+            emit(FeedbackSuccessState());
+          },
+        );
+      },
+    );
   }
 }

@@ -52,18 +52,22 @@ class ImageSliderState extends State<ImageSlider> {
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: widget.multimedia.map((url) {
-            int index = widget.multimedia.indexOf(url);
-            return Container(
-              width: 8.0,
-              height: 8.0,
-              margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _currentPage == index ? AppColors.primaryColor: AppColors.greyColor,
-              ),
-            );
-          }).toList(),
+          children: widget.multimedia.map(
+            (url) {
+              int index = widget.multimedia.indexOf(url);
+              return Container(
+                width: 8.0,
+                height: 8.0,
+                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _currentPage == index
+                      ? AppColors.primaryColor
+                      : AppColors.greyColor,
+                ),
+              );
+            },
+          ).toList(),
         ),
       ],
     );

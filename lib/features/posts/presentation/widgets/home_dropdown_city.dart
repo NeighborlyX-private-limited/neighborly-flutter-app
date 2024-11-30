@@ -20,24 +20,27 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
   OverlayEntry? _overlayEntry;
   String? _selectedCity;
 
+  /// init state method
   @override
   void initState() {
     super.initState();
     _selectedCity = widget.selectCity;
   }
 
+  ///dispose method
   @override
   void dispose() {
     _overlayEntry?.remove();
     super.dispose();
   }
 
-  // This method will remove the dropdown overlay
+  /// This method will remove the dropdown overlay
   void _removeOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
   }
 
+  /// create overlay method
   OverlayEntry _createOverlay() {
     return OverlayEntry(
       builder: (context) => GestureDetector(
@@ -73,9 +76,9 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
     );
   }
 
+  /// city list
   List<Widget> _buildMenuItems() {
     List<String> cities = ['Noida', 'Gurugram', 'New Delhi'];
-    // List<String> cities = ['Delhi', 'Noida', 'Gurugram', 'New Delhi'];
 
     return cities.map((city) {
       bool isSelected = city == _selectedCity;
@@ -109,6 +112,7 @@ class HomeDropdownCityState extends State<HomeDropdownCity> {
     }).toList();
   }
 
+  /// toggle dropdown
   void _toggleDropdown() {
     if (_overlayEntry == null) {
       _overlayEntry = _createOverlay();

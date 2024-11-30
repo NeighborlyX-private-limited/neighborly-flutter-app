@@ -20,19 +20,20 @@ class PostButtonWidget extends StatelessWidget {
       child: Opacity(
         opacity: isActive ? 1 : 0.3,
         child: Container(
-            padding: const EdgeInsets.all(12),
-            width: 81,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-              borderRadius: BorderRadius.circular(40),
+          padding: const EdgeInsets.all(12),
+          width: 81,
+          height: 48,
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor,
+            borderRadius: BorderRadius.circular(40),
+          ),
+          child: Center(
+            child: Text(
+              title ?? 'Post',
+              style: whiteNormalTextStyle,
             ),
-            child: Center(
-              child: Text(
-                title ?? 'Post',
-                style: whiteNormalTextStyle,
-              ),
-            )),
+          ),
+        ),
       ),
     );
   }

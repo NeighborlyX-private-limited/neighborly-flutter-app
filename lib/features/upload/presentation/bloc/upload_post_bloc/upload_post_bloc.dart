@@ -15,29 +15,33 @@ class UploadPostBloc extends Bloc<UploadPostEvent, UploadPostState> {
       : _uploadPostUsecase = uploadPostUsecase,
         super(UploadPostInitialState()) {
     on<UploadPostPressedEvent>(
-        (UploadPostPressedEvent event, Emitter<UploadPostState> emit) async {
-      emit(UploadPostLoadingState());
+      (UploadPostPressedEvent event, Emitter<UploadPostState> emit) async {
+        emit(UploadPostLoadingState());
 
-      final result = await _uploadPostUsecase.call(
-        title: event.title,
-        content: event.content,
-        type: event.type,
-        multimedia: event.multimedia,
-        city: event.city,
-        allowMultipleVotes: event.allowMultipleVotes,
-        options: event.options,
-        location: event.location,
-        thumbnail: event.thumbnail,
-      );
-      print('...Result in UploadPostBloc $result');
+        final result = await _uploadPostUsecase.call(
+          title: event.title,
+          content: event.content,
+          type: event.type,
+          multimedia: event.multimedia,
+          city: event.city,
+          allowMultipleVotes: event.allowMultipleVotes,
+          options: event.options,
+          location: event.location,
+          thumbnail: event.thumbnail,
+        );
+        print('...Result in UploadPostBloc $result');
 
-      result.fold((error) {
-        print('fold error: ${error.toString()}');
-        emit(UploadPostFailureState(error: error.toString()));
-      }, (user) {
-        // print('fold user: ${user.toString()}');
-        emit(UploadPostSuccessState());
-      });
-    });
+        result.fold(
+          (error) {
+            print('fold error: ${error.toString()}');
+            emit(UploadPostFailureState(error: error.toString()));
+          },
+          (user) {
+            // print('fold user: ${user.toString()}');
+            emit(UploadPostSuccessState());
+          },
+        );
+      },
+    );
   }
 }

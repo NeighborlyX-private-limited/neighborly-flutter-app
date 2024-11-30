@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../domain/entities/reply_entity.dart';
@@ -43,34 +42,31 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
   int streetlightCount = 0;
   int mapCount = 0;
 
-  // State variables to track counts
   late num cheersCount;
   late num boolsCount;
 
+  /// init state
   @override
   void initState() {
     super.initState();
-    // Initialize state variables with initial counts
     cheersCount = widget.reply.cheers;
     boolsCount = widget.reply.bools;
     awardsCount = widget.reply.awardType.length;
-    // Initialize ProfileRemoteDataSourceImpl with an http.Client instance
     profileRemoteDataSource =
         ProfileRemoteDataSourceImpl(client: http.Client());
-    // Load persisted state
     _loadReactionState();
   }
 
+  ///_loadReactionState method
   Future<void> _loadReactionState() async {
     getmyawards();
-    //final userID = ShardPrefHelper.getUserID();
-    //final box = Hive.box('replyReactions');
     setState(() {
       isCheered = widget.reply.userFeedback == 'cheer';
       isBooled = widget.reply.userFeedback == 'boo';
     });
   }
 
+  /// get my awards
   getmyawards() async {
     List responseMessage = await profileRemoteDataSource.getMyAwards();
     bool localLegendAvailable = false;
@@ -140,7 +136,8 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
         }
       }
     }
-    // Update state once after the loop
+
+    /// Update state once after the loop
     setState(() {
       isLocalLegendAwardAvailable = localLegendAvailable;
       isParkBenchAwardAvailable = parkBenchAvailable;
@@ -155,6 +152,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
     });
   }
 
+  ///_saveReactionState in local
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('replyReactions');
@@ -162,6 +160,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
     await box.put('${userID}_${widget.reply.id}_isBooled', isBooled);
   }
 
+  ///_removeReactionState from local
   Future<void> _removeReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('replyReactions');
@@ -169,40 +168,42 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
     await box.put('${userID}_${widget.reply.id}_isBooled', false);
   }
 
+  ///_updateState method
   void _updateState(String reaction) {
     setState(() {
       if (reaction == 'cheer') {
         if (isCheered) {
-          // User is un-cheering, decrement count
+          /// User is un-cheering, decrement count
           if (cheersCount > 0) cheersCount -= 1;
           isCheered = false;
         } else {
-          // User is cheering
+          /// User is cheering
           cheersCount += 1;
           isCheered = true;
           if (isBooled) {
-            // Reverse boo if it was already booed
+            /// Reverse boo if it was already booed
             if (boolsCount > 0) boolsCount -= 1;
             isBooled = false;
           }
         }
       } else if (reaction == 'boo') {
         if (isBooled) {
-          // User is un-booing, decrement count
+          /// User is un-booing, decrement count
           if (boolsCount > 0) boolsCount -= 1;
           isBooled = false;
         } else {
-          // User is booing
+          /// User is booing
           boolsCount += 1;
           isBooled = true;
           if (isCheered) {
-            // Reverse cheer if it was already cheered
+            /// Reverse cheer if it was already cheered
             if (cheersCount > 0) cheersCount -= 1;
             isCheered = false;
           }
         }
       }
-      // Save the new state
+
+      /// Save the new state
       _saveReactionState();
     });
   }
@@ -229,9 +230,10 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Cheers button
+        /// Cheers button
         BlocConsumer<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
+            ///Feedback Failure State
             if (state is FeedbackFailureState) {
               _removeReactionState();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -239,7 +241,10 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                   content: Text(state.error),
                 ),
               );
-            } else if (state is FeedbackSuccessState) {
+            }
+
+            ///Feedback Success State
+            else if (state is FeedbackSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(AppLocalizations.of(context)!
@@ -253,12 +258,13 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
               onTap: () {
                 _updateState('cheer');
 
-                // Trigger BLoC event for cheers
+                /// Trigger BLoC event for cheers
                 BlocProvider.of<FeedbackBloc>(context).add(
                   FeedbackButtonPressedEvent(
-                      postId: widget.reply.id,
-                      feedback: 'cheer',
-                      type: 'comment'),
+                    postId: widget.reply.id,
+                    feedback: 'cheer',
+                    type: 'comment',
+                  ),
                 );
               },
               child: Container(
@@ -304,9 +310,10 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
           },
         ),
 
-        // Bools button
+        /// Bools button
         BlocListener<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
+            ///Feedback Failure State
             if (state is FeedbackFailureState) {
               _removeReactionState();
             }
@@ -315,10 +322,13 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
             onTap: () {
               _updateState('boo');
 
-              // Trigger BLoC event for bools
+              /// Trigger BLoC event for bools
               BlocProvider.of<FeedbackBloc>(context).add(
                 FeedbackButtonPressedEvent(
-                    postId: widget.reply.id, feedback: 'boo', type: 'comment'),
+                  postId: widget.reply.id,
+                  feedback: 'boo',
+                  type: 'comment',
+                ),
               );
             },
             child: Container(
@@ -326,10 +336,11 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
               height: 32,
               width: 56,
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(21),
-                  )),
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                ),
+              ),
               child: Center(
                 child: Row(
                   children: [
@@ -364,6 +375,7 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
           ),
         ),
 
+        /// award button
         InkWell(
           onTap: () async {
             await getmyawards();
@@ -380,10 +392,11 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
             height: 32,
             width: 65,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(21),
+              ),
+            ),
             child: Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -437,12 +450,14 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
     );
   }
 
+  ///showBottomSheet method
   Future<num?> showBottomSheet() {
     return showModalBottomSheet<num>(
       context: context,
       builder: (BuildContext context) {
         return BlocListener<GiveAwardBloc, GiveAwardState>(
           listener: (context, state) {
+            ///Give Award Failure State
             if (state is GiveAwardFailureState) {
               Navigator.pop(context, awardsCount);
               if (state.error.contains('Award not available')) {
@@ -453,7 +468,10 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                   ),
                 );
               }
-            } else if (state is GiveAwardSuccessState) {
+            }
+
+            /// Give Award Success State
+            else if (state is GiveAwardSuccessState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -596,12 +614,13 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                     onTap: !isSunflowerAwardAvailable
                         ? null
                         : () {
-                            BlocProvider.of<GiveAwardBloc>(context)
-                                .add(GiveAwardButtonPressedEvent(
-                              id: widget.reply.id,
-                              awardType: 'Sunflower',
-                              type: 'comment',
-                            ));
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                              GiveAwardButtonPressedEvent(
+                                id: widget.reply.id,
+                                awardType: 'Sunflower',
+                                type: 'comment',
+                              ),
+                            );
                           },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -686,12 +705,13 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                     onTap: !isStreetlightAwardAvailable
                         ? null
                         : () {
-                            BlocProvider.of<GiveAwardBloc>(context)
-                                .add(GiveAwardButtonPressedEvent(
-                              id: widget.reply.id,
-                              awardType: 'Streetlight',
-                              type: 'comment',
-                            ));
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                              GiveAwardButtonPressedEvent(
+                                id: widget.reply.id,
+                                awardType: 'Streetlight',
+                                type: 'comment',
+                              ),
+                            );
                           },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -776,12 +796,13 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                     onTap: !isParkBenchAwardAvailable
                         ? null
                         : () {
-                            BlocProvider.of<GiveAwardBloc>(context)
-                                .add(GiveAwardButtonPressedEvent(
-                              id: widget.reply.id,
-                              awardType: 'Park Bench',
-                              type: 'comment',
-                            ));
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                              GiveAwardButtonPressedEvent(
+                                id: widget.reply.id,
+                                awardType: 'Park Bench',
+                                type: 'comment',
+                              ),
+                            );
                           },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -866,12 +887,13 @@ class _ReactionReplyWidgetState extends State<ReactionReplyWidget> {
                     onTap: !isMapAwardAvailable
                         ? null
                         : () {
-                            BlocProvider.of<GiveAwardBloc>(context)
-                                .add(GiveAwardButtonPressedEvent(
-                              id: widget.reply.id,
-                              awardType: 'Map',
-                              type: 'comment',
-                            ));
+                            BlocProvider.of<GiveAwardBloc>(context).add(
+                              GiveAwardButtonPressedEvent(
+                                id: widget.reply.id,
+                                awardType: 'Map',
+                                type: 'comment',
+                              ),
+                            );
                           },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,

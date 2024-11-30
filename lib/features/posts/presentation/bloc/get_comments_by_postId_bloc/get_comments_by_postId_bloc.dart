@@ -25,8 +25,6 @@ class GetCommentsByPostIdBloc
         commentId: event.commentId,
       );
       print('...Result in GetCommentsByPostIdBloc $result');
-      //print('fold error: ${error.toString()}');
-      //print('fold response: ${response.toString()}');
 
       result.fold((error) {
         print('fold error: ${error.toString()}');

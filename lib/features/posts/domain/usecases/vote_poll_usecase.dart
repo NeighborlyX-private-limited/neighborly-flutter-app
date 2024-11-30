@@ -8,8 +8,10 @@ class VotePollUsecase {
 
   VotePollUsecase(this.repository);
 
-  Future<Either<Failure, void>> call(
-      {required num pollId, required num optionId}) async {
+  Future<Either<Failure, void>> call({
+    required num pollId,
+    required num optionId,
+  }) async {
     return await repository.votePoll(
       pollId: pollId,
       optionId: optionId,

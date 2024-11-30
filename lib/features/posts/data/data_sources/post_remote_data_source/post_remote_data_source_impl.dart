@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
-
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/models/post_model.dart';
@@ -32,7 +30,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     print('url:$url');
 
     Map<String, dynamic> queryParameters;
-    double radius = ShardPrefHelper.getRadius() ?? 1.0;
+    double radius = ShardPrefHelper.getRadius() ?? 3.0;
     print('radius:$radius');
 
     if (isHome) {
@@ -71,7 +69,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
     final List<dynamic> jsonData = jsonDecode(response.body);
     print('getAllPosts api response status code: ${response.statusCode}');
-
     print('getAllPosts api response: $jsonData');
     if (response.statusCode == 200) {
       return jsonData.map((data) => PostModel.fromJson(data)).toList();
@@ -209,7 +206,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/posts/get-comment/$id';
     print('url:$url');
-    //Map<String, dynamic> queryParameters = {'home': 'true'};
+
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
@@ -220,10 +217,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     print('getCommentById api response: ${response.body}');
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonData = jsonDecode(response.body);
-
-      // final String postId =
-      //     jsonDecode(response.body)['content']['contentid'].toString();
-      // return postId;
       return SpecificCommentModel.fromJson(jsonData);
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';

@@ -1,17 +1,18 @@
 import '../../domain/entities/reply_entity.dart';
 
 class ReplyModel extends ReplyEntity {
-  const ReplyModel(
-      {required super.awardType,
-      required super.id,
-      required super.userId,
-      required super.userName,
-      required super.text,
-      required super.createdAt,
-      required super.cheers,
-      required super.bools,
-      super.proPic,
-      required super.userFeedback});
+  const ReplyModel({
+    required super.awardType,
+    required super.id,
+    required super.userId,
+    required super.userName,
+    required super.text,
+    required super.createdAt,
+    required super.cheers,
+    required super.bools,
+    super.proPic,
+    required super.userFeedback,
+  });
 
   factory ReplyModel.fromJson(Map<String, dynamic> json) {
     return ReplyModel(

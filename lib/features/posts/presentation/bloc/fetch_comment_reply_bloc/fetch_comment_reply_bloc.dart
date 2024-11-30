@@ -16,33 +16,37 @@ class FetchCommentReplyBloc
       : _fetchCommentReplyUsecase = fetchCommentReplyUsecase,
         super(FetchCommentReplyInitialState()) {
     on<FetchCommentReplyButtonPressedEvent>(
-        (FetchCommentReplyButtonPressedEvent event,
-            Emitter<FetchCommentReplyState> emit) async {
-      emit(FetchCommentReplyLoadingState(commentId: event.commentId));
+      (FetchCommentReplyButtonPressedEvent event,
+          Emitter<FetchCommentReplyState> emit) async {
+        emit(FetchCommentReplyLoadingState(commentId: event.commentId));
 
-      final result = await _fetchCommentReplyUsecase.call(
-        commentId: event.commentId,
-      );
-      print('...Result in FetchCommentReplyBloc $result');
-
-      result.fold((error) {
-        print('fold error: ${error.toString()}');
-        emit(
-          FetchCommentReplyFailureState(
-            error: error.toString(),
-            commentId: event.commentId,
-          ),
+        final result = await _fetchCommentReplyUsecase.call(
+          commentId: event.commentId,
         );
-      }, (response) {
-        print('fold response: ${response.toString()}');
+        print('...Result in FetchCommentReplyBloc $result');
 
-        emit(
-          FetchCommentReplySuccessState(
-            reply: response,
-            commentId: event.commentId,
-          ),
+        result.fold(
+          (error) {
+            print('fold error: ${error.toString()}');
+            emit(
+              FetchCommentReplyFailureState(
+                error: error.toString(),
+                commentId: event.commentId,
+              ),
+            );
+          },
+          (response) {
+            print('fold response: ${response.toString()}');
+
+            emit(
+              FetchCommentReplySuccessState(
+                reply: response,
+                commentId: event.commentId,
+              ),
+            );
+          },
         );
-      });
-    });
+      },
+    );
   }
 }

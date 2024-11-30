@@ -7,8 +7,11 @@ class VideoDisplayWidget extends StatefulWidget {
   final String videoUrl;
   final String thumbnailUrl;
 
-  const VideoDisplayWidget(
-      {super.key, required this.videoUrl, required this.thumbnailUrl});
+  const VideoDisplayWidget({
+    super.key,
+    required this.videoUrl,
+    required this.thumbnailUrl,
+  });
 
   @override
   VideoDisplayWidgetState createState() => VideoDisplayWidgetState();
@@ -20,11 +23,10 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
   bool _isMuted = false;
   bool _showThumbnail = true;
   bool _showLoading = false;
-
+//// init method
   @override
   void initState() {
     super.initState();
-    print('in video card');
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
       ..initialize().then((_) {
         setState(() {
@@ -52,6 +54,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
     return '$minutes:$seconds';
   }
 
+  /// play pause toggle
   void _togglePlayPause() {
     setState(() {
       if (_controller.value.isPlaying) {
@@ -64,12 +67,14 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
     });
   }
 
+  ///dispose method
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
+  /// on visivility change handle method
   void _onVisibilityChanged(VisibilityInfo info) {
     final visibleFraction = info.visibleFraction;
     if (visibleFraction > 0.5 && !_controller.value.isPlaying) {
@@ -81,65 +86,38 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
     }
   }
 
-  void _onThumbnailVisibilityChanged(VisibilityInfo info) {
-    final visibleFraction = info.visibleFraction;
-    if (visibleFraction > 0.5 && !_controller.value.isPlaying) {
-      setState(() {
-        _showLoading = true; // Hide thumbnail
-      });
-      setState(() {
-        _controller.initialize().then((_) {
-          _showThumbnail = false;
-          _showLoading = false; // Hide thumbnail
-          _controller.play();
-          _isPlaying = true;
-        });
-      });
-    } else if (visibleFraction <= 0.5 && _controller.value.isPlaying) {
-      setState(() {
-        _controller.initialize().then((_) {
-          _showThumbnail = true;
-          _controller.pause();
-          _isPlaying = false;
-        });
-      });
-      _controller.pause();
-      _isPlaying = false;
-      _showThumbnail = true;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return (_showThumbnail)
         ? GestureDetector(
             onTap: () {
               setState(() {
-                _showLoading = true; // Hide thumbnail
+                _showLoading = true;
               });
               setState(() {
                 _controller.initialize().then((_) {
                   _showThumbnail = false;
-                  _showLoading = false; // Hide thumbnail
+                  _showLoading = false;
                   _controller.play();
                   _isPlaying = true;
                 });
               });
             },
             child: Stack(
-              alignment: Alignment.center, // Center child widgets
+              alignment: Alignment.center,
               children: [
-                // Thumbnail image
+                /// Thumbnail image
                 AspectRatio(
-                    aspectRatio: 1 / 1.2,
-                    child: widget.thumbnailUrl != ''
-                        ? Image.network(
-                            widget.thumbnailUrl,
-                            fit: BoxFit.cover,
-                          )
-                        : SizedBox()),
-                // Play button on top of the thumbnail
+                  aspectRatio: 1 / 1.2,
+                  child: widget.thumbnailUrl != ''
+                      ? Image.network(
+                          widget.thumbnailUrl,
+                          fit: BoxFit.cover,
+                        )
+                      : SizedBox(),
+                ),
 
+                /// Play button on top of the thumbnail
                 _showLoading
                     ? CircularProgressIndicator()
                     : Icon(
@@ -155,7 +133,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
         : _controller.value.isInitialized
             ? VisibilityDetector(
                 key: Key('video-widget'),
-                onVisibilityChanged: _onVisibilityChanged, // Detect visibility
+                onVisibilityChanged: _onVisibilityChanged,
                 child: Stack(
                   children: [
                     AspectRatio(
@@ -195,7 +173,8 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                               Text(
                                 '${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}',
                                 style: TextStyle(
-                                    color: AppColors.lightBackgroundColor),
+                                  color: AppColors.lightBackgroundColor,
+                                ),
                               ),
                             ],
                           ),
@@ -238,8 +217,10 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
             : SizedBox(
                 height: 500,
                 child: Center(
-                    child: CircularProgressIndicator(
-                  color: AppColors.primaryColor,
-                )));
+                  child: CircularProgressIndicator(
+                    color: AppColors.primaryColor,
+                  ),
+                ),
+              );
   }
 }

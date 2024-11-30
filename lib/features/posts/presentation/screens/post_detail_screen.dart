@@ -8,7 +8,6 @@ import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/video_widget.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -47,20 +46,20 @@ class PostDetailScreen extends StatefulWidget {
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
   late TextEditingController _commentController;
-  bool isCommentFilled = false;
   final FocusNode _commentFocusNode = FocusNode();
+  bool isCommentFilled = false;
   List<dynamic> comments = [];
-// Union type for storing either CommentEntity or ReplyEntity
   dynamic commentToReply;
 
+  /// init method
   @override
   void initState() {
     super.initState();
     _commentController = TextEditingController();
     _fetchPostAndComments();
-    print('... POST DETAIL: postId=${widget.postId} ');
   }
 
+  ///dispose method
   @override
   void dispose() {
     _commentController.dispose();
@@ -68,6 +67,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     super.dispose();
   }
 
+  /// fetch post comments
   void _fetchPostAndComments() {
     final postId = int.parse(widget.postId);
     BlocProvider.of<GetPostByIdBloc>(context)
@@ -77,6 +77,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             postId: postId, commentId: widget.commentId));
   }
 
+  /// screen refersh methood
   Future<void> _onRefresh() async {
     final postId = int.parse(widget.postId);
     BlocProvider.of<GetPostByIdBloc>(context)
@@ -89,9 +90,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
+  /// on replay tap
   void _handleReplyTap(dynamic commentOrReply) {
     setState(() {
-      // Set the comment or reply to reply to
       commentToReply = commentOrReply;
     });
   }
@@ -100,112 +101,124 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
-          appBar: AppBar(
-            backgroundColor: AppColors.whiteColor,
-            leading: InkWell(
-              child: const Icon(Icons.arrow_back_ios, size: 15),
-              onTap: () => context.pop(),
-            ),
-            centerTitle: true,
-            title: Text(widget.isPost
-                ? AppLocalizations.of(context)!.post
-                : AppLocalizations.of(context)!.poll),
+          leading: InkWell(
+            child: const Icon(Icons.arrow_back, size: 15),
+            onTap: () => context.pop(),
           ),
-          body: RefreshIndicator(
-            onRefresh: _onRefresh,
-            child: BlocBuilder<GetPostByIdBloc, GetPostByIdState>(
-              builder: (context, postState) {
-                if (postState is GetPostByIdLoadingState) {
-                  return const PostDetailSheemer();
-                } else if (postState is GetPostByIdSuccessState) {
-                  return Column(
-                    children: [
-                      Expanded(
-                        child: ListView(
-                          padding: const EdgeInsets.all(16.0),
-                          children: [
-                            widget.isPost
-                                ? _buildPostDetails(postState.post)
-                                : _buildPollWidget(postState),
-                            const SizedBox(height: 20),
-                            ReactionWidget(post: postState.post),
-                            const SizedBox(height: 10),
-                            Divider(color: Colors.grey[300], thickness: 1),
-                            const SizedBox(height: 20),
-                            BlocBuilder<GetCommentsByPostIdBloc,
-                                GetCommentsByPostIdState>(
-                              builder: (context, commentState) {
-                                if (commentState
-                                    is GetcommentsByPostIdSuccessState) {
-                                  comments = commentState.comments;
-                                  if (comments.isEmpty) {
-                                    return Center(
-                                      child: Text(AppLocalizations.of(context)!
-                                          .no_comments_yet),
-                                    );
-                                  }
+          centerTitle: true,
+          title: Text(widget.isPost
+              ? AppLocalizations.of(context)!.post
+              : AppLocalizations.of(context)!.poll),
+        ),
+        body: RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: BlocBuilder<GetPostByIdBloc, GetPostByIdState>(
+            builder: (context, postState) {
+              ///Get Post By Id Loading State
+              if (postState is GetPostByIdLoadingState) {
+                return const PostDetailSheemer();
+              }
 
-                                  return ListView.separated(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount: comments.length,
-                                    itemBuilder: (context, index) {
-                                      return CommentWidget(
-                                          commentFocusNode: _commentFocusNode,
-                                          comment: comments[index],
-                                          onReplyTap: _handleReplyTap,
-                                          isPost: widget.isPost,
-                                          onDelete: () {
-                                            context
-                                                .read<GetCommentsByPostIdBloc>()
-                                                .deleteComment(
-                                                    comments[index].commentid);
-                                          });
-                                    },
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(height: 10),
-                                  );
-                                } else if (commentState
-                                    is GetcommentsByPostIdFailureState) {
+              ///Get Post By Id Success State
+              else if (postState is GetPostByIdSuccessState) {
+                return Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.all(16.0),
+                        children: [
+                          widget.isPost
+                              ? _buildPostDetails(postState.post)
+                              : _buildPollWidget(postState),
+                          const SizedBox(height: 20),
+                          ReactionWidget(post: postState.post),
+                          const SizedBox(height: 10),
+                          Divider(color: Colors.grey[300], thickness: 1),
+                          const SizedBox(height: 20),
+                          BlocBuilder<GetCommentsByPostIdBloc,
+                              GetCommentsByPostIdState>(
+                            builder: (context, commentState) {
+                              ///Get comments By Post Id Success State
+                              if (commentState
+                                  is GetcommentsByPostIdSuccessState) {
+                                comments = commentState.comments;
+                                if (comments.isEmpty) {
                                   return Center(
-                                    child: Text(commentState.error),
+                                    child: Text(AppLocalizations.of(context)!
+                                        .no_comments_yet),
                                   );
-                                } else {
-                                  return const SizedBox();
                                 }
-                              },
-                            ),
-                          ],
-                        ),
+
+                                return ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: comments.length,
+                                  itemBuilder: (context, index) {
+                                    return CommentWidget(
+                                      commentFocusNode: _commentFocusNode,
+                                      comment: comments[index],
+                                      onReplyTap: _handleReplyTap,
+                                      isPost: widget.isPost,
+                                      onDelete: () {
+                                        context
+                                            .read<GetCommentsByPostIdBloc>()
+                                            .deleteComment(
+                                                comments[index].commentid);
+                                      },
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 10),
+                                );
+                              }
+
+                              ///Get comments By Post Id Failure State
+                              else if (commentState
+                                  is GetcommentsByPostIdFailureState) {
+                                return Center(
+                                  child: Text(commentState.error),
+                                );
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                      _buildCommentInputSection(),
-                    ],
-                  );
-                } else if (postState is GetPostByIdFailureState) {
-                  return SomethingWentWrong(
-                    imagePath: 'assets/not_found.svg',
-                    title:
-                        AppLocalizations.of(context)!.aaah_something_went_wrong,
-                    message: AppLocalizations.of(context)!.post_not_found,
-                    buttonText: AppLocalizations.of(context)!.go_back,
-                    // title: 'Aaah! Something went wrong',
-                    // message: "Post not found",
-                    // buttonText: 'Go Back',
-                    onButtonPressed: () {
-                      context.pop();
-                    },
-                  );
-                } else {
-                  return const SizedBox();
-                }
-              },
-            ),
-          )),
+                    ),
+
+                    /// comment input section
+                    _buildCommentInputSection(),
+                  ],
+                );
+              }
+
+              ///Get Post By Id Failure State
+              else if (postState is GetPostByIdFailureState) {
+                return SomethingWentWrong(
+                  imagePath: 'assets/not_found.svg',
+                  title:
+                      AppLocalizations.of(context)!.aaah_something_went_wrong,
+                  message: AppLocalizations.of(context)!.post_not_found,
+                  buttonText: AppLocalizations.of(context)!.go_back,
+                  onButtonPressed: () {
+                    context.pop();
+                  },
+                );
+              } else {
+                return const SizedBox();
+              }
+            },
+          ),
+        ),
+      ),
     );
   }
 
+  /// comment input section
   Widget _buildCommentInputSection() {
     bool isReply = commentToReply != null;
     return SingleChildScrollView(
@@ -301,6 +314,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 //     },
                 //   );
                 // }
+                /// Add Comment Failure State state
                 if (state is AddCommentFailureState) {
                   if (state.error.contains("Sorry, you are banned")) {
                     showDialog(
@@ -315,7 +329,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: <Widget>[
-                                // Placeholder for the image
                                 SvgPicture.asset(
                                   'assets/something_went_wrong.svg',
                                   width: 150,
@@ -370,9 +383,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         );
                       },
                     );
-                    // ScaffoldMessenger.of(context).showSnackBar(
-                    //   SnackBar(content: Text("Sorry, you are banned")),
-                    // );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -383,14 +393,14 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 }
               },
               builder: (context, state) {
+                /// comment and reply send button
                 return InkWell(
                   onTap: () {
                     if (isCommentFilled) {
                       final postId = int.parse(widget.postId);
 
+                      /// Handle sending reply to comment
                       if (isReply) {
-                        // Handle sending reply to comment
-
                         BlocProvider.of<AddCommentBloc>(context).add(
                           AddCommentButtonPressedEvent(
                             commentId: commentToReply.commentid,
@@ -398,28 +408,34 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             postId: postId,
                           ),
                         );
-                      } else {
+                      }
+
+                      /// Handle sending new comment
+                      else {
                         String propic =
                             ShardPrefHelper.getUserProfilePicture()!;
                         String username = ShardPrefHelper.getUsername()!;
                         String userId = ShardPrefHelper.getUserID()!;
-                        // Handle sending new comment
-                        setState(() {
-                          comments.insert(
+                        setState(
+                          () {
+                            comments.insert(
                               0,
                               CommentModel(
-                                  userId: userId,
-                                  userName: username,
-                                  proPic: propic,
-                                  text: _commentController.text,
-                                  createdAt: DateTime.now().toString(),
-                                  awardType: const [],
-                                  commentid: 0,
-                                  cheers: 0,
-                                  bools: 0,
-                                  userFeedback: '',
-                                  postid: postId.toString()));
-                        });
+                                userId: userId,
+                                userName: username,
+                                proPic: propic,
+                                text: _commentController.text,
+                                createdAt: DateTime.now().toString(),
+                                awardType: const [],
+                                commentid: 0,
+                                cheers: 0,
+                                bools: 0,
+                                userFeedback: '',
+                                postid: postId.toString(),
+                              ),
+                            );
+                          },
+                        );
                         BlocProvider.of<AddCommentBloc>(context).add(
                           AddCommentButtonPressedEvent(
                             postId: postId,
@@ -430,7 +446,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       _commentController.clear();
                       setState(() {
                         isCommentFilled = false;
-                        commentToReply = null; // Reset reply state
+                        commentToReply = null;
                       });
                     }
                   },
@@ -459,6 +475,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
+  /// poll widget
   Column _buildPollWidget(GetPostByIdSuccessState postState) {
     void showBottomSheet() {
       bottomSheet(context);
@@ -474,7 +491,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             InkWell(
               onTap: () {
                 if (postState.post.userName.contains('[deleted]')) {
-                  print('here....');
                   context.push('/deleted-user');
                 } else {
                   context.push('/userProfileScreen/${postState.post.userId}');
@@ -483,26 +499,27 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               child: Row(
                 children: [
                   Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: postState.post.proPic != null &&
-                              postState.post.proPic != ''
-                          ? Image.network(
-                              postState.post.proPic!,
-                              fit: BoxFit.contain,
-                            )
-                          : postState.post.userName.contains('[deleted]')
-                              ? Image.asset(
-                                  'assets/deleted_user.png',
-                                  fit: BoxFit.contain,
-                                )
-                              : Image.asset(
-                                  'assets/second_pro_pic.png',
-                                  fit: BoxFit.contain,
-                                )),
+                    width: 40,
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    child: postState.post.proPic != null &&
+                            postState.post.proPic != ''
+                        ? Image.network(
+                            postState.post.proPic!,
+                            fit: BoxFit.contain,
+                          )
+                        : postState.post.userName.contains('[deleted]')
+                            ? Image.asset(
+                                'assets/deleted_user.png',
+                                fit: BoxFit.contain,
+                              )
+                            : Image.asset(
+                                'assets/second_pro_pic.png',
+                                fit: BoxFit.contain,
+                              ),
+                  ),
                   const SizedBox(
                     width: 12,
                   ),
@@ -521,8 +538,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               : Text(
                                   postState.post.userName,
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14),
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
                                 ),
                           const SizedBox(
                             width: 6,
@@ -550,9 +568,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       Text(
                         postState.post.city,
                         style: TextStyle(
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey[500],
-                            fontSize: 14),
+                          fontWeight: FontWeight.w400,
+                          color: Colors.grey[500],
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -560,11 +579,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
             ),
             InkWell(
-                onTap: () {
-                  showBottomSheet();
-                },
-                child:
-                    Icon(Icons.more_horiz, size: 30, color: Colors.grey[500])),
+              onTap: () {
+                showBottomSheet();
+              },
+              child: Icon(
+                Icons.more_horiz,
+                size: 30,
+                color: Colors.grey[500],
+              ),
+            ),
           ],
         ),
         const SizedBox(
@@ -623,7 +646,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
-                ))
+                ),
+              )
             : Container(),
         const SizedBox(
           height: 10,
@@ -643,6 +667,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
+  ///report bottom sheet
   Future<dynamic> bottomSheet(BuildContext context) {
     void showReportReasonBottomSheet() {
       reportReasonBottomSheet(context);
@@ -676,17 +701,23 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 )
               : BlocConsumer<DeletePostBloc, DeletePostState>(
                   listener: (context, state) {
+                    ///Delete Post Success State
                     if (state is DeletePostSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(widget.isPost
-                              ? AppLocalizations.of(context)!.post_deleted
-                              : AppLocalizations.of(context)!.poll_deleted),
+                          content: Text(
+                            widget.isPost
+                                ? AppLocalizations.of(context)!.post_deleted
+                                : AppLocalizations.of(context)!.poll_deleted,
+                          ),
                         ),
                       );
                       context.pop(context);
                       context.pop(context);
-                    } else if (state is DeletePostFailureState) {
+                    }
+
+                    ///Delete Post Failure State
+                    else if (state is DeletePostFailureState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(state.error),
@@ -695,24 +726,22 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     }
                   },
                   builder: (context, state) {
+                    ///Delete Post Loading State
                     if (state is DeletePostLoadingState) {
                       return Center(
                         child: BouncingLogoIndicator(
                           logo: 'images/logo.svg',
                         ),
                       );
-                      // return const Center(
-                      //   child: CircularProgressIndicator(),
-                      // );
                     }
                     return InkWell(
                       onTap: () {
-                        context
-                            .read<DeletePostBloc>()
-                            .add(DeletePostButtonPressedEvent(
-                              postId: int.parse(widget.postId),
-                              type: 'post',
-                            ));
+                        context.read<DeletePostBloc>().add(
+                              DeletePostButtonPressedEvent(
+                                postId: int.parse(widget.postId),
+                                type: 'post',
+                              ),
+                            );
                       },
                       child: Row(
                         children: [
@@ -737,6 +766,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
+  /// report confirmation bottom sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
@@ -790,23 +820,21 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       AppLocalizations.of(context)!.violence_or_dangerous_organizations,
       AppLocalizations.of(context)!.intellectual_property_violation,
     ];
-    // List<String> reportReasons = [
-    //   'Inappropriate content',
-    //   'Spam',
-    //   'Harassment or hate speech',
-    //   'Violence or dangerous organizations',
-    //   'Intellectual property violation',
-    // ];
+
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(
           listener: (context, state) {
+            ///Report Post Success State
             if (state is ReportPostSuccessState) {
               Navigator.pop(context);
               Navigator.pop(context);
               showReportConfirmationBottomSheet();
-            } else if (state is ReportPostFailureState) {
+            }
+
+            ///Report Post Failure State
+            else if (state is ReportPostFailureState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.error),
@@ -836,14 +864,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     const SizedBox(
                       height: 15,
                     ),
+
+                    ///Report Post Loading State
                     state is ReportPostLoadingState
-                        // ? Center(
-                        //     child: BouncingLogoIndicator(
-                        //       logo: 'images/logo.svg',
-                        //     ),
-                        //   )
                         ? const Center(
-                            child: CircularProgressIndicator(),
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                            ),
                           )
                         : Center(
                             child: Text(
@@ -861,10 +888,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         InkWell(
                           onTap: () {
                             context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
+                                  ReportButtonPressedEvent(
                                     type: 'post',
                                     postId: int.parse(widget.postId),
-                                    reason: reportReasons[0]));
+                                    reason: reportReasons[0],
+                                  ),
+                                );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -882,10 +911,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         InkWell(
                           onTap: () {
                             context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
+                                  ReportButtonPressedEvent(
                                     type: 'post',
                                     postId: int.parse(widget.postId),
-                                    reason: reportReasons[1]));
+                                    reason: reportReasons[1],
+                                  ),
+                                );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -902,10 +933,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'post',
                                   postId: int.parse(widget.postId),
-                                  reason: reportReasons[2])),
+                                  reason: reportReasons[2],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -921,10 +954,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'post',
                                   postId: int.parse(widget.postId),
-                                  reason: reportReasons[3])),
+                                  reason: reportReasons[3],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -940,10 +975,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   postId: int.parse(widget.postId),
                                   type: 'post',
-                                  reason: reportReasons[4])),
+                                  reason: reportReasons[4],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -966,6 +1003,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
+  /// build post detail section
   Widget _buildPostDetails(PostEntity post) {
     void showBottomSheet() {
       bottomSheet(context);
@@ -1000,12 +1038,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               width: double.infinity,
                               placeholder: (context, url) => Center(
                                 child: SizedBox(
-                                    height: 16,
-                                    width: 16,
-                                    child: CircularProgressIndicator(
-                                      color: AppColors.primaryColor,
-                                      strokeWidth: 2,
-                                    )),
+                                  height: 16,
+                                  width: 16,
+                                  child: CircularProgressIndicator(
+                                    color: AppColors.primaryColor,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
                               ),
                               errorWidget: (context, url, error) =>
                                   Icon(Icons.error),
@@ -1027,7 +1066,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ? Text(
                           AppLocalizations.of(context)!.neighborly_user,
                           style: const TextStyle(
-                              fontWeight: FontWeight.w600, fontSize: 14),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
                         )
                       : Text(
                           post.userName,
@@ -1040,11 +1081,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
             ),
             InkWell(
-                onTap: () {
-                  showBottomSheet();
-                },
-                child:
-                    Icon(Icons.more_horiz, size: 30, color: Colors.grey[500])),
+              onTap: () {
+                showBottomSheet();
+              },
+              child: Icon(
+                Icons.more_horiz,
+                size: 30,
+                color: Colors.grey[500],
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 10),
@@ -1100,12 +1145,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     width: double.infinity,
                     placeholder: (context, url) => Center(
                       child: SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                            strokeWidth: 2,
-                          )),
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(
+                          color: AppColors.primaryColor,
+                          strokeWidth: 2,
+                        ),
+                      ),
                     ),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),

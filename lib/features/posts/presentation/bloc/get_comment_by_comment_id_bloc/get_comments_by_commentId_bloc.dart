@@ -23,8 +23,6 @@ class GetCommentByCommentIdBloc
         id: event.commentId,
       );
       print('...Result in GetCommentByCommentIdBloc $result');
-      //print('fold error: ${error.toString()}');
-      //print('fold response: ${response.toString()}');
 
       result.fold((error) {
         print('fold error: ${error.toString()}');

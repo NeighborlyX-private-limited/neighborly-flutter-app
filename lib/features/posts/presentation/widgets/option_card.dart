@@ -16,15 +16,16 @@ class OptionCard extends StatefulWidget {
   final List<OptionEntity> otherOptions;
   final bool alreadyselected;
 
-  const OptionCard(
-      {required this.totalVotes,
-      super.key,
-      required this.option,
-      required this.pollId,
-      required this.allowMultiSelect,
-      required this.onSelectOptionCallback,
-      required this.otherOptions,
-      required this.alreadyselected});
+  const OptionCard({
+    required this.totalVotes,
+    super.key,
+    required this.option,
+    required this.pollId,
+    required this.allowMultiSelect,
+    required this.onSelectOptionCallback,
+    required this.otherOptions,
+    required this.alreadyselected,
+  });
 
   @override
   State<OptionCard> createState() => _OptionCardState();
@@ -41,9 +42,7 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   Future<void> _loadSelectionState() async {
-    //final userID = ShardPrefHelper.getUserID();
     setState(() {
-      //final box = Hive.box('pollVotes');
       isSelected = widget.option.userVoted;
       filledPercentage = calculatePercentage(
             widget.option.votes,
@@ -55,8 +54,6 @@ class _OptionCardState extends State<OptionCard> {
 
   Future<void> _saveSelectionState() async {
     final userID = ShardPrefHelper.getUserID();
-    // ShardPrefHelper.setPollVote(
-    //     userID!, widget.pollId, widget.option.optionId, isSelected);
 
     final box = Hive.box('pollVotes');
     await box.put(
@@ -65,8 +62,6 @@ class _OptionCardState extends State<OptionCard> {
   }
 
   void _toggleSelection() {
-    print(
-        'iselected ${widget.allowMultiSelect} total ${widget.alreadyselected} voted ${widget.totalVotes} $isSelected');
     setState(() {
       if (isSelected || widget.alreadyselected) {
         return;
@@ -157,7 +152,9 @@ class _OptionCardState extends State<OptionCard> {
                   Text(
                     widget.option.option,
                     style: TextStyle(
-                      color: isSelected ? AppColors.whiteColor : AppColors.blackColor,
+                      color: isSelected
+                          ? AppColors.whiteColor
+                          : AppColors.blackColor,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),

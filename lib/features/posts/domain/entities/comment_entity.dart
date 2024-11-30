@@ -13,18 +13,19 @@ class CommentEntity extends Equatable {
   final String? userFeedback;
   final String? postid;
 
-  const CommentEntity(
-      {required this.awardType,
-      required this.commentid,
-      required this.userId,
-      required this.userName,
-      required this.text,
-      required this.createdAt,
-      required this.cheers,
-      required this.bools,
-      this.proPic,
-      required this.userFeedback,
-      required this.postid});
+  const CommentEntity({
+    required this.awardType,
+    required this.commentid,
+    required this.userId,
+    required this.userName,
+    required this.text,
+    required this.createdAt,
+    required this.cheers,
+    required this.bools,
+    this.proPic,
+    required this.userFeedback,
+    required this.postid,
+  });
 
   @override
   List<Object?> get props => [

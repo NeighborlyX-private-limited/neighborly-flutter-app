@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -41,12 +40,14 @@ class _CommentWidgetState extends State<CommentWidget> {
   List<ReplyEntity> _replies = [];
   late FetchCommentReplyBloc _fetchCommentReplyBloc;
 
+  ///init method
   @override
   void initState() {
     super.initState();
     _fetchCommentReplyBloc = BlocProvider.of<FetchCommentReplyBloc>(context);
   }
 
+  /// fetch replies
   void _fetchReplies() {
     setState(() {
       _showReplies = !_showReplies;
@@ -111,7 +112,9 @@ class _CommentWidgetState extends State<CommentWidget> {
                             ? Text(
                                 AppLocalizations.of(context)!.neighborly_user,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 14),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
                               )
                             : Text(
                                 widget.comment.userName,
@@ -210,12 +213,16 @@ class _CommentWidgetState extends State<CommentWidget> {
                       ? BlocConsumer<FetchCommentReplyBloc,
                           FetchCommentReplyState>(
                           listener: (context, state) {
+                            /// Fetch Comment Reply Success State
                             if (state is FetchCommentReplySuccessState &&
                                 state.commentId == widget.comment.commentid) {
                               setState(() {
                                 _replies = state.reply;
                               });
-                            } else if (state is FetchCommentReplyFailureState &&
+                            }
+
+                            ///Fetch Comment Reply Failure State
+                            else if (state is FetchCommentReplyFailureState &&
                                 state.commentId == widget.comment.commentid) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text(state.error)),
@@ -223,6 +230,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                             }
                           },
                           builder: (context, state) {
+                            ///Fetch Comment Reply Loading State
                             if (state is FetchCommentReplyLoadingState &&
                                 state.commentId == widget.comment.commentid) {
                               return Center(
@@ -230,9 +238,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                                   logo: 'images/logo.svg',
                                 ),
                               );
-                              // return const Center(
-                              //   child: CircularProgressIndicator(),
-                              // );
                             } else {
                               return _replies.isNotEmpty
                                   ? ListView.builder(
@@ -267,6 +272,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     );
   }
 
+  /// bottom sheet
   Future<dynamic> bottomSheet(BuildContext context) {
     void showReportReasonBottomSheet() {
       reportReasonBottomSheet(context);
@@ -300,6 +306,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                 )
               : BlocConsumer<DeletePostBloc, DeletePostState>(
                   listener: (context, state) {
+                    ///Delete Post Success State
                     if (state is DeletePostSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -308,7 +315,10 @@ class _CommentWidgetState extends State<CommentWidget> {
                         ),
                       );
                       context.pop(context);
-                    } else if (state is DeletePostFailureState) {
+                    }
+
+                    ///Delete Post Failure State
+                    else if (state is DeletePostFailureState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(state.error),
@@ -317,23 +327,23 @@ class _CommentWidgetState extends State<CommentWidget> {
                     }
                   },
                   builder: (context, state) {
+                    ///Delete Post Loading State
                     if (state is DeletePostLoadingState) {
                       return Center(
                         child: BouncingLogoIndicator(
                           logo: 'images/logo.svg',
                         ),
                       );
-                      // return const Center(
-                      //   child: CircularProgressIndicator(),
-                      // );
                     }
                     return InkWell(
                       onTap: () {
                         widget.onDelete();
                         context.read<DeletePostBloc>().add(
-                            DeletePostButtonPressedEvent(
+                              DeletePostButtonPressedEvent(
                                 postId: widget.comment.commentid,
-                                type: 'comment'));
+                                type: 'comment',
+                              ),
+                            );
                       },
                       child: Row(
                         children: [
@@ -358,6 +368,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     );
   }
 
+  /// report reason bottom sheet
   Future<dynamic> reportReasonBottomSheet(BuildContext context) {
     void showReportConfirmationBottomSheet() {
       reportConfirmationBottomSheet(context);
@@ -371,23 +382,20 @@ class _CommentWidgetState extends State<CommentWidget> {
       AppLocalizations.of(context)!.intellectual_property_violation,
     ];
 
-    // List<String> reportReasons = [
-    //   'Inappropriate content',
-    //   'Spam',
-    //   'Harassment or hate speech',
-    //   'Violence or dangerous organizations',
-    //   'Intellectual property violation',
-    // ];
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(
           listener: (context, state) {
+            ///Report Post Success State
             if (state is ReportPostSuccessState) {
               Navigator.pop(context);
               Navigator.pop(context);
               showReportConfirmationBottomSheet();
-            } else if (state is ReportPostFailureState) {
+            }
+
+            ///Report Post Failure State
+            else if (state is ReportPostFailureState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.error),
@@ -418,11 +426,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
-                        // ? Center(
-                        //     child: BouncingLogoIndicator(
-                        //       logo: 'images/logo.svg',
-                        //     ),
-                        //   )
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )
@@ -442,10 +445,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                         InkWell(
                           onTap: () {
                             context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
+                                  ReportButtonPressedEvent(
                                     type: 'comment',
                                     postId: widget.comment.commentid,
-                                    reason: reportReasons[0]));
+                                    reason: reportReasons[0],
+                                  ),
+                                );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -463,10 +468,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                         InkWell(
                           onTap: () {
                             context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
+                                  ReportButtonPressedEvent(
                                     type: 'comment',
                                     postId: widget.comment.commentid,
-                                    reason: reportReasons[1]));
+                                    reason: reportReasons[1],
+                                  ),
+                                );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -483,10 +490,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'comment',
                                   postId: widget.comment.commentid,
-                                  reason: reportReasons[2])),
+                                  reason: reportReasons[2],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -502,10 +511,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'comment',
                                   postId: widget.comment.commentid,
-                                  reason: reportReasons[3])),
+                                  reason: reportReasons[3],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -521,10 +532,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'comment',
                                   postId: widget.comment.commentid,
-                                  reason: reportReasons[4])),
+                                  reason: reportReasons[4],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -547,6 +560,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     );
   }
 
+  /// report Confirmation Bottom Sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,

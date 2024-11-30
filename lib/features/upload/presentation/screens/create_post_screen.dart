@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,19 +74,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   /// dispose
   @override
   void dispose() {
-    super.dispose();
     _videoController?.dispose();
     _contentController.dispose();
     _titleController.dispose();
     _questionController.dispose();
+    _titleFocusNode.dispose();
+    _contentFocusNode.dispose();
     for (var controller in _optionControllers) {
       controller.dispose();
     }
     for (var focusNode in _optionFocusNodes) {
       focusNode.dispose();
     }
-    _titleFocusNode.dispose();
-    _contentFocusNode.dispose();
+    super.dispose();
   }
 
   /// is location on
@@ -106,31 +104,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
+
+      /// location permission denied
       if (permission == LocationPermission.denied) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(AppLocalizations.of(context)!
                   .location_permissions_are_denied),
-              // content: Text('Location permissions are denied.'),
             ),
           );
         }
         return false;
       }
     }
+
+    /// location permission forever denied
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!
                 .location_permissions_are_permanently_denied_we_cannot_request_permissions),
-            // 'Location permissions are permanently denied, we cannot request permissions.'),
           ),
         );
       }
       return false;
     }
+
+    /// location permission forever granted
     return true;
   }
 
@@ -143,7 +145,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           SnackBar(
             content: Text(AppLocalizations.of(context)!
                 .location_permissions_are_permanently_denied_we_cannot_request_permissions),
-            // 'Location permissions are permanently denied, we cannot request permissions.'),
           ),
         );
       }
@@ -157,8 +158,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
 
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
-      print(
-          'Lat Long in create post Screen: ${position.latitude}, ${position.longitude}');
     } catch (e) {
       if (mounted) {
         showLocationAccessDialog(context);
@@ -170,7 +169,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           ),
         );
       }
-      debugPrint('Error getting location in create post: $e');
     }
   }
 
@@ -180,10 +178,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       surfaceTintColor: AppColors.whiteColor,
       backgroundColor: AppColors.whiteColor,
       title: Text(AppLocalizations.of(context)!.no_location_access),
-      // title: Text("No Location Access"),
       content: Text(AppLocalizations.of(context)!
           .device_location_is_turned_off_and_if_you_donot_turn_on_your_location_then_last_location_will_be_used),
-      // "Device location is turned off, and if you don't turn on your location then last location will be used."),
       actions: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -196,7 +192,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             Navigator.of(context).pop();
           },
           child: Text(AppLocalizations.of(context)!.ok),
-          // child: Text("OK"),
         ),
       ],
     );
@@ -224,11 +219,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   /// Function to fetch the current city name
   Future<String?> getCityName() async {
     try {
-      // Check for location permissions
+      /// Check for location permissions
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        // Request permissions if not granted
+        /// Request permissions if not granted
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied ||
             permission == LocationPermission.deniedForever) {
@@ -236,30 +231,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
       }
 
-      // Get the current position (latitude and longitude)
+      /// Get the current position (latitude and longitude)
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      // Use the coordinates to get the address details
+      /// Use the coordinates to get the address details
       List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
       );
 
-      // Extract the city name from the first placemark
+      /// Extract the city name from the first placemark
       if (placemarks.isNotEmpty) {
         return placemarks.first.locality;
       } else {
         return 'No city found at this location';
       }
     } catch (e) {
-      print('Error getting city name in getCityName: $e');
       return 'Failed to get city name';
     }
   }
 
-  // Check if all options and question are filled
+  /// Check if all options and question are filled
   bool checkIsPollActive() {
     if (isQuestionFilled &&
         _optionControllers
@@ -319,10 +313,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   VideoPlayerController? _videoController;
 
   /// get thumbnail
-
   Future<void> _generateVideoThumbnail(String videoPath) async {
     try {
-      // Generate the thumbnail
+      /// Generate the thumbnail
       Uint8List? thumbnail = await VideoThumbnail.thumbnailData(
         video: videoPath,
         imageFormat: ImageFormat.JPEG,
@@ -331,51 +324,32 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
 
       if (thumbnail != null) {
-        // Get the directory to store the thumbnail
+        /// Get the directory to store the thumbnail
         final directory = await getApplicationDocumentsDirectory();
         final thumbnailPath = '${directory.path}/thumbnail.jpeg';
 
-        // Save the thumbnail as a file
+        /// Save the thumbnail as a file
         File thumbnailFile = File(thumbnailPath);
         await thumbnailFile.writeAsBytes(thumbnail);
 
         // Get the path of the saved thumbnail
         String filePath = thumbnailFile.path;
 
-        // Now you can send the file as part of your API request
-        print('Thumbnail saved at: $filePath');
-
         // Optionally, create a File object and send it to your API
         _thumbnail = File(filePath);
-        // Pass this `thumbnailForApi` to your API method as required
 
         setState(() {}); // Trigger UI update if necessary
       }
     } catch (e) {
-      print('Error generating thumbnail: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error generating thumbnail: $e')),
+        );
+      }
     }
   }
 
-  // Future<void> _generateVideoThumbnail(String videoPath) async {
-  //   try {
-  //     Uint8List? thumbnail = await VideoThumbnail.thumbnailData(
-  //       video: videoPath,
-  //       imageFormat: ImageFormat.JPEG,
-  //       maxWidth: 400,
-  //       quality: 75,
-  //     );
-
-  //     if (thumbnail != null) {
-  //       String base64Thumbnail = base64Encode(thumbnail);
-  //       print('Base64 Encoded Thumbnail: $base64Thumbnail');
-  //       setState(() {});
-  //     }
-  //   } catch (e) {
-  //     print('Error generating thumbnail: $e');
-  //   }
-  // }
-
-  // Pick video from gallery
+  /// Pick video from gallery
   Future<void> _pickVideoFromGallery() async {
     final ImagePicker picker = ImagePicker();
     try {
@@ -406,13 +380,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               SnackBar(
                   content: Text(
                       AppLocalizations.of(context)!.this_video_is_too_large)),
-              // SnackBar(content: Text('The video is too large..')),
             );
           }
           setState(() {
             _videoFile = null;
           });
-          print('The video is too large.');
           return;
         }
 
@@ -438,7 +410,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           setState(() {
             _videoFile = null;
           });
-          print('The video is too large after compression.');
+
           return;
         }
 
@@ -452,10 +424,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             _videoController!.pause();
           });
       } else {
-        print('Please pick a video.');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Please pick a video')),
+          );
+        }
       }
     } catch (e) {
-      print('Error in video picking: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error in video picking: $e')),
+        );
+      }
     } finally {
       // Stop loading
       setState(() {
@@ -498,25 +478,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               SnackBar(
                   content: Text(
                       AppLocalizations.of(context)!.this_video_is_too_large)),
-              // SnackBar(content: Text('The video is too large..')),
             );
           }
           setState(() {
             _videoFile = null;
           });
-          print('The video is too large.');
+
           return;
         }
-        //      if (_selectedMedia!.length >= 5) {
-        //   ScaffoldMessenger.of(context).showSnackBar(
-        //     SnackBar(content: Text('You can select up to 5 images.')),
-        //   );
-        //   setState(() {
-        //     isImage = false;
-        //     _selectedMedia = [];
-        //   });
-        //   return;
-        // }
 
         // Compress video
         _videoFile = await compressVideo(_videoFile!);
@@ -534,13 +503,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               SnackBar(
                   content: Text(
                       AppLocalizations.of(context)!.this_video_is_too_large)),
-              // SnackBar(content: Text('The video is too large..')),
             );
           }
           setState(() {
             _videoFile = null;
           });
-          print('The compressed video is still too large.');
+
           return;
         }
 
@@ -551,15 +519,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
           _videoController = VideoPlayerController.file(_videoFile!)
             ..initialize().then((_) {
-              setState(() {}); // Refresh UI after initialization
+              setState(() {});
               _videoController!.pause();
             });
         });
       } else {
-        print('No video was picked.');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('No video was picked')),
+          );
+        }
       }
     } catch (e) {
-      print('Error in video picking: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error in video picking: $e')),
+        );
+      }
     } finally {
       // Stop loading
       setState(() {
@@ -579,7 +555,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         SnackBar(
             content: Text(
                 AppLocalizations.of(context)!.you_can_select_up_to_5_images)),
-        // SnackBar(content: Text('You can select up to 5 images.')),
       );
       setState(() {
         isImage = false;
@@ -612,7 +587,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ); // Update selected images list
             });
-            print(_selectedMedia);
           } else {
             // Show a message if the user tries to select more than 5 images
             ScaffoldMessenger.of(context).showSnackBar(
@@ -634,7 +608,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         return;
       }
     } catch (e) {
-      print("Error picking multiple images: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking multiple images: $e')),
+        );
+      }
     } finally {
       setState(() {
         isImagePicking = false;
@@ -664,7 +642,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         });
       }
     } catch (e) {
-      print("Error picking image: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking image: $e')),
+        );
+      }
     } finally {
       setState(() {
         isImagePicking = false;
@@ -716,8 +698,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() {
       isPollOptionShow = true;
     });
-
-    print('Video and controller cleared.');
   }
 
   @override
@@ -732,8 +712,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  isImagePicking ? LinearProgressIndicator() : SizedBox(),
-                  isImageUploading ? LinearProgressIndicator() : SizedBox(),
+                  isImagePicking
+                      ? LinearProgressIndicator(
+                          color: AppColors.primaryColor,
+                        )
+                      : SizedBox(),
+                  isImageUploading
+                      ? LinearProgressIndicator(
+                          color: AppColors.primaryColor,
+                        )
+                      : SizedBox(),
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 14.0,
@@ -746,8 +734,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         InkWell(
                           child: const Icon(Icons.close, size: 30),
                           onTap: () {
-                            print(
-                                '_selectedImage path in on tap fn: $_selectedImage');
                             if (_condition == 'post') {
                               isImageUploading = false;
                               _titleController.clear();
@@ -756,7 +742,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               isImage = false;
                               _selectedImage = null;
                               context.go('/home/Home');
-                              // context.go('/MainPage');
                             } else {
                               setState(() {
                                 _condition = 'post';
@@ -767,14 +752,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         _condition == 'post'
                             ? BlocConsumer<UploadPostBloc, UploadPostState>(
                                 listener: (context, state) {
+                                  ///loading state
                                   if (state is UploadPostLoadingState) {
                                     setState(() {
                                       isImageUploading = true;
                                     });
                                   }
-                                  if (state is UploadPostFailureState) {
-                                    ///chnage error msg error
 
+                                  /// failure state
+                                  if (state is UploadPostFailureState) {
                                     if (state.error
                                         .contains("Sorry, you are banned")) {
                                       isImageUploading = false;
@@ -792,7 +778,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: <Widget>[
-                                                  // Placeholder for the image
                                                   SvgPicture.asset(
                                                     'assets/something_went_wrong.svg',
                                                     width: 150,
@@ -803,7 +788,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                     AppLocalizations.of(
                                                             context)!
                                                         .aaah_something_went_wrong,
-                                                    // 'Aaah! Something went wrong',
                                                     style: TextStyle(
                                                       fontSize: 18,
                                                       fontWeight:
@@ -816,7 +800,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                     AppLocalizations.of(
                                                             context)!
                                                         .sorry_you_are_banned_please_try_it_after_some_time,
-                                                    // "Sorry,You are banned.\nPlease try it after some time",
                                                     style: TextStyle(
                                                       fontSize: 14,
                                                       color:
@@ -844,17 +827,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                     child: Padding(
                                                       padding:
                                                           EdgeInsets.symmetric(
-                                                              horizontal: 20,
-                                                              vertical: 10),
+                                                        horizontal: 20,
+                                                        vertical: 10,
+                                                      ),
                                                       child: Text(
                                                         AppLocalizations.of(
                                                                 context)!
                                                             .go_back,
-                                                        // 'Go Back',
                                                         style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: AppColors
-                                                                .whiteColor),
+                                                          fontSize: 16,
+                                                          color: AppColors
+                                                              .whiteColor,
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -864,13 +848,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           );
                                         },
                                       );
-                                      // ScaffoldMessenger.of(context)
-                                      //     .showSnackBar(
-                                      //   SnackBar(
-                                      //     content:
-                                      //         Text("Sorry, you are banned"),
-                                      //   ),
-                                      // );
                                     } else {
                                       isImageUploading = false;
                                       ScaffoldMessenger.of(context)
@@ -878,7 +855,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         SnackBar(content: Text(state.error)),
                                       );
                                     }
-                                  } else if (state is UploadPostSuccessState) {
+                                  }
+
+                                  ///success state
+                                  else if (state is UploadPostSuccessState) {
                                     setState(() {
                                       isImageUploading = false;
                                     });
@@ -890,7 +870,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         content: Text(
                                             AppLocalizations.of(context)!
                                                 .post_created),
-                                        // content: Text('Post Created'),
                                       ),
                                     );
 
@@ -898,21 +877,22 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   }
                                 },
                                 builder: (context, state) {
+                                  ///loading state
                                   if (state is UploadPostLoadingState) {
                                     return Center(
                                         child: Text(
                                             AppLocalizations.of(context)!
                                                 .uploading));
-                                    // child: Text('Uploading...'));
                                   }
+
+                                  ///post button
                                   return PostButtonWidget(
                                     onTapListener: () async {
                                       if (!_isButtonActive) {
-                                        return; // Prevent multiple taps
+                                        return;
                                       }
                                       setState(() {
-                                        _isButtonActive =
-                                            false; // Disable the button
+                                        _isButtonActive = false;
                                       });
 
                                       await fetchLocationAndUpdate();
@@ -951,9 +931,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         city = placemarks[0].locality ?? '';
                                       }
 
-                                      print("...post city:$city");
-                                      print("...post city cord:$locationCord");
-                                      print('selectedImage: $_selectedImage');
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
@@ -975,11 +952,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               )
                             : BlocConsumer<UploadPostBloc, UploadPostState>(
                                 listener: (context, state) {
+                                  /// failure state
                                   if (state is UploadPostFailureState) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(content: Text(state.error)),
                                     );
-                                  } else if (state is UploadPostSuccessState) {
+                                  }
+
+                                  ///success state
+                                  else if (state is UploadPostSuccessState) {
                                     _questionController.clear();
 
                                     _removeImage();
@@ -991,31 +972,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         content: Text(
                                             AppLocalizations.of(context)!
                                                 .poll_created),
-                                        // content: Text('Poll Created'),
                                       ),
                                     );
                                     context.go('/home/Home');
                                   }
                                 },
                                 builder: (context, state) {
+                                  ///loading state
                                   if (state is UploadPostLoadingState) {
                                     return Center(
                                       child: BouncingLogoIndicator(
                                         logo: 'images/logo.svg',
                                       ),
                                     );
-                                    // return const Center(
-                                    //   child: CircularProgressIndicator(),
-                                    // );
                                   }
                                   return PostButtonWidget(
                                     onTapListener: () async {
                                       if (!_isButtonActive) {
-                                        return; // Prevent multiple taps
+                                        return;
                                       }
                                       setState(() {
-                                        _isButtonActive =
-                                            false; // Disable the button
+                                        _isButtonActive = false;
                                       });
                                       bool iaLocationOn =
                                           ShardPrefHelper.getIsLocationOn();
@@ -1052,8 +1029,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         city = placemarks[0].locality ?? '';
                                       }
 
-                                      print("city during post:$city");
-                                      print("cord during post :$locationCord");
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
@@ -1085,37 +1060,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ],
                     ),
                   ),
-
                   if (_videoController != null &&
                       _videoController!.value.isInitialized)
                     SizedBox(
                       height: 10,
                     ),
-                  // (_videoController != null &&
-                  //         _videoController!.value.isInitialized)?
-                  (_videoController != null &&
-                          _videoController!.value.isInitialized)
+                  _videoController != null &&
+                          _videoController!.value.isInitialized
                       ? Stack(
                           children: [
                             SizedBox(
                               width: MediaQuery.of(context).size.width,
                               height: 260,
-                              // color: Colors.redAccent,
                               child: Center(
                                 child: AspectRatio(
                                   aspectRatio: 1 / 1,
                                   child: VideoPlayer(_videoController!),
                                 ),
                               ),
-                              // child: Center(
-                              //   child: Transform.rotate(
-                              //     angle: pi / 2,
-                              //     child: AspectRatio(
-                              //       aspectRatio: 1 / 1,
-                              //       child: VideoPlayer(_videoController!),
-                              //     ),
-                              //   ),
-                              // ),
                             ),
                             Positioned.fill(
                               child: Align(
@@ -1138,7 +1100,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               child: GestureDetector(
                                 onTap: () {
                                   clearVideoController();
-                                  // here i have write the code clear the controller
                                 },
                                 child: Container(
                                   decoration: const BoxDecoration(
@@ -1228,7 +1189,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             decoration: InputDecoration(
                               hintText:
                                   AppLocalizations.of(context)!.title_required,
-                              // hintText: 'Title (Required)',
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.multiline,
@@ -1238,16 +1198,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           TextField(
                             textCapitalization: TextCapitalization.sentences,
                             onChanged: (value) {
-                              setState(() {
-                                // Handle content input changes if necessary
-                              });
+                              setState(() {});
                             },
                             controller: _contentController,
                             focusNode: _contentFocusNode,
                             decoration: InputDecoration(
                               hintText: AppLocalizations.of(context)!
                                   .whats_on_your_mind,
-                              // hintText: 'What\'s on your mind?',
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.multiline,
@@ -1276,7 +1233,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             decoration: InputDecoration(
                               hintText: AppLocalizations.of(context)!
                                   .write_your_question_here,
-                              // hintText: 'Write your question here...',
                               border: InputBorder.none,
                             ),
                             keyboardType: TextInputType.multiline,
@@ -1297,7 +1253,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 const SizedBox(width: 5),
                                 Text(
                                   AppLocalizations.of(context)!.add_option,
-                                  // 'Add Option',
                                   style: blueNormalTextStyle,
                                 ),
                               ],
@@ -1310,7 +1265,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               Text(
                                 AppLocalizations.of(context)!
                                     .allow_multiple_votes,
-                                // 'Allow multiple votes',
                                 style: greyonboardingBody1Style,
                               ),
                               Switch(
@@ -1352,7 +1306,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             const SizedBox(width: 10),
                             Text(
                               AppLocalizations.of(context)!.add_a_photo,
-                              // 'Add a Photo',
                               style: mediumTextStyleBlack,
                             ),
                           ],
@@ -1379,7 +1332,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             const SizedBox(width: 10),
                             Text(AppLocalizations.of(context)!.take_a_picture,
                                 style: mediumTextStyleBlack)
-                            // Text('Take a Picture', style: mediumTextStyleBlack)
                           ],
                         ),
                       ),
@@ -1388,7 +1340,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           : InkWell(
                               onTap: () {
                                 _showVideoPickerOptions();
-                                // _pickImageFromCamera();
                               },
                               child: Row(
                                 children: [
@@ -1409,7 +1360,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   const SizedBox(width: 10),
                                   Text(
                                       AppLocalizations.of(context)!.add_a_video,
-                                      // Text('Add a video',
                                       style: mediumTextStyleBlack)
                                 ],
                               ),
@@ -1462,10 +1412,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   SvgPicture.asset('assets/create_a_poll.svg'),
                                   const SizedBox(width: 10),
                                   Text(
-                                      AppLocalizations.of(context)!
-                                          .create_a_poll,
-                                      // Text('Create a Poll',
-                                      style: mediumTextStyleBlack),
+                                    AppLocalizations.of(context)!.create_a_poll,
+                                    style: mediumTextStyleBlack,
+                                  ),
                                 ],
                               ),
                             )
@@ -1518,7 +1467,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           : InkWell(
                               onTap: () {
                                 _showVideoPickerOptions();
-                                // _pickImageFromCamera();
                               },
                               child: Row(
                                 children: [
@@ -1581,16 +1529,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               TextField(
                 textCapitalization: TextCapitalization.sentences,
                 onChanged: (value) {
-                  setState(() {
-                    // Option filled check is performed on all options
-                  });
+                  setState(() {});
                 },
                 controller: _optionControllers[index],
                 focusNode: _optionFocusNodes[index],
                 decoration: InputDecoration(
                   labelText:
                       '${AppLocalizations.of(context)!.option} ${index + 1}',
-                  // labelText: 'Option ${index + 1}',
                   border: const OutlineInputBorder(),
                 ),
               ),
@@ -1629,7 +1574,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 leading: const Icon(Icons.video_library),
                 title:
                     Text(AppLocalizations.of(context)!.pick_video_from_gallery),
-                // title: const Text("Pick Video from Gallery"),
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickVideoFromGallery();
@@ -1638,7 +1582,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ListTile(
                 leading: const Icon(Icons.videocam),
                 title: Text(AppLocalizations.of(context)!.record_a_video),
-                // title: const Text("Record a Video"),
                 onTap: () {
                   Navigator.of(context).pop();
                   _pickVideoFromCamera();

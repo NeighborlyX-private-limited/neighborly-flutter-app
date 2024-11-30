@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -31,16 +30,17 @@ class _PollWidgetState extends State<PollWidget> {
   PostEntity? post;
   bool isselected = false;
   bool isrefresh = false;
+
+  /// init method
   @override
   void initState() {
     super.initState();
     uselocalpost();
   }
 
+  ///use local post method
   uselocalpost() {
     setState(() {
-      print('post printing');
-      print(widget.post);
       post = widget.post;
     });
   }
@@ -267,11 +267,9 @@ class _PollWidgetState extends State<PollWidget> {
     );
   }
 
+  /// onselect option call back funtion
   onSelectOptionCallback(int optionid) {
-    print('option sa$optionid');
-    print('check ${widget.post.allowMultipleVotes} allowed multi');
     if (widget.post.allowMultipleVotes ?? false) {
-      print("ALLOW MULTI");
       List<OptionEntity>? newOptions =
           List<OptionEntity>.from(post?.pollOptions ?? []);
 
@@ -328,6 +326,7 @@ class _PollWidgetState extends State<PollWidget> {
     }
   }
 
+  /// bottom sheet method
   Future<dynamic> bottomSheet(BuildContext context) {
     void showReportReasonBottomSheet() {
       reportReasonBottomSheet(context);
@@ -361,6 +360,7 @@ class _PollWidgetState extends State<PollWidget> {
                 )
               : BlocConsumer<DeletePostBloc, DeletePostState>(
                   listener: (context, state) {
+                    ///Delete Post Success State
                     if (state is DeletePostSuccessState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
@@ -369,7 +369,10 @@ class _PollWidgetState extends State<PollWidget> {
                         ),
                       );
                       context.pop(context);
-                    } else if (state is DeletePostFailureState) {
+                    }
+
+                    ///Delete Post Failure State
+                    else if (state is DeletePostFailureState) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(state.error),
@@ -378,15 +381,13 @@ class _PollWidgetState extends State<PollWidget> {
                     }
                   },
                   builder: (context, state) {
+                    /// Delete Post Loading State
                     if (state is DeletePostLoadingState) {
                       return Center(
                         child: BouncingLogoIndicator(
                           logo: 'images/logo.svg',
                         ),
                       );
-                      // return const Center(
-                      //   child: CircularProgressIndicator(),
-                      // );
                     }
                     return InkWell(
                       onTap: () {
@@ -418,6 +419,7 @@ class _PollWidgetState extends State<PollWidget> {
     );
   }
 
+  ///report Confirmation Bottom Sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
     return showModalBottomSheet(
       context: context,
@@ -459,6 +461,7 @@ class _PollWidgetState extends State<PollWidget> {
     );
   }
 
+  ///report Reason Bottom Sheet
   Future<dynamic> reportReasonBottomSheet(BuildContext context) {
     void showReportConfirmationBottomSheet() {
       reportConfirmationBottomSheet(context);
@@ -472,23 +475,20 @@ class _PollWidgetState extends State<PollWidget> {
       AppLocalizations.of(context)!.intellectual_property_violation,
     ];
 
-    // List<String> reportReasons = [
-    //   'Inappropriate content',
-    //   'Spam',
-    //   'Harassment or hate speech',
-    //   'Violence or dangerous organizations',
-    //   'Intellectual property violation',
-    // ];
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(
           listener: (context, state) {
+            ///Report Post Success State
             if (state is ReportPostSuccessState) {
               Navigator.pop(context);
               Navigator.pop(context);
               showReportConfirmationBottomSheet();
-            } else if (state is ReportPostFailureState) {
+            }
+
+            ///Report Post Failure State
+            else if (state is ReportPostFailureState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.error),
@@ -519,11 +519,6 @@ class _PollWidgetState extends State<PollWidget> {
                       height: 15,
                     ),
                     state is ReportPostLoadingState
-                        // ? Center(
-                        //     child: BouncingLogoIndicator(
-                        //       logo: 'images/logo.svg',
-                        //     ),
-                        //   )
                         ? const Center(
                             child: CircularProgressIndicator(),
                           )
@@ -543,10 +538,12 @@ class _PollWidgetState extends State<PollWidget> {
                         InkWell(
                           onTap: () {
                             context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
+                                  ReportButtonPressedEvent(
                                     type: 'content',
                                     postId: widget.post.id,
-                                    reason: reportReasons[0]));
+                                    reason: reportReasons[0],
+                                  ),
+                                );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -564,10 +561,12 @@ class _PollWidgetState extends State<PollWidget> {
                         InkWell(
                           onTap: () {
                             context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
+                                  ReportButtonPressedEvent(
                                     type: 'content',
                                     postId: widget.post.id,
-                                    reason: reportReasons[1]));
+                                    reason: reportReasons[1],
+                                  ),
+                                );
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -584,10 +583,12 @@ class _PollWidgetState extends State<PollWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'content',
                                   postId: widget.post.id,
-                                  reason: reportReasons[2])),
+                                  reason: reportReasons[2],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -603,10 +604,12 @@ class _PollWidgetState extends State<PollWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'content',
                                   postId: widget.post.id,
-                                  reason: reportReasons[3])),
+                                  reason: reportReasons[3],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -622,10 +625,12 @@ class _PollWidgetState extends State<PollWidget> {
                         ),
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
+                                ReportButtonPressedEvent(
                                   type: 'content',
                                   postId: widget.post.id,
-                                  reason: reportReasons[4])),
+                                  reason: reportReasons[4],
+                                ),
+                              ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
