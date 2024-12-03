@@ -1364,19 +1364,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 ],
                               ),
                             ),
-                      // InkWell(
-                      //   onTap: () {
-                      //     context.push('/groups/create');
-                      //   },
-                      //   child: Row(
-                      //     children: [
-                      //       SvgPicture.asset('assets/communities.svg'),
-                      //       const SizedBox(width: 10),
-                      //       Text('Create Community',
-                      //           style: mediumTextStyleBlack),
-                      //     ],
-                      //   ),
-                      // ),
+                      InkWell(
+                        onTap: () {
+                          context.push('/groups/create');
+                        },
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/communities.svg'),
+                            const SizedBox(width: 10),
+                            Text('Create Community',
+                                style: mediumTextStyleBlack),
+                          ],
+                        ),
+                      ),
 
                       // TODO: create a action to this and remove the comment
 

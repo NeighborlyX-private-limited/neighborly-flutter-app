@@ -274,7 +274,8 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: '/groups/:communityId',
           builder: (context, state) => CommunityDetailsScreen(
-              communityId: state.pathParameters["communityId"] as String),
+            communityId: state.pathParameters["communityId"] as String,
+          ),
         ),
         GoRoute(
           path: '/chat',

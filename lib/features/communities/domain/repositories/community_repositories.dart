@@ -8,6 +8,11 @@ import '../../data/model/search_dash_model.dart';
 import '../../data/model/search_result_model.dart';
 
 abstract class CommunityRepositories {
+  ///create community use case
+  Future<Either<Failure, String>> createCommunity({
+    required CommunityModel community,
+    File? pictureFile,
+  });
   Future<Either<Failure, List<CommunityModel>>> getAllCommunities(
       {required bool isSummary, required bool isNearBy});
   Future<Either<Failure, CommunityModel>> getCommunity(
@@ -36,9 +41,6 @@ abstract class CommunityRepositories {
   Future<Either<Failure, void>> leaveCommunity({required String communityId});
   Future<Either<Failure, void>> reportCommunity(
       {required String communityId, required String reason});
-
-  Future<Either<Failure, String>> createCommunity(
-      {required CommunityModel community, File? pictureFile});
 
   Future<Either<Failure, SearchDashModel>> getSearchHistoryAndTrends();
   Future<Either<Failure, SearchResultModel>> getSearchResults(

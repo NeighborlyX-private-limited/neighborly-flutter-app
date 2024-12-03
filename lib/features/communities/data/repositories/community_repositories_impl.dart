@@ -19,6 +19,32 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     required this.networkInfo,
   });
 
+  /// create community repo impl
+  @override
+  Future<Either<Failure, String>> createCommunity({
+    required CommunityModel community,
+    File? pictureFile,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.createCommunity(
+          community: community,
+          pictureFile: pictureFile,
+        );
+        print('result in createCommunity repo: $result');
+        return Right(result);
+      } on ServerFailure catch (e) {
+        print('result in createCommunity repo: ${e.toString()}');
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        print('catch error in createCommunity repo: ${e.toString()}');
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
   @override
   Future<Either<Failure, List<CommunityModel>>> getAllCommunities(
       {required bool isSummary, required bool isNearBy}) async {
@@ -117,24 +143,6 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
       try {
         final result = await remoteDataSource.updateType(
             communityId: communityId, newType: newType);
-        return Right(result);
-      } on ServerFailure catch (e) {
-        return Left(ServerFailure(message: e.message));
-      } catch (e) {
-        return Left(ServerFailure(message: '$e'));
-      }
-    } else {
-      return const Left(ServerFailure(message: 'No internet connection'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, String>> createCommunity(
-      {required CommunityModel community, File? pictureFile}) async {
-    if (await networkInfo.isConnected) {
-      try {
-        final result = await remoteDataSource.createCommunity(
-            community: community, pictureFile: pictureFile);
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

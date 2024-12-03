@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/constants/status.dart';
 import '../../../posts/presentation/widgets/toggle_button_widget.dart';
 import '../bloc/communities_main_cubit.dart';
@@ -16,17 +15,14 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  late var communityMainCubit;
+  late CommunityMainCubit communityMainCubit;
   bool isNearBy = false;
   bool isSummary = true;
 
   @override
   void initState() {
-    print('... COMMUNITY MAIN - init');
     super.initState();
-
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
-
     communityMainCubit.init();
   }
 
@@ -65,7 +61,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
               CustomToggleSwitch(
                 imagePath1: 'assets/home.svg',
                 imagePath2: 'assets/location.svg',
-                onToggle: handleToggle, // Pass the callback function
+                onToggle: handleToggle,
               ),
             ],
           ),
@@ -79,7 +75,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 child: SvgPicture.asset(
                   'assets/search.svg',
                   fit: BoxFit.contain,
-                  width: 30, // Adjusted to fit within the AppBar
+                  width: 30,
                   height: 30,
                 ),
               ),
@@ -93,7 +89,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 child: SvgPicture.asset(
                   'assets/chat.svg',
                   fit: BoxFit.contain,
-                  width: 30, // Adjusted to fit within the AppBar
+                  width: 30,
                   height: 30,
                 ),
               ),
@@ -103,8 +99,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
         body: BlocConsumer<CommunityMainCubit, CommunityMainState>(
           bloc: communityMainCubit,
           listener: (context, state) {
-            print('... state.currentUser: ${state.status}');
-
             switch (state.status) {
               case Status.loading:
                 break;

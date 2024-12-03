@@ -5,6 +5,11 @@ import '../../model/search_dash_model.dart';
 import '../../model/search_result_model.dart';
 
 abstract class CommunityRemoteDataSource {
+  ///createCommunity
+  Future<String> createCommunity({
+    required CommunityModel community,
+    File? pictureFile,
+  });
   Future<List<CommunityModel>> getAllCommunities(
       {required bool isSummary, required bool isNearBy});
   Future<CommunityModel> getCommunity({required String communityId});
@@ -29,9 +34,6 @@ abstract class CommunityRemoteDataSource {
   Future<void> leaveCommunity({required String communityId});
   Future<void> reportCommunity(
       {required String communityId, required String reason});
-
-  Future<String> createCommunity(
-      {required CommunityModel community, File? pictureFile});
 
   Future<SearchDashModel> getSearchHistoryAndTrends();
   Future<SearchResultModel> getSearchResults(

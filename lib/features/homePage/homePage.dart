@@ -192,20 +192,26 @@ class _MainPageState extends State<MainPage> {
         setState(() {
           _currentIndex = 1;
         });
-        context.push('/create');
+        context.go('/groups');
         break;
       case 2:
         setState(() {
           _currentIndex = 2;
         });
-        context.push('/profile');
+        context.push('/create');
         break;
       // case 3:
-      //   context.go('/groups');
-      //   break;
-      // case 4:
+      //     setState(() {
+      //   _currentIndex = 3;
+      // });
       //   context.go('/events');
       //   break;
+      case 3:
+        setState(() {
+          _currentIndex = 3;
+        });
+        context.push('/profile');
+        break;
     }
   }
 
@@ -234,12 +240,13 @@ class _MainPageState extends State<MainPage> {
               ),
               label: AppLocalizations.of(context)!.home,
             ),
-            // const BottomNavigationBarItem(
-            //   icon: Icon(
-            //     Icons.calendar_month,
-            //   ),
-            //   label: 'Events',
-            // ),
+            const BottomNavigationBarItem(
+              icon: Icon(
+                Icons.groups,
+              ),
+              label: 'Groups',
+            ),
+
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 'assets/add.svg',
@@ -249,9 +256,9 @@ class _MainPageState extends State<MainPage> {
             ),
             // const BottomNavigationBarItem(
             //   icon: Icon(
-            //     Icons.groups,
+            //     Icons.calendar_month,
             //   ),
-            //   label: 'Groups',
+            //   label: 'Events',
             // ),
             BottomNavigationBarItem(
               icon: Icon(

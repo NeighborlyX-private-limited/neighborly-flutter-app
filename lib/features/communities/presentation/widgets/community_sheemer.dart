@@ -53,8 +53,6 @@ class CommunityMainSheemer extends StatelessWidget {
                           baseColor: Colors.grey[300]!,
                           highlightColor: Colors.grey[100]!,
                           child: Container(
-                            // width: 180,
-                            // height: MediaQuery.of(context).size.width * 0.4,
                             height: 230,
                             color: Colors.grey[300],
                           ),

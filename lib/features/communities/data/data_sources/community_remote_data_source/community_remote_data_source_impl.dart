@@ -18,6 +18,101 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
   CommunityRemoteDataSourceImpl({required this.client});
 
+  /// create community api call
+  @override
+  Future<String> createCommunity({
+    required CommunityModel community,
+    File? pictureFile,
+  }) async {
+    print('... createCommunity start with');
+    print('community=$community');
+    print('pictureFilee=${pictureFile?.path}');
+
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      print('No cookies found in createCommunity');
+      throw const ServerException(message: 'Something went wrong');
+    }
+    String cookieHeader = cookies.join('; ');
+    print('cookieHeader=$cookieHeader');
+    String url = '$kBaseUrl/group/create?home=false';
+    print('url=$url');
+
+    /// Create a multipart request if group icon is not null
+    if (pictureFile != null) {
+      print('pictureFile:$pictureFile');
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse(url),
+      )
+        ..headers['Cookie'] = cookieHeader
+        // ..fields['group_id'] = community.id
+        ..fields['name'] = community.name
+        // ..fields['topic'] = 'etc'
+        ..fields['radius'] = '${community.radius}'
+        ..fields['description'] = community.description
+        // ..fields['location'] = community.locationStr ?? ''
+        // ..fields['typeOf'] = community.isPublic ? 'public' : 'close'
+        // ..fields["useHomeLocation"] = 'false'
+        ..fields["isOpen"] = community.isPublic.toString();
+
+      /// Add multimedia file if available
+      request.files.add(
+        http.MultipartFile(
+          'file',
+          pictureFile.readAsBytes().asStream(),
+          pictureFile.lengthSync(),
+          filename: pictureFile.path.split('/').last,
+        ),
+      );
+
+      // Send the request and handle the response
+      final response = await request.send();
+      final responseString = await response.stream.bytesToString();
+      print('createCommunity status code: ${response.statusCode}');
+      print('createCommunity response: $responseString');
+      if (response.statusCode == 200) {
+        return jsonDecode(responseString)['group']['_id'];
+      } else {
+        print(
+            'else error in createCommunity: ${jsonDecode(responseString)['error'] ?? 'Something went wrong'}');
+        final errorMessage =
+            jsonDecode(responseString)['error'] ?? 'Something went wrong';
+        throw ServerException(message: errorMessage);
+      }
+    }
+
+    /// call createCommunity api when there is not group icon
+    else {
+      final response = await client.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Cookie': cookieHeader,
+        },
+        body: jsonEncode(
+          <String, dynamic>{
+            'name': community.name,
+            'description': community.description,
+            'isOpen': community.isPublic,
+            'radius': community.radius,
+          },
+        ),
+      );
+      print('createCommunity status code: ${response.statusCode}');
+      print('createCommunity response: ${response.body}');
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body)['group']['_id'];
+      } else {
+        print(
+            'else error in createCommunity: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+        final message =
+            jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+        throw ServerException(message: message);
+      }
+    }
+  }
+
   @override
   Future<List<CommunityModel>> getAllCommunities(
       {required bool isSummary, required bool isNearBy}) async {
@@ -30,7 +125,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       throw const ServerException(message: 'No cookies found');
     }
     String cookieHeader = cookies.join('; ');
-    Map<String, dynamic> queryParameters = {'isHome': 'true'};
+    Map<String, dynamic> queryParameters = {'isHome': 'false'};
 
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
@@ -40,6 +135,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      print(jsonDecode(response.body));
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     } else {
@@ -203,77 +299,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       throw ServerException(message: message);
     }
   }
-
-  @override
-  Future<String> createCommunity(
-      {required CommunityModel community, File? pictureFile}) async {
-    print('... createCommunity community=$community');
-    print('... createCommunity File=${pictureFile?.path}');
-
-    List<String>? cookies = ShardPrefHelper.getCookie();
-    if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
-    }
-    String cookieHeader = cookies.join('; ');
-    String url =
-        '$kBaseUrl/group/create?home=true'; // TODO put a correct URL endPoint
-
-    // Create a multipart request
-    if (pictureFile != null) {
-      final request = http.MultipartRequest(
-        'POST',
-        Uri.parse(url),
-      )
-        ..headers['Cookie'] = cookieHeader
-        ..fields['group_id'] = community.id
-        ..fields['name'] = community.name
-        ..fields['topic'] = 'etc'
-        ..fields['radius'] = '${community.radius}'
-        ..fields['description'] = community.description
-        ..fields['location'] = community.locationStr ?? ''
-        ..fields['typeOf'] = community.isPublic ? 'public' : 'close'
-        ..fields["useHomeLocation"] = 'false'
-        ..fields["isOpen"] = 'true';
-
-      // Add multimedia file if available
-      request.files.add(
-        http.MultipartFile(
-          'file', // Field name for the file
-          pictureFile.readAsBytes().asStream(),
-          pictureFile.lengthSync(),
-          filename: pictureFile.path.split('/').last,
-        ),
-      );
-
-      // Send the request and handle the response
-      final response = await request.send();
-      final responseString = await response.stream.bytesToString();
-      if (response.statusCode == 200) {
-        return jsonDecode(responseString)['group']['_id'];
-      } else {
-        final errorMessage = jsonDecode(responseString)['error'];
-        throw ServerException(message: errorMessage);
-      }
-    } else {
-      final response = await client.post(Uri.parse(url),
-          headers: <String, String>{
-            'Content-Type': 'application/json',
-            'Cookie': cookieHeader,
-          },
-          body: jsonEncode(<String, dynamic>{
-            'name': community.name,
-            'description': community.description,
-            'isOpen': 'true',
-          }));
-
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body)['group']['_id'];
-      } else {
-        final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
-        throw ServerException(message: message);
-      }
-    }
-  } // createCommunity
 
   @override
   Future<void> leaveCommunity({required String communityId}) async {

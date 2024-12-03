@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_it/share_it.dart';
-
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/community_model.dart';
@@ -20,7 +19,6 @@ import '../widgets/community_section_chat.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   final String communityId;
-
   const CommunityDetailsScreen({
     super.key,
     required this.communityId,
@@ -33,33 +31,34 @@ class CommunityDetailsScreen extends StatefulWidget {
 class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late var communityDetailCubit;
+  late CommunityDetailsCubit communityDetailCubit;
   late bool isJoined;
   late bool isAdmin;
   late CommunityModel? communityCache;
 
+  /// init method
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     communityDetailCubit.init(widget.communityId);
     isAdmin = false;
   }
 
+  ///dispose method
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
 
+  /// group image
   Widget topElement(String avatarUrl) {
     return Container(
       height: MediaQuery.of(context).size.height * 0.30,
       decoration: BoxDecoration(
         color: Colors.white,
-        // borderRadius: BorderRadius.circular(10),
         image: DecorationImage(
           fit: BoxFit.cover,
           image: CachedNetworkImageProvider(avatarUrl),
@@ -68,11 +67,13 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
-  Widget titleArea(
-      {required String title,
-      required num userCount,
-      required List<UserSimpleModel> users,
-      required bool isPublic}) {
+  /// title area
+  Widget titleArea({
+    required String title,
+    required num userCount,
+    required List<UserSimpleModel> users,
+    required bool isPublic,
+  }) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
       child: Row(
@@ -81,11 +82,12 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
         children: [
           Expanded(
             child: Container(
-              // color: Colors.grey,
+              color: Colors.grey,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  ///group title
                   Text(
                     title,
                     textAlign: TextAlign.center,
@@ -95,23 +97,20 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     ),
                   ),
                   const SizedBox(height: 5),
-                  //
-                  //
 
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        // width: 200,
-                        // color: Colors.green,
-                        child: StackedAvatarIndicator(
-                          avatarUrls: users.map((e) => e.avatarUrl).toList(),
-                          showOnly: 4,
-                          avatarSize: 14,
-                          radius: 9,
-                          onTap: () {},
-                        ),
+                      ///StackedAvatarIndicator
+                      StackedAvatarIndicator(
+                        avatarUrls: users.map((e) => e.avatarUrl).toList(),
+                        showOnly: 4,
+                        avatarSize: 14,
+                        radius: 9,
+                        onTap: () {},
                       ),
+
+                      /// member count
                       Expanded(
                         child: Text(
                           '${userCount}k+ Members',
@@ -125,8 +124,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     ],
                   ),
                   const SizedBox(height: 4),
-                  //
-                  //
+
+                  /// is public or private
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -149,39 +148,38 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       ),
                     ],
                   ),
-                  //
-                  //
                 ],
               ),
             ),
           ),
-          //
-          //
+
+          ///join group button
           ElevatedButton(
             onPressed: () {
-              // Lógica ao clicar no botão
-              // context.go('/groups/create');
               if (isJoined) {
-                bottomSheetMenu(context, '', communityCache?.name ?? '',
-                    communityCache?.isMuted ?? false);
+                bottomSheetMenu(
+                  context,
+                  '',
+                  communityCache?.name ?? '',
+                  communityCache?.isMuted ?? false,
+                );
               }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: isJoined ? Colors.white : AppColors.primaryColor,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                    50), // Ajuste o raio conforme necessário
+                borderRadius: BorderRadius.circular(50),
               ),
-              // padding: EdgeInsets.all(15)
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
                 isJoined ? 'Joined' : 'Join',
                 style: TextStyle(
-                    color: isJoined ? AppColors.primaryColor : Colors.white,
-                    fontSize: 18,
-                    height: 0.3),
+                  color: isJoined ? AppColors.primaryColor : Colors.white,
+                  fontSize: 18,
+                  height: 0.3,
+                ),
               ),
             ),
           )
@@ -190,6 +188,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
+  /// tab bar area
   Widget tabTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -199,17 +198,16 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
         style: TextStyle(
           fontWeight: FontWeight.w700,
           fontSize: 16,
-          // color: Colors.black,
         ),
       ),
     );
   }
 
+  /// bottom sheet to leave group confirmation
   Future<dynamic> bottomSheetLeaveConfirm(BuildContext context, String userId) {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        // String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: 120,
@@ -233,10 +231,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        // padding: EdgeInsets.all(15)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -265,17 +261,18 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        // padding: EdgeInsets.all(15)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
                           style: TextStyle(
-                              color: Colors.white, fontSize: 18, height: 0.3),
+                            color: Colors.white,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
                         ),
                       ),
                     ),
@@ -294,7 +291,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        // String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: MediaQuery.of(context).size.height * 0.25,
@@ -337,6 +333,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
+  ///reportConfirmationBottomSheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
       context: context,
@@ -377,6 +374,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
+  ///reportReasonBottomSheet
   Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
       context: context,
@@ -414,30 +412,28 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ...kReportReasons
-                        .map(
-                          (e) => InkWell(
-                            onTap: () async {
-                              print('...on Select the report reason');
-                              Navigator.of(context).pop();
-                              communityDetailCubit.reportCommunity(e);
-                              await reportConfirmationBottomSheet(context);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    e,
-                                    style: blackonboardingBody1Style,
-                                  ),
-                                ),
-                              ],
+                    ...kReportReasons.map(
+                      (e) => InkWell(
+                        onTap: () async {
+                          print('...on Select the report reason');
+                          Navigator.of(context).pop();
+                          communityDetailCubit.reportCommunity(e);
+                          await reportConfirmationBottomSheet(context);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                e,
+                                style: blackonboardingBody1Style,
+                              ),
                             ),
-                          ),
-                        )
-                        ,
+                          ],
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 10),
                   ],
                 ),
@@ -462,13 +458,11 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             onTap: () {
               Navigator.pop(context);
             },
-            // icon: LineIcons.angleLeft,
             icon: Icons.chevron_left_rounded,
             iconSize: 30,
           ),
         ),
         backgroundColor: Colors.transparent,
-        // title: const Text('community create'),
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -478,13 +472,17 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                   String message = '''
                   Hey, check this community:   ${communityCache?.name} 
                   ''';
-                  // Lógica ao clicar no botão
-                  // context.go('/groups/create');
+
                   ShareIt.text(
-                      content: message, androidSheetTitle: 'Look this event');
+                    content: message,
+                    androidSheetTitle: 'Look this event',
+                  );
 
                   // TODO: remove this, only for presentation/test porpouse
-                  context.push('/groups/admin', extra: communityCache);
+                  // context.push(
+                  //   '/groups/admin',
+                  //   extra: communityCache,
+                  // );
                 },
                 icon: Icons.share,
                 iconSize: 20,
@@ -494,16 +492,22 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                 onTap: () {
                   print('...TAP menu settings');
 
-                  if (isAdmin) {
-                    context.push('/groups/admin', extra: communityCache);
+                  if (!isAdmin) {
+                    context.push(
+                      '/groups/admin',
+                      extra: communityCache,
+                    );
                   } else {
                     if (isJoined) {
-                      bottomSheetMenu(context, '', communityCache?.name ?? '',
-                          communityCache?.isMuted ?? false);
+                      bottomSheetMenu(
+                        context,
+                        '',
+                        communityCache?.name ?? '',
+                        communityCache?.isMuted ?? false,
+                      );
                     }
                   }
                 },
-                // icon: LineIcons.verticalEllipsis,
                 icon: Icons.more_vert_outlined,
                 iconSize: 25,
               ),
@@ -518,27 +522,20 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
           isJoined = state.community?.isJoined ?? false;
           communityCache = state.community;
 
+          ///loadinng state
           if (state.status == Status.loading) {
             return const CommunityDetailsSheemer();
           }
 
-          // print('... community${state.community}');
-          print('... isMuted${state.community?.isMuted}');
-
           return Column(
             children: [
-              //
               topElement(state.community!.avatarUrl),
-              //
-              //
               titleArea(
                 title: state.community?.name ?? '...',
                 userCount: state.community?.users.length ?? 0,
                 users: state.community?.users ?? [],
                 isPublic: state.community?.isPublic ?? false,
               ),
-              //
-              //
               const SizedBox(height: 15),
               Container(
                 height: 40,
@@ -556,15 +553,11 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       fontSize: 16,
                       color: Colors.grey,
                     ),
-
-                    // labelColor: AppColors.primaryColor.withOpacity(0.8),
                     controller: _tabController,
                     tabAlignment: TabAlignment.start,
                     isScrollable: true,
-                    // labelPadding: EdgeInsets.only(left: 0, right: 20),
                     tabs: [
                       Tab(child: tabTitle('About')),
-                      // Tab(child: tabTitle('Feed')),
                       Tab(child: tabTitle('Chat')),
                     ],
                   ),
@@ -574,8 +567,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                 child: TabBarView(
                   controller: _tabController,
                   children: [
-                    //
-                    // section ABOUT
                     CommunitySectionAbout(
                       community: state.community!,
                     ),
@@ -600,13 +591,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     //
                     //  section CHAT
                     CommunitySectionChat(community: state.community!),
-                    //
-                    //
                   ],
                 ),
               ),
-              //
-              //
             ],
           );
         },
