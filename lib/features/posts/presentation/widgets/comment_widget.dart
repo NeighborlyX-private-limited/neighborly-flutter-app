@@ -72,198 +72,208 @@ class _CommentWidgetState extends State<CommentWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipOval(
-              child: Container(
-                width: screenWidth * 0.1,
-                height: screenWidth * 0.1,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
+        InkWell(
+          onTap: () {
+            if (widget.comment.userName.contains('[deleted]')) {
+              context.push('/deleted-user');
+            } else {
+              context.push('/userProfileScreen/${widget.comment.userId}');
+            }
+          },
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipOval(
+                child: Container(
+                  width: screenWidth * 0.1,
+                  height: screenWidth * 0.1,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                  ),
+                  child: widget.comment.proPic != null
+                      ? Image.network(
+                          widget.comment.proPic!,
+                          fit: BoxFit.cover,
+                        )
+                      : widget.comment.userName.contains('[deleted]')
+                          ? Image.asset(
+                              'assets/deleted_user.png',
+                              fit: BoxFit.contain,
+                            )
+                          : Image.asset(
+                              'assets/second_pro_pic.png',
+                              fit: BoxFit.cover,
+                            ),
                 ),
-                child: widget.comment.proPic != null
-                    ? Image.network(
-                        widget.comment.proPic!,
-                        fit: BoxFit.cover,
-                      )
-                    : widget.comment.userName.contains('[deleted]')
-                        ? Image.asset(
-                            'assets/deleted_user.png',
-                            fit: BoxFit.contain,
-                          )
-                        : Image.asset(
-                            'assets/second_pro_pic.png',
-                            fit: BoxFit.cover,
-                          ),
               ),
-            ),
-            const SizedBox(
-              width: 12,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: widget.comment.userName.contains('[deleted]')
-                            ? Text(
-                                AppLocalizations.of(context)!.neighborly_user,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
+              const SizedBox(
+                width: 12,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: widget.comment.userName.contains('[deleted]')
+                              ? Text(
+                                  AppLocalizations.of(context)!.neighborly_user,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                )
+                              : Text(
+                                  widget.comment.userName,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: screenWidth * 0.035,
+                                  ),
                                 ),
-                              )
-                            : Text(
-                                widget.comment.userName,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: screenWidth * 0.035,
-                                ),
-                              ),
-                      ),
-                      const Spacer(),
-                      InkWell(
-                        onTap: () {
-                          showBottomSheet();
-                        },
-                        child: Icon(
-                          Icons.more_horiz,
-                          size: 30,
-                          color: Colors.grey[500],
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 4,
-                  ),
-                  Text(
-                    widget.comment.text,
-                    style: TextStyle(
-                      color: Colors.grey[800],
-                      fontSize: screenWidth * 0.04,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        timeAgo(widget.comment.createdAt),
-                        style: TextStyle(
-                          color: AppColors.greyColor,
-                          fontWeight: FontWeight.w400,
-                          fontSize: screenWidth * 0.035,
-                          height: 1.3,
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          widget.onReplyTap(widget.comment);
-                          widget.commentFocusNode.requestFocus();
-                        },
-                        child: Text(
-                          AppLocalizations.of(context)!.reply,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            height: 1.3,
+                        const Spacer(),
+                        InkWell(
+                          onTap: () {
+                            showBottomSheet();
+                          },
+                          child: Icon(
+                            Icons.more_horiz,
+                            size: 30,
+                            color: Colors.grey[500],
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ReactionCommentWidget(
-                    comment: widget.comment,
-                    isPost: widget.isPost,
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  GestureDetector(
-                    onTap: _fetchReplies,
-                    child: Text(
-                      _showReplies
-                          ? AppLocalizations.of(context)!.hide_replies
-                          : AppLocalizations.of(context)!.view_replies,
-                      style: const TextStyle(
-                        color: AppColors.greyColor,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 14,
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 4,
+                    ),
+                    Text(
+                      widget.comment.text,
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: screenWidth * 0.04,
                         height: 1.3,
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  _showReplies
-                      ? BlocConsumer<FetchCommentReplyBloc,
-                          FetchCommentReplyState>(
-                          listener: (context, state) {
-                            /// Fetch Comment Reply Success State
-                            if (state is FetchCommentReplySuccessState &&
-                                state.commentId == widget.comment.commentid) {
-                              setState(() {
-                                _replies = state.reply;
-                              });
-                            }
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          timeAgo(widget.comment.createdAt),
+                          style: TextStyle(
+                            color: AppColors.greyColor,
+                            fontWeight: FontWeight.w400,
+                            fontSize: screenWidth * 0.035,
+                            height: 1.3,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            widget.onReplyTap(widget.comment);
+                            widget.commentFocusNode.requestFocus();
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.reply,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              height: 1.3,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ReactionCommentWidget(
+                      comment: widget.comment,
+                      isPost: widget.isPost,
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                      onTap: _fetchReplies,
+                      child: Text(
+                        _showReplies
+                            ? AppLocalizations.of(context)!.hide_replies
+                            : AppLocalizations.of(context)!.view_replies,
+                        style: const TextStyle(
+                          color: AppColors.greyColor,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14,
+                          height: 1.3,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    _showReplies
+                        ? BlocConsumer<FetchCommentReplyBloc,
+                            FetchCommentReplyState>(
+                            listener: (context, state) {
+                              /// Fetch Comment Reply Success State
+                              if (state is FetchCommentReplySuccessState &&
+                                  state.commentId == widget.comment.commentid) {
+                                setState(() {
+                                  _replies = state.reply;
+                                });
+                              }
 
-                            ///Fetch Comment Reply Failure State
-                            else if (state is FetchCommentReplyFailureState &&
-                                state.commentId == widget.comment.commentid) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(state.error)),
-                              );
-                            }
-                          },
-                          builder: (context, state) {
-                            ///Fetch Comment Reply Loading State
-                            if (state is FetchCommentReplyLoadingState &&
-                                state.commentId == widget.comment.commentid) {
-                              return Center(
-                                child: BouncingLogoIndicator(
-                                  logo: 'images/logo.svg',
-                                ),
-                              );
-                            } else {
-                              return _replies.isNotEmpty
-                                  ? ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: _replies.length,
-                                      itemBuilder: (context, index) {
-                                        final reply = _replies[index];
-                                        return ReplyWidget(
-                                          reply: reply,
-                                        );
-                                      },
-                                    )
-                                  : Center(
-                                      child: Text(AppLocalizations.of(context)!
-                                          .no_reply_yet),
-                                    );
-                            }
-                          },
-                        )
-                      : const SizedBox(),
-                ],
+                              ///Fetch Comment Reply Failure State
+                              else if (state is FetchCommentReplyFailureState &&
+                                  state.commentId == widget.comment.commentid) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(state.error)),
+                                );
+                              }
+                            },
+                            builder: (context, state) {
+                              ///Fetch Comment Reply Loading State
+                              if (state is FetchCommentReplyLoadingState &&
+                                  state.commentId == widget.comment.commentid) {
+                                return Center(
+                                  child: BouncingLogoIndicator(
+                                    logo: 'images/logo.svg',
+                                  ),
+                                );
+                              } else {
+                                return _replies.isNotEmpty
+                                    ? ListView.builder(
+                                        shrinkWrap: true,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: _replies.length,
+                                        itemBuilder: (context, index) {
+                                          final reply = _replies[index];
+                                          return ReplyWidget(
+                                            reply: reply,
+                                          );
+                                        },
+                                      )
+                                    : Center(
+                                        child: Text(
+                                            AppLocalizations.of(context)!
+                                                .no_reply_yet),
+                                      );
+                              }
+                            },
+                          )
+                        : const SizedBox(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(
           height: 15,

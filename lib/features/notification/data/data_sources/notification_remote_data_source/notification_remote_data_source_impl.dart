@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
@@ -134,25 +135,34 @@ Future<int> getNotificationUnreadCount() async {
   String url =
       '$kBaseUrlNotification/notifications/get-unread-notification-count';
   print('url: $url');
-
-  final response = await client.get(
-    Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=utf-8',
-      'Authorization': 'Bearer $getAccessToken',
-      'Cookie': cookieHeader,
-    },
-  );
-  print(
-      'getNotificationUnreadCount api response status code: ${response.statusCode}');
-  print('getNotificationUnreadCount api response: ${response.body}');
-  if (response.statusCode == 200) {
-    final unreadCount = jsonDecode(response.body)["unreadCount"];
-    return unreadCount ?? 0;
-  } else {
-    final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
-    print('else error in getNotificationUnreadCount: $message');
-    throw ServerException(message: message);
+  try {
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': 'Bearer $getAccessToken',
+        'Cookie': cookieHeader,
+      },
+    );
+    print(
+        'getNotificationUnreadCount api response status code: ${response.statusCode}');
+    print('getNotificationUnreadCount api response: ${response.body}');
+    if (response.statusCode == 200) {
+      final unreadCount = jsonDecode(response.body)["unreadCount"];
+      return unreadCount ?? 0;
+    } else {
+      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      print('else error in getNotificationUnreadCount: $message');
+      throw ServerException(message: message);
+    }
+  } on SocketException catch (_) {
+    throw ServerException(
+      message: 'oops something went wrong',
+    );
+  } catch (e) {
+    throw ServerException(
+      message: 'oops something went wrong',
+    );
   }
 }
 

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/award_bag_buy_bottom_sheet.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
+import 'package:go_router/go_router.dart';
 
 class AwardSelectionScreen extends StatefulWidget {
   const AwardSelectionScreen({super.key});
@@ -122,19 +125,35 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              SvgPicture.asset(
-                'assets/award.svg',
-                height: 60,
-                width: 60,
+              Row(
+                children: [
+                  SvgPicture.asset(
+                    'assets/award.svg',
+                    height: 50,
+                    width: 50,
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text(
+                    AppLocalizations.of(context)!.buy_awards,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
-              SizedBox(
-                width: 20,
-              ),
-              Text(
-                AppLocalizations.of(context)!.buy_awards,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      String karmaScore = ShardPrefHelper.getKarmaScore();
+                      Navigator.pop(context);
+                      context.push('/activityAndStatsScreen/$karmaScore');
+                    },
+                    child: Icon(Icons.info_outline_rounded),
+                  ),
+                ],
               ),
             ],
           ),

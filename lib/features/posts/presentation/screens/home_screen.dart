@@ -36,7 +36,9 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with AutomaticKeepAliveClientMixin {
+  final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isHome = true;
   bool isDobSet = true;
@@ -60,6 +62,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(0.0);
+    }
+
     setIsHome();
     fetchLocationAndUpdate();
     setCityHomeName();
@@ -77,6 +83,21 @@ class _HomeScreenState extends State<HomeScreen> {
         _openBottomSheet();
       });
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(0.0);
+    }
+  }
+
+  ///dispose method
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   /// on notification method
@@ -105,6 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   /// refersh the home screen
   Future<void> _onRefresh() async {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(0.0);
+    }
     setIsHome();
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
@@ -235,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     }).catchError((error) {
-      if (mounted) {
+      if (mounted && (!error.contains('oops something went wrong'))) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(error.toString()),
@@ -247,6 +271,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(0.0);
+    }
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: PopScope(
@@ -524,6 +552,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           )
                         : ListView.separated(
+                            controller: _scrollController,
                             itemCount: posts.length,
                             itemBuilder: (context, index) {
                               final post = posts[index];
@@ -566,6 +595,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     }
                     if (state.error.contains('No internet connection')) {
+                      return SomethingWentWrong(
+                        imagePath: 'assets/something_went_wrong.svg',
+                        title: AppLocalizations.of(context)!
+                            .aaah_something_went_wrong,
+                        message: AppLocalizations.of(context)!
+                            .we_could_not_fetch_your_data_please_try_starting_it_again,
+                        buttonText: AppLocalizations.of(context)!.retry,
+                        onButtonPressed: () {
+                          _onRefresh();
+                        },
+                      );
+                    }
+                    if (state.error.contains('oops something went wrong')) {
                       return SomethingWentWrong(
                         imagePath: 'assets/something_went_wrong.svg',
                         title: AppLocalizations.of(context)!
@@ -804,4 +846,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => false;
 }

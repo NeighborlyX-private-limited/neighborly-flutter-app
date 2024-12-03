@@ -23,7 +23,7 @@ class SomethingWentWrong extends StatelessWidget {
     return Center(
       child: Container(
         width: MediaQuery.of(context).size.width * 0.8,
-        height: 300,
+        height: 400,
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: AppColors.whiteColor,

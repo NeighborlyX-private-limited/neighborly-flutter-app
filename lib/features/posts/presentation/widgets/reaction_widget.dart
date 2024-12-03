@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:share_it/share_it.dart';
@@ -548,11 +549,22 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                   const SizedBox(
                     height: 15,
                   ),
-                  Center(
-                    child: Text(
-                      AppLocalizations.of(context)!.award_this_post,
-                      style: onboardingHeading2Style,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.award_this_post,
+                        style: onboardingHeading2Style,
+                      ),
+                      InkWell(
+                        onTap: () {
+                          String karmaScore = ShardPrefHelper.getKarmaScore();
+                          Navigator.pop(context);
+                          context.push('/activityAndStatsScreen/$karmaScore');
+                        },
+                        child: Icon(Icons.info_outline_rounded),
+                      ),
+                    ],
                   ),
                   const SizedBox(
                     height: 5,

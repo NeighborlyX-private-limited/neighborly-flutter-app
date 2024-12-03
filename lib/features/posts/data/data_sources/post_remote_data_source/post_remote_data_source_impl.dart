@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
 import '../../../../../core/constants/constants.dart';
@@ -11,7 +12,6 @@ import 'post_remote_data_source.dart';
 
 class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   final http.Client client;
-
   PostRemoteDataSourceImpl({required this.client});
 
   @override
@@ -59,23 +59,33 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'range': '$radius',
       };
     }
+    try {
+      final response = await client.get(
+        Uri.parse(url).replace(queryParameters: queryParameters),
+        headers: <String, String>{
+          'Cookie': cookieHeader,
+        },
+      );
 
-    final response = await client.get(
-      Uri.parse(url).replace(queryParameters: queryParameters),
-      headers: <String, String>{
-        'Cookie': cookieHeader,
-      },
-    );
-
-    final List<dynamic> jsonData = jsonDecode(response.body);
-    print('getAllPosts api response status code: ${response.statusCode}');
-    print('getAllPosts api response: $jsonData');
-    if (response.statusCode == 200) {
-      return jsonData.map((data) => PostModel.fromJson(data)).toList();
-    } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
-      print('else error in getAllPosts: $message');
-      throw ServerException(message: message);
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      print('getAllPosts api response status code: ${response.statusCode}');
+      print('getAllPosts api response: $jsonData');
+      if (response.statusCode == 200) {
+        return jsonData.map((data) => PostModel.fromJson(data)).toList();
+      } else {
+        final message =
+            jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+        print('else error in getAllPosts: $message');
+        throw ServerException(message: message);
+      }
+    } on SocketException catch (_) {
+      throw ServerException(
+        message: 'oops something went wrong',
+      );
+    } catch (e) {
+      throw ServerException(
+        message: 'oops something went wrong',
+      );
     }
   }
 

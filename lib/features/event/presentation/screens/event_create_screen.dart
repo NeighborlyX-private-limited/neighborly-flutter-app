@@ -241,12 +241,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
         setState(() => isValidForm = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ops, you forgot to fill: \n${errors
-                    .map((e) => '\n${e}')
-                    .toList()
-                    .toString()
-                    .replaceAll('[', '')
-                    .replaceAll(']', '')}'),
+            content: Text(
+                'Ops, you forgot to fill: \n${errors.map((e) => '\n${e}').toList().toString().replaceAll('[', '').replaceAll(']', '')}'),
           ),
         );
       }
@@ -435,8 +431,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                           category: categoryEC,
                           onChange: (dateStart, hourStart, dateEnd, hourEnd,
                               category) {
-                            print(
-                                'dateStart=$dateStart hourStart=$hourStart');
+                            print('dateStart=$dateStart hourStart=$hourStart');
                             print('dateStart=$dateEnd hourStart=$hourEnd');
 
                             // updateDates(String dateStart, String hourStart, String dateEnd, String hourEnd)
@@ -658,7 +653,9 @@ class _Step1areaState extends State<Step1area> {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             // margin: EdgeInsets.all(15),
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey,),
+              border: Border.all(
+                color: Colors.grey,
+              ),
               borderRadius: BorderRadius.circular(10),
             ),
             child: TextField(

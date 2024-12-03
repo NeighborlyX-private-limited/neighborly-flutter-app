@@ -295,6 +295,14 @@ class ShardPrefHelper {
   static bool getIsViewedTutorial() =>
       _preferences.getBool('isViewedTutorial') ?? false;
 
+  ///....set and get karma score
+  ///set
+  static Future setKarmaScore(String karmaScore) async =>
+      await _preferences.setString('karma', karmaScore);
+
+  ///get
+  static String getKarmaScore() => _preferences.getString('karma') ?? '0';
+
   // // save is cheered
   // static Future setIsCheered(String userId, num postId, bool isLiked) async =>
   //     await _preferences.setBool('$userId-${postId}_isCheered', isLiked);

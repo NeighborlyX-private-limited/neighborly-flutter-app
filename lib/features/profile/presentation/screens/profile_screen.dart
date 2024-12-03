@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -28,7 +29,6 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
-    print('here 2');
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _fetchProfile();
@@ -70,7 +70,6 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    print('here 3');
     return Directionality(
       textDirection: TextDirection.ltr,
       child: SafeArea(
@@ -81,6 +80,8 @@ class _ProfileScreenState extends State<ProfileScreen>
               if (state is GetProfileLoadingState) {
                 return const ProfileShimmerWidget();
               } else if (state is GetProfileSuccessState) {
+                ShardPrefHelper.setKarmaScore(state.profile.karma.toString());
+
                 return NestedScrollView(
                   headerSliverBuilder:
                       (BuildContext context, bool innerBoxIsScrolled) {
