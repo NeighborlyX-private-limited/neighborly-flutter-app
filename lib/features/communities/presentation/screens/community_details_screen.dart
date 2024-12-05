@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:share_it/share_it.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
@@ -53,16 +54,25 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     super.dispose();
   }
 
+  Color parseColor(String hexColor) {
+    hexColor = hexColor.replaceAll('#', '');
+    return Color(int.parse('0xFF$hexColor'));
+  }
+
   /// group image
   Widget topElement(String avatarUrl) {
+    bool isColor = avatarUrl.length > 1 && avatarUrl.length < 8;
+    print('isColor: $isColor');
     return Container(
       height: MediaQuery.of(context).size.height * 0.30,
       decoration: BoxDecoration(
-        color: Colors.white,
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: CachedNetworkImageProvider(avatarUrl),
-        ),
+        color: isColor ? parseColor(avatarUrl) : Colors.transparent,
+        image: isColor
+            ? null
+            : DecorationImage(
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(avatarUrl),
+              ),
       ),
     );
   }
@@ -81,75 +91,81 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
-            child: Container(
-              color: Colors.grey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  ///group title
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ///group title
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 18,
+                  ),
+                ),
+                const SizedBox(height: 5),
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ///StackedAvatarIndicator
+                    StackedAvatarIndicator(
+                      avatarUrls: users.map((e) => e.avatarUrl).toList(),
+                      showOnly: 4,
+                      avatarSize: 14,
+                      radius: 9,
+                      onTap: () {},
                     ),
-                  ),
-                  const SizedBox(height: 5),
 
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ///StackedAvatarIndicator
-                      StackedAvatarIndicator(
-                        avatarUrls: users.map((e) => e.avatarUrl).toList(),
-                        showOnly: 4,
-                        avatarSize: 14,
-                        radius: 9,
-                        onTap: () {},
-                      ),
+                    /// member count
+                    Expanded(
+                      child: userCount >= 1000
+                          ? Text(
+                              '${userCount}k+ Members',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            )
+                          : Text(
+                              '$userCount Members',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 14,
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
 
-                      /// member count
-                      Expanded(
-                        child: Text(
-                          '${userCount}k+ Members',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-
-                  /// is public or private
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        isPublic ? Icons.public : Icons.lock_person_outlined,
+                /// is public or private
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      isPublic ? Icons.public : Icons.lock_person_outlined,
+                      color: Colors.black,
+                      size: 15,
+                    ),
+                    const SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      isPublic ? 'Public' : 'Private',
+                      style: TextStyle(
+                        height: 0.5,
                         color: Colors.black,
-                        size: 15,
+                        fontSize: 14,
                       ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      Text(
-                        isPublic ? 'Public' : 'Private',
-                        style: TextStyle(
-                          height: 0.5,
-                          color: Colors.black,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
 
@@ -448,8 +464,12 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+
+        ///back arraow button
         leading: Container(
           margin: EdgeInsets.all(9.0),
           height: 40,
@@ -462,36 +482,28 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             iconSize: 30,
           ),
         ),
-        backgroundColor: Colors.transparent,
         actions: [
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              ///share button
               AppbatButton(
                 onTap: () {
-                  String message = '''
-                  Hey, check this community:   ${communityCache?.name} 
-                  ''';
-
+                  String message =
+                      'Hey, check this community: ${communityCache?.name}';
                   ShareIt.text(
                     content: message,
                     androidSheetTitle: 'Look this event',
                   );
-
-                  // TODO: remove this, only for presentation/test porpouse
-                  // context.push(
-                  //   '/groups/admin',
-                  //   extra: communityCache,
-                  // );
                 },
                 icon: Icons.share,
                 iconSize: 20,
               ),
               const SizedBox(width: 10),
+
+              ///menu button
               AppbatButton(
                 onTap: () {
-                  print('...TAP menu settings');
-
                   if (!isAdmin) {
                     context.push(
                       '/groups/admin',

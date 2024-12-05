@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:readmore/readmore.dart';
-
 import '../../../../core/models/community_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
@@ -19,36 +18,28 @@ class CommunitySectionAbout extends StatelessWidget {
     double space = 6;
     return Container(
       width: double.infinity,
-      color: AppColors.lightBackgroundColor,
-      // color: AppColors.lightBackgroundColor,
+      color: AppColors.whiteColor,
       child: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //
-            //
-            SizedBox(height: space),
             DescriptionArea(description: community.description),
-            //
-            //
-            SizedBox(height: space),
+            Divider(),
             TextAndIconArea(
               title: 'Karma',
               text: '${community.karma}',
               svgPath: 'assets/karma.svg',
             ),
-            //
-            //
-            SizedBox(height: space),
             TextAndIconArea(
-                title: 'Radius',
-                text: '${community.radius} miles',
-                icon: Icons.pin_drop_outlined),
-            //
-            //
-            SizedBox(height: space),
-            MembersList(members: community.users, admins: community.admins),
-            //
-            //
+              title: 'Radius',
+              text: '${community.radius} miles',
+              icon: Icons.pin_drop_outlined,
+            ),
+            Divider(),
+            MembersList(
+              members: community.users,
+              admins: community.admins,
+            ),
           ],
         ),
       ),
@@ -56,10 +47,7 @@ class CommunitySectionAbout extends StatelessWidget {
   }
 }
 
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
+///description area
 class DescriptionArea extends StatelessWidget {
   final String description;
   const DescriptionArea({
@@ -69,14 +57,13 @@ class DescriptionArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(15),
-      color: Colors.white,
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Description',
+            'Group Description',
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.black,
@@ -93,23 +80,23 @@ class DescriptionArea extends StatelessWidget {
             trimCollapsedText: ' See more',
             trimExpandedText: ' See less',
             moreStyle: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-                color: Colors.blue),
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+              color: Colors.blue,
+            ),
             lessStyle: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.normal,
-                color: Colors.blue),
+              fontSize: 14,
+              fontWeight: FontWeight.normal,
+              color: Colors.blue,
+            ),
           ),
         ],
       ),
     );
   }
 }
-// ########################################################################
-// ########################################################################
-// ########################################################################
 
+///text and icon area
 class TextAndIconArea extends StatelessWidget {
   final String title;
   final String text;
@@ -173,10 +160,7 @@ class TextAndIconArea extends StatelessWidget {
   }
 }
 
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
+///member and admin list area
 class MembersList extends StatefulWidget {
   final List<UserSimpleModel> members;
   final List<UserSimpleModel> admins;
@@ -281,14 +265,11 @@ class _MembersListState extends State<MembersList> {
                 fontSize: 16,
               ),
             ),
-
           if (hasMembers == true) ...[
             ...widget.admins.map((adm) => userTile(adm, true)),
-            //
             ...widget.members
                 .take(showAll == true ? widget.members.length : 5)
                 .map((user) => userTile(user, false)),
-            //
             showAll == false && widget.members.length > 5
                 ? Padding(
                     padding: const EdgeInsets.only(top: 10.0),
@@ -311,7 +292,6 @@ class _MembersListState extends State<MembersList> {
                   )
                 : SizedBox.shrink(),
           ],
-          //
         ],
       ),
     );

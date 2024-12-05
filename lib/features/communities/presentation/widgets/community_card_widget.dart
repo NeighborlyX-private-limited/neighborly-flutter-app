@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-
+import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
 
@@ -29,22 +29,29 @@ class CommunityCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isColor =
+        community.avatarUrl.length > 1 && community.avatarUrl.length < 8;
+    print('isColor: $isColor');
+
     return GestureDetector(
       onTap: () {
         openCommunity(context);
       },
       child: Card(
-        elevation: 7,
+        elevation: 3,
         child: Container(
           height: 150,
           width: 125,
           decoration: BoxDecoration(
-            color: Colors.black,
+            color:
+                isColor ? parseColor(community.avatarUrl) : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: CachedNetworkImageProvider(community.avatarUrl),
-            ),
+            image: isColor
+                ? null
+                : DecorationImage(
+                    fit: BoxFit.cover,
+                    image: CachedNetworkImageProvider(community.avatarUrl),
+                  ),
           ),
           child: Column(
             children: [
@@ -61,33 +68,34 @@ class CommunityCardWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(50),
                       ),
                       child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                community.isPublic
-                                    ? Icons.public
-                                    : Icons.lock_person_outlined,
-                                color: Colors.white,
-                                size: 15,
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Text(
-                                community.isPublic ? 'Public' : 'Private',
-                                // textAlign: TextAlign.center,
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              community.isPublic
+                                  ? Icons.public
+                                  : Icons.lock_person_outlined,
+                              color: Colors.white,
+                              size: 15,
+                            ),
+                            const SizedBox(
+                              width: 4,
+                            ),
+                            Text(
+                              community.isPublic ? 'Public' : 'Private',
+                              // textAlign: TextAlign.center,
 
-                                style: TextStyle(
-                                  height: 0.5,
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
+                              style: TextStyle(
+                                height: 0.5,
+                                color: Colors.white,
+                                fontSize: 12,
                               ),
-                            ],
-                          )),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -179,5 +187,10 @@ class CommunityCardWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Color parseColor(String hexColor) {
+    hexColor = hexColor.replaceAll('#', '');
+    return Color(int.parse('0xFF$hexColor'));
   }
 }

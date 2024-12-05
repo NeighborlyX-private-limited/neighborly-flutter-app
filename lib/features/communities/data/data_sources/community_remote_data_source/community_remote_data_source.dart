@@ -10,9 +10,17 @@ abstract class CommunityRemoteDataSource {
     required CommunityModel community,
     File? pictureFile,
   });
-  Future<List<CommunityModel>> getAllCommunities(
-      {required bool isSummary, required bool isNearBy});
-  Future<CommunityModel> getCommunity({required String communityId});
+
+  ///getAllCommunities
+  Future<List<CommunityModel>> getAllCommunities({
+    required bool isSummary,
+    required bool isNearBy,
+  });
+
+  ///get community details
+  Future<CommunityModel> getCommunity({
+    required String communityId,
+  });
 
   Future<void> removeUser(
       {required String communityId, required String userId});

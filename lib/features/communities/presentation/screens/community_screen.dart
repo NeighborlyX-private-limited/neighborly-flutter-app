@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import '../../../../core/constants/status.dart';
 import '../../../posts/presentation/widgets/toggle_button_widget.dart';
 import '../bloc/communities_main_cubit.dart';
@@ -19,6 +20,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   bool isNearBy = false;
   bool isSummary = true;
 
+  ///init state method
   @override
   void initState() {
     super.initState();
@@ -26,6 +28,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
     communityMainCubit.init();
   }
 
+  ///handle toggle method for fetching groups
   void handleToggle(bool value) {
     setState(() {
       isNearBy = value;
@@ -34,6 +37,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
     communityMainCubit.updateNearBy(!value);
   }
 
+  ///handle toggle is summary
   void handleToggleIsSummary(bool value) {
     setState(() {
       isSummary = value;
@@ -42,22 +46,23 @@ class _CommunityScreenState extends State<CommunityScreen> {
   }
 
   @override
-  Widget build(
-    BuildContext context,
-  ) {
-    // communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColors.whiteColor,
           title: Row(
             children: [
+              ///app logo
               SvgPicture.asset(
                 'assets/logo.svg',
                 width: 30,
                 height: 34,
               ),
               const SizedBox(width: 10),
+
+              ///toggle button
               CustomToggleSwitch(
                 imagePath1: 'assets/home.svg',
                 imagePath2: 'assets/location.svg',
@@ -66,6 +71,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ],
           ),
           actions: [
+            ///search icon
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: InkWell(
@@ -80,6 +86,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 ),
               ),
             ),
+
+            ///chat icon
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: InkWell(
@@ -100,16 +108,41 @@ class _CommunityScreenState extends State<CommunityScreen> {
           bloc: communityMainCubit,
           listener: (context, state) {
             switch (state.status) {
+              ///loading state
               case Status.loading:
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) =>
+                      const Center(child: CircularProgressIndicator()),
+                );
+                print('loading state in listner');
                 break;
+
+              /// failure state
               case Status.failure:
-                // hideLoader();
-                // showError(state.errorMessage ?? 'Some error');
-                print('ERROR ${state.failure?.message}');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '${state.errorMessage}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.red,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+                print('failure state in listner');
+
                 break;
+
+              /// success state
               case Status.success:
+                print('success state in listner');
                 break;
+
+              /// initial  state
               case Status.initial:
+                print('initial state in listner');
                 break;
             }
           },
@@ -117,83 +150,88 @@ class _CommunityScreenState extends State<CommunityScreen> {
             return BlocBuilder<CommunityMainCubit, CommunityMainState>(
               bloc: communityMainCubit,
               builder: (context, state) {
+                ///loading state in builder
                 if (state.status == Status.loading) {
+                  print('loading in builder');
                   return const CommunityMainSheemer();
                 }
 
-                if (state.communities.isNotEmpty) {
+                if (state.status == Status.success &&
+                    state.communities.isNotEmpty) {
+                  print('success and isNotEmpty in builder');
                   // return CommunityEmptyWidget();
 
-                  return LayoutBuilder(builder: (context, constraints) {
-                    int crossAxisCount = 2;
-
-                    if (constraints.maxWidth >= 600) {
-                      crossAxisCount = 3;
-                    } else if (constraints.maxWidth >= 900) {
-                      crossAxisCount = 4;
-                    }
-
-                    return Padding(
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      int crossAxisCount = 2;
+                      if (constraints.maxWidth >= 600) {
+                        crossAxisCount = 3;
+                      } else if (constraints.maxWidth >= 900) {
+                        crossAxisCount = 4;
+                      }
+                      return Padding(
                         padding: EdgeInsets.all(10),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 5),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    isSummary ? 'Summary' : 'All Groups',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      handleToggleIsSummary(!isSummary);
-                                    },
-                                    child: Text(
-                                      isSummary ? 'See all' : 'See less',
+                        child: Container(
+                          color: AppColors.whiteColor,
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 5),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      isSummary ? 'Summary' : 'All Groups',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 16,
-                                        color: Color(0xff635BFF),
+                                        fontSize: 20,
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Expanded(
-                              child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount:
-                                            crossAxisCount, // Número de colunas
-                                        crossAxisSpacing:
-                                            10.0, // Espaçamento horizontal entre os itens
-                                        mainAxisSpacing:
-                                            10.0, // Espaçamento vertical entre os itens
-                                        childAspectRatio: 1 / 1.5),
-                                itemCount: state.communities.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    child: CommunityCardWidget(
-                                      community: state.communities[index],
+                                    GestureDetector(
+                                      onTap: () {
+                                        handleToggleIsSummary(!isSummary);
+                                      },
+                                      child: Text(
+                                        isSummary ? 'See all' : 'See less',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                          color: Color(0xff635BFF),
+                                        ),
+                                      ),
                                     ),
-                                  );
-                                },
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ));
-                  });
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Expanded(
+                                child: GridView.builder(
+                                  gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: crossAxisCount,
+                                    crossAxisSpacing: 10.0,
+                                    mainAxisSpacing: 10.0,
+                                    childAspectRatio: 1 / 1.5,
+                                  ),
+                                  itemCount: state.communities.length,
+                                  itemBuilder: (context, index) {
+                                    return CommunityCardWidget(
+                                      community: state.communities[index],
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 }
 
                 if (state.communities.isNotEmpty &&
@@ -201,7 +239,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   return Text('empty');
                 }
 
-                return Text('...');
+                return Text('No Data');
               },
             );
           },

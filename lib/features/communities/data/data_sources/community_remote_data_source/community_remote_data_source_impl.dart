@@ -113,47 +113,60 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     }
   }
 
+  /// get all community api call
   @override
-  Future<List<CommunityModel>> getAllCommunities(
-      {required bool isSummary, required bool isNearBy}) async {
-    print('... getAllCommunities isSummary=$isSummary isNearBy=$isNearBy ');
-    String url =
-        '$kBaseUrl/group/nearby-groups'; // from postman collection 2024-08-17
-
+  Future<List<CommunityModel>> getAllCommunities({
+    required bool isSummary,
+    required bool isNearBy,
+  }) async {
+    print('... getAllCommunities start with');
+    print('isSummary=$isSummary');
+    print('isNearBy=$isNearBy ');
+    String url = '$kBaseUrl/group/nearby-groups';
+    print('url=$url');
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      print('No cookies found in getAllCommunities');
+      throw const ServerException(message: 'Something went wrong');
     }
     String cookieHeader = cookies.join('; ');
-    Map<String, dynamic> queryParameters = {'isHome': 'false'};
-
+    print('cookieHeader=$cookieHeader');
+    //Map<String, dynamic> queryParameters = {'isHome': 'false'};
     final response = await client.get(
-      Uri.parse(url).replace(queryParameters: queryParameters),
+      // Uri.parse(url).replace(queryParameters: queryParameters),
+      Uri.parse(url),
       headers: <String, String>{
         'Cookie': cookieHeader,
       },
     );
-
+    print('getAllCommunities status code: ${response.statusCode}');
+    print('getAllCommunities response: ${response.body}');
     if (response.statusCode == 200) {
-      print(jsonDecode(response.body));
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      print(
+          'else error in getAllCommunities: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
       throw ServerException(message: message);
     }
   }
 
+  ///get community api call
   @override
   Future<CommunityModel> getCommunity({required String communityId}) async {
-    print('... getCommunity communityId=$communityId');
+    print('....getCommunity start with');
+    print('communityId=$communityId');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      print('No cookies found in getCommunity');
+      throw const ServerException(message: 'Something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/group/fetch-group-details/$communityId';
+    print('url=$url');
 
     final response = await client.get(
       Uri.parse(url),
@@ -161,11 +174,15 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         'Cookie': cookieHeader,
       },
     );
-
+    print('getCommunity status code: ${response.statusCode}');
+    print('getCommunity response: ${response.body}');
     if (response.statusCode == 200) {
       return CommunityModel.fromJson(jsonDecode(response.body));
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
+      print(
+          'else error in getCommunity: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
       throw ServerException(message: message);
     }
   }

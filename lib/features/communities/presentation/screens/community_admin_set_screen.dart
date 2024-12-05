@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 import '../../../../core/models/community_model.dart';
 
@@ -15,7 +16,9 @@ class CommunityAdminSetScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
@@ -26,7 +29,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
           },
         ),
         title: Text(
-          'Settings',
+          'Group settings',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -42,6 +45,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              ///general
               Text(
                 'General',
                 overflow: TextOverflow.ellipsis,
@@ -51,9 +55,10 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              //
-              //
+
               const SizedBox(height: 5),
+
+              ///member list
               MenuIconItem(
                 title: 'Member list',
                 svgPath: 'assets/menu_members.svg',
@@ -62,9 +67,10 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   context.push('/groups/admin/members');
                 },
               ),
-              //
-              //
+
               const SizedBox(height: 5),
+
+              ///community icon
               MenuIconItem(
                 title: 'Community Icon',
                 svgPath: 'assets/menu_icon.svg',
@@ -73,9 +79,10 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   context.push('/groups/admin/icon');
                 },
               ),
-              //
-              //
+
               const SizedBox(height: 5),
+
+              ///description
               MenuIconItem(
                 title: 'Description',
                 svgPath: 'assets/menu_description.svg',
@@ -84,8 +91,8 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   context.push('/groups/admin/description');
                 },
               ),
-              //
-              //
+
+              ///location
               const SizedBox(height: 5),
               MenuIconItem(
                 title: 'Location',
@@ -95,8 +102,8 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   context.push('/groups/admin/location');
                 },
               ),
-              //
-              //
+
+              ///radius
               const SizedBox(height: 5),
               MenuIconItem(
                 title: 'Radius',
@@ -106,8 +113,8 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   context.push('/groups/admin/radius');
                 },
               ),
-              //
-              //
+
+              ///community type
               const SizedBox(height: 5),
               MenuIconItem(
                 title: 'Community Type',
@@ -117,8 +124,8 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   context.push('/groups/admin/type');
                 },
               ),
-              //
-              //
+
+              ///block user list
               const SizedBox(height: 5),
               MenuIconItem(
                 title: 'Blocked users',
@@ -129,8 +136,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   context.push('/groups/admin/blocked');
                 },
               ),
-              //
-              //
+
               const SizedBox(
                 height: 300,
               ),
@@ -142,9 +148,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
   }
 }
 
-// ########################################################################
-// ########################################################################
-// ########################################################################
+///
 
 class MenuIconItem extends StatelessWidget {
   final String title;

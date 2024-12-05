@@ -13,10 +13,17 @@ abstract class CommunityRepositories {
     required CommunityModel community,
     File? pictureFile,
   });
-  Future<Either<Failure, List<CommunityModel>>> getAllCommunities(
-      {required bool isSummary, required bool isNearBy});
-  Future<Either<Failure, CommunityModel>> getCommunity(
-      {required String communityId});
+
+  ///get all communities
+  Future<Either<Failure, List<CommunityModel>>> getAllCommunities({
+    required bool isSummary,
+    required bool isNearBy,
+  });
+
+  ///get community details
+  Future<Either<Failure, CommunityModel>> getCommunity({
+    required String communityId,
+  });
 
   Future<Either<Failure, void>> makeAdmin(
       {required String communityId, required String userId});

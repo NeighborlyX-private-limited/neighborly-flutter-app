@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
 import '../../../../core/constants/status.dart';
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/error/failures.dart';
@@ -21,7 +19,6 @@ import '../../domain/usecases/update_location_community_usecase.dart';
 import '../../domain/usecases/update_mute_community_usecase.dart';
 import '../../domain/usecases/update_radius_community_usecase.dart';
 import '../../domain/usecases/update_type_community_usecase.dart';
-
 part 'community_detail_state.dart';
 
 class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
@@ -31,7 +28,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
   final RemoveUserCommunityUsecase removeUserCommunityUsecase;
   final UnblockUserCommunityUsecase unblockUserCommunityUsecase;
   final UpdateTypeCommunityUsecase updateTypeCommunityUsecase;
-
   final UpdateLocationCommunityUsecase updateLocationCommunityUsecase;
   final UpdateRadiusCommunityUsecase updateRadiusCommunityUsecase;
   final LeaveCommunityUsecase leaveCommunityUsecase;
@@ -67,20 +63,28 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
 
   Future getCommunityDetail(String communityId) async {
     emit(state.copyWith(status: Status.loading));
-    final result = await getCommunityUsecase(
-        communityId: communityId); // unblockUserCommunityUsecase
+    final result = await getCommunityUsecase(communityId: communityId);
+    print('result: $result');
 
     result.fold(
       (failure) {
-        print('...failure=$failure');
-        emit(state.copyWith(
+        print('failure=$failure');
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (community) {
-        print('...community=$community');
-        emit(state.copyWith(status: Status.success, community: community));
+        print('community=$community');
+        emit(
+          state.copyWith(
+            status: Status.success,
+            community: community,
+          ),
+        );
       },
     );
   }

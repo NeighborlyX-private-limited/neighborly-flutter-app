@@ -6,11 +6,12 @@ import '../repositories/community_repositories.dart';
 
 class GetAllCommunitiesUsecase {
   final CommunityRepositories repository;
-
   GetAllCommunitiesUsecase(this.repository);
 
-  Future<Either<Failure, List<CommunityModel>>> call(
-      {required bool isSummary, required bool isNearBy}) async {
+  Future<Either<Failure, List<CommunityModel>>> call({
+    required bool isSummary,
+    required bool isNearBy,
+  }) async {
     return await repository.getAllCommunities(
       isSummary: isSummary,
       isNearBy: isNearBy,

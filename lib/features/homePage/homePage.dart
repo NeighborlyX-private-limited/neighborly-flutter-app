@@ -183,22 +183,22 @@ class _MainPageState extends State<MainPage> {
     });
     switch (index) {
       case 0:
+        context.go('/home/Home');
         setState(() {
           _currentIndex = 0;
         });
-        context.go('/home/Home');
         break;
       case 1:
+        context.go('/groups');
         setState(() {
           _currentIndex = 1;
         });
-        context.go('/groups');
         break;
       case 2:
+        context.push('/create');
         setState(() {
           _currentIndex = 2;
         });
-        context.push('/create');
         break;
       // case 3:
       //     setState(() {
@@ -207,10 +207,10 @@ class _MainPageState extends State<MainPage> {
       //   context.go('/events');
       //   break;
       case 3:
+        context.push('/profile');
         setState(() {
           _currentIndex = 3;
         });
-        context.push('/profile');
         break;
     }
   }

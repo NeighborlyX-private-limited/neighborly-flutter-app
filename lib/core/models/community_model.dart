@@ -46,11 +46,11 @@ class CommunityModel extends CommunityEntity {
 
   factory CommunityModel.fromMap(Map<String, dynamic> map) {
     return CommunityModel(
-      id: map['_id'] ?? map['id'] ?? "0",
+      id: map['id'] ?? map['_id'] ?? "0",
       name: map['name'] ?? '',
       description: map['description'] ?? '',
       createdAt: map['createdAt'] ?? '',
-      avatarUrl: map['avatarUrl'] ?? '',
+      avatarUrl: map['image'] ?? map['icon'] ?? '',
       karma: map['karma'] ?? 0,
       radius: map['radius'] ?? 0,
       membersCount: map['membersCount'] ?? 0,

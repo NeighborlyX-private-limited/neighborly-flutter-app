@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
@@ -253,8 +252,9 @@ class _CommunityAdminMembersUsersScreenState
     final bool hasMembers = members.isNotEmpty || admins.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
@@ -279,7 +279,6 @@ class _CommunityAdminMembersUsersScreenState
         width: double.infinity,
         color: Colors.white,
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             if (hasMembers == false)
@@ -296,19 +295,11 @@ class _CommunityAdminMembersUsersScreenState
                   ),
                 ),
               ),
-            //
-            //
             ...admins.map((adm) => userTile(context, adm, true)),
             ...members.map((adm) => userTile(context, adm, false)),
-            //
-            //
           ],
         ),
       ),
     );
   }
 }
-
-// ########################################################################
-// ########################################################################
-// ########################################################################

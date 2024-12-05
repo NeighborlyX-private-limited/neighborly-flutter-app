@@ -34,7 +34,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
         print('result in createCommunity repo: $result');
         return Right(result);
       } on ServerFailure catch (e) {
-        print('result in createCommunity repo: ${e.toString()}');
+        print('ServerFailure in createCommunity repo: ${e.toString()}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
         print('catch error in createCommunity repo: ${e.toString()}');
@@ -45,17 +45,25 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
+  ///get all communities repo impl
   @override
-  Future<Either<Failure, List<CommunityModel>>> getAllCommunities(
-      {required bool isSummary, required bool isNearBy}) async {
+  Future<Either<Failure, List<CommunityModel>>> getAllCommunities({
+    required bool isSummary,
+    required bool isNearBy,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getAllCommunities(
-            isSummary: isSummary, isNearBy: isNearBy);
+          isSummary: isSummary,
+          isNearBy: isNearBy,
+        );
+        print('result in getAllCommunities repo: $result');
         return Right(result);
       } on ServerFailure catch (e) {
+        print('ServerFailure in getAllCommunities repo: ${e.toString()}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch error in getAllCommunities repo: ${e.toString()}');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -63,6 +71,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
+  ///get community details usecase
   @override
   Future<Either<Failure, CommunityModel>> getCommunity(
       {required String communityId}) async {
@@ -71,10 +80,13 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
         final result = await remoteDataSource.getCommunity(
           communityId: communityId,
         );
+        print('result: $result');
         return Right(result);
       } on ServerFailure catch (e) {
+        print('server failure: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('catch error: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
