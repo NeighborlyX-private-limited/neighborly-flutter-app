@@ -410,7 +410,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     File? image,
     String? phoneNumber,
     bool? toggleFindMe,
-    //  List<d?ouble> homeCoordinates,
   }) async {
     print('editProfile start with...');
     print('username: $username');
@@ -433,7 +432,6 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       ..fields['bio'] = bio ?? ''
       ..fields['phoneNumber'] = phoneNumber ?? ''
       ..fields['toggleFindMe'] = toggleFindMe.toString()
-      // ..fields['homeCoordinates'] = homeCoordinates.join(',')
       ..fields['gender'] = gender ?? '';
     if (image != null) {
       request.files.add(

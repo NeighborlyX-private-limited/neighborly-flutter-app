@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
@@ -18,6 +17,7 @@ class PostRepositoriesImpl implements PostRepositories {
     required this.networkInfo,
   });
 
+  /// get all post repo impl
   @override
   Future<Either<Failure, List<PostEntity>>> getAllPosts({
     required bool isHome,
@@ -44,6 +44,7 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+  /// report post repo impl
   @override
   Future<Either<Failure, void>> reportPost({
     required String reason,
@@ -73,6 +74,7 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+  /// feedback repo impl
   @override
   Future<Either<Failure, void>> feedback({
     required num id,

@@ -1,10 +1,7 @@
 import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/edit_profile_usecase.dart';
-
 part 'edit_profile_event.dart';
 part 'edit_profile_state.dart';
 

@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/fogot_password_usecase.dart';
-
 part 'forgot_password_event.dart';
 part 'forgot_password_state.dart';
 

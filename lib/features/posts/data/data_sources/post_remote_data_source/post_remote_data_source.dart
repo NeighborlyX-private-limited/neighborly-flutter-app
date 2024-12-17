@@ -1,5 +1,4 @@
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
-
 import '../../../../../core/models/post_model.dart';
 import '../../model/comments_model.dart';
 import '../../model/reply_model.dart';

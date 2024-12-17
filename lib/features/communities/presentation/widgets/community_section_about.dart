@@ -15,7 +15,6 @@ class CommunitySectionAbout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double space = 6;
     return Container(
       width: double.infinity,
       color: AppColors.whiteColor,

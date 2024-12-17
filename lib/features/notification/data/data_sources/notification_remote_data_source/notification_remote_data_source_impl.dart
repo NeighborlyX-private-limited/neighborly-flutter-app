@@ -151,7 +151,8 @@ Future<int> getNotificationUnreadCount() async {
       final unreadCount = jsonDecode(response.body)["unreadCount"];
       return unreadCount ?? 0;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'oops someting went wrong';
       print('else error in getNotificationUnreadCount: $message');
       throw ServerException(message: message);
     }
@@ -169,7 +170,6 @@ Future<int> getNotificationUnreadCount() async {
 Future<void> updateNotificationStatus(List<String> notificationIds) async {
   print('...updateNotificationStatus start with');
   print('notificationIds: $notificationIds');
-  // print('notificationIds $notificationId');
 
   final http.Client client = http.Client();
   List<String>? cookies = ShardPrefHelper.getCookie();

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../entities/community_entity.dart';
 import 'user_simple_model.dart';
 
@@ -7,6 +6,7 @@ class CommunityModel extends CommunityEntity {
   const CommunityModel({
     required super.id,
     required super.name,
+    required super.displayName,
     required super.description,
     required super.locationStr,
     required super.createdAt,
@@ -15,6 +15,7 @@ class CommunityModel extends CommunityEntity {
     required super.membersCount,
     required super.isPublic,
     required super.isJoined,
+    required super.isAdmin,
     required super.isMuted,
     required super.users,
     required super.admins,
@@ -27,6 +28,7 @@ class CommunityModel extends CommunityEntity {
     return {
       'id': id,
       'name': name,
+      'displayName': displayName,
       'description': description,
       'createdAt': createdAt,
       'avatarUrl': avatarUrl,
@@ -35,6 +37,7 @@ class CommunityModel extends CommunityEntity {
       'membersCount': membersCount,
       'isPublic': isPublic,
       'isJoined': isJoined,
+      'isAdmin': isAdmin,
       'isMuted': isMuted,
       'users': users.map((x) => x.toMap()).toList(),
       'admins': admins.map((x) => x.toMap()).toList(),
@@ -48,6 +51,7 @@ class CommunityModel extends CommunityEntity {
     return CommunityModel(
       id: map['id'] ?? map['_id'] ?? "0",
       name: map['name'] ?? '',
+      displayName: map['displayname'] ?? '',
       description: map['description'] ?? '',
       createdAt: map['createdAt'] ?? '',
       avatarUrl: map['image'] ?? map['icon'] ?? '',
@@ -55,8 +59,9 @@ class CommunityModel extends CommunityEntity {
       radius: map['radius'] ?? 0,
       membersCount: map['membersCount'] ?? 0,
       isPublic: map['isOpen'] ?? map['isPublic'] ?? false,
-      isJoined: map['isJoined'] ?? map['isJoined'] ?? false,
-      isMuted: map['isMuted'] ?? map['isMuted'] ?? false,
+      isJoined: map['isJoined'] ?? false,
+      isAdmin: map['isAdmin'] ?? false,
+      isMuted: map['isMuted'] ?? false,
       users: map['members'] != null
           ? List<UserSimpleModel>.from(
               map['members']?.map((x) => UserSimpleModel.fromMap(x)))
@@ -81,6 +86,7 @@ class CommunityModel extends CommunityEntity {
   CommunityModel copyWith({
     String? id,
     String? name,
+    String? displayName,
     String? description,
     String? location,
     String? createdAt,
@@ -90,6 +96,7 @@ class CommunityModel extends CommunityEntity {
     num? membersCount,
     bool? isPublic,
     bool? isJoined,
+    bool? isAdmin,
     bool? isMuted,
     List<UserSimpleModel>? users,
     List<UserSimpleModel>? admins,
@@ -100,6 +107,7 @@ class CommunityModel extends CommunityEntity {
     return CommunityModel(
       id: id ?? this.id,
       name: name ?? this.name,
+      displayName: displayName ?? this.displayName,
       description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
       avatarUrl: avatarUrl ?? this.avatarUrl,
@@ -108,6 +116,7 @@ class CommunityModel extends CommunityEntity {
       membersCount: membersCount ?? this.membersCount,
       isPublic: isPublic ?? this.isPublic,
       isJoined: isJoined ?? this.isJoined,
+      isAdmin: isAdmin ?? this.isAdmin,
       isMuted: isMuted ?? this.isMuted,
       users: users ?? this.users,
       admins: admins ?? this.admins,
@@ -119,7 +128,7 @@ class CommunityModel extends CommunityEntity {
 
   @override
   String toString() {
-    return 'CommunityModel(id: $id, name: $name, avatarUrl: $avatarUrl, karma: $karma, radius: $radius, membersCount: $membersCount, isPublic: $isPublic, isJoined: $isJoined, usersC: ${users.length}, adminsC: ${admins.length}, blockListC: ${blockList.length}, locationStr: $locationStr, latLong: $latLong)';
+    return 'CommunityModel(id: $id, name: $name, displayName:$displayName,avatarUrl: $avatarUrl, karma: $karma, radius: $radius, membersCount: $membersCount, isPublic: $isPublic, isAdmin:$isAdmin,isJoined: $isJoined, usersC: ${users.length}, adminsC: ${admins.length}, blockListC: ${blockList.length}, locationStr: $locationStr, latLong: $latLong)';
   }
 
   static List<CommunityModel> fromJsonList(List<dynamic> json) {

@@ -1,56 +1,88 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/utils/helpers.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
 
-class CommunityCardWidget extends StatelessWidget {
+class CommunityCardWidget extends StatefulWidget {
   final CommunityModel community;
   const CommunityCardWidget({
     super.key,
     required this.community,
   });
 
-  void openCommunity(BuildContext context) {
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (BuildContext context) {
-    //       return CommunityDetailsScreen(
-    //         community: this.community,
-    //       );
-    //     },
-    //   ),
-    // );
+  @override
+  State<CommunityCardWidget> createState() => _CommunityCardWidgetState();
+}
 
-    context.push('/groups/${community.id}');
+class _CommunityCardWidgetState extends State<CommunityCardWidget> {
+  late CommunityDetailsCubit communityCubit;
+  String? userId;
+  bool isJoining = false;
+  int groupMemberCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
+    calculateGroupMemberCount();
+    getUserId();
+  }
+
+  /// calculate totla group member including admins
+  void calculateGroupMemberCount() {
+    groupMemberCount =
+        widget.community.admins.length + widget.community.users.length;
+    setState(() {});
+  }
+
+  /// get user id
+  void getUserId() async {
+    userId = ShardPrefHelper.getUserID();
+    setState(() {});
+  }
+
+  ///color parser
+  Color parseColor(String hexColor) {
+    hexColor = hexColor.replaceAll('#', '');
+    return Color(int.parse('0xFF$hexColor'));
+  }
+
+  void openCommunity(BuildContext context) {
+    context.push('/groups/${widget.community.id}');
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isColor =
-        community.avatarUrl.length > 1 && community.avatarUrl.length < 8;
-    print('isColor: $isColor');
+    bool isColor = widget.community.avatarUrl.length > 1 &&
+        widget.community.avatarUrl.length < 8;
 
     return GestureDetector(
       onTap: () {
         openCommunity(context);
       },
       child: Card(
-        elevation: 3,
+        elevation: 1,
         child: Container(
-          height: 150,
+          height: 160,
           width: 125,
           decoration: BoxDecoration(
-            color:
-                isColor ? parseColor(community.avatarUrl) : Colors.transparent,
+            color: isColor
+                ? parseColor(widget.community.avatarUrl)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
             image: isColor
                 ? null
                 : DecorationImage(
                     fit: BoxFit.cover,
-                    image: CachedNetworkImageProvider(community.avatarUrl),
+                    image: CachedNetworkImageProvider(
+                      widget.community.avatarUrl[0].contains('#')
+                          ? widget.community.avatarUrl.replaceFirst('#', '')
+                          : widget.community.avatarUrl,
+                    ),
                   ),
           ),
           child: Column(
@@ -61,9 +93,7 @@ class CommunityCardWidget extends StatelessWidget {
                   children: [
                     Container(
                       height: 19,
-                      // width: double.infinity,
                       decoration: BoxDecoration(
-                        // color: Colors.black.withOpacity(0.7),
                         color: Colors.black.withOpacity(0.6),
                         borderRadius: BorderRadius.circular(50),
                       ),
@@ -74,7 +104,7 @@ class CommunityCardWidget extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              community.isPublic
+                              widget.community.isPublic
                                   ? Icons.public
                                   : Icons.lock_person_outlined,
                               color: Colors.white,
@@ -84,9 +114,7 @@ class CommunityCardWidget extends StatelessWidget {
                               width: 4,
                             ),
                             Text(
-                              community.isPublic ? 'Public' : 'Private',
-                              // textAlign: TextAlign.center,
-
+                              widget.community.isPublic ? 'Public' : 'Private',
                               style: TextStyle(
                                 height: 0.5,
                                 color: Colors.white,
@@ -103,7 +131,6 @@ class CommunityCardWidget extends StatelessWidget {
               Spacer(),
               Container(
                 decoration: BoxDecoration(
-                  // color: Colors.green,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(10),
                     bottomRight: Radius.circular(10),
@@ -123,14 +150,25 @@ class CommunityCardWidget extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        community.name,
-                        textAlign: TextAlign.center,
+                        widget.community.displayName,
+                        textAlign: TextAlign.start,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.grey,
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        widget.community.name,
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontWeight: FontWeight.normal,
+                          fontSize: 14,
                         ),
                       ),
                       const SizedBox(height: 10),
@@ -138,22 +176,45 @@ class CommunityCardWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           StackedAvatarIndicator(
-                            avatarUrls: community.users
-                                .map((e) => e.avatarUrl)
-                                .toList(),
+                            avatarUrls: [
+                              ...(widget.community.users
+                                  .map((e) => e.avatarUrl)
+                                  .toList()),
+                              ...(widget.community.admins
+                                  .map((e) => e.avatarUrl)
+                                  .toList())
+                            ],
                             showOnly: 3,
                             avatarSize: 22,
                             onTap: () {},
                           ),
                           Expanded(
-                            child: Text(
-                              '${community.users.length}k+ Members',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
+                            child: groupMemberCount > 1000
+                                ? Text(
+                                    '${groupMemberCount}k+ Members',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                : groupMemberCount > 1
+                                    ? Text(
+                                        '$groupMemberCount Members',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                      )
+                                    : Text(
+                                        '$groupMemberCount Member',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
+                                      ),
                           ),
                         ],
                       ),
@@ -164,11 +225,12 @@ class CommunityCardWidget extends StatelessWidget {
                           height: 35,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                              color: Color(0xff635BFF),
-                              borderRadius: BorderRadius.circular(20)),
+                            color: Color(0xff635BFF),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Center(
                             child: Text(
-                              community.isPublic ? 'Join' : 'Request',
+                              widget.community.isJoined ? 'Joined' : 'Join',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,
@@ -178,6 +240,57 @@ class CommunityCardWidget extends StatelessWidget {
                           ),
                         ),
                       )
+                      // BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      //   listener: (context, state) {
+                      //     if (state is JoinGroupFailureState) {
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         SnackBar(
+                      //           content: Text('Error: ${state.error}'),
+                      //         ),
+                      //       );
+                      //     }
+                      //     if (state is JoinGroupSuccessState) {
+                      //       communityCubit
+                      //           .getCommunityDetail(widget.community.id);
+                      //       ScaffoldMessenger.of(context).showSnackBar(
+                      //         SnackBar(
+                      //           content: Text('Group join'),
+                      //         ),
+                      //       );
+                      //     }
+                      //   },
+                      //   builder: (context, state) {
+                      //     if (state is JoinGroupLoadingState) {
+                      //       return CircularProgressIndicator();
+                      //     }
+                      //     return GestureDetector(
+                      //       onTap: () {
+                      //         BlocProvider.of<JoinGroupBloc>(context)
+                      //             .add(JoinGroupButtonPressedEvent(
+                      //           communityId: widget.community.id,
+                      //         ));
+                      //       },
+                      //       child: Container(
+                      //         height: 35,
+                      //         width: double.infinity,
+                      //         decoration: BoxDecoration(
+                      //           color: Color(0xff635BFF),
+                      //           borderRadius: BorderRadius.circular(20),
+                      //         ),
+                      //         child: Center(
+                      //           child: Text(
+                      //             widget.community.isJoined ? 'Joined' : 'Join',
+                      //             textAlign: TextAlign.center,
+                      //             style: TextStyle(
+                      //               color: Colors.white,
+                      //               fontSize: 16,
+                      //             ),
+                      //           ),
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
                     ],
                   ),
                 ),
@@ -187,10 +300,5 @@ class CommunityCardWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Color parseColor(String hexColor) {
-    hexColor = hexColor.replaceAll('#', '');
-    return Color(int.parse('0xFF$hexColor'));
   }
 }

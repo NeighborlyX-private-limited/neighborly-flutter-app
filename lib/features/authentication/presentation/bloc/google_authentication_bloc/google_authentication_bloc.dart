@@ -1,10 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../../core/error/failures.dart';
 import '../../../domain/entities/google_auth_entity.dart';
 import '../../../domain/usecases/google_authentication_usecase.dart';
-
 part 'google_authentication_event.dart';
 part 'google_authentication_state.dart';
 

@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/delete_community_usecase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/update_community_displayname.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/error/failures.dart';
@@ -35,10 +37,13 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
   final ReportCommunityUsecase reportCommunityUsecase;
   final UpdateIconCommunityUsecase updateIconCommunityUsecase;
   final UpdateDescriptionCommunityUsecase updateDescriptionCommunityUsecase;
+  final UpdateDisplayNameCommunityUsecase updateDisplayNameCommunityUsecase;
   final UploadFileUsecase uploadFileUsecase;
+  final DeleteCommunityUsecase deleteCommunityUsecase;
 
   CommunityDetailsCubit(
     this.getCommunityUsecase,
+    this.deleteCommunityUsecase,
     this.getAllPostsUsecase,
     this.makeAdminCommunityUsecase,
     this.removeUserCommunityUsecase,
@@ -52,23 +57,18 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
     this.updateDescriptionCommunityUsecase,
     this.updateMuteCommunityUsecase,
     this.uploadFileUsecase,
+    this.updateDisplayNameCommunityUsecase,
   ) : super(const CommunityDetailsState());
 
-  void init(String communityId) async {
-    print('... COMMUNITY DETAIL BLOC - init - id=$communityId');
-
-    await getCommunityDetail(communityId);
-    await getCommunityPosts(communityId);
-  }
-
+  /// get Community Detail
   Future getCommunityDetail(String communityId) async {
     emit(state.copyWith(status: Status.loading));
     final result = await getCommunityUsecase(communityId: communityId);
-    print('result: $result');
+    print('result in getCommunityDetail cubit: $result');
 
     result.fold(
       (failure) {
-        print('failure=$failure');
+        print('failure in getCommunityDetail cubit=$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -78,7 +78,7 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (community) {
-        print('community=$community');
+        print('community details=$community');
         emit(
           state.copyWith(
             status: Status.success,
@@ -89,21 +89,25 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
     );
   }
 
+  ///unblockUser
   Future unblockUser(String communityId, String userId) async {
     emit(state.copyWith(status: Status.loading));
-
-    print(
-        'COMMUNITY DETAIL CUBIT unblockUser communityId=$communityId userId=$userId');
     final result = await unblockUserCommunityUsecase(
-        communityId: communityId, userId: userId);
+      communityId: communityId,
+      userId: userId,
+    );
+    print('result in unblockUser cubit: $result');
 
     result.fold(
       (failure) {
-        print('...failure=$failure');
-        emit(state.copyWith(
+        print('...failure in unblockUser cubit=$failure');
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (community) {
         print('...unblockUser done');
@@ -112,21 +116,27 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
     );
   }
 
+  /// make admin
   Future makeAdmin(String communityId, String userId) async {
     emit(state.copyWith(status: Status.loading));
 
-    print(
-        'COMMUNITY DETAIL CUBIT makeAdmin communityId=$communityId userId=$userId');
+    print('...make admin cubit');
+    print('communityId=$communityId userId=$userId');
     final result = await makeAdminCommunityUsecase(
-        communityId: communityId, userId: userId);
-
+      communityId: communityId,
+      userId: userId,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (community) {
         print('...makeAdmin done');
@@ -135,41 +145,51 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
     );
   }
 
+  /// remove user
   Future removeUSer(String communityId, String userId) async {
     emit(state.copyWith(status: Status.loading));
 
-    print(
-        'COMMUNITY DETAIL CUBIT removeUSer communityId=$communityId userId=$userId');
+    print('removeUSer communityId=$communityId userId=$userId');
     final result = await removeUserCommunityUsecase(
-        communityId: communityId, userId: userId);
-
+      communityId: communityId,
+      userId: userId,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (community) {
         print('...remover user done');
-        emit(state.copyWith(status: Status.success));
+        emit(state.copyWith(
+          status: Status.success,
+        ));
       },
     );
   }
 
+  /// get community post
   Future getCommunityPosts(String communityId) async {
-    print('... BLOG getCommunityPosts started');
     // emit(state.copyWith(status: Status.loading));
     final result = await getAllPostsUsecase(isHome: false);
-
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (communityPosts) {
         print('...communityPosts=$communityPosts');
@@ -179,68 +199,79 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
     );
   }
 
-  // ####################################################################
-  // ####################################################################
-
+  /// update type cubit
   Future updateType(String communityId, String newType) async {
     emit(state.copyWith(status: Status.loading));
-
-    print(
-        'COMMUNITY DETAIL CUBIT updateType communityId=$communityId newType=$newType');
     final result = await updateTypeCommunityUsecase(
-        communityId: communityId, newType: newType);
-
+      communityId: communityId,
+      newType: newType,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (communityResp) {
         print('...updateType done');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.success,
             community:
-                state.community!.copyWith(isPublic: (newType == 'public'))));
+                state.community!.copyWith(isPublic: (newType == 'public')),
+          ),
+        );
       },
     );
   }
 
+  /// update location cubit
   Future updateLocation(String communityId, String newLocationStr) async {
     emit(state.copyWith(status: Status.loading));
 
-    print(
-        'COMMUNITY DETAIL CUBIT updateLocation communityId=$communityId newLocationStr=$newLocationStr');
     final result = await updateLocationCommunityUsecase(
-        communityId: communityId, newLocation: newLocationStr);
-
+      communityId: communityId,
+      newLocation: newLocationStr,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (communityResp) {
         print('...updateLocation done');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.success,
-            community: state.community!.copyWith(locationStr: newLocationStr)));
+            community: state.community!.copyWith(locationStr: newLocationStr),
+          ),
+        );
       },
     );
   }
 
+  ///update radius cubit
   Future updateRadius(String communityId, double newRadius) async {
     emit(state.copyWith(status: Status.loading));
 
-    print(
-        'COMMUNITY DETAIL CUBIT updateRadius communityId=$communityId newRadius=$newRadius');
     final result = await updateRadiusCommunityUsecase(
-        communityId: communityId, newRadius: newRadius);
-
+      communityId: communityId,
+      newRadius: newRadius,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
@@ -251,88 +282,137 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       },
       (communityResp) {
         print('...updateRadius done');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.success,
-            community: state.community!.copyWith(radius: newRadius)));
+            community: state.community!.copyWith(radius: newRadius),
+          ),
+        );
       },
     );
   }
 
+  ///update description cubit
   Future updateDescription(String communityId, String newDescription) async {
     emit(state.copyWith(status: Status.loading));
 
-    print(
-        'COMMUNITY DETAIL CUBIT updateDescription communityId=$communityId newDescription=$newDescription');
     final result = await updateDescriptionCommunityUsecase(
-        communityId: communityId, newDescription: newDescription);
-
+      communityId: communityId,
+      newDescription: newDescription,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (communityResp) {
         print('...updateDescription done');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.success,
-            community: state.community!.copyWith(description: newDescription)));
+            community: state.community!.copyWith(description: newDescription),
+          ),
+        );
       },
     );
   }
 
-  Future onUpdateFile(File fileToUpload) async {
-    var result = await uploadFileUsecase(file: fileToUpload);
+  ///update description cubit
+  Future updateDisplayName(String communityId, String newDisplayname) async {
+    emit(state.copyWith(status: Status.loading));
 
-    print('...BLOC onUpdateFile start');
-
+    final result = await updateDisplayNameCommunityUsecase(
+      communityId: communityId,
+      newDisplayname: newDisplayname,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
-        print('...BLOC onUpdateFile error: ${failure.message}');
-        emit(state.copyWith(
+        print('...failure=$failure');
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
+      },
+      (communityResp) {
+        print('...update display name done');
+        emit(
+          state.copyWith(
+            status: Status.success,
+            community: state.community!.copyWith(description: newDisplayname),
+          ),
+        );
+      },
+    );
+  }
+
+  ///on update file
+  Future onUpdateFile(File fileToUpload) async {
+    var result = await uploadFileUsecase(file: fileToUpload);
+    print('result:$result');
+    result.fold(
+      (failure) {
+        print('... onUpdateFile error: ${failure.message}');
+        emit(
+          state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message,
+          ),
+        );
       },
       (imageUrl) {
-        print('... BLOC imageUrl=$imageUrl');
+        print('... imageUrl=$imageUrl');
         emit(state.copyWith(imageToUpload: fileToUpload, imageUrl: imageUrl));
       },
     );
   }
 
+  /// update icon
   Future updateIcon(String communityId, File? imageToUpload) async {
     emit(state.copyWith(status: Status.loading));
-
-    print(
-        'COMMUNITY DETAIL CUBIT updateIcon communityId=$communityId imageUrl=${state.imageUrl}');
     final result = await updateIconCommunityUsecase(
-        communityId: communityId, pictureFile: null, imageUrl: state.imageUrl);
-
+      communityId: communityId,
+      pictureFile: imageToUpload,
+      //imageUrl: state.imageUrl,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (communityResp) {
         print('...updateIcon done');
         emit(state.copyWith(status: Status.success));
-        // Refresh main data
         getCommunityDetail(communityId);
       },
     );
   }
 
-  Future leaveCommunity() async {
-    print('... BLOG leaveCommunity communityId=${state.community?.id}  ');
-    final result =
-        await leaveCommunityUsecase(communityId: state.community!.id);
-
+  /// leave community cubit
+  Future leaveCommunity(String communityId, String userId) async {
+    final result = await removeUserCommunityUsecase(
+      communityId: communityId,
+      userId: userId,
+    );
+    print('result:$result');
     result.fold(
       (failure) {
         print('...failure=$failure');
@@ -343,55 +423,92 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       },
       (communityPosts) {
         print('...leaveCommunity done');
+        emit(state.copyWith(
+          status: Status.success,
+          successMessage: 'leave',
+        ));
+      },
+    );
+  }
+
+  ///toggle munte
+  Future toggleMute() async {
+    emit(state.copyWith(status: Status.loading));
+    final result = await updateMuteCommunityUsecase(
+      communityId: state.community?.id ?? '',
+      newValue: !state.community!.isMuted,
+    );
+    print('result:$result');
+    result.fold(
+      (failure) {
+        print('...failure=$failure');
+        emit(
+          state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message,
+          ),
+        );
+      },
+      (communityResp) {
+        print('...toggleMute done');
+        emit(
+          state.copyWith(
+            status: Status.success,
+            community:
+                state.community!.copyWith(isMuted: !(state.community!.isMuted)),
+          ),
+        );
+      },
+    );
+  }
+
+  /// report community cubit
+  Future reportCommunity(String reason) async {
+    emit(state.copyWith(status: Status.loading));
+    final result = await reportCommunityUsecase(
+      communityId: state.community!.id,
+      reason: reason,
+    );
+    print('result in reportCommunity cubit:$result');
+    result.fold(
+      (failure) {
+        print('failure in reportCommunity cubit:$failure');
+        emit(
+          state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message,
+          ),
+        );
+      },
+      (communityResp) {
+        print('reportCommunity done');
         emit(state.copyWith(status: Status.success));
       },
     );
   }
 
-  Future toggleMute() async {
+  /// delete community cubit
+  Future deleteCommunity(String? communityId) async {
     emit(state.copyWith(status: Status.loading));
-
-    print(
-        'COMMUNITY DETAIL CUBIT toggleMute isMuted=${state.community?.isMuted} ');
-    final result = await updateMuteCommunityUsecase(
-        communityId: state.community?.id ?? '',
-        newValue: !state.community!.isMuted);
-
-    result.fold(
-      (failure) {
-        print('...failure=$failure');
-        emit(state.copyWith(
-            status: Status.failure,
-            failure: failure,
-            errorMessage: failure.message));
-      },
-      (communityResp) {
-        print('...toggleMute done');
-        emit(state.copyWith(
-            status: Status.success,
-            community: state.community!
-                .copyWith(isMuted: !(state.community!.isMuted))));
-      },
+    final result = await deleteCommunityUsecase(
+      communityId: communityId!,
     );
-  }
-
-  Future reportCommunity(String reason) async {
-    emit(state.copyWith(status: Status.loading));
-
-    print('...COMMUNITY DETAIL CUBIT reportCommunity reason=$reason ');
-    final result = await reportCommunityUsecase(
-        communityId: state.community!.id, reason: reason);
-
+    print('result in deleteCommunity cubit:$result');
     result.fold(
       (failure) {
-        print('...failure=$failure');
-        emit(state.copyWith(
+        print('failure deleteCommunity:$failure');
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
-      (communityResp) {
-        print('...reportCommunity done');
+      (communityDelete) {
+        print('communityDelete done');
         emit(state.copyWith(status: Status.success));
       },
     );

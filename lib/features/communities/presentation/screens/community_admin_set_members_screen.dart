@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/core/constants/status.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
@@ -21,56 +26,40 @@ class _CommunityAdminMembersUsersScreenState
   late CommunityDetailsCubit communityCubit;
   late List<UserSimpleModel> members;
   late List<UserSimpleModel> admins;
+  late String communityId;
+  String myUserId = '';
 
+  ///init state method
   @override
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
+    communityId = communityCubit.state.community?.id ?? '';
     members = communityCubit.state.community?.users != null
         ? [...communityCubit.state.community!.users]
         : [];
     admins = communityCubit.state.community?.admins != null
         ? [...communityCubit.state.community!.admins]
         : [];
+    getuserId();
   }
 
-  void removeUser(BuildContext context, String communityId, String userId) {
-    communityCubit.unblockUser(communityId, userId);
-
-    setState(() {
-      members = members.where((element) => element.id != userId).toList();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('User removed'),
-        ),
-      );
-    });
+  ///get user id
+  void getuserId() {
+    myUserId = ShardPrefHelper.getUserID() ?? '';
+    setState(() {});
   }
 
-  void makeAdmin(BuildContext context, String communityId, String userId) {
-    communityCubit.makeAdmin(communityId, userId);
-    var newAdmin = members.firstWhere((element) => element.id == userId);
-
-    print('newAdmin=$newAdmin');
-
-    setState(() {
-      members = members.where((element) => element.id != userId).toList();
-      admins = [newAdmin, ...admins];
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-              'User transformed. \nWith great power comes great responsabilities'),
-        ),
-      );
-    });
-  }
-
-  Future<dynamic> bottomSheetConfirm(BuildContext context, String userId) {
+  ///make admin
+  Future<dynamic> bottomSheetMakeAdminConfirm(
+    BuildContext context,
+    String userId,
+  ) {
     return showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
       context: context,
       builder: (BuildContext context) {
-        // String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: 120,
@@ -94,17 +83,18 @@ class _CommunityAdminMembersUsersScreenState
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        // padding: EdgeInsets.all(15)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                              color: Colors.black, fontSize: 18, height: 0.3),
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
                         ),
                       ),
                     ),
@@ -114,29 +104,63 @@ class _CommunityAdminMembersUsersScreenState
                   ),
                   Expanded(
                     flex: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        communityCubit.leaveCommunity();
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                    child:
+                        BlocConsumer<MakeRemoveAdminBloc, MakeRemoveAdminState>(
+                      listener: (context, state) {
+                        ///failure state
+                        if (state is MakeRemoveAdminFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        ///success state
+                        if (state is MakeAdminSuccessState) {
+                          communityCubit.getCommunityDetail(communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Admin made'),
+                            ),
+                          );
+                        }
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff635BFF),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
-                        ),
-                        // padding: EdgeInsets.all(15)
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          'Yes',
-                          style: TextStyle(
-                              color: Colors.white, fontSize: 18, height: 0.3),
-                        ),
-                      ),
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is MakeRemoveAdminLoadingState) {
+                          return CircularProgressIndicator(
+                            color: AppColors.whiteColor,
+                          );
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<MakeRemoveAdminBloc>(context)
+                                .add(MakeAdminButtonPressedEvent(
+                              communityId: communityId,
+                              userId: userId,
+                            ));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   )
                 ],
@@ -148,11 +172,383 @@ class _CommunityAdminMembersUsersScreenState
     );
   }
 
-  Future<dynamic> bottomSheetMenu(BuildContext context, String userId) {
+  ///remove admin
+  Future<dynamic> bottomSheetRemoveAdminConfirm(
+    BuildContext context,
+    String userId,
+  ) {
     return showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
       context: context,
       builder: (BuildContext context) {
-        // String? userId = ShardPrefHelper.getUserID();
+        return Container(
+          color: Colors.white,
+          height: 120,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Are you sure you want to remove this person from Admin post?',
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child:
+                        BlocConsumer<MakeRemoveAdminBloc, MakeRemoveAdminState>(
+                      listener: (context, state) {
+                        /// failure state
+                        if (state is MakeRemoveAdminFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        /// success state
+                        if (state is RemoveAdminSuccessState) {
+                          communityCubit.getCommunityDetail(communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Admin remove'),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is MakeRemoveAdminLoadingState) {
+                          return CircularProgressIndicator(
+                            color: AppColors.whiteColor,
+                          );
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<MakeRemoveAdminBloc>(context)
+                                .add(RemoveAdminButtonPressedEvent(
+                              communityId: communityId,
+                              userId: userId,
+                            ));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  ///remove user
+  Future<dynamic> bottomSheetConfirmRemove(
+    BuildContext context,
+    String userId,
+  ) {
+    return showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 140,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Are you sure you want to remove this person from community?',
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child: BlocConsumer<AddRemoveUserInGroupBloc,
+                        AddRemoveUserInGroupState>(
+                      ///failure state
+                      listener: (context, state) {
+                        if (state is AddRemoveUserInGroupFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        ///success state
+                        if (state is RemoveUserInGroupSuccessState) {
+                          communityCubit.getCommunityDetail(communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('User removed'),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is AddRemoveUserInGroupLoadingState) {
+                          return CircularProgressIndicator(
+                            color: AppColors.whiteColor,
+                          );
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<AddRemoveUserInGroupBloc>(context)
+                                .add(RemoveUserInGroupButtonPressedEvent(
+                              communityId: communityId,
+                              userId: userId,
+                            ));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  ///leave community
+  Future<dynamic> bottomSheetLeaveConfirm(
+    BuildContext context,
+  ) {
+    return showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 140,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Are you sure you want to leave this community?',
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        ///failure state
+                        if (state is JoinGroupFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        ///success state
+                        if (state is LeaveGroupSuccessState) {
+                          communityCubit.getCommunityDetail(communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Group leaved'),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is JoinGroupLoadingState) {
+                          return CircularProgressIndicator(
+                            color: AppColors.whiteColor,
+                          );
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<JoinGroupBloc>(context)
+                                .add(LeaveGroupButtonPressedEvent(
+                              communityId: communityId,
+                            ));
+
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Yes',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// make admin/ remove admin and remove from community bottomsheet
+  Future<dynamic> bottomSheetMenu(
+    BuildContext context,
+    String userId,
+    bool isAdmin,
+  ) {
+    return showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
         return Container(
           color: Colors.white,
           height: 150,
@@ -161,24 +557,45 @@ class _CommunityAdminMembersUsersScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              MenuIconItem(
-                  title: 'Make Admin',
-                  svgPath: 'assets/menu_make_admin.svg',
-                  iconSize: 25,
-                  onTap: () {
-                    Navigator.pop(context);
-                    bottomSheetConfirm(context, userId);
-                  }),
-              MenuIconItem(
-                  title: 'Remove from community',
-                  svgPath: 'assets/menu_remove.svg',
-                  iconSize: 25,
-                  textColor: Colors.red,
-                  onTap: () {
-                    Navigator.pop(context);
-                    removeUser(context,
-                        communityCubit.state.community?.id ?? '', userId);
-                  }),
+              myUserId != userId && isAdmin
+                  ? MenuIconItem(
+                      title: 'Remove Admin',
+                      svgPath: 'assets/menu_make_admin.svg',
+                      iconSize: 25,
+                      onTap: () {
+                        Navigator.pop(context);
+                        bottomSheetRemoveAdminConfirm(context, userId);
+                      })
+                  : SizedBox(),
+              myUserId != userId && !isAdmin
+                  ? MenuIconItem(
+                      title: 'Make Admin',
+                      svgPath: 'assets/menu_make_admin.svg',
+                      iconSize: 25,
+                      onTap: () {
+                        Navigator.pop(context);
+                        bottomSheetMakeAdminConfirm(context, userId);
+                      })
+                  : SizedBox(),
+              myUserId != userId
+                  ? MenuIconItem(
+                      title: 'Remove from community',
+                      svgPath: 'assets/menu_remove.svg',
+                      iconSize: 25,
+                      textColor: Colors.red,
+                      onTap: () {
+                        Navigator.pop(context);
+                        bottomSheetConfirmRemove(context, userId);
+                      })
+                  : MenuIconItem(
+                      title: 'Leave community',
+                      svgPath: 'assets/menu_remove.svg',
+                      iconSize: 25,
+                      textColor: Colors.red,
+                      onTap: () {
+                        Navigator.pop(context);
+                        bottomSheetLeaveConfirm(context);
+                      }),
             ],
           ),
         );
@@ -204,10 +621,11 @@ class _CommunityAdminMembersUsersScreenState
     );
   }
 
+  ///user/ admin list tile
   Widget userTile(BuildContext context, UserSimpleModel user, bool isAdmin) {
     return GestureDetector(
       onTap: () {
-        bottomSheetMenu(context, user.id);
+        bottomSheetMenu(context, user.id, isAdmin);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
@@ -247,10 +665,10 @@ class _CommunityAdminMembersUsersScreenState
     );
   }
 
+  /// build method
   @override
   Widget build(BuildContext context) {
     final bool hasMembers = members.isNotEmpty || admins.isNotEmpty;
-
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
@@ -274,30 +692,52 @@ class _CommunityAdminMembersUsersScreenState
         ),
         centerTitle: true,
       ),
-      body: Container(
-        padding: EdgeInsets.all(15),
-        width: double.infinity,
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            if (hasMembers == false)
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'No Members',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 16,
+      body: SingleChildScrollView(
+        child: BlocBuilder<CommunityDetailsCubit, CommunityDetailsState>(
+          bloc: communityCubit,
+          builder: (context, state) {
+            if (state.status == Status.loading) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            if (state.status == Status.success) {
+              communityId = communityCubit.state.community?.id ?? '';
+              members = communityCubit.state.community?.users != null
+                  ? [...communityCubit.state.community!.users]
+                  : [];
+              admins = communityCubit.state.community?.admins != null
+                  ? [...communityCubit.state.community!.admins]
+                  : [];
+              final adminSet = admins.toSet();
+              members = members
+                  .where((member) => !adminSet.contains(member))
+                  .toList();
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (hasMembers == false)
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'No Members',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ...admins.map((adm) => userTile(context, adm, true)),
-            ...members.map((adm) => userTile(context, adm, false)),
-          ],
+                  ...admins.map((admin) => userTile(context, admin, true)),
+                  ...members.map((member) => userTile(context, member, false)),
+                ],
+              );
+            }
+            return Center(
+              child: Text(state.errorMessage ?? 'something went wrong'),
+            );
+          },
         ),
       ),
     );

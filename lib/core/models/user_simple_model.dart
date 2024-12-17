@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../entities/user_simple_entity.dart';
 
 class UserSimpleModel extends UserSimpleEntity {

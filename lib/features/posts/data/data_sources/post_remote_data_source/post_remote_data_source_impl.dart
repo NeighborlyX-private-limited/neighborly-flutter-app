@@ -25,6 +25,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       print('cookies not found in getAllPosts');
       throw const ServerException(message: 'Something went wrong');
     }
+
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/fetch-posts';
     print('url:$url');

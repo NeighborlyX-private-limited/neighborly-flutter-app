@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
 
@@ -118,4 +119,12 @@ double calculateTotalVotes(List<OptionEntity> options) {
   }
 
   return totalVotes;
+}
+
+Color parseColor(String hexColor) {
+  // Remove '#' if present
+  hexColor = hexColor.replaceAll('#', '');
+
+  // Add '0xFF' for full opacity
+  return Color(int.parse('0xFF$hexColor'));
 }

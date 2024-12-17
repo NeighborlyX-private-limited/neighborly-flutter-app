@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/send_feedback_usecase.dart';
-
 part 'send_feedback_event.dart';
 part 'send_feedback_state.dart';
 

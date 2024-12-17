@@ -1,9 +1,8 @@
 import 'dart:io';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 import '../../../../core/constants/imagepickercompress.dart';
@@ -23,11 +22,16 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
 
   final bool showChange = true;
   File? _selectedImage;
+  late String communityId;
+  String avatarUrl = '';
 
+  ///init state method
   @override
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
+    communityId = communityCubit.state.community?.id ?? '';
+    avatarUrl = communityCubit.state.community?.avatarUrl ?? '';
   }
 
   @override
@@ -35,16 +39,27 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
     super.dispose();
   }
 
+  /// color parser
+  Color parseColor(String hexColor) {
+    hexColor = hexColor.replaceAll('#', '');
+    return Color(int.parse('0xFF$hexColor'));
+  }
+
+  ///pic image from gallery
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: ImageSource.gallery).then((file){
-      return compressImage(imageFileX: file);
-    });
+    final XFile? image =
+        await picker.pickImage(source: ImageSource.gallery).then(
+      (file) {
+        return compressImage(imageFileX: file);
+      },
+    );
 
     if (image != null) {
       setState(() {
         _selectedImage = File(image.path);
-        communityCubit.onUpdateFile(_selectedImage!);
+        // communityCubit.updateIcon(communityId, _selectedImage!);
+        // communityCubit.onUpdateFile(_selectedImage!);
       });
     }
   }
@@ -53,7 +68,6 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        // String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: 120,
@@ -77,10 +91,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        // padding: EdgeInsets.all(15)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -105,17 +117,18 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        // padding: EdgeInsets.all(15)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Yes',
                           style: TextStyle(
-                              color: Colors.white, fontSize: 18, height: 0.3),
+                            color: Colors.white,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
                         ),
                       ),
                     ),
@@ -131,21 +144,25 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool isColor = avatarUrl.length > 1 && avatarUrl.length < 8;
     return Scaffold(
       backgroundColor: AppColors.lightBackgroundColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
             color: Colors.black,
           ),
           onTap: () {
-            // Navigator.pop(context);
-            bottomSheetConfirmNotSaved(context);
+            Navigator.pop(context);
+            // bottomSheetConfirmNotSaved(context);
           },
         ),
+
+        ///community icon
         title: Text(
-          'Icon',
+          'Community Icon',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -157,7 +174,6 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
           _selectedImage == null
               ? TextButton(
                   onPressed: () {
-                    print('Do change');
                     _pickImage();
                   },
                   child: Text(
@@ -178,10 +194,10 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                         ),
                       );
                     } else {
-                      print('SAVE');
                       communityCubit.updateIcon(
-                          communityCubit.state.community?.id ?? '',
-                          _selectedImage);
+                        communityCubit.state.community?.id ?? '',
+                        _selectedImage,
+                      );
                       Navigator.of(context).pop();
                     }
                   },
@@ -201,33 +217,37 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
         width: double.infinity,
         color: Colors.white,
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Stack(
               children: [
                 ClipOval(
                   child: Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    height: MediaQuery.of(context).size.width * 0.7,
-                    // height: 190,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child:
-                        _selectedImage != null && _selectedImage?.path != null
-                            ? Image.file(
-                                _selectedImage!,
-                                width: double.infinity,
-                                // height: 260,
-                                fit: BoxFit.cover,
-                              )
-                            : Image.network(
-                                communityCubit.state.community?.avatarUrl ??
-                                    'https://eu.ui-avatars.com/api/?name=${communityCubit.state.community?.name}&background=random&rounded=true',
-                                fit: BoxFit.cover,
-                              ),
-                  ),
+                      width: MediaQuery.of(context).size.width * 0.7,
+                      height: MediaQuery.of(context).size.width * 0.7,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: isColor
+                              ? parseColor(avatarUrl)
+                              : Colors.transparent,
+                          image: isColor
+                              ? null
+                              : DecorationImage(
+                                  fit: BoxFit.cover,
+                                  image: CachedNetworkImageProvider(
+                                    avatarUrl.contains('#')
+                                        ? avatarUrl.replaceFirst('#', '')
+                                        : avatarUrl,
+                                  ),
+                                )),
+                      child:
+                          _selectedImage != null && _selectedImage?.path != null
+                              ? Image.file(
+                                  _selectedImage!,
+                                  width: double.infinity,
+                                  fit: BoxFit.cover,
+                                )
+                              : SizedBox()),
                 ),
                 Positioned(
                   bottom: 0,
@@ -259,7 +279,3 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
     );
   }
 }
-
-// ########################################################################
-// ########################################################################
-// ########################################################################

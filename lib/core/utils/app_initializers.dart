@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../dependency_injection.dart' as di;
@@ -15,7 +14,7 @@ class AppInitializers {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    // Firebase
+    /// Firebase
     final fcmConfig = FCMConfig();
     const appName = 'Neighborly';
     await fcmConfig.init(
@@ -38,6 +37,6 @@ class AppInitializers {
 
     var FCMtoken = await fcmConfig.getToken() ?? '';
     ShardPrefHelper.setFCMtoken(FCMtoken);
-    print('Token FCM: $FCMtoken ');
+    print('Token FCM in app initializer: $FCMtoken ');
   }
 }

@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/failures.dart';
 import '../repositories/notification_repositories.dart';
 

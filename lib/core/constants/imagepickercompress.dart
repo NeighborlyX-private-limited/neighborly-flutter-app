@@ -12,16 +12,16 @@ Future<XFile> compressImage({
     throw ("Failed to load the image");
   }
 
-  // Convert XFile to File
+  /// Convert XFile to File
   File imageFile = File(imageFileX.path);
 
-  // Generate a target path for compressed image
+  /// Generate a target path for compressed image
   final String targetPath = p.join(
     Directory.systemTemp.path,
     '${DateTime.now()}_compressed.${format.name}',
   );
 
-  // Compress the image with the initial quality
+  /// Compress the image with the initial quality
   XFile? compressedImage = await FlutterImageCompress.compressAndGetFile(
     imageFile.path,
     targetPath,
@@ -33,11 +33,11 @@ Future<XFile> compressImage({
     throw ("Failed to compress the image");
   }
 
-  // Check if the compressed image is within the size limit
+  /// Check if the compressed image is within the size limit
   double imageSizeMB = File(compressedImage.path).lengthSync() / (1024 * 1024);
   print("Initial Image Size: ${imageSizeMB.toStringAsFixed(2)} MB");
 
-  // Reduce quality only if the file size is greater than the limit
+  /// Reduce quality only if the file size is greater than the limit
   int currentQuality = initialQuality;
   while (imageSizeMB > sizeLimitMB && currentQuality > 50) {
     // Reduce quality by 5% each time until it fits or quality is too low
@@ -49,7 +49,7 @@ Future<XFile> compressImage({
       format: format,
     );
 
-    // Update the new file size after compression
+    /// Update the new file size after compression
     if (compressedImage != null) {
       imageSizeMB = File(compressedImage.path).lengthSync() / (1024 * 1024);
       print(

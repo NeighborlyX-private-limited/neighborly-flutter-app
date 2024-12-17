@@ -4,7 +4,6 @@ import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/award_bag_buy_bottom_sheet.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
 import 'package:go_router/go_router.dart';
 
 class AwardSelectionScreen extends StatefulWidget {

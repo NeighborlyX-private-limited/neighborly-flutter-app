@@ -1,10 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../../core/entities/auth_response_entity.dart';
 import '../../../domain/usecases/google_authentication_usecase.dart';
 import '../../../domain/usecases/login_with_email_usecase.dart';
-
 part 'login_with_email_event.dart';
 part 'login_with_email_state.dart';
 

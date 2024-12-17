@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/failures.dart';
 import '../repositories/community_repositories.dart';
 
@@ -13,6 +12,8 @@ class UpdateMuteCommunityUsecase {
     required bool newValue,
   }) async {
     return await repository.updateMute(
-        communityId: communityId, newValue: newValue);
+      communityId: communityId,
+      newValue: newValue,
+    );
   }
 }

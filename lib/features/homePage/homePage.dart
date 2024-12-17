@@ -46,7 +46,7 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    pageController = PageController();
+    //pageController = PageController();
     fetchLocationAndUpdate();
     updateFCMtokenNotification();
     _setDeepLinkListener();
@@ -200,16 +200,21 @@ class _MainPageState extends State<MainPage> {
           _currentIndex = 2;
         });
         break;
-      // case 3:
-      //     setState(() {
-      //   _currentIndex = 3;
-      // });
-      //   context.go('/events');
-      //   break;
       case 3:
-        context.push('/profile');
         setState(() {
           _currentIndex = 3;
+        });
+        // context.go('/events');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('comming soon...'),
+          ),
+        );
+        break;
+      case 4:
+        context.push('/profile');
+        setState(() {
+          _currentIndex = 4;
         });
         break;
     }
@@ -246,7 +251,6 @@ class _MainPageState extends State<MainPage> {
               ),
               label: 'Groups',
             ),
-
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 'assets/add.svg',
@@ -254,12 +258,12 @@ class _MainPageState extends State<MainPage> {
               ),
               label: '',
             ),
-            // const BottomNavigationBarItem(
-            //   icon: Icon(
-            //     Icons.calendar_month,
-            //   ),
-            //   label: 'Events',
-            // ),
+            const BottomNavigationBarItem(
+              icon: Icon(
+                Icons.calendar_month,
+              ),
+              label: 'Events',
+            ),
             BottomNavigationBarItem(
               icon: Icon(
                 Icons.person,

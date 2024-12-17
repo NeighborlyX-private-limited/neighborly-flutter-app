@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/resend_otp_usecase.dart';
-
 part 'resend_otp_event.dart';
 part 'resend_otp_state.dart';
 

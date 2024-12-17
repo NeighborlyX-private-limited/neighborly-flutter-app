@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
 import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
-// import 'package:uni_links/uni_links.dart';
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
 import 'dependency_injection.dart' as di;
@@ -62,6 +63,7 @@ import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// import 'package:uni_links/uni_links.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -205,6 +207,8 @@ class MyAppState extends State<MyApp> {
           BlocProvider<AppLocalizationBloc>(
             create: (context) => AppLocalizationBloc()..add(GetLocale()),
           ),
+
+          ///auth bloc
           BlocProvider<RegisterBloc>(
             create: (context) => di.sl<RegisterBloc>(),
           ),
@@ -217,15 +221,43 @@ class MyAppState extends State<MyApp> {
           BlocProvider<ForgotPasswordBloc>(
             create: (context) => di.sl<ForgotPasswordBloc>(),
           ),
-          BlocProvider<OtpBloc>(
-            create: (context) => di.sl<OtpBloc>(),
-          ),
           BlocProvider<GoogleAuthenticationBloc>(
             create: (context) => di.sl<GoogleAuthenticationBloc>(),
           ),
           BlocProvider<ChangePasswordBloc>(
             create: (context) => di.sl<ChangePasswordBloc>(),
           ),
+          BlocProvider<OtpBloc>(
+            create: (context) => di.sl<OtpBloc>(),
+          ),
+          BlocProvider<LogoutBloc>(
+            create: (context) => di.sl<LogoutBloc>(),
+          ),
+
+          ///community/group bloc
+          BlocProvider<CommunityMainCubit>(
+            create: (context) => di.sl<CommunityMainCubit>(),
+          ),
+          BlocProvider<CommunityDetailsCubit>(
+            create: (context) => di.sl<CommunityDetailsCubit>(),
+          ),
+          BlocProvider<JoinGroupBloc>(
+            create: (context) => di.sl<JoinGroupBloc>(),
+          ),
+          BlocProvider<AddRemoveUserInGroupBloc>(
+            create: (context) => di.sl<AddRemoveUserInGroupBloc>(),
+          ),
+          BlocProvider<MakeRemoveAdminBloc>(
+            create: (context) => di.sl<MakeRemoveAdminBloc>(),
+          ),
+          BlocProvider<CommunityCreateCubit>(
+            create: (context) => di.sl<CommunityCreateCubit>(),
+          ),
+          BlocProvider<CommunitySearchCubit>(
+            create: (context) => di.sl<CommunitySearchCubit>(),
+          ),
+
+          ///post bloc
           BlocProvider<GetAllPostsBloc>(
             create: (context) => di.sl<GetAllPostsBloc>(),
           ),
@@ -265,15 +297,16 @@ class MyAppState extends State<MyApp> {
           BlocProvider<GiveAwardBloc>(
             create: (context) => di.sl<GiveAwardBloc>(),
           ),
+
+          ///profile bloc
           BlocProvider<GetGenderAndDOBBloc>(
             create: (context) => di.sl<GetGenderAndDOBBloc>(),
           ),
           BlocProvider<GetProfileBloc>(
             create: (context) => di.sl<GetProfileBloc>(),
           ),
-          BlocProvider<LogoutBloc>(
-            create: (context) => di.sl<LogoutBloc>(),
-          ),
+
+          ///post bloc
           BlocProvider<GetMyPostsBloc>(
             create: (context) => di.sl<GetMyPostsBloc>(),
           ),
@@ -298,18 +331,8 @@ class MyAppState extends State<MyApp> {
           BlocProvider<GetMyAwardsBloc>(
             create: (context) => di.sl<GetMyAwardsBloc>(),
           ),
-          BlocProvider<CommunityMainCubit>(
-            create: (context) => di.sl<CommunityMainCubit>(),
-          ),
-          BlocProvider<CommunityCreateCubit>(
-            create: (context) => di.sl<CommunityCreateCubit>(),
-          ),
-          BlocProvider<CommunitySearchCubit>(
-            create: (context) => di.sl<CommunitySearchCubit>(),
-          ),
-          BlocProvider<CommunityDetailsCubit>(
-            create: (context) => di.sl<CommunityDetailsCubit>(),
-          ),
+
+          ///chat bloc
           BlocProvider<ChatMainCubit>(
             create: (context) => di.sl<ChatMainCubit>(),
           ),
@@ -322,6 +345,8 @@ class MyAppState extends State<MyApp> {
           BlocProvider<ChatGroupCubitThread>(
             create: (context) => di.sl<ChatGroupCubitThread>(),
           ),
+
+          ///event bloc
           BlocProvider<EventMainCubit>(
             create: (context) => di.sl<EventMainCubit>(),
           ),
@@ -337,12 +362,16 @@ class MyAppState extends State<MyApp> {
           BlocProvider<EventJoinCubit>(
             create: (context) => di.sl<EventJoinCubit>(),
           ),
+
+          ///notification bloc
           BlocProvider<NotificationGeneralCubit>(
             create: (context) => di.sl<NotificationGeneralCubit>(),
           ),
           BlocProvider<NotificationListCubit>(
             create: (context) => di.sl<NotificationListCubit>(),
           ),
+
+          ///others bloc
           BlocProvider<CityBloc>(
             create: (context) => CityBloc(sl<CityRepository>()),
           ),

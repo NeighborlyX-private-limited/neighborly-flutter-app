@@ -1,9 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../../core/entities/auth_response_entity.dart';
 import '../../../domain/usecases/get_user_info_usecase.dart';
-
 part 'get_user_info_event.dart';
 part 'get_user_info_state.dart';
 

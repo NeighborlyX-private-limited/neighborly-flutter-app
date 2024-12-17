@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/theme/colors.dart';
 
 class CommunityEmptyWidget extends StatelessWidget {
@@ -17,16 +16,11 @@ class CommunityEmptyWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          //
-          //
           SvgPicture.asset(
             'assets/group-empty.svg',
             width: MediaQuery.of(context).size.width * 0.60,
-            // height: 84,
           ),
           const SizedBox(height: 20),
-          //
-          //
           Text(
             'No Community Groups Yet',
             textAlign: TextAlign.center,
@@ -36,8 +30,6 @@ class CommunityEmptyWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          //
-          //
           Text(
             'Be the first to create a group and start connecting!',
             textAlign: TextAlign.center,
@@ -47,19 +39,14 @@ class CommunityEmptyWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 25),
-          //
-          //
-
           ElevatedButton(
             onPressed: () {
-              // Lógica ao clicar no botão
               context.go('/groups/create');
             },
             style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xff635BFF),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      50), // Ajuste o raio conforme necessário
+                  borderRadius: BorderRadius.circular(50),
                 ),
                 padding: EdgeInsets.all(15)),
             child: Padding(

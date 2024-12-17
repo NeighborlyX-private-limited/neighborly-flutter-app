@@ -1,9 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/entities/post_with_comments_entity.dart';
 import '../../../domain/usecases/get_my_comments_usecase.dart';
-
 part 'get_my_comments_event.dart';
 part 'get_my_comments_state.dart';
 

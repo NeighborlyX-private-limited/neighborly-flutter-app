@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/give_award_usecase.dart';
-
 part 'give_award_event.dart';
 part 'give_award_state.dart';
 

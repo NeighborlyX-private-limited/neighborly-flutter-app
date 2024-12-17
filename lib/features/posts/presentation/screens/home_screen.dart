@@ -259,13 +259,20 @@ class _HomeScreenState extends State<HomeScreen>
         }
       }
     }).catchError((error) {
-      if (mounted && (!error.contains('oops something went wrong'))) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error.toString()),
+            content: Text('oops something went wrong'),
           ),
         );
       }
+      // if (mounted && (!error.contains('oops something went wrong'))) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text(error.toString()),
+      //     ),
+      //   );
+      // }
     });
   }
 

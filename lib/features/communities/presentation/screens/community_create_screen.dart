@@ -23,24 +23,26 @@ class CommunityCreateScreen extends StatefulWidget {
 }
 
 class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
-  int currentStep = 1;
-  File? fileToUpload;
+  late CommunityCreateCubit communityCreateCubit;
 
   final nameEC = TextEditingController();
   final descriptionEC = TextEditingController();
   final locationEC = TextEditingController();
   final typeEC = TextEditingController(text: 'public');
   final radiusEC = TextEditingController();
-  late var communityCreateCubit;
+  int currentStep = 1;
+  File? fileToUpload;
 
+  ///init method
   @override
   void initState() {
     super.initState();
     communityCreateCubit = BlocProvider.of<CommunityCreateCubit>(context);
-    radiusEC.text = '1';
+    radiusEC.text = '3';
     currentStep = 1;
   }
 
+  ///dispose method
   @override
   void dispose() {
     nameEC.dispose();
@@ -51,7 +53,34 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     super.dispose();
   }
 
-  /// user leave with save confiemation bottom sheet
+  ///  jump to next form
+  void jumpNext() {
+    setState(() {
+      if (currentStep == 2) {
+        currentStep += 2;
+      } else {
+        currentStep++;
+      }
+    });
+  }
+
+  /// title selection
+  String titleSelector(int step) {
+    switch (step) {
+      case 1:
+        return 'create - basic';
+      case 2:
+        return 'create - descr.';
+      // case 3:
+      //   return 'create - locat.';
+      case 4:
+        return 'create - image';
+      default:
+        return 'create';
+    }
+  }
+
+  /// user leave with save confirmation bottom sheet
   Future<dynamic> bottomSheetConfirmNotSaved(BuildContext context) {
     return showModalBottomSheet(
       showDragHandle: true,
@@ -117,7 +146,10 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                         child: Text(
                           'Yes',
                           style: TextStyle(
-                              color: Colors.white, fontSize: 18, height: 0.3),
+                            color: Colors.white,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
                         ),
                       ),
                     ),
@@ -131,33 +163,10 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     );
   }
 
-  void jumpNext() {
-    setState(() {
-      currentStep++;
-    });
-  }
-
-  /// title selection
-  String titleSelector(int step) {
-    switch (step) {
-      case 1:
-        return 'create - basic';
-      case 2:
-        return 'create - descr.';
-      case 3:
-        return 'create - locat.';
-      case 4:
-        return 'create - image';
-      default:
-        return 'create';
-    }
-  }
-
   void processSave() {
     ///  Save process start
     print('...nameEC: ${nameEC.text}');
     print('...descriptionEC: ${descriptionEC.text}');
-    print('...locationEC: ${locationEC.text}');
     print('...typeEC: ${typeEC.text}');
     print('...radiusEC: ${radiusEC.text}');
 
@@ -172,21 +181,13 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
       );
     }
 
-    if (locationEC.text.trim() == '') {
-      setState(() {
-        currentStep = 3;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Location is mandatory'),
-        ),
-      );
-    }
-
-    if ((locationEC.text.trim() != '') && (nameEC.text.trim() != '')) {
+    if ((nameEC.text.trim() != '')) {
+      String radiusInput = radiusEC.text;
+      double radiusDouble = double.parse(radiusInput);
       communityCreateCubit.createCommunity(
         CommunityModel(
           id: '',
+          radius: radiusDouble.toInt(),
           name: nameEC.text,
           description: descriptionEC.text,
           locationStr: locationEC.text,
@@ -196,20 +197,16 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
           membersCount: 1,
           isPublic: typeEC.text != 'public' ? false : true,
           isJoined: true,
+          isAdmin: true,
           isMuted: false,
           users: [],
           admins: [],
           blockList: [],
+          displayName: '',
         ),
         fileToUpload,
       );
     }
-
-    // final nameEC = TextEditingController();
-    // final descriptionEC = TextEditingController();
-    // final locationEC = TextEditingController();
-    // final typeEC = TextEditingController();
-    // final radiusEC = TextEditingController();
   }
 
   @override
@@ -222,15 +219,16 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             color: Colors.black,
           ),
           onTap: () {
-            print('currentStep=$currentStep');
-
             if (currentStep == 1) {
               bottomSheetConfirmNotSaved(context);
               return;
             }
-
             setState(() {
-              currentStep--;
+              if (currentStep == 4) {
+                currentStep -= 2;
+              } else {
+                currentStep--;
+              }
             });
           },
         ),
@@ -267,34 +265,31 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
       ),
       body: BlocConsumer<CommunityCreateCubit, CommunityCreateState>(
         listener: (context, state) {
-          switch (state.status) {
-            case Status.loading:
-              break;
-            case Status.failure:
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text('Something went wrong! ${state.failure?.message}'),
-                ),
-              );
-              break;
-            case Status.success:
-              print('Success JUMP to ${state.newCommunityId}');
-              Navigator.of(context).pop();
-              context.push('/groups/${state.newCommunityId}');
-              break;
-            case Status.initial:
-              break;
+          ///failure state
+          if (state.status == Status.failure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content:
+                    Text('Something went wrong! ${state.failure?.message}'),
+              ),
+            );
+          }
+
+          ///success state
+          if (state.status == Status.success) {
+            Navigator.of(context).pop();
+            context.push('/groups/${state.newCommunityId}');
           }
         },
         builder: (context, state) {
           return BlocBuilder<CommunityCreateCubit, CommunityCreateState>(
             bloc: communityCreateCubit,
             builder: (context, state) {
-              /// CommunityCreateCubit loading state
+              ///  loading state
               if (state.status == Status.loading) {
                 return const CommunityMainSheemer();
               }
+
               return Container(
                 padding: EdgeInsets.only(top: 15),
                 width: double.infinity,
@@ -319,12 +314,12 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       ],
 
                       ///for location and radius
-                      if (currentStep == 3) ...[
-                        Step3area(
-                          locationController: locationEC,
-                          radiusController: radiusEC,
-                        ),
-                      ],
+                      // if (currentStep == 3) ...[
+                      //   Step3area(
+                      //     //locationController: locationEC,
+                      //     radiusController: radiusEC,
+                      //   ),
+                      // ],
 
                       /// for group icon or image
                       if (currentStep == 4) ...[
@@ -332,8 +327,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                           isLoading: state.uploadIsLoading,
                           currentFile: fileToUpload,
                           onSelectImage: (newFile) {
-                            print('newFile=${newFile.path}');
-
                             // ignore: unnecessary_null_comparison
                             if (newFile != null) {
                               setState(() {
@@ -400,7 +393,7 @@ class _Step1areaState extends State<Step1area> {
             label: 'Choose your group type',
             items: ['public', 'private'],
             onChanged: (value) {
-              widget.typeController.text = value ?? '';
+              widget.typeController.text = value ?? 'public';
             },
             initialValue: widget.typeController.text,
             placeholder: 'Community Type',
@@ -468,11 +461,11 @@ class _Step2areaState extends State<Step2area> {
 
 ///step 3 area for taking group location and radius
 class Step3area extends StatefulWidget {
-  final TextEditingController locationController;
+  //final TextEditingController locationController;
   final TextEditingController radiusController;
   const Step3area({
     super.key,
-    required this.locationController,
+    //required this.locationController,
     required this.radiusController,
   });
 
@@ -489,17 +482,17 @@ class _Step3areaState extends State<Step3area> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DropdownSearchField(
-            label: 'Choose your location',
-            items: kLocationList,
-            onChanged: (value) {
-              widget.locationController.text = value ?? '';
-            },
-            initialValue: widget.locationController.text,
-            placeholder: 'Location',
-            // validator: Validatorless.required('Preenchimento é obrigatório'),
-          ),
-          const SizedBox(height: 30),
+          // DropdownSearchField(
+          //   label: 'Choose your location',
+          //   items: kLocationList,
+          //   onChanged: (value) {
+          //     widget.locationController.text = value ?? '';
+          //   },
+          //   initialValue: widget.locationController.text,
+          //   placeholder: 'Location',
+          //   // validator: Validatorless.required('Preenchimento é obrigatório'),
+          // ),
+          // const SizedBox(height: 30),
           Text(
             'Community Radius',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
@@ -551,16 +544,17 @@ class _Step4areaState extends State<Step4area> {
   @override
   void initState() {
     super.initState();
-
     selectedImage = widget.currentFile;
   }
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image =
-        await picker.pickImage(source: ImageSource.gallery).then((file) {
-      return compressImage(imageFileX: file);
-    });
+        await picker.pickImage(source: ImageSource.gallery).then(
+      (file) {
+        return compressImage(imageFileX: file);
+      },
+    );
 
     if (image != null) {
       setState(() {
@@ -582,7 +576,6 @@ class _Step4areaState extends State<Step4area> {
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const SizedBox(height: 7),
-          //
           Stack(
             children: [
               if (widget.isLoading == true) ...[

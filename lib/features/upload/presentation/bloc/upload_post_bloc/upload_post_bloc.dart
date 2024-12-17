@@ -1,10 +1,7 @@
 import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/upload_post_usecase.dart';
-
 part 'upload_post_event.dart';
 part 'upload_post_state.dart';
 

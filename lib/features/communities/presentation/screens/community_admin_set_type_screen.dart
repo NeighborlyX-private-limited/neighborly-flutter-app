@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 
@@ -23,7 +22,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     selectedOption =
         communityCubit.state.community?.isPublic == true ? 'public' : 'private';
   }
@@ -60,7 +58,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
         actions: [
           TextButton(
               onPressed: () {
-                print('SAVE');
                 communityCubit.updateType(
                     communityCubit.state.community?.id ?? '',
                     selectedOption ?? 'public');
@@ -81,11 +78,8 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
         width: double.infinity,
         color: Colors.white,
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            //
-            //
             ListTile(
               title: const Text(
                 'Public',
@@ -100,7 +94,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(50),
                   color: AppColors.lightBackgroundColor,
-                  // color: Colors.red,
                 ),
                 child: Icon(
                   Icons.public,
@@ -117,8 +110,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
             const SizedBox(
               height: 15,
             ),
-            //
-            //
             ListTile(
               title: const Text(
                 'Private',
@@ -133,7 +124,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(50),
                   color: AppColors.lightBackgroundColor,
-                  // color: Colors.red,
                 ),
                 child: Icon(
                   Icons.privacy_tip_outlined,
@@ -147,8 +137,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 onChanged: _handleRadioValueChange,
               ),
             ),
-            //
-            //
           ],
         ),
       ),
@@ -156,14 +144,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
   }
 }
 
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
+///menu button
 class MenuIconItem extends StatelessWidget {
   final String title;
   final IconData? icon;

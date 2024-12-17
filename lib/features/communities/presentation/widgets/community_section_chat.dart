@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/models/community_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -18,15 +17,11 @@ class CommunitySectionChat extends StatelessWidget {
     double space = 6;
     return Container(
       width: double.infinity,
-      color: AppColors.lightBackgroundColor,
-      // color: AppColors.lightBackgroundColor,
+      color: AppColors.whiteColor,
       child: SingleChildScrollView(
         child: Column(
           children: [
-            //
-            //
             SizedBox(height: space),
-
             TileChat(
               name: community.name,
               avatarUrl: community.avatarUrl,
@@ -46,18 +41,12 @@ class CommunitySectionChat extends StatelessWidget {
                 );
               },
             ),
-            //
-            //
           ],
         ),
       ),
     );
   }
 }
-
-// ########################################################################
-// ########################################################################
-// ########################################################################
 
 class TileChat extends StatelessWidget {
   final String name;

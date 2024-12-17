@@ -12,20 +12,17 @@ class CommunityMainCubit extends Cubit<CommunityMainState> {
       : super(const CommunityMainState());
 
   void init() async {
-    await getAllCommunities(true, false);
+    await getAllCommunities();
   }
 
-  Future getAllCommunities(bool isSummary, bool isNearBy) async {
+  /// get all community cubit
+  Future getAllCommunities() async {
     emit(state.copyWith(status: Status.loading));
-    final result = await getAllCommunitiesUseCase(
-      isSummary: isSummary,
-      isNearBy: isNearBy,
-    );
-
-    print('result :$result');
+    final result = await getAllCommunitiesUseCase();
+    print('result in get all community cubit:$result');
     result.fold(
       (failure) {
-        print('fold error:${failure.message}');
+        print('fold error in get all community cubit:${failure.message}');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -46,15 +43,19 @@ class CommunityMainCubit extends Cubit<CommunityMainState> {
     );
   }
 
-  Future<void> updateNearBy(bool newValue) async {
-    await getAllCommunities(true, newValue);
-  }
+  /// it is no longer required
+  // Future<void> updateNearBy(bool newValue) async {
+  //   await getAllCommunities(true, newValue);
+  // }
 
-  Future<void> updateIsSummary(
-    bool isSummary,
-    bool isNearBy,
-  ) async {
-    print('...BLOC isSummary=$isSummary isNearBy=$isNearBy');
-    await getAllCommunities(isSummary, isNearBy);
-  }
+  /// it is no longer required
+  // Future<void> updateIsSummary(
+  //   bool isSummary,
+  //   bool isNearBy,
+  // ) async {
+  //   await getAllCommunities(
+  //     isSummary,
+  //     isNearBy,
+  //   );
+  // }
 }

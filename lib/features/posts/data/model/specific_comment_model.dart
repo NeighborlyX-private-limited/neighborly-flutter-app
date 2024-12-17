@@ -1,5 +1,4 @@
 import 'package:neighborly_flutter_app/features/posts/domain/entities/specific_comment_entity.dart';
-
 import '../../../../core/models/post_model.dart';
 
 class SpecificCommentModel extends SpecificCommentEntity {

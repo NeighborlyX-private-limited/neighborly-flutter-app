@@ -1,8 +1,9 @@
-/// prod base url
+// prod base url
+
 // const kBaseUrl = "https://prod.neighborly.in/api";
 // const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 
-/// dev base url
+// dev base url
 const kBaseUrl = "https://dev.neighborly.in/api";
 const kBaseUrlNotification = "https://dev.neighborly.in/notification";
 
@@ -11,6 +12,7 @@ const kBaseSocketUrl = "ws://s54.90.230.2:3001";
 const double kMaxRadius = 100;
 const double kMinRadius = 1;
 
+/// report reason list
 const List<String> kReportReasons = [
   'Inappropriate content',
   'Spam',
@@ -19,6 +21,7 @@ const List<String> kReportReasons = [
   'Intellectual property violation',
 ];
 
+/// location city list
 const List<String> kLocationList = [
   'Agra',
   'Ahmedabad',
@@ -72,10 +75,22 @@ const List<String> kLocationList = [
   'Jaipur'
 ];
 
-const List<String> kEventCategories = ['Nerd', 'Hackaton', 'Music', 'Food'];
+///event category list
+const List<String> kEventCategories = [
+  'Nerd',
+  'Hackaton',
+  'Music',
+  'Food',
+];
 
-const List<String> kGender = ['', 'Female', 'Male'];
+///gender list
+const List<String> kGender = [
+  'Other',
+  'Female',
+  'Male',
+];
 
+/// hours list
 List<String> kHoursOfDay = [
   "12:00 AM",
   "01:00 AM",

@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/logout_usecase.dart';
-
 part 'logout_event.dart';
 part 'logout_state.dart';
 

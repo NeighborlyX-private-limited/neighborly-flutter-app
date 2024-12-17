@@ -22,7 +22,7 @@ class GoogleSignInService {
       print("googleAuth: $googleUser");
 
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
-      print("fcmToken in Oauth: $fcmToken ");
+      print("FCM Token in Oauth: $fcmToken ");
 
       return {
         'idToken': googleAuth.idToken,

@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/get_my_groups_usecase.dart';
-
 part 'get_my_groups_event.dart';
 part 'get_my_groups_state.dart';
 

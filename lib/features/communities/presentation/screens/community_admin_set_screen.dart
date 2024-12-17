@@ -1,17 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
 
-class CommunityAdminSetScreen extends StatelessWidget {
+class CommunityAdminSetScreen extends StatefulWidget {
   final CommunityModel community;
 
   const CommunityAdminSetScreen({
     super.key,
     required this.community,
   });
+
+  @override
+  State<CommunityAdminSetScreen> createState() =>
+      _CommunityAdminSetScreenState();
+}
+
+class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
+  late CommunityDetailsCubit communityDetailCubit;
+  late String communitytId;
+
+  ///init state method
+  @override
+  void initState() {
+    super.initState();
+    communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
+    communitytId = widget.community.id;
+  }
+
+  /// delete group confirmation bottom sheet
+  void _showConfirmGroupDeletionSheet(BuildContext context) {
+    showModalBottomSheet(
+      showDragHandle: true,
+      barrierColor: AppColors.whiteColor,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Delete Group',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Are you sure you want to delete this group? This action cannot be undone.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: Colors.grey[300],
+                    ),
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      communityDetailCubit.deleteCommunity(communitytId);
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Group deleted')),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: AppColors.primaryColor,
+                    ),
+                    child: Text(
+                      'Delete',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,13 +149,35 @@ class CommunityAdminSetScreen extends StatelessWidget {
 
               const SizedBox(height: 5),
 
-              ///member list
+              ///community name
               MenuIconItem(
-                title: 'Member list',
+                title: 'Community name',
                 svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/members');
+                  context.push('/groups/admin/displayname');
+                },
+              ),
+
+              /// community description
+              MenuIconItem(
+                title: 'Description',
+                svgPath: 'assets/menu_description.svg',
+                iconSize: 25,
+                onTap: () {
+                  context.push('/groups/admin/description');
+                },
+              ),
+
+              const SizedBox(height: 5),
+
+              /// community type
+              MenuIconItem(
+                title: 'Community Type',
+                svgPath: 'assets/menu_type.svg',
+                iconSize: 25,
+                onTap: () {
+                  context.push('/groups/admin/type');
                 },
               ),
 
@@ -82,51 +195,43 @@ class CommunityAdminSetScreen extends StatelessWidget {
 
               const SizedBox(height: 5),
 
-              ///description
-              MenuIconItem(
-                title: 'Description',
-                svgPath: 'assets/menu_description.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/groups/admin/description');
-                },
-              ),
-
               ///location
-              const SizedBox(height: 5),
-              MenuIconItem(
-                title: 'Location',
-                svgPath: 'assets/menu_location.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/groups/admin/location');
-                },
-              ),
+              // const SizedBox(height: 5),
+              // MenuIconItem(
+              //   title: 'Location',
+              //   svgPath: 'assets/menu_location.svg',
+              //   iconSize: 25,
+              //   onTap: () {
+              //     context.push('/groups/admin/location');
+              //   },
+              // ),
 
               ///radius
+              // const SizedBox(height: 5),
+              // MenuIconItem(
+              //   title: 'Radius',
+              //   svgPath: 'assets/menu_location_.svg',
+              //   iconSize: 25,
+              //   onTap: () {
+              //     context.push('/groups/admin/radius');
+              //   },
+              // ),
+
               const SizedBox(height: 5),
+
+              ///member list
               MenuIconItem(
-                title: 'Radius',
-                svgPath: 'assets/menu_location_.svg',
+                title: 'Member list',
+                svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/radius');
+                  context.push('/groups/admin/members');
                 },
               ),
 
-              ///community type
               const SizedBox(height: 5),
-              MenuIconItem(
-                title: 'Community Type',
-                svgPath: 'assets/menu_type.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/groups/admin/type');
-                },
-              ),
 
               ///block user list
-              const SizedBox(height: 5),
               MenuIconItem(
                 title: 'Blocked users',
                 svgPath: 'assets/menu_block.svg',
@@ -137,8 +242,16 @@ class CommunityAdminSetScreen extends StatelessWidget {
                 },
               ),
 
-              const SizedBox(
-                height: 300,
+              const SizedBox(height: 5),
+
+              ///delete group
+              MenuIconItem(
+                title: 'Delete community',
+                svgPath: 'assets/menu_remove.svg',
+                iconSize: 25,
+                onTap: () {
+                  _showConfirmGroupDeletionSheet(context);
+                },
               ),
             ],
           ),
@@ -148,8 +261,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
   }
 }
 
-///
-
+/// menu button
 class MenuIconItem extends StatelessWidget {
   final String title;
   final IconData? icon;

@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
 import '../../../../core/constants/status.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/community_model.dart';
@@ -11,7 +9,6 @@ import '../../data/model/search_dash_model.dart';
 import '../../data/model/search_result_model.dart';
 import '../../domain/usecases/get_search_history_communities_usecase.dart';
 import '../../domain/usecases/get_search_results_communities_usecase.dart';
-
 part 'communities_search_state.dart';
 
 class CommunitySearchCubit extends Cubit<CommunitySearchState> {
@@ -40,7 +37,6 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
             errorMessage: failure.message));
       },
       (dashData) {
-        // print('... BLOC SEARCH dash: $dashData');
         emit(state.copyWith(
             status: Status.success,
             dashData: dashData,
@@ -56,17 +52,16 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        // print('... BLOC SEARCH failure: ${failure.message}');
-
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (searchresult) {
-        // print('... BLOC SEARCH results: dashData');
-        emit(
-            state.copyWith(status: Status.success, searchResult: searchresult));
+        emit(state.copyWith(
+          status: Status.success,
+          searchResult: searchresult,
+        ));
       },
     );
   }

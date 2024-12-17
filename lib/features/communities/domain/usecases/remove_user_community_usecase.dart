@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/failures.dart';
 import '../repositories/community_repositories.dart';
 
@@ -12,7 +11,7 @@ class RemoveUserCommunityUsecase {
     required String communityId,
     required String userId,
   }) async {
-    return await repository.removeUser(
+    return await repository.leaveCommunity(
       communityId: communityId,
       userId: userId,
     );

@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/failures.dart';
 import '../repositories/community_repositories.dart';
 
@@ -13,6 +12,8 @@ class ReportCommunityUsecase {
     required String reason,
   }) async {
     return await repository.reportCommunity(
-        communityId: communityId, reason: reason);
+      communityId: communityId,
+      reason: reason,
+    );
   }
 }

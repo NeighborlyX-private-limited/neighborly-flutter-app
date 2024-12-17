@@ -8,7 +8,9 @@ class DateUtilsHelper {
       DateFormat('dd/MM/yyyy').parse(date);
 
   static String simplifyISOtimeStringStartEnd(
-      String dateStart, String dateEnd) {
+    String dateStart,
+    String dateEnd,
+  ) {
     DateTime dateTimeStart = DateTime.parse(dateStart);
     DateTime dateTimeEnd = DateTime.parse(dateEnd);
 

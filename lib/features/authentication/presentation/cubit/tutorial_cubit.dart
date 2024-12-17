@@ -4,7 +4,6 @@ import 'package:neighborly_flutter_app/core/constants/constants.dart';
 import 'package:neighborly_flutter_app/core/error/exception.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'dart:convert';
-
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_state.dart';
 
 class TutorialCubit extends Cubit<TutorialState> {

@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import 'package:neighborly_flutter_app/core/constants/constants.dart';
 import 'package:neighborly_flutter_app/core/error/exception.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';

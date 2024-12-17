@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/not_found_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/screens/community_admin_set_displayname.dart';
 
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_of_specific_comment.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/deletd_user_profile_screen.dart';
@@ -254,6 +255,10 @@ final GoRouter router = GoRouter(
         GoRoute(
           path: '/groups/admin/description',
           builder: (context, state) => const CommunityAdminDescriptionScreen(),
+        ),
+        GoRoute(
+          path: '/groups/admin/displayname',
+          builder: (context, state) => const CommunityAdminDisplaynameScreen(),
         ),
         GoRoute(
           path: '/groups/admin/icon',

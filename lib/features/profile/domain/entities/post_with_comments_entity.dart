@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 
 class PostWithCommentsEntity extends Equatable {

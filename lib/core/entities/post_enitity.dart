@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-
 import 'option_entity.dart';
 
 class PostEntity extends Equatable {

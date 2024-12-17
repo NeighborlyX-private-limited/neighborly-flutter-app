@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
@@ -33,8 +32,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     print('.....start login with');
     print('email: $email');
     print('password: $password');
+
     String url = '$kBaseUrl/authentication/login';
     print('url: $url');
+
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -45,8 +46,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'password': password,
       }),
     );
+
     print('...login response status code: ${response.statusCode}');
     print('...login response: ${response.body}');
+
     if (response.statusCode == 200) {
       /// Assuming the response headers contain the Set-Cookie header
       /// extract data from response
@@ -106,10 +109,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     print('.....start resendOtp with');
     print('email: $email');
     print('phone: $phone');
+
     String urlForEmail = '$kBaseUrl/authentication/send-otp';
     String urlForPhone = '$kBaseUrl/authentication/send-phone-otp';
     print('urlForEmail:  $urlForEmail');
     print('urlForPhone: $urlForPhone');
+
     final response = await client.post(
       Uri.parse(email != null ? urlForEmail : urlForPhone),
       headers: <String, String>{
@@ -125,6 +130,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     );
     print('resendOtp response status code :${response.statusCode}');
     print('resendOtp response:${response.body}');
+
     if (response.statusCode == 200) {
       return "OTP sent successfully";
     } else {
@@ -148,10 +154,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     print('email: $email');
     print('password: $password');
     print('phone: $phone');
+
     String url = '$kBaseUrl/authentication/register';
     print('url... : $url');
+
     String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
-    print('fcmToken... : $fcmToken');
+    print('FCM Token in signup... : $fcmToken');
 
     final response = await client.post(
       Uri.parse(url),
@@ -250,10 +258,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     print('phone: $phone');
     print('otp: $otp');
     print('verificationFor: $verificationFor');
+
     String urlForEmail = '$kBaseUrl/authentication/verify-otp';
     String urlForPhone = '$kBaseUrl/authentication/verify-phone-otp';
     print('urlForEmail:  $urlForEmail');
     print('urlForPhone: $urlForPhone');
+
     final response = await client.post(
       Uri.parse(email != null ? urlForEmail : urlForPhone),
       headers: {

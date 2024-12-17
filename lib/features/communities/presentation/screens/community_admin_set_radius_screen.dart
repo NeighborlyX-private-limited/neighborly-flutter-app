@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
-
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
@@ -26,7 +25,6 @@ class _CommunityAdminRadiusScreenState
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     newRadiusEC.text = '${communityCubit.state.community?.radius ?? 0}';
   }
 
@@ -93,11 +91,8 @@ class _CommunityAdminRadiusScreenState
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              //
-              //
               FlutterSlider(
                 values: [double.parse(newRadiusEC.text)],
                 max: kMaxRadius,
@@ -108,8 +103,6 @@ class _CommunityAdminRadiusScreenState
                   });
                 },
               ),
-              //
-              //
               Text(
                 '  ${newRadiusEC.text} miles',
                 style: TextStyle(
@@ -117,14 +110,6 @@ class _CommunityAdminRadiusScreenState
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              //               Text(
-              //   'Current Value',
-              //   style: TextStyle(
-              //     fontSize: 15,
-              //     fontWeight: FontWeight.w500,
-              //     color: Colors.grey
-              //   ),
-              // ),
               const SizedBox(
                 height: 30,
               ),

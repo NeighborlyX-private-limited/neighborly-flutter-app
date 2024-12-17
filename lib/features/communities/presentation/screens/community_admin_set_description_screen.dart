@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 
@@ -17,21 +16,19 @@ class CommunityAdminDescriptionScreen extends StatefulWidget {
 class _CommunityAdminDescriptionScreenState
     extends State<CommunityAdminDescriptionScreen> {
   late CommunityDetailsCubit communityCubit;
-
   final newDescriptionEC = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     newDescriptionEC.text = communityCubit.state.community?.description ?? '';
   }
 
   @override
   void dispose() {
-    super.dispose();
     newDescriptionEC.dispose();
+    super.dispose();
   }
 
   @override
@@ -67,7 +64,6 @@ class _CommunityAdminDescriptionScreenState
                     ),
                   );
                 } else {
-                  print('SAVE');
                   communityCubit.updateDescription(
                       communityCubit.state.community?.id ?? '',
                       newDescriptionEC.text.trim());
@@ -90,15 +86,14 @@ class _CommunityAdminDescriptionScreenState
         color: Colors.white,
         child: SingleChildScrollView(
           child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              //
-              //
               Container(
                 height: 450,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 margin: EdgeInsets.all(15),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
@@ -109,19 +104,18 @@ class _CommunityAdminDescriptionScreenState
                   onChanged: (value) {},
                   controller: newDescriptionEC,
                   decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Describe your community',
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.normal,
-                      )),
+                    border: InputBorder.none,
+                    hintText: 'Describe your community',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   minLines: 1,
                 ),
               ),
-              //
-              //
             ],
           ),
         ),
@@ -129,7 +123,3 @@ class _CommunityAdminDescriptionScreenState
     );
   }
 }
-
-// ########################################################################
-// ########################################################################
-// ########################################################################
