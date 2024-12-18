@@ -9,11 +9,11 @@ class UpdateMuteCommunityUsecase {
 
   Future<Either<Failure, void>> call({
     required String communityId,
-    required bool newValue,
+    required bool isMute,
   }) async {
     return await repository.updateMute(
       communityId: communityId,
-      newValue: newValue,
+      isMute: isMute,
     );
   }
 }

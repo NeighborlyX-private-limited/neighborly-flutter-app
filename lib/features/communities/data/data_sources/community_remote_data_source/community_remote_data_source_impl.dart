@@ -172,6 +172,43 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     }
   }
 
+  /// get user group api call
+  @override
+  Future<List<CommunityModel>> getUserGroups() async {
+    print('... getUserGroups start with');
+    List<String>? cookies = ShardPrefHelper.getCookie();
+    print('cookies=$cookies');
+
+    if (cookies == null || cookies.isEmpty) {
+      print('Something went wrong in getUserGroups');
+      throw const ServerException(message: 'Something went wrong');
+    }
+    String cookieHeader = cookies.join('; ');
+    print('cookieHeader=$cookieHeader');
+
+    String url = '$kBaseUrl/group/user-groups';
+    print('url=$url');
+
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+    print('getUserGroups status code: ${response.statusCode}');
+    print('getUserGroups response: ${response.body}');
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
+    } else {
+      print(
+          'else error in getUserGroups: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+      throw ServerException(message: message);
+    }
+  }
+
   ///get community api call
   @override
   Future<CommunityModel> getCommunity({required String communityId}) async {
@@ -725,11 +762,11 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   @override
   Future<void> updateMute({
     required String communityId,
-    required bool newValue,
+    required bool isMute,
   }) async {
     print('... updateMute start with');
     print('communityId=$communityId ');
-    print('newValue=$newValue ');
+    print('isMute=$isMute ');
     List<String>? cookies = ShardPrefHelper.getCookie();
     print('cookies=$cookies ');
     if (cookies == null || cookies.isEmpty) {
@@ -739,10 +776,10 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
 
-    String url = '$kBaseUrl/group/mute';
+    String url = '$kBaseUrl/group/mute-group';
     print('url=$url ');
 
-    final response = await client.post(
+    final response = await client.put(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
@@ -751,7 +788,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       body: jsonEncode(
         <String, dynamic>{
           'groupId': communityId,
-          'newValue': newValue,
+          'mute': isMute,
         },
       ),
     );
@@ -861,25 +898,30 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
   @override
   // ignore: override_on_non_overriding_member
-  Future<void> unblockUser({
+  Future<void> updateBlock({
     required String communityId,
     required String userId,
+    required String isBlock,
   }) async {
-    print('... unblockUser start with');
+    print('... updateBlock start with');
     print('userId=$userId ');
     print('communityId=$communityId');
+    print('isBlock=$isBlock');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
+    print('cookies=$cookies');
+
     if (cookies == null || cookies.isEmpty) {
-      print('cookies not found in unblockUser');
+      print('cookies not found in updateBlock');
       throw const ServerException(message: 'Something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader');
-    String url = '$kBaseUrl/group/unblock-user';
+
+    String url = '$kBaseUrl/group/block-user';
     print('url=$url');
 
-    final response = await client.post(
+    final response = await client.put(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
@@ -888,19 +930,18 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       body: jsonEncode(
         <String, String>{
           'userId': userId,
-          'group_id': communityId,
+          'groupId': communityId,
+          'block': isBlock,
         },
       ),
     );
-    print('unblockUser status code: ${response.statusCode}');
-    print('unblockUser response: ${response.body}');
+    print('updateBlock status code: ${response.statusCode}');
+    print('updateBlock response: ${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
-
-      // return jsonData['message'];
     } else {
       print(
-          'else error in unblockUser: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in updateBlock: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
       final message =
           jsonDecode(response.body)['msg'] ?? 'Something went wrong';
       throw ServerException(message: message);

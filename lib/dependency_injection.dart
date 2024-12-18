@@ -3,11 +3,13 @@ import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/add_user_community_usecase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/get_user_groups_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/join_community_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/delete_community_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/remove_admin_community_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/update_community_displayname.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/data/datasources/payment_remote_data_source.dart';
@@ -301,6 +303,7 @@ void init() async {
   /// community/group usecase
   sl.registerLazySingleton(() => CreateCommunityUsecase(sl()));
   sl.registerLazySingleton(() => GetAllCommunitiesUsecase(sl()));
+  sl.registerLazySingleton(() => GetUserGroupsUsecase(sl()));
   sl.registerLazySingleton(() => GetCommunityUsecase(sl()));
   sl.registerLazySingleton(() => MakeAdminCommunityUsecase(sl()));
   sl.registerLazySingleton(() => RemoveAdminCommunityUsecase(sl()));
@@ -391,6 +394,7 @@ void init() async {
 
   ///community bloc
   sl.registerFactory(() => CommunityMainCubit(sl()));
+  sl.registerFactory(() => GetUserGroupsBloc(getUserGroupsUsecase: sl()));
   sl.registerFactory(() => CommunityDetailsCubit(sl(), sl(), sl(), sl(), sl(),
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => CommunityCreateCubit(sl()));

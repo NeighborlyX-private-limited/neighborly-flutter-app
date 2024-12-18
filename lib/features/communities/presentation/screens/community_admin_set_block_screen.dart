@@ -32,7 +32,7 @@ class _CommunityAdminBlockedUsersScreenState
   }
 
   void removeUser(BuildContext context, String communityId, String userId) {
-    communityCubit.unblockUser(communityId, userId);
+    communityCubit.updateBlock(communityId, userId, 'false');
 
     setState(() {
       blockedMembers =

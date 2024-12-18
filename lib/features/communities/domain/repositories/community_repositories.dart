@@ -15,6 +15,9 @@ abstract class CommunityRepositories {
   ///get all communities
   Future<Either<Failure, List<CommunityModel>>> getAllCommunities();
 
+  ///get user groups
+  Future<Either<Failure, List<CommunityModel>>> getUserGroups();
+
   ///get community details
   Future<Either<Failure, CommunityModel>> getCommunity({
     required String communityId,
@@ -83,7 +86,7 @@ abstract class CommunityRepositories {
   ///update mute
   Future<Either<Failure, void>> updateMute({
     required String communityId,
-    required bool newValue,
+    required bool isMute,
   });
 
   ///report group
@@ -97,10 +100,11 @@ abstract class CommunityRepositories {
     required String communityId,
   });
 
-  ///unblock user
-  Future<Either<Failure, void>> unblockUser({
+  ///updateBlock user
+  Future<Either<Failure, void>> updateBlock({
     required String communityId,
     required String userId,
+    required String isBlock,
   });
 
   Future<Either<Failure, SearchDashModel>> getSearchHistoryAndTrends();

@@ -89,33 +89,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
     );
   }
 
-  ///unblockUser
-  Future unblockUser(String communityId, String userId) async {
-    emit(state.copyWith(status: Status.loading));
-    final result = await unblockUserCommunityUsecase(
-      communityId: communityId,
-      userId: userId,
-    );
-    print('result in unblockUser cubit: $result');
-
-    result.fold(
-      (failure) {
-        print('...failure in unblockUser cubit=$failure');
-        emit(
-          state.copyWith(
-            status: Status.failure,
-            failure: failure,
-            errorMessage: failure.message,
-          ),
-        );
-      },
-      (community) {
-        print('...unblockUser done');
-        emit(state.copyWith(status: Status.success));
-      },
-    );
-  }
-
   /// make admin
   Future makeAdmin(String communityId, String userId) async {
     emit(state.copyWith(status: Status.loading));
@@ -436,7 +409,7 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
     emit(state.copyWith(status: Status.loading));
     final result = await updateMuteCommunityUsecase(
       communityId: state.community?.id ?? '',
-      newValue: !state.community!.isMuted,
+      isMute: !state.community!.isMuted,
     );
     print('result:$result');
     result.fold(
@@ -509,6 +482,38 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       },
       (communityDelete) {
         print('communityDelete done');
+        emit(state.copyWith(status: Status.success));
+      },
+    );
+  }
+
+  ///unblockUser
+  Future updateBlock(
+    String communityId,
+    String userId,
+    String isBlock,
+  ) async {
+    emit(state.copyWith(status: Status.loading));
+    final result = await unblockUserCommunityUsecase(
+      communityId: communityId,
+      userId: userId,
+      isBlock: isBlock,
+    );
+    print('result in updateBlock cubit: $result');
+
+    result.fold(
+      (failure) {
+        print('...failure in updateBlock cubit=$failure');
+        emit(
+          state.copyWith(
+            status: Status.failure,
+            failure: failure,
+            errorMessage: failure.message,
+          ),
+        );
+      },
+      (community) {
+        print('...updateBlock done');
         emit(state.copyWith(status: Status.success));
       },
     );

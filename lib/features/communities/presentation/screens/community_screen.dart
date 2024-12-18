@@ -5,6 +5,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
@@ -22,15 +23,28 @@ class CommunityScreen extends StatefulWidget {
   State<CommunityScreen> createState() => _CommunityScreenState();
 }
 
-class _CommunityScreenState extends State<CommunityScreen> {
+class _CommunityScreenState extends State<CommunityScreen>
+    with SingleTickerProviderStateMixin {
   late CommunityMainCubit communityMainCubit;
   bool isHome = true;
   late String _selectedCity;
+  late TabController _tabController;
+  int _currentIndex = 0;
 
   ///init state method
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    // Listen for tab changes
+    _tabController.addListener(() {
+      // Trigger the API call when the tab changes
+      if (_tabController.index != _currentIndex &&
+          !_tabController.indexIsChanging) {
+        _currentIndex = _tabController.index;
+        _onTabChanged(_currentIndex);
+      }
+    });
     setIsHome();
     fetchLocationAndUpdate();
     setCityHomeName();
@@ -41,6 +55,22 @@ class _CommunityScreenState extends State<CommunityScreen> {
     }
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
     communityMainCubit.init();
+  }
+
+  _onTabChanged(int tabIndex) {
+    if (tabIndex == 0) {
+      communityMainCubit.init();
+    } else {
+      BlocProvider.of<GetUserGroupsBloc>(context)
+          .add(GetUserGroupsButtonPressedEvent());
+    }
+  }
+
+  ///dispose method
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   /// set the location of  user whether their home location is on or current location in
@@ -160,6 +190,21 @@ class _CommunityScreenState extends State<CommunityScreen> {
     communityMainCubit.init();
   }
 
+  /// tab bar area
+  Widget tabTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
+        ),
+      ),
+    );
+  }
+
   /// handle location toggle
   void handleToggle(bool value) async {
     if (mounted) {
@@ -180,270 +225,404 @@ class _CommunityScreenState extends State<CommunityScreen> {
     communityMainCubit.init();
   }
 
+  /// Refresh based on the current tab
+  Future<void> _onRefres() async {
+    BlocProvider.of<GetUserGroupsBloc>(context)
+        .add(GetUserGroupsButtonPressedEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: Scaffold(
+      child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
-          appBar: AppBar(
-            backgroundColor: AppColors.whiteColor,
-            title: Row(
-              children: [
-                ///app logo
-                SvgPicture.asset(
-                  'assets/logo.svg',
-                  width: 30,
-                  height: 34,
-                ),
-                const SizedBox(width: 10),
+          title: Row(
+            children: [
+              ///app logo
+              SvgPicture.asset(
+                'assets/logo.svg',
+                width: 30,
+                height: 34,
+              ),
+              const SizedBox(width: 10),
 
-                ///toggle button
-                Flexible(
-                  child: Container(
-                    height: 40,
-                    width: 160,
-                    decoration: BoxDecoration(
-                      color: AppColors.inActivePrimaryColor,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.location_on,
-                          size: 16,
-                          color: isHome
-                              ? AppColors.primaryColor
-                              : AppColors.blackColor,
+              ///toggle button
+              Flexible(
+                child: Container(
+                  height: 40,
+                  width: 160,
+                  decoration: BoxDecoration(
+                    color: AppColors.inActivePrimaryColor,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: isHome
+                            ? AppColors.primaryColor
+                            : AppColors.blackColor,
+                      ),
+
+                      /// Home Button
+                      InkWell(
+                        onTap: () {
+                          ShardPrefHelper.setIsLocationOn(false);
+                          handleToggle(true);
+                        },
+                        child: SizedBox(
+                          height: 35,
+                          width: 60,
+                          child: Center(
+                            child: Text(
+                              _selectedCity,
+                              style: TextStyle(
+                                fontWeight: isHome
+                                    ? FontWeight.w900
+                                    : FontWeight.normal,
+                                fontSize: 16,
+                                color: isHome
+                                    ? AppColors.primaryColor
+                                    : AppColors.blackColor,
+                              ),
+                            ),
+                          ),
                         ),
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
 
-                        /// Home Button
-                        InkWell(
-                          onTap: () {
+                      /// Dropdown for city selection
+                      BlocListener<CityBloc, CityState>(
+                        listener: (context, state) {
+                          ///success state
+                          if (state is CityUpdatedState) {
                             ShardPrefHelper.setIsLocationOn(false);
                             handleToggle(true);
-                          },
-                          child: SizedBox(
-                            height: 35,
-                            width: 60,
-                            child: Center(
-                              child: Text(
-                                _selectedCity,
-                                style: TextStyle(
-                                  fontWeight: isHome
-                                      ? FontWeight.w900
-                                      : FontWeight.normal,
-                                  fontSize: 16,
-                                  color: isHome
-                                      ? AppColors.primaryColor
-                                      : AppColors.blackColor,
-                                ),
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    '${AppLocalizations.of(context)!.city_updated_to} ${state.city}!'),
                               ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
+                            );
+                          }
 
-                        /// Dropdown for city selection
-                        BlocListener<CityBloc, CityState>(
-                          listener: (context, state) {
-                            ///success state
-                            if (state is CityUpdatedState) {
-                              ShardPrefHelper.setIsLocationOn(false);
-                              handleToggle(true);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      '${AppLocalizations.of(context)!.city_updated_to} ${state.city}!'),
-                                ),
-                              );
-                            }
-
-                            /// failure state
-                            else if (state is CityErrorState) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Error: ${state.errorMessage}'),
-                                ),
-                              );
+                          /// failure state
+                          else if (state is CityErrorState) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Error: ${state.errorMessage}'),
+                              ),
+                            );
+                          }
+                        },
+                        child: HomeDropdownCity(
+                          selectCity: _selectedCity,
+                          onChanged: (String? newValue) {
+                            if (newValue != null) {
+                              context
+                                  .read<CityBloc>()
+                                  .add(UpdateCityEvent(newValue));
                             }
                           },
-                          child: HomeDropdownCity(
-                            selectCity: _selectedCity,
-                            onChanged: (String? newValue) {
-                              if (newValue != null) {
-                                context
-                                    .read<CityBloc>()
-                                    .add(UpdateCityEvent(newValue));
-                              }
-                            },
+                        ),
+                      ),
+
+                      /// Vertical Divider
+                      Container(
+                        height: 25,
+                        width: 1,
+                        color: AppColors.blackColor,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+
+                      /// Location Button
+                      InkWell(
+                        onTap: () {
+                          ShardPrefHelper.setIsLocationOn(true);
+                          handleToggle(false);
+                        },
+                        child: Container(
+                          height: 35,
+                          width: 35,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isHome
+                                ? AppColors.inActivePrimaryColor
+                                : AppColors.primaryColor,
                           ),
-                        ),
-
-                        /// Vertical Divider
-                        Container(
-                          height: 25,
-                          width: 1,
-                          color: AppColors.blackColor,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-
-                        /// Location Button
-                        InkWell(
-                          onTap: () {
-                            ShardPrefHelper.setIsLocationOn(true);
-                            handleToggle(false);
-                          },
-                          child: Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isHome
-                                  ? AppColors.inActivePrimaryColor
-                                  : AppColors.primaryColor,
-                            ),
-                            child: Center(
-                              child: SvgPicture.asset(
-                                'assets/location.svg',
-                                height: 25,
-                                width: 25,
-                              ),
+                          child: Center(
+                            child: SvgPicture.asset(
+                              'assets/location.svg',
+                              height: 25,
+                              width: 25,
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              ///search icon
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: InkWell(
-                  onTap: () {
-                    // context.push('/groups/search');
-                  },
-                  child: SvgPicture.asset(
-                    'assets/search.svg',
-                    fit: BoxFit.contain,
-                    width: 30,
-                    height: 30,
-                  ),
-                ),
-              ),
-
-              ///chat icon
-              Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: InkWell(
-                  onTap: () {
-                    // context.push('/chat');
-                  },
-                  child: SvgPicture.asset(
-                    'assets/chat.svg',
-                    fit: BoxFit.contain,
-                    width: 30,
-                    height: 30,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ],
           ),
-          body: BlocConsumer<CommunityMainCubit, CommunityMainState>(
-            bloc: communityMainCubit,
-            listener: (context, state) {
-              if (state.status == Status.loading) {}
-              if (state.status == Status.success) {}
-              if (state.status == Status.failure) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      '${state.errorMessage}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                    backgroundColor: Colors.red,
-                    duration: const Duration(seconds: 3),
+          actions: [
+            ///search icon
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: InkWell(
+                onTap: () {
+                  // context.push('/groups/search');
+                },
+                child: SvgPicture.asset(
+                  'assets/search.svg',
+                  fit: BoxFit.contain,
+                  width: 30,
+                  height: 30,
+                ),
+              ),
+            ),
+
+            ///chat icon
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: InkWell(
+                onTap: () {
+                  // context.push('/chat');
+                },
+                child: SvgPicture.asset(
+                  'assets/chat.svg',
+                  fit: BoxFit.contain,
+                  width: 30,
+                  height: 30,
+                ),
+              ),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.whiteColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 0, right: 5),
+                child: TabBar(
+                  indicatorColor: AppColors.primaryColor,
+                  unselectedLabelColor: Colors.grey,
+                  unselectedLabelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.grey,
                   ),
-                );
-              }
-            },
-            builder: (context, state) {
-              ///loading state
-              if (state.status == Status.loading) {
-                return const CommunityMainSheemer();
-              }
-
-              ///failure state
-              if (state.status == Status.failure) {
-                return Center(
-                  child: Text(state.errorMessage ?? 'Something went wrong'),
-                );
-              }
-              if (state.status == Status.success) {
-                /// if community is not empty
-                if (state.communities.isNotEmpty) {
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      int crossAxisCount = 2;
-                      if (constraints.maxWidth >= 600) {
-                        crossAxisCount = 3;
-                      } else if (constraints.maxWidth >= 900) {
-                        crossAxisCount = 4;
-                      }
-                      return Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Container(
-                          color: AppColors.whiteColor,
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 5),
-                              Expanded(
-                                child: GridView.builder(
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: crossAxisCount,
-                                    crossAxisSpacing: 10.0,
-                                    mainAxisSpacing: 10.0,
-                                    childAspectRatio: 1 / 1.5,
-                                  ),
-                                  itemCount: state.communities.length,
-                                  itemBuilder: (context, index) {
-                                    return CommunityCardWidget(
-                                      community: state.communities[index],
-                                    );
-                                  },
-                                ),
+                  controller: _tabController,
+                  tabAlignment: TabAlignment.start,
+                  isScrollable: true,
+                  tabs: [
+                    Tab(
+                      child: tabTitle('Nearby Groups'),
+                    ),
+                    Tab(
+                      child: tabTitle('My Groups'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  /// get near by groups tab
+                  RefreshIndicator(
+                    onRefresh: _onRefresh,
+                    child: BlocConsumer<CommunityMainCubit, CommunityMainState>(
+                      bloc: communityMainCubit,
+                      listener: (context, state) {
+                        if (state.status == Status.loading) {}
+                        if (state.status == Status.success) {}
+                        if (state.status == Status.failure) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${state.errorMessage}',
+                                style: const TextStyle(color: Colors.white),
                               ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                }
+                              backgroundColor: Colors.red,
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state.status == Status.loading) {
+                          return const CommunityMainSheemer();
+                        }
 
-                /// if community is empty
-                if (state.communities.isEmpty) {
-                  return Center(
-                    child: Text('No Community found'),
-                  );
-                }
-              }
+                        ///failure state
+                        if (state.status == Status.failure) {
+                          return Center(
+                            child: Text(
+                                state.errorMessage ?? 'Something went wrong'),
+                          );
+                        }
+                        if (state.status == Status.success) {
+                          /// if community is not empty
+                          if (state.communities.isNotEmpty) {
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int crossAxisCount = 2;
+                                if (constraints.maxWidth >= 600) {
+                                  crossAxisCount = 3;
+                                } else if (constraints.maxWidth >= 900) {
+                                  crossAxisCount = 4;
+                                }
+                                return Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Container(
+                                    color: AppColors.whiteColor,
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 5),
+                                        Expanded(
+                                          child: GridView.builder(
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: crossAxisCount,
+                                              crossAxisSpacing: 10.0,
+                                              mainAxisSpacing: 10.0,
+                                              childAspectRatio: 1 / 1.5,
+                                            ),
+                                            itemCount: state.communities.length,
+                                            itemBuilder: (context, index) {
+                                              return CommunityCardWidget(
+                                                community:
+                                                    state.communities[index],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
 
-              return Center(
-                child: Text('Something went wrong'),
-              );
-            },
-          ),
+                          /// if community is empty
+                          if (state.communities.isEmpty) {
+                            return Center(
+                              child: Text('No Community found'),
+                            );
+                          }
+                        }
+
+                        return Center(
+                          child: Text('Something went wrong'),
+                        );
+                      },
+                    ),
+                  ),
+
+                  /// get my groups tab
+                  RefreshIndicator(
+                    onRefresh: _onRefres,
+                    child: BlocConsumer<GetUserGroupsBloc, GetUserGroupsState>(
+                      listener: (context, state) {
+                        ///failure state
+                        if (state is GetUserGroupsFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                state.error.toString(),
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                              backgroundColor: Colors.red,
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is GetUserGroupsLoadingState) {
+                          return const CommunityMainSheemer();
+                        }
+
+                        if (state is GetUserGroupsSuccessState) {
+                          /// if community is not empty
+                          if (state.communities.isNotEmpty) {
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int crossAxisCount = 2;
+                                if (constraints.maxWidth >= 600) {
+                                  crossAxisCount = 3;
+                                } else if (constraints.maxWidth >= 900) {
+                                  crossAxisCount = 4;
+                                }
+                                return Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Container(
+                                    color: AppColors.whiteColor,
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 5),
+                                        Expanded(
+                                          child: GridView.builder(
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: crossAxisCount,
+                                              crossAxisSpacing: 10.0,
+                                              mainAxisSpacing: 10.0,
+                                              childAspectRatio: 1 / 1.5,
+                                            ),
+                                            itemCount: state.communities.length,
+                                            itemBuilder: (context, index) {
+                                              return CommunityCardWidget(
+                                                community:
+                                                    state.communities[index],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+
+                          /// if community is empty
+                          if (state.communities.isEmpty) {
+                            return Center(
+                              child: Text('No Community found'),
+                            );
+                          }
+                        }
+
+                        return Center(
+                          child: Text('Something went wrong'),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -63,6 +63,26 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
+  ///get user groups  repo impl
+  @override
+  Future<Either<Failure, List<CommunityModel>>> getUserGroups() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getUserGroups();
+        print('result in getUserGroups repo impl: $result');
+        return Right(result);
+      } on ServerFailure catch (e) {
+        print('ServerFailure in getUserGroups repo impl: ${e.toString()}');
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        print('catch error in getUserGroups repo impl: ${e.toString()}');
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
   ///get community details usecase
   @override
   Future<Either<Failure, CommunityModel>> getCommunity({
@@ -351,13 +371,13 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   @override
   Future<Either<Failure, void>> updateMute({
     required String communityId,
-    required bool newValue,
+    required bool isMute,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.updateMute(
           communityId: communityId,
-          newValue: newValue,
+          isMute: isMute,
         );
         print('success result in updateMute repo impl');
         return Right(result);
@@ -423,25 +443,27 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
-  /// unblock user repo impl
+  /// updateBlock user repo impl
   @override
-  Future<Either<Failure, void>> unblockUser({
+  Future<Either<Failure, void>> updateBlock({
     required String communityId,
     required String userId,
+    required String isBlock,
   }) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.leaveCommunity(
+        final result = await remoteDataSource.updateBlock(
           communityId: communityId,
           userId: userId,
+          isBlock: isBlock,
         );
-        print('success result in unblockUser repo impl');
+        print('success result in updateBlock repo impl');
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in unblockUser repo impl:${e.message}');
+        print('failure in updateBlock repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error unblockUser in repo impl $e');
+        print('catch error updateBlock in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {

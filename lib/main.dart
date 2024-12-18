@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
 import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
@@ -240,6 +241,9 @@ class MyAppState extends State<MyApp> {
           ),
           BlocProvider<CommunityDetailsCubit>(
             create: (context) => di.sl<CommunityDetailsCubit>(),
+          ),
+          BlocProvider<GetUserGroupsBloc>(
+            create: (context) => di.sl<GetUserGroupsBloc>(),
           ),
           BlocProvider<JoinGroupBloc>(
             create: (context) => di.sl<JoinGroupBloc>(),

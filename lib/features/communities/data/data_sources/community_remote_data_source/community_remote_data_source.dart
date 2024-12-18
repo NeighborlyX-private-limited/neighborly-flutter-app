@@ -13,6 +13,9 @@ abstract class CommunityRemoteDataSource {
   ///get All Communities
   Future<List<CommunityModel>> getAllCommunities();
 
+  ///get users groups
+  Future<List<CommunityModel>> getUserGroups();
+
   ///get community details
   Future<CommunityModel> getCommunity({
     required String communityId,
@@ -81,7 +84,7 @@ abstract class CommunityRemoteDataSource {
   ///update mute/unmute
   Future<void> updateMute({
     required String communityId,
-    required bool newValue,
+    required bool isMute,
   });
 
   ///report group
@@ -93,6 +96,13 @@ abstract class CommunityRemoteDataSource {
   ///delete group
   Future<void> deleteCommunity({
     required String communityId,
+  });
+
+  ///update block
+  Future<void> updateBlock({
+    required String communityId,
+    required String userId,
+    required String isBlock,
   });
 
   ///can be delete these fun
