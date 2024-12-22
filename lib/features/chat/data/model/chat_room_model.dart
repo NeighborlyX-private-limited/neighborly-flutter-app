@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../../domain/entities/chat_room_entity.dart';
 
 class ChatRoomModel extends ChatRoomEntity {
-  ChatRoomModel({
+  const ChatRoomModel({
     required super.id,
     required super.name,
     required super.avatarUrl,

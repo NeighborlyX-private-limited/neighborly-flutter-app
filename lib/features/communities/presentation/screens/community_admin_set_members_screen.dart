@@ -5,6 +5,7 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
@@ -50,7 +51,7 @@ class _CommunityAdminMembersUsersScreenState
     setState(() {});
   }
 
-  ///make admin
+  ///make admin confirm bottom sheet
   Future<dynamic> bottomSheetMakeAdminConfirm(
     BuildContext context,
     String userId,
@@ -62,7 +63,7 @@ class _CommunityAdminMembersUsersScreenState
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
-          height: 120,
+          height: 150,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,7 +173,7 @@ class _CommunityAdminMembersUsersScreenState
     );
   }
 
-  ///remove admin
+  ///remove admin confirm bottom sheet
   Future<dynamic> bottomSheetRemoveAdminConfirm(
     BuildContext context,
     String userId,
@@ -181,10 +182,11 @@ class _CommunityAdminMembersUsersScreenState
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
-          height: 120,
+          height: 180,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -294,7 +296,7 @@ class _CommunityAdminMembersUsersScreenState
     );
   }
 
-  ///remove user
+  ///remove user confirm bottom sheet
   Future<dynamic> bottomSheetConfirmRemove(
     BuildContext context,
     String userId,
@@ -416,7 +418,7 @@ class _CommunityAdminMembersUsersScreenState
     );
   }
 
-  ///leave community
+  ///leave community confirm bottom sheet
   Future<dynamic> bottomSheetLeaveConfirm(
     BuildContext context,
   ) {
@@ -538,7 +540,133 @@ class _CommunityAdminMembersUsersScreenState
     );
   }
 
-  /// make admin/ remove admin and remove from community bottomsheet
+  ///block user confirm bottom sheet
+  Future<dynamic> bottomSheetBlockConfirm(
+    BuildContext context,
+    String userId,
+  ) {
+    return showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 140,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Are you sure you want to block this user?',
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child:
+                        BlocConsumer<UpdateBlockUserBloc, UpdateBlockUserState>(
+                      listener: (context, state) {
+                        ///failure state
+                        if (state is UpdateBlockUserFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        ///success state
+                        if (state is UpdateBlockSuccessState) {
+                          communityCubit.getCommunityDetail(communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is UpdateBlockUserLoadingState) {
+                          return CircularProgressIndicator(
+                            color: AppColors.whiteColor,
+                          );
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<UpdateBlockUserBloc>(context)
+                                .add(UpdateBlockUserButtonPressedEvent(
+                              communityId: communityId,
+                              userId: userId,
+                              isBlock: true,
+                            ));
+
+                            // Navigator.pop(context);
+                            // Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Block',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// make admin, remove admin, remove from community, bloc user bottomsheet
   Future<dynamic> bottomSheetMenu(
     BuildContext context,
     String userId,
@@ -551,10 +679,9 @@ class _CommunityAdminMembersUsersScreenState
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
-          height: 150,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               myUserId != userId && isAdmin
@@ -596,6 +723,16 @@ class _CommunityAdminMembersUsersScreenState
                         Navigator.pop(context);
                         bottomSheetLeaveConfirm(context);
                       }),
+              myUserId != userId
+                  ? MenuIconItem(
+                      title: 'Block user',
+                      svgPath: 'assets/menu_make_admin.svg',
+                      iconSize: 25,
+                      onTap: () {
+                        Navigator.pop(context);
+                        bottomSheetBlockConfirm(context, userId);
+                      })
+                  : SizedBox(),
             ],
           ),
         );
@@ -694,7 +831,6 @@ class _CommunityAdminMembersUsersScreenState
       ),
       body: SingleChildScrollView(
         child: BlocBuilder<CommunityDetailsCubit, CommunityDetailsState>(
-          bloc: communityCubit,
           builder: (context, state) {
             if (state.status == Status.loading) {
               return Center(child: CircularProgressIndicator());

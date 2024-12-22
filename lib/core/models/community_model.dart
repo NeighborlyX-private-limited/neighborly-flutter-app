@@ -47,6 +47,7 @@ class CommunityModel extends CommunityEntity {
     };
   }
 
+  String toJson() => json.encode(toMap());
   factory CommunityModel.fromMap(Map<String, dynamic> map) {
     return CommunityModel(
       id: map['id'] ?? map['_id'] ?? "0",
@@ -70,15 +71,13 @@ class CommunityModel extends CommunityEntity {
           ? List<UserSimpleModel>.from(
               map['admin']?.map((x) => UserSimpleModel.fromMap(x)))
           : [],
-      blockList: map['blockList'] != null
+      blockList: map['blockedList'] != null
           ? List<UserSimpleModel>.from(
-              map['blockList']?.map((x) => UserSimpleModel.fromMap(x)))
+              map['blockedList']?.map((x) => UserSimpleModel.fromMap(x)))
           : [],
       locationStr: map['locationStr'] ?? '',
     );
   }
-
-  String toJson() => json.encode(toMap());
 
   factory CommunityModel.fromJson(Map<String, dynamic> source) =>
       CommunityModel.fromMap(source);

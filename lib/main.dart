@@ -8,6 +8,8 @@ import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bl
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_mute_group_bloc.dart';
 import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
@@ -259,6 +261,12 @@ class MyAppState extends State<MyApp> {
           ),
           BlocProvider<CommunitySearchCubit>(
             create: (context) => di.sl<CommunitySearchCubit>(),
+          ),
+          BlocProvider<UpdateBlockUserBloc>(
+            create: (context) => di.sl<UpdateBlockUserBloc>(),
+          ),
+          BlocProvider<UpdateMuteGroupBloc>(
+            create: (context) => di.sl<UpdateMuteGroupBloc>(),
           ),
 
           ///post bloc

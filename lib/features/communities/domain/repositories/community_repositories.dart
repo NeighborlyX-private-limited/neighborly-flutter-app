@@ -101,10 +101,10 @@ abstract class CommunityRepositories {
   });
 
   ///updateBlock user
-  Future<Either<Failure, void>> updateBlock({
+  Future<Either<Failure, String>> updateBlock({
     required String communityId,
     required String userId,
-    required String isBlock,
+    required bool isBlock,
   });
 
   Future<Either<Failure, SearchDashModel>> getSearchHistoryAndTrends();

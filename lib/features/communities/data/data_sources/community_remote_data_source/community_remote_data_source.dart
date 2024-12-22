@@ -99,10 +99,10 @@ abstract class CommunityRemoteDataSource {
   });
 
   ///update block
-  Future<void> updateBlock({
+  Future<String> updateBlock({
     required String communityId,
     required String userId,
-    required String isBlock,
+    required bool isBlock,
   });
 
   ///can be delete these fun

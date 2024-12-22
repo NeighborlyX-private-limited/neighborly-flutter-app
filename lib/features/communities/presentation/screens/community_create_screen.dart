@@ -23,15 +23,16 @@ class CommunityCreateScreen extends StatefulWidget {
 }
 
 class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
-  late CommunityCreateCubit communityCreateCubit;
-
   final nameEC = TextEditingController();
   final descriptionEC = TextEditingController();
-  final locationEC = TextEditingController();
   final typeEC = TextEditingController(text: 'public');
   final radiusEC = TextEditingController();
-  int currentStep = 1;
+
+  /// in future we have plan to add location during create community
+  //final locationEC = TextEditingController();
   File? fileToUpload;
+  late CommunityCreateCubit communityCreateCubit;
+  int currentStep = 1;
 
   ///init method
   @override
@@ -47,9 +48,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   void dispose() {
     nameEC.dispose();
     descriptionEC.dispose();
-    locationEC.dispose();
     typeEC.dispose();
     radiusEC.dispose();
+    //locationEC.dispose();
     super.dispose();
   }
 
@@ -57,6 +58,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   void jumpNext() {
     setState(() {
       if (currentStep == 2) {
+        /// because we have comment 3rd step to get radius of the from the user
         currentStep += 2;
       } else {
         currentStep++;
@@ -80,9 +82,10 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     }
   }
 
-  /// user leave with save confirmation bottom sheet
+  /// user leave with save with creating gorups confirmation bottom sheet
   Future<dynamic> bottomSheetConfirmNotSaved(BuildContext context) {
     return showModalBottomSheet(
+      backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
       builder: (BuildContext context) {
@@ -169,7 +172,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     print('...descriptionEC: ${descriptionEC.text}');
     print('...typeEC: ${typeEC.text}');
     print('...radiusEC: ${radiusEC.text}');
+    print('...fine to uploade: $fileToUpload');
 
+    /// group name can not be empty
     if (nameEC.text.trim() == '') {
       setState(() {
         currentStep = 1;
@@ -181,38 +186,38 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
       );
     }
 
-    if ((nameEC.text.trim() != '')) {
-      String radiusInput = radiusEC.text;
-      double radiusDouble = double.parse(radiusInput);
-      communityCreateCubit.createCommunity(
-        CommunityModel(
-          id: '',
-          radius: radiusDouble.toInt(),
-          name: nameEC.text,
-          description: descriptionEC.text,
-          locationStr: locationEC.text,
-          createdAt: DateTime.now().toString(),
-          avatarUrl: '',
-          karma: 0,
-          membersCount: 1,
-          isPublic: typeEC.text != 'public' ? false : true,
-          isJoined: true,
-          isAdmin: true,
-          isMuted: false,
-          users: [],
-          admins: [],
-          blockList: [],
-          displayName: '',
-        ),
-        fileToUpload,
-      );
-    }
+    String radiusInput = radiusEC.text;
+    double radiusDouble = double.parse(radiusInput);
+    communityCreateCubit.createCommunity(
+      CommunityModel(
+        id: '',
+        name: nameEC.text,
+        description: descriptionEC.text,
+        isPublic: typeEC.text != 'public' ? false : true,
+        radius: radiusDouble.toInt(),
+        displayName: '',
+        locationStr: '',
+        avatarUrl: '',
+        karma: 0,
+        membersCount: 1,
+        isJoined: true,
+        isAdmin: true,
+        isMuted: false,
+        users: [],
+        admins: [],
+        blockList: [],
+        createdAt: DateTime.now().toString(),
+      ),
+      fileToUpload,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
@@ -269,14 +274,14 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
           if (state.status == Status.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content:
-                    Text('Something went wrong! ${state.failure?.message}'),
+                content: Text('oops something went wrong!'),
               ),
             );
           }
 
           ///success state
           if (state.status == Status.success) {
+            Navigator.of(context).pop();
             Navigator.of(context).pop();
             context.push('/groups/${state.newCommunityId}');
           }
@@ -332,8 +337,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                               setState(() {
                                 fileToUpload = newFile;
                               });
-
-                              //communityCreateCubit.onUpdateFile(newFile);
                             }
                           },
                         ),
@@ -550,11 +553,9 @@ class _Step4areaState extends State<Step4area> {
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image =
-        await picker.pickImage(source: ImageSource.gallery).then(
-      (file) {
-        return compressImage(imageFileX: file);
-      },
-    );
+        await picker.pickImage(source: ImageSource.gallery).then((file) {
+      return compressImage(imageFileX: file);
+    });
 
     if (image != null) {
       setState(() {

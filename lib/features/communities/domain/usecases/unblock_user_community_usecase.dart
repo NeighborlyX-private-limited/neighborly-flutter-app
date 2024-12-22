@@ -7,10 +7,10 @@ class UnblockUserCommunityUsecase {
 
   UnblockUserCommunityUsecase(this.repository);
 
-  Future<Either<Failure, void>> call({
+  Future<Either<Failure, String>> call({
     required String communityId,
     required String userId,
-    required String isBlock,
+    required bool isBlock,
   }) async {
     return await repository.updateBlock(
       communityId: communityId,

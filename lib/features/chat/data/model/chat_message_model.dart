@@ -5,9 +5,9 @@ import '../../../../core/models/user_simple_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
 
 class ChatMessageModel extends ChatMessageEntity {
-  ChatMessageModel({
+  const ChatMessageModel({
     required super.id,
-    required super.text, // post=content
+    required super.text,
     required super.date,
     required super.isMine,
     required super.readByuser,
@@ -15,11 +15,11 @@ class ChatMessageModel extends ChatMessageEntity {
     required super.pictureUrl,
     required super.isAdmin,
     required super.isPinned,
-    required super.repliesCount, // post=commentCount
+    required super.repliesCount,
     required super.cheers,
     required super.boos,
     required super.booOrCheer,
-    super.author, //  post: userId, userName, proPic
+    super.author,
   });
 
   @override

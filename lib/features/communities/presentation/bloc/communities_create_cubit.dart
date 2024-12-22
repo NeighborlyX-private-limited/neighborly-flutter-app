@@ -21,12 +21,10 @@ class CommunityCreateCubit extends Cubit<CommunityCreateState> {
   ) async {
     emit(state.copyWith(status: Status.loading));
     final result = await createCommunityUsecase(
-      community: newCommunity.copyWith(
-        avatarUrl: state.imageUrl,
-      ),
+      community: newCommunity,
       pictureFile: pictureFile,
     );
-    print('create group result cubit: $result');
+    print('....create group result cubit: $result');
 
     result.fold(
       (failure) {
@@ -40,7 +38,7 @@ class CommunityCreateCubit extends Cubit<CommunityCreateState> {
         );
       },
       (newCommunityId) {
-        print('group id cubit:$newCommunityId');
+        print('....group id create group cubit:$newCommunityId');
         emit(
           state.copyWith(
             status: Status.success,

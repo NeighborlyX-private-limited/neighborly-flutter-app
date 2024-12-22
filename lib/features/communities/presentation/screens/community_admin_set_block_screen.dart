@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -20,36 +20,24 @@ class _CommunityAdminBlockedUsersScreenState
     extends State<CommunityAdminBlockedUsersScreen> {
   late CommunityDetailsCubit communityCubit;
   late List<UserSimpleModel> blockedMembers;
+  late String communityId;
 
+  ///init state
   @override
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
+    communityId = communityCubit.state.community?.id ?? '';
     blockedMembers = communityCubit.state.community?.blockList != null
         ? [...communityCubit.state.community!.blockList]
         : [];
-  }
-
-  void removeUser(BuildContext context, String communityId, String userId) {
-    communityCubit.updateBlock(communityId, userId, 'false');
-
-    setState(() {
-      blockedMembers =
-          blockedMembers.where((element) => element.id != userId).toList();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('User unblocked'),
-        ),
-      );
-    });
+    print('details:${communityCubit.state.community}');
   }
 
   Future<dynamic> bottomSheet(BuildContext context, String userId) {
     return showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        // String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: 120,
@@ -59,7 +47,7 @@ class _CommunityAdminBlockedUsersScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you whant to Unlock this person?',
+                'Are you sure you whant to Unblock this user?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -73,17 +61,18 @@ class _CommunityAdminBlockedUsersScreenState
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        // padding: EdgeInsets.all(15)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                              color: Colors.black, fontSize: 18, height: 0.3),
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
                         ),
                       ),
                     ),
@@ -93,28 +82,67 @@ class _CommunityAdminBlockedUsersScreenState
                   ),
                   Expanded(
                     flex: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        removeUser(context,
-                            communityCubit.state.community?.id ?? '', userId);
+                    child:
+                        BlocConsumer<UpdateBlockUserBloc, UpdateBlockUserState>(
+                      listener: (context, state) {
+                        ///failure state
+                        if (state is UpdateBlockUserFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        ///success state
+                        if (state is UpdateBlockSuccessState) {
+                          communityCubit.getCommunityDetail(communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.message),
+                            ),
+                          );
+                        }
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff635BFF),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
-                        ),
-                        // padding: EdgeInsets.all(15)
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          'Yes',
-                          style: TextStyle(
-                              color: Colors.white, fontSize: 18, height: 0.3),
-                        ),
-                      ),
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is UpdateBlockUserLoadingState) {
+                          return CircularProgressIndicator(
+                            color: AppColors.whiteColor,
+                          );
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<UpdateBlockUserBloc>(context)
+                                .add(UpdateBlockUserButtonPressedEvent(
+                              communityId: communityId,
+                              userId: userId,
+                              isBlock: false,
+                            ));
+
+                            // Navigator.pop(context);
+                            // Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              'Unblock',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   )
                 ],
@@ -126,7 +154,7 @@ class _CommunityAdminBlockedUsersScreenState
     );
   }
 
-  Widget userTile(BuildContext context, UserSimpleModel user, bool isAdmin) {
+  Widget userTile(BuildContext context, UserSimpleModel user) {
     return GestureDetector(
       onTap: () {
         bottomSheet(context, user.id);
@@ -172,7 +200,6 @@ class _CommunityAdminBlockedUsersScreenState
   @override
   Widget build(BuildContext context) {
     final bool hasMembers = blockedMembers.isNotEmpty;
-
     return Scaffold(
       backgroundColor: AppColors.lightBackgroundColor,
       appBar: AppBar(
@@ -200,7 +227,6 @@ class _CommunityAdminBlockedUsersScreenState
         width: double.infinity,
         color: Colors.white,
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             if (hasMembers == false)
@@ -217,18 +243,10 @@ class _CommunityAdminBlockedUsersScreenState
                   ),
                 ),
               ),
-            //
-            //
-            ...blockedMembers.map((adm) => userTile(context, adm, true)),
-            //
-            //
+            ...blockedMembers.map((user) => userTile(context, user)),
           ],
         ),
       ),
     );
   }
 }
-
-// ########################################################################
-// ########################################################################
-// ########################################################################

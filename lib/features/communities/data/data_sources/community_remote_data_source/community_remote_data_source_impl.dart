@@ -26,9 +26,10 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('pictureFile=${pictureFile?.path}');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
+    print('cookies=$cookies');
     if (cookies == null || cookies.isEmpty) {
-      print('Something went wrong in createCommunity');
-      throw const ServerException(message: 'Something went wrong');
+      print('oops omething went wrong in createCommunity');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader');
@@ -41,8 +42,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     bool isHome = true;
     var isLocationOn = ShardPrefHelper.getIsLocationOn();
     isHome = isLocationOn ? false : true;
-
     print('isHome:$isHome');
+
     if (isHome) {
       List<double> location = ShardPrefHelper.getHomeLocation();
       double lat = location[0];
@@ -73,9 +74,9 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     )
       ..headers['Cookie'] = cookieHeader
       ..fields['name'] = community.name
-      ..fields['radius'] = '${community.radius}'
-      ..fields['description'] = community.description
       ..fields['isOpen'] = community.isPublic.toString()
+      ..fields['description'] = community.description
+      ..fields['radius'] = '${community.radius}'
       ..fields['karma'] = community.karma.toString();
 
     /// Add multimedia file if available
@@ -99,9 +100,10 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       return jsonDecode(responseString)['group']['_id'];
     } else {
       print(
-          'else error in createCommunity: ${jsonDecode(responseString)['error'] ?? 'Something went wrong'}');
-      final errorMessage =
-          jsonDecode(responseString)['error'] ?? 'Something went wrong';
+          'else error in createCommunity: ${jsonDecode(responseString)['error'] ?? jsonDecode(responseString)['msg'] ?? 'oops omething went wrong'}');
+      final errorMessage = jsonDecode(responseString)['error'] ??
+          jsonDecode(responseString)['msg'] ??
+          'oops omething went wrong';
       throw ServerException(message: errorMessage);
     }
   }
@@ -114,8 +116,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('cookies=$cookies');
 
     if (cookies == null || cookies.isEmpty) {
-      print('Something went wrong in getAllCommunities');
-      throw const ServerException(message: 'Something went wrong');
+      print('oops omething went wrong in getAllCommunities');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader');
@@ -165,9 +167,9 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     } else {
       print(
-          'else error in getAllCommunities: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in getAllCommunities: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -180,8 +182,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('cookies=$cookies');
 
     if (cookies == null || cookies.isEmpty) {
-      print('Something went wrong in getUserGroups');
-      throw const ServerException(message: 'Something went wrong');
+      print('oops omething went wrong in getUserGroups');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader');
@@ -202,9 +204,9 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     } else {
       print(
-          'else error in getUserGroups: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in getUserGroups: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -219,8 +221,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('cookies=$cookies');
 
     if (cookies == null || cookies.isEmpty) {
-      print('Something went wrong in getCommunity');
-      throw const ServerException(message: 'Something went wrong');
+      print('oops omething went wrong in getCommunity');
+      throw const ServerException(message: 'oops omething went wrong');
     }
 
     String cookieHeader = cookies.join('; ');
@@ -241,9 +243,11 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       return CommunityModel.fromJson(jsonDecode(response.body));
     } else {
       print(
-          'else error in getCommunity: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
-      final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          'else error in getCommunity: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
+      final message = jsonDecode(response.body)['msg'] ??
+          jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -262,8 +266,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('cookies=$cookies');
 
     if (cookies == null || cookies.isEmpty) {
-      print('Something went wrong in makeAdmin');
-      throw const ServerException(message: 'Something went wrong');
+      print('oops omething went wrong in makeAdmin');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader');
@@ -289,9 +293,9 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     if (response.statusCode == 200) {
     } else {
       print(
-          'else error in makeAdmin: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in makeAdmin: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -310,8 +314,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('cookies=$cookies');
 
     if (cookies == null || cookies.isEmpty) {
-      print('Something went wrong in removeAdmin');
-      throw const ServerException(message: 'Something went wrong');
+      print('oops omething went wrong in removeAdmin');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader');
@@ -337,9 +341,9 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     if (response.statusCode == 200) {
     } else {
       print(
-          'else error in removeAdmin: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in removeAdmin: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -356,13 +360,14 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     if (userId == null) {
       userId = ShardPrefHelper.getUserID() ?? '';
     }
+    print('userId=$userId');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     print('cookies=$cookies');
 
     if (cookies == null || cookies.isEmpty) {
       print('coockies not found in joinGroup');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader');
@@ -386,11 +391,12 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('joinGroup status code: ${response.statusCode}');
     print('joinGroup response: ${response.body}');
     if (response.statusCode == 200) {
+      print('user added');
     } else {
       print(
-          'else error in joinGroup: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in joinGroup: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -407,12 +413,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     if (userId == null) {
       userId = ShardPrefHelper.getUserID() ?? '';
     }
+    print('userId=$userId ');
     List<String>? cookies = ShardPrefHelper.getCookie();
     print('cookies=$cookies ');
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in leaveCommunity');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
 
     String cookieHeader = cookies.join('; ');
@@ -437,11 +444,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('leaveCommunity status code: ${response.statusCode}');
     print('leaveCommunity response: ${response.body}');
     if (response.statusCode == 200) {
+      print('user leave');
     } else {
       print(
-          'else error in leaveCommunity: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
-      final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          'else error in leaveCommunity: ${jsonDecode(response.body)['message'] ?? 'oops omething went wrong'}');
+      final message = jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
       throw ServerException(message: message);
     }
   }
@@ -461,7 +470,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in updateDisplayname');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
@@ -488,10 +497,10 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       print('display name updated!');
     } else {
       print(
-          'else error in updateDisplayname: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in updateDisplayname: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
 
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -511,7 +520,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in updateDescription');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
@@ -538,10 +547,10 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       print('description updated!');
     } else {
       print(
-          'else error in updateDescription: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in updateDescription: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
 
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -561,7 +570,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in updateType');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
@@ -593,10 +602,10 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       print('group type changed!');
     } else {
       print(
-          'else error in updateType: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in updateType: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
 
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -616,7 +625,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in updateIcon');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
 
     String cookieHeader = cookies.join('; ');
@@ -653,7 +662,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       print('icon updated!');
     } else {
       print(
-          'else error in updateIcon: ${jsonDecode(responseString)['msg'] ?? 'Something went wrong'}');
+          'else error in updateIcon: ${jsonDecode(responseString)['msg'] ?? 'oops omething went wrong'}');
 
       final errorMessage = jsonDecode(responseString)['msg'];
       throw ServerException(message: errorMessage);
@@ -674,7 +683,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in updateLocation');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
@@ -701,9 +710,9 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       final jsonData = jsonDecode(response.body);
     } else {
       print(
-          'else error in updateLocation: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in updateLocation: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -723,7 +732,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in updateRadius');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
@@ -750,15 +759,16 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       final jsonData = jsonDecode(response.body);
     } else {
       print(
-          'else error in updateRadius: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in updateRadius: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
 
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
 
   ///update mute
+
   @override
   Future<void> updateMute({
     required String communityId,
@@ -771,7 +781,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('cookies=$cookies ');
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in updateMute');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
@@ -793,15 +803,16 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
     print('updateMute status code: ${response.statusCode}');
-    print('updateMute response: ${response.body}');
+    print('updateMute response: ${response.body.toString()}');
+
     if (response.statusCode == 204) {
-      final jsonData = jsonDecode(response.body);
     } else {
       print(
-          'else error in updateMute: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in updateMute: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
 
-      final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+      final message = jsonDecode(response.body)['msg'] ??
+          jsonDecode(response.body)['message'] ??
+          'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -821,7 +832,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in reportCommunity');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
@@ -847,10 +858,10 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     if (response.statusCode == 200) {
     } else {
       print(
-          'else error in reportCommunity: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in reportCommunity: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
 
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -868,7 +879,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in deleteCommunity');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader ');
@@ -889,19 +900,19 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       print('Group deleted!');
     } else {
       print(
-          'else error in deleteCommunity: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in deleteCommunity: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
 
   @override
   // ignore: override_on_non_overriding_member
-  Future<void> updateBlock({
+  Future<String> updateBlock({
     required String communityId,
     required String userId,
-    required String isBlock,
+    required bool isBlock,
   }) async {
     print('... updateBlock start with');
     print('userId=$userId ');
@@ -913,7 +924,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     if (cookies == null || cookies.isEmpty) {
       print('cookies not found in updateBlock');
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops omething went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader=$cookieHeader');
@@ -928,7 +939,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         'Cookie': cookieHeader,
       },
       body: jsonEncode(
-        <String, String>{
+        <String, dynamic>{
           'userId': userId,
           'groupId': communityId,
           'block': isBlock,
@@ -938,12 +949,14 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('updateBlock status code: ${response.statusCode}');
     print('updateBlock response: ${response.body}');
     if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.body);
+      final msg = jsonDecode(response.body)['msg'] ??
+          'check what msg is comming from backend';
+      return msg;
     } else {
       print(
-          'else error in updateBlock: ${jsonDecode(response.body)['msg'] ?? 'Something went wrong'}');
+          'else error in updateBlock: ${jsonDecode(response.body)['msg'] ?? 'oops omething went wrong'}');
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
@@ -981,7 +994,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     // List<String>? cookies = ShardPrefHelper.getCookie();
     // if (cookies == null || cookies.isEmpty) {
-    //   throw const ServerException(message: 'Something went wrong');
+    //   throw const ServerException(message: 'oops omething went wrong');
     // }
     // String cookieHeader = cookies.join('; ');
     // String url = '$kBaseUrl/wall/fetch-posts';
@@ -998,7 +1011,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     //   final List<dynamic> jsonData = jsonDecode(response.body);
     //   return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     // } else {
-    //   final message = jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+    //   final message = jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
     //   throw ServerException(message: message);
     // }
   }
@@ -1113,7 +1126,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     // List<String>? cookies = ShardPrefHelper.getCookie();
     // if (cookies == null || cookies.isEmpty) {
-    //   throw const ServerException(message: 'Something went wrong');
+    //   throw const ServerException(message: 'oops omething went wrong');
     // }
     // String cookieHeader = cookies.join('; ');
     // String url = '$kBaseUrl/wall/fetch-posts';
@@ -1130,8 +1143,10 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     //   final List<dynamic> jsonData = jsonDecode(response.body);
     //   return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     // } else {
-    //   final message = jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+    //   final message = jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
     //   throw ServerException(message: message);
     // }
-  } // getSearchHistoryAndTrends
+  }
+
+  // getSearchHistoryAndTrends
 }

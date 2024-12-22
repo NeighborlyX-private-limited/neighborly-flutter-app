@@ -12,6 +12,8 @@ import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bl
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_mute_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/data/datasources/payment_remote_data_source.dart';
 import 'package:neighborly_flutter_app/features/payment/data/repositories/payment_repository_impl.dart';
 import 'package:neighborly_flutter_app/features/payment/domain/repositories/payment_repository.dart';
@@ -395,8 +397,8 @@ void init() async {
   ///community bloc
   sl.registerFactory(() => CommunityMainCubit(sl()));
   sl.registerFactory(() => GetUserGroupsBloc(getUserGroupsUsecase: sl()));
-  sl.registerFactory(() => CommunityDetailsCubit(sl(), sl(), sl(), sl(), sl(),
-      sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
+  sl.registerFactory(() => CommunityDetailsCubit(
+      sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
   sl.registerFactory(() => CommunityCreateCubit(sl()));
   sl.registerFactory(() =>
       JoinGroupBloc(joinCommunityUsecase: sl(), leaveCommunityUsecase: sl()));
@@ -405,6 +407,10 @@ void init() async {
   sl.registerFactory(() => MakeRemoveAdminBloc(
       makeAdminCommunityUsecase: sl(), removeAdminCommunityUsecase: sl()));
   sl.registerFactory(() => CommunitySearchCubit(sl(), sl()));
+  sl.registerFactory(
+      () => UpdateBlockUserBloc(unblockUserCommunityUsecase: sl()));
+  sl.registerFactory(
+      () => UpdateMuteGroupBloc(updateMuteCommunityUsecase: sl()));
 
   ///chat bloc
   sl.registerFactory(() => ChatMainCubit(sl()));

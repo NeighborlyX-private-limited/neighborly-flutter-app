@@ -14,6 +14,7 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/appbat_button.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
+import '../bloc/bloc/update_mute_group_bloc.dart';
 import '../bloc/community_detail_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
 import '../widgets/community_section_about.dart';
@@ -46,6 +47,29 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     _tabController = TabController(length: 2, vsync: this);
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
     communityDetailCubit.getCommunityDetail(widget.communityId);
+    isJoined = false;
+    isAdmin = false;
+    communityCache = CommunityModel(
+      id: '',
+      name: '',
+      description: '',
+      isPublic: false,
+      radius: 3,
+      displayName: '',
+      locationStr: '',
+      avatarUrl: '',
+      karma: 0,
+      membersCount: 1,
+      isJoined: false,
+      isAdmin: false,
+      isMuted: false,
+      users: [],
+      admins: [],
+      blockList: [],
+      createdAt: DateTime.now().toString(),
+    );
+    print('community: $communityCache');
+
     getUserId();
   }
 
@@ -75,7 +99,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
 
   /// group image
   Widget topElement(String avatarUrl) {
-    bool isColor = avatarUrl.length > 1 && avatarUrl.length < 8;
+    bool isColor = avatarUrl.length < 9;
     return Container(
       height: MediaQuery.of(context).size.height * 0.30,
       decoration: BoxDecoration(
@@ -333,11 +357,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   }
 
   ///bottom sheet to mute.unmute group, join group, report group, leave group
-  Future<dynamic> bottomSheetMenu(
+  Future<dynamic> userBottomSheetMenu(
     BuildContext context,
-    String userId,
-    String communityName,
-    bool isMuted,
   ) {
     return showModalBottomSheet(
       showDragHandle: true,
@@ -349,31 +370,71 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
           height: MediaQuery.of(context).size.height * 0.25,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               /// leave button
-              // MenuIconItem(
-              //   title: 'Leave $communityName',
-              //   svgPath: 'assets/menu_leave.svg',
-              //   iconSize: 25,
-              //   onTap: () {
-              //     Navigator.pop(context);
-              //     bottomSheetLeaveConfirm(context, userId);
-              //   },
-              // ),
+              MenuIconItem(
+                title: 'Leave ${communityCache?.name}',
+                svgPath: 'assets/menu_leave.svg',
+                iconSize: 25,
+                onTap: () {
+                  Navigator.pop(context);
+                  leaveGroupBottomSheet(context);
+                },
+              ),
 
               ///mute .unmute group
-              // MenuIconItem(
-              //   title: isMuted ? 'Unmute' : 'Mute',
-              //   svgPath:
-              //       isMuted ? 'assets/menu_unmute.svg' : 'assets/menu_mute.svg',
-              //   iconSize: 25,
-              //   onTap: () {
-              //     communityDetailCubit.toggleMute();
-              //     Navigator.pop(context);
-              //   },
-              // ),
+              BlocConsumer<UpdateMuteGroupBloc, UpdateMuteGroupState>(
+                listener: (context, state) {
+                  /// failure state
+                  if (state is UpdateMuteGroupFailureState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.error),
+                      ),
+                    );
+                  }
+
+                  /// success state
+                  if (state is UpdateMuteGroupSuccessState) {
+                    communityCache?.copyWith(
+                        isMuted: !(communityCache?.isMuted ?? false));
+                    communityDetailCubit.getCommunityDetail(widget.communityId);
+                    String msg = !(communityCache?.isMuted ?? false)
+                        ? 'Group unmuted!'
+                        : 'Group muted!';
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(msg),
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  ///loading state
+                  if (state is UpdateMuteGroupLoadingState) {
+                    return CircularProgressIndicator();
+                  }
+                  return MenuIconItem(
+                    title:
+                        !(communityCache?.isMuted ?? false) ? 'Unmute' : 'Mute',
+                    svgPath: !(communityCache?.isMuted ?? false)
+                        ? 'assets/menu_unmute.svg'
+                        : 'assets/menu_mute.svg',
+                    iconSize: 25,
+                    onTap: () {
+                      BlocProvider.of<UpdateMuteGroupBloc>(context)
+                          .add(UpdateMuteGroupButtonPressedEvent(
+                        communityId: communityCache?.id ?? '',
+                        isMute: !(communityCache?.isMuted ?? false),
+                      ));
+
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
 
               ///report button
               MenuIconItem(
@@ -400,6 +461,11 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
       showDragHandle: true,
       context: context,
       builder: (BuildContext context) {
+        Future.delayed(const Duration(seconds: 3), () {
+          if (context.mounted) {
+            Navigator.pop(context);
+          }
+        });
         return Container(
           color: Colors.white,
           height: 240,
@@ -484,6 +550,224 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
+  ///leave group bottom sheet
+  Future<dynamic> leaveGroupBottomSheet(BuildContext context) async {
+    return showModalBottomSheet(
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Leave Community?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Are you sure you want to leave this community?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  // Confirm Button
+                  Expanded(
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        /// failure state
+                        if (state is JoinGroupFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        /// success state
+                        if (state is LeaveGroupSuccessState) {
+                          communityDetailCubit
+                              .getCommunityDetail(widget.communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Group leaved successfully'),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is JoinGroupLoadingState) {
+                          return CircularProgressIndicator();
+                        }
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<JoinGroupBloc>(context)
+                                .add(LeaveGroupButtonPressedEvent(
+                              communityId: widget.communityId,
+                            ));
+                          },
+                          child: Text(
+                            'Leave',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// join group bottom sheet
+  Future<dynamic> joinGroupBottomSheet(BuildContext context) async {
+    return showModalBottomSheet(
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Join Community?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Are you sure you want to join this community?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  // Confirm Button
+                  Expanded(
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        /// failure state
+                        if (state is JoinGroupFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        /// success state
+                        if (state is JoinGroupSuccessState) {
+                          communityDetailCubit
+                              .getCommunityDetail(widget.communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Group joined successfully'),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is JoinGroupLoadingState) {
+                          return CircularProgressIndicator();
+                        }
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<JoinGroupBloc>(context)
+                                .add(JoinGroupButtonPressedEvent(
+                              communityId: widget.communityId,
+                            ));
+                          },
+                          child: Text(
+                            'Join',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -527,21 +811,19 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
               ///menu button
               AppbatButton(
                 onTap: () {
-                  if (isAdmin && isJoined) {
+                  if ((communityCache?.isAdmin ?? false) &&
+                      (communityCache?.isJoined ?? false)) {
                     context.push(
                       '/groups/admin',
                       extra: communityCache,
                     );
                   } else {
-                    if (isJoined) {
-                      bottomSheetMenu(
+                    if (communityCache?.isJoined ?? false) {
+                      userBottomSheetMenu(
                         context,
-                        '',
-                        communityCache?.name ?? '',
-                        communityCache?.isMuted ?? false,
                       );
                     } else {
-                      ///define action when a user is not an admin nor group member
+                      joinGroupBottomSheet(context);
                     }
                   }
                 },
@@ -557,354 +839,108 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
         ///refresh is not working i have to check it.
         onRefresh: _onRefresh,
         child: BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
-          bloc: communityDetailCubit,
-          listener: (BuildContext context, CommunityDetailsState state) {
-            if (state.status == Status.loading) {}
-            if (state.status == Status.success) {}
-            if (state.status == Status.failure) {}
-          },
+          listener: (BuildContext context, CommunityDetailsState state) {},
           builder: (context, state) {
             ///loadinng state
             if (state.status == Status.loading) {
               return const CommunityDetailsSheemer();
             }
-
-            ///failure state
             if (state.status == Status.failure) {
+              /// have to replace with error widget
               return Center(
-                child: Text(state.errorMessage ?? 'Something went wrong'),
+                child: Text('oops something went wrong'),
               );
             }
+
+            /// success state
             if (state.status == Status.success) {
-              isAdmin = state.community?.isAdmin ?? false;
-              isJoined = state.community?.isJoined ?? false;
               communityCache = state.community;
-              return Column(
-                children: [
-                  topElement(state.community!.avatarUrl),
-                  titleArea(
-                    displayName: state.community?.displayName ?? '',
-                    title: state.community?.name ?? '',
-                    isPublic: state.community?.isPublic ?? false,
-                    isJoined: isJoined,
-                    userCount: (state.community?.users.length ?? 0) +
-                        (state.community?.admins.length ?? 0),
-                    users: [
-                      ...(state.community?.users ?? []),
-                      ...(state.community?.admins ?? [])
-                    ],
-                    onJoinLeavePressed: () {
-                      if (state.community?.isJoined ?? false) {
-                        showModalBottomSheet(
-                          showDragHandle: true,
-                          backgroundColor: AppColors.whiteColor,
-                          context: context,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                          ),
-                          builder: (BuildContext context) {
-                            return Container(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Leave Community?',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    'Are you sure you want to leave this community?',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Cancel Button
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.grey[300],
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                            'Cancel',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-                                      // Confirm Button
-                                      Expanded(
-                                        child: BlocConsumer<JoinGroupBloc,
-                                            JoinGroupState>(
-                                          listener: (context, state) {
-                                            /// failure state
-                                            if (state
-                                                is JoinGroupFailureState) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Error: ${state.error}'),
-                                                ),
-                                              );
-                                            }
-
-                                            /// success state
-                                            if (state
-                                                is LeaveGroupSuccessState) {
-                                              communityDetailCubit
-                                                  .getCommunityDetail(
-                                                      widget.communityId);
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text('Group leave'),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          builder: (context, state) {
-                                            ///loading state
-                                            if (state
-                                                is JoinGroupLoadingState) {
-                                              return CircularProgressIndicator();
-                                            }
-                                            return ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    AppColors.primaryColor,
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                BlocProvider.of<JoinGroupBloc>(
-                                                        context)
-                                                    .add(
-                                                        LeaveGroupButtonPressedEvent(
-                                                  communityId:
-                                                      widget.communityId,
-                                                ));
-                                              },
-                                              child: Text(
-                                                'Leave',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      } else {
-                        showModalBottomSheet(
-                          showDragHandle: true,
-                          backgroundColor: AppColors.whiteColor,
-                          context: context,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.vertical(
-                              top: Radius.circular(20),
-                            ),
-                          ),
-                          builder: (BuildContext context) {
-                            return Container(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Join Community?',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    'Are you sure you want to join this community?',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      // Cancel Button
-                                      Expanded(
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.grey[300],
-                                          ),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Text(
-                                            'Cancel',
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(width: 10),
-                                      // Confirm Button
-                                      Expanded(
-                                        child: BlocConsumer<JoinGroupBloc,
-                                            JoinGroupState>(
-                                          listener: (context, state) {
-                                            /// failure state
-                                            if (state
-                                                is JoinGroupFailureState) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Error: ${state.error}'),
-                                                ),
-                                              );
-                                            }
-
-                                            /// success state
-                                            if (state
-                                                is JoinGroupSuccessState) {
-                                              communityDetailCubit
-                                                  .getCommunityDetail(
-                                                      widget.communityId);
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text('Group join'),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                          builder: (context, state) {
-                                            ///loading state
-                                            if (state
-                                                is JoinGroupLoadingState) {
-                                              return CircularProgressIndicator();
-                                            }
-                                            return ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    AppColors.primaryColor,
-                                              ),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                                BlocProvider.of<JoinGroupBloc>(
-                                                        context)
-                                                    .add(
-                                                        JoinGroupButtonPressedEvent(
-                                                  communityId:
-                                                      widget.communityId,
-                                                ));
-                                              },
-                                              child: Text(
-                                                'Join',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      }
-                    },
+            }
+            return Column(
+              children: [
+                topElement(communityCache?.avatarUrl ?? ''),
+                titleArea(
+                  displayName: communityCache?.displayName ?? '',
+                  title: communityCache?.name ?? '',
+                  isPublic: communityCache?.isPublic ?? false,
+                  isJoined: communityCache?.isJoined ?? false,
+                  userCount: (communityCache?.users.length ?? 0) +
+                      (communityCache?.admins.length ?? 0),
+                  users: [
+                    ...(communityCache?.users ?? []),
+                    ...(communityCache?.admins ?? [])
+                  ],
+                  onJoinLeavePressed: () {
+                    if (communityCache?.isJoined ?? false) {
+                      leaveGroupBottomSheet(context);
+                    } else {
+                      joinGroupBottomSheet(context);
+                    }
+                  },
+                ),
+                const SizedBox(height: 15),
+                Container(
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 15),
-                  Container(
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColors.whiteColor,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 0, right: 5),
-                      child: TabBar(
-                        indicatorColor: AppColors.primaryColor,
-                        unselectedLabelColor: Colors.grey,
-                        unselectedLabelStyle: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                          color: Colors.grey,
-                        ),
-                        controller: _tabController,
-                        tabAlignment: TabAlignment.start,
-                        isScrollable: true,
-                        tabs: [
-                          Tab(
-                            child: tabTitle('About'),
-                          ),
-                          Tab(
-                            child: tabTitle('Chat'),
-                          ),
-                        ],
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 0, right: 5),
+                    child: TabBar(
+                      indicatorColor: AppColors.primaryColor,
+                      unselectedLabelColor: Colors.grey,
+                      unselectedLabelStyle: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                        color: Colors.grey,
                       ),
-                    ),
-                  ),
-                  Expanded(
-                    child: TabBarView(
                       controller: _tabController,
-                      children: [
-                        CommunitySectionAbout(
-                          community: state.community!,
+                      tabAlignment: TabAlignment.start,
+                      isScrollable: true,
+                      tabs: [
+                        Tab(
+                          child: tabTitle('About'),
                         ),
-
-                        // CommunitySectionPosts(
-                        //     isLoading: false,
-                        //     isEmpty: (state.status != Status.loading && state.posts.isEmpty),
-                        //     posts: state.posts,
-                        //     onReport: (postId) {
-                        //       print('postId=$postId');
-                        //     },
-                        //     onDelete: (postId) {
-                        //       print('postId=$postId');
-                        //     },
-                        //     onTap: (postId) {
-                        //       print('postId=$postId');
-                        //     },
-                        //     onReact: (postId) {
-                        //       print('postId=$postId');
-                        //     }),
-                        //
-
-                        ///  chat section
-                        CommunitySectionChat(community: state.community!),
+                        Tab(
+                          child: tabTitle('Chat'),
+                        ),
                       ],
                     ),
                   ),
-                ],
-              );
-            }
+                ),
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      CommunitySectionAbout(
+                        community: communityCache!,
+                      ),
 
-            return Center(
-              child: Text(state.errorMessage ?? 'Something went wrong'),
+                      // CommunitySectionPosts(
+                      //     isLoading: false,
+                      //     isEmpty: (state.status != Status.loading && state.posts.isEmpty),
+                      //     posts: state.posts,
+                      //     onReport: (postId) {
+                      //       print('postId=$postId');
+                      //     },
+                      //     onDelete: (postId) {
+                      //       print('postId=$postId');
+                      //     },
+                      //     onTap: (postId) {
+                      //       print('postId=$postId');
+                      //     },
+                      //     onReact: (postId) {
+                      //       print('postId=$postId');
+                      //     }),
+                      //
+
+                      ///  chat section
+                      CommunitySectionChat(community: communityCache!),
+                    ],
+                  ),
+                ),
+              ],
             );
           },
         ),

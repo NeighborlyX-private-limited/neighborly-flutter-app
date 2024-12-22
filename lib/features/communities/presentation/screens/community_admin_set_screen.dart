@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
+import '../bloc/bloc/update_mute_group_bloc.dart';
 
 class CommunityAdminSetScreen extends StatefulWidget {
   final CommunityModel community;
@@ -22,13 +23,15 @@ class CommunityAdminSetScreen extends StatefulWidget {
 class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
   late CommunityDetailsCubit communityDetailCubit;
   late String communitytId;
+  late CommunityModel community;
 
   ///init state method
   @override
   void initState() {
     super.initState();
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-    communitytId = widget.community.id;
+    community = communityDetailCubit.state.community ?? widget.community;
+    communitytId = community.id;
   }
 
   /// delete group confirmation bottom sheet
@@ -169,8 +172,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 },
               ),
 
-              const SizedBox(height: 5),
-
               /// community type
               MenuIconItem(
                 title: 'Community Type',
@@ -181,8 +182,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 },
               ),
 
-              const SizedBox(height: 5),
-
               ///community icon
               MenuIconItem(
                 title: 'Community Icon',
@@ -192,8 +191,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                   context.push('/groups/admin/icon');
                 },
               ),
-
-              const SizedBox(height: 5),
 
               ///location
               // const SizedBox(height: 5),
@@ -216,7 +213,59 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
               //     context.push('/groups/admin/radius');
               //   },
               // ),
+              /// mute/unmute
+              BlocConsumer<UpdateMuteGroupBloc, UpdateMuteGroupState>(
+                listener: (context, state) {
+                  /// failure state
+                  if (state is UpdateMuteGroupFailureState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.error),
+                      ),
+                    );
+                  }
 
+                  /// success state
+                  if (state is UpdateMuteGroupSuccessState) {
+                    community.copyWith(isMuted: !(community.isMuted));
+                    communityDetailCubit.getCommunityDetail(community.id);
+                    String msg =
+                        community.isMuted ? 'Group unmuted!' : 'Group muted!';
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(msg),
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  ///loading state
+                  if (state is UpdateMuteGroupLoadingState) {
+                    return CircularProgressIndicator();
+                  }
+                  // if (state is UpdateMuteGroupSuccessState) {
+                  //   community.copyWith(isMuted: !(community.isMuted));
+                  //   community = communityDetailCubit.state.community!;
+                  // }
+                  return MenuIconItem(
+                    title: community.isMuted ? 'Unmute' : 'Mute',
+                    svgPath: community.isMuted
+                        ? 'assets/menu_unmute.svg'
+                        : 'assets/menu_mute.svg',
+                    iconSize: 25,
+                    onTap: () {
+                      BlocProvider.of<UpdateMuteGroupBloc>(context)
+                          .add(UpdateMuteGroupButtonPressedEvent(
+                        communityId: community.id,
+                        isMute: !community.isMuted,
+                      ));
+
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
               const SizedBox(height: 5),
 
               ///member list

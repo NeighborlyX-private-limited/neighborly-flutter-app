@@ -445,10 +445,10 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
 
   /// updateBlock user repo impl
   @override
-  Future<Either<Failure, void>> updateBlock({
+  Future<Either<Failure, String>> updateBlock({
     required String communityId,
     required String userId,
-    required String isBlock,
+    required bool isBlock,
   }) async {
     if (await networkInfo.isConnected) {
       try {
