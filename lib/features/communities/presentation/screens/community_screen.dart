@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/constants/app_images.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
@@ -12,6 +14,7 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/constants/status.dart';
+import '../../../../core/widgets/somthing_went_wrong.dart';
 import '../bloc/communities_main_cubit.dart';
 import '../widgets/community_card_widget.dart';
 import '../widgets/community_sheemer.dart';
@@ -26,9 +29,9 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen>
     with SingleTickerProviderStateMixin {
   late CommunityMainCubit communityMainCubit;
+  late TabController _tabController;
   bool isHome = true;
   late String _selectedCity;
-  late TabController _tabController;
   int _currentIndex = 0;
 
   ///init state method
@@ -38,7 +41,6 @@ class _CommunityScreenState extends State<CommunityScreen>
     _tabController = TabController(length: 2, vsync: this);
     // Listen for tab changes
     _tabController.addListener(() {
-      // Trigger the API call when the tab changes
       if (_tabController.index != _currentIndex &&
           !_tabController.indexIsChanging) {
         _currentIndex = _tabController.index;
@@ -57,20 +59,16 @@ class _CommunityScreenState extends State<CommunityScreen>
     communityMainCubit.init();
   }
 
+  ///listen on tab changes for featch groups
+  /// Trigger the API call when the tab changes
   _onTabChanged(int tabIndex) {
+    print('Tab index for featch groups:$tabIndex');
     if (tabIndex == 0) {
       communityMainCubit.init();
     } else {
       BlocProvider.of<GetUserGroupsBloc>(context)
           .add(GetUserGroupsButtonPressedEvent());
     }
-  }
-
-  ///dispose method
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   /// set the location of  user whether their home location is on or current location in
@@ -92,15 +90,20 @@ class _CommunityScreenState extends State<CommunityScreen>
       );
 
       ShardPrefHelper.setLocation(
-        [position.latitude, position.longitude],
+        [
+          position.latitude,
+          position.longitude,
+        ],
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-          ),
-        );
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(e.toString()),
+            ),
+          );
       }
     }
   }
@@ -120,13 +123,15 @@ class _CommunityScreenState extends State<CommunityScreen>
       /// if location is denied
       if (permission == LocationPermission.denied) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                AppLocalizations.of(context)!.location_permissions_are_denied,
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(
+                  AppLocalizations.of(context)!.location_permissions_are_denied,
+                ),
               ),
-            ),
-          );
+            );
         }
         return false;
       }
@@ -135,14 +140,16 @@ class _CommunityScreenState extends State<CommunityScreen>
     /// if location is forever denied
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!
-                  .location_permissions_are_permanently_denied_we_cannot_request_permissions,
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!
+                    .location_permissions_are_permanently_denied_we_cannot_request_permissions,
+              ),
             ),
-          ),
-        );
+          );
       }
       return false;
     }
@@ -176,7 +183,14 @@ class _CommunityScreenState extends State<CommunityScreen>
     ShardPrefHelper.setCurrentCity(city);
   }
 
-  /// refersh the home screen
+  ///dispose method
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  /// refersh the nearby groups tab screen
   Future<void> _onRefresh() async {
     setIsHome();
     fetchLocationAndUpdate();
@@ -190,19 +204,10 @@ class _CommunityScreenState extends State<CommunityScreen>
     communityMainCubit.init();
   }
 
-  /// tab bar area
-  Widget tabTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0),
-      child: Text(
-        title,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
-        ),
-      ),
-    );
+  /// Refresh my groups tab screen
+  Future<void> _onRefres() async {
+    BlocProvider.of<GetUserGroupsBloc>(context)
+        .add(GetUserGroupsButtonPressedEvent());
   }
 
   /// handle location toggle
@@ -225,10 +230,19 @@ class _CommunityScreenState extends State<CommunityScreen>
     communityMainCubit.init();
   }
 
-  /// Refresh based on the current tab
-  Future<void> _onRefres() async {
-    BlocProvider.of<GetUserGroupsBloc>(context)
-        .add(GetUserGroupsButtonPressedEvent());
+  /// tab bar area
+  Widget tabTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18.0),
+      child: Text(
+        title,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 16,
+        ),
+      ),
+    );
   }
 
   @override
@@ -293,6 +307,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                           ),
                         ),
                       ),
+
                       SizedBox(
                         width: 5,
                       ),
@@ -304,21 +319,29 @@ class _CommunityScreenState extends State<CommunityScreen>
                           if (state is CityUpdatedState) {
                             ShardPrefHelper.setIsLocationOn(false);
                             handleToggle(true);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                    '${AppLocalizations.of(context)!.city_updated_to} ${state.city}!'),
-                              ),
-                            );
+                            if (mounted) {
+                              ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        '${AppLocalizations.of(context)!.city_updated_to} ${state.city}!'),
+                                  ),
+                                );
+                            }
                           }
 
                           /// failure state
                           else if (state is CityErrorState) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Error: ${state.errorMessage}'),
-                              ),
-                            );
+                            if (mounted) {
+                              ScaffoldMessenger.of(context)
+                                ..hideCurrentSnackBar()
+                                ..showSnackBar(
+                                  SnackBar(
+                                    content: Text(state.errorMessage),
+                                  ),
+                                );
+                            }
                           }
                         },
                         child: HomeDropdownCity(
@@ -447,21 +470,24 @@ class _CommunityScreenState extends State<CommunityScreen>
                   RefreshIndicator(
                     onRefresh: _onRefresh,
                     child: BlocConsumer<CommunityMainCubit, CommunityMainState>(
-                      bloc: communityMainCubit,
                       listener: (context, state) {
                         if (state.status == Status.loading) {}
                         if (state.status == Status.success) {}
                         if (state.status == Status.failure) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                '${state.errorMessage}',
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: Colors.red,
-                              duration: const Duration(seconds: 3),
-                            ),
-                          );
+                          if (mounted) {
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${state.errorMessage}',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                  duration: const Duration(seconds: 3),
+                                ),
+                              );
+                          }
                         }
                       },
                       builder: (context, state) {
@@ -472,9 +498,14 @@ class _CommunityScreenState extends State<CommunityScreen>
 
                         ///failure state
                         if (state.status == Status.failure) {
-                          return Center(
-                            child: Text(
-                                state.errorMessage ?? 'Something went wrong'),
+                          return SomethingWentWrong(
+                            imagePath: 'assets/something_went_wrong.svg',
+                            title: "oops something went wrong",
+                            message: "We could not featch nearby groups.",
+                            buttonText: AppLocalizations.of(context)!.retry,
+                            onButtonPressed: () {
+                              communityMainCubit.init();
+                            },
                           );
                         }
                         if (state.status == Status.success) {
@@ -523,14 +554,27 @@ class _CommunityScreenState extends State<CommunityScreen>
 
                           /// if community is empty
                           if (state.communities.isEmpty) {
-                            return Center(
-                              child: Text('No Community found'),
+                            return SomethingWentWrong(
+                              imagePath: AppImages.emptyCommunity,
+                              title: 'No Community Groups Yet',
+                              message:
+                                  'Be the first to create a group and start connecting!',
+                              buttonText: 'Start a Community',
+                              onButtonPressed: () {
+                                context.push('/groups/create');
+                              },
                             );
                           }
                         }
 
-                        return Center(
-                          child: Text('Something went wrong'),
+                        return SomethingWentWrong(
+                          imagePath: 'assets/something_went_wrong.svg',
+                          title: "oops something went wrong",
+                          message: "We could not featch nearby groups.",
+                          buttonText: AppLocalizations.of(context)!.retry,
+                          onButtonPressed: () {
+                            communityMainCubit.init();
+                          },
                         );
                       },
                     ),
@@ -543,16 +587,20 @@ class _CommunityScreenState extends State<CommunityScreen>
                       listener: (context, state) {
                         ///failure state
                         if (state is GetUserGroupsFailureState) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                state.error.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                              backgroundColor: Colors.red,
-                              duration: const Duration(seconds: 3),
-                            ),
-                          );
+                          if (mounted) {
+                            ScaffoldMessenger.of(context)
+                              ..hideCurrentSnackBar()
+                              ..showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    'oops something went wrong',
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
+                                  backgroundColor: Colors.red,
+                                  duration: const Duration(seconds: 3),
+                                ),
+                              );
+                          }
                         }
                       },
                       builder: (context, state) {
@@ -607,14 +655,28 @@ class _CommunityScreenState extends State<CommunityScreen>
 
                           /// if community is empty
                           if (state.communities.isEmpty) {
-                            return Center(
-                              child: Text('No Community found'),
+                            return SomethingWentWrong(
+                              imagePath: AppImages.emptyCommunity,
+                              title: 'No Community Groups Yet',
+                              message:
+                                  'Be the first to create a group and start connecting!',
+                              buttonText: 'Start a Community',
+                              onButtonPressed: () {
+                                context.push('/groups/create');
+                              },
                             );
                           }
                         }
 
-                        return Center(
-                          child: Text('Something went wrong'),
+                        return SomethingWentWrong(
+                          imagePath: 'assets/something_went_wrong.svg',
+                          title: "oops something went wrong",
+                          message: "We could not featch your groups.",
+                          buttonText: AppLocalizations.of(context)!.retry,
+                          onButtonPressed: () {
+                            BlocProvider.of<GetUserGroupsBloc>(context)
+                                .add(GetUserGroupsButtonPressedEvent());
+                          },
                         );
                       },
                     ),

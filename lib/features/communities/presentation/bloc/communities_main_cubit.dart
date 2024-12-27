@@ -42,20 +42,4 @@ class CommunityMainCubit extends Cubit<CommunityMainState> {
       },
     );
   }
-
-  /// it is no longer required
-  // Future<void> updateNearBy(bool newValue) async {
-  //   await getAllCommunities(true, newValue);
-  // }
-
-  /// it is no longer required
-  // Future<void> updateIsSummary(
-  //   bool isSummary,
-  //   bool isNearBy,
-  // ) async {
-  //   await getAllCommunities(
-  //     isSummary,
-  //     isNearBy,
-  //   );
-  // }
 }

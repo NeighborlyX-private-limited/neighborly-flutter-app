@@ -238,6 +238,9 @@ class MyAppState extends State<MyApp> {
           ),
 
           ///community/group bloc
+          BlocProvider<CommunityCreateCubit>(
+            create: (context) => di.sl<CommunityCreateCubit>(),
+          ),
           BlocProvider<CommunityMainCubit>(
             create: (context) => di.sl<CommunityMainCubit>(),
           ),
@@ -256,9 +259,7 @@ class MyAppState extends State<MyApp> {
           BlocProvider<MakeRemoveAdminBloc>(
             create: (context) => di.sl<MakeRemoveAdminBloc>(),
           ),
-          BlocProvider<CommunityCreateCubit>(
-            create: (context) => di.sl<CommunityCreateCubit>(),
-          ),
+
           BlocProvider<CommunitySearchCubit>(
             create: (context) => di.sl<CommunitySearchCubit>(),
           ),
