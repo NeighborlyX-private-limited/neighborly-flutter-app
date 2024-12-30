@@ -316,7 +316,11 @@ class _CommunityScreenState extends State<CommunityScreen>
                           else if (state is CityErrorState) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Error: ${state.errorMessage}'),
+                                content: Text(
+                                 
+                                  '${AppLocalizations.of(context)!.error}: ${state.errorMessage}',
+                                 // 'Error: ${state.errorMessage}'
+                                  ),
                               ),
                             );
                           }
@@ -430,10 +434,16 @@ class _CommunityScreenState extends State<CommunityScreen>
                   isScrollable: true,
                   tabs: [
                     Tab(
-                      child: tabTitle('Nearby Groups'),
+                      child: tabTitle(
+                        AppLocalizations.of(context)!.nearby_Groups,
+                      //  'Nearby Groups'
+                        ),
                     ),
                     Tab(
-                      child: tabTitle('My Groups'),
+                      child: tabTitle(
+                        AppLocalizations.of(context)!.my_Groups,
+                      //  'My Groups'
+                        ),
                     ),
                   ],
                 ),
@@ -474,7 +484,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                         if (state.status == Status.failure) {
                           return Center(
                             child: Text(
-                                state.errorMessage ?? 'Something went wrong'),
+                                state.errorMessage ?? AppLocalizations.of(context)!.something_went_wrong),
                           );
                         }
                         if (state.status == Status.success) {
@@ -524,13 +534,19 @@ class _CommunityScreenState extends State<CommunityScreen>
                           /// if community is empty
                           if (state.communities.isEmpty) {
                             return Center(
-                              child: Text('No Community found'),
+                              child: Text(
+                                AppLocalizations.of(context)!.no_Community_found,
+                              //  'No Community found'
+                                ),
                             );
                           }
                         }
 
                         return Center(
-                          child: Text('Something went wrong'),
+                          child: Text(
+                            AppLocalizations.of(context)!.something_went_wrong,
+                          //  'Something went wrong'
+                            ),
                         );
                       },
                     ),
@@ -608,13 +624,19 @@ class _CommunityScreenState extends State<CommunityScreen>
                           /// if community is empty
                           if (state.communities.isEmpty) {
                             return Center(
-                              child: Text('No Community found'),
+                              child: Text(
+                                AppLocalizations.of(context)!.no_Community_found,
+                               // 'No Community found'
+                                ),
                             );
                           }
                         }
 
                         return Center(
-                          child: Text('Something went wrong'),
+                          child: Text(
+                            AppLocalizations.of(context)!.something_went_wrong,
+                           // 'Something went wrong'
+                            ),
                         );
                       },
                     ),

@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 import '../../../../core/constants/imagepickercompress.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminIconScreen extends StatefulWidget {
   const CommunityAdminIconScreen({
@@ -77,7 +78,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'if you leave, the icon will not be saved. Are you sure?',
+                AppLocalizations.of(context)!.if_you_leave_the_icon_will_not_be_saved_Are_you_sure,
+               // 'if you leave, the icon will not be saved. Are you sure?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -97,7 +99,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
+                         // 'Cancel',
                           style: TextStyle(
                               color: Colors.black, fontSize: 18, height: 0.3),
                         ),
@@ -123,7 +126,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Yes',
+                         AppLocalizations.of(context)!.yes,
+                        //  'Yes',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -162,7 +166,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
 
         ///community icon
         title: Text(
-          'Community Icon',
+          AppLocalizations.of(context)!.community_Icon,
+         // 'Community Icon',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -177,7 +182,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                     _pickImage();
                   },
                   child: Text(
-                    'Change',
+                    AppLocalizations.of(context)!.change,
+                   // 'Change',
                     style: TextStyle(
                       color: AppColors.primaryColor,
                       fontSize: 16,
@@ -189,8 +195,11 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                   onPressed: () {
                     if (_selectedImage == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Select a image to be saved'),
+                         SnackBar(
+                          content: Text(
+                             AppLocalizations.of(context)!.select_a_image_to_be_saved,
+                          //  'Select a image to be saved'
+                            ),
                         ),
                       );
                     } else {
@@ -202,7 +211,8 @@ class _CommunityAdminIconScreenState extends State<CommunityAdminIconScreen> {
                     }
                   },
                   child: Text(
-                    'Save',
+                    AppLocalizations.of(context)!.save,
+                   // 'Save',
                     style: TextStyle(
                       color: AppColors.primaryColor,
                       fontSize: 16,

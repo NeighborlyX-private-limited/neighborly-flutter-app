@@ -19,6 +19,7 @@ import '../bloc/community_detail_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
 import '../widgets/community_section_about.dart';
 import '../widgets/community_section_chat.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   final String communityId;
@@ -178,7 +179,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     Expanded(
                       child: userCount > 1000
                           ? Text(
-                              '${userCount}k+ Members',
+                              '$userCount ${AppLocalizations.of(context)!.members}',
+                              // '${userCount}k+ Members',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.black,
@@ -187,7 +189,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                             )
                           : userCount > 1
                               ? Text(
-                                  '$userCount Members',
+                                  '$userCount ${AppLocalizations.of(context)!.members}',
+                                  // '$userCount Members',
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: Colors.black,
@@ -195,7 +198,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                                   ),
                                 )
                               : Text(
-                                  '$userCount Member',
+                                  '$userCount ${AppLocalizations.of(context)!.member}',
+                                  // '$userCount Member',
                                   overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     color: Colors.black,
@@ -221,7 +225,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       width: 4,
                     ),
                     Text(
-                      isPublic ? 'Public' : 'Private',
+                      isPublic
+                          ? AppLocalizations.of(context)!.public
+                          : AppLocalizations.of(context)!.private,
                       style: TextStyle(
                         height: 0.5,
                         color: Colors.black,
@@ -246,7 +252,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                isJoined ? 'Leave' : 'Join',
+                isJoined
+                    ? AppLocalizations.of(context)!.leave
+                    : AppLocalizations.of(context)!.join,
                 style: TextStyle(
                   color: AppColors.whiteColor,
                   fontSize: 18,
@@ -291,7 +299,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you make this person Admin?',
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_make_this_person_Admin,
+                // 'Are you sure you make this person Admin?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -311,7 +321,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
+                          //'Cancel',
                           style: TextStyle(
                               color: Colors.black, fontSize: 18, height: 0.3),
                         ),
@@ -337,7 +348,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Yes',
+                          AppLocalizations.of(context)!.yes,
+                          // 'Yes',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -375,7 +387,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             children: [
               /// leave button
               MenuIconItem(
-                title: 'Leave ${communityCache?.name}',
+                title:
+                    '${AppLocalizations.of(context)!.leave} ${communityCache?.name}',
+                // 'Leave ${communityCache?.name}',
                 svgPath: 'assets/menu_leave.svg',
                 iconSize: 25,
                 onTap: () {
@@ -402,8 +416,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         isMuted: !(communityCache?.isMuted ?? false));
                     communityDetailCubit.getCommunityDetail(widget.communityId);
                     String msg = !(communityCache?.isMuted ?? false)
-                        ? 'Group unmuted!'
-                        : 'Group muted!';
+                        ? AppLocalizations.of(context)!.group_unmuted
+                        : AppLocalizations.of(context)!.group_muted;
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(msg),
@@ -417,8 +431,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     return CircularProgressIndicator();
                   }
                   return MenuIconItem(
-                    title:
-                        !(communityCache?.isMuted ?? false) ? 'Unmute' : 'Mute',
+                    title: !(communityCache?.isMuted ?? false)
+                        ? AppLocalizations.of(context)!.unmute
+                        : AppLocalizations.of(context)!.mute,
                     svgPath: !(communityCache?.isMuted ?? false)
                         ? 'assets/menu_unmute.svg'
                         : 'assets/menu_mute.svg',
@@ -438,7 +453,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
 
               ///report button
               MenuIconItem(
-                title: 'Report',
+                title: AppLocalizations.of(context)!.report,
+                //  'Report',
                 svgPath: 'assets/menu_flag.svg',
                 iconSize: 20,
                 textColor: Colors.red,
@@ -476,12 +492,15 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             children: [
               Image.asset('assets/report_confirmation.png'),
               Text(
-                'Thanks for letting us know',
+                AppLocalizations.of(context)!.thanks_for_letting_us_know,
+                // 'Thanks for letting us know',
                 style: onboardingHeading2Style,
               ),
               Text(
                 textAlign: TextAlign.center,
-                'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
+                AppLocalizations.of(context)!
+                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_Our_team_will_review_the_content_shortly,
+                // 'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
                 style: blackonboardingBody1Style,
               ),
             ],
@@ -507,7 +526,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
               children: [
                 Center(
                   child: Text(
-                    'Reason to Report',
+                    AppLocalizations.of(context)!.reason_to_Report,
+                    // 'Reason to Report',
                     style: onboardingHeading2Style,
                   ),
                 ),
@@ -568,7 +588,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Leave Community?',
+                AppLocalizations.of(context)!.leave_Community,
+                // 'Leave Community?',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -576,7 +597,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
               ),
               SizedBox(height: 10),
               Text(
-                'Are you sure you want to leave this community?',
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_leave_this_community,
+                // 'Are you sure you want to leave this community?',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
@@ -594,7 +617,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         Navigator.pop(context);
                       },
                       child: Text(
-                        'Cancel',
+                        AppLocalizations.of(context)!.cancel,
+                        // 'Cancel',
                         style: TextStyle(color: Colors.black),
                       ),
                     ),
@@ -619,7 +643,11 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                               .getCommunityDetail(widget.communityId);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Group leaved successfully'),
+                              content: Text(
+                                AppLocalizations.of(context)!
+                                    .group_leaved_successfully,
+                                // 'Group leaved successfully'
+                              ),
                             ),
                           );
                         }
@@ -641,7 +669,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                             ));
                           },
                           child: Text(
-                            'Leave',
+                            AppLocalizations.of(context)!.leave,
+                            // 'Leave',
                             style: TextStyle(
                               color: Colors.white,
                             ),
@@ -677,7 +706,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Join Community?',
+                AppLocalizations.of(context)!.join_Community,
+                // 'Join Community?',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -685,7 +715,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
               ),
               SizedBox(height: 10),
               Text(
-                'Are you sure you want to join this community?',
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_join_this_community,
+                // 'Are you sure you want to join this community?',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
@@ -703,7 +735,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         Navigator.pop(context);
                       },
                       child: Text(
-                        'Cancel',
+                        AppLocalizations.of(context)!.cancel,
+                        // 'Cancel',
                         style: TextStyle(color: Colors.black),
                       ),
                     ),
@@ -728,7 +761,11 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                               .getCommunityDetail(widget.communityId);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Group joined successfully'),
+                              content: Text(
+                                AppLocalizations.of(context)!
+                                    .group_joined_successfully,
+                                // 'Group joined successfully'
+                              ),
                             ),
                           );
                         }
@@ -750,7 +787,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                             ));
                           },
                           child: Text(
-                            'Join',
+                            AppLocalizations.of(context)!.join,
+                            // 'Join',
                             style: TextStyle(
                               color: Colors.white,
                             ),
@@ -796,11 +834,15 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
               ///share button
               AppbatButton(
                 onTap: () {
-                  String message =
-                      'Hey, check this community: ${communityCache?.name}';
+                  String message = AppLocalizations.of(context)!.hey_check_this_community.replaceFirst(
+                     '{communityName}', communityCache?.name ?? '',
+                  );
+                  // String message =
+                  //    'Hey, check this community: ${communityCache?.name}';
                   ShareIt.text(
                     content: message,
-                    androidSheetTitle: 'Look this event',
+                    androidSheetTitle: AppLocalizations.of(context)!.look_this_event,
+                    // 'Look this event',
                   );
                 },
                 icon: Icons.share,
@@ -848,7 +890,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             if (state.status == Status.failure) {
               /// have to replace with error widget
               return Center(
-                child: Text('oops something went wrong'),
+                child: Text(AppLocalizations.of(context)!.oops_something_went_wrong),
               );
             }
 
@@ -900,10 +942,16 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       isScrollable: true,
                       tabs: [
                         Tab(
-                          child: tabTitle('About'),
+                          child: tabTitle(
+                            AppLocalizations.of(context)!.about,
+                           // 'About'
+                            ),
                         ),
                         Tab(
-                          child: tabTitle('Chat'),
+                          child: tabTitle(
+                            AppLocalizations.of(context)!.chat
+                          //  'Chat'
+                            ),
                         ),
                       ],
                     ),

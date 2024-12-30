@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/shared_preference.dart';
@@ -245,11 +246,11 @@ class _MainPageState extends State<MainPage> {
               ),
               label: AppLocalizations.of(context)!.home,
             ),
-            const BottomNavigationBarItem(
+             BottomNavigationBarItem(
               icon: Icon(
                 Icons.groups,
               ),
-              label: 'Groups',
+              label: AppLocalizations.of(context)!.groups,
             ),
             BottomNavigationBarItem(
               icon: SvgPicture.asset(
@@ -258,11 +259,11 @@ class _MainPageState extends State<MainPage> {
               ),
               label: '',
             ),
-            const BottomNavigationBarItem(
+             BottomNavigationBarItem(
               icon: Icon(
                 Icons.calendar_month,
               ),
-              label: 'Events',
+              label:  AppLocalizations.of(context)!.events,
             ),
             BottomNavigationBarItem(
               icon: Icon(

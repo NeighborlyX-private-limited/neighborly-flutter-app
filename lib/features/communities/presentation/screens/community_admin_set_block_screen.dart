@@ -5,6 +5,7 @@ import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminBlockedUsersScreen extends StatefulWidget {
   const CommunityAdminBlockedUsersScreen({
@@ -47,7 +48,8 @@ class _CommunityAdminBlockedUsersScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you whant to Unblock this user?',
+                AppLocalizations.of(context)!.are_you_sure_you_whant_to_Unblock_this_user,
+               // 'Are you sure you whant to Unblock this user?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -67,7 +69,8 @@ class _CommunityAdminBlockedUsersScreenState
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
+                        //  'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -133,7 +136,8 @@ class _CommunityAdminBlockedUsersScreenState
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
-                              'Unblock',
+                              AppLocalizations.of(context)!.unblock,
+                             // 'Unblock',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -213,7 +217,8 @@ class _CommunityAdminBlockedUsersScreenState
           },
         ),
         title: Text(
-          'Blocked User',
+          AppLocalizations.of(context)!.blocked_User,
+         // 'Blocked User',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -233,7 +238,8 @@ class _CommunityAdminBlockedUsersScreenState
               Expanded(
                 child: Center(
                   child: Text(
-                    'No Members',
+                    AppLocalizations.of(context)!.no_Members,
+                   // 'No Members',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.grey,

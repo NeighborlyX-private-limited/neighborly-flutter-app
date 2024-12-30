@@ -12,6 +12,7 @@ import '../bloc/communities_search_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
 import '../widgets/community_search_empty_widget.dart';
 import '../widgets/search_ahead_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunitySearchScreen extends StatefulWidget {
   const CommunitySearchScreen({super.key});
@@ -56,7 +57,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
           showTitle: true,
           isDarkmode: false,
           showBackButton: true,
-          lintText: 'Search',
+          lintText: AppLocalizations.of(context)!.search,
           icon: Icons.search,
           onSearchTextChange: (currentStrSearchValue) {
             print('... currentStrSearchValue=$currentStrSearchValue');
@@ -105,9 +106,14 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                      Text('Something went wrong! ${state.failure?.message}'),
-                ),
+  content: Text(
+    '${AppLocalizations.of(context)!.something_went_wrong} ${state.failure?.message ?? ''}',
+  ),
+),
+               // SnackBar(
+                 // content:
+                 //     Text('Something went wrong! ${state.failure?.message}'),
+               // ),
               );
               break;
             case Status.success:
@@ -312,6 +318,7 @@ class TrendListArea extends StatelessWidget {
                         height: 8,
                       ),
                       Text(
+                        // '${community.membersCount} ${AppLocalizations.of(context)!.members}',
                         '${community.membersCount} Members',
                         style: TextStyle(fontWeight: FontWeight.normal),
                       ),
@@ -337,7 +344,8 @@ class TrendListArea extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              'Trending Communities',
+              AppLocalizations.of(context)!.trending_Communities,
+              // 'Trending Communities',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
@@ -451,7 +459,8 @@ class _ResultAreaState extends State<ResultArea>
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 1),
                   child: Text(
-                    'Join',
+                    AppLocalizations.of(context)!.join,
+                    // 'Join',
                     style: TextStyle(
                         color: Colors.white, fontSize: 18, height: 0.3),
                   ),
@@ -480,7 +489,10 @@ class _ResultAreaState extends State<ResultArea>
   }
 
   Widget listArea(List<dynamic> list) {
-    if (list.isEmpty) return Text('vazio');
+    if (list.isEmpty) return Text(
+      AppLocalizations.of(context)!.vazio,
+     // 'vazio'
+      );
 
     return Container(
       color: Colors.white,
@@ -528,8 +540,14 @@ class _ResultAreaState extends State<ResultArea>
                 isScrollable: true,
                 // labelPadding: EdgeInsets.only(left: 0, right: 20),
                 tabs: [
-                  Tab(child: tabTitle('Communities')),
-                  Tab(child: tabTitle('People')),
+                  Tab(child: tabTitle(
+                    AppLocalizations.of(context)!.communities
+                    // 'Communities'
+                    )),
+                  Tab(child: tabTitle(
+                    AppLocalizations.of(context)!.people
+                  //  'People'
+                    )),
                 ],
               ),
             ),

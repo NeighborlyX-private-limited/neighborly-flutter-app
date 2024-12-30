@@ -5,6 +5,7 @@ import '../../../../core/models/community_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunitySectionAbout extends StatelessWidget {
   final CommunityModel community;
@@ -25,13 +26,16 @@ class CommunitySectionAbout extends StatelessWidget {
             DescriptionArea(description: community.description),
             Divider(),
             TextAndIconArea(
-              title: 'Karma',
+              title: AppLocalizations.of(context)!.karma,
+              // 'Karma',
               text: '${community.karma}',
               svgPath: 'assets/karma.svg',
             ),
             TextAndIconArea(
-              title: 'Radius',
-              text: '${community.radius} miles',
+              title: AppLocalizations.of(context)!.radius,
+              // 'Radius',
+              text:  '${community.radius} ${AppLocalizations.of(context)!.miles}',
+              // '${community.radius} miles',
               icon: Icons.pin_drop_outlined,
             ),
             Divider(),
@@ -62,7 +66,8 @@ class DescriptionArea extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Group Description',
+            AppLocalizations.of(context)!.group_Description,
+           // 'Group Description',
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.black,
@@ -76,8 +81,10 @@ class DescriptionArea extends StatelessWidget {
             trimLines: 2,
             style: TextStyle(fontSize: 14, height: 1.3),
             trimMode: TrimMode.Line,
-            trimCollapsedText: ' See more',
-            trimExpandedText: ' See less',
+            trimCollapsedText: AppLocalizations.of(context)!.see_more,
+            //' See more',
+            trimExpandedText: AppLocalizations.of(context)!.see_less,
+            // ' See less',
             moreStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.normal,
@@ -187,7 +194,8 @@ class _MembersListState extends State<MembersList> {
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Text(
-          'Admin',
+          AppLocalizations.of(context)!.admin,
+        //  'Admin',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
         ),
@@ -245,7 +253,8 @@ class _MembersListState extends State<MembersList> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Members list',
+            AppLocalizations.of(context)!.member_list,
+           // 'Members list',
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.black,
@@ -256,7 +265,8 @@ class _MembersListState extends State<MembersList> {
           const SizedBox(height: 10),
           if (hasMembers == false)
             Text(
-              'No Members',
+              AppLocalizations.of(context)!.no_Members,
+            //  'No Members',
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.grey,
@@ -279,7 +289,8 @@ class _MembersListState extends State<MembersList> {
                         });
                       },
                       child: Text(
-                        'View All Members',
+                        AppLocalizations.of(context)!.view_All_Members,
+                      //  'View All Members',
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: AppColors.primaryColor,

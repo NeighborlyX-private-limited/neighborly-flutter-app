@@ -6,6 +6,7 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityCardWidget extends StatefulWidget {
   final CommunityModel community;
@@ -114,7 +115,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                               width: 4,
                             ),
                             Text(
-                              widget.community.isPublic ? 'Public' : 'Private',
+                              widget.community.isPublic ? AppLocalizations.of(context)!.public: AppLocalizations.of(context)!.private,
                               style: TextStyle(
                                 height: 0.5,
                                 color: Colors.white,
@@ -191,7 +192,8 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           Expanded(
                             child: groupMemberCount > 1000
                                 ? Text(
-                                    '${groupMemberCount}k+ Members',
+                                  '${groupMemberCount}k+ ${AppLocalizations.of(context)!.members}',
+                                   // '${groupMemberCount}k+ Members',
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       color: Colors.white,
@@ -200,7 +202,8 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                                   )
                                 : groupMemberCount > 1
                                     ? Text(
-                                        '$groupMemberCount Members',
+                                      '${groupMemberCount} ${AppLocalizations.of(context)!.members}',
+                                       // '$groupMemberCount Members',
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -208,7 +211,8 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                                         ),
                                       )
                                     : Text(
-                                        '$groupMemberCount Member',
+                                      '${groupMemberCount} ${AppLocalizations.of(context)!.member}',
+                                       // '$groupMemberCount Member',
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -230,7 +234,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           ),
                           child: Center(
                             child: Text(
-                              widget.community.isJoined ? 'Joined' : 'Join',
+                              widget.community.isJoined ? AppLocalizations.of(context)!.joined : AppLocalizations.of(context)!.join,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,

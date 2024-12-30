@@ -4,6 +4,7 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/dropdown_search_field.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminLocationScreen extends StatefulWidget {
   const CommunityAdminLocationScreen({
@@ -49,7 +50,8 @@ class _CommunityAdminLocationScreenState
           },
         ),
         title: Text(
-          'Location',
+          AppLocalizations.of(context)!.location,
+         // 'Location',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -62,8 +64,11 @@ class _CommunityAdminLocationScreenState
               onPressed: () {
                 if (newLocationEC.text.trim() == '') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Select a location to be saved'),
+                     SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.select_a_location_to_be_saved,
+                       // 'Select a location to be saved'
+                        ),
                     ),
                   );
                 } else {
@@ -75,7 +80,8 @@ class _CommunityAdminLocationScreenState
                 }
               },
               child: Text(
-                'Save',
+                AppLocalizations.of(context)!.save,
+               // 'Save',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
@@ -100,7 +106,8 @@ class _CommunityAdminLocationScreenState
                     newLocationEC.text = value ?? '';
                   },
                   initialValue: newLocationEC.text,
-                  placeholder: 'Type to search location',
+                  placeholder: AppLocalizations.of(context)!.type_to_search_location,
+                  // 'Type to search location',
                 ),
               ),
             ),
