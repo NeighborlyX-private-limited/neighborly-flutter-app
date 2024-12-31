@@ -413,11 +413,11 @@ class _Step1areaState extends State<Step1area> {
           DropdownSearchField(
             label: AppLocalizations.of(context)!.choose_your_group_type,
             // 'Choose your group type',
-            items: [AppLocalizations.of(context)!.public, AppLocalizations.of(context)!.private],
+            items: ['public', 'private'],
             onChanged: (value) {
-              widget.typeController.text = value ?? AppLocalizations.of(context)!.public;
+              widget.typeController.text = value ?? 'public';
             },
-            initialValue: AppLocalizations.of(context)!.public,
+            initialValue: widget.typeController.text,
             //  widget.typeController.text,
             placeholder: AppLocalizations.of(context)!.community_Type,
 
