@@ -14,6 +14,7 @@ import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/communities_create_cubit.dart';
 import '../widgets/community_sheemer.dart';
 import '../../../../core/constants/imagepickercompress.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityCreateScreen extends StatefulWidget {
   const CommunityCreateScreen({super.key});
@@ -71,13 +72,13 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   String titleSelector(int step) {
     switch (step) {
       case 1:
-        return 'create - basic';
+        return AppLocalizations.of(context)!.create_community;
       case 2:
-        return 'create - descr.';
+        return AppLocalizations.of(context)!.create_description;
       // case 3:
       //   return 'create - locat.';
       case 4:
-        return 'create - image';
+        return AppLocalizations.of(context)!.upload_image;
       default:
         return 'create';
     }
@@ -99,7 +100,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you want leave without save?',
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_leave_without_save,
+                // 'Are you sure you want leave without save?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -119,7 +122,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
+                          // 'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -148,7 +152,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Yes',
+                          AppLocalizations.of(context)!.yes,
+                          //   'Yes',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -261,7 +266,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Text(
-                currentStep == 4 ? 'Save' : 'Next >',
+                currentStep == 4
+                    ? AppLocalizations.of(context)!.save
+                    : AppLocalizations.of(context)!.next,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -387,7 +394,8 @@ class _Step1areaState extends State<Step1area> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Name',
+            AppLocalizations.of(context)!.name,
+            // 'Name',
             style: greyonboardingBody1Style,
           ),
           const SizedBox(height: 5),
@@ -403,13 +411,17 @@ class _Step1areaState extends State<Step1area> {
 
           ///group type drop down
           DropdownSearchField(
-            label: 'Choose your group type',
+            label: AppLocalizations.of(context)!.choose_your_group_type,
+            // 'Choose your group type',
             items: ['public', 'private'],
             onChanged: (value) {
               widget.typeController.text = value ?? 'public';
             },
             initialValue: widget.typeController.text,
-            placeholder: 'Community Type',
+            //  widget.typeController.text,
+            placeholder: AppLocalizations.of(context)!.community_Type,
+
+            // 'Community Type',
           ),
         ],
       ),
@@ -439,7 +451,8 @@ class _Step2areaState extends State<Step2area> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Community Description',
+            AppLocalizations.of(context)!.community_Description,
+            // 'Community Description',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const SizedBox(height: 7),
@@ -453,9 +466,10 @@ class _Step2areaState extends State<Step2area> {
             child: TextField(
               onChanged: (value) {},
               controller: widget.descriptionController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: 'Describe your community',
+                hintText: AppLocalizations.of(context)!.describe_your_community,
+                //'Describe your community',
                 hintStyle: TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.normal,
@@ -507,7 +521,8 @@ class _Step3areaState extends State<Step3area> {
           // ),
           // const SizedBox(height: 30),
           Text(
-            'Community Radius',
+            AppLocalizations.of(context)!.community_Radius,
+            // 'Community Radius',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const SizedBox(height: 7),
@@ -522,7 +537,8 @@ class _Step3areaState extends State<Step3area> {
             },
           ),
           Text(
-            '  ${widget.radiusController.text} miles',
+            '  ${widget.radiusController.text} ${AppLocalizations.of(context)!.miles}',
+            // '  ${widget.radiusController.text} miles',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w500,
@@ -583,7 +599,8 @@ class _Step4areaState extends State<Step4area> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Image Cover/Avatar',
+            AppLocalizations.of(context)!.image_Cover_Avatar,
+            // 'Image Cover/Avatar',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const SizedBox(height: 7),

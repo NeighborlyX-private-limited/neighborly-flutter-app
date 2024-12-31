@@ -1372,10 +1372,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           children: [
                             SvgPicture.asset('assets/communities.svg'),
                             const SizedBox(width: 10),
-                            Text(
-                              'Create Community',
-                              style: mediumTextStyleBlack,
-                            ),
+                            Text(AppLocalizations.of(context)!.create_community,
+                                style: mediumTextStyleBlack),
                           ],
                         ),
                       ),

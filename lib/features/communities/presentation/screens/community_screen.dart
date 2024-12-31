@@ -453,10 +453,16 @@ class _CommunityScreenState extends State<CommunityScreen>
                   isScrollable: true,
                   tabs: [
                     Tab(
-                      child: tabTitle('Nearby Groups'),
+                      child: tabTitle(
+                        AppLocalizations.of(context)!.nearby_Groups,
+                      //  'Nearby Groups'
+                        ),
                     ),
                     Tab(
-                      child: tabTitle('My Groups'),
+                      child: tabTitle(
+                        AppLocalizations.of(context)!.my_Groups,
+                      //  'My Groups'
+                        ),
                     ),
                   ],
                 ),

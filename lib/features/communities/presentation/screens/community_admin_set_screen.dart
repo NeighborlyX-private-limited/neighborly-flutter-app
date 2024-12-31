@@ -6,6 +6,7 @@ import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
 import '../bloc/bloc/update_mute_group_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminSetScreen extends StatefulWidget {
   final CommunityModel community;
@@ -49,16 +50,18 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Delete Group',
+              Text(
+               AppLocalizations.of(context)!.delete_Group,
+              // 'Delete Group',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
-                'Are you sure you want to delete this group? This action cannot be undone.',
+              Text(
+               AppLocalizations.of(context)!.are_you_sure_you_want_to_delete_your_account_this_action_is_irreversible,
+               // 'Are you sure you want to delete this group? This action cannot be undone.',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 16),
               ),
@@ -74,8 +77,9 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                       elevation: 0,
                       backgroundColor: Colors.grey[300],
                     ),
-                    child: const Text(
-                      'Cancel',
+                    child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                     // 'Cancel',
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
@@ -86,7 +90,10 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                       Navigator.pop(context);
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Group deleted')),
+                         SnackBar(content: Text(
+                          AppLocalizations.of(context)!.group_deleted,
+                         // 'Group deleted'
+                          )),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -94,7 +101,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                       backgroundColor: AppColors.primaryColor,
                     ),
                     child: Text(
-                      'Delete',
+                      AppLocalizations.of(context)!.delete,
+                     // 'Delete',
                       style: TextStyle(color: Colors.black),
                     ),
                   ),
@@ -123,7 +131,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
           },
         ),
         title: Text(
-          'Group settings',
+          AppLocalizations.of(context)!.group_settings,
+         // 'Group settings',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -141,7 +150,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
             children: [
               ///general
               Text(
-                'General',
+                AppLocalizations.of(context)!.general,
+              //  'General',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.black,
@@ -154,7 +164,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
 
               ///community name
               MenuIconItem(
-                title: 'Community name',
+                title: AppLocalizations.of(context)!.community_name,
+                // 'Community name',
                 svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
@@ -164,7 +175,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
 
               /// community description
               MenuIconItem(
-                title: 'Description',
+                title: AppLocalizations.of(context)!.description,
+                // 'Description',
                 svgPath: 'assets/menu_description.svg',
                 iconSize: 25,
                 onTap: () {
@@ -174,7 +186,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
 
               /// community type
               MenuIconItem(
-                title: 'Community Type',
+                title: AppLocalizations.of(context)!.community_Type,
+                // 'Community Type',
                 svgPath: 'assets/menu_type.svg',
                 iconSize: 25,
                 onTap: () {
@@ -184,7 +197,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
 
               ///community icon
               MenuIconItem(
-                title: 'Community Icon',
+                title: AppLocalizations.of(context)!.community_Icon,
+                // 'Community Icon',
                 svgPath: 'assets/menu_icon.svg',
                 iconSize: 25,
                 onTap: () {
@@ -230,7 +244,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                     community.copyWith(isMuted: !(community.isMuted));
                     communityDetailCubit.getCommunityDetail(community.id);
                     String msg =
-                        community.isMuted ? 'Group unmuted!' : 'Group muted!';
+                        community.isMuted ? AppLocalizations.of(context)!.group_unmuted : AppLocalizations.of(context)!.group_muted;
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -249,7 +263,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                   //   community = communityDetailCubit.state.community!;
                   // }
                   return MenuIconItem(
-                    title: community.isMuted ? 'Unmute' : 'Mute',
+                    title: community.isMuted ? AppLocalizations.of(context)!.unmute :AppLocalizations.of(context)!.mute,
                     svgPath: community.isMuted
                         ? 'assets/menu_unmute.svg'
                         : 'assets/menu_mute.svg',
@@ -270,7 +284,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
 
               ///member list
               MenuIconItem(
-                title: 'Member list',
+                title: AppLocalizations.of(context)!.member_list,
+                // 'Member list',
                 svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
@@ -282,7 +297,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
 
               ///block user list
               MenuIconItem(
-                title: 'Blocked users',
+                title: AppLocalizations.of(context)!.blocked_User,
+                 //'Blocked users',
                 svgPath: 'assets/menu_block.svg',
                 iconSize: 25,
                 onTap: () {
@@ -295,7 +311,8 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
 
               ///delete group
               MenuIconItem(
-                title: 'Delete community',
+                title: AppLocalizations.of(context)!.delete_community,
+                 //'Delete community',
                 svgPath: 'assets/menu_remove.svg',
                 iconSize: 25,
                 onTap: () {

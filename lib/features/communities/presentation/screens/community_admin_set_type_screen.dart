@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminTypeScreen extends StatefulWidget {
   const CommunityAdminTypeScreen({
@@ -47,7 +48,8 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
           },
         ),
         title: Text(
-          'Community Type',
+          AppLocalizations.of(context)!.community_Type,
+         // 'Community Type',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -64,7 +66,8 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 Navigator.of(context).pop();
               },
               child: Text(
-                'Save',
+                AppLocalizations.of(context)!.save,
+               // 'Save',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
@@ -81,12 +84,14 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             ListTile(
-              title: const Text(
-                'Public',
+              title: Text(
+                 AppLocalizations.of(context)!.public,
+               // 'Public',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: const Text(
-                'Anyone can join, see posts, and participate in discussions. ',
+              subtitle:  Text(
+                 AppLocalizations.of(context)!.anyone_can_join_see_posts_and_participate_in_discussions,
+               // 'Anyone can join, see posts, and participate in discussions. ',
                 style: TextStyle(fontWeight: FontWeight.normal),
               ),
               leading: Container(
@@ -102,7 +107,8 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 ),
               ),
               trailing: Radio<String>(
-                value: 'public',
+                value:  AppLocalizations.of(context)!.public,
+                // 'public',
                 groupValue: selectedOption,
                 onChanged: _handleRadioValueChange,
               ),
@@ -111,12 +117,14 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
               height: 15,
             ),
             ListTile(
-              title: const Text(
-                'Private',
+              title:  Text(
+                 AppLocalizations.of(context)!.private,
+               // 'Private',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: const Text(
-                'Only invited members can join, view posts, and engage in conversations',
+              subtitle: Text(
+                   AppLocalizations.of(context)!.only_invited_members_can_join_view_posts_and_engage_in_conversations,
+               // 'Only invited members can join, view posts, and engage in conversations',
                 style: TextStyle(fontWeight: FontWeight.normal),
               ),
               leading: Container(
@@ -132,7 +140,8 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 ),
               ),
               trailing: Radio<String>(
-                value: 'private',
+                value:  AppLocalizations.of(context)!.private,
+                // 'private',
                 groupValue: selectedOption,
                 onChanged: _handleRadioValueChange,
               ),

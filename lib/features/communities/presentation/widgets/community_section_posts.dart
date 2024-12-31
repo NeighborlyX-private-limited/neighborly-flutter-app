@@ -4,6 +4,7 @@ import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../posts/presentation/widgets/post_sheemer_widget.dart';
 import '../../../posts/presentation/widgets/post_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunitySectionPosts extends StatelessWidget {
   final bool isLoading;
@@ -62,7 +63,10 @@ class PostListEmpty extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Flexible(
-            child: Text('No posts so far'),
+            child: Text(
+              AppLocalizations.of(context)!.no_posts_so_far,
+             // 'No posts so far'
+              ),
           ),
         ],
       ),

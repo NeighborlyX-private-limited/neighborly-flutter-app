@@ -6,6 +6,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /*
   example:
@@ -140,7 +141,8 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                     // fillColor: widget.isDarkmode! ? Colors.grey[800] : Colors.grey[200],
                     fillColor: AppColors.lightBackgroundColor,
                     hintText: widget.lintText == ''
-                        ? 'type something here'
+                        ? AppLocalizations.of(context)!.type_something_here
+                        //'type something here'
                         : widget.lintText, // 'Buscar',
                     contentPadding: EdgeInsets.symmetric(
                         horizontal: 20, vertical: 5), // Inside box padding
@@ -174,7 +176,8 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
               emptyBuilder: (context) => Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: Text(
-                  'type to search', // 'nenhum resultado encontrado',
+                  AppLocalizations.of(context)!.type_to_search,
+                 // 'type to search', // 'nenhum resultado encontrado',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -210,8 +213,10 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                             //
                             Text(
                               result is CommunityModel
-                                  ? '${result.membersCount} Members'
-                                  : '${result.karma} Karma',
+                               ? '${result.membersCount} ${AppLocalizations.of(context)!.members}'
+      : '${result.karma} ${AppLocalizations.of(context)!.karma}',
+                                 // ? '${result.membersCount} Members'
+                                 // : '${result.karma} Karma',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontWeight: FontWeight.normal),
