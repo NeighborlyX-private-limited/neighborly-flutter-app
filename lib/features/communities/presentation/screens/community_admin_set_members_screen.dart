@@ -11,6 +11,7 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminMembersUsersScreen extends StatefulWidget {
   const CommunityAdminMembersUsersScreen({
@@ -70,7 +71,8 @@ class _CommunityAdminMembersUsersScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you make this person Admin?',
+                AppLocalizations.of(context)!.are_you_sure_you_make_this_person_Admin,
+                // 'Are you sure you make this person Admin?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -90,7 +92,8 @@ class _CommunityAdminMembersUsersScreenState
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
+                        //  'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -122,7 +125,10 @@ class _CommunityAdminMembersUsersScreenState
                           communityCubit.getCommunityDetail(communityId);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Admin made'),
+                              content: Text(
+                                AppLocalizations.of(context)!.admin_made,
+                               // 'Admin made'
+                                ),
                             ),
                           );
                         }
@@ -152,7 +158,8 @@ class _CommunityAdminMembersUsersScreenState
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
-                              'Yes',
+                              AppLocalizations.of(context)!.yes,
+                            //  'Yes',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -193,7 +200,8 @@ class _CommunityAdminMembersUsersScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you want to remove this person from Admin post?',
+                AppLocalizations.of(context)!.are_you_sure_you_want_to_remove_this_person_from_Admin_post,
+               // 'Are you sure you want to remove this person from Admin post?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -213,7 +221,8 @@ class _CommunityAdminMembersUsersScreenState
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
+                         // 'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -245,7 +254,10 @@ class _CommunityAdminMembersUsersScreenState
                           communityCubit.getCommunityDetail(communityId);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Admin remove'),
+                              content: Text(
+                                AppLocalizations.of(context)!.admin_remove,
+                               // 'Admin remove'
+                                ),
                             ),
                           );
                         }
@@ -275,7 +287,8 @@ class _CommunityAdminMembersUsersScreenState
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
-                              'Yes',
+                              AppLocalizations.of(context)!.yes,
+                             // 'Yes',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -315,7 +328,8 @@ class _CommunityAdminMembersUsersScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you want to remove this person from community?',
+                AppLocalizations.of(context)!.are_you_sure_you_want_to_remove_this_person_from_community,
+               // 'Are you sure you want to remove this person from community?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -335,7 +349,8 @@ class _CommunityAdminMembersUsersScreenState
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
+                         // 'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -367,7 +382,10 @@ class _CommunityAdminMembersUsersScreenState
                           communityCubit.getCommunityDetail(communityId);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('User removed'),
+                              content: Text(
+                                AppLocalizations.of(context)!.user_removed,
+                               // 'User removed'
+                                ),
                             ),
                           );
                         }
@@ -397,7 +415,8 @@ class _CommunityAdminMembersUsersScreenState
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
-                              'Yes',
+                              AppLocalizations.of(context)!.yes,
+                             // 'Yes',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -436,7 +455,8 @@ class _CommunityAdminMembersUsersScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you want to leave this community?',
+                AppLocalizations.of(context)!.are_you_sure_you_want_to_leave_this_community,
+              //  'Are you sure you want to leave this community?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -456,7 +476,8 @@ class _CommunityAdminMembersUsersScreenState
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                             AppLocalizations.of(context)!.cancel,
+                         // 'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -487,7 +508,10 @@ class _CommunityAdminMembersUsersScreenState
                           communityCubit.getCommunityDetail(communityId);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('Group leaved'),
+                              content: Text(
+                                   AppLocalizations.of(context)!.group_leaved,
+                                // 'Group leaved'
+                                ),
                             ),
                           );
                         }
@@ -519,7 +543,8 @@ class _CommunityAdminMembersUsersScreenState
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
-                              'Yes',
+                                AppLocalizations.of(context)!.yes,
+                             // 'Yes',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -559,7 +584,8 @@ class _CommunityAdminMembersUsersScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you want to block this user?',
+                   AppLocalizations.of(context)!.are_you_sure_you_want_to_block_this_user,
+                //'Are you sure you want to block this user?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -579,7 +605,8 @@ class _CommunityAdminMembersUsersScreenState
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                             AppLocalizations.of(context)!.cancel,
+                        //  'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -645,7 +672,8 @@ class _CommunityAdminMembersUsersScreenState
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: Text(
-                              'Block',
+                                 AppLocalizations.of(context)!.block,
+                             // 'Block',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -686,7 +714,8 @@ class _CommunityAdminMembersUsersScreenState
             children: [
               myUserId != userId && isAdmin
                   ? MenuIconItem(
-                      title: 'Remove Admin',
+                      title:    AppLocalizations.of(context)!.remove_Admin,
+                      // 'Remove Admin',
                       svgPath: 'assets/menu_make_admin.svg',
                       iconSize: 25,
                       onTap: () {
@@ -696,7 +725,8 @@ class _CommunityAdminMembersUsersScreenState
                   : SizedBox(),
               myUserId != userId && !isAdmin
                   ? MenuIconItem(
-                      title: 'Make Admin',
+                      title:    AppLocalizations.of(context)!.make_Admin,
+                      // 'Make Admin',
                       svgPath: 'assets/menu_make_admin.svg',
                       iconSize: 25,
                       onTap: () {
@@ -706,7 +736,8 @@ class _CommunityAdminMembersUsersScreenState
                   : SizedBox(),
               myUserId != userId
                   ? MenuIconItem(
-                      title: 'Remove from community',
+                      title:    AppLocalizations.of(context)!.remove_from_community,
+                      // 'Remove from community',
                       svgPath: 'assets/menu_remove.svg',
                       iconSize: 25,
                       textColor: Colors.red,
@@ -715,7 +746,8 @@ class _CommunityAdminMembersUsersScreenState
                         bottomSheetConfirmRemove(context, userId);
                       })
                   : MenuIconItem(
-                      title: 'Leave community',
+                      title:    AppLocalizations.of(context)!.leave_Community,
+                      // 'Leave community',
                       svgPath: 'assets/menu_remove.svg',
                       iconSize: 25,
                       textColor: Colors.red,
@@ -725,7 +757,8 @@ class _CommunityAdminMembersUsersScreenState
                       }),
               myUserId != userId
                   ? MenuIconItem(
-                      title: 'Block user',
+                      title:    AppLocalizations.of(context)!.block_user,
+                       //'Block user',
                       svgPath: 'assets/menu_make_admin.svg',
                       iconSize: 25,
                       onTap: () {
@@ -750,7 +783,8 @@ class _CommunityAdminMembersUsersScreenState
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Text(
-          'Admin',
+             AppLocalizations.of(context)!.admin,
+          // 'Admin',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
         ),
@@ -820,7 +854,9 @@ class _CommunityAdminMembersUsersScreenState
           },
         ),
         title: Text(
-          'Members list',
+         
+            AppLocalizations.of(context)!.member_list,
+         // 'Members list',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -855,7 +891,8 @@ class _CommunityAdminMembersUsersScreenState
                     Expanded(
                       child: Center(
                         child: Text(
-                          'No Members',
+                            AppLocalizations.of(context)!.no_Members,
+                         // 'No Members',
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             color: Colors.grey,
@@ -871,7 +908,10 @@ class _CommunityAdminMembersUsersScreenState
               );
             }
             return Center(
-              child: Text(state.errorMessage ?? 'something went wrong'),
+              child: Text(state.errorMessage ?? 
+                AppLocalizations.of(context)!.something_went_wrong,
+             // 'something went wrong'
+              ),
             );
           },
         ),

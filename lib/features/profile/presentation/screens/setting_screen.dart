@@ -354,6 +354,7 @@ class _SettingScreenState extends State<SettingScreen> {
     bool isUsernameWrong = false;
 
     return showModalBottomSheet(
+     
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,

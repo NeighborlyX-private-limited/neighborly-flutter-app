@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminDescriptionScreen extends StatefulWidget {
   const CommunityAdminDescriptionScreen({
@@ -46,7 +48,8 @@ class _CommunityAdminDescriptionScreenState
           },
         ),
         title: Text(
-          'Description',
+          AppLocalizations.of(context)!.description,
+         // 'Description',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -54,13 +57,19 @@ class _CommunityAdminDescriptionScreenState
           ),
         ),
         centerTitle: false,
+        
         actions: [
           TextButton(
               onPressed: () {
                 if (newDescriptionEC.text.trim() == '') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Select a description to be saved'),
+                     SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.description
+                       //  'description'
+                      
+                       
+                      ),
                     ),
                   );
                 } else {
@@ -71,7 +80,8 @@ class _CommunityAdminDescriptionScreenState
                 }
               },
               child: Text(
-                'Save',
+                AppLocalizations.of(context)!.save,
+                //'Save',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
@@ -100,12 +110,14 @@ class _CommunityAdminDescriptionScreenState
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextField(
+                  
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: (value) {},
                   controller: newDescriptionEC,
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'Describe your community',
+                    hintText: AppLocalizations.of(context)!.describe_your_community,
+                    //'Describe your community',
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.normal,

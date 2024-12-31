@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../../core/theme/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunitySearchEmptyWidget extends StatelessWidget {
   final String searchTem;
@@ -25,7 +26,8 @@ class CommunitySearchEmptyWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'No results for "$searchTem"',
+            '${AppLocalizations.of(context)!.no_results_for} "$searchTem"',
+            //'No results for "$searchTem"',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -34,7 +36,8 @@ class CommunitySearchEmptyWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'We couldn\'t find any matches. Try adjusting your search or using different keywords.',
+            AppLocalizations.of(context)!.we_couldnt_find_any_matches_Try_adjusting_your_search_or_using_different_keywords,
+           // 'We couldn\'t find any matches. Try adjusting your search or using different keywords.',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w400,

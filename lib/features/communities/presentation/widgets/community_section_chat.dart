@@ -5,6 +5,7 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../chat/data/model/chat_room_model.dart';
 
+
 class CommunitySectionChat extends StatelessWidget {
   final CommunityModel community;
   const CommunitySectionChat({

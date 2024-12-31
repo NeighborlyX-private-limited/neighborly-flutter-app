@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminDisplaynameScreen extends StatefulWidget {
   const CommunityAdminDisplaynameScreen({
@@ -46,7 +47,8 @@ class _CommunityAdminDisplaynameScreenState
           },
         ),
         title: Text(
-          'Community display name',
+          AppLocalizations.of(context)!.community_display_name,
+         // 'Community display name',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -59,8 +61,11 @@ class _CommunityAdminDisplaynameScreenState
               onPressed: () {
                 if (newDisplaynameEC.text.trim() == '') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Select a display name to be saved'),
+                     SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!.select_a_display_name_to_be_saved,
+                        //'Select a display name to be saved'
+                        ),
                     ),
                   );
                 } else {
@@ -71,7 +76,8 @@ class _CommunityAdminDisplaynameScreenState
                 }
               },
               child: Text(
-                'Save',
+                 AppLocalizations.of(context)!.save,
+               // 'Save',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
@@ -102,9 +108,10 @@ class _CommunityAdminDisplaynameScreenState
                 child: TextField(
                   onChanged: (value) {},
                   controller: newDisplaynameEC,
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
                     border: InputBorder.none,
-                    hintText: 'your community name',
+                    hintText: AppLocalizations.of(context)!.your_community_name,
+                    // 'your community name',
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.normal,

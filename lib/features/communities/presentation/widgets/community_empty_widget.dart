@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/colors.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityEmptyWidget extends StatelessWidget {
   const CommunityEmptyWidget({super.key});
@@ -22,7 +23,8 @@ class CommunityEmptyWidget extends StatelessWidget {
           ),
           const SizedBox(height: 20),
           Text(
-            'No Community Groups Yet',
+            AppLocalizations.of(context)!.no_Community_Groups_Yet,
+           // 'No Community Groups Yet',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -31,7 +33,8 @@ class CommunityEmptyWidget extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Text(
-            'Be the first to create a group and start connecting!',
+            AppLocalizations.of(context)!.be_the_first_to_create_a_group_and_start_connecting,
+           // 'Be the first to create a group and start connecting!',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontWeight: FontWeight.w400,
@@ -52,7 +55,8 @@ class CommunityEmptyWidget extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Text(
-                'Start a Community',
+                AppLocalizations.of(context)!.start_a_Community,
+               // 'Start a Community',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 18,
