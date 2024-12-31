@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../../../core/models/post_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
@@ -24,7 +23,7 @@ class ChatMessageModel extends ChatMessageEntity {
 
   @override
   String toString() {
-    return 'ChatMessageModel(id: $id, text: $text, date: $date, isMine: $isMine, readByuser: $readByuser, hasMore: $hasMore, isAdmin: $isAdmin, isPinned: $isPinned, repliesCount: $repliesCount, cheers: $cheers, boos: $boos, booOrCheer: $booOrCheer, pictureUrl: $pictureUrl, author: $author)';
+    return 'ChatMessageModel(id: $id, text: $text, date: $date, isMine: $isMine, readByuser: $readByuser, hasMore: $hasMore, isAdmin: $isAdmin, isPinned: $isPinned, repliesCount: $repliesCount, cheers: $cheers, boos: $boos, booOrCheer: $booOrCheer, pictureUrl: $pictureUrl, author: $author,)';
   }
 
   num _extractAndConcatenateNumbers(String input) {

@@ -25,6 +25,10 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       print('cookies not found in getAllPosts');
       throw const ServerException(message: 'Something went wrong');
     }
+    String? a = ShardPrefHelper.getAccessToken();
+    String? r = ShardPrefHelper.getRefreshToken();
+    print('r:$r');
+    print('a:$a');
 
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/fetch-posts';

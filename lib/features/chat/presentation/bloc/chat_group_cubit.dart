@@ -1,16 +1,12 @@
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
 import '../../../../core/constants/status.dart';
 import '../../../../core/error/failures.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../domain/usecases/get_chat_group_room_messages_usecase .dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
-import '../../Socket/socketService.dart'; // Import the SocketService
+import '../../Socket/socket_service.dart';
 import '../../../../core/utils/shared_preference.dart';
-
 part 'chat_group_state.dart';
 
 class ChatGroupCubit extends Cubit<ChatGroupState> {
@@ -19,22 +15,17 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   ChatGroupCubit(
     this.getChatGroupRoomMessagesUseCase,
     this.socketService,
-  ) : super(const ChatGroupState()) {
-    // Initialize socket connection
-
-    // Set the callback for receiving messages
-    // socketService.onNewMessageReceived = (message) {
-    //   addMessage(message); // Add message to state
-    // };
-  }
-  String? userName = '';
-  String? userImage = '';
+  ) : super(const ChatGroupState());
+  String? userName = ShardPrefHelper.getUsername();
+  String? userImage = ShardPrefHelper.getUserProfilePicture();
+  String? userId = ShardPrefHelper.getUserID();
 
   void init(String roomId) async {
     emit(state.copyWith(roomId: roomId));
     socketService.connect(groupId: roomId);
-    await getGroupRoomMessages();
+    await getGroupRoomMessages(roomId: roomId);
     socketService.onNewMessageReceived = (message) {
+      print('new msg');
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
           'id': DateTime.now().toString(),
@@ -61,8 +52,12 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     };
   }
 
-  Future getGroupRoomMessages(
-      {bool? hideLoading = false, String? dateFrom}) async {
+  /// get group msgs
+  Future getGroupRoomMessages({
+    required roomId,
+    bool? hideLoading = false,
+    String? dateFrom,
+  }) async {
     String? userN = ShardPrefHelper.getUsername();
     String? userI = ShardPrefHelper.getUserProfilePicture();
     userName = userN;
@@ -73,15 +68,20 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
       emit(state.copyWith(status: Status.loading));
     }
     final result = await getChatGroupRoomMessagesUseCase(
-        roomId: state.roomId, dateFrom: dateFrom);
+      roomId: state.roomId,
+      dateFrom: dateFrom,
+    );
 
     result.fold(
       (failure) {
         print('...BLOC getGroupRoomMessages ERROR: ${failure.message}');
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (messageList) {
         print('...BLOC getGroupRoomMessages list: $messageList');
@@ -122,9 +122,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     }
   }
 
-  void sendMessage(var message, [bool isMsg = false]) {
-    socketService.sendMessage(state.roomId, message, isMsg);
-    print(' gg $userImage');
+  /// send msg
+  void sendMessage(Map<String, String> payload, bool isMsg) {
+    socketService.sendMessage(state.roomId, payload, isMsg);
     if (isMsg) {
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
@@ -139,9 +139,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           'boos': 0,
           'booOrCheer': '',
           'pictureUrl': '',
-          'text': message['msg'],
+          'text': payload['msg'],
           'author': {
-            "userId": "1111",
+            "userId": '$userId',
             "userName": "$userName",
             "picture": "$userImage",
             "karma": 1
@@ -152,6 +152,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     }
   }
 
+  /// on disconnect
   void disconnectChat(String roomId) {
     print('disconnet');
     socketService.dispose(roomId);
@@ -170,11 +171,10 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   //           errorMessage: 'dfsaf'));
   //   emit(state.copyWith(status: Status.success, messages: updatedMessages));
   // }
-
+  /// add msg
   addMessage(ChatMessageModel message) {
     List<ChatMessageModel> updatedMessages =
         List<ChatMessageModel>.from(state.messages);
-    // updatedMessages.insert(0,message);
 
     // Emit the updated state with the new list of messages
     final updatedMessagesList = [

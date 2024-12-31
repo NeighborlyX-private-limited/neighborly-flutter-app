@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
-import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/chat_message_model.dart';
 
@@ -18,8 +16,7 @@ class ChatMessageGroupWidget extends StatefulWidget {
   final ChatMessageModel message;
   final bool? showIsReaded;
   final bool? showReply;
-  final bool?
-      isAdmin; // isAdmin inside the message flag admin message, but this one is a layer above
+  final bool? isAdmin;
   final Function(ChatMessageModel) onTap;
   final Function(ChatMessageModel, String)? onReply;
   final Function(String, String) onReact;
@@ -60,7 +57,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
   bool isBooled = false;
   num repliesCount = 0;
 
-  // State variables to track counts
+  /// State variables to track counts
   late num cheersCount;
   late num boolsCount;
 
@@ -76,21 +73,27 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     boolsCount = widget.message.boos;
     repliesCount = widget.message.repliesCount;
 
-    // Load persisted state
+    /// Load persisted state
     _loadReactionState();
   }
 
+  /// load local reaction state
   Future<void> _loadReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('postReactions');
     setState(() {
-      isCheered = box.get('${userID}_${widget.message.id}_isCheered',
-          defaultValue: false);
-      isBooled = box.get('${userID}_${widget.message.id}_isBooled',
-          defaultValue: false);
+      isCheered = box.get(
+        '${userID}_${widget.message.id}_isCheered',
+        defaultValue: false,
+      );
+      isBooled = box.get(
+        '${userID}_${widget.message.id}_isBooled',
+        defaultValue: false,
+      );
     });
   }
 
+  /// save local reaction state
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('postReactions');
@@ -105,6 +108,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     await box.put('${userID}_${widget.message.id}_isBooled', false);
   }
 
+  /// update reaction state
   void _updateState(String reaction) {
     setState(() {
       if (reaction == 'cheer') {
@@ -162,9 +166,10 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     return timeFormat.format(dateTime);
   }
 
+  /// admin bubble
   Widget isAdminBubble() {
     return Container(
-      width: 60,
+      width: 40,
       decoration: BoxDecoration(
         color: AppColors.lightBackgroundColor,
         borderRadius: BorderRadius.circular(50),
@@ -174,7 +179,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
         child: Text(
           'Admin',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
+          style: TextStyle(fontSize: 12, color: AppColors.primaryColor),
         ),
       ),
     );
@@ -270,8 +275,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
   }
 
   void _showOverlay(BuildContext context) {
-    print('Showing overlay');
-
     _overlayEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         onTap: () {
@@ -287,10 +290,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                //
-                //
                 Container(
-                  // height: 90,
                   margin: EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -315,15 +315,10 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              //
-                              //
-                              //
-                              // author AREA
                               Row(
                                 children: [
                                   Text(
-                                    // message.date,
-                                    widget.message.author?.name ?? '...',
+                                    widget.message.author?.name ?? '',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -360,22 +355,13 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   )
                                 ],
                               ),
-                              //
-                              //
-                              // message AREA
                               SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 child: widget.message.pictureUrl != '' &&
                                         widget.message.text == ''
                                     ? Image.network(
                                         '${widget.message.pictureUrl}')
-                                    //  : (widget.message.pictureAsset != null &&
-                                    //     widget.message.pictureAsset?.path !=
-                                    //         '')
-                                    // ? Image.file(
-                                    //     widget.message.pictureAsset!)
                                     : Text(
-                                        // message.date,
                                         widget.message.text,
                                         textAlign: TextAlign.start,
                                         style: TextStyle(
@@ -384,8 +370,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                         ),
                                       ),
                               ),
-                              //
-                              //
                             ],
                           ),
                         ),
@@ -393,24 +377,22 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     ],
                   ),
                 ),
-                //
-                //
+
                 // menu area
                 Container(
                   height: showReplyInput
                       ? MediaQuery.of(context).size.height * 0.10
                       : MediaQuery.of(context).size.height * 0.40,
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      )),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      topRight: Radius.circular(10),
+                    ),
+                  ),
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        //
-                        //
                         if (showReplyInput == false) ...[
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -426,7 +408,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                               )
                             ],
                           ),
-                          //
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Row(
@@ -436,6 +417,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   assetUrl: 'assets/react5.svg',
                                   onTap: () {
                                     _updateState('cheer');
+                                    widget.onTapCheer();
                                     _removeOverlay();
                                   },
                                 ),
@@ -443,56 +425,54 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   assetUrl: 'assets/react6.svg',
                                   onTap: () {
                                     _updateState('boo');
+                                    widget.onTapBool();
                                     _removeOverlay();
                                   },
                                 ),
-                                reactionCircle(
-                                  assetUrl: 'assets/Local_Legend.svg',
-                                  onTap: () {
-                                    // Function(String, String)?
-                                    widget.onReact(
-                                        widget.message.id, 'Local Legend');
-                                    _removeOverlay();
-                                  },
-                                ),
-                                reactionCircle(
-                                  assetUrl: 'assets/Sunflower.svg',
-                                  onTap: () {
-                                    widget.onReact(
-                                        widget.message.id, 'Sunflower');
-                                    _removeOverlay();
-                                  },
-                                ),
-                                reactionCircle(
-                                  assetUrl: 'assets/Streetlight.svg',
-                                  onTap: () {
-                                    widget.onReact(
-                                        widget.message.id, 'Streetlight');
-                                    _removeOverlay();
-                                  },
-                                ),
-                                reactionCircle(
-                                  assetUrl: 'assets/Park_Bench.svg',
-                                  onTap: () {
-                                    widget.onReact(
-                                        widget.message.id, 'Park Bench');
-                                    _removeOverlay();
-                                  },
-                                ),
-                                reactionCircle(
-                                  assetUrl: 'assets/Map.svg',
-                                  onTap: () {
-                                    widget.onReact(widget.message.id, 'Map');
-                                    _removeOverlay();
-                                  },
-                                ),
+                                // reactionCircle(
+                                //   assetUrl: 'assets/Local_Legend.svg',
+                                //   onTap: () {
+                                //     // Function(String, String)?
+                                //     widget.onReact(
+                                //         widget.message.id, 'Local Legend');
+                                //     _removeOverlay();
+                                //   },
+                                // ),
+                                // reactionCircle(
+                                //   assetUrl: 'assets/Sunflower.svg',
+                                //   onTap: () {
+                                //     widget.onReact(
+                                //         widget.message.id, 'Sunflower');
+                                //     _removeOverlay();
+                                //   },
+                                // ),
+                                // reactionCircle(
+                                //   assetUrl: 'assets/Streetlight.svg',
+                                //   onTap: () {
+                                //     widget.onReact(
+                                //         widget.message.id, 'Streetlight');
+                                //     _removeOverlay();
+                                //   },
+                                // ),
+                                // reactionCircle(
+                                //   assetUrl: 'assets/Park_Bench.svg',
+                                //   onTap: () {
+                                //     widget.onReact(
+                                //         widget.message.id, 'Park Bench');
+                                //     _removeOverlay();
+                                //   },
+                                // ),
+                                // reactionCircle(
+                                //   assetUrl: 'assets/Map.svg',
+                                //   onTap: () {
+                                //     widget.onReact(widget.message.id, 'Map');
+                                //     _removeOverlay();
+                                //   },
+                                // ),
                               ],
                             ),
                           ),
                           const SizedBox(height: 20),
-                          //
-                          //
-
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: MenuIconItem(
@@ -506,10 +486,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   _removeOverlay();
                                 }),
                           ),
-                          //
-                          //
                           Padding(
-                            padding: const EdgeInsets.only(left: 8.0), // XXX
+                            padding: const EdgeInsets.only(left: 8.0),
                             child: MenuIconItem(
                                 title: 'Reply',
                                 svgPath: 'assets/menu_reply.svg',
@@ -532,11 +510,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   _showOverlay(context);
                                 }),
                           ),
-                          //
-                          //
-
-                          //
-                          //
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: MenuIconItem(
@@ -553,8 +526,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   _removeOverlay();
                                 }),
                           ),
-                          //
-                          //
+
+                          /// show pinned option
                           if (widget.isAdmin == true)
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
@@ -571,8 +544,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                     widget.onPin(widget.message);
                                   }),
                             ),
-                          //
-                          //
+
+                          /// report msg
                           if (widget.isAdmin == false)
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
@@ -590,19 +563,13 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                   }),
                             ),
                         ],
-                        //
-                        //
                         if (showReplyInput == true) ...[
                           messageInputSection(),
-                          //
-                          //
                         ],
                       ],
                     ),
                   ),
                 ),
-                //
-                //
               ],
             ),
           ),
@@ -613,6 +580,12 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     Overlay.of(context).insert(_overlayEntry!);
   }
 
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  /// report confirmation bottom sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
       context: context,
@@ -653,6 +626,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     );
   }
 
+  /// report reason bottom sheet
   Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
       context: context,
@@ -690,30 +664,27 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ...kReportReasons
-                        .map(
-                          (e) => InkWell(
-                            onTap: () async {
-                              print('...on Select the report reason');
-                              Navigator.of(context).pop();
-                              widget.onReport(widget.message.id, e);
-                              await reportConfirmationBottomSheet(context);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    e,
-                                    style: blackonboardingBody1Style,
-                                  ),
-                                ),
-                              ],
+                    ...kReportReasons.map(
+                      (e) => InkWell(
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          widget.onReport(widget.message.id, e);
+                          await reportConfirmationBottomSheet(context);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                e,
+                                style: blackonboardingBody1Style,
+                              ),
                             ),
-                          ),
-                        )
-                        ,
+                          ],
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 10),
                   ],
                 ),
@@ -725,13 +696,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     );
   }
 
-  void _removeOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-  }
-
+  ///chat react local widget
   Widget chatReactionLocalWidget() {
-    // XXX
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -739,7 +705,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
         InkWell(
           onTap: () {
             _updateState('cheer');
-
             widget.onTapCheer();
           },
           child: Container(
@@ -747,10 +712,11 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
             height: 32,
             width: 60,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(21),
+              ),
+            ),
             child: Center(
               child: Row(
                 children: [
@@ -769,7 +735,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     width: 3,
                   ),
                   Text(
-                    cheersCount.toString(), // Use state variable for count
+                    cheersCount.toString(),
                     style: TextStyle(
                       color: isCheered ? Colors.red : Colors.grey[900],
                       fontSize: 12,
@@ -782,9 +748,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
           ),
         ),
         const SizedBox(width: 8),
-        //
-        //
-        // Bools button
+
+        // Boos button
         InkWell(
           onTap: () {
             _updateState('boo');
@@ -795,10 +760,11 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
             height: 32,
             width: 60,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(21),
+              ),
+            ),
             child: Center(
               child: Row(
                 children: [
@@ -817,7 +783,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                     width: 3,
                   ),
                   Text(
-                    boolsCount.toString(), // Use state variable for count
+                    boolsCount.toString(),
                     style: TextStyle(
                       color: isBooled ? Colors.blue : Colors.grey[600],
                       fontSize: 12,
@@ -830,22 +796,23 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
           ),
         ),
         const SizedBox(width: 8),
-        //
-        //
+
+        /// reply button
         if (widget.showReply == true)
           GestureDetector(
             onTap: () {
+              print('inside reply...');
               widget.onTapReply(widget.message);
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               height: 32,
-              // width: 60,
               decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey[300]!),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(21),
-                  )),
+                border: Border.all(color: Colors.grey[300]!),
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(21),
+                ),
+              ),
               child: Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -879,7 +846,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                               color: Colors.grey[600],
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                            ))
+                            ),
+                          )
                         : const SizedBox(),
                     const SizedBox(width: 5),
                   ],
@@ -929,9 +897,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
           ),
           Expanded(
             child: Container(
-              // color: Colors.transparent,
               decoration: BoxDecoration(
-                // color: message.isMine ? Colors.grey[100] : AppColors.lightBackgroundColor,
                 borderRadius: BorderRadius.circular(10),
                 color: Colors.transparent,
               ),
@@ -939,15 +905,10 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    //
-                    //
-                    //
-                    // author AREA
                     Row(
                       children: [
                         Text(
-                          // message.date,
-                          widget.message.author?.name ?? '...',
+                          widget.message.author?.name ?? '',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -957,7 +918,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                         Text(
                           formatTime(widget.message.date),
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 12,
                             fontWeight: FontWeight.w400,
                             color: Colors.black45,
                           ),
@@ -969,9 +930,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                         ],
                       ],
                     ),
-                    //
-                    //
-                    // message AREA
                     SizedBox(
                       width: MediaQuery.of(context).size.width,
                       child: GestureDetector(
@@ -981,11 +939,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                         child: widget.message.pictureUrl != '' &&
                                 widget.message.text == ''
                             ? Image.network('${widget.message.pictureUrl}')
-                            //  : (widget.message.pictureAsset != null &&
-                            //         widget.message.pictureAsset?.path != '')
-                            //     ? Image.file(widget.message.pictureAsset!)
                             : Text(
-                                // message.date,
                                 widget.message.text,
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
@@ -995,8 +949,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                               ),
                       ),
                     ),
-                    //
-                    //
                     if ((widget.message.repliesCount +
                             widget.message.cheers +
                             widget.message.boos) >=
@@ -1023,8 +975,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                         // ),
                       ),
                     ],
-                    //
-                    //
                   ],
                 ),
               ),

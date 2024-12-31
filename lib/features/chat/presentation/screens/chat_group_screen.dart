@@ -1,12 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
-
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -33,22 +30,23 @@ class ChatGroupScreen extends StatefulWidget {
 }
 
 class _ChatGroupScreenState extends State<ChatGroupScreen> {
-  late var chatGroupCubit;
-
+  final ScrollController _scrollController = ScrollController();
+  late ChatGroupCubit chatGroupCubit;
   final messageEC = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
   bool isCommentFilled = false;
   bool showPinned = true;
   File? fileToUpload;
-  final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   bool _shouldScrollToBottom = true;
   double _previousScrollOffset = 0.0;
+
+  /// init state method
   @override
   void initState() {
     super.initState();
     chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
-    chatGroupCubit.init(widget.roomId); // widget.roomId;
+    chatGroupCubit.init(widget.roomId);
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.minScrollExtent &&
@@ -58,6 +56,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     });
   }
 
+  /// scroll to bottom
   void _scrollToBottom() {
     if (_scrollController.hasClients && _shouldScrollToBottom) {
       Future.delayed(Duration(milliseconds: 300), () {
@@ -66,6 +65,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     }
   }
 
+  /// SCROLL TO END
   void _scrollToEnd() {
     if (_scrollController.hasClients) {
       Future.delayed(Duration(milliseconds: 300), () {
@@ -81,12 +81,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     }
   }
 
+  /// load more msg
   Future<void> _loadMoreMessages() async {
-    double currentScrollOffset = _scrollController.offset;
     setState(() {
       _isLoadingMore = true;
       _shouldScrollToBottom = false;
-      // _previousScrollOffset = _scrollController.position.pixels;
     });
 
     // Fetch older messages from server via ChatGroupCubit
@@ -100,13 +99,15 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     });
   }
 
+  /// dispose method
   @override
   void dispose() {
-    super.dispose();
     chatGroupCubit.setPagetoDefault();
     messageEC.dispose();
+    super.dispose();
   }
 
+  /// pic image
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image =
@@ -119,11 +120,12 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         fileToUpload = File(image.path);
         print('Do something with this file: ${fileToUpload?.path}');
         // TODO: send image as message
-        chatGroupCubit.sendMessage(message: '', image: fileToUpload);
+        // chatGroupCubit.sendMessage(message: '', image: fileToUpload);
       });
     }
   }
 
+  /// app bar
   Widget appBarTitleArea() {
     return Row(
       children: [
@@ -148,8 +150,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           ),
         const SizedBox(width: 10),
         Expanded(
-          child: Container(
-              child: Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -159,8 +160,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                       widget.room.name,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -185,12 +188,13 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
               //   ],
               // ),
             ],
-          )),
+          ),
         ),
       ],
     );
   }
 
+  /// message input section area
   Widget messageInputSection() {
     // bool isReply = commentToReply != null; // Check if it's a reply
     return SingleChildScrollView(
@@ -209,27 +213,37 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   });
                 },
                 decoration: InputDecoration(
-                    suffixIcon: GestureDetector(
-                      onTap: pickImage,
-                      child: Icon(
-                        Icons.photo_camera_back_outlined,
-                        color: Colors.grey[600],
-                      ),
+                  suffixIcon: GestureDetector(
+                    onTap: pickImage,
+                    child: Icon(
+                      Icons.photo_camera_back_outlined,
+                      color: Colors.grey[600],
                     ),
-                    hintText: 'Message',
-                    hintStyle: TextStyle(color: Colors.grey[500]),
-                    border: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(48)),
-                    ),
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20)),
+                  ),
+                  hintText: 'Message',
+                  hintStyle: TextStyle(color: Colors.grey[500]),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(48)),
+                  ),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                ),
               ),
             ),
             const SizedBox(width: 10),
+
+            ///send button
             InkWell(
               onTap: () {
-                // #send
-                // XXX
+                // final payload = {
+                //   "msg_id": string,
+                //   "group_id": string,
+                //   "senderName": string,
+                //   "msg": string,
+                //   "sent_at": string,
+                //   "mediaLink": string,
+                //   "senderPhoto": string,
+                // };
                 final payload = {
                   'group_id': widget.roomId,
                   'msg': messageEC.text
@@ -292,7 +306,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       children: pinnedMessages
           .map((pinMsg) => ChatMessagePinnedWidget(
                 message: pinMsg,
-                isAdmin: true, // TODO: make this check real
+                isAdmin: true,
                 onClose: () {
                   setState(() {
                     showPinned = false;
@@ -320,10 +334,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         title: appBarTitleArea(),
         actions: [
           IconButton(
-            onPressed: () {
-              // TEST
-              chatGroupCubit.testReceivingMessage();
-            },
+            onPressed: () {},
             icon: Icon(
               Icons.more_vert_outlined,
               size: 31,
@@ -333,34 +344,27 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         ],
       ),
       body: BlocConsumer<ChatGroupCubit, ChatGroupState>(
+        /// listner
         listener: (context, state) {
-          print('... state.currentUser: ${state.status}');
-
           switch (state.status) {
             case Status.loading:
               break;
             case Status.failure:
-              // hideLoader();
-              // showError(state.errorMessage ?? 'Some error');
-              print('ERROR ${state.failure?.message}');
+              print('failure state: ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                      Text('Something went wrong! ${state.failure?.message}'),
+                  content: Text('oops something went wrong'),
                 ),
               );
               break;
             case Status.success:
-              // print('Success JUMP to ${state.roomId}');
-              // Navigator.of(context).pop();
-              // context.push('/groups/${state.roomId}');
               break;
             case Status.initial:
               break;
           }
           if (state.status == Status.success && !_isLoadingMore) {
             _shouldScrollToBottom = true;
-            //_scrollToBottom();
+            _scrollToBottom();
           }
           if (state.status == Status.success && state.page == 1) {
             Future.delayed(Duration(milliseconds: 100), () {
@@ -371,18 +375,22 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           }
         },
         builder: (context, state) {
-          //
-          //
           int lineCount = 1;
           String lastDate = '';
           return BlocBuilder<ChatGroupCubit, ChatGroupState>(
-            bloc: chatGroupCubit,
             builder: (context, state) {
               var pinnedMessages = <ChatMessageModel>[];
+
+              /// loading state
               if (state.status == Status.loading) {
                 return Container(
-                    color: Colors.white, child: ChatMessagesGroupSheemer());
-              } else {
+                  color: Colors.white,
+                  child: ChatMessagesGroupSheemer(),
+                );
+              }
+
+              /// get pinned msg
+              else {
                 pinnedMessages = [
                   ...state.messages.where((element) => element.isPinned)
                 ];
@@ -394,37 +402,23 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 width: double.infinity,
                 color: Colors.white,
                 child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    //
-                    //
-                    // #pinned #pin
+                    /// #pinned msg area
                     if (showPinned && pinnedMessages.isNotEmpty)
                       pinnedMessageArea(
                         pinnedMessages,
                       ),
-                    //
-                    //
-//                     //  TextButton(onPressed: _loadMoreMessages, child: Text('Load more messages'),
-// ),
+
+                    /// Show loading indicator at the top when fetching more messages
                     if (_isLoadingMore)
                       Padding(
-                        padding: const EdgeInsets.all(
-                          6.0,
-                        ),
-                        // child: Center(
-                        //   child: BouncingLogoIndicator(
-                        //     logo: 'images/logo.svg',
-                        //   ),
-                        // ),
-
+                        padding: const EdgeInsets.all(6.0),
                         child: Center(
                           child: CircularProgressIndicator(),
                         ),
                       ),
-                    // Show loading indicator at the top when fetching more messages
 
                     Expanded(
                       child: Container(
@@ -434,7 +428,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                         child: ListView.builder(
                           controller: _scrollController,
                           shrinkWrap: true,
-                          // reverse: true, // Inverter a ordem da lista
                           itemCount:
                               state.messages.length + (_isLoadingMore ? 1 : 0),
                           itemBuilder: (context, index) {
@@ -445,29 +438,32 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                             var msg = state.messages[index];
 
                             // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
-
                             //String cheerorbooFromreply = state.messages[index].booOrCheer;
 
-                            var dateSummary =
-                                onlyDate(state.messages[index].date);
+                            var dateSummary = onlyDate(msg.date);
+
+                            /// Show loading indicator at the top when fetching more messages
                             if (_isLoadingMore &&
                                 index == state.messages.length) {
-                              // Show loading indicator at the top when fetching more messages
                               return Center(child: CircularProgressIndicator());
                             }
                             var messageWidget = ChatMessageGroupWidget(
                               message: msg,
-                              isAdmin: true, // TODO: make this a real check
+                              isAdmin: msg.isAdmin,
                               showIsReaded:
                                   (lineCount == state.messages.length) &&
                                       msg.isMine,
+
+                              /// ON TAP PRESS
                               onTap: (msgSelected) {
                                 print('....selected=$msgSelected');
                                 print('lineCount=$lineCount');
                               },
+
+                              /// ON REPLY
                               onReply: (msgIdToSendReply, message) {
                                 print('#send reply');
-                                // TODO: colocar cubit action to remote, and load thread message
+
                                 context.push(
                                     '/chat/group/thread/${msgIdToSendReply.id}',
                                     extra: {
@@ -475,6 +471,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                       'room': widget.room,
                                     });
                               },
+
+                              /// on tap reply
                               onTapReply: (messageToOpen) {
                                 print('#onTag reply - only JUMP');
                                 context.push(
@@ -484,9 +482,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                       'room': widget.room,
                                     });
                               },
+
+                              /// on tap cheer
                               onTapCheer: () {
                                 print(
-                                    '#onTap cheer - send to remote ${state.messages[index]})');
+                                    '#onTap cheer - send to remote: ${state.messages[index]})');
                                 final payload = {
                                   'group_id': widget.roomId,
                                   'message_id': state.messages[index].id,
@@ -494,8 +494,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 };
                                 context
                                     .read<ChatGroupCubit>()
-                                    .sendMessage(payload);
+                                    .sendMessage(payload, false);
                               },
+
+                              /// on tap boo
                               onTapBool: () {
                                 final payload = {
                                   'group_id': widget.roomId,
@@ -504,8 +506,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 };
                                 context
                                     .read<ChatGroupCubit>()
-                                    .sendMessage(payload);
+                                    .sendMessage(payload, false);
                               },
+
+                              ///ON REACT
                               onReact: (messageId, reactOrAward) {
                                 print(
                                     '#onTap react - send to remote award: $reactOrAward');
@@ -531,8 +535,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                   if (lastDate != '')
                                     Text(
                                       formatDate(dateSummary),
-                                      style:
-                                          TextStyle(fontSize: 12, height: 2.5),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        height: 2.5,
+                                      ),
                                     ),
                                   messageWidget,
                                 ],
@@ -544,14 +550,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                         ),
                       ),
                     ),
-                    //
-                    //
+
                     Divider(height: 1, color: Colors.grey[300]),
-                    //
-                    //
+
                     messageInputSection(),
-                    //
-                    //
                   ],
                 ),
               );

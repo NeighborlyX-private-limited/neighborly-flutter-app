@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -20,18 +18,19 @@ class ChatGroupThreadScreen extends StatefulWidget {
   final ChatRoomModel room;
   final ChatMessageModel message;
 
-  const ChatGroupThreadScreen(
-      {super.key,
-      required this.messageId,
-      required this.room,
-      required this.message});
+  const ChatGroupThreadScreen({
+    super.key,
+    required this.messageId,
+    required this.room,
+    required this.message,
+  });
 
   @override
   State<ChatGroupThreadScreen> createState() => _ChatGroupThreadScreenState();
 }
 
 class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
-  late var chatGroupCubit;
+  late ChatGroupCubitThread chatGroupCubit;
 
   final messageEC = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
@@ -39,17 +38,18 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
   File? fileToUpload;
   final ScrollController _scrollController = ScrollController();
 
+  /// init method
   @override
   void initState() {
     super.initState();
-    print('... THREAD INIT first time ${widget.message}');
+    print('... reply: ${widget.room}');
+    print('... messageId: ${widget.messageId}');
+    print('... reply: ${widget.message}');
     chatGroupCubit = BlocProvider.of<ChatGroupCubitThread>(context);
-    chatGroupCubit.init(widget.message.id); // widget.roomId;
-    print('... THREAD INIT');
-    print('... room=${widget.room}');
-    print('... message=${widget.message}');
+    chatGroupCubit.init(widget.message.id);
   }
 
+  /// end scroll
   void _scrollToEnd() {
     if (_scrollController.hasClients) {
       Future.delayed(Duration(milliseconds: 300), () {
@@ -62,10 +62,11 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
     }
   }
 
+  /// dispose method
   @override
   void dispose() {
-    super.dispose();
     messageEC.dispose();
+    super.dispose();
   }
 
   Future<void> pickImage() async {
@@ -80,11 +81,12 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
         fileToUpload = File(image.path);
         print('Do something with this file: ${fileToUpload?.path}');
         // TODO: send image as message
-        chatGroupCubit.sendMessage(message: '', image: fileToUpload);
+        //chatGroupCubit.sendMessage(message: '', image: fileToUpload);
       });
     }
   }
 
+  /// app bar
   Widget appBarTitleArea() {
     return Row(
       children: [
@@ -107,19 +109,20 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: Container(
-              child: Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Expanded(
                     child: Text(
-                      'Thread',
+                      'Reply thread',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -136,15 +139,16 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black45,
-                          fontSize: 14),
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black45,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ],
               ),
             ],
-          )),
+          ),
         ),
       ],
     );
@@ -260,10 +264,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
         title: appBarTitleArea(),
         actions: [
           IconButton(
-            onPressed: () {
-              // TEST
-              chatGroupCubit.testReceivingMessage();
-            },
+            onPressed: () {},
             icon: Icon(
               Icons.more_vert_outlined,
               size: 31,
@@ -278,8 +279,6 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
             case Status.loading:
               break;
             case Status.failure:
-              // hideLoader();
-              // showError(state.errorMessage ?? 'Some error');
               print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -289,9 +288,6 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
               );
               break;
             case Status.success:
-              // print('Success JUMP to ${state.roomId}');
-              // Navigator.of(context).pop();
-              // context.push('/groups/${state.roomId}');
               break;
             case Status.initial:
               break;
@@ -305,16 +301,15 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
           }
         },
         builder: (context, state) {
-          //
-          //
           int lineCount = 1;
           String lastDate = '';
           return BlocBuilder<ChatGroupCubitThread, ChatGroupStateThread>(
-            bloc: chatGroupCubit,
             builder: (context, state) {
               if (state.status == Status.loading) {
                 return Container(
-                    color: Colors.white, child: ChatMessagesGroupSheemer());
+                  color: Colors.white,
+                  child: ChatMessagesGroupSheemer(),
+                );
               }
 
               return Container(
@@ -323,12 +318,9 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                 width: double.infinity,
                 color: Colors.white,
                 child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    //
-                    // Fixed content
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: ChatMessageGroupWidget(
@@ -394,8 +386,6 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Divider(color: Colors.grey, height: 2),
                     ),
-                    //
-                    //
                     Expanded(
                       child: Container(
                         color: Colors.white,
@@ -404,12 +394,9 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                         child: ListView.builder(
                           controller: _scrollController,
                           shrinkWrap: true,
-                          //reverse: true, // Inverter a ordem da lista
                           itemCount: state.messages.length,
                           itemBuilder: (context, index) {
                             var msg = state.messages[index];
-
-                            // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
 
                             var dateSummary =
                                 onlyDate(state.messages[index].date);
@@ -493,14 +480,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                         ),
                       ),
                     ),
-                    //
-                    //
                     Divider(height: 1, color: Colors.grey[300]),
-                    //
-                    //
                     messageInputSection(),
-                    //
-                    //
                   ],
                 ),
               );

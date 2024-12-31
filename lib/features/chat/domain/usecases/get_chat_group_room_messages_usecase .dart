@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/failures.dart';
 import '../../data/model/chat_message_model.dart';
 import '../repositories/chat_repositories.dart';
@@ -13,12 +12,12 @@ class GetChatGroupRoomMessagesUseCase {
     required String roomId,
     String? dateFrom,
     bool isreply = false,
-    int page = 1 
+    int page = 1,
   }) async {
     return await repository.getGroupRoomMessages(
       roomId: roomId,
       dateFrom: dateFrom,
-      page: page
+      page: page,
     );
   }
 }

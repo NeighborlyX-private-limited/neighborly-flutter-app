@@ -167,7 +167,7 @@ import 'features/upload/domain/usecases/upload_file_usecase.dart';
 import 'features/upload/domain/usecases/upload_post_usecase.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
-import 'features/chat/Socket/socketService.dart';
+import 'features/chat/Socket/socket_service.dart';
 
 /// getit instance
 final sl = GetIt.instance;

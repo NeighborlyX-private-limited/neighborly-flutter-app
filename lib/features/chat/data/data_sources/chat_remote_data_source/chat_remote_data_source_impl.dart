@@ -131,6 +131,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     return ChatMessageModel.fromJsonList(fakeJson);
   }
 
+  /// get group room messages
   @override
   Future<List<ChatMessageModel>> getGroupRoomMessages({
     required String roomId,
@@ -148,13 +149,11 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       dateFrom = DateTime.now().toIso8601String();
     }
 
-    // FAKE example
-    await Future.delayed(Duration(seconds: 2));
-
     List<String>? cookies = ShardPrefHelper.getCookie();
     print('cookie $cookies');
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      print('No cookies found in getGroupRoomMessages');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     print('cookieHeader: $cookieHeader');
