@@ -31,6 +31,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 
   /// in future we have plan to add location during create community
   //final locationEC = TextEditingController();
+
   File? fileToUpload;
   late CommunityCreateCubit communityCreateCubit;
   int currentStep = 1;
@@ -184,40 +185,41 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
       setState(() {
         currentStep = 1;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context)!.name_is_mandatory,
-            //  'Name is mandatory'
-          ),
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('Name is mandatory'),
+            ),
+          );
+      }
+    } else {
+      String radiusInput = radiusEC.text;
+      double radiusDouble = double.parse(radiusInput);
+      communityCreateCubit.createCommunity(
+        CommunityModel(
+          id: '',
+          name: nameEC.text,
+          description: descriptionEC.text,
+          isPublic: typeEC.text != 'public' ? false : true,
+          radius: radiusDouble.toInt(),
+          displayName: '',
+          locationStr: '',
+          avatarUrl: '',
+          karma: 0,
+          membersCount: 1,
+          isJoined: true,
+          isAdmin: true,
+          isMuted: false,
+          users: [],
+          admins: [],
+          blockList: [],
+          createdAt: DateTime.now().toString(),
         ),
+        fileToUpload,
       );
     }
-
-    String radiusInput = radiusEC.text;
-    double radiusDouble = double.parse(radiusInput);
-    communityCreateCubit.createCommunity(
-      CommunityModel(
-        id: '',
-        name: nameEC.text,
-        description: descriptionEC.text,
-        isPublic: typeEC.text != 'public' ? false : true,
-        radius: radiusDouble.toInt(),
-        displayName: '',
-        locationStr: '',
-        avatarUrl: '',
-        karma: 0,
-        membersCount: 1,
-        isJoined: true,
-        isAdmin: true,
-        isMuted: false,
-        users: [],
-        admins: [],
-        blockList: [],
-        createdAt: DateTime.now().toString(),
-      ),
-      fileToUpload,
-    );
   }
 
   @override
@@ -282,26 +284,28 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
         listener: (context, state) {
           ///failure state
           if (state.status == Status.failure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)!.oops_something_went_wrong,
-                  //  'oops something went wrong!'
-                ),
-              ),
-            );
+            if (mounted) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(
+                    content: Text('oops something went wrong!'),
+                  ),
+                );
+            }
           }
 
           ///success state
           if (state.status == Status.success) {
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-            context.push('/groups/${state.newCommunityId}');
+            if (mounted) {
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              context.push('/groups/${state.newCommunityId}');
+            }
           }
         },
         builder: (context, state) {
           return BlocBuilder<CommunityCreateCubit, CommunityCreateState>(
-            bloc: communityCreateCubit,
             builder: (context, state) {
               ///  loading state
               if (state.status == Status.loading) {

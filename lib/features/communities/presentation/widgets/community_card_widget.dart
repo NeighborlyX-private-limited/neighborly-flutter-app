@@ -35,8 +35,10 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
 
   /// calculate totla group member including admins
   void calculateGroupMemberCount() {
-    groupMemberCount =
-        widget.community.admins.length + widget.community.users.length;
+    groupMemberCount = {
+      ...widget.community.admins,
+      ...widget.community.users,
+    }.length;
     setState(() {});
   }
 
@@ -52,6 +54,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
     return Color(int.parse('0xFF$hexColor'));
   }
 
+  /// goto group detailed screen
   void openCommunity(BuildContext context) {
     context.push('/groups/${widget.community.id}');
   }
@@ -178,17 +181,30 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                         children: [
                           StackedAvatarIndicator(
                             avatarUrls: [
-                              ...(widget.community.users
-                                  .map((e) => e.avatarUrl)
-                                  .toList()),
-                              ...(widget.community.admins
-                                  .map((e) => e.avatarUrl)
-                                  .toList())
+                              ...{
+                                ...widget.community.users
+                                    .map((e) => e.avatarUrl),
+                                ...widget.community.admins
+                                    .map((e) => e.avatarUrl),
+                              }
                             ],
                             showOnly: 3,
                             avatarSize: 22,
                             onTap: () {},
                           ),
+                          // StackedAvatarIndicator(
+                          //   avatarUrls: [
+                          //     ...(widget.community.users
+                          //         .map((e) => e.avatarUrl)
+                          //         .toList()),
+                          //     ...(widget.community.admins
+                          //         .map((e) => e.avatarUrl)
+                          //         .toList())
+                          //   ],
+                          //   showOnly: 3,
+                          //   avatarSize: 22,
+                          //   onTap: () {},
+                          // ),
                           Expanded(
                             child: groupMemberCount > 1000
                                 ? Text(

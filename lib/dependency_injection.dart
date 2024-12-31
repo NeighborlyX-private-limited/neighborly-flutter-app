@@ -395,11 +395,12 @@ void init() async {
   sl.registerFactory(() => GetGenderAndDOBBloc(getGenderAndDOBUsecase: sl()));
 
   ///community bloc
+  sl.registerFactory(() => CommunityCreateCubit(sl()));
   sl.registerFactory(() => CommunityMainCubit(sl()));
   sl.registerFactory(() => GetUserGroupsBloc(getUserGroupsUsecase: sl()));
   sl.registerFactory(() => CommunityDetailsCubit(
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => CommunityCreateCubit(sl()));
+
   sl.registerFactory(() =>
       JoinGroupBloc(joinCommunityUsecase: sl(), leaveCommunityUsecase: sl()));
   sl.registerFactory(() => AddRemoveUserInGroupBloc(
