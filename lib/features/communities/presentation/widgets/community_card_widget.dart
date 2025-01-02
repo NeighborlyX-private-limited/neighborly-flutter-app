@@ -4,15 +4,23 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
+import 'package:neighborly_flutter_app/features/event/presentation/screens/event_detail_screen.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
+import '../../../../core/theme/colors.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/screens/community_details_screen.dart';
 
 class CommunityCardWidget extends StatefulWidget {
+  // final String communityId;
   final CommunityModel community;
+
   const CommunityCardWidget({
     super.key,
     required this.community,
+    //  required this.communityId,
   });
 
   @override
@@ -20,6 +28,7 @@ class CommunityCardWidget extends StatefulWidget {
 }
 
 class _CommunityCardWidgetState extends State<CommunityCardWidget> {
+  late CommunityDetailsCubit communityDetailCubit;
   late CommunityDetailsCubit communityCubit;
   String? userId;
   bool isJoining = false;
@@ -57,6 +66,123 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
   /// goto group detailed screen
   void openCommunity(BuildContext context) {
     context.push('/groups/${widget.community.id}');
+  }
+
+  Future<dynamic> joinGroupBottomSheet(BuildContext context) async {
+    return showModalBottomSheet(
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.join_Community,
+                // 'Join Community?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_join_this_community,
+                // 'Are you sure you want to join this community?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        // 'Cancel',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  // Confirm Button
+                  Expanded(
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        /// failure state
+                        if (state is JoinGroupFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        /// success state
+                        if (state is JoinGroupSuccessState) {
+                          communityDetailCubit
+                              .getCommunityDetail(widget.community.id);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!
+                                    .group_joined_successfully,
+                                // 'Group joined successfully'
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is JoinGroupLoadingState) {
+                          return CircularProgressIndicator();
+                        }
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<JoinGroupBloc>(context)
+                                .add(JoinGroupButtonPressedEvent(
+                              communityId: widget.community.id,
+                            ));
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.join,
+                            // 'Join',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -118,7 +244,9 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                               width: 4,
                             ),
                             Text(
-                              widget.community.isPublic ? AppLocalizations.of(context)!.public: AppLocalizations.of(context)!.private,
+                              widget.community.isPublic
+                                  ? AppLocalizations.of(context)!.public
+                                  : AppLocalizations.of(context)!.private,
                               style: TextStyle(
                                 height: 0.5,
                                 color: Colors.white,
@@ -208,8 +336,8 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           Expanded(
                             child: groupMemberCount > 1000
                                 ? Text(
-                                  '${groupMemberCount}k+ ${AppLocalizations.of(context)!.members}',
-                                   // '${groupMemberCount}k+ Members',
+                                    '${groupMemberCount}k+ ${AppLocalizations.of(context)!.members}',
+                                    // '${groupMemberCount}k+ Members',
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       color: Colors.white,
@@ -218,8 +346,8 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                                   )
                                 : groupMemberCount > 1
                                     ? Text(
-                                      '${groupMemberCount} ${AppLocalizations.of(context)!.members}',
-                                       // '$groupMemberCount Members',
+                                        '${groupMemberCount} ${AppLocalizations.of(context)!.members}',
+                                        // '$groupMemberCount Members',
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -227,8 +355,8 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                                         ),
                                       )
                                     : Text(
-                                      '${groupMemberCount} ${AppLocalizations.of(context)!.member}',
-                                       // '$groupMemberCount Member',
+                                        '${groupMemberCount} ${AppLocalizations.of(context)!.member}',
+                                        // '$groupMemberCount Member',
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                           color: Colors.white,
@@ -240,7 +368,16 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                       ),
                       const SizedBox(height: 10),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          if (widget.community.isJoined == false) {
+                            joinGroupBottomSheet(context);
+                            
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('you already in group')),
+                            );
+                          }
+                        },
                         child: Container(
                           height: 35,
                           width: double.infinity,
@@ -250,7 +387,9 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           ),
                           child: Center(
                             child: Text(
-                              widget.community.isJoined ? AppLocalizations.of(context)!.joined : AppLocalizations.of(context)!.join,
+                              widget.community.isJoined
+                                  ? AppLocalizations.of(context)!.joined
+                                  : AppLocalizations.of(context)!.join,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,
@@ -260,57 +399,6 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           ),
                         ),
                       )
-                      // BlocConsumer<JoinGroupBloc, JoinGroupState>(
-                      //   listener: (context, state) {
-                      //     if (state is JoinGroupFailureState) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackBar(
-                      //           content: Text('Error: ${state.error}'),
-                      //         ),
-                      //       );
-                      //     }
-                      //     if (state is JoinGroupSuccessState) {
-                      //       communityCubit
-                      //           .getCommunityDetail(widget.community.id);
-                      //       ScaffoldMessenger.of(context).showSnackBar(
-                      //         SnackBar(
-                      //           content: Text('Group join'),
-                      //         ),
-                      //       );
-                      //     }
-                      //   },
-                      //   builder: (context, state) {
-                      //     if (state is JoinGroupLoadingState) {
-                      //       return CircularProgressIndicator();
-                      //     }
-                      //     return GestureDetector(
-                      //       onTap: () {
-                      //         BlocProvider.of<JoinGroupBloc>(context)
-                      //             .add(JoinGroupButtonPressedEvent(
-                      //           communityId: widget.community.id,
-                      //         ));
-                      //       },
-                      //       child: Container(
-                      //         height: 35,
-                      //         width: double.infinity,
-                      //         decoration: BoxDecoration(
-                      //           color: Color(0xff635BFF),
-                      //           borderRadius: BorderRadius.circular(20),
-                      //         ),
-                      //         child: Center(
-                      //           child: Text(
-                      //             widget.community.isJoined ? 'Joined' : 'Join',
-                      //             textAlign: TextAlign.center,
-                      //             style: TextStyle(
-                      //               color: Colors.white,
-                      //               fontSize: 16,
-                      //             ),
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
                     ],
                   ),
                 ),

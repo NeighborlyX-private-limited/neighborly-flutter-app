@@ -229,7 +229,9 @@ final GoRouter router = GoRouter(
         ),
         GoRoute(
           path: '/groups',
-          builder: (context, state) => const CommunityScreen(),
+          builder: (context, state) => const CommunityScreen(
+            
+          ),
         ),
         GoRoute(
           path: '/groups/create',

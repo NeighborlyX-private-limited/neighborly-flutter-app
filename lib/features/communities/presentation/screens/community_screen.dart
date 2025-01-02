@@ -21,7 +21,13 @@ import '../widgets/community_sheemer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityScreen extends StatefulWidget {
-  const CommunityScreen({super.key});
+  
+  const CommunityScreen({
+    super.key,
+    
+    
+  });
+
   @override
   State<CommunityScreen> createState() => _CommunityScreenState();
 }
@@ -544,6 +550,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                                             itemCount: state.communities.length,
                                             itemBuilder: (context, index) {
                                               return CommunityCardWidget(
+                                                
                                                 community:
                                                     state.communities[index],
                                               );
@@ -645,6 +652,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                                             itemCount: state.communities.length,
                                             itemBuilder: (context, index) {
                                               return CommunityCardWidget(
+                                                
                                                 community:
                                                     state.communities[index],
                                               );
