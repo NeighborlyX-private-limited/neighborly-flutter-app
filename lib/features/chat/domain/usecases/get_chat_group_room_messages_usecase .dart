@@ -10,13 +10,11 @@ class GetChatGroupRoomMessagesUseCase {
 
   Future<Either<Failure, List<ChatMessageModel>>> call({
     required String roomId,
-    String? dateFrom,
     bool isreply = false,
     int page = 1,
   }) async {
     return await repository.getGroupRoomMessages(
       roomId: roomId,
-      dateFrom: dateFrom,
       page: page,
     );
   }

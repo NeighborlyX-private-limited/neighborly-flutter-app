@@ -38,7 +38,8 @@ class ChatRepositoriesImpl implements ChatRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getRoomMessages(
-            roomId: roomId, dateFrom: dateFrom);
+          roomId: roomId,
+        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -50,13 +51,21 @@ class ChatRepositoriesImpl implements ChatRepositories {
     }
   }
 
+  /// featch group chat room messages
   @override
-  Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages(
-      {required String roomId, String? dateFrom, bool isreply = false, int page = 1}) async {
+  Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages({
+    required String roomId,
+    // String? dateFrom,
+    bool isreply = false,
+    int page = 1,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getGroupRoomMessages(
-            roomId: roomId, dateFrom: dateFrom, isreply: isreply, page: page);
+          roomId: roomId,
+          isreply: isreply,
+          page: page,
+        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

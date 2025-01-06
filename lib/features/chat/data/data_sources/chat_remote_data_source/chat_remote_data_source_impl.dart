@@ -131,23 +131,23 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     return ChatMessageModel.fromJsonList(fakeJson);
   }
 
-  /// get group room messages
+  /// get group chat room messages
   @override
   Future<List<ChatMessageModel>> getGroupRoomMessages({
     required String roomId,
-    String? dateFrom,
+    // String? dateFrom,
     bool isreply = false,
     int page = 1,
   }) async {
     print('...getGroupRoomMessages start with');
     print('roomId=$roomId');
-    print('dateFrom=$dateFrom');
+    // print('dateFrom=$dateFrom');
     print('isreply=$isreply');
     print('page=$page');
 
-    if (dateFrom == null || dateFrom == '') {
-      dateFrom = DateTime.now().toIso8601String();
-    }
+    // if (dateFrom == null || dateFrom == '') {
+    //   dateFrom = DateTime.now().toIso8601String();
+    // }
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     print('cookie $cookies');

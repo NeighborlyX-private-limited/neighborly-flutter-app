@@ -5,7 +5,6 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../chat/data/model/chat_room_model.dart';
 
-
 class CommunitySectionChat extends StatelessWidget {
   final CommunityModel community;
   const CommunitySectionChat({
@@ -26,6 +25,8 @@ class CommunitySectionChat extends StatelessWidget {
             TileChat(
               name: community.name,
               avatarUrl: community.avatarUrl,
+              lastMessage: "This is the last message", // Mock data
+              lastMessageTime: DateTime.now().toIso8601String(), // Mock data
               onTap: () {
                 context.push(
                   '/chat/group/${community.id}',
@@ -52,11 +53,16 @@ class CommunitySectionChat extends StatelessWidget {
 class TileChat extends StatelessWidget {
   final String name;
   final String avatarUrl;
+  final String lastMessage;
+  final String lastMessageTime;
   final VoidCallback onTap;
+
   const TileChat({
     super.key,
     required this.name,
     required this.avatarUrl,
+    required this.lastMessage,
+    required this.lastMessageTime,
     required this.onTap,
   });
 
@@ -66,93 +72,78 @@ class TileChat extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  UserAvatarStyledWidget(
-                    avatarUrl: avatarUrl,
-                    avatarSize: 18,
-                    avatarBorderSize: 0,
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    flex: 50,
-                    child: Text(
-                      name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Avatar
+                UserAvatarStyledWidget(
+                  avatarUrl: avatarUrl,
+                  avatarSize: 18,
+                  avatarBorderSize: 0,
+                ),
+                const SizedBox(width: 15),
+
+                // Name, Last Message, and Time
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Chat Name
+                      Text(
+                        name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
+
+                      // Last Message
+                      Text(
+                        lastMessage,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            )),
+                ),
+
+                // Time
+                Text(
+                  _formatTime(lastMessageTime),
+                  style: TextStyle(
+                    color: Colors.grey.shade500,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
+
+  // Helper function to format time
+  String _formatTime(String isoTime) {
+    final dateTime = DateTime.parse(isoTime);
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 0) {
+      return "${dateTime.day}/${dateTime.month}/${dateTime.year}"; // e.g., 02/01/2025
+    } else {
+      return "${dateTime.hour}:${dateTime.minute}"; // e.g., 14:30
+    }
+  }
 }
-
-// class MembersList extends StatefulWidget {
-//   final String name;
-//   final String avatarUrl;
-
-//   const MembersList({
-//     Key? key,
-//     required this.name,
-//     required this.avatarUrl,
-//   }) : super(key: key);
-
-//   @override
-//   State<MembersList> createState() => _MembersListState();
-// }
-
-// class _MembersListState extends State<MembersList> {
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final bool hasMembers = (widget.members.length + widget.admins.length) > 0;
-
-//     return Container(
-//       padding: EdgeInsets.all(15),
-//       width: double.infinity,
-//       color: Colors.white,
-//       child: Padding(
-//       padding: const EdgeInsets.symmetric(vertical: 5),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.start,
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         children: [
-//           UserAvatarStyledWidget(
-//             avatarUrl: user.avatarUrl,
-//             avatarSize: 18,
-//             avatarBorderSize: 0,
-//           ),
-//           const SizedBox(width: 15),
-//           Expanded(
-//             flex: 50,
-//             child: Text(
-//               user.name,
-//               maxLines: 1,
-//               overflow: TextOverflow.ellipsis,
-//               style: TextStyle(
-//                 color: Colors.black,
-//                 fontWeight: FontWeight.bold,
-//                 fontSize: 16,
-//               ),
-//             ),
-//           ),
-
-//         ],
-//       ),
-//     )
-//     );
-//   }
-// }

@@ -34,15 +34,15 @@ class ChatMessageGroupWidget extends StatefulWidget {
     this.showIsReaded = false,
     this.showReply = true,
     this.isAdmin = false,
+    required this.onTapCheer,
+    required this.onTapBool,
     required this.onTap,
     this.onReply,
+    required this.onTapReply,
     required this.onReact,
     required this.onReport,
     required this.onShare,
     required this.onPin,
-    required this.onTapReply,
-    required this.onTapCheer,
-    required this.onTapBool,
   });
 
   @override
@@ -244,6 +244,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                 // #send
 
                 if (widget.onReply != null) {
+                  print('inside onReply');
                   widget.onReply!(widget.message, messageEC.text);
                 }
 

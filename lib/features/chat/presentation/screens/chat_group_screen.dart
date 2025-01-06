@@ -208,9 +208,14 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 controller: messageEC,
                 focusNode: messageFocusNode,
                 onChanged: (value) {
-                  setState(() {
-                    isCommentFilled = messageEC.text.isNotEmpty;
-                  });
+                  if (value.trim() == "") {
+                    print("yes");
+                  }
+                  if (value.trim() != "") {
+                    setState(() {
+                      isCommentFilled = messageEC.text.isNotEmpty;
+                    });
+                  }
                 },
                 decoration: InputDecoration(
                   suffixIcon: GestureDetector(
@@ -244,13 +249,15 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 //   "mediaLink": string,
                 //   "senderPhoto": string,
                 // };
-                final payload = {
-                  'group_id': widget.roomId,
-                  'msg': messageEC.text
-                };
-                context.read<ChatGroupCubit>().sendMessage(payload, true);
-                // fileToUpload = null;
-                messageEC.clear();
+                if (messageEC.text.trim() != "") {
+                  final payload = {
+                    'group_id': widget.roomId,
+                    'msg': messageEC.text
+                  };
+                  context.read<ChatGroupCubit>().sendMessage(payload, true);
+                  // fileToUpload = null;
+                  messageEC.clear();
+                }
               },
               child: Opacity(
                 opacity: messageEC.text.isNotEmpty ? 1 : 0.3,
@@ -334,7 +341,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         title: appBarTitleArea(),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              /// perform action for group chat screen
+            },
             icon: Icon(
               Icons.more_vert_outlined,
               size: 31,

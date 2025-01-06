@@ -225,10 +225,13 @@ class ChatRemoteDataSourceImplThread implements ChatRemoteDataSourceThread {
   }
 
   @override
-  Future<List<ChatMessageModel>> getGroupRoomMessages(
-      {required String roomId, String? dateFrom, bool isreply = false}) async {
+  Future<List<ChatMessageModel>> getGroupRoomMessages({
+    required String roomId,
+    String? dateFrom,
+    bool isreply = false,
+  }) async {
     print(
-        '... getGroupRoomMessagesforthread -------------------------------------------------   \n roomId=$roomId \n dateFrom=$dateFrom');
+        '... getGroupRoomMessagesforthread    \n roomId=$roomId \n dateFrom=$dateFrom');
 
     if (dateFrom == null || dateFrom == '') {
       dateFrom = DateTime.now().toIso8601String();

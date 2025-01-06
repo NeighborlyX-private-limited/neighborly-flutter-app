@@ -15,7 +15,7 @@ class ChatRepositoriesImplThread implements ChatRepositoriesThread {
     required this.remoteDataSource,
     required this.networkInfo,
   });
-  
+
   @override
   Future<Either<Failure, List<ChatRoomModel>>> getAllChatRooms() async {
     if (await networkInfo.isConnected) {
@@ -38,7 +38,8 @@ class ChatRepositoriesImplThread implements ChatRepositoriesThread {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getRoomMessages(
-            roomId: roomId, dateFrom: dateFrom);
+          roomId: roomId,
+        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -50,13 +51,19 @@ class ChatRepositoriesImplThread implements ChatRepositoriesThread {
     }
   }
 
+  /// featch group room messages
   @override
-  Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages(
-      {required String roomId, String? dateFrom, bool isreply = false}) async {
+  Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages({
+    required String roomId,
+    String? dateFrom,
+    bool isreply = false,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getGroupRoomMessages(
-            roomId: roomId, dateFrom: dateFrom, isreply: isreply);
+          roomId: roomId,
+          isreply: isreply,
+        );
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

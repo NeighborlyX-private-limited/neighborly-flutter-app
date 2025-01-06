@@ -11,10 +11,10 @@ abstract class ChatRepositories {
     String? dateFrom,
   });
 
-  /// get group room messages
+  /// get group chat room messages
   Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages({
     required String roomId,
-    String? dateFrom,
+    // String? dateFrom,
     bool isreply = false,
     int page = 1,
   });

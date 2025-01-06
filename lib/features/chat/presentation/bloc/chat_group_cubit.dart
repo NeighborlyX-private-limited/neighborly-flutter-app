@@ -22,10 +22,16 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
   void init(String roomId) async {
     emit(state.copyWith(roomId: roomId));
+
+    /// socket connect
     socketService.connect(groupId: roomId);
+
+    /// featch group messages
     await getGroupRoomMessages(roomId: roomId);
+
+    /// listen for new messages
     socketService.onNewMessageReceived = (message) {
-      print('new msg');
+      print('New msg receive:$message');
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
           'id': DateTime.now().toString(),
@@ -69,7 +75,6 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     }
     final result = await getChatGroupRoomMessagesUseCase(
       roomId: state.roomId,
-      dateFrom: dateFrom,
     );
 
     result.fold(
@@ -100,7 +105,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
       print('state.page ${state.page}');
       print(state.page + 1);
       final result = await getChatGroupRoomMessagesUseCase(
-          roomId: state.roomId, dateFrom: dateFrom, page: state.page + 1);
+          roomId: state.roomId, page: state.page + 1);
 
       result.fold(
         (failure) {

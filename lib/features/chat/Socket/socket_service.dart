@@ -188,19 +188,22 @@ class SocketService {
         'group_id': groupId,
       };
 
-      // Emit the join-room event with a callback for acknowledgment
-      _socket?.emitWithAck('join-room', payload, ack: (response) {
-        print('response:$response');
-        if (response != null && response['status'] == 'success') {
-          print('Successfully joined room: $groupId');
-        } else if (response != null && response['status'] == 'error') {
-          print('Failed to join room: ${response['message']}');
-        } else {
-          print('No acknowledgment received for join-room');
-        }
-      });
+      /// Emit the join-room event with a callback for acknowledgment
+      try {
+        _socket?.emitWithAck('join-room', payload, ack: (response) {
+          print('response for join-room:$response');
 
-      print('Room Joined with room id: $groupId');
+          if (response != null && response['status'] == 'success') {
+            print('Successfully joined room: $groupId');
+          } else if (response != null && response['status'] == 'error') {
+            print('Failed to join room: ${response['message']}');
+          } else {
+            print('No acknowledgment received for join-room');
+          }
+        });
+      } catch (e) {
+        print('error while joning room: $e');
+      }
     }
   }
 
