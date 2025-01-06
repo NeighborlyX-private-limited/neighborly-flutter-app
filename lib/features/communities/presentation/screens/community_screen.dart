@@ -5,6 +5,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/constants/app_images.dart';
+import 'package:neighborly_flutter_app/core/models/community_model.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
@@ -21,11 +22,8 @@ import '../widgets/community_sheemer.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityScreen extends StatefulWidget {
-  
   const CommunityScreen({
     super.key,
-    
-    
   });
 
   @override
@@ -461,14 +459,14 @@ class _CommunityScreenState extends State<CommunityScreen>
                     Tab(
                       child: tabTitle(
                         AppLocalizations.of(context)!.nearby_Groups,
-                      //  'Nearby Groups'
-                        ),
+                        //  'Nearby Groups'
+                      ),
                     ),
                     Tab(
                       child: tabTitle(
                         AppLocalizations.of(context)!.my_Groups,
-                      //  'My Groups'
-                        ),
+                        //  'My Groups'
+                      ),
                     ),
                   ],
                 ),
@@ -550,7 +548,6 @@ class _CommunityScreenState extends State<CommunityScreen>
                                             itemCount: state.communities.length,
                                             itemBuilder: (context, index) {
                                               return CommunityCardWidget(
-                                                
                                                 community:
                                                     state.communities[index],
                                               );
@@ -652,7 +649,6 @@ class _CommunityScreenState extends State<CommunityScreen>
                                             itemCount: state.communities.length,
                                             itemBuilder: (context, index) {
                                               return CommunityCardWidget(
-                                                
                                                 community:
                                                     state.communities[index],
                                               );

@@ -23,6 +23,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   final String communityId;
+
   const CommunityDetailsScreen({
     super.key,
     required this.communityId,
@@ -808,189 +809,200 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-
-        ///back arraow button
-        leading: Container(
-          margin: EdgeInsets.all(9.0),
-          height: 40,
-          width: 40,
-          child: AppbatButton(
-            onTap: () {
-              Navigator.pop(context);
-            },
-            icon: Icons.chevron_left_rounded,
-            iconSize: 30,
+    return PopScope(
+      canPop: false,onPopInvokedWithResult: (didPop, result) => Navigator.pop(context, true),
+      
+      child: Scaffold(
+        
+        backgroundColor: AppColors.whiteColor,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+      
+          ///back arraow button
+          leading: Container(
+            margin: EdgeInsets.all(9.0),
+            height: 40,
+            width: 40,
+            child: AppbatButton(
+              onTap: () {
+                
+                Navigator.pop(context, true);
+      
+              },
+              icon: Icons.chevron_left_rounded,
+              iconSize: 30,
+            ),
           ),
-        ),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ///share button
-              AppbatButton(
-                onTap: () {
-                  String message = AppLocalizations.of(context)!.hey_check_this_community.replaceFirst(
-                     '{communityName}', communityCache?.name ?? '',
-                  );
-                  // String message =
-                  //    'Hey, check this community: ${communityCache?.name}';
-                  ShareIt.text(
-                    content: message,
-                    androidSheetTitle: AppLocalizations.of(context)!.look_this_event,
-                    // 'Look this event',
-                  );
-                },
-                icon: Icons.share,
-                iconSize: 20,
-              ),
-              const SizedBox(width: 10),
-
-              ///menu button
-              AppbatButton(
-                onTap: () {
-                  if ((communityCache?.isAdmin ?? false) &&
-                      (communityCache?.isJoined ?? false)) {
-                    context.push(
-                      '/groups/admin',
-                      extra: communityCache,
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ///share button
+                AppbatButton(
+                  onTap: () {
+                    String message = AppLocalizations.of(context)!
+                        .hey_check_this_community
+                        .replaceFirst(
+                          '{communityName}',
+                          communityCache?.name ?? '',
+                        );
+                    // String message =
+                    //    'Hey, check this community: ${communityCache?.name}';
+                    ShareIt.text(
+                      content: message,
+                      androidSheetTitle:
+                          AppLocalizations.of(context)!.look_this_event,
+                      // 'Look this event',
                     );
-                  } else {
-                    if (communityCache?.isJoined ?? false) {
-                      userBottomSheetMenu(
-                        context,
+                  },
+                  icon: Icons.share,
+                  iconSize: 20,
+                ),
+                const SizedBox(width: 10),
+      
+                ///menu button
+                AppbatButton(
+                  onTap: () {
+                    if ((communityCache?.isAdmin ?? false) &&
+                        (communityCache?.isJoined ?? false)) {
+                      context.push(
+                        '/groups/admin',
+                        extra: communityCache,
                       );
                     } else {
-                      joinGroupBottomSheet(context);
-                    }
-                  }
-                },
-                icon: Icons.more_vert_outlined,
-                iconSize: 25,
-              ),
-              const SizedBox(width: 10),
-            ],
-          )
-        ],
-      ),
-      body: RefreshIndicator(
-        ///refresh is not working i have to check it.
-        onRefresh: _onRefresh,
-        child: BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
-          listener: (BuildContext context, CommunityDetailsState state) {},
-          builder: (context, state) {
-            ///loadinng state
-            if (state.status == Status.loading) {
-              return const CommunityDetailsSheemer();
-            }
-            if (state.status == Status.failure) {
-              /// have to replace with error widget
-              return Center(
-                child: Text(AppLocalizations.of(context)!.oops_something_went_wrong),
-              );
-            }
-
-            /// success state
-            if (state.status == Status.success) {
-              communityCache = state.community;
-            }
-            return Column(
-              children: [
-                topElement(communityCache?.avatarUrl ?? ''),
-                titleArea(
-                  displayName: communityCache?.displayName ?? '',
-                  title: communityCache?.name ?? '',
-                  isPublic: communityCache?.isPublic ?? false,
-                  isJoined: communityCache?.isJoined ?? false,
-                  userCount: (communityCache?.users.length ?? 0) +
-                      (communityCache?.admins.length ?? 0),
-                  users: [
-                    ...(communityCache?.users ?? []),
-                    ...(communityCache?.admins ?? [])
-                  ],
-                  onJoinLeavePressed: () {
-                    if (communityCache?.isJoined ?? false) {
-                      leaveGroupBottomSheet(context);
-                    } else {
-                      joinGroupBottomSheet(context);
+                      if (communityCache?.isJoined ?? false) {
+                        userBottomSheetMenu(
+                          context,
+                        );
+                      } else {
+                        joinGroupBottomSheet(context);
+                      }
                     }
                   },
+                  icon: Icons.more_vert_outlined,
+                  iconSize: 25,
                 ),
-                const SizedBox(height: 15),
-                Container(
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    borderRadius: BorderRadius.circular(10),
+                const SizedBox(width: 10),
+              ],
+            )
+          ],
+        ),
+        body: RefreshIndicator(
+          ///refresh is not working i have to check it.
+          onRefresh: _onRefresh,
+          child: BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
+            listener: (BuildContext context, CommunityDetailsState state) {},
+            builder: (context, state) {
+              ///loadinng state
+              if (state.status == Status.loading) {
+                return const CommunityDetailsSheemer();
+              }
+              if (state.status == Status.failure) {
+                /// have to replace with error widget
+                return Center(
+                  child: Text(
+                      AppLocalizations.of(context)!.oops_something_went_wrong),
+                );
+              }
+      
+              /// success state
+              if (state.status == Status.success) {
+                communityCache = state.community;
+              }
+              return Column(
+                children: [
+                  topElement(communityCache?.avatarUrl ?? ''),
+                  titleArea(
+                    displayName: communityCache?.displayName ?? '',
+                    title: communityCache?.name ?? '',
+                    isPublic: communityCache?.isPublic ?? false,
+                    isJoined: communityCache?.isJoined ?? false,
+                    userCount: (communityCache?.users.length ?? 0) +
+                        (communityCache?.admins.length ?? 0),
+                    users: [
+                      ...(communityCache?.users ?? []),
+                      ...(communityCache?.admins ?? [])
+                    ],
+                    onJoinLeavePressed: () {
+                      if (communityCache?.isJoined ?? false) {
+                        leaveGroupBottomSheet(context);
+                      } else {
+                        joinGroupBottomSheet(context);
+                      }
+                    },
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 0, right: 5),
-                    child: TabBar(
-                      indicatorColor: AppColors.primaryColor,
-                      unselectedLabelColor: Colors.grey,
-                      unselectedLabelStyle: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: Colors.grey,
+                  const SizedBox(height: 15),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 0, right: 5),
+                      child: TabBar(
+                        indicatorColor: AppColors.primaryColor,
+                        unselectedLabelColor: Colors.grey,
+                        unselectedLabelStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                        controller: _tabController,
+                        tabAlignment: TabAlignment.start,
+                        isScrollable: true,
+                        tabs: [
+                          Tab(
+                            child: tabTitle(
+                              AppLocalizations.of(context)!.about,
+                              // 'About'
+                            ),
+                          ),
+                          Tab(
+                            child: tabTitle(AppLocalizations.of(context)!.chat
+                                //  'Chat'
+                                ),
+                          ),
+                        ],
                       ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TabBarView(
                       controller: _tabController,
-                      tabAlignment: TabAlignment.start,
-                      isScrollable: true,
-                      tabs: [
-                        Tab(
-                          child: tabTitle(
-                            AppLocalizations.of(context)!.about,
-                           // 'About'
-                            ),
+                      children: [
+                        CommunitySectionAbout(
+                          community: communityCache!,
                         ),
-                        Tab(
-                          child: tabTitle(
-                            AppLocalizations.of(context)!.chat
-                          //  'Chat'
-                            ),
-                        ),
+      
+                        // CommunitySectionPosts(
+                        //     isLoading: false,
+                        //     isEmpty: (state.status != Status.loading && state.posts.isEmpty),
+                        //     posts: state.posts,
+                        //     onReport: (postId) {
+                        //       print('postId=$postId');
+                        //     },
+                        //     onDelete: (postId) {
+                        //       print('postId=$postId');
+                        //     },
+                        //     onTap: (postId) {
+                        //       print('postId=$postId');
+                        //     },
+                        //     onReact: (postId) {
+                        //       print('postId=$postId');
+                        //     }),
+                        //
+      
+                        ///  chat section
+                        CommunitySectionChat(community: communityCache!),
                       ],
                     ),
                   ),
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      CommunitySectionAbout(
-                        community: communityCache!,
-                      ),
-
-                      // CommunitySectionPosts(
-                      //     isLoading: false,
-                      //     isEmpty: (state.status != Status.loading && state.posts.isEmpty),
-                      //     posts: state.posts,
-                      //     onReport: (postId) {
-                      //       print('postId=$postId');
-                      //     },
-                      //     onDelete: (postId) {
-                      //       print('postId=$postId');
-                      //     },
-                      //     onTap: (postId) {
-                      //       print('postId=$postId');
-                      //     },
-                      //     onReact: (postId) {
-                      //       print('postId=$postId');
-                      //     }),
-                      //
-
-                      ///  chat section
-                      CommunitySectionChat(community: communityCache!),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
