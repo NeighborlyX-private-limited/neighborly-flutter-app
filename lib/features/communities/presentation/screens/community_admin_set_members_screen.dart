@@ -884,27 +884,30 @@ class _CommunityAdminMembersUsersScreenState
               members = members
                   .where((member) => !adminSet.contains(member))
                   .toList();
-              return Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  if (hasMembers == false)
-                    Expanded(
-                      child: Center(
-                        child: Text(
-                            AppLocalizations.of(context)!.no_Members,
-                         // 'No Members',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 16,
+              return Padding(
+                padding: EdgeInsets.all(9),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    if (hasMembers == false)
+                      Expanded(
+                        child: Center(
+                          child: Text(
+                              AppLocalizations.of(context)!.no_Members,
+                           // 'No Members',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 16,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ...admins.map((admin) => userTile(context, admin, true)),
-                  ...members.map((member) => userTile(context, member, false)),
-                ],
+                    ...admins.map((admin) => userTile(context, admin, true)),
+                    ...members.map((member) => userTile(context, member, false)),
+                  ],
+                ),
               );
             }
             return Center(
