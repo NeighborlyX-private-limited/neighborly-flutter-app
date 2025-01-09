@@ -181,7 +181,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               isEmpty = true;
                             });
                           } else {
-                            if (context.mounted) {
+                            if (mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text(state.error)),
                               );

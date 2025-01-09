@@ -131,138 +131,115 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     required VoidCallback onJoinLeavePressed,
   }) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ///group display name
-                Text(
-                  displayName,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
-                const SizedBox(height: 5),
-
-                ///group title
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    fontSize: 14,
-                    color: AppColors.greyColor,
-                  ),
-                ),
-                const SizedBox(height: 5),
-
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ///StackedAvatarIndicator
-                    StackedAvatarIndicator(
-                      avatarUrls: users.map((e) => e.avatarUrl).toList(),
-                      showOnly: 4,
-                      avatarSize: 14,
-                      radius: 9,
-                      onTap: () {},
-                    ),
-
-                    /// member count
-                    Expanded(
-                      child: userCount > 1000
-                          ? Text(
-                              '$userCount ${AppLocalizations.of(context)!.members}',
-                              // '${userCount}k+ Members',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                              ),
-                            )
-                          : userCount > 1
-                              ? Text(
-                                  '$userCount ${AppLocalizations.of(context)!.members}',
-                                  // '$userCount Members',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                  ),
-                                )
-                              : Text(
-                                  '$userCount ${AppLocalizations.of(context)!.member}',
-                                  // '$userCount Member',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-
-                /// is public or private
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      isPublic ? Icons.public : Icons.lock_person_outlined,
-                      color: Colors.black,
-                      size: 15,
-                    ),
-                    const SizedBox(
-                      width: 4,
-                    ),
-                    Text(
-                      isPublic
-                          ? AppLocalizations.of(context)!.public
-                          : AppLocalizations.of(context)!.private,
-                      style: TextStyle(
-                        height: 0.5,
-                        color: Colors.black,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          ///group display name
+          Text(
+            displayName,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              onJoinLeavePressed();
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
-              ),
+
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 14,
+              color: AppColors.greyColor,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                isJoined
-                    ? AppLocalizations.of(context)!.leave
-                    : AppLocalizations.of(context)!.join,
-                style: TextStyle(
-                  color: AppColors.whiteColor,
-                  fontSize: 18,
-                  height: 0.3,
+          ),
+          Row(
+            children: [
+              ///StackedAvatarIndicator
+              StackedAvatarIndicator(
+                avatarUrls: users.map((e) => e.avatarUrl).toList(),
+                showOnly: 4,
+                avatarSize: 14,
+                radius: 9,
+                onTap: () {},
+              ),
+              Expanded(
+                child: userCount > 1000
+                    ? Text(
+                        '$userCount ${AppLocalizations.of(context)!.members}',
+                        // '${userCount}k+ Members',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
+                      )
+                    : userCount > 1
+                        ? Text(
+                            '$userCount ${AppLocalizations.of(context)!.members}',
+                            // '$userCount Members',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          )
+                        : Text(
+                            '$userCount ${AppLocalizations.of(context)!.member}',
+                            // '$userCount Member',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  onJoinLeavePressed();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    isJoined
+                        ? AppLocalizations.of(context)!.leave
+                        : AppLocalizations.of(context)!.join,
+                    style: TextStyle(
+                      color: AppColors.whiteColor,
+                      fontSize: 18,
+                      height: 0.3,
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
+          ),
+          Row(
+            children: [
+              Icon(
+                isPublic ? Icons.public : Icons.lock_person_outlined,
+                color: Colors.black,
+                size: 15,
+              ),
+              const SizedBox(
+                width: 4,
+              ),
+              Text(
+                isPublic
+                    ? AppLocalizations.of(context)!.public
+                    : AppLocalizations.of(context)!.private,
+                style: TextStyle(
+                  height: 0.5,
+                  color: Colors.black,
+                  fontSize: 14,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -479,7 +456,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
       context: context,
       builder: (BuildContext context) {
         Future.delayed(const Duration(seconds: 3), () {
-          if (context.mounted) {
+          if (mounted) {
             Navigator.pop(context);
           }
         });
@@ -810,15 +787,14 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: false,onPopInvokedWithResult: (didPop, result) => Navigator.pop(context, true),
-      
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) => Navigator.pop(context, true),
       child: Scaffold(
-        
         backgroundColor: AppColors.whiteColor,
         extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-      
+
           ///back arraow button
           leading: Container(
             margin: EdgeInsets.all(9.0),
@@ -826,9 +802,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             width: 40,
             child: AppbatButton(
               onTap: () {
-                
                 Navigator.pop(context, true);
-      
               },
               icon: Icons.chevron_left_rounded,
               iconSize: 30,
@@ -860,7 +834,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                   iconSize: 20,
                 ),
                 const SizedBox(width: 10),
-      
+
                 ///menu button
                 AppbatButton(
                   onTap: () {
@@ -905,7 +879,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       AppLocalizations.of(context)!.oops_something_went_wrong),
                 );
               }
-      
+
               /// success state
               if (state.status == Status.success) {
                 communityCache = state.community;
@@ -975,7 +949,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         CommunitySectionAbout(
                           community: communityCache!,
                         ),
-      
+
                         // CommunitySectionPosts(
                         //     isLoading: false,
                         //     isEmpty: (state.status != Status.loading && state.posts.isEmpty),
@@ -993,7 +967,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         //       print('postId=$postId');
                         //     }),
                         //
-      
+
                         ///  chat section
                         CommunitySectionChat(community: communityCache!),
                       ],

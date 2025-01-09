@@ -305,64 +305,59 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
           }
         },
         builder: (context, state) {
-          return BlocBuilder<CommunityCreateCubit, CommunityCreateState>(
-            builder: (context, state) {
-              ///  loading state
-              if (state.status == Status.loading) {
-                return const CommunityMainSheemer();
-              }
+          ///  loading state
+          if (state.status == Status.loading) {
+            return const CommunityMainSheemer();
+          }
+          return Container(
+            padding: EdgeInsets.only(top: 15),
+            width: double.infinity,
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  /// for name and group type
+                  if (currentStep == 1) ...[
+                    Step1area(
+                      nameController: nameEC,
+                      typeController: typeEC,
+                    ),
+                  ],
 
-              return Container(
-                padding: EdgeInsets.only(top: 15),
-                width: double.infinity,
-                color: Colors.white,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      /// for name and group type
-                      if (currentStep == 1) ...[
-                        Step1area(
-                          nameController: nameEC,
-                          typeController: typeEC,
-                        ),
-                      ],
+                  /// for group desc
+                  if (currentStep == 2) ...[
+                    Step2area(
+                      descriptionController: descriptionEC,
+                    ),
+                  ],
 
-                      /// for group desc
-                      if (currentStep == 2) ...[
-                        Step2area(
-                          descriptionController: descriptionEC,
-                        ),
-                      ],
+                  ///for location and radius
+                  // if (currentStep == 3) ...[
+                  //   Step3area(
+                  //     //locationController: locationEC,
+                  //     radiusController: radiusEC,
+                  //   ),
+                  // ],
 
-                      ///for location and radius
-                      // if (currentStep == 3) ...[
-                      //   Step3area(
-                      //     //locationController: locationEC,
-                      //     radiusController: radiusEC,
-                      //   ),
-                      // ],
-
-                      /// for group icon or image
-                      if (currentStep == 4) ...[
-                        Step4area(
-                          isLoading: state.uploadIsLoading,
-                          currentFile: fileToUpload,
-                          onSelectImage: (newFile) {
-                            // ignore: unnecessary_null_comparison
-                            if (newFile != null) {
-                              setState(() {
-                                fileToUpload = newFile;
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              );
-            },
+                  /// for group icon or image
+                  if (currentStep == 4) ...[
+                    Step4area(
+                      isLoading: state.uploadIsLoading,
+                      currentFile: fileToUpload,
+                      onSelectImage: (newFile) {
+                        // ignore: unnecessary_null_comparison
+                        if (newFile != null) {
+                          setState(() {
+                            fileToUpload = newFile;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ],
+              ),
+            ),
           );
         },
       ),

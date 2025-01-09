@@ -5,7 +5,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/constants/app_images.dart';
-import 'package:neighborly_flutter_app/core/models/community_model.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
@@ -63,10 +62,9 @@ class _CommunityScreenState extends State<CommunityScreen>
     communityMainCubit.init();
   }
 
-  ///listen on tab changes for featch groups
+  /// listen on tab changes for featch groups
   /// Trigger the API call when the tab changes
   _onTabChanged(int tabIndex) {
-    print('Tab index for featch groups:$tabIndex');
     if (tabIndex == 0) {
       communityMainCubit.init();
     } else {
@@ -258,7 +256,7 @@ class _CommunityScreenState extends State<CommunityScreen>
           backgroundColor: AppColors.whiteColor,
           title: Row(
             children: [
-              ///app logo
+              /// app logo
               SvgPicture.asset(
                 'assets/logo.svg',
                 width: 30,
@@ -266,7 +264,7 @@ class _CommunityScreenState extends State<CommunityScreen>
               ),
               const SizedBox(width: 10),
 
-              ///toggle button
+              /// toggle button
               Flexible(
                 child: Container(
                   height: 40,
@@ -401,7 +399,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             ],
           ),
           actions: [
-            ///search icon
+            /// search icon
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: InkWell(
@@ -459,13 +457,11 @@ class _CommunityScreenState extends State<CommunityScreen>
                     Tab(
                       child: tabTitle(
                         AppLocalizations.of(context)!.nearby_Groups,
-                        //  'Nearby Groups'
                       ),
                     ),
                     Tab(
                       child: tabTitle(
                         AppLocalizations.of(context)!.my_Groups,
-                        //  'My Groups'
                       ),
                     ),
                   ],
@@ -483,6 +479,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                       listener: (context, state) {
                         if (state.status == Status.loading) {}
                         if (state.status == Status.success) {}
+
+                        /// failure state
                         if (state.status == Status.failure) {
                           if (mounted) {
                             ScaffoldMessenger.of(context)
@@ -501,7 +499,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                         }
                       },
                       builder: (context, state) {
-                        ///loading state
+                        /// loading state
                         if (state.status == Status.loading) {
                           return const CommunityMainSheemer();
                         }
@@ -518,6 +516,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                             },
                           );
                         }
+
+                        /// success state
                         if (state.status == Status.success) {
                           /// if community is not empty
                           if (state.communities.isNotEmpty) {
@@ -566,7 +566,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                           if (state.communities.isEmpty) {
                             return SomethingWentWrong(
                               imagePath: AppImages.emptyCommunity,
-                              title: 'No Community Groups Yet',
+                              title: 'No Community Yet',
                               message:
                                   'Be the first to create a group and start connecting!',
                               buttonText: 'Start a Community',

@@ -156,6 +156,13 @@ class SocketService {
       print('Error joining room: ${jsonEncode(data)}');
       // Handle error logic, like showing a UI message
     });
+    _socket?.on('error-message', (data) {
+      print('Error joining room: ${jsonEncode(data)}');
+      // Handle error logic, like showing a UI message
+    });
+    _socket?.on('user-joined', (data) {
+      print('room join: ${jsonEncode(data)}');
+    });
 
     _socket?.onError((error) => print('Socket error: $error'));
     _socket?.onConnectError((error) => print('Connection error: $error'));
@@ -182,10 +189,8 @@ class SocketService {
   /// join grouo event
   void joinRoom(String groupId) {
     if (groupId.isNotEmpty) {
-      String? name = ShardPrefHelper.getUsername();
       final payload = {
-        'username': name,
-        'group_id': groupId,
+        'groupId': groupId,
       };
 
       /// Emit the join-room event with a callback for acknowledgment
