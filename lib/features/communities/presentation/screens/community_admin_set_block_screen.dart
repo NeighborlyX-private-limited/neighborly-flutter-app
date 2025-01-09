@@ -134,7 +134,7 @@ class _CommunityAdminBlockedUsersScreenState
                             ),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(horizontal: 17),
                             child: Text(
                               AppLocalizations.of(context)!.unblock,
                              // 'Unblock',
