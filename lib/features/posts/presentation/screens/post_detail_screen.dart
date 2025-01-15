@@ -101,7 +101,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.whiteColor,
+       
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
