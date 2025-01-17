@@ -1,5 +1,8 @@
 import '../../domain/entities/comment_entity.dart';
 
+
+
+
 class CommentModel extends CommentEntity {
   const CommentModel({
     required super.awardType,
@@ -13,6 +16,7 @@ class CommentModel extends CommentEntity {
     super.proPic,
     required super.userFeedback,
     required super.postid,
+    
   });
 
   factory CommentModel.fromJson(Map<String, dynamic> json, num postid) {

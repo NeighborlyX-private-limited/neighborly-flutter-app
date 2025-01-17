@@ -8,6 +8,10 @@ part 'get_comments_by_postId_state.dart';
 class GetCommentsByPostIdBloc
     extends Bloc<GetCommentsByPostIdEvent, GetCommentsByPostIdState> {
   final GetCommentsByPostIdUsecase _getCommentsByPostIdUsecase;
+   bool isLastPage = false;
+  int pageNumber = 1;
+  int totalComments = 0;
+ // final int nextPageTrigger = 3;
 
   GetCommentsByPostIdBloc(
       {required GetCommentsByPostIdUsecase getCommentsByPostIdUsecase})
@@ -16,11 +20,15 @@ class GetCommentsByPostIdBloc
     on<GetCommentsByPostIdButtonPressedEvent>(
         (GetCommentsByPostIdButtonPressedEvent event,
             Emitter<GetCommentsByPostIdState> emit) async {
+               if (isLastPage) return;
       emit(GetcommentsByPostIdLoadingState());
+      
 
       final result = await _getCommentsByPostIdUsecase.call(
         id: event.postId,
         commentId: event.commentId,
+        page: pageNumber,
+        
       );
       print('...Result in GetCommentsByPostIdBloc $result');
 
@@ -28,8 +36,14 @@ class GetCommentsByPostIdBloc
         print('fold error: ${error.toString()}');
         emit(GetcommentsByPostIdFailureState(error: error.toString()));
       }, (response) {
+         if (response.isEmpty) {
+          isLastPage = true;
+        } else {
+          pageNumber++;
+         // totalComments = response.total;
+        }
         print('fold response: ${response.toString()}');
-        emit(GetcommentsByPostIdSuccessState(comments: response));
+        emit(GetcommentsByPostIdSuccessState(comments: response, ));
       });
     });
   }

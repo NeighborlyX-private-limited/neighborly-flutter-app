@@ -45,6 +45,7 @@ class PostDetailScreen extends StatefulWidget {
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
+  late ScrollController _scrollController;
   late TextEditingController _commentController;
   final FocusNode _commentFocusNode = FocusNode();
   bool isCommentFilled = false;
@@ -57,6 +58,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     super.initState();
     _commentController = TextEditingController();
     _fetchPostAndComments();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollcoments);
+  }
+
+  void _scrollcoments() {
+    
+     print('Current position: ${_scrollController.position.pixels}');
+  print('Max extent: ${_scrollController.position.maxScrollExtent}');
+   if ((_scrollController.position.pixels - _scrollController.position.maxScrollExtent).abs() < 1.0) {
+      _fetchPostAndComments();
+     
+      print( "scrolling");
+    }
   }
 
   ///dispose method
@@ -64,6 +78,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   void dispose() {
     _commentController.dispose();
     _commentFocusNode.dispose();
+     _scrollController.dispose();
     super.dispose();
   }
 
@@ -128,6 +143,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   children: [
                     Expanded(
                       child: ListView(
+                        controller: _scrollController,
                         padding: const EdgeInsets.all(16.0),
                         children: [
                           widget.isPost
@@ -144,7 +160,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                               ///Get comments By Post Id Success State
                               if (commentState
                                   is GetcommentsByPostIdSuccessState) {
-                                comments = commentState.comments;
+                                comments.addAll(commentState.comments);
                                 if (comments.isEmpty) {
                                   return Center(
                                     child: Text(AppLocalizations.of(context)!
@@ -153,10 +169,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 }
 
                                 return ListView.separated(
+                                 //  controller: _scrollController,
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount: comments.length,
+                                   scrollDirection: Axis.vertical,
                                   itemBuilder: (context, index) {
+                                    
                                     return CommentWidget(
                                       commentFocusNode: _commentFocusNode,
                                       comment: comments[index],

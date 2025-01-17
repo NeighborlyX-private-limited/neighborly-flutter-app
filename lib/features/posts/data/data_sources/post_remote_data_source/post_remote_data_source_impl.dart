@@ -241,10 +241,8 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }
 
   @override
-  Future<List<CommentModel>> getCommentsByPostId({
-    required num postId,
-    required String commentId,
-  }) async {
+  Future<List<CommentModel>> getCommentsByPostId(
+      {required num postId, required String commentId, int? pagenumber}) async {
     print('....getCommentsByPostId start with');
     print('postId:$postId');
     print('commentId:$commentId');
@@ -260,7 +258,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     */
 
     //String url = commentId == '0'? '$kBaseUrl/posts/fetch-comments/$postId' : '$kBaseUrl/posts/fetch-comment-thread/$commentId';
-    String url = '$kBaseUrl/posts/fetch-comments/$postId';
+    String url = '$kBaseUrl/posts/fetch-comments/$postId?page=${pagenumber??1}';
     print("url: $url");
     final response = await client.get(
       Uri.parse(url),
@@ -273,12 +271,12 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'getCommentsByPostId api response status code: ${response.statusCode}');
     print('getCommentsByPostId api response: ${response.body}');
 
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
-      return jsonData
-          .map((data) => CommentModel.fromJson(data, postId))
-          .toList();
-    } else {
+   if (response.statusCode == 200) {
+    final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
+     return jsonData
+         .map((data) => CommentModel.fromJson(data, postId))
+       .toList();
+   } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
       print('else error in getCommentsByPostId: $message');
       throw ServerException(message: message);
