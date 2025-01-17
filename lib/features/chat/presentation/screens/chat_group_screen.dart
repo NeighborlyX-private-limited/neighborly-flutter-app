@@ -51,38 +51,90 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       if (_scrollController.position.pixels ==
               _scrollController.position.minScrollExtent &&
           !_isLoadingMore) {
+        print(
+            '_scrollController.position.pixels:${_scrollController.position.pixels}');
+        print(
+            '_scrollController.position.minScrollExtent:${_scrollController.position.minScrollExtent}');
         _loadMoreMessages();
       }
     });
   }
 
   /// scroll to bottom
+  // void _scrollToBottom() {
+  //   if (_scrollController.hasClients && _shouldScrollToBottom) {
+  //     Future.delayed(Duration(milliseconds: 100), () {
+  //       final maxScrollExtent = _scrollController.position.maxScrollExtent;
+  //       final targetOffset = (_previousScrollOffset <= maxScrollExtent)
+  //           ? _previousScrollOffset
+  //           : maxScrollExtent;
+
+  //       _scrollController.position.animateTo(
+  //         targetOffset,
+  //         duration: Duration(milliseconds: 100),
+  //         curve: Curves.easeOut,
+  //       );
+  //     });
+  //   }
+  // }
+
   void _scrollToBottom() {
     if (_scrollController.hasClients && _shouldScrollToBottom) {
       Future.delayed(Duration(milliseconds: 300), () {
-        _scrollController.position.jumpTo(_previousScrollOffset);
+        _scrollController.position.animateTo(
+          _previousScrollOffset,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
       });
     }
   }
 
   /// SCROLL TO END
+  // void _scrollToEnd() {
+  //   if (_scrollController.hasClients) {
+  //     Future.delayed(Duration(milliseconds: 100), () {
+  //       _scrollController.animateTo(
+  //         _scrollController.position.maxScrollExtent,
+  //         duration: Duration(milliseconds: 100),
+  //         curve: Curves.easeOut,
+  //       );
+  //       setState(() {
+  //         _previousScrollOffset = _scrollController.position.maxScrollExtent;
+  //         print('_previousScrollOffset:${_previousScrollOffset}');
+  //       });
+  //     });
+  //   }
+  // }
+
   void _scrollToEnd() {
     if (_scrollController.hasClients) {
-      Future.delayed(Duration(milliseconds: 300), () {
+      final maxScroll = _scrollController.position.maxScrollExtent;
+      print("Max Scroll Extent: $maxScroll");
+
+      // Check if scroll controller position is at the bottom
+      if (maxScroll > 0) {
         _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
+          maxScroll,
+          duration: Duration(milliseconds: 200),
           curve: Curves.easeOut,
         );
+
         setState(() {
-          _previousScrollOffset = _scrollController.position.maxScrollExtent;
+          _previousScrollOffset = maxScroll;
+          print('_previousScrollOffset: $_previousScrollOffset');
         });
-      });
+      } else {
+        print("No content to scroll.");
+      }
+    } else {
+      print("Scroll controller doesn't have clients.");
     }
   }
 
   /// load more msg
   Future<void> _loadMoreMessages() async {
+    print('_loadMoreMessages call:');
     setState(() {
       _isLoadingMore = true;
       _shouldScrollToBottom = false;
@@ -91,9 +143,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     // Fetch older messages from server via ChatGroupCubit
     await context.read<ChatGroupCubit>().fetchOlderMessages();
     // Restore the previous scroll position after loading more messages
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_previousScrollOffset + 500);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollController.jumpTo(_previousScrollOffset + 500);
+    // });
     setState(() {
       _isLoadingMore = false;
     });
@@ -135,6 +187,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             color: Colors.black,
           ),
           onTap: () {
+            //chatGroupCubit.
             context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
             Navigator.pop(context);
           },
@@ -251,8 +304,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 // };
                 if (messageEC.text.trim() != "") {
                   final payload = {
-                    'group_id': widget.roomId,
-                    'msg': messageEC.text
+                    'groupId': widget.roomId,
+                    'message': messageEC.text
                   };
                   context.read<ChatGroupCubit>().sendMessage(payload, true);
                   // fileToUpload = null;
@@ -286,7 +339,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
   String formatDate(String dateStr) {
     try {
-      DateFormat format = DateFormat("yyyy-MM-dd"); //  HH:mm:ss
+      DateFormat format = DateFormat("yyyy-MM-dd");
       DateFormat dateFormat = DateFormat('d MMMM yyyy');
       DateTime dateTime = format.parse(dateStr);
 
@@ -372,14 +425,24 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
               break;
           }
           if (state.status == Status.success && !_isLoadingMore) {
+            print('check _isLoadingMore:$_isLoadingMore');
             _shouldScrollToBottom = true;
             _scrollToBottom();
           }
+          // if (state.status == Status.success && state.page == 1) {
+          //   print('page number:${state.page}');
+          //   // _scrollToEnd();
+          //   Future.delayed(Duration(milliseconds: 100), () {
+          //     if (_scrollController.hasClients) {
+          //       _scrollToEnd();
+          //     }
+          //   });
+          // }
           if (state.status == Status.success && state.page == 1) {
-            Future.delayed(Duration(milliseconds: 100), () {
-              if (_scrollController.hasClients) {
-                _scrollToEnd();
-              }
+            print('Page number: ${state.page}');
+            // Ensure the scroll action occurs after the widget layout is completed
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToEnd();
             });
           }
         },
@@ -403,6 +466,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 pinnedMessages = [
                   ...state.messages.where((element) => element.isPinned)
                 ];
+                print('pinnedMessages:$pinnedMessages');
               }
 
               return Container(
@@ -441,6 +505,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               state.messages.length + (_isLoadingMore ? 1 : 0),
                           itemBuilder: (context, index) {
                             if (index >= state.messages.length) {
+                              print('call');
                               return SizedBox.shrink();
                             }
 

@@ -51,6 +51,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     print('...login response: ${response.body}');
 
     if (response.statusCode == 200) {
+      final jwtToken = response.headers['authorization'] ?? '';
+      print('yes this token:$jwtToken');
+
       /// Assuming the response headers contain the Set-Cookie header
       /// extract data from response
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
@@ -74,6 +77,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
 
       /// set data to local
+      ShardPrefHelper.setJwtToken(jwtToken);
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setAccessToken(accessToken);
       ShardPrefHelper.setRefreshToken(refreshToken);

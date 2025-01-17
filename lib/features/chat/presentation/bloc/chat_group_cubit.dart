@@ -34,28 +34,41 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
       print('New msg receive:$message');
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
-          'id': DateTime.now().toString(),
-          'date': DateTime.now().toString(),
+          'id': message['groupId'],
+          'date': message['sendAt'],
           'isMine': false,
           'readByuser': false,
           'isAdmin': false,
           'isPinned': false,
           'repliesCount': 0,
-          'cheers': 0,
-          'boos': 0,
+          'cheers': message['cheers'],
+          'boos': message['boos'],
           'booOrCheer': '',
           'pictureUrl': '',
-          'text': message['msg'],
+          'text': message['message'],
           'author': {
-            "userId": "1111",
-            "userName": "$userName",
+            "userId": message['userId'],
+            "userName": message['name'],
             "picture": "$userImage",
             "karma": 1
           }
         }
       ])[0];
-      addMessage(chatmodel); // Add message to state
+      addMessage(chatmodel);
     };
+  }
+
+  /// add msg
+  addMessage(ChatMessageModel message) {
+    List<ChatMessageModel> updatedMessages =
+        List<ChatMessageModel>.from(state.messages);
+
+    // Emit the updated state with the new list of messages
+    final updatedMessagesList = [
+      ...updatedMessages,
+      ...[message]
+    ];
+    emit(state.copyWith(status: Status.success, messages: updatedMessagesList));
   }
 
   /// get group msgs
@@ -95,25 +108,33 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     );
   }
 
-  Future<void> fetchOlderMessages(
-      {bool? hideLoading = false, String? dateFrom}) async {
+  Future<void> fetchOlderMessages({
+    bool? hideLoading = false,
+    String? dateFrom,
+  }) async {
     try {
       // Simulate fetching older messages from the server (implement API call)
       print(
           '... BLOC update getGroupRoomMessages hideLoading=$hideLoading dateFrom=$dateFrom');
       List<ChatMessageModel> olderMessages = state.messages;
+      print('olderMessages:${olderMessages.length}');
       print('state.page ${state.page}');
       print(state.page + 1);
       final result = await getChatGroupRoomMessagesUseCase(
-          roomId: state.roomId, page: state.page + 1);
+        roomId: state.roomId,
+        page: state.page + 1,
+      );
 
       result.fold(
         (failure) {
           print('...BLOC getGroupRoomMessages ERROR: ${failure.message}');
-          emit(state.copyWith(
+          emit(
+            state.copyWith(
               status: Status.failure,
               failure: failure,
-              errorMessage: failure.message));
+              errorMessage: failure.message,
+            ),
+          );
         },
         (messageList) {
           print('...BLOC getGroupRoomMessages list: $messageList');
@@ -130,37 +151,11 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   /// send msg
   void sendMessage(Map<String, String> payload, bool isMsg) {
     socketService.sendMessage(state.roomId, payload, isMsg);
-    if (isMsg) {
-      ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
-        {
-          'id': DateTime.now().toString(),
-          'date': DateTime.now().toString(),
-          'isMine': true,
-          'readByuser': true,
-          'isAdmin': true,
-          'isPinned': false,
-          'repliesCount': 0,
-          'cheers': 0,
-          'boos': 0,
-          'booOrCheer': '',
-          'pictureUrl': '',
-          'text': payload['msg'],
-          'author': {
-            "userId": '$userId',
-            "userName": "$userName",
-            "picture": "$userImage",
-            "karma": 1
-          }
-        }
-      ])[0];
-      addMessage(chatmodel);
-    }
   }
 
   /// on disconnect
-  void disconnectChat(String roomId) {
-    print('disconnet');
-    socketService.dispose(roomId);
+  void disconnectChat(String roomId) async {
+    socketService.dispose(state.roomId);
   }
 
   // updateMessage(ChatMessageModel updatedMessage) {
@@ -176,18 +171,6 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   //           errorMessage: 'dfsaf'));
   //   emit(state.copyWith(status: Status.success, messages: updatedMessages));
   // }
-  /// add msg
-  addMessage(ChatMessageModel message) {
-    List<ChatMessageModel> updatedMessages =
-        List<ChatMessageModel>.from(state.messages);
-
-    // Emit the updated state with the new list of messages
-    final updatedMessagesList = [
-      ...updatedMessages,
-      ...[message]
-    ];
-    emit(state.copyWith(status: Status.success, messages: updatedMessagesList));
-  }
 
   @override
   Future<void> close() {

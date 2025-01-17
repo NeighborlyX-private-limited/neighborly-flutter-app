@@ -5,13 +5,18 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../chat/data/model/chat_room_model.dart';
 
-class CommunitySectionChat extends StatelessWidget {
+class CommunitySectionChat extends StatefulWidget {
   final CommunityModel community;
   const CommunitySectionChat({
     super.key,
     required this.community,
   });
 
+  @override
+  State<CommunitySectionChat> createState() => _CommunitySectionChatState();
+}
+
+class _CommunitySectionChatState extends State<CommunitySectionChat> {
   @override
   Widget build(BuildContext context) {
     double space = 6;
@@ -23,20 +28,20 @@ class CommunitySectionChat extends StatelessWidget {
           children: [
             SizedBox(height: space),
             TileChat(
-              name: community.name,
-              avatarUrl: community.avatarUrl,
-              lastMessage: "This is the last message", // Mock data
-              lastMessageTime: DateTime.now().toIso8601String(), // Mock data
+              name: widget.community.name,
+              avatarUrl: widget.community.avatarUrl,
+              lastMessage: "This is the last message",
+              lastMessageTime: DateTime.now().toIso8601String(),
               onTap: () {
                 context.push(
-                  '/chat/group/${community.id}',
+                  '/chat/group/${widget.community.id}',
                   extra: ChatRoomModel(
-                    id: community.id,
-                    name: community.name,
-                    avatarUrl: community.avatarUrl,
+                    id: widget.community.id,
+                    name: widget.community.name,
+                    avatarUrl: widget.community.avatarUrl,
                     lastMessage: '',
                     lastMessageDate: DateTime.now().toIso8601String(),
-                    isMuted: false,
+                    isMuted: widget.community.isMuted,
                     isGroup: true,
                     unreadCount: 0,
                   ),
@@ -141,9 +146,9 @@ class TileChat extends StatelessWidget {
     final difference = now.difference(dateTime);
 
     if (difference.inDays > 0) {
-      return "${dateTime.day}/${dateTime.month}/${dateTime.year}"; // e.g., 02/01/2025
+      return "${dateTime.day}/${dateTime.month}/${dateTime.year}";
     } else {
-      return "${dateTime.hour}:${dateTime.minute}"; // e.g., 14:30
+      return "${dateTime.hour}:${dateTime.minute}";
     }
   }
 }

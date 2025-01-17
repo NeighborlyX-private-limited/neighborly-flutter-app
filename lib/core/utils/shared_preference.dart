@@ -6,6 +6,7 @@ class ShardPrefHelper {
 
   /// keys
   static const String _cookie = 'cookies';
+  static const String _jwtToken = 'jwtToken';
   static const String _accessToken = 'accessToken';
   static const String _refreshToken = 'refreshToken';
   static const String _userID = 'userID';
@@ -33,6 +34,14 @@ class ShardPrefHelper {
 
   static Future removeAccessToken() async =>
       await _preferences.remove(_accessToken);
+
+  ///...... setAccessToken
+  static Future setJwtToken(String jwtToken) async =>
+      await _preferences.setString(_jwtToken, jwtToken);
+
+  static String? getJwtToken() => _preferences.getString(_jwtToken) ?? '';
+
+  static Future removeJwtToken() async => await _preferences.remove(_jwtToken);
 
   ///......setRefreshToken
   static Future setRefreshToken(String refreshToken) async =>
