@@ -59,6 +59,18 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'range': '$radius',
       };
     }
+    // var isMode = ShardPrefHelper.getIsModeLocationOn();
+    // if (isMode && !isHome) {
+    //   List<double> modeLocation = ShardPrefHelper.getModeLocation();
+    //   double lat = modeLocation[0];
+    //   double long = modeLocation[1];
+    //   queryParameters = {
+    //     'home': 'false',
+    //     'latitude': '$lat',
+    //     'longitude': '$long',
+    //     'range': '$radius',
+    //   };
+    // }
     try {
       final response = await client.get(
         Uri.parse(url).replace(queryParameters: queryParameters),
@@ -255,7 +267,10 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     */
 
     //String url = commentId == '0'? '$kBaseUrl/posts/fetch-comments/$postId' : '$kBaseUrl/posts/fetch-comment-thread/$commentId';
-    String url = '$kBaseUrl/posts/fetch-comments/$postId';
+    // String url = '$kBaseUrl/posts/fetch-comments/$postId';
+    int pagenumber = 1;
+    String url =
+        '$kBaseUrl/posts/fetch-comments/$postId?page=${pagenumber ?? 1}?limit=100';
     print("url: $url");
     final response = await client.get(
       Uri.parse(url),
@@ -269,6 +284,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     print('getCommentsByPostId api response: ${response.body}');
 
     if (response.statusCode == 200) {
+      print('totalItems:${jsonDecode(response.body)['comments']}.length');
       final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
       return jsonData
           .map((data) => CommentModel.fromJson(data, postId))

@@ -249,6 +249,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             const SizedBox(width: 10),
             BlocConsumer<AddCommentBloc, AddCommentState>(
               listener: (context, state) {
+                if (state is AddCommentSuccessState) {
+                  _fetchPostAndComments();
+                }
                 // if (state is AddCommentSuccessState) {
                 //   showDialog(
                 //     context: context,

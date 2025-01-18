@@ -96,9 +96,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                     widget.post.userName,
                     style: mediumTextStyleBlack,
                   ),
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  Text(" "),
                   Text(
                     AppLocalizations.of(context)!.commented_on_this,
                     // 'Commented on this',
@@ -420,6 +418,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                       const SizedBox(
                                         height: 10,
                                       ),
+                                      // Text('hello'),
                                       ProfileReactionCommentWidget(
                                         postComment: widget.post,
                                         isPost:
