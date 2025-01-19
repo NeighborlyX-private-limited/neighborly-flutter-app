@@ -1419,16 +1419,28 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       _condition == 'post'
                           ? InkWell(
                               onTap: () {
-                                setState(() {
-                                  _condition = 'poll';
-                                });
+                                if (_condition == 'post') {
+                                  setState(() {
+                                    _condition = 'poll';
+                                  });
+                                } else {
+                                  setState(() {
+                                    _condition = 'post';
+                                  });
+                                }
                               },
                               child: Row(
                                 children: [
                                   SvgPicture.asset('assets/create_a_poll.svg'),
                                   const SizedBox(width: 10),
+                                  if (_condition == 'post')
+                                    Text(
+                                      AppLocalizations.of(context)!.create_a_poll,
+                                      style: mediumTextStyleBlack,
+                                    )
+                                  else
                                   Text(
-                                    AppLocalizations.of(context)!.create_a_poll,
+                                    AppLocalizations.of(context)!.create_a_post,
                                     style: mediumTextStyleBlack,
                                   ),
                                 ],
