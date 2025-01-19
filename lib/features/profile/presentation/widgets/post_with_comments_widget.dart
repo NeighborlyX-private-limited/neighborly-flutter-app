@@ -85,7 +85,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           shape: BoxShape.circle,
                         ),
                         child: Image.network(
-                          userProPic,
+                          // userProPic,
+                          widget.post.commenterProfilePicture,
                           fit: BoxFit.contain,
                         )),
                   ),
@@ -345,7 +346,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                     ),
                                     child: widget.post.content.proPic != null
                                         ? Image.network(
-                                            userProPic,
+                                            widget.post.commenterProfilePicture,
+                                            // userProPic,
                                             fit: BoxFit.contain,
                                           )
                                         : Image.asset(

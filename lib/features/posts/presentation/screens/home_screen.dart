@@ -13,6 +13,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
+import 'package:new_version_plus/new_version_plus.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
@@ -47,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen>
   String? selectedMonth;
   String? selectedYear;
   bool isDobBtnActive = false;
+  // final newVersionPlus = NewVersionPlus();
 
   /// Generate lists for day, month, and year
   List<String> days =
@@ -65,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen>
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(0.0);
     }
+    // newVersionPlus.showAlertIfNecessary(context: context);
 
     setIsHome();
     fetchLocationAndUpdate();

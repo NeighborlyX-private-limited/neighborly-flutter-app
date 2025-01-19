@@ -6,6 +6,7 @@ class PostWithCommentsEntity extends Equatable {
   final String userId;
   final String userName;
   final String commentText;
+  final String commenterProfilePicture;
   final num commentId;
   final PostEntity content;
   final String createdAt;
@@ -16,6 +17,7 @@ class PostWithCommentsEntity extends Equatable {
   const PostWithCommentsEntity({
     required this.userId,
     required this.userName,
+    required this.commenterProfilePicture,
     required this.commentText,
     required this.commentId,
     required this.content,
@@ -36,5 +38,6 @@ class PostWithCommentsEntity extends Equatable {
         cheers,
         bools,
         awardType,
+        commenterProfilePicture
       ];
 }

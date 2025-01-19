@@ -6,6 +6,7 @@ class SpecificCommentModel extends SpecificCommentEntity {
   const SpecificCommentModel({
     required super.userId,
     required super.userName,
+    // required super.commentorPic,
     required super.createdAt,
     required super.cheers,
     required super.bools,
@@ -20,6 +21,7 @@ class SpecificCommentModel extends SpecificCommentEntity {
       awardType: json['awards'] as List<dynamic>,
       userId: json['userid'] as String,
       userName: json['username'] as String,
+      // commentorPic: json['commenterProfilePicture'] as String,
       content: PostModel.fromJson(json['content'] as Map<String, dynamic>),
       createdAt: json['createdat'] as String,
       cheers: json['cheers'],
@@ -40,6 +42,7 @@ class SpecificCommentModel extends SpecificCommentEntity {
       'text': commentText,
       'commentid': commentId,
       'content': content,
+      // 'commentorPic': commentorPic
     };
   }
 }

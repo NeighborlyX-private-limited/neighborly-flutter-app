@@ -435,6 +435,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 bools: 0,
                                 userFeedback: '',
                                 postid: postId.toString(),
+                                // commenterProfilePicture: '',
                               ),
                             );
                           },
