@@ -125,8 +125,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   userName,
                   style: TextStyle(
                     color: AppColors.whiteColor,
-                    fontSize: 16,
+                    // fontSize: 16,
+                    fontSize: MediaQuery.of(context).size.width * 0.03,
                     fontWeight: FontWeight.bold,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

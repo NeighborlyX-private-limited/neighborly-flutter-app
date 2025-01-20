@@ -92,17 +92,22 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                   const SizedBox(
                     width: 12,
                   ),
-                  Text(
-                    widget.post.userName,
-                    style: mediumTextStyleBlack,
+                  Flexible(
+                    child: Text(
+                      widget.post.userName,
+                      style: mediumTextStyleBlack,
+                    ),
                   ),
                   const SizedBox(
                     width: 12,
                   ),
-                  Text(
-                    AppLocalizations.of(context)!.commented_on_this,
-                    // 'Commented on this',
-                    style: mediumGreyTextStyleBlack,
+                  Flexible(
+                    child: Text(
+                      AppLocalizations.of(context)!.commented_on_this,
+                      // 'Commented on this',
+                      style: mediumGreyTextStyleBlack,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),

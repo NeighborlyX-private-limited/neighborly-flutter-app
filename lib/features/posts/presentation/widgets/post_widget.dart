@@ -32,6 +32,7 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     void showBottomSheet() {
       bottomSheet(context);
     }
@@ -109,17 +110,21 @@ class _PostWidgetState extends State<PostWidget> {
                                   ? Text(
                                       AppLocalizations.of(context)!
                                           .neighborly_user,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,
                                       ),
                                     )
                                   : Text(
                                       widget.post.userName,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 14,
+                                        // fontSize: 14,
+                                        fontSize:
+                                            MediaQuery.of(context).size.width *
+                                                0.03,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                               const SizedBox(
                                 width: 6,
@@ -135,13 +140,15 @@ class _PostWidgetState extends State<PostWidget> {
                               const SizedBox(
                                 width: 6,
                               ),
-                              Text(
-                                formatTimeDifference(widget.post.createdAt),
-                                style: TextStyle(
-                                  color: Colors.grey[500],
-                                  fontSize: 14,
-                                ),
-                              ),
+                              Text(formatTimeDifference(widget.post.createdAt),
+                                  style: TextStyle(
+                                    color: Colors.grey[500],
+                                    // fontSize: 14,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.02,
+                                  ),
+                                  overflow: TextOverflow.ellipsis),
                             ],
                           ),
                           Text(
