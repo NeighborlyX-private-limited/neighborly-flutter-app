@@ -100,115 +100,103 @@ class TutorialScreenState extends State<TutorialScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return SafeArea(
-      child: Scaffold(
-        body: BlocListener<TutorialCubit, TutorialState>(
-          bloc: _tutorialCubit,
-          listener: (context, state) {
-            ///success state
-            if (state is TutorialUpdateSuccess) {
-              context.go('/home/Home');
-            } else if (state is TutorialUpdateFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to update status: ${state.error}'),
-                ),
-              );
-            }
-          },
-          child: Stack(
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: SvgPicture.asset(
-                  tutorialImages[_currentPage],
-                  key: ValueKey<int>(_currentPage),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
+    return Scaffold(
+      body: BlocListener<TutorialCubit, TutorialState>(
+        bloc: _tutorialCubit,
+        listener: (context, state) {
+          ///success state
+          if (state is TutorialUpdateSuccess) {
+            context.go('/home/Home');
+          } else if (state is TutorialUpdateFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to update status: ${state.error}'),
               ),
-              Positioned(
-                top: screenHeight * topPositionOffset,
-                left: screenWidth * leftPositionOffset,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
-                  child: Container(
-                    key: ValueKey<int>(_currentPage),
-                    height: 300,
-                    width: screenWidth * 0.7,
-                    padding: const EdgeInsets.all(16.0),
-                    decoration: BoxDecoration(
-                      color: AppColors.whiteColor.withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.blackColor.withOpacity(0.26),
-                          blurRadius: 6,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            tutorialContent[_currentPage]['title']!,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.left,
+            );
+          }
+        },
+        child: Stack(
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: SvgPicture.asset(
+                tutorialImages[_currentPage],
+                key: ValueKey<int>(_currentPage),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+            Positioned(
+              top: screenHeight * topPositionOffset,
+              left: screenWidth * leftPositionOffset,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: Container(
+                  key: ValueKey<int>(_currentPage),
+                  height: 200,
+                  width: screenWidth * 0.7,
+                  padding: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.blackColor.withOpacity(0.26),
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          tutorialContent[_currentPage]['title']!,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
+                          textAlign: TextAlign.left,
                         ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            tutorialContent[_currentPage]['description']!,
-                            style: const TextStyle(fontSize: 14),
-                            textAlign: TextAlign.left,
+                      ),
+                      Align(
+                        alignment: Alignment.topLeft,
+                        child: Text(
+                          tutorialContent[_currentPage]['description']!,
+                          style: const TextStyle(fontSize: 14),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: _nextPage,
+                            child: Text(
+                              _currentPage < tutorialContent.length - 1
+                                  ? 'Next'
+                                  : 'End Tour',
+                            ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            if (_currentPage < tutorialContent.length - 1)
-                              ElevatedButton(
-                                onPressed: _skipTutorial,
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                child: const Text('Skip'),
-                              ),
-                            const SizedBox(width: 16),
-                            ElevatedButton(
-                              onPressed: _nextPage,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: Text(
-                                _currentPage < tutorialContent.length - 1
-                                    ? 'Next'
-                                    : 'End Tour',
+                          if (_currentPage < tutorialContent.length - 1)
+                            TextButton(
+                              onPressed: _skipTutorial,
+                              child: const Text(
+                                'Skip',
+                                style: TextStyle(color: AppColors.greyColor),
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
