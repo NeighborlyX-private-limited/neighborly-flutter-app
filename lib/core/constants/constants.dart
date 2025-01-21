@@ -1,8 +1,14 @@
+/// prod base url
+// const kBaseUrl = "https://prod.neighborly.in/api";
+// const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 // prod base url
 
 // const kBaseUrl = "https://prod.neighborly.in/api";
 // const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 
+/// dev base url
+const kBaseUrl = "https://dev.neighborly.in/api";
+const kBaseUrlNotification = "https://dev.neighborly.in/notification";
 // dev base url
 const kBaseUrl = "https://dev.neighborly.in/api";
 const kBaseUrlNotification = "https://dev.neighborly.in/notification";

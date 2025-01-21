@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
+import 'package:new_version_plus/new_version_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/shared_preference.dart';
@@ -42,12 +42,16 @@ class _MainPageState extends State<MainPage> {
   late PageController pageController;
 
   static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
+  final newVersionPlus = NewVersionPlus();
 
   /// init method
   @override
   void initState() {
     super.initState();
-    //pageController = PageController();
+    pageController = PageController();
+    newVersionPlus.showAlertIfNecessary(context: context);
+    AppVersionDetails();
+
     fetchLocationAndUpdate();
     updateFCMtokenNotification();
     _setDeepLinkListener();
@@ -64,6 +68,16 @@ class _MainPageState extends State<MainPage> {
   void dispose() {
     pageController.dispose();
     super.dispose();
+  }
+
+//// appversion details
+  void AppVersionDetails() async {
+    final status = await newVersionPlus.getVersionStatus();
+    print('version detals');
+    print(status?.canUpdate);
+    print(status?.localVersion);
+    print(status?.storeVersion);
+    print(status?.appStoreLink);
   }
 
   /// deep link listner
@@ -246,7 +260,7 @@ class _MainPageState extends State<MainPage> {
               ),
               label: AppLocalizations.of(context)!.home,
             ),
-             BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.groups,
               ),
@@ -259,11 +273,11 @@ class _MainPageState extends State<MainPage> {
               ),
               label: '',
             ),
-             BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(
                 Icons.calendar_month,
               ),
-              label:  AppLocalizations.of(context)!.events,
+              label: AppLocalizations.of(context)!.events,
             ),
             BottomNavigationBarItem(
               icon: Icon(

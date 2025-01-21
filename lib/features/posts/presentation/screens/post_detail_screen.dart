@@ -249,7 +249,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             const SizedBox(width: 10),
             BlocConsumer<AddCommentBloc, AddCommentState>(
               listener: (context, state) {
-                _fetchPostAndComments();
+                if (state is AddCommentSuccessState) {
+                  _fetchPostAndComments();
+                }
                 // if (state is AddCommentSuccessState) {
                 //   showDialog(
                 //     context: context,
@@ -433,6 +435,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 bools: 0,
                                 userFeedback: '',
                                 postid: postId.toString(),
+                                // commenterProfilePicture: '',
                               ),
                             );
                           },

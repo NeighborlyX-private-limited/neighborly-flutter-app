@@ -85,7 +85,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           shape: BoxShape.circle,
                         ),
                         child: Image.network(
-                          userProPic,
+                          // userProPic,
+                          widget.post.commenterProfilePicture,
                           fit: BoxFit.contain,
                         )),
                   ),
@@ -96,9 +97,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                     widget.post.userName,
                     style: mediumTextStyleBlack,
                   ),
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  Text(" "),
                   Text(
                     AppLocalizations.of(context)!.commented_on_this,
                     // 'Commented on this',
@@ -347,7 +346,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                     ),
                                     child: widget.post.content.proPic != null
                                         ? Image.network(
-                                            userProPic,
+                                            widget.post.commenterProfilePicture,
+                                            // userProPic,
                                             fit: BoxFit.contain,
                                           )
                                         : Image.asset(
@@ -420,6 +420,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                       const SizedBox(
                                         height: 10,
                                       ),
+                                      // Text('hello'),
                                       ProfileReactionCommentWidget(
                                         postComment: widget.post,
                                         isPost:

@@ -4,6 +4,7 @@ import '../../../../core/entities/post_enitity.dart';
 class SpecificCommentEntity extends Equatable {
   final String userId;
   final String userName;
+  // final String commentorPic;
   final String commentText;
   final num commentId;
   final PostEntity content;
@@ -15,6 +16,7 @@ class SpecificCommentEntity extends Equatable {
   const SpecificCommentEntity({
     required this.userId,
     required this.userName,
+    // required this.commentorPic,
     required this.commentText,
     required this.commentId,
     required this.content,
@@ -35,5 +37,6 @@ class SpecificCommentEntity extends Equatable {
         cheers,
         bools,
         awardType,
+        // commentorPic
       ];
 }

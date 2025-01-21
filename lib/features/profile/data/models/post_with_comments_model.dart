@@ -5,6 +5,7 @@ class PostWithCommentsModel extends PostWithCommentsEntity {
   const PostWithCommentsModel({
     required super.userId,
     required super.userName,
+    required super.commenterProfilePicture,
     required super.createdAt,
     required super.cheers,
     required super.bools,
@@ -19,6 +20,7 @@ class PostWithCommentsModel extends PostWithCommentsEntity {
       awardType: json['awards'] as List<dynamic>,
       userId: json['userid'] as String,
       userName: json['username'] as String,
+      commenterProfilePicture: json['commenterProfilePicture'] as String,
       content: PostModel.fromJson(json['content'] as Map<String, dynamic>),
       createdAt: json['createdat'] as String,
       cheers: json['cheers'],
@@ -39,6 +41,7 @@ class PostWithCommentsModel extends PostWithCommentsEntity {
       'text': commentText,
       'commentid': commentId,
       'content': content,
+      'commenterProfilePicture': commenterProfilePicture,
     };
   }
 }

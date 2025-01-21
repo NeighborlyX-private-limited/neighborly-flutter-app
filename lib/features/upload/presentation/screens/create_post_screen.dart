@@ -1336,7 +1336,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ),
                       _condition == 'poll'
-                          ? SizedBox()
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _condition = 'post';
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset('assets/create_a_poll.svg'),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    AppLocalizations.of(context)!.create_a_post,
+                                    style: mediumTextStyleBlack,
+                                  ),
+                                ],
+                              ),
+                            )
                           : InkWell(
                               onTap: () {
                                 _showVideoPickerOptions();
@@ -1400,7 +1416,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       //     ],
                       //   ),
                       // ),
-                      isPollOptionShow
+                      _condition == 'post'
                           ? InkWell(
                               onTap: () {
                                 setState(() {
@@ -1488,7 +1504,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 ],
                               ),
                             ),
-                      isPollOptionShow
+                      _condition == 'post'
                           ? InkWell(
                               onTap: () {
                                 setState(() {
@@ -1502,7 +1518,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 ],
                               ),
                             )
-                          : SizedBox()
+                          : InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _condition = 'post';
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset('assets/create_a_poll.svg'),
+                                  const SizedBox(width: 10),
+                                ],
+                              ),
+                            )
                     ],
                   ),
                 )),
