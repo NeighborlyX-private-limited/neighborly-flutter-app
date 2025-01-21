@@ -208,8 +208,8 @@ class _PostWidgetState extends State<PostWidget> {
                     widget.post.multimedia!.isNotEmpty &&
                     widget.post.multimedia!.length > 1
                 ? ImageSlider(
-                    multimedia: widget.post.multimedia ?? [],
-                  )
+                  multimedia: widget.post.multimedia ?? [],
+                )
                 : Container(),
             widget.post.multimedia != null &&
                     widget.post.multimedia!.isNotEmpty &&
