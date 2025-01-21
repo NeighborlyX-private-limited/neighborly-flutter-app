@@ -166,6 +166,10 @@ final GoRouter router = GoRouter(
         return const DeletedUserProfileScreen();
       },
     ),
+    GoRoute(
+      path: '/create',
+      builder: (context, state) => const CreatePostScreen(),
+    ),
     ShellRoute(
       builder: (context, state, child) {
         final String? childId = state.pathParameters['Home'];
@@ -223,10 +227,10 @@ final GoRouter router = GoRouter(
             event: state.extra != null ? state.extra as EventModel : null,
           ),
         ),
-        GoRoute(
-          path: '/create',
-          builder: (context, state) => const CreatePostScreen(),
-        ),
+        // GoRoute(
+        //  path: '/create',
+        //  builder: (context, state) => const CreatePostScreen(),
+        //  ),
         GoRoute(
           path: '/groups',
           builder: (context, state) => const CommunityScreen(),
