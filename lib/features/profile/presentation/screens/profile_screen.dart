@@ -91,12 +91,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         pinned: true,
                         backgroundColor: AppColors.whiteColor,
                         expandedHeight: 300.0,
-                        leading: IconButton(
-                          icon: const Icon(Icons.arrow_back),
-                          onPressed: () {
-                            context.go('/home/Home');
-                          },
-                        ),
+                        automaticallyImplyLeading: false,
                         title: _isTabBarVisible
                             ? Text(
                                 state.profile.username,
@@ -112,11 +107,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                               context.push(
                                   '/settingsScreen/${state.profile.karma.toString()}/${state.profile.findMe}');
                             },
-                            icon: const Icon(
-                              Icons.settings_outlined,
-                              size: 25,
-                              color: AppColors.blackColor,
-                            ),
+                            icon: SvgPicture.asset("assets/Vector.svg"),
+                            iconSize: 25,
                           ),
                         ],
                         flexibleSpace: FlexibleSpaceBar(
