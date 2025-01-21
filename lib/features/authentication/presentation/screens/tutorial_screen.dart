@@ -134,7 +134,7 @@ class TutorialScreenState extends State<TutorialScreen> {
                 duration: const Duration(milliseconds: 300),
                 child: Container(
                   key: ValueKey<int>(_currentPage),
-                  height: 200,
+                  height: 340,
                   width: screenWidth * 0.7,
                   padding: const EdgeInsets.all(16.0),
                   decoration: BoxDecoration(
