@@ -96,7 +96,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 onTap: () {
                   // TODO: remove this, only for presentation/test porpouse
                   // context.push('/groups/admin', extra: communityCache);
-                  print('...TAP menu SHARE');
                 },
                 icon: Icons.share,
                 iconSize: 20,
@@ -104,8 +103,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               const SizedBox(width: 10),
               AppbatButton(
                 onTap: () {
-                  print('...TAP menu settings');
-
                   // if (isAdmin) {
                   //   context.push('/groups/admin', extra: communityCache);
                   // } else {
@@ -125,13 +122,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       ),
       body: BlocConsumer<EventDetailCubit, EventDetailState>(
         listener: (context, state) {
-          // print('... state.currentUser: ${state.status}');
+          //
 
           if (state.eventDetails != null) {
             // var localEvent = state.eventDetails!;
-            print('\n\n\n... EVENT name=${state.eventDetails!.title}');
-            print('... EVENT isMine=${state.eventDetails!.isMine}');
-            print('... EVENT name=${state.eventDetails!.isJoined}');
           }
 
           switch (state.status) {
@@ -140,7 +134,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
             case Status.failure:
               // hideLoader();
               // showError(state.errorMessage ?? 'Some error');
-              print('ERROR ${state.failure?.message}');
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content:
@@ -182,7 +176,6 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               //   return Text('loading');
               // }
 
-              print('...state.event:$state');
               return Container(
                 // padding: EdgeInsets.only(top: 15),
                 width: double.infinity,
@@ -258,10 +251,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
                             if (state.eventDetails!.isMine == true)
                               AuthorArea(onCancel: () {
-                                print(' ON CANCEL pressed');
                                 eventDetailCubit.cancelEvent('reason');
                               }, onEdit: () {
-                                print(' ON EDIT pressed'); // XXXr
+                                // XXXr
                                 Navigator.of(context).pop();
                                 context.push('/events/edit',
                                     extra: state.eventDetails);
@@ -273,7 +265,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                               JoinArea(
                                 onJoin: () {
                                   // XXX
-                                  print('JOINED IN ${state.eventDetails}');
+
                                   // eventDetailCubit.onPressJoin();
                                   context.push('/events/join',
                                       extra: state.eventDetails);
@@ -443,7 +435,6 @@ class ChatArea extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
         color: AppColors.whiteColor,
-
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -529,7 +520,7 @@ class AboutArea extends StatelessWidget {
             moreStyle: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
-                color:Colors.blue),
+                color: Colors.blue),
             lessStyle: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.normal,
@@ -704,7 +695,9 @@ class _JoinAreaState extends State<JoinArea> {
                     : Text(
                         'Join',
                         style: TextStyle(
-                            color: _isChecked ? AppColors.whiteColor :AppColors.greyColor,
+                            color: _isChecked
+                                ? AppColors.whiteColor
+                                : AppColors.greyColor,
                             fontSize: 18,
                             height: 0.3),
                       ),
@@ -858,7 +851,9 @@ class AuthorArea extends StatelessWidget {
                         child: Text(
                           'Cancel',
                           style: TextStyle(
-                              color: AppColors.blackColor, fontSize: 18, height: 0.3),
+                              color: AppColors.blackColor,
+                              fontSize: 18,
+                              height: 0.3),
                         ),
                       ),
                     ),
@@ -887,7 +882,9 @@ class AuthorArea extends StatelessWidget {
                         child: Text(
                           'Yes',
                           style: TextStyle(
-                              color: AppColors.whiteColor,fontSize: 18, height: 0.3),
+                              color: AppColors.whiteColor,
+                              fontSize: 18,
+                              height: 0.3),
                         ),
                       ),
                     ),
@@ -928,8 +925,8 @@ class AuthorArea extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 1, vertical: 20),
                 child: Text(
                   'Cancel Event',
-                  style:
-                      TextStyle(color: AppColors.blackColor, fontSize: 18, height: 0.3),
+                  style: TextStyle(
+                      color: AppColors.blackColor, fontSize: 18, height: 0.3),
                 ),
               ),
             ),
@@ -960,8 +957,8 @@ class AuthorArea extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 1, vertical: 20),
                 child: Text(
                   'Edit Event',
-                  style:
-                      TextStyle(color: AppColors.whiteColor, fontSize: 18, height: 0.3),
+                  style: TextStyle(
+                      color: AppColors.whiteColor, fontSize: 18, height: 0.3),
                 ),
               ),
             ),

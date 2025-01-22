@@ -70,7 +70,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
       blockList: [],
       createdAt: DateTime.now().toString(),
     );
-    print('community: $communityCache');
 
     getUserId();
   }
@@ -883,7 +882,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
 
               /// success state
               if (state.status == Status.success) {
-                print('new communityCache');
                 communityCache = state.community;
               }
               return Column(
@@ -955,16 +953,16 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         //     isEmpty: (state.status != Status.loading && state.posts.isEmpty),
                         //     posts: state.posts,
                         //     onReport: (postId) {
-                        //       print('postId=$postId');
+
                         //     },
                         //     onDelete: (postId) {
-                        //       print('postId=$postId');
+
                         //     },
                         //     onTap: (postId) {
-                        //       print('postId=$postId');
+
                         //     },
                         //     onReact: (postId) {
-                        //       print('postId=$postId');
+
                         //     }),
                         //
 

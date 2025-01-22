@@ -67,8 +67,6 @@ class LocaleNotificationManager {
       [int? id]) {
     if (notification.notification == null) return;
 
-    print(
-        '... LocaleNotificationManager displayNotification notification: ${notification.toString()}');
     var localeNotification = FlutterLocalNotificationsPlugin();
     var smallIcon = notification.notification?.android?.smallIcon;
 
@@ -122,15 +120,6 @@ class LocaleNotificationManager {
     );
     var id0 = id ?? DateTime.now().difference(DateTime(2021)).inSeconds;
 
-    print('...LocaleNotificationManager displayNotification _id: $id0');
-    print(
-        '...LocaleNotificationManager displayNotification title: ${notification.notification!.title}');
-    print(
-        '...LocaleNotificationManager displayNotification body: ${notification.notification!.body}');
-    print(
-        '...LocaleNotificationManager displayNotification _details: $details');
-    print(
-        '...LocaleNotificationManager displayNotification payload: ${jsonEncode(notification.toMap())}');
     try {
       localeNotification.show(
         id0,
@@ -139,9 +128,7 @@ class LocaleNotificationManager {
         details,
         payload: jsonEncode(notification.toMap()),
       );
-    } catch (e) {
-      print('LocaleNotificationManager ERROR: $e');
-    }
+    } catch (e) {}
   }
 
   static Importance _getImportance(RemoteNotification notification) {

@@ -24,11 +24,9 @@ class CommunityCreateCubit extends Cubit<CommunityCreateState> {
       community: newCommunity,
       pictureFile: pictureFile,
     );
-    print('....create group result cubit: $result');
 
     result.fold(
       (failure) {
-        print('...create group failure cubit: ${failure.message}');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -38,7 +36,6 @@ class CommunityCreateCubit extends Cubit<CommunityCreateState> {
         );
       },
       (newCommunityId) {
-        print('....group id create group cubit:$newCommunityId');
         emit(
           state.copyWith(
             status: Status.success,

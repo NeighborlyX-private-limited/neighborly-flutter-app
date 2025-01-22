@@ -29,13 +29,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           community: community,
           pictureFile: pictureFile,
         );
-        print('result in createCommunity repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('ServerFailure in createCommunity repo impl: ${e.toString()}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error in createCommunity repo impl : ${e.toString()}');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -49,13 +47,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getAllCommunities();
-        print('result in getAllCommunities repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('ServerFailure in getAllCommunities repo impl: ${e.toString()}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error in getAllCommunities repo impl: ${e.toString()}');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -69,13 +65,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getUserGroups();
-        print('result in getUserGroups repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('ServerFailure in getUserGroups repo impl: ${e.toString()}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error in getUserGroups repo impl: ${e.toString()}');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -93,13 +87,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
         final result = await remoteDataSource.getCommunity(
           communityId: communityId,
         );
-        print('result in getCommunity repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('server failure in getCommunity repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error in getCommunity repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -119,13 +111,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           userId: userId,
         );
-        print('success result in makeAdmin repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in makeAdmin repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error in makeAdmin repo impl: ${e.toString()}');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -145,13 +135,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           userId: userId,
         );
-        print('success result in removeAdmin repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in removeAdmin repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error in removeAdmin repo impl: ${e.toString()}');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -171,13 +159,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           userId: userId,
         );
-        print('success result in joinGroup repo impl');
+
         return const Right(null);
       } on ServerFailure catch (e) {
-        print('failure in joinGroup repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error joinGroup in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -197,13 +183,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           userId: userId,
         );
-        print('success result in leaveCommunity repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in leaveCommunity repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error leaveCommunity in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -223,13 +207,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           newDisplayname: newDisplayname,
         );
-        print('success result in updateDisplayName repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in updateDisplayName repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error updateDisplayName in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -249,13 +231,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           newDescription: newDescription,
         );
-        print('success result in updateDescription repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in updateDescription repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error updateDescription in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -275,13 +255,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           newType: newType,
         );
-        print('success result in updateType repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in updateType repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error updateType in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -301,13 +279,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           pictureFile: pictureFile,
         );
-        print('success result in updateIcon repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in updateIcon repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error updateIcon in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -327,13 +303,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           newLocation: newLocation,
         );
-        print('success result in updateLocation repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in updateLocation repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error updateLocation in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -353,13 +327,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           newRadius: newRadius,
         );
-        print('success result in updateRadius repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in updateRadius repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error updateRadius in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -379,13 +351,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           isMute: isMute,
         );
-        print('success result in updateMute repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in updateMute repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error updateMute in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -405,13 +375,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           communityId: communityId,
           reason: reason,
         );
-        print('success result in reportCommunity repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in reportCommunity repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error reportCommunity in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -429,13 +397,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
         final result = await remoteDataSource.deleteCommunity(
           communityId: communityId,
         );
-        print('success result in deleteCommunity repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in deleteCommunity repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error deleteCommunity in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -457,13 +423,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           userId: userId,
           isBlock: isBlock,
         );
-        print('success result in updateBlock repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in updateBlock repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error updateBlock in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -477,13 +441,11 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getSearchHistoryAndTrends();
-        print('success result in getSearchHistoryAndTrends repo impl');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('failure in getSearchHistoryAndTrends repo impl:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch error getSearchHistoryAndTrends in repo impl $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {

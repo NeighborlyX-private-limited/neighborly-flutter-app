@@ -18,13 +18,10 @@ class ForgotPasswordBloc
       emit(ForgotPasswordLoadingState());
 
       final result = await _forgotPasswordUsecase.call(event.email);
-      print('...Result in ForgotPasswordBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(ForgotPasswordFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(ForgotPasswordSuccessState(message: response));
       });
     });

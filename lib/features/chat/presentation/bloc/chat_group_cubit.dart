@@ -31,7 +31,6 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
     /// listen for new messages
     socketService.onNewMessageReceived = (message) {
-      print('New msg receive:$message');
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
           'id': message['groupId'],
@@ -81,8 +80,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     String? userI = ShardPrefHelper.getUserProfilePicture();
     userName = userN;
     userImage = userI;
-    print(
-        '... BLOC getGroupRoomMessages hideLoading=$hideLoading dateFrom=$dateFrom');
+
     if (!hideLoading!) {
       emit(state.copyWith(status: Status.loading));
     }
@@ -92,7 +90,6 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
     result.fold(
       (failure) {
-        print('...BLOC getGroupRoomMessages ERROR: ${failure.message}');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -102,7 +99,6 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
         );
       },
       (messageList) {
-        print('...BLOC getGroupRoomMessages list: $messageList');
         emit(state.copyWith(status: Status.success, messages: messageList));
       },
     );
@@ -114,12 +110,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   }) async {
     try {
       // Simulate fetching older messages from the server (implement API call)
-      print(
-          '... BLOC update getGroupRoomMessages hideLoading=$hideLoading dateFrom=$dateFrom');
+
       List<ChatMessageModel> olderMessages = state.messages;
-      print('olderMessages:${olderMessages.length}');
-      print('state.page ${state.page}');
-      print(state.page + 1);
+
       final result = await getChatGroupRoomMessagesUseCase(
         roomId: state.roomId,
         page: state.page + 1,
@@ -127,7 +120,6 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
       result.fold(
         (failure) {
-          print('...BLOC getGroupRoomMessages ERROR: ${failure.message}');
           emit(
             state.copyWith(
               status: Status.failure,
@@ -137,15 +129,12 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           );
         },
         (messageList) {
-          print('...BLOC getGroupRoomMessages list: $messageList');
           final updatedMessages = [...messageList, ...olderMessages];
 
           emit(state.copyWith(messages: updatedMessages, page: state.page + 1));
         },
       );
-    } catch (e) {
-      print('Error fetching older messages: $e');
-    }
+    } catch (e) {}
   }
 
   /// send msg
@@ -161,11 +150,11 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   // updateMessage(ChatMessageModel updatedMessage) {
   //   final updatedMessages = state.messages.map((message) {
   //     if(message.id == updatedMessage.id){
-  //       print('sdffas $updatedMessage');
+
   //     }
   //       return message.id == updatedMessage.id ? updatedMessage : message;
   //     }).toList();
-  //     print('update message $updatedMessages');
+
   //    emit(state.copyWith(
   //           status: Status.failure,
   //           errorMessage: 'dfsaf'));

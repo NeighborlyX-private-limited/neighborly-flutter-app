@@ -372,7 +372,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         // Calculate video size
         int fileSizeInBytes = _videoFile!.lengthSync();
         double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-        print('Video size before: ${fileSizeInMB.toStringAsFixed(2)} MB');
 
         if (fileSizeInMB > 50) {
           if (mounted) {

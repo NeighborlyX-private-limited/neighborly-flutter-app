@@ -51,7 +51,7 @@ class _CommunityAdminLocationScreenState
         ),
         title: Text(
           AppLocalizations.of(context)!.location,
-         // 'Location',
+          // 'Location',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -64,15 +64,15 @@ class _CommunityAdminLocationScreenState
               onPressed: () {
                 if (newLocationEC.text.trim() == '') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(
+                    SnackBar(
                       content: Text(
-                        AppLocalizations.of(context)!.select_a_location_to_be_saved,
-                       // 'Select a location to be saved'
-                        ),
+                        AppLocalizations.of(context)!
+                            .select_a_location_to_be_saved,
+                        // 'Select a location to be saved'
+                      ),
                     ),
                   );
                 } else {
-                  print('SAVE');
                   communityCubit.updateLocation(
                       communityCubit.state.community?.id ?? '',
                       newLocationEC.text.trim());
@@ -81,7 +81,7 @@ class _CommunityAdminLocationScreenState
               },
               child: Text(
                 AppLocalizations.of(context)!.save,
-               // 'Save',
+                // 'Save',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
@@ -106,7 +106,8 @@ class _CommunityAdminLocationScreenState
                     newLocationEC.text = value ?? '';
                   },
                   initialValue: newLocationEC.text,
-                  placeholder: AppLocalizations.of(context)!.type_to_search_location,
+                  placeholder:
+                      AppLocalizations.of(context)!.type_to_search_location,
                   // 'Type to search location',
                 ),
               ),

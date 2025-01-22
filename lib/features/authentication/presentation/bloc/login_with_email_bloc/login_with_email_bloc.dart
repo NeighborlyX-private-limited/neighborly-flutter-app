@@ -23,13 +23,10 @@ class LoginWithEmailBloc
       emit(LoginLoadingState());
 
       final result = await _loginUser.call(event.email, event.password);
-      print('...Result in LoginWithEmailBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(LoginFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(LoginSuccessState(authResponseEntity: response));
       });
     });
@@ -42,12 +39,10 @@ class LoginWithEmailBloc
       emit(LoginLoadingState());
 
       final result = await _googleLogin.call();
-      print('...Result in GoogleLoginEvent $result');
+
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(LoginFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(OAuthSuccessState(message: 'true'));
       });
     });

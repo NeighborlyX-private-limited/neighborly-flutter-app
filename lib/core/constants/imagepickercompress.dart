@@ -53,7 +53,7 @@ Future<XFile> compressImage({
     if (compressedImage != null) {
       imageSizeMB = File(compressedImage.path).lengthSync() / (1024 * 1024);
       print(
-          "Compressed Image Size: ${imageSizeMB.toStringAsFixed(2)} MB with Quality: $currentQuality");
+          "Compressed Size: ${imageSizeMB.toStringAsFixed(2)} MB with Quality: $currentQuality");
     } else {
       break;
     }

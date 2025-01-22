@@ -45,11 +45,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
   /// calculate totla group member including admins
   void calculateGroupMemberCount() {
     groupMemberCount = widget.community.users.length;
-    // groupMemberCount = {
-    //   ...widget.community.admins,
-    //   ...widget.community.users,
-    // }.length;
-    print('groupMemberCount:$groupMemberCount');
+
     setState(() {});
   }
 

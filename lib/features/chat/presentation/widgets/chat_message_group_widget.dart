@@ -244,7 +244,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                 // #send
 
                 if (widget.onReply != null) {
-                  print('inside onReply');
                   widget.onReply!(widget.message, messageEC.text);
                 }
 
@@ -481,8 +480,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                 svgPath: 'assets/menu_reply_list.svg',
                                 iconSize: 25,
                                 onTap: () {
-                                  print('#replySee');
-
                                   widget.onTapReply(widget.message);
                                   _removeOverlay();
                                 }),
@@ -494,8 +491,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                 svgPath: 'assets/menu_reply.svg',
                                 iconSize: 25,
                                 onTap: () {
-                                  print('#reply');
-
                                   setState(() {
                                     showReplyInput = true;
                                     // FocusScope.of(context).requestFocus(messageFocusNode);
@@ -802,7 +797,6 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
         if (widget.showReply == true)
           GestureDetector(
             onTap: () {
-              print('inside reply...');
               widget.onTapReply(widget.message);
             },
             child: Container(
@@ -962,16 +956,16 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                         //   post: widget.message.toPost(),
                         //   repliesAvatar: widget.message.repliesAvatas,
                         //   onTapReply: () {
-                        //     print('onTAP replay');
+
                         //   },
                         //   onTapCheer: () {
-                        //     print('onTAP cheer');
+
                         //   },
                         //   onTapBool: () {
-                        //     print('onTAP bool');
+
                         //   },
                         //   onTapMessage: (PostEntity) {
-                        //     print('onTAP replay');
+
                         //   },
                         // ),
                       ),

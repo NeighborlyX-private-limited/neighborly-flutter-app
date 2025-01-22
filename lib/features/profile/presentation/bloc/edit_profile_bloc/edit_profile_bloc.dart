@@ -26,13 +26,10 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
         bio: event.bio,
         image: event.image,
       );
-      print('...Result in EditProfileBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(EditProfileFailureState(error: error.toString()));
       }, (response) {
-        // print('fold response: ${response.toString()}');
         emit(EditProfileSuccessState());
       });
     });

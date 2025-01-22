@@ -20,15 +20,12 @@ class GetUserGroupsBloc extends Bloc<GetUserGroupsEvent, GetUserGroupsState> {
         emit(GetUserGroupsLoadingState());
 
         final result = await _getUserGroupsUsecase.call();
-        print('...Result in GetUserGroupsBloc: $result');
 
         result.fold(
           (error) {
-            print('fold error in GetUserGroupsBloc: ${error.toString()}');
             emit(GetUserGroupsFailureState(error: error.toString()));
           },
           (communities) {
-            print('fold success response in GetUserGroupsBloc}');
             emit(GetUserGroupsSuccessState(communities: communities));
           },
         );

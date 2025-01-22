@@ -108,12 +108,12 @@ class NotificationTileWidget extends StatelessWidget {
 
                 // if (notification.eventId != null) {
                 //   // context.push('/events/detail/:eventId/${notification.eventId}');
-                //   print('/events/detail/:eventId/${notification.eventId}');
+
                 // }
 
                 // if (notification.groupId != null) {
                 //   // context.push('/groups/${notification.groupId}');
-                //   print('/groups/${notification.groupId}');
+
                 // }
 
                 // if (notification.messageId != null) {

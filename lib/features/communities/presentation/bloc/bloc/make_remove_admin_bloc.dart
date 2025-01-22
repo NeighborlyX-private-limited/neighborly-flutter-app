@@ -26,15 +26,12 @@ class MakeRemoveAdminBloc
           communityId: event.communityId,
           userId: event.userId,
         );
-        print('...Result in MakeAdminBloc $result');
 
         result.fold(
           (error) {
-            print('fold error in MakeAdminBloc: ${error.toString()}');
             emit(MakeRemoveAdminFailureState(error: error.toString()));
           },
           (response) {
-            print('fold success response in MakeAdminBloc}');
             emit(MakeAdminSuccessState());
           },
         );
@@ -51,15 +48,12 @@ class MakeRemoveAdminBloc
           communityId: event.communityId,
           userId: event.userId,
         );
-        print('...Result in RemoveAdminBloc: $result');
 
         result.fold(
           (error) {
-            print('fold error in RemoveAdminBloc: ${error.toString()}');
             emit(MakeRemoveAdminFailureState(error: error.toString()));
           },
           (response) {
-            print('fold success response in RemoveAdminBloc}');
             emit(RemoveAdminSuccessState());
           },
         );

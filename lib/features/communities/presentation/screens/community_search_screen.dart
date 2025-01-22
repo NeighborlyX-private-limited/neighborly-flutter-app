@@ -42,7 +42,6 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
   }
 
   void handleSearchTermSelection(String searchTermFromHistory) {
-    print('jump to same search');
     communitySearchCubit.getSearchResultBySumit(searchTermFromHistory);
   }
 
@@ -60,8 +59,6 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
           lintText: AppLocalizations.of(context)!.search,
           icon: Icons.search,
           onSearchTextChange: (currentStrSearchValue) {
-            print('... currentStrSearchValue=$currentStrSearchValue');
-            print('... SHOW? ${(currentStrSearchValue == '')}');
             // if (currentStrSearchValue == '') {
             setState(() {
               showDashInfo = currentStrSearchValue == '';
@@ -72,9 +69,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
               communitySearchCubit.cleanSearchTerm();
             }
           },
-          onFocusChange: (newFocusValie) {
-            print('... newFocusValie=$newFocusValie');
-          },
+          onFocusChange: (newFocusValie) {},
           onSuggestionSelected: (selectedItem) {
             // widget.onSuggestionSelected(selectedItem);
           },
@@ -92,7 +87,6 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
             return results;
           },
           onSubmit: (searchTerm) {
-            print('... SEARCH = $searchTerm');
             communitySearchCubit.getSearchResultBySumit(searchTerm);
           },
         ),
@@ -103,17 +97,16 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
             case Status.loading:
               break;
             case Status.failure:
-              print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-  content: Text(
-    '${AppLocalizations.of(context)!.something_went_wrong} ${state.failure?.message ?? ''}',
-  ),
-),
-               // SnackBar(
-                 // content:
-                 //     Text('Something went wrong! ${state.failure?.message}'),
-               // ),
+                  content: Text(
+                    '${AppLocalizations.of(context)!.something_went_wrong} ${state.failure?.message ?? ''}',
+                  ),
+                ),
+                // SnackBar(
+                // content:
+                //     Text('Something went wrong! ${state.failure?.message}'),
+                // ),
               );
               break;
             case Status.success:
@@ -145,9 +138,6 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                   communities: state.communities,
                   people: state.people,
                   onSelect: (selected) {
-                    print(
-                        'JUMP TO...${selected is CommunityModel ? "Community" : "Profile info"}');
-
                     if (selected is CommunityModel) {
                       Navigator.of(context).pop();
                       context.push('/groups/${selected.id}');
@@ -446,7 +436,6 @@ class _ResultAreaState extends State<ResultArea>
                 onPressed: () {
                   // Lógica ao clicar no botão
                   // context.go('/groups/create');
-                  print('JOIN');
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
@@ -489,9 +478,10 @@ class _ResultAreaState extends State<ResultArea>
   }
 
   Widget listArea(List<dynamic> list) {
-    if (list.isEmpty) return Text(
-      AppLocalizations.of(context)!.vazio,
-     // 'vazio'
+    if (list.isEmpty)
+      return Text(
+        AppLocalizations.of(context)!.vazio,
+        // 'vazio'
       );
 
     return Container(
@@ -540,14 +530,14 @@ class _ResultAreaState extends State<ResultArea>
                 isScrollable: true,
                 // labelPadding: EdgeInsets.only(left: 0, right: 20),
                 tabs: [
-                  Tab(child: tabTitle(
-                    AppLocalizations.of(context)!.communities
-                    // 'Communities'
-                    )),
-                  Tab(child: tabTitle(
-                    AppLocalizations.of(context)!.people
-                  //  'People'
-                    )),
+                  Tab(
+                      child: tabTitle(AppLocalizations.of(context)!.communities
+                          // 'Communities'
+                          )),
+                  Tab(
+                      child: tabTitle(AppLocalizations.of(context)!.people
+                          //  'People'
+                          )),
                 ],
               ),
             ),

@@ -31,7 +31,6 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
           .add(GetMyGroupsButtonPressedEvent(
         userId: userId,
       ));
-      print('bloc called');
     }
   }
 

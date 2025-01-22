@@ -18,13 +18,10 @@ class VotePollBloc extends Bloc<VotePollEvent, VotePollState> {
         pollId: event.pollId,
         optionId: event.optionId,
       );
-      print('...Result in VotePollBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(VotePollFailureState(error: error.toString()));
       }, (response) {
-        // print('fold response: ${response.toString()}');
         emit(VotePollSuccessState());
       });
     });

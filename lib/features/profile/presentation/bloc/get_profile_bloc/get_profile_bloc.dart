@@ -18,13 +18,10 @@ class GetProfileBloc extends Bloc<GetProfileEvent, GetProfileState> {
       emit(GetProfileLoadingState());
 
       final result = await _getProfileUsecase.call();
-      print('...Result in GetProfileBloc: $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetProfileFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(GetProfileSuccessState(profile: response));
       });
     });

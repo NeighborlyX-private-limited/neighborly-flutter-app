@@ -93,7 +93,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                   ),
                   BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
                     listener: (context, state) {
-                      print('yes this is called');
                       if (state.status == Status.failure) {
                         showSnackBar(
                           context: context,
@@ -102,7 +101,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                         );
                       }
                       if (state.status == Status.success) {
-                        print('yes this is called2');
                         communityMainCubit.getAllCommunities();
                         BlocProvider.of<GetUserGroupsBloc>(context)
                             .add(GetUserGroupsButtonPressedEvent());
@@ -120,7 +118,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                       if (state.status == Status.loading) {
                         return BouncingLogoIndicator(logo: 'logo');
                       }
-                      print('yes this is called3');
+
                       return ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
@@ -337,7 +335,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 svgPath: 'assets/menu_block.svg',
                 iconSize: 25,
                 onTap: () {
-                  print('Tapped');
                   context.push('/groups/admin/blocked');
                 },
               ),

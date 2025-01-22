@@ -51,10 +51,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       if (_scrollController.position.pixels ==
               _scrollController.position.minScrollExtent &&
           !_isLoadingMore) {
-        print(
-            '_scrollController.position.pixels:${_scrollController.position.pixels}');
-        print(
-            '_scrollController.position.minScrollExtent:${_scrollController.position.minScrollExtent}');
         _loadMoreMessages();
       }
     });
@@ -101,7 +97,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   //       );
   //       setState(() {
   //         _previousScrollOffset = _scrollController.position.maxScrollExtent;
-  //         print('_previousScrollOffset:${_previousScrollOffset}');
+
   //       });
   //     });
   //   }
@@ -110,7 +106,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   void _scrollToEnd() {
     if (_scrollController.hasClients) {
       final maxScroll = _scrollController.position.maxScrollExtent;
-      print("Max Scroll Extent: $maxScroll");
 
       // Check if scroll controller position is at the bottom
       if (maxScroll > 0) {
@@ -122,19 +117,13 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
         setState(() {
           _previousScrollOffset = maxScroll;
-          print('_previousScrollOffset: $_previousScrollOffset');
         });
-      } else {
-        print("No content to scroll.");
-      }
-    } else {
-      print("Scroll controller doesn't have clients.");
-    }
+      } else {}
+    } else {}
   }
 
   /// load more msg
   Future<void> _loadMoreMessages() async {
-    print('_loadMoreMessages call:');
     setState(() {
       _isLoadingMore = true;
       _shouldScrollToBottom = false;
@@ -170,7 +159,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     if (image != null) {
       setState(() {
         fileToUpload = File(image.path);
-        print('Do something with this file: ${fileToUpload?.path}');
+
         // TODO: send image as message
         // chatGroupCubit.sendMessage(message: '', image: fileToUpload);
       });
@@ -261,9 +250,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 controller: messageEC,
                 focusNode: messageFocusNode,
                 onChanged: (value) {
-                  if (value.trim() == "") {
-                    print("yes");
-                  }
+                  if (value.trim() == "") {}
                   if (value.trim() != "") {
                     setState(() {
                       isCommentFilled = messageEC.text.isNotEmpty;
@@ -373,8 +360,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   });
                 },
                 onUnpin: (messageTobeUnPinned) {
-                  print(
-                      '#unPinned : call remote to on message: ${messageTobeUnPinned.id}');
                   setState(() {
                     showPinned = false;
                   });
@@ -412,7 +397,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             case Status.loading:
               break;
             case Status.failure:
-              print('failure state: ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('oops something went wrong'),
@@ -425,12 +409,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
               break;
           }
           if (state.status == Status.success && !_isLoadingMore) {
-            print('check _isLoadingMore:$_isLoadingMore');
             _shouldScrollToBottom = true;
             _scrollToBottom();
           }
           // if (state.status == Status.success && state.page == 1) {
-          //   print('page number:${state.page}');
+
           //   // _scrollToEnd();
           //   Future.delayed(Duration(milliseconds: 100), () {
           //     if (_scrollController.hasClients) {
@@ -439,7 +422,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           //   });
           // }
           if (state.status == Status.success && state.page == 1) {
-            print('Page number: ${state.page}');
             // Ensure the scroll action occurs after the widget layout is completed
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _scrollToEnd();
@@ -466,7 +448,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 pinnedMessages = [
                   ...state.messages.where((element) => element.isPinned)
                 ];
-                print('pinnedMessages:$pinnedMessages');
               }
 
               return Container(
@@ -505,7 +486,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               state.messages.length + (_isLoadingMore ? 1 : 0),
                           itemBuilder: (context, index) {
                             if (index >= state.messages.length) {
-                              print('call');
                               return SizedBox.shrink();
                             }
 
@@ -529,15 +509,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                       msg.isMine,
 
                               /// ON TAP PRESS
-                              onTap: (msgSelected) {
-                                print('....selected=$msgSelected');
-                                print('lineCount=$lineCount');
-                              },
+                              onTap: (msgSelected) {},
 
                               /// ON REPLY
                               onReply: (msgIdToSendReply, message) {
-                                print('#send reply');
-
                                 context.push(
                                     '/chat/group/thread/${msgIdToSendReply.id}',
                                     extra: {
@@ -548,7 +523,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
                               /// on tap reply
                               onTapReply: (messageToOpen) {
-                                print('#onTag reply - only JUMP');
                                 context.push(
                                     '/chat/group/thread/${messageToOpen.id}',
                                     extra: {
@@ -559,8 +533,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
                               /// on tap cheer
                               onTapCheer: () {
-                                print(
-                                    '#onTap cheer - send to remote: ${state.messages[index]})');
                                 final payload = {
                                   'group_id': widget.roomId,
                                   'message_id': state.messages[index].id,
@@ -584,22 +556,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               },
 
                               ///ON REACT
-                              onReact: (messageId, reactOrAward) {
-                                print(
-                                    '#onTap react - send to remote award: $reactOrAward');
-                              },
-                              onReport: (messageId, reason) {
-                                print(
-                                    '#onTap report - send to remote reason: $reason');
-                              },
-                              onShare: (message) {
-                                print(
-                                    '#onTap share - do something to share: $message.id');
-                              },
-                              onPin: (messageToBePinned) {
-                                print(
-                                    '#onTap PIN - send to remote: $messageToBePinned.id');
-                              },
+                              onReact: (messageId, reactOrAward) {},
+                              onReport: (messageId, reason) {},
+                              onShare: (message) {},
+                              onPin: (messageToBePinned) {},
                             );
 
                             if (lastDate != dateSummary) {

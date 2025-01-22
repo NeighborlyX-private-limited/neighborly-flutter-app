@@ -21,13 +21,10 @@ class GetGenderAndDOBBloc
         gender: event.gender,
         dob: event.dob,
       );
-      print('...Result in GetGenderAndDOBBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetGenderAndDOBFailureState(error: error.toString()));
       }, (response) {
-        // print('fold response: ${response.toString()}');
         emit(GetGenderAndDOBSuccessState());
       });
     });

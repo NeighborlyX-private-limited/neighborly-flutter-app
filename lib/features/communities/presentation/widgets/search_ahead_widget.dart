@@ -113,7 +113,6 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                   onFieldSubmitted: (value) {
                     if (widget.onSubmit == null) return;
 
-                    print('...PRESS ENTER? $value');
                     widget.onSubmit!(value);
                   },
                   decoration: InputDecoration(
@@ -177,7 +176,7 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                 padding: const EdgeInsets.all(18.0),
                 child: Text(
                   AppLocalizations.of(context)!.type_to_search,
-                 // 'type to search', // 'nenhum resultado encontrado',
+                  // 'type to search', // 'nenhum resultado encontrado',
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -213,10 +212,10 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
                             //
                             Text(
                               result is CommunityModel
-                               ? '${result.membersCount} ${AppLocalizations.of(context)!.members}'
-      : '${result.karma} ${AppLocalizations.of(context)!.karma}',
-                                 // ? '${result.membersCount} Members'
-                                 // : '${result.karma} Karma',
+                                  ? '${result.membersCount} ${AppLocalizations.of(context)!.members}'
+                                  : '${result.karma} ${AppLocalizations.of(context)!.karma}',
+                              // ? '${result.membersCount} Members'
+                              // : '${result.karma} Karma',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontWeight: FontWeight.normal),
@@ -231,7 +230,7 @@ class _SearchAheadElementState extends State<SearchAheadElement> {
               },
               onSelected: (movie) {
                 searchEC.clear();
-                print(movie);
+
                 widget.onSuggestionSelected(movie);
               },
             ),

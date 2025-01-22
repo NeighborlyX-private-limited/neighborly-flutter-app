@@ -97,20 +97,15 @@ class MyAppState extends State<MyApp> {
   }
 
   Future<void> _setDeepLinkListener() async {
-    print("deep link received by vinay");
     try {
-      print("deep link received by vinay:");
       platform.setMethodCallHandler((MethodCall call) async {
-        print("deep link received by vinay :${call.method}");
         if (call.method == "onDeepLink") {
-          print("deep link received by vinay");
           setState(() {
             _deepLink = call.arguments;
-            print('deep link aaya $_deepLink');
+
             List? linksplit = _deepLink?.split('neighborly.in/');
             if (linksplit != null && linksplit.length > 1) {
               if (linksplit[1].contains('posts/')) {
-                print('this is post');
                 try {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => PostDetailScreen(
@@ -121,35 +116,26 @@ class MyAppState extends State<MyApp> {
                     ),
                   ));
                 } catch (e) {
-                  print("error aaya kch: $e");
                   //handle default page if error
                 }
-              } else {
-                print(
-                    'here you have to handle other navigation for url based on if condition.');
-              }
-            } else {
-              print("Empty means open default page.");
-            }
+              } else {}
+            } else {}
           });
         }
       });
-    } catch (e) {
-      print('error in deep: $e');
-    }
+    } catch (e) {}
   }
 
   // Future<void> _init() async {
-  //   print("init...");
+
   //   await _initUniLinks();
   // }
 
   // Future<void> _initUniLinks() async {
-  //   print("inside _initUniLinks...");
+
   //   try {
   //     _sub = linkStream.listen((String? link) {
-  //       print('is link fetched');
-  //       print('link $link');
+
   //       if (link != null) {
   //         setState(() {
   //           _linkMessage = link;
@@ -158,17 +144,17 @@ class MyAppState extends State<MyApp> {
   //         });
   //       }
   //     }, onError: (err) {
-  //       print('Error in deep link: $err');
+
   //     });
   //   } catch (e) {
-  //     print('error in main: $e');
+
   //   }
   // }
 
   // void _navigateToDeepLink(String link) {
-  //   print('is link fetched ....');
+
   //   try {
-  //     print('is link fetched..');
+
   //     // Parse the link and navigate to the corresponding screen
   //     // Example: If the link is "myapp://profile/123", navigate to profile screen
   //     final uri = Uri.parse(link);
@@ -178,7 +164,7 @@ class MyAppState extends State<MyApp> {
 
   //       switch (path) {
   //         case 'profile':
-  //           print('is link fetched profile');
+
   //           // Navigate to Profile screen
   //           Navigator.of(context).pushNamed('/profile', arguments: id);
   //           break;
@@ -186,7 +172,7 @@ class MyAppState extends State<MyApp> {
   //       }
   //     }
   //   } catch (e) {
-  //     print("error in navigate $e");
+
   //   }
   // }
 
@@ -199,9 +185,6 @@ class MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // if (_deepLink != null) {
-    //   print("deeplink null nahi hai...");
-    // }
     return MultiBlocProvider(
         providers: [
           BlocProvider<PaymentBloc>(

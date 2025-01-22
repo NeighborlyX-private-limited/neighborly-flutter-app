@@ -40,8 +40,6 @@ class _PostWithCommentsWidgetState
 
   uselocalpost() {
     setState(() {
-      print('post printing');
-      print(widget.post);
       post = widget.post.content;
     });
   }
@@ -109,7 +107,6 @@ class _PostWithCommentsWidgetState
             const Divider(),
             InkWell(
               onTap: () {
-                print('on click ${widget.post.content.type}');
                 if (widget.post.content.type == 'post') {
                   context.push(
                       '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
@@ -127,7 +124,6 @@ class _PostWithCommentsWidgetState
                     children: [
                       InkWell(
                         onTap: () {
-                          print('pic ${widget.post.content.proPic}');
                           if (widget.post.content.userName
                               .contains('[deleted]')) {
                             context.push('/deleted-user');

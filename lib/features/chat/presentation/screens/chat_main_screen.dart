@@ -124,7 +124,6 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
             case Status.loading:
               break;
             case Status.failure:
-              print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content:
@@ -166,10 +165,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                     return ChatTileWidget(
                       room: state.rooms[index],
                       onTap: (selectedRoom) {
-                        print('selectedRoom= ${state.rooms[index]}');
-
                         var goTo = selectedRoom.isGroup ? 'group' : 'private';
-                        print('... goTo=$goTo');
 
                         context.push('/chat/$goTo/${state.rooms[index].id}',
                             extra: state.rooms[index]);

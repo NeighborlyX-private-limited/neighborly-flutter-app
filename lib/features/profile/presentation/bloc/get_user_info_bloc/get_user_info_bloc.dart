@@ -18,13 +18,10 @@ class GetUserInfoBloc extends Bloc<GetUserInfoEvent, GetUserInfoState> {
       emit(GetUserInfoLoadingState());
 
       final result = await _getUserInfoUsecase.call(userId: event.userId);
-      print('...Result in GetUserInfoBloc: $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetUserInfoFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(GetUserInfoSuccessState(profile: response));
       });
     });

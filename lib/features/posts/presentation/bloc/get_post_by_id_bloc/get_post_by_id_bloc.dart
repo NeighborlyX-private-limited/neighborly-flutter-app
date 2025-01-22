@@ -18,13 +18,10 @@ class GetPostByIdBloc extends Bloc<GetPostByIdEvent, GetPostByIdState> {
       final result = await _getPostByIdUsecase.call(
         id: event.postId,
       );
-      print('...Result in GetPostByIdBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetPostByIdFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(GetPostByIdSuccessState(post: response));
       });
     });

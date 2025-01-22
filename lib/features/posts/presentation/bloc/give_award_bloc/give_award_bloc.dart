@@ -19,13 +19,10 @@ class GiveAwardBloc extends Bloc<GiveAwardEvent, GiveAwardState> {
         awardType: event.awardType,
         type: event.type,
       );
-      print('...Result in GiveAwardBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GiveAwardFailureState(error: error.toString()));
       }, (response) {
-        //print('fold response: ${response.toString()}');
         emit(GiveAwardSuccessState());
       });
     });

@@ -24,15 +24,12 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
           communityId: event.communityId,
           userId: null,
         );
-        print('...Result in JoinGroupBloc: $result');
 
         result.fold(
           (error) {
-            print('fold error in JoinGroupBloc: ${error.toString()}');
             emit(JoinGroupFailureState(error: error.toString()));
           },
           (response) {
-            print('fold success response in JoinGroupBloc}');
             emit(JoinGroupSuccessState());
           },
         );
@@ -48,15 +45,12 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
           communityId: event.communityId,
           userId: null,
         );
-        print('...Result in LeaveGroupBloc: $result');
 
         result.fold(
           (error) {
-            print('fold error in LeaveGroupBloc: ${error.toString()}');
             emit(JoinGroupFailureState(error: error.toString()));
           },
           (response) {
-            print('fold response in LeaveGroupBloc}');
             emit(LeaveGroupSuccessState());
           },
         );

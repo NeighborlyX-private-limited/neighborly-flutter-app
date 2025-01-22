@@ -18,14 +18,11 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
   ) : super(const ChatPrivateState());
 
   void init(String roomId) async {
-    print('... BLOC CHAT INDIVIDUAL init');
     emit(state.copyWith(roomId: roomId));
     await getRoomMessages();
   }
 
   Future getRoomMessages({bool? hideLoading = false, String? dateFrom}) async {
-    print(
-        '... BLOC getRoomMessages hideLoading=$hideLoading dateFrom=$dateFrom');
     if (!hideLoading!) {
       emit(state.copyWith(status: Status.loading));
     }
@@ -34,14 +31,12 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
 
     result.fold(
       (failure) {
-        print('...BLOC getRoomMessages ERROR: ${failure.message}');
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (messageList) {
-        print('...BLOC getRoomMessages list: $messageList');
         emit(state.copyWith(status: Status.success, messages: messageList));
       },
     );
@@ -51,20 +46,19 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
     var newMessage = ChatMessageModel(
-      id: '',
-      text: 'are you there?',
-      date: dateFormat.format(DateTime.now()),
-      isMine: false,
-      readByuser: false,
-      hasMore: false,
-      pictureUrl: '',
-      isAdmin: false,
-      isPinned: false,
-      repliesCount: 0,
-      cheers: 0,
-      boos: 0,
-      booOrCheer: ''
-    );
+        id: '',
+        text: 'are you there?',
+        date: dateFormat.format(DateTime.now()),
+        isMine: false,
+        readByuser: false,
+        hasMore: false,
+        pictureUrl: '',
+        isAdmin: false,
+        isPinned: false,
+        repliesCount: 0,
+        cheers: 0,
+        boos: 0,
+        booOrCheer: '');
     emit(state.copyWith(
         status: Status.success, messages: [newMessage, ...state.messages]));
   }
@@ -74,20 +68,19 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
   Future sendMessage({String? message, File? image}) async {
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
     var newMessage = ChatMessageModel(
-      id: '',
-      text: message ?? '',
-      date: dateFormat.format(DateTime.now()),
-      isMine: true,
-      readByuser: false,
-      hasMore: false,
-      pictureUrl: '',
-      isAdmin: false,
-      isPinned: false,
-      repliesCount: 0,
-      cheers: 0,
-      boos: 0,
-      booOrCheer: ''
-    );
+        id: '',
+        text: message ?? '',
+        date: dateFormat.format(DateTime.now()),
+        isMine: true,
+        readByuser: false,
+        hasMore: false,
+        pictureUrl: '',
+        isAdmin: false,
+        isPinned: false,
+        repliesCount: 0,
+        cheers: 0,
+        boos: 0,
+        booOrCheer: '');
     emit(state.copyWith(
         status: Status.success, messages: [newMessage, ...state.messages]));
   }

@@ -19,13 +19,10 @@ class SendFeedbackBloc extends Bloc<SendFeedbackEvent, SendFeedbackState> {
       final result = await _sendFeedbackUsecase.call(
         feedback: event.feedback,
       );
-      print('...Result in SendFeedbackBloc: $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(SendFeedbackFailureState(error: error.toString()));
       }, (response) {
-        // print('fold response: ${response.toString()}');
         emit(SendFeedbackSuccessState());
       });
     });

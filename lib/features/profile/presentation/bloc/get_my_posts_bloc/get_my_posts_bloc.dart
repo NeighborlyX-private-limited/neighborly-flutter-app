@@ -20,13 +20,10 @@ class GetMyPostsBloc extends Bloc<GetMyPostsEvent, GetMyPostsState> {
       final result = await _getMyPostsUsecase.call(
         userId: event.userId,
       );
-      print('...Result in GetMyPostsBloc: $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetMyPostsFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(GetMyPostsSuccessState(post: response));
       });
     });

@@ -148,8 +148,6 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                   // context.go('/groups/create');
                   ShareIt.text(
                       content: message, androidSheetTitle: 'Look this event');
-
-                  // print('shareResult: ${shareResult}');
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,

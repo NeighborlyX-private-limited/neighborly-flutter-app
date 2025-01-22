@@ -130,26 +130,11 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
 
     Future<void> handleMessage(RemoteMessage message) async {
       // this part works with the app in BACKGROUND
-      print('...FCMConfig handleMessage: $message');
-      print(
-          '...FCMConfig handleMessage existe order?: ${(message.data["order"] != null)}');
-      print(
-          '...FCMConfig handleMessage existe valor? order?: ${message.data["order"]}');
 
       MessageHandlerHelper(messageData: message.data).doTheJump();
     }
 
     FirebaseMessaging.onMessage.listen((notification) {
-      print('...FCMConfig listen - displayInForeground=$displayInForeground');
-      print('...FCMConfig listen - notification=$notification');
-      print(
-          '...FCMConfig listen - notification.notification:${notification.notification}');
-      print(
-          '...FCMConfig listen - notification.notificationBODY:${notification.notification?.body}');
-      print(
-          '...FCMConfig listen - notification.notificationTITLE:${notification.notification?.title}');
-      print(
-          '...FCMConfig listen - notification.notificationDATA:${notification.notification}');
       if (displayInForeground && notification.notification != null) {
         // MessageHandlerHelper(messageData: notification.data).doTheJump();
 
@@ -161,23 +146,19 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
         );
       }
     });
-    LocaleNotificationManager.onLocaleClick.stream
-        .listen((message) => handleMessage(message), onError: (error) {
-      print('...FCMConfig onLocaleClick error: $error');
-    }, onDone: () {
-      print('...FCMConfig onLocaleClick DONE');
-    });
-    FirebaseMessaging.onMessageOpenedApp
-        .listen((message) => handleMessage(message), onError: (error) {
-      print('...FCMConfig onMessageOpenedApp error:$error');
-    }, onDone: () {
-      print('...FCMConfig onMessageOpenedApp DONE');
-    });
+    LocaleNotificationManager.onLocaleClick.stream.listen(
+        (message) => handleMessage(message),
+        onError: (error) {},
+        onDone: () {});
+    FirebaseMessaging.onMessageOpenedApp.listen(
+        (message) => handleMessage(message),
+        onError: (error) {},
+        onDone: () {});
     // FirebaseMessaging.onMessageOpenedApp.listen(handleMessage,
     //     onError: (error) {
-    //   print('...FCMConfig onMessageOpenedApp error:$error');
+
     // }, onDone: () {
-    //   print('...FCMConfig onMessageOpenedApp DONE');
+
     // });
   }
 

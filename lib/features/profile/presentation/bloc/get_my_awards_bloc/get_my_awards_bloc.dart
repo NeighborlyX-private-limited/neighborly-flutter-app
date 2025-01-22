@@ -17,13 +17,10 @@ class GetMyAwardsBloc extends Bloc<GetMyAwardsEvent, GetMyAwardsState> {
       emit(GetMyAwardsLoadingState());
 
       final result = await _getMyAwardsUsecase.call();
-      print('...Result in GetMyAwardsBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetMyAwardsFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(GetMyAwardsSuccessState(awards: response));
       });
     });

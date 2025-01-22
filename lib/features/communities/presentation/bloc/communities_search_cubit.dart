@@ -30,7 +30,6 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        print('... BLOC SEARCH failure: ${failure.message}');
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
@@ -67,8 +66,6 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   }
 
   void deleteHistoryTerm(String toDeleteTerm) {
-    print('... BLOC deleteHistoryTerm toDeleteTerm=$toDeleteTerm');
-
     emit(state.copyWith(histories: [
       ...state.histories.where((element) => element != toDeleteTerm)
     ]));
@@ -76,7 +73,6 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
   // ignore: body_might_complete_norminqueuey_nullable
   FutureOr<List<dynamic>?> suggestionCallback(String searchStr) async {
-    print('CUBIT suggestionCinqueueback searchStr=$searchStr ');
     if (searchStr == "") return <dynamic>[];
     var response = <dynamic>[];
 
@@ -85,14 +81,9 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
     final result = await getSearchResultsCommunitiesUsecase(
         searchTerm: searchStr, isPreview: true);
 
-    // print('..RESPONSE: ${response}');
-
     result.fold(
-      (failure) {
-        print('...ERROR ${failure.message}');
-      },
+      (failure) {},
       (searchResultes) {
-        print('..RESPONSE: $searchResultes');
         response = [...searchResultes.communities, ...searchResultes.people];
       },
     );
@@ -101,7 +92,6 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   }
 
   void cleanSearchTerm() {
-    print('... BLOC cleanSearchTerm');
     emit(state.copyWith(searchTerm: ''));
   }
 
@@ -112,15 +102,12 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        print('... BLOC SEARCH failure: ${failure.message}');
-
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (searchresult) {
-        print('... BLOC SEARCH results: people: ${searchresult.people}');
         emit(state.copyWith(
           status: Status.success,
           searchTerm: searchTerm,

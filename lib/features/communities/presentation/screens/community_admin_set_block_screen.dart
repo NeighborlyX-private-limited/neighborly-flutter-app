@@ -32,7 +32,6 @@ class _CommunityAdminBlockedUsersScreenState
     blockedMembers = communityCubit.state.community?.blockList != null
         ? [...communityCubit.state.community!.blockList]
         : [];
-    print('details:${communityCubit.state.community}');
   }
 
   Future<dynamic> bottomSheet(BuildContext context, String userId) {
@@ -48,8 +47,9 @@ class _CommunityAdminBlockedUsersScreenState
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                AppLocalizations.of(context)!.are_you_sure_you_whant_to_Unblock_this_user,
-               // 'Are you sure you whant to Unblock this user?',
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_whant_to_Unblock_this_user,
+                // 'Are you sure you whant to Unblock this user?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -70,7 +70,7 @@ class _CommunityAdminBlockedUsersScreenState
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           AppLocalizations.of(context)!.cancel,
-                        //  'Cancel',
+                          //  'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -137,7 +137,7 @@ class _CommunityAdminBlockedUsersScreenState
                             padding: const EdgeInsets.symmetric(horizontal: 17),
                             child: Text(
                               AppLocalizations.of(context)!.unblock,
-                             // 'Unblock',
+                              // 'Unblock',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -218,7 +218,7 @@ class _CommunityAdminBlockedUsersScreenState
         ),
         title: Text(
           AppLocalizations.of(context)!.blocked_User,
-         // 'Blocked User',
+          // 'Blocked User',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -239,7 +239,7 @@ class _CommunityAdminBlockedUsersScreenState
                 child: Center(
                   child: Text(
                     AppLocalizations.of(context)!.no_Members,
-                   // 'No Members',
+                    // 'No Members',
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: Colors.grey,

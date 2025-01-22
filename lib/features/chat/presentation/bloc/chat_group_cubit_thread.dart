@@ -45,7 +45,6 @@ class ChatGroupCubitThread extends Cubit<ChatGroupStateThread> {
 
     result.fold(
       (failure) {
-        print('...BLOC getGroupRoomMessages ERROR: ${failure.message}');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -55,7 +54,6 @@ class ChatGroupCubitThread extends Cubit<ChatGroupStateThread> {
         );
       },
       (messageList) {
-        print('...BLOC getGroupRoomMessages list: $messageList');
         emit(state.copyWith(status: Status.success, messages: messageList));
       },
     );

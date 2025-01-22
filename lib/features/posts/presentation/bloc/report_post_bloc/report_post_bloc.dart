@@ -19,13 +19,10 @@ class ReportPostBloc extends Bloc<ReportPostEvent, ReportPostState> {
         type: event.type,
         postId: event.postId,
       );
-      print('...Result in ReportPostBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(ReportPostFailureState(error: error.toString()));
       }, (response) {
-        //print('fold response: ${response.toString()}');
         emit(ReportPostSuccessState());
       });
     });

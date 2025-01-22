@@ -137,8 +137,6 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final String data = state.pathParameters['data']!;
         final String verificationFor = state.pathParameters['verificationFor']!;
-        print('data:$data');
-        print('verificationFor:$verificationFor');
 
         return OtpScreen(data: data, verificationFor: verificationFor);
       },
@@ -166,10 +164,10 @@ final GoRouter router = GoRouter(
         return const DeletedUserProfileScreen();
       },
     ),
-    GoRoute(
-      path: '/create',
-      builder: (context, state) => const CreatePostScreen(),
-    ),
+    // GoRoute(
+    //   path: '/create',
+    //   builder: (context, state) => const CreatePostScreen(),
+    // ),
     ShellRoute(
       builder: (context, state, child) {
         final String? childId = state.pathParameters['Home'];
@@ -227,10 +225,10 @@ final GoRouter router = GoRouter(
             event: state.extra != null ? state.extra as EventModel : null,
           ),
         ),
-        // GoRoute(
-        //  path: '/create',
-        //  builder: (context, state) => const CreatePostScreen(),
-        //  ),
+        GoRoute(
+          path: '/create',
+          builder: (context, state) => const CreatePostScreen(),
+        ),
         GoRoute(
           path: '/groups',
           builder: (context, state) => const CommunityScreen(),
@@ -344,7 +342,6 @@ final GoRouter router = GoRouter(
       path: '/post-detail-of-specific-comment/:commentId',
       name: RouteConstants.postDetailOfSpecificCommentScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
-        print('here');
         final String commentId = state.pathParameters['commentId'] ?? '0';
         return PostDetailOfSpecificComment(
           commentId: commentId,

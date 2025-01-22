@@ -38,7 +38,6 @@ class _CustomToggleSwitchState extends State<CustomToggleSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    print("togggle click with index: $currentIndex");
     return ToggleSwitch(
       initialLabelIndex: currentIndex,
       minHeight: 35,

@@ -19,15 +19,12 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
           feedback: event.feedback,
           type: event.type,
         );
-        print('...Result in FeedbackBloc $result');
 
         result.fold(
           (error) {
-            print('fold error: ${error.toString()}');
             emit(FeedbackFailureState(error: error.toString()));
           },
           (response) {
-            //print('fold response: ${response.toString()}');
             emit(FeedbackSuccessState());
           },
         );

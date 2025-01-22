@@ -19,13 +19,10 @@ class AddCommentBloc extends Bloc<AddCommentEvent, AddCommentState> {
         text: event.text,
         commentId: event.commentId,
       );
-      print('...Result in ForgotPasswordBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(AddCommentFailureState(error: error.toString()));
       }, (response) {
-        // print('fold response: ${response.toString()}');
         emit(AddCommentSuccessState());
       });
     });

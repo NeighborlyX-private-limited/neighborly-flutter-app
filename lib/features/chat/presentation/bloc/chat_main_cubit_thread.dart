@@ -7,7 +7,6 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/shared_preference.dart';
@@ -27,12 +26,7 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
   ) : super(ChatMainStateThread());
 
   void init() async {
-    print('... BLOC CHAT MAIN init');
     await getAllRooms();
-
-    var cookieData = ShardPrefHelper.getCookie();
-
-    print('...cookieData=$cookieData');
   }
 
   Future getAllRooms() async {
@@ -41,7 +35,6 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
 
     result.fold(
       (failure) {
-        print('ERROR: ${failure.message}');
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
@@ -75,8 +68,7 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
   // CHAT ###########################################################################
   // void _setupChatSocket() {
   //   var baseUrlSocket = kBaseSocketUrl;
-  //   print(
-  //       '... CUBIT init _setupChatSocket baseUrlSocket=$baseUrlSocket _currentUser=${this._currentUser}');
+
   //   if (baseUrlSocket == '' || this._currentUser == null) return;
 
   //   if (socketChat != null) return;
@@ -92,38 +84,27 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
   //           .build());
 
   //   socketChat!.onConnect((_) {
-  //     print('... SOCK_CHAT: connect');
+
   //   });
 
   //   socketChat!.on('friendActive', (data) {
-  //     print('... SOCK_CHAT: on=friendActive:: ');
+
   //   });
 
   //   socketChat!.on('getAllConversations', (data) {
-  //     print('... SOCK_CHAT: on=getAllConversations:: ');
-  //     print(data);
-  //     // print(data['isActive'].runtimeType);
 
   //     if (data == null) return;
 
   //     // var conversations = data.map<ConversationModel>((c) => ConversationModel.fromMap(c)).toList();
 
-  //     // print('... SOCK_CHAT conversations=${conversations}');
-
   //     // emit(state.copyWith(conversations: conversations));
   //   });
 
   //   socketChat!.on('newMessage', (data) {
-  //     print('... SOCK_CHAT: on=newMessage:: ');
-  //     print(data);
-  //     // print(data['isActive'].runtimeType);
 
   //     if (data == null) return;
 
   //     var message = ChatMessageModel.fromMap(data);
-
-  //     print(
-  //         '... SOCK_CHAT message=${message} state.appIsOpen=${state.appIsOpen}');
 
   //     emit(state.copyWith(messages: [...state.messages, message]));
 
@@ -132,19 +113,15 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
   //     }
   //   });
 
-  //   socketChat!.onDisconnect((_) => print('... SOCK_CHAT: disconnect'));
-  //   socketChat!
-  //       .onConnectError((data) => print('... SOCK_CHAT: error: ${data}'));
-
   //   socketChat!.connect();
   //   socketChat!.emit('getConversations');
-  //   print('... SOCK_CHAT: setup done');
+
   // }
 
   // void startSocketPinger() {
   //   _periodicPinger = Timer.periodic(Duration(seconds: 10), (timer) {
   //     socketChat!.emit('ping');
-  //     print('... SOCK_CHAT: ping');
+
   //   });
   // }
 
@@ -192,9 +169,6 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
       ticker: 'ticker',
     );
 
-    print(
-        '... APP CUBIT showLocalNotification androidChannelId=$androidChannelId androidChannelName=$androidChannelName randomNumber=$randomNumber');
-
     NotificationDetails platformChannelSpecifics =
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
@@ -206,14 +180,6 @@ class ChatMainCubitThread extends Cubit<ChatMainStateThread> {
     );
   }
   // int getConversationId(int friendId) {
-  //   print('... getConversationId friendId=${friendId}');
-  //   print('... getConversationId _currentUser.id=${_currentUser.id}');
-  //   print('... getConversationId state.conversations=${state.conversations}\n');
-
-  //   // print('... getConversationId check1=${state.conversations[0].userIds.contains(int.parse(_currentUser.id))}');
-  //   // print('... getConversationId check2=${state.conversations[0].userIds.contains(friendId)}');
-  //   // print('... getConversationId check1.=${state.conversations[0].userIds[0]}');
-  //   // print('... getConversationId check1.=${state.conversations[0].userIds[0].runtimeType}');
 
   //   try {
   //     ConversationModel? conversartion = state.conversations.firstWhere(

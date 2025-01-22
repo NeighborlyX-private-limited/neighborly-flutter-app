@@ -35,15 +35,12 @@ class AddRemoveUserInGroupBloc
           communityId: event.communityId,
           userId: event.userId,
         );
-        print('...Result in AddRemoveUserInGroupBloc $result');
 
         result.fold(
           (error) {
-            print('fold error: ${error.toString()}');
             emit(AddRemoveUserInGroupFailureState(error: error.toString()));
           },
           (response) {
-            //  print('fold response: ${response.toString()}');
             emit(AddUserInGroupSuccessState());
           },
         );
@@ -58,15 +55,12 @@ class AddRemoveUserInGroupBloc
           communityId: event.communityId,
           userId: event.userId,
         );
-        print('...Result in AddRemoveUserInGroupBloc $result');
 
         result.fold(
           (error) {
-            print('fold error: ${error.toString()}');
             emit(AddRemoveUserInGroupFailureState(error: error.toString()));
           },
           (response) {
-            //  print('fold response: ${response.toString()}');
             emit(RemoveUserInGroupSuccessState());
           },
         );

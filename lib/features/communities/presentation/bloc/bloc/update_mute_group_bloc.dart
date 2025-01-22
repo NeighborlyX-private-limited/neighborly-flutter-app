@@ -30,15 +30,12 @@ class UpdateMuteGroupBloc
           communityId: event.communityId,
           isMute: event.isMute,
         );
-        print('...Result in UpdateMuteGroupBloc: $result');
 
         result.fold(
           (error) {
-            print('fold error in UpdateMuteGroupBloc: ${error.toString()}');
             emit(UpdateMuteGroupFailureState(error: error.toString()));
           },
           (message) {
-            print('fold success response in UpdateBlockUserBloc');
             emit(UpdateMuteGroupSuccessState());
           },
         );

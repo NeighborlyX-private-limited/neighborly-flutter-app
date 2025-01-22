@@ -171,11 +171,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 
   void processSave() {
     ///  Save process start
-    print('...nameEC: ${nameEC.text}');
-    print('...descriptionEC: ${descriptionEC.text}');
-    print('...typeEC: ${typeEC.text}');
-    print('...radiusEC: ${radiusEC.text}');
-    print('...fine to uploade: $fileToUpload');
 
     /// group name can not be empty
     if (nameEC.text.trim() == '') {

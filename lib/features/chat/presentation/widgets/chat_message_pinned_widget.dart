@@ -24,8 +24,6 @@ class ChatMessagePinnedWidget extends StatelessWidget {
   }
 
   void _showOverlay(BuildContext context, OverlayEntry? overlayEntry) {
-    print('Showing overlay');
-
     overlayEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         onTap: () {

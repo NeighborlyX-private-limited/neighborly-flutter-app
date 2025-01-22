@@ -191,8 +191,6 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           _usernameController.clear();
                           _bioController.clear();
 
-                          //context.go(location)
-                          print('here 1');
                           context.go('/profile');
                           BlocProvider.of<GetProfileBloc>(context)
                               .add(GetProfileButtonPressedEvent());

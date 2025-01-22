@@ -39,7 +39,7 @@ class _EventMainScreenState extends State<EventMainScreen>
 
     // _tabController.addListener(() {
     //   if (_tabController.indexIsChanging) {
-    //     // print('Tab changed to index: ${_tabController.index}');
+    //     //
     //     setState(() {});
     //   }
     // });
@@ -71,10 +71,9 @@ class _EventMainScreenState extends State<EventMainScreen>
           title,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 19,
-            color: isSelected ? AppColors.blackColor : AppColors.greyColor
-          ),
+              fontWeight: FontWeight.w500,
+              fontSize: 19,
+              color: isSelected ? AppColors.blackColor : AppColors.greyColor),
         ),
       ),
     );
@@ -150,15 +149,13 @@ class _EventMainScreenState extends State<EventMainScreen>
         body: BlocConsumer<EventMainCubit, EventMainState>(
           bloc: eventMainCubit,
           listener: (context, state) {
-            print('... state.currentUser: ${state.status}');
-
             switch (state.status) {
               case Status.loading:
                 break;
               case Status.failure:
                 // hideLoader();
                 // showError(state.errorMessage ?? 'Some error');
-                print('ERROR ${state.failure?.message}');
+
                 break;
               case Status.success:
                 break;
@@ -173,8 +170,6 @@ class _EventMainScreenState extends State<EventMainScreen>
                 if (state.status == Status.loading) {
                   return const EventMainSheemer();
                 }
-
-                print('...state.eventsGoing=${state.eventsGoing}');
 
                 return Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
@@ -236,9 +231,7 @@ class _EventMainScreenState extends State<EventMainScreen>
                                     event: state.eventsLocal[index],
                                     width:
                                         MediaQuery.of(context).size.width * 0.9,
-                                    onSelect: (EventModel) {
-                                      print('selected: $EventModel');
-                                    },
+                                    onSelect: (EventModel) {},
                                   ),
                                 );
                               },
@@ -351,22 +344,16 @@ class _EventMainScreenState extends State<EventMainScreen>
                             if (selectedTab == 1) ...[
                               // GOING
                               if (state.eventsGoing.isNotEmpty)
-                                ...state.eventsGoing
-                                    .map((event) => Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 8.0),
-                                          child: EventCardWidget(
-                                            event: event,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                ...state.eventsGoing.map((event) => Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: EventCardWidget(
+                                        event: event,
+                                        width:
+                                            MediaQuery.of(context).size.width *
                                                 0.9,
-                                            onSelect: (EventModel) {
-                                              print('selected: $EventModel');
-                                            },
-                                          ),
-                                        ))
-                                    ,
+                                        onSelect: (EventModel) {},
+                                      ),
+                                    )),
 
                               // Expanded(
                               //   child: ListView.builder(
@@ -374,14 +361,14 @@ class _EventMainScreenState extends State<EventMainScreen>
                               //     physics: NeverScrollableScrollPhysics(),
                               //     itemCount: state.eventsGoing.length,
                               //     itemBuilder: (context, index) {
-                              //       print('...state.eventsGoing=${state.eventsGoing}');
+                              //
                               //       return Container(
                               //         padding: EdgeInsets.only(left: index == 0 ? 13 : 1),
                               //         child: EventCardWidget(
                               //           event: state.eventsGoing[index],
                               //           width: MediaQuery.of(context).size.width * 0.9,
                               //           onSelect: (EventModel) {
-                              //             print('selected: ${EventModel}');
+                              //
                               //           },
                               //         ),
                               //       );

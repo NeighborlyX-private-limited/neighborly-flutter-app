@@ -51,7 +51,7 @@ class _CommunityAdminRadiusScreenState
         ),
         title: Text(
           AppLocalizations.of(context)!.radius,
-         // 'Radius',
+          // 'Radius',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -64,15 +64,15 @@ class _CommunityAdminRadiusScreenState
               onPressed: () {
                 if (newRadiusEC.text.trim() == '') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(
+                    SnackBar(
                       content: Text(
-                        AppLocalizations.of(context)!.select_a_radius_to_be_saved,
-                    //  Select a radius to be saved'
+                        AppLocalizations.of(context)!
+                            .select_a_radius_to_be_saved,
+                        //  Select a radius to be saved'
                       ),
                     ),
                   );
                 } else {
-                  print('SAVE');
                   communityCubit.updateRadius(
                       communityCubit.state.community?.id ?? '',
                       double.parse(newRadiusEC.text.trim()));
@@ -81,7 +81,7 @@ class _CommunityAdminRadiusScreenState
               },
               child: Text(
                 AppLocalizations.of(context)!.save,
-               // 'Save',
+                // 'Save',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
@@ -110,13 +110,12 @@ class _CommunityAdminRadiusScreenState
                 },
               ),
               Text(
-                 AppLocalizations.of(context)!.miles.replaceFirst(
-        '{distance}', newRadiusEC.text,
-              
-              //  '  ${newRadiusEC.text} miles',
-                
-                
-               ) , style: TextStyle(
+                AppLocalizations.of(context)!.miles.replaceFirst(
+                      '{distance}', newRadiusEC.text,
+
+                      //  '  ${newRadiusEC.text} miles',
+                    ),
+                style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w500,
                 ),
@@ -127,8 +126,9 @@ class _CommunityAdminRadiusScreenState
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Text(
-                  AppLocalizations.of(context)!.you_can_use_this_slider_to_increase_and_decrease_the_radius_of_our_community,
-                 // 'You can use this slider to increase and decrease the radius of your community',
+                  AppLocalizations.of(context)!
+                      .you_can_use_this_slider_to_increase_and_decrease_the_radius_of_our_community,
+                  // 'You can use this slider to increase and decrease the radius of your community',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,

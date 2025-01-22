@@ -18,13 +18,10 @@ class ResendOtpBloc extends Bloc<ResendOTPEvent, ResendOTPState> {
         email: event.email,
         phone: event.phone,
       );
-      print('...Result in ResendOtpBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(ResendOTPFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(ResendOTPSuccessState(message: response));
       });
     });

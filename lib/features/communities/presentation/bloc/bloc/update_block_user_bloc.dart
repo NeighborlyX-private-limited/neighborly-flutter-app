@@ -23,15 +23,12 @@ class UpdateBlockUserBloc
           userId: event.userId,
           isBlock: event.isBlock,
         );
-        print('...Result in UpdateBlockUserBloc: $result');
 
         result.fold(
           (error) {
-            print('fold error in UpdateBlockUserBloc: ${error.toString()}');
             emit(UpdateBlockUserFailureState(error: error.toString()));
           },
           (message) {
-            print('fold success response in UpdateBlockUserBloc: $message');
             emit(UpdateBlockSuccessState(message: message));
           },
         );

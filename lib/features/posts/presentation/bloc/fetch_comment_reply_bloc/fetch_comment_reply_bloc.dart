@@ -21,11 +21,9 @@ class FetchCommentReplyBloc
         final result = await _fetchCommentReplyUsecase.call(
           commentId: event.commentId,
         );
-        print('...Result in FetchCommentReplyBloc $result');
 
         result.fold(
           (error) {
-            print('fold error: ${error.toString()}');
             emit(
               FetchCommentReplyFailureState(
                 error: error.toString(),
@@ -34,8 +32,6 @@ class FetchCommentReplyBloc
             );
           },
           (response) {
-            print('fold response: ${response.toString()}');
-
             emit(
               FetchCommentReplySuccessState(
                 reply: response,

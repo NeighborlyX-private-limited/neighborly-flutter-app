@@ -20,13 +20,10 @@ class GetMyCommentsBloc extends Bloc<GetMyCommentsEvent, GetMyCommentsState> {
       final result = await _getMyCommentsUsecase.call(
         userId: event.userId,
       );
-      print('...Result in GetMyCommentsBloc: $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetMyCommentsFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(GetMyCommentsSuccessState(post: response));
       });
     });

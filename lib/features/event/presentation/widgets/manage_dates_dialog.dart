@@ -35,10 +35,6 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
       endDateFormated = DateFormat('dd/MM/yyyy').format(endDate!);
     }
 
-    print('startDateFormated: $startDateFormated');
-    print('endDateFormated: $endDateFormated');
-    print('startDateRaw: $startDate');
-    print('endDateRaw: $endDate');
     Navigator.pop(context, {
       'startDate': startDateFormated,
       'endDate': endDateFormated,
@@ -53,10 +49,6 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
     startDate = null;
     endDate = null;
 
-    print('... INIT MANAGE DATES DIALOG ');
-    print('...widget.startDateStr=${widget.startDateStr}');
-    print('...widget.endDateStr=${widget.endDateStr}');
-
     if ((widget.startDateStr != null && widget.startDateStr != '') &&
         (widget.endDateStr != null && widget.endDateStr != '')) {
       startDate = DateTime.parse(widget
@@ -69,16 +61,12 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
       minDate: DateTime.now(),
       maxDate: DateTime.now().add(const Duration(days: 365)),
       onRangeSelected: (firstDate, secondDate) {
-        print('StartDate: $firstDate');
-        print('endDate: $secondDate');
         setState(() {
           startDate = firstDate;
           endDate = secondDate;
         });
       },
-      onDayTapped: (date) {
-        // print(date);
-      },
+      onDayTapped: (date) {},
       // readOnly: true,
       onPreviousMinDateTapped: (date) {},
       onAfterMaxDateTapped: (date) {},
@@ -178,8 +166,6 @@ class _ManageDatesDialogState extends State<ManageDatesDialog> {
                   child: ElevatedButton(
                     onPressed: () {
                       // handleSave(false);
-                      print('startDateSelected: $startDate');
-                      print('endDateSelected: $endDate');
 
                       handleReturn();
                     },

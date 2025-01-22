@@ -15,24 +15,18 @@ class ChatRemoteDataSourceImplThread implements ChatRemoteDataSourceThread {
   ChatRemoteDataSourceImplThread({required this.client});
   @override
   Future<List<ChatRoomModel>> getAllChatRooms() async {
-    print('... getAllChatRooms   ');
-
     // near by:   {{URL}}/group/nearby-groups?isHome=false
     // from user: {{URL}}/group//user-groups
 
     // FAKE example
 
-    print('... get group rooms');
-
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
-    print('cookies list $cookies');
+
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/chat/fetch-user-chats';
-
-    print('cookie $cookieHeader');
 
     final response = await client.get(
       Uri.parse(url),
@@ -41,15 +35,12 @@ class ChatRemoteDataSourceImplThread implements ChatRemoteDataSourceThread {
         //'Cookie': 'connect.sid=s%3ATNsUxcpmB530JPuGonUAMDf7UM75k6Q4.mxgR3Q0l1w8bXnJiiZlxe76Dlme%2FOEHdlLkM4ZHRoFA; refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2N2QwZDZkNjIxMDQxZGEyYzdiNzllOCIsImlhdCI6MTcyNjE1MTY5OCwiZXhwIjoxNzM5MTExNjk4fQ.nVVIIKSfktYn64zktVqexxi86sfXqkuKRjp9g13fuM0',
       },
     );
-    print("message response api $response");
 
     if (response.statusCode == 200) {
-      print("message API else ${jsonDecode(response.body)}");
-
       return ChatRoomModel.fromJsonList(jsonDecode(response.body));
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
-      print("message API else $message");
+
       throw ServerException(message: message);
     }
 
@@ -144,8 +135,6 @@ class ChatRemoteDataSourceImplThread implements ChatRemoteDataSourceThread {
   @override
   Future<List<ChatMessageModel>> getRoomMessages(
       {required String roomId, String? dateFrom}) async {
-    print('... getRoomMessages   \n roomId=$roomId \n dateFrom=$dateFrom');
-
     if (dateFrom == null || dateFrom == '') {
       dateFrom = DateTime.now().toIso8601String();
     }
@@ -230,9 +219,6 @@ class ChatRemoteDataSourceImplThread implements ChatRemoteDataSourceThread {
     String? dateFrom,
     bool isreply = false,
   }) async {
-    print(
-        '... getGroupRoomMessagesforthread    \n roomId=$roomId \n dateFrom=$dateFrom');
-
     if (dateFrom == null || dateFrom == '') {
       dateFrom = DateTime.now().toIso8601String();
     }
@@ -241,7 +227,6 @@ class ChatRemoteDataSourceImplThread implements ChatRemoteDataSourceThread {
     await Future.delayed(Duration(seconds: 2));
 
     //Get msg Api call here harsh
-    print('... get group room chat');
 
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {

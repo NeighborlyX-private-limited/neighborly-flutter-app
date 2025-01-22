@@ -22,12 +22,6 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     required String filterLocation,
   }) async {
 // scope:  nearBy  fromUser
-    print(
-        '... getEvents scope=$scope  myOrOngoing=$myOrOngoing searchTerm=$searchTerm   ');
-    print(
-        '... getEvents filterDateStart=$filterDateStart filterDateEnd=$filterDateEnd');
-    print(
-        '... getEvents filterCategory=$filterCategory filterLocation=$filterLocation');
 
     // near by:   {{URL}}/group/nearby-groups?isHome=false
     // from user: {{URL}}/group//user-groups

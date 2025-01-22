@@ -12,7 +12,7 @@ class SocketService {
     }
 
     String? token = ShardPrefHelper.getJwtToken();
-    print('token:$token');
+    print('jwt token in socket:$token');
 
     /// Initialize socket connection to the server with token authentication
     _socket = io.io(
@@ -46,7 +46,7 @@ class SocketService {
       print('User $userId left the room.');
     });
     _socket!.on("error-message", (data) {
-      print(' THIS $data');
+      print('error-message: $data');
     });
     _socket!.on("receive-message", (message) {
       if (onNewMessageReceived != null) {
@@ -57,7 +57,6 @@ class SocketService {
 
   ///send message
   void sendMessage(String roomId, Map<String, dynamic> payload, bool isMsg) {
-    print('Sending payload: $payload');
     if (isMsg) {
       _socket?.emit('send-message', payload);
     } else {

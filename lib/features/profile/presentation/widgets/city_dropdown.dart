@@ -14,7 +14,6 @@ class CityDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('city in basic info widget ==> $selectCity');
     return DropdownButtonFormField<String>(
       decoration: InputDecoration(
         icon: isHome == true

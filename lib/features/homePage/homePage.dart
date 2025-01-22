@@ -50,7 +50,6 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     pageController = PageController();
     newVersionPlus.showAlertIfNecessary(context: context);
-    AppVersionDetails();
 
     fetchLocationAndUpdate();
     updateFCMtokenNotification();
@@ -70,22 +69,11 @@ class _MainPageState extends State<MainPage> {
     super.dispose();
   }
 
-//// appversion details
-  void AppVersionDetails() async {
-    final status = await newVersionPlus.getVersionStatus();
-    print('version detals');
-    print(status?.canUpdate);
-    print(status?.localVersion);
-    print(status?.storeVersion);
-    print(status?.appStoreLink);
-  }
-
   /// deep link listner
   Future<void> _setDeepLinkListener() async {
     platform.setMethodCallHandler(
       (MethodCall call) async {
         if (call.method == "onDeepLink") {
-          print("deep link received");
           setState(
             () {
               _deepLink = call.arguments;
@@ -94,17 +82,11 @@ class _MainPageState extends State<MainPage> {
                 if (linksplit[1].contains('post-detail/')) {
                   try {
                     context.push(linksplit[1]);
-                  } catch (e) {
-                    print("error in deep link $e");
-                  }
+                  } catch (e) {}
                 } else {
                   //context.push('/userProfileScreen/${widget.post.userId}');
-                  print(
-                      'here you have to handle other navigation for url based on if condition');
                 }
-              } else {
-                print("Empty means open default page");
-              }
+              } else {}
             },
           );
         }
@@ -192,7 +174,6 @@ class _MainPageState extends State<MainPage> {
 
   int _currentIndex = 0;
   void _onItemTapped(int index) {
-    print('Tab Index:$index');
     setState(() {
       _currentIndex = index;
     });
@@ -237,7 +218,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('Tab Id: ${widget.childId}');
     if (widget.childId == 'Home') {
       setState(() {
         _currentIndex = 0;

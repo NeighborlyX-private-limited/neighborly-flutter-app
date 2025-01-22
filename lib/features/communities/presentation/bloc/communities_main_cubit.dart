@@ -19,10 +19,9 @@ class CommunityMainCubit extends Cubit<CommunityMainState> {
   Future getAllCommunities() async {
     emit(state.copyWith(status: Status.loading));
     final result = await getAllCommunitiesUseCase();
-    print('result in get all community cubit:$result');
+
     result.fold(
       (failure) {
-        print('fold error in get all community cubit:${failure.message}');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -32,7 +31,6 @@ class CommunityMainCubit extends Cubit<CommunityMainState> {
         );
       },
       (list) {
-        print('fold list:$list');
         emit(
           state.copyWith(
             status: Status.success,

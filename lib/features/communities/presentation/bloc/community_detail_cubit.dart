@@ -43,11 +43,9 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
   Future getCommunityDetail(String communityId) async {
     emit(state.copyWith(status: Status.loading));
     final result = await getCommunityUsecase(communityId: communityId);
-    print('result in getCommunityDetail cubit: $result');
 
     result.fold(
       (failure) {
-        print('failure in getCommunityDetail cubit=$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -57,7 +55,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (community) {
-        print('community details=$community');
         emit(
           state.copyWith(
             status: Status.success,
@@ -75,10 +72,9 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       communityId: communityId,
       newType: newType,
     );
-    print('result:$result');
+
     result.fold(
       (failure) {
-        print('...failure=$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -88,7 +84,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (communityResp) {
-        print('...updateType done');
         emit(
           state.copyWith(
             status: Status.success,
@@ -108,10 +103,9 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       communityId: communityId,
       newLocation: newLocationStr,
     );
-    print('result:$result');
+
     result.fold(
       (failure) {
-        print('...failure=$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -121,7 +115,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (communityResp) {
-        print('...updateLocation done');
         emit(
           state.copyWith(
             status: Status.success,
@@ -140,17 +133,15 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       communityId: communityId,
       newRadius: newRadius,
     );
-    print('result:$result');
+
     result.fold(
       (failure) {
-        print('...failure=$failure');
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (communityResp) {
-        print('...updateRadius done');
         emit(
           state.copyWith(
             status: Status.success,
@@ -169,10 +160,9 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       communityId: communityId,
       newDescription: newDescription,
     );
-    print('result:$result');
+
     result.fold(
       (failure) {
-        print('...failure=$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -182,7 +172,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (communityResp) {
-        print('...updateDescription done');
         emit(
           state.copyWith(
             status: Status.success,
@@ -201,10 +190,9 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       communityId: communityId,
       newDisplayname: newDisplayname,
     );
-    print('result:$result');
+
     result.fold(
       (failure) {
-        print('...failure=$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -214,7 +202,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (communityResp) {
-        print('...update display name done');
         emit(
           state.copyWith(
             status: Status.success,
@@ -233,10 +220,9 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       pictureFile: imageToUpload,
       //imageUrl: state.imageUrl,
     );
-    print('result:$result');
+
     result.fold(
       (failure) {
-        print('...failure=$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -246,7 +232,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (communityResp) {
-        print('...updateIcon done');
         emit(state.copyWith(status: Status.success));
         getCommunityDetail(communityId);
       },
@@ -260,10 +245,9 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
       communityId: state.community!.id,
       reason: reason,
     );
-    print('result in reportCommunity cubit:$result');
+
     result.fold(
       (failure) {
-        print('failure in reportCommunity cubit:$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -273,7 +257,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (communityResp) {
-        print('reportCommunity done');
         emit(state.copyWith(status: Status.success));
       },
     );
@@ -285,10 +268,9 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
     final result = await deleteCommunityUsecase(
       communityId: communityId!,
     );
-    print('result in deleteCommunity cubit:$result');
+
     result.fold(
       (failure) {
-        print('failure deleteCommunity:$failure');
         emit(
           state.copyWith(
             status: Status.failure,
@@ -298,7 +280,6 @@ class CommunityDetailsCubit extends Cubit<CommunityDetailsState> {
         );
       },
       (communityDelete) {
-        print('communityDelete done');
         emit(state.copyWith(status: Status.success));
       },
     );

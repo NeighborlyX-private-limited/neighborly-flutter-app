@@ -15,13 +15,10 @@ class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
       emit(LogoutLoadingState());
 
       final result = await _logoutUsecase.call();
-      print('...Result in LogoutBloc: $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(LogoutFailureState(error: error.toString()));
       }, (response) {
-        // print('fold response: ${response.toString()}');
         emit(LogoutSuccessState());
       });
     });

@@ -13,23 +13,18 @@ class TutorialCubit extends Cubit<TutorialState> {
 
   // Function to call the API and update tutorial status
   Future<void> updateTutorialStatus(bool viewed, bool skipped) async {
-    print("updateTutorialStatus api start with...");
-    print('viewed: $viewed');
-    print('skipped: $skipped');
     emit(TutorialUpdateLoading());
 
     try {
       List<String>? cookies = ShardPrefHelper.getCookie();
       if (cookies == null || cookies.isEmpty) {
-        print("No cookies found...");
         throw const ServerException(message: 'No cookies found');
       }
-      print('cookies list: $cookies');
+
       String cookieHeader = cookies.join('; ');
 
       //  API URL
       const url = '$kBaseUrl/user/update-tutorial-info';
-      print('url: $url');
 
       //  request body
       final data = {
@@ -48,8 +43,6 @@ class TutorialCubit extends Cubit<TutorialState> {
         },
         body: jsonEncode(data),
       );
-      print("update Tutorial Status code: ${response.statusCode}");
-      print("update Tutorial Status response: ${response.body}");
 
       if (response.statusCode == 200) {
         bool isSkippedTutorial =
@@ -62,12 +55,10 @@ class TutorialCubit extends Cubit<TutorialState> {
 
         emit(TutorialUpdateSuccess());
       } else {
-        print("update Tutorial Status else error: ${response.body}");
         emit(TutorialUpdateFailure(
             'Failed to update tutorial status: ${response.statusCode}'));
       }
     } catch (e) {
-      print("update Tutorial Status catch error: ${e.toString()}");
       emit(TutorialUpdateFailure(e.toString()));
     }
   }
