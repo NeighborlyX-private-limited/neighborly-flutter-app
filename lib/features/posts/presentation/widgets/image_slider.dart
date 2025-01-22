@@ -17,8 +17,8 @@ class ImageSliderState extends State<ImageSlider> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    return Column(
+    return Stack(
+      alignment: Alignment.bottomCenter,
       children: [
         SizedBox(
           height: 300,
@@ -37,7 +37,7 @@ class ImageSliderState extends State<ImageSlider> {
                   imageUrl: widget.multimedia[index],
                   fit: BoxFit.cover,
                   width: screenWidth,
-                  height: 350,
+                  height: 300,
                   placeholder: (context, url) => Center(
                     child: CircularProgressIndicator(
                       color: AppColors.primaryColor,
@@ -50,26 +50,91 @@ class ImageSliderState extends State<ImageSlider> {
             },
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: widget.multimedia.map(
-            (url) {
-              int index = widget.multimedia.indexOf(url);
-              return Container(
-                width: 8.0,
-                height: 8.0,
-                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentPage == index
-                      ? AppColors.primaryColor
-                      : AppColors.greyColor,
-                ),
-              );
-            },
-          ).toList(),
+        Positioned(
+          bottom: 10.0,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: widget.multimedia.map(
+              (url) {
+                int index = widget.multimedia.indexOf(url);
+                return Container(
+                  width: 8.0,
+                  height: 8.0,
+                  margin: EdgeInsets.symmetric(horizontal: 4.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _currentPage == index
+                        ? AppColors.primaryColor
+                        : AppColors.greyColor,
+                  ),
+                );
+              },
+            ).toList(),
+          ),
         ),
       ],
     );
   }
 }
+
+//     return Stack(
+//        alignment: Alignment.bottomCenter,
+//       children: [ Column(
+//         children: [
+//           SizedBox(
+//             height: 300,
+//             width: screenWidth,
+//             child: PageView.builder(
+//               itemCount: widget.multimedia.length,
+//               onPageChanged: (int index) {
+//                 setState(() {
+//                   _currentPage = index;
+//                 });
+//               },
+//               itemBuilder: (context, index) {
+//                 return ClipRRect(
+//                   borderRadius: BorderRadius.circular(8),
+//                   child: CachedNetworkImage(
+//                     imageUrl: widget.multimedia[index],
+//                     fit: BoxFit.cover,
+//                     width: screenWidth,
+//                     height: 350,
+//                     placeholder: (context, url) => Center(
+//                       child: CircularProgressIndicator(
+//                         color: AppColors.primaryColor,
+//                         strokeWidth: 2,
+//                       ),
+//                     ),
+//                     errorWidget: (context, url, error) => Icon(Icons.error),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//           Positioned(
+//              bottom: 10.0,
+//             child: Row(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               children: widget.multimedia.map(
+//                 (url) {
+//                   int index = widget.multimedia.indexOf(url);
+//                   return Container(
+//                     width: 8.0,
+//                     height: 8.0,
+//                     margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
+//                     decoration: BoxDecoration(
+//                       shape: BoxShape.circle,
+//                       color: _currentPage == index
+//                           ? AppColors.primaryColor
+//                           : AppColors.greyColor,
+//                     ),
+//                   );
+//                 },
+//               ).toList(),
+//             ),
+//           ),
+//         ],
+//       ),
+//     ]);
+//   }
+// }

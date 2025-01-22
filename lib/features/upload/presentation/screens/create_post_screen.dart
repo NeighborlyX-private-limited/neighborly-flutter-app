@@ -1150,7 +1150,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     onTap: () => _removeImages(index),
                                     child: Container(
                                       decoration: const BoxDecoration(
-                                        color: AppColors.redColor,
+                                        color: AppColors.greyColor,
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
