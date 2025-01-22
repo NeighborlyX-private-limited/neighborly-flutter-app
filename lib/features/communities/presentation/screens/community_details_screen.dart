@@ -49,7 +49,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     _tabController = TabController(length: 2, vsync: this);
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
     communityDetailCubit.getCommunityDetail(widget.communityId);
-    isJoined = false;
+    isJoined = true;
     isAdmin = false;
     communityCache = CommunityModel(
       id: '',
@@ -62,7 +62,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
       avatarUrl: '',
       karma: 0,
       membersCount: 1,
-      isJoined: false,
+      isJoined: true,
       isAdmin: false,
       isMuted: false,
       users: [],
@@ -876,12 +876,14 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                 /// have to replace with error widget
                 return Center(
                   child: Text(
-                      AppLocalizations.of(context)!.oops_something_went_wrong),
+                    AppLocalizations.of(context)!.oops_something_went_wrong,
+                  ),
                 );
               }
 
               /// success state
               if (state.status == Status.success) {
+                print('new communityCache');
                 communityCache = state.community;
               }
               return Column(
@@ -892,11 +894,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     title: communityCache?.name ?? '',
                     isPublic: communityCache?.isPublic ?? false,
                     isJoined: communityCache?.isJoined ?? false,
-                    userCount: (communityCache?.users.length ?? 0) +
-                        (communityCache?.admins.length ?? 0),
+                    userCount: (communityCache?.users.length ?? 0),
                     users: [
                       ...(communityCache?.users ?? []),
-                      ...(communityCache?.admins ?? [])
                     ],
                     onJoinLeavePressed: () {
                       if (communityCache?.isJoined ?? false) {

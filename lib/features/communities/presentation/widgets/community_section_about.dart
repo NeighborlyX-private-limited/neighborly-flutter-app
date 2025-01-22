@@ -34,7 +34,8 @@ class CommunitySectionAbout extends StatelessWidget {
             TextAndIconArea(
               title: AppLocalizations.of(context)!.radius,
               // 'Radius',
-              text:  '${community.radius} ${AppLocalizations.of(context)!.miles}',
+              text:
+                  '${community.radius} ${AppLocalizations.of(context)!.miles}',
               // '${community.radius} miles',
               icon: Icons.pin_drop_outlined,
             ),
@@ -67,7 +68,7 @@ class DescriptionArea extends StatelessWidget {
         children: [
           Text(
             AppLocalizations.of(context)!.group_Description,
-           // 'Group Description',
+            // 'Group Description',
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.black,
@@ -195,7 +196,7 @@ class _MembersListState extends State<MembersList> {
         padding: const EdgeInsets.all(6.0),
         child: Text(
           AppLocalizations.of(context)!.admin,
-        //  'Admin',
+          //  'Admin',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
         ),
@@ -203,7 +204,13 @@ class _MembersListState extends State<MembersList> {
     );
   }
 
+  bool checkIsAdmin(UserSimpleModel user) {
+    bool isAdmin = widget.admins.any((adm) => adm.id == user.id);
+    return isAdmin;
+  }
+
   Widget userTile(UserSimpleModel user, bool isAdmin) {
+    isAdmin = checkIsAdmin(user);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -254,7 +261,7 @@ class _MembersListState extends State<MembersList> {
         children: [
           Text(
             AppLocalizations.of(context)!.member_list,
-           // 'Members list',
+            // 'Members list',
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.black,
@@ -266,7 +273,7 @@ class _MembersListState extends State<MembersList> {
           if (hasMembers == false)
             Text(
               AppLocalizations.of(context)!.no_Members,
-            //  'No Members',
+              //  'No Members',
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.grey,
@@ -275,7 +282,7 @@ class _MembersListState extends State<MembersList> {
               ),
             ),
           if (hasMembers == true) ...[
-            ...widget.admins.map((adm) => userTile(adm, true)),
+            //...widget.admins.map((adm) => userTile(adm, true)),
             ...widget.members
                 .take(showAll == true ? widget.members.length : 5)
                 .map((user) => userTile(user, false)),
@@ -290,7 +297,7 @@ class _MembersListState extends State<MembersList> {
                       },
                       child: Text(
                         AppLocalizations.of(context)!.view_All_Members,
-                      //  'View All Members',
+                        //  'View All Members',
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: AppColors.primaryColor,

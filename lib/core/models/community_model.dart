@@ -60,8 +60,8 @@ class CommunityModel extends CommunityEntity {
       radius: map['radius'] ?? 0,
       membersCount: map['membersCount'] ?? 0,
       isPublic: map['isOpen'] ?? map['isPublic'] ?? false,
-      isJoined: map['isJoined'] ?? false,
-      isAdmin: map['isAdmin'] ?? false,
+      isJoined: map['isJoined'] ?? true,
+      isAdmin: map['isAdmin'] ?? true,
       isMuted: map['isMuted'] ?? false,
       users: map['members'] != null
           ? List<UserSimpleModel>.from(

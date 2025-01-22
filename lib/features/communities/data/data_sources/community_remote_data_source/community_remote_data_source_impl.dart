@@ -136,6 +136,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       List<double> location = ShardPrefHelper.getHomeLocation();
       double lat = location[0];
       double long = location[1];
+      String city = ShardPrefHelper.getHomeCity() ?? '';
+      print('city in getAllCommunities ==> $city');
       print('lat in getAllCommunities ==> $lat');
       print('long in getAllCommunities ==> $long');
       queryParameters = {
@@ -146,7 +148,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       List<double> location = ShardPrefHelper.getLocation();
       double lat = location[0];
       double long = location[1];
-
+      String city = ShardPrefHelper.getCurrentCity() ?? '';
+      print('city in getAllCommunities ==> $city');
       print('lat in getAllCommunities ==> $lat');
       print('long in getAllCommunities ==> $long');
       queryParameters = {

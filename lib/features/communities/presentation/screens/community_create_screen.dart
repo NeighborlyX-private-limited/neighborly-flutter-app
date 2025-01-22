@@ -31,9 +31,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 
   /// in future we have plan to add location during create community
   //final locationEC = TextEditingController();
+  late CommunityCreateCubit communityCreateCubit;
 
   File? fileToUpload;
-  late CommunityCreateCubit communityCreateCubit;
   int currentStep = 1;
 
   ///init method
@@ -102,7 +102,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
               Text(
                 AppLocalizations.of(context)!
                     .are_you_sure_you_want_leave_without_save,
-                // 'Are you sure you want leave without save?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -123,7 +122,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           AppLocalizations.of(context)!.cancel,
-                          // 'Cancel',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -153,7 +151,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
                           AppLocalizations.of(context)!.yes,
-                          //   'Yes',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -390,7 +387,6 @@ class _Step1areaState extends State<Step1area> {
         children: [
           Text(
             AppLocalizations.of(context)!.name,
-            // 'Name',
             style: greyonboardingBody1Style,
           ),
           const SizedBox(height: 5),
@@ -407,16 +403,12 @@ class _Step1areaState extends State<Step1area> {
           ///group type drop down
           DropdownSearchField(
             label: AppLocalizations.of(context)!.choose_your_group_type,
-            // 'Choose your group type',
             items: ['public', 'private'],
             onChanged: (value) {
               widget.typeController.text = value ?? 'public';
             },
             initialValue: widget.typeController.text,
-            //  widget.typeController.text,
             placeholder: AppLocalizations.of(context)!.community_Type,
-
-            // 'Community Type',
           ),
         ],
       ),
@@ -447,7 +439,6 @@ class _Step2areaState extends State<Step2area> {
         children: [
           Text(
             AppLocalizations.of(context)!.community_Description,
-            // 'Community Description',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const SizedBox(height: 7),
@@ -464,7 +455,6 @@ class _Step2areaState extends State<Step2area> {
               decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: AppLocalizations.of(context)!.describe_your_community,
-                //'Describe your community',
                 hintStyle: TextStyle(
                   color: Colors.grey,
                   fontWeight: FontWeight.normal,
@@ -517,7 +507,6 @@ class _Step3areaState extends State<Step3area> {
           // const SizedBox(height: 30),
           Text(
             AppLocalizations.of(context)!.community_Radius,
-            // 'Community Radius',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const SizedBox(height: 7),
@@ -533,7 +522,6 @@ class _Step3areaState extends State<Step3area> {
           ),
           Text(
             '  ${widget.radiusController.text} ${AppLocalizations.of(context)!.miles}',
-            // '  ${widget.radiusController.text} miles',
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w500,
@@ -595,7 +583,6 @@ class _Step4areaState extends State<Step4area> {
         children: [
           Text(
             AppLocalizations.of(context)!.image_Cover_Avatar,
-            // 'Image Cover/Avatar',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
           ),
           const SizedBox(height: 7),
