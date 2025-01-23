@@ -87,6 +87,7 @@ class _CityDropdownState extends State<CityDropdown> {
 
   void _showCitySelectionSheet(BuildContext context) {
     showModalBottomSheet(
+       backgroundColor: AppColors.whiteColor,
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
