@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/community_model.dart';
@@ -140,6 +141,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
+                        isBottomNavVisible.value = true;
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
@@ -216,142 +218,149 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        isBottomNavVisible.value = true;
+        Navigator.pop(context, true);
+      },
+      child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        leading: GestureDetector(
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-          ),
-          onTap: () {
-            if (currentStep == 1) {
-              bottomSheetConfirmNotSaved(context);
-              return;
-            }
-            setState(() {
-              if (currentStep == 4) {
-                currentStep -= 2;
-              } else {
-                currentStep--;
-              }
-            });
-          },
-        ),
-        title: Text(titleSelector(currentStep)),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              if (currentStep == 4) {
-                processSave();
-              } else {
-                jumpNext();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
-              ),
+        appBar: AppBar(
+          backgroundColor: AppColors.whiteColor,
+          leading: GestureDetector(
+            child: Icon(
+              Icons.arrow_back_ios,
+              color: Colors.black,
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Text(
-                currentStep == 4
-                    ? AppLocalizations.of(context)!.save
-                    : AppLocalizations.of(context)!.next,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  height: 0.3,
+            onTap: () {
+              if (currentStep == 1) {
+                bottomSheetConfirmNotSaved(context);
+                return;
+              }
+              setState(() {
+                if (currentStep == 4) {
+                  currentStep -= 2;
+                } else {
+                  currentStep--;
+                }
+              });
+            },
+          ),
+          title: Text(titleSelector(currentStep)),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                if (currentStep == 4) {
+                  processSave();
+                } else {
+                  jumpNext();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Text(
+                  currentStep == 4
+                      ? AppLocalizations.of(context)!.save
+                      : AppLocalizations.of(context)!.next,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    height: 0.3,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
-      body: BlocConsumer<CommunityCreateCubit, CommunityCreateState>(
-        listener: (context, state) {
-          ///failure state
-          if (state.status == Status.failure) {
-            if (mounted) {
-              ScaffoldMessenger.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Text('oops something went wrong!'),
-                  ),
-                );
+            const SizedBox(width: 10),
+          ],
+        ),
+        body: BlocConsumer<CommunityCreateCubit, CommunityCreateState>(
+          listener: (context, state) {
+            ///failure state
+            if (state.status == Status.failure) {
+              if (mounted) {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text('oops something went wrong!'),
+                    ),
+                  );
+              }
             }
-          }
 
-          ///success state
-          if (state.status == Status.success) {
-            if (mounted) {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              context.push('/groups/${state.newCommunityId}');
+            ///success state
+            if (state.status == Status.success) {
+              if (mounted) {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                context.push('/groups/${state.newCommunityId}');
+              }
             }
-          }
-        },
-        builder: (context, state) {
-          ///  loading state
-          if (state.status == Status.loading) {
-            return const CommunityMainSheemer();
-          }
-          return Container(
-            padding: EdgeInsets.only(top: 15),
-            width: double.infinity,
-            color: Colors.white,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  /// for name and group type
-                  if (currentStep == 1) ...[
-                    Step1area(
-                      nameController: nameEC,
-                      typeController: typeEC,
-                    ),
-                  ],
+          },
+          builder: (context, state) {
+            ///  loading state
+            if (state.status == Status.loading) {
+              return const CommunityMainSheemer();
+            }
+            return Container(
+              padding: EdgeInsets.only(top: 15),
+              width: double.infinity,
+              color: Colors.white,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    /// for name and group type
+                    if (currentStep == 1) ...[
+                      Step1area(
+                        nameController: nameEC,
+                        typeController: typeEC,
+                      ),
+                    ],
 
-                  /// for group desc
-                  if (currentStep == 2) ...[
-                    Step2area(
-                      descriptionController: descriptionEC,
-                    ),
-                  ],
+                    /// for group desc
+                    if (currentStep == 2) ...[
+                      Step2area(
+                        descriptionController: descriptionEC,
+                      ),
+                    ],
 
-                  ///for location and radius
-                  // if (currentStep == 3) ...[
-                  //   Step3area(
-                  //     //locationController: locationEC,
-                  //     radiusController: radiusEC,
-                  //   ),
-                  // ],
+                    ///for location and radius
+                    // if (currentStep == 3) ...[
+                    //   Step3area(
+                    //     //locationController: locationEC,
+                    //     radiusController: radiusEC,
+                    //   ),
+                    // ],
 
-                  /// for group icon or image
-                  if (currentStep == 4) ...[
-                    Step4area(
-                      isLoading: state.uploadIsLoading,
-                      currentFile: fileToUpload,
-                      onSelectImage: (newFile) {
-                        // ignore: unnecessary_null_comparison
-                        if (newFile != null) {
-                          setState(() {
-                            fileToUpload = newFile;
-                          });
-                        }
-                      },
-                    ),
+                    /// for group icon or image
+                    if (currentStep == 4) ...[
+                      Step4area(
+                        isLoading: state.uploadIsLoading,
+                        currentFile: fileToUpload,
+                        onSelectImage: (newFile) {
+                          // ignore: unnecessary_null_comparison
+                          if (newFile != null) {
+                            setState(() {
+                              fileToUpload = newFile;
+                            });
+                          }
+                        },
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -12,7 +12,7 @@ class SocketService {
     }
 
     String? token = ShardPrefHelper.getJwtToken();
-    print('jwt token in socket:$token');
+    print('JWT token in socket:$token');
 
     /// Initialize socket connection to the server with token authentication
     _socket = io.io(

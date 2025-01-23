@@ -1,5 +1,3 @@
-// ignore_for_file: unused_field
-
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
@@ -7,12 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/colors.dart';
 import '../../core/utils/shared_preference.dart';
 import '../notification/presentation/bloc/notification_general_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+ValueNotifier<bool> isBottomNavVisible = ValueNotifier<bool>(true);
 
 class MainPage extends StatefulWidget {
   final Widget child;
@@ -192,6 +193,7 @@ class _MainPageState extends State<MainPage> {
         break;
       case 2:
         context.push('/create');
+        isBottomNavVisible.value = false;
         setState(() {
           _currentIndex = 2;
         });
@@ -201,11 +203,8 @@ class _MainPageState extends State<MainPage> {
           _currentIndex = 3;
         });
         // context.go('/events');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('comming soon...'),
-          ),
-        );
+        showSnackBar(context: context, message: 'comming soon...');
+
         break;
       case 4:
         context.push('/profile');
@@ -227,49 +226,46 @@ class _MainPageState extends State<MainPage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        bottomNavigationBar: BottomNavigationBar(
-          elevation: 0,
-          backgroundColor: AppColors.whiteColor,
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: AppColors.primaryColor,
-          unselectedItemColor: AppColors.blackColor,
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: const Icon(
-                Icons.home,
-              ),
-              label: AppLocalizations.of(context)!.home,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.groups,
-              ),
-              label: AppLocalizations.of(context)!.groups,
-            ),
-            BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/add.svg',
-                fit: BoxFit.contain,
-              ),
-              label: '',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.calendar_month,
-              ),
-              label: AppLocalizations.of(context)!.events,
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.person,
-              ),
-              label: AppLocalizations.of(context)!.profile,
-            ),
-          ],
-          currentIndex: _currentIndex,
-          onTap: (index) => _onItemTapped(
-            index,
-          ),
+        bottomNavigationBar: ValueListenableBuilder<bool>(
+          valueListenable: isBottomNavVisible,
+          builder: (context, isVisible, child) {
+            return isVisible
+                ? BottomNavigationBar(
+                    elevation: 0,
+                    backgroundColor: AppColors.whiteColor,
+                    type: BottomNavigationBarType.fixed,
+                    selectedItemColor: AppColors.primaryColor,
+                    unselectedItemColor: AppColors.blackColor,
+                    items: <BottomNavigationBarItem>[
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.home),
+                        label: AppLocalizations.of(context)!.home,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.groups),
+                        label: AppLocalizations.of(context)!.groups,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: SvgPicture.asset(
+                          'assets/add.svg',
+                          fit: BoxFit.contain,
+                        ),
+                        label: '',
+                      ),
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.calendar_month),
+                        label: AppLocalizations.of(context)!.events,
+                      ),
+                      BottomNavigationBarItem(
+                        icon: const Icon(Icons.person),
+                        label: AppLocalizations.of(context)!.profile,
+                      ),
+                    ],
+                    currentIndex: _currentIndex,
+                    onTap: _onItemTapped,
+                  )
+                : const SizedBox.shrink(); // Empty space if hidden
+          },
         ),
         body: widget.child,
       ),

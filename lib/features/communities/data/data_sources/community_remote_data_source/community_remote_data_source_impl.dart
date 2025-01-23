@@ -239,7 +239,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('makeAdmin response: ${response.body}');
     if (response.statusCode == 200) {
     } else {
       final message =
@@ -318,7 +317,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('joinGroup response: ${response.body}');
     if (response.statusCode == 200) {
     } else {
       final message =
@@ -361,7 +359,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('leaveCommunity response: ${response.body}');
     if (response.statusCode == 200) {
     } else {
       final message = jsonDecode(response.body)['message'] ??
@@ -400,7 +397,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('updateDisplayname response: ${response.body}');
     if (response.statusCode == 200) {
     } else {
       final message =
@@ -438,7 +434,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('updateDescription response: ${response.body}');
     if (response.statusCode == 200) {
     } else {
       final message =
@@ -564,7 +559,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('updateLocation response: ${response.body}');
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
     } else {
@@ -603,7 +597,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('updateRadius response: ${response.body}');
     if (response.statusCode == 200) {
       final jsonData = jsonDecode(response.body);
     } else {
@@ -643,8 +636,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('updateMute response: ${response.body.toString()}');
-
     if (response.statusCode == 204) {
     } else {
       final message = jsonDecode(response.body)['msg'] ??
@@ -683,7 +674,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       ),
     );
 
-    print('reportCommunity response: ${response.body}');
     if (response.statusCode == 200) {
     } else {
       final message =
@@ -714,7 +704,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       },
     );
 
-    print('deleteCommunity response: ${response.body}');
     if (response.statusCode == 200) {
     } else {
       final message =

@@ -35,7 +35,6 @@ Future<XFile> compressImage({
 
   /// Check if the compressed image is within the size limit
   double imageSizeMB = File(compressedImage.path).lengthSync() / (1024 * 1024);
-  print("Initial Image Size: ${imageSizeMB.toStringAsFixed(2)} MB");
 
   /// Reduce quality only if the file size is greater than the limit
   int currentQuality = initialQuality;
@@ -52,8 +51,6 @@ Future<XFile> compressImage({
     /// Update the new file size after compression
     if (compressedImage != null) {
       imageSizeMB = File(compressedImage.path).lengthSync() / (1024 * 1024);
-      print(
-          "Compressed Size: ${imageSizeMB.toStringAsFixed(2)} MB with Quality: $currentQuality");
     } else {
       break;
     }

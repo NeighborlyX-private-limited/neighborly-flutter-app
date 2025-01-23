@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
+import 'package:neighborly_flutter_app/core/constants/status.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -49,7 +51,6 @@ class _CommunityAdminDescriptionScreenState
         ),
         title: Text(
           AppLocalizations.of(context)!.description,
-         // 'Description',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -57,37 +58,56 @@ class _CommunityAdminDescriptionScreenState
           ),
         ),
         centerTitle: false,
-        
         actions: [
-          TextButton(
-              onPressed: () {
-                if (newDescriptionEC.text.trim() == '') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(
-                      content: Text(
-                        AppLocalizations.of(context)!.description
-                       //  'description'
-                      
-                       
-                      ),
-                    ),
-                  );
-                } else {
-                  communityCubit.updateDescription(
+          BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
+            listener: (context, state) {
+              if (state.status == Status.failure) {
+                showSnackBar(
+                  context: context,
+                  message:
+                      state.failure?.message ?? 'oops something went wrong',
+                );
+              }
+              if (state.status == Status.success) {
+                communityCubit.getCommunityDetail(
+                  communityCubit.state.community?.id ?? '',
+                );
+                Navigator.of(context).pop();
+              }
+            },
+            builder: (context, state) {
+              if (state.status == Status.loading) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: BouncingLogoIndicator(logo: ''),
+                );
+              }
+              return TextButton(
+                onPressed: () {
+                  if (newDescriptionEC.text.trim() == '') {
+                    showSnackBar(
+                      context: context,
+                      message: AppLocalizations.of(context)!
+                          .select_a_description_to_be_saved,
+                    );
+                  } else {
+                    communityCubit.updateDescription(
                       communityCubit.state.community?.id ?? '',
-                      newDescriptionEC.text.trim());
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Text(
-                AppLocalizations.of(context)!.save,
-                //'Save',
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                      newDescriptionEC.text.trim(),
+                    );
+                  }
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.save,
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ))
+              );
+            },
+          ),
         ],
       ),
       body: Container(
@@ -110,14 +130,13 @@ class _CommunityAdminDescriptionScreenState
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextField(
-                  
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: (value) {},
                   controller: newDescriptionEC,
-                  decoration:  InputDecoration(
+                  decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintText: AppLocalizations.of(context)!.describe_your_community,
-                    //'Describe your community',
+                    hintText:
+                        AppLocalizations.of(context)!.describe_your_community,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontWeight: FontWeight.normal,

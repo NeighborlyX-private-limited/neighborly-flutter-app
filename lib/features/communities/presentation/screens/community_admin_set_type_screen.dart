@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:neighborly_flutter_app/core/constants/status.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -49,7 +52,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
         ),
         title: Text(
           AppLocalizations.of(context)!.community_Type,
-         // 'Community Type',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -58,22 +60,47 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
         ),
         centerTitle: false,
         actions: [
-          TextButton(
-              onPressed: () {
-                communityCubit.updateType(
-                    communityCubit.state.community?.id ?? '',
-                    selectedOption ?? 'public');
+          BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
+            listener: (context, state) {
+              if (state.status == Status.failure) {
+                showSnackBar(
+                  context: context,
+                  message:
+                      state.failure?.message ?? 'oops something went wrong',
+                );
+              }
+              if (state.status == Status.success) {
+                communityCubit.getCommunityDetail(
+                  communityCubit.state.community?.id ?? '',
+                );
                 Navigator.of(context).pop();
-              },
-              child: Text(
-                AppLocalizations.of(context)!.save,
-               // 'Save',
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              }
+            },
+            builder: (context, state) {
+              if (state.status == Status.loading) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: BouncingLogoIndicator(logo: ''),
+                );
+              }
+              return TextButton(
+                onPressed: () {
+                  communityCubit.updateType(
+                    communityCubit.state.community?.id ?? '',
+                    selectedOption ?? 'public',
+                  );
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.save,
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ))
+              );
+            },
+          )
         ],
       ),
       body: Container(
@@ -85,13 +112,12 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
           children: [
             ListTile(
               title: Text(
-                 AppLocalizations.of(context)!.public,
-               // 'Public',
+                AppLocalizations.of(context)!.public,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle:  Text(
-                 AppLocalizations.of(context)!.anyone_can_join_see_posts_and_participate_in_discussions,
-               // 'Anyone can join, see posts, and participate in discussions. ',
+              subtitle: Text(
+                AppLocalizations.of(context)!
+                    .anyone_can_join_see_posts_and_participate_in_discussions,
                 style: TextStyle(fontWeight: FontWeight.normal),
               ),
               leading: Container(
@@ -107,8 +133,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 ),
               ),
               trailing: Radio<String>(
-                value:  AppLocalizations.of(context)!.public,
-                // 'public',
+                value: 'public',
                 groupValue: selectedOption,
                 onChanged: _handleRadioValueChange,
               ),
@@ -117,14 +142,13 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
               height: 15,
             ),
             ListTile(
-              title:  Text(
-                 AppLocalizations.of(context)!.private,
-               // 'Private',
+              title: Text(
+                AppLocalizations.of(context)!.private,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                   AppLocalizations.of(context)!.only_invited_members_can_join_view_posts_and_engage_in_conversations,
-               // 'Only invited members can join, view posts, and engage in conversations',
+                AppLocalizations.of(context)!
+                    .only_invited_members_can_join_view_posts_and_engage_in_conversations,
                 style: TextStyle(fontWeight: FontWeight.normal),
               ),
               leading: Container(
@@ -140,8 +164,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 ),
               ),
               trailing: Radio<String>(
-                value:  AppLocalizations.of(context)!.private,
-                // 'private',
+                value: 'private',
                 groupValue: selectedOption,
                 onChanged: _handleRadioValueChange,
               ),

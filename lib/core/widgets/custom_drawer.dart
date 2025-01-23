@@ -39,7 +39,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     /// drawer
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.60,
+      width: MediaQuery.of(context).size.width * 0.75,
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[

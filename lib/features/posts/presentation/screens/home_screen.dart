@@ -9,6 +9,7 @@ import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart'
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
+import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
@@ -509,10 +510,19 @@ class _HomeScreenState extends State<HomeScreen>
                       color: AppColors.greyColor,
                       size: 26,
                     ),
-                    onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+                    // onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+                    onPressed: () {
+                      isBottomNavVisible.value = false;
+                      _scaffoldKey.currentState?.openEndDrawer();
+                    },
                   ),
                 ],
               ),
+              onEndDrawerChanged: (isOpened) {
+                if (!isOpened) {
+                  isBottomNavVisible.value = true;
+                }
+              },
               endDrawer: CustomDrawer(
                 scaffoldKey: _scaffoldKey,
               ),
