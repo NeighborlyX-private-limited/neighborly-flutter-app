@@ -132,66 +132,77 @@ class TutorialScreenState extends State<TutorialScreen> {
               left: screenWidth * leftPositionOffset,
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 300),
-                child: Container(
-                  key: ValueKey<int>(_currentPage),
-                  height: 340,
-                  width: screenWidth * 0.7,
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor.withOpacity(0.9),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.blackColor.withOpacity(0.26),
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          tutorialContent[_currentPage]['title']!,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.left,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    key: ValueKey<int>(_currentPage),
+                    width: screenWidth * 0.7,
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      right: 12.0,
+                      bottom: 1.0,
+                      left: 18.0,
+                    ),
+                    
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.blackColor.withOpacity(0.26),
+                          blurRadius: 6,
+                          offset: Offset(0, 2),
                         ),
-                      ),
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: Text(
-                          tutorialContent[_currentPage]['description']!,
-                          style: const TextStyle(fontSize: 14),
-                          textAlign: TextAlign.left,
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: _nextPage,
-                            child: Text(
-                              _currentPage < tutorialContent.length - 1
-                                  ? 'Next'
-                                  : 'End Tour',
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            tutorialContent[_currentPage]['title']!,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
+                            textAlign: TextAlign.left,
                           ),
-                          if (_currentPage < tutorialContent.length - 1)
+                        ),
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            tutorialContent[_currentPage]['description']!,
+                            style: const TextStyle(fontSize: 14),
+                            textAlign: TextAlign.left,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
                             TextButton(
-                              onPressed: _skipTutorial,
-                              child: const Text(
-                                'Skip',
-                                style: TextStyle(color: AppColors.greyColor),
+                              onPressed: _nextPage,
+                              child: Text(
+                                _currentPage < tutorialContent.length - 1
+                                    ? 'Next'
+                                    : 'End Tour',
                               ),
                             ),
-                        ],
-                      ),
-                    ],
+                            if (_currentPage < tutorialContent.length - 1)
+                              TextButton(
+                                onPressed: _skipTutorial,
+                                child: const Text(
+                                  'Skip',
+                                  style: TextStyle(color: AppColors.greyColor),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
