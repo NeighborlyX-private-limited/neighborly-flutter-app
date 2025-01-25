@@ -100,44 +100,50 @@ class TutorialScreenState extends State<TutorialScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return SafeArea(
-      child: Scaffold(
-        body: BlocListener<TutorialCubit, TutorialState>(
-          bloc: _tutorialCubit,
-          listener: (context, state) {
-            ///success state
-            if (state is TutorialUpdateSuccess) {
-              context.go('/home/Home');
-            } else if (state is TutorialUpdateFailure) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Failed to update status: ${state.error}'),
-                ),
-              );
-            }
-          },
-          child: Stack(
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 300),
-                child: SvgPicture.asset(
-                  tutorialImages[_currentPage],
-                  key: ValueKey<int>(_currentPage),
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
-                ),
+    return Scaffold(
+      body: BlocListener<TutorialCubit, TutorialState>(
+        bloc: _tutorialCubit,
+        listener: (context, state) {
+          ///success state
+          if (state is TutorialUpdateSuccess) {
+            context.go('/home/Home');
+          } else if (state is TutorialUpdateFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to update status: ${state.error}'),
               ),
-              Positioned(
-                top: screenHeight * topPositionOffset,
-                left: screenWidth * leftPositionOffset,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
+            );
+          }
+        },
+        child: Stack(
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: SvgPicture.asset(
+                tutorialImages[_currentPage],
+                key: ValueKey<int>(_currentPage),
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+            Positioned(
+              top: screenHeight * topPositionOffset,
+              left: screenWidth * leftPositionOffset,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
                   child: Container(
                     key: ValueKey<int>(_currentPage),
-                    height: 300,
                     width: screenWidth * 0.7,
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.only(
+                      top: 8.0,
+                      right: 12.0,
+                      bottom: 1.0,
+                      left: 18.0,
+                    ),
+                    
                     decoration: BoxDecoration(
                       color: AppColors.whiteColor.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(16),
@@ -150,7 +156,7 @@ class TutorialScreenState extends State<TutorialScreen> {
                       ],
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Align(
                           alignment: Alignment.topLeft,
@@ -171,35 +177,28 @@ class TutorialScreenState extends State<TutorialScreen> {
                             textAlign: TextAlign.left,
                           ),
                         ),
+                        SizedBox(
+                          height: 8,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            if (_currentPage < tutorialContent.length - 1)
-                              ElevatedButton(
-                                onPressed: _skipTutorial,
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                child: const Text('Skip'),
-                              ),
-                            const SizedBox(width: 16),
-                            ElevatedButton(
+                            TextButton(
                               onPressed: _nextPage,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 12,
-                                ),
-                              ),
                               child: Text(
                                 _currentPage < tutorialContent.length - 1
                                     ? 'Next'
                                     : 'End Tour',
                               ),
                             ),
+                            if (_currentPage < tutorialContent.length - 1)
+                              TextButton(
+                                onPressed: _skipTutorial,
+                                child: const Text(
+                                  'Skip',
+                                  style: TextStyle(color: AppColors.greyColor),
+                                ),
+                              ),
                           ],
                         ),
                       ],
@@ -207,8 +206,8 @@ class TutorialScreenState extends State<TutorialScreen> {
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
