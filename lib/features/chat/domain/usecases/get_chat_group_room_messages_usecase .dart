@@ -16,6 +16,7 @@ class GetChatGroupRoomMessagesUseCase {
     return await repository.getGroupRoomMessages(
       roomId: roomId,
       page: page,
+      isreply: isreply,
     );
   }
 }

@@ -31,7 +31,8 @@ class _CommunitySectionChatState extends State<CommunitySectionChat> {
               name: widget.community.name,
               avatarUrl: widget.community.avatarUrl,
               lastMessage: "This is the last message",
-              lastMessageTime: DateTime.now().toIso8601String(),
+              lastMessageTime: DateTime.now()
+                  .toIso8601String(), //need to fix this is not correct last msg time
               onTap: () {
                 context.push(
                   '/chat/group/${widget.community.id}',

@@ -41,13 +41,17 @@ class SocketService {
     _socket!.on("user-joined", (userId) {
       print('User $userId joined the room.');
     });
-    //  user leaving
+
+    ///  user leaving
     _socket!.on("user-left", (userId) {
       print('User $userId left the room.');
     });
+
     _socket!.on("error-message", (data) {
       print('error-message: $data');
     });
+
+    /// on receive message
     _socket!.on("receive-message", (message) {
       if (onNewMessageReceived != null) {
         onNewMessageReceived!(message);
@@ -78,6 +82,7 @@ class SocketService {
 
   // leave room method
   void leaveRoom(String groupId) async {
+    print('room leave');
     if (groupId.isNotEmpty) {
       final payload = {'groupId': groupId};
       // Emit leave-room event and handle response
@@ -87,7 +92,9 @@ class SocketService {
 
   /// dispose method for socket
   void dispose(String roomId) {
+    print('dispose: $roomId');
     if (roomId.isNotEmpty) {
+      print('roomid not empty: $roomId');
       leaveRoom(roomId);
     }
     _socket?.disconnect();

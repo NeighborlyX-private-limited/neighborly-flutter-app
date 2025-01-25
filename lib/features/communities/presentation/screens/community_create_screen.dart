@@ -41,6 +41,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   @override
   void initState() {
     super.initState();
+    isBottomNavVisible.value = false;
     communityCreateCubit = BlocProvider.of<CommunityCreateCubit>(context);
     radiusEC.text = '3';
     currentStep = 1;
@@ -141,7 +142,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
-                        isBottomNavVisible.value = true;
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Color(0xff635BFF),
@@ -221,7 +221,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        isBottomNavVisible.value = true;
         Navigator.pop(context, true);
       },
       child: Scaffold(
@@ -298,8 +297,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             ///success state
             if (state.status == Status.success) {
               if (mounted) {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                context.go('/home/Home');
+
                 context.push('/groups/${state.newCommunityId}');
               }
             }

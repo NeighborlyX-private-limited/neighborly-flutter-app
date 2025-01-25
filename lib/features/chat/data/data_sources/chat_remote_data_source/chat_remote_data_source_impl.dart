@@ -12,28 +12,61 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   ChatRemoteDataSourceImpl({required this.client});
 
+  /// get group chat room messages
   @override
-  Future<List<ChatRoomModel>> getAllChatRooms() async {
-    print('... getAllChatRooms start');
-
+  Future<List<ChatMessageModel>> getGroupRoomMessages({
+    required String roomId,
+    bool isreply = false,
+    int page = 1,
+  }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
-    print('cookies:$cookies');
+
     if (cookies == null || cookies.isEmpty) {
-      print('cookies not fount in getAllChatRooms');
-      throw const ServerException(message: 'No cookies found');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
-    print('cookieHeader:$cookieHeader');
-    String url = '$kBaseUrl/chat/fetch-user-chats';
-    print('url:$url');
+
+    String url =
+        '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=10';
+
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
         'Cookie': cookieHeader,
       },
     );
-    print("getAllChatRooms response status code:${response.statusCode}");
-    print("getAllChatRooms response:${response.body}");
+
+    if (response.statusCode == 200) {
+      print('chat msg: ${jsonDecode(response.body)}');
+      print('chat msg page: $page');
+      print('chat msg limit: ${jsonDecode(response.body).length}');
+      return ChatMessageModel.fromJsonList(jsonDecode(response.body))
+          .reversed
+          .toList();
+    } else {
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<List<ChatRoomModel>> getAllChatRooms() async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'No cookies found');
+    }
+    String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/chat/fetch-user-chats';
+
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
 
     if (response.statusCode == 200) {
       return ChatRoomModel.fromJsonList(jsonDecode(response.body));
@@ -49,10 +82,6 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     required String roomId,
     String? dateFrom,
   }) async {
-    print('... getRoomMessages start with');
-    print('roomId=$roomId');
-    print('dateFrom=$dateFrom');
-
     if (dateFrom == null || dateFrom == '') {
       dateFrom = DateTime.now().toIso8601String();
     }
@@ -129,54 +158,5 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
     final fakeJson = json.decode(fakeData);
     return ChatMessageModel.fromJsonList(fakeJson);
-  }
-
-  /// get group chat room messages
-  @override
-  Future<List<ChatMessageModel>> getGroupRoomMessages({
-    required String roomId,
-    // String? dateFrom,
-    bool isreply = false,
-    int page = 1,
-  }) async {
-    print('...getGroupRoomMessages start with');
-    print('roomId=$roomId');
-    // print('dateFrom=$dateFrom');
-    print('isreply=$isreply');
-    print('page=$page');
-
-    // if (dateFrom == null || dateFrom == '') {
-    //   dateFrom = DateTime.now().toIso8601String();
-    // }
-
-    List<String>? cookies = ShardPrefHelper.getCookie();
-    print('cookie $cookies');
-    if (cookies == null || cookies.isEmpty) {
-      print('No cookies found in getGroupRoomMessages');
-      throw const ServerException(message: 'oops something went wrong');
-    }
-    String cookieHeader = cookies.join('; ');
-    print('cookieHeader: $cookieHeader');
-    String url =
-        '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=10';
-    print('url:$url');
-
-    final response = await client.get(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Cookie': cookieHeader,
-      },
-    );
-    print("getGroupRoomMessages response status code:${response.statusCode}");
-    print("getGroupRoomMessages response:${response.body}");
-    if (response.statusCode == 200) {
-      return ChatMessageModel.fromJsonList(jsonDecode(response.body))
-          .reversed
-          .toList();
-    } else {
-      final message =
-          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
-      throw ServerException(message: message);
-    }
   }
 }

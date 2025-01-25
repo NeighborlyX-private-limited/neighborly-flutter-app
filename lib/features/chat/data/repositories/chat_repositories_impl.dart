@@ -55,7 +55,6 @@ class ChatRepositoriesImpl implements ChatRepositories {
   @override
   Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages({
     required String roomId,
-    // String? dateFrom,
     bool isreply = false,
     int page = 1,
   }) async {

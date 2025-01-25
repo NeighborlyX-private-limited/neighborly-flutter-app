@@ -14,7 +14,6 @@ abstract class ChatRepositories {
   /// get group chat room messages
   Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages({
     required String roomId,
-    // String? dateFrom,
     bool isreply = false,
     int page = 1,
   });

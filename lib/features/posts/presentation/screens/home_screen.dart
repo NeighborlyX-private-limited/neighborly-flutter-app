@@ -282,6 +282,7 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
+    isBottomNavVisible.value = true;
     super.build(context);
     if (_scrollController.hasClients) {
       _scrollController.jumpTo(0.0);
@@ -512,7 +513,6 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                     // onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
                     onPressed: () {
-                      isBottomNavVisible.value = false;
                       _scaffoldKey.currentState?.openEndDrawer();
                     },
                   ),
@@ -521,6 +521,8 @@ class _HomeScreenState extends State<HomeScreen>
               onEndDrawerChanged: (isOpened) {
                 if (!isOpened) {
                   isBottomNavVisible.value = true;
+                } else {
+                  isBottomNavVisible.value = false;
                 }
               },
               endDrawer: CustomDrawer(

@@ -73,17 +73,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   /// get group msgs
   Future getGroupRoomMessages({
     required roomId,
-    bool? hideLoading = false,
-    String? dateFrom,
   }) async {
-    String? userN = ShardPrefHelper.getUsername();
-    String? userI = ShardPrefHelper.getUserProfilePicture();
-    userName = userN;
-    userImage = userI;
+    emit(state.copyWith(status: Status.loading));
 
-    if (!hideLoading!) {
-      emit(state.copyWith(status: Status.loading));
-    }
     final result = await getChatGroupRoomMessagesUseCase(
       roomId: state.roomId,
     );
@@ -99,18 +91,17 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
         );
       },
       (messageList) {
-        emit(state.copyWith(status: Status.success, messages: messageList));
+        emit(
+          state.copyWith(status: Status.success, messages: messageList),
+        );
       },
     );
   }
 
-  Future<void> fetchOlderMessages({
-    bool? hideLoading = false,
-    String? dateFrom,
-  }) async {
+  /// featch older msg with pagination
+  Future<void> fetchOlderMessages() async {
+    print('page: ${state.page}');
     try {
-      // Simulate fetching older messages from the server (implement API call)
-
       List<ChatMessageModel> olderMessages = state.messages;
 
       final result = await getChatGroupRoomMessagesUseCase(
@@ -129,16 +120,26 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           );
         },
         (messageList) {
+          int pageNumber = state.page;
           final updatedMessages = [...messageList, ...olderMessages];
-
-          emit(state.copyWith(messages: updatedMessages, page: state.page + 1));
+          if (messageList.length < 10) {
+            pageNumber = pageNumber;
+          } else {
+            pageNumber += 1;
+          }
+          emit(state.copyWith(messages: updatedMessages, page: pageNumber));
         },
       );
-    } catch (e) {}
+    } catch (e) {
+      throw e.toString();
+    }
   }
 
   /// send msg
-  void sendMessage(Map<String, String> payload, bool isMsg) {
+  void sendMessage(
+    Map<String, String> payload,
+    bool isMsg,
+  ) {
     socketService.sendMessage(state.roomId, payload, isMsg);
   }
 

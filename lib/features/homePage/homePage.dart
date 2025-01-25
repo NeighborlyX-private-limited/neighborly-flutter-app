@@ -55,6 +55,13 @@ class _MainPageState extends State<MainPage> {
     fetchLocationAndUpdate();
     updateFCMtokenNotification();
     _setDeepLinkListener();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.childId == 'Home') {
+        setState(() {
+          _currentIndex = 0;
+        });
+      }
+    });
   }
 
   @override
@@ -193,7 +200,7 @@ class _MainPageState extends State<MainPage> {
         break;
       case 2:
         context.push('/create');
-        isBottomNavVisible.value = false;
+
         setState(() {
           _currentIndex = 2;
         });

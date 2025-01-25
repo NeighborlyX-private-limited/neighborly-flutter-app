@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -38,7 +39,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   bool showPinned = true;
   File? fileToUpload;
   bool _isLoadingMore = false;
-  bool _shouldScrollToBottom = true;
+  // bool _shouldScrollToBottom = true;
   double _previousScrollOffset = 0.0;
 
   /// init state method
@@ -74,17 +75,17 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   //   }
   // }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients && _shouldScrollToBottom) {
-      Future.delayed(Duration(milliseconds: 300), () {
-        _scrollController.position.animateTo(
-          _previousScrollOffset,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      });
-    }
-  }
+  // void _scrollToBottom() {
+  //   if (_scrollController.hasClients && _shouldScrollToBottom) {
+  //     Future.delayed(Duration(milliseconds: 300), () {
+  //       _scrollController.position.animateTo(
+  //         _previousScrollOffset,
+  //         duration: Duration(milliseconds: 300),
+  //         curve: Curves.easeOut,
+  //       );
+  //     });
+  //   }
+  // }
 
   /// SCROLL TO END
   // void _scrollToEnd() {
@@ -126,7 +127,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   Future<void> _loadMoreMessages() async {
     setState(() {
       _isLoadingMore = true;
-      _shouldScrollToBottom = false;
+      // _shouldScrollToBottom = false;
     });
 
     // Fetch older messages from server via ChatGroupCubit
@@ -393,25 +394,17 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       body: BlocConsumer<ChatGroupCubit, ChatGroupState>(
         /// listner
         listener: (context, state) {
-          switch (state.status) {
-            case Status.loading:
-              break;
-            case Status.failure:
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('oops something went wrong'),
-                ),
-              );
-              break;
-            case Status.success:
-              break;
-            case Status.initial:
-              break;
+          /// loading state
+          if (state.status == Status.failure) {
+            showSnackBar(
+              context: context,
+              message: state.failure?.message ?? 'oops something went wrong',
+            );
           }
-          if (state.status == Status.success && !_isLoadingMore) {
-            _shouldScrollToBottom = true;
-            _scrollToBottom();
-          }
+          // if (state.status == Status.success && !_isLoadingMore) {
+          //   // _shouldScrollToBottom = true;
+          //   // _scrollToBottom();
+          // }
           // if (state.status == Status.success && state.page == 1) {
 
           //   // _scrollToEnd();
@@ -421,6 +414,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           //     }
           //   });
           // }
+          /// success state
           if (state.status == Status.success && state.page == 1) {
             // Ensure the scroll action occurs after the widget layout is completed
             WidgetsBinding.instance.addPostFrameCallback((_) {
