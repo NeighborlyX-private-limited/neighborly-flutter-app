@@ -117,6 +117,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
 
   Future<dynamic> bottomSheetConfirmNotSaved(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         // String? userId = ShardPrefHelper.getUserID();

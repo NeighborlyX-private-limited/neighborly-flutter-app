@@ -58,6 +58,9 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'range': '$radius',
       };
     }
+    print(
+      Uri.parse(url).replace(queryParameters: queryParameters),
+    );
 
     // var isMode = ShardPrefHelper.getIsModeLocationOn();
     // if (isMode && !isHome) {

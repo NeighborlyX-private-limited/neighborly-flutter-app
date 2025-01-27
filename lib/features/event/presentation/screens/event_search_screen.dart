@@ -82,6 +82,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
 
   Future<dynamic> searchFilterSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(

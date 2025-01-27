@@ -24,35 +24,35 @@ class SocketService {
           .build(),
     );
 
-    _socket!.connect();
+    _socket?.connect();
 
     /// successfull connection
-    _socket!.on("connect", (_) {
+    _socket?.on("connect", (_) {
       print("Connected to the server");
       joinRoom(groupId);
     });
 
     /// on connection error
-    _socket!.on("error", (err) {
+    _socket?.on("error", (err) {
       print("Connection error:  ${err['message']}");
     });
 
     /// user joined
-    _socket!.on("user-joined", (userId) {
+    _socket?.on("user-joined", (userId) {
       print('User $userId joined the room.');
     });
 
     ///  user leaving
-    _socket!.on("user-left", (userId) {
-      print('User $userId left the room.');
+    _socket?.on("user-left", (userId) {
+      print('User with userId $userId left the room.');
     });
 
-    _socket!.on("error-message", (data) {
+    _socket?.on("error-message", (data) {
       print('error-message: $data');
     });
 
     /// on receive message
-    _socket!.on("receive-message", (message) {
+    _socket?.on("receive-message", (message) {
       if (onNewMessageReceived != null) {
         onNewMessageReceived!(message);
       }
@@ -76,7 +76,7 @@ class SocketService {
     if (groupId.isNotEmpty) {
       final payload = {'groupId': groupId};
       // Emit join-room event and handle response
-      _socket!.emit('join-room', payload);
+      _socket?.emit('join-room', payload);
     }
   }
 
@@ -86,7 +86,7 @@ class SocketService {
     if (groupId.isNotEmpty) {
       final payload = {'groupId': groupId};
       // Emit leave-room event and handle response
-      _socket!.emit('leave-room', payload);
+      _socket?.emit('leave-room', payload);
     }
   }
 
@@ -101,5 +101,6 @@ class SocketService {
     _socket?.dispose();
     _socket = null;
     print("Socket connection disposed");
+    return;
   }
 }

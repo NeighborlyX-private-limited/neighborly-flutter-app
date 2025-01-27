@@ -289,6 +289,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     }
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
@@ -393,6 +394,7 @@ class _CommentWidgetState extends State<CommentWidget> {
     ];
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(
@@ -573,6 +575,7 @@ class _CommentWidgetState extends State<CommentWidget> {
   /// report Confirmation Bottom Sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(

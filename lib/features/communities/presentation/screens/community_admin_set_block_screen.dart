@@ -36,6 +36,7 @@ class _CommunityAdminBlockedUsersScreenState
 
   Future<dynamic> bottomSheet(BuildContext context, String userId) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(

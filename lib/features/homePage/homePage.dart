@@ -55,13 +55,14 @@ class _MainPageState extends State<MainPage> {
     fetchLocationAndUpdate();
     updateFCMtokenNotification();
     _setDeepLinkListener();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (widget.childId == 'Home') {
-        setState(() {
-          _currentIndex = 0;
-        });
-      }
-    });
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (widget.childId == 'Home') {
+    //     setState(() {
+    //       _currentIndex = 0;
+    //     });
+    //   }
+    // });
   }
 
   @override
@@ -181,54 +182,60 @@ class _MainPageState extends State<MainPage> {
   }
 
   int _currentIndex = 0;
-  void _onItemTapped(int index) {
+  void _onItemTapped(int index) async {
     setState(() {
       _currentIndex = index;
     });
     switch (index) {
       case 0:
         context.go('/home/Home');
-        setState(() {
-          _currentIndex = 0;
-        });
+        // setState(() {
+        //   _currentIndex = 0;
+        // });
         break;
       case 1:
         context.go('/groups');
-        setState(() {
-          _currentIndex = 1;
-        });
+        // setState(() {
+        //   _currentIndex = 1;
+        // });
         break;
       case 2:
-        context.push('/create');
+        context.go('/create');
+        // final result = await context.push('/create');
+        // if (result == true) {
+        //   Navigator.pop(context, true);
+        // } else {
+        //   print('Pop returned: false or null');
+        // }
 
-        setState(() {
-          _currentIndex = 2;
-        });
+        // setState(() {
+        //   _currentIndex = 2;
+        // });
         break;
       case 3:
-        setState(() {
-          _currentIndex = 3;
-        });
-        // context.go('/events');
-        showSnackBar(context: context, message: 'comming soon...');
+        // setState(() {
+        //   _currentIndex = 3;
+        // });
+        context.go('/coming-soon');
+        //showSnackBar(context: context, message: 'comming soon...');
 
         break;
       case 4:
-        context.push('/profile');
-        setState(() {
-          _currentIndex = 4;
-        });
+        context.go('/profile');
+        // setState(() {
+        //   _currentIndex = 4;
+        // });
         break;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.childId == 'Home') {
-      setState(() {
-        _currentIndex = 0;
-      });
-    }
+    // if (widget.childId == 'Home') {
+    //   setState(() {
+    //     _currentIndex = 0;
+    //   });
+    // }
 
     return SafeArea(
       child: Scaffold(

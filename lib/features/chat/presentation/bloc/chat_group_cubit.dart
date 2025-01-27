@@ -31,6 +31,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
     /// listen for new messages
     socketService.onNewMessageReceived = (message) {
+      print(message);
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
           'id': message['groupId'],
@@ -137,7 +138,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
   /// send msg
   void sendMessage(
-    Map<String, String> payload,
+    Map<String, dynamic> payload,
     bool isMsg,
   ) {
     socketService.sendMessage(state.roomId, payload, isMsg);

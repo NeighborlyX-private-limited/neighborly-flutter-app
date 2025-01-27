@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -44,6 +46,7 @@ class _CommunitySectionChatState extends State<CommunitySectionChat> {
                     lastMessageDate: DateTime.now().toIso8601String(),
                     isMuted: widget.community.isMuted,
                     isGroup: true,
+                    isJoined: widget.community.isJoined,
                     unreadCount: 0,
                   ),
                 );

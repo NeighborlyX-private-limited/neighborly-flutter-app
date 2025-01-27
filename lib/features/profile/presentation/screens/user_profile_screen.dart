@@ -280,6 +280,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(

@@ -584,6 +584,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
   /// report confirmation bottom sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -625,6 +626,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
   /// report reason bottom sheet
   Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return SingleChildScrollView(

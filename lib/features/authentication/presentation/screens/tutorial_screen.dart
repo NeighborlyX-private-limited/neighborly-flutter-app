@@ -143,7 +143,6 @@ class TutorialScreenState extends State<TutorialScreen> {
                       bottom: 1.0,
                       left: 18.0,
                     ),
-                    
                     decoration: BoxDecoration(
                       color: AppColors.whiteColor.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(16),

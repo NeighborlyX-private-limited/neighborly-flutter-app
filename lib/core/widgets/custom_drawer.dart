@@ -154,6 +154,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             onTap: () {
               widget.scaffoldKey.currentState?.closeEndDrawer();
               showModalBottomSheet(
+                useRootNavigator: true,
                 showDragHandle: true,
                 backgroundColor: AppColors.whiteColor,
                 context: context,
@@ -228,6 +229,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   /// logout bottom sheet
   Future<void> logoutBottomSheet(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(

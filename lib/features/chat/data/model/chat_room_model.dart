@@ -11,6 +11,7 @@ class ChatRoomModel extends ChatRoomEntity {
     required super.lastMessageDate,
     required super.isMuted,
     required super.isGroup,
+    required super.isJoined,
     required super.unreadCount,
   });
 
@@ -22,6 +23,7 @@ class ChatRoomModel extends ChatRoomEntity {
     String? lastMessageDate,
     bool? isMuted,
     bool? isGroup,
+    bool? isJoined,
     int? unreadCount,
   }) {
     return ChatRoomModel(
@@ -32,6 +34,7 @@ class ChatRoomModel extends ChatRoomEntity {
       lastMessageDate: lastMessageDate ?? this.lastMessageDate,
       isMuted: isMuted ?? this.isMuted,
       isGroup: isGroup ?? this.isGroup,
+      isJoined: isJoined ?? this.isJoined,
       unreadCount: unreadCount ?? this.unreadCount,
     );
   }
@@ -50,6 +53,7 @@ class ChatRoomModel extends ChatRoomEntity {
       'lastMessageDate': lastMessageDate,
       'isMuted': isMuted,
       'isGroup': isGroup,
+      'isJoined': isJoined,
       'unreadCount': unreadCount,
     };
   }
@@ -63,6 +67,7 @@ class ChatRoomModel extends ChatRoomEntity {
       lastMessageDate: map['lastMessageDate'] ?? '',
       isMuted: map['isMuted'] ?? false,
       isGroup: map['isGroup'] ?? false,
+      isJoined: map['isJoined'] ?? false,
       unreadCount: map['unreadCount']?.toInt() ?? 0,
     );
   }

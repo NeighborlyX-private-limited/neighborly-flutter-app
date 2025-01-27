@@ -60,6 +60,7 @@ class _CommunityAdminMembersUsersScreenState
     String userId,
   ) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -179,6 +180,7 @@ class _CommunityAdminMembersUsersScreenState
     String userId,
   ) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -299,6 +301,7 @@ class _CommunityAdminMembersUsersScreenState
     String userId,
   ) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -424,6 +427,7 @@ class _CommunityAdminMembersUsersScreenState
     BuildContext context,
   ) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -554,6 +558,7 @@ class _CommunityAdminMembersUsersScreenState
     String userId,
   ) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -685,6 +690,7 @@ class _CommunityAdminMembersUsersScreenState
     bool isAdmin,
   ) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,

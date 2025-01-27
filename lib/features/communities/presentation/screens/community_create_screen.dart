@@ -41,7 +41,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   @override
   void initState() {
     super.initState();
-    isBottomNavVisible.value = false;
+
     communityCreateCubit = BlocProvider.of<CommunityCreateCubit>(context);
     radiusEC.text = '3';
     currentStep = 1;
@@ -89,6 +89,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   /// user leave with save with creating gorups confirmation bottom sheet
   Future<dynamic> bottomSheetConfirmNotSaved(BuildContext context) {
     return showModalBottomSheet(
+      //useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -221,7 +222,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        Navigator.pop(context, true);
+        Navigator.pop(context);
       },
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -233,7 +234,9 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
               color: Colors.black,
             ),
             onTap: () {
+              print('hello: $currentStep');
               if (currentStep == 1) {
+                // Navigator.pop(context);
                 bottomSheetConfirmNotSaved(context);
                 return;
               }
@@ -297,8 +300,11 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             ///success state
             if (state.status == Status.success) {
               if (mounted) {
-                context.go('/home/Home');
-
+                // Navigator.pop(
+                //   context,
+                // );
+                //Navigator.pop(context, true);
+                //context.go('/home/Home');
                 context.push('/groups/${state.newCommunityId}');
               }
             }

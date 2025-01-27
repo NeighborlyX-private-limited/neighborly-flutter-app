@@ -442,6 +442,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
 
   Future<dynamic> bottomSheet(BuildContext context, bool isComment) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(

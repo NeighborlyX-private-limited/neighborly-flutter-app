@@ -41,6 +41,7 @@ class GenderDropdown extends StatelessWidget {
 
   void _showGenderSelectionSheet(BuildContext context) {
     showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       context: context,
       shape: RoundedRectangleBorder(

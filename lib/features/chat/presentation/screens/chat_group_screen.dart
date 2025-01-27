@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -38,6 +40,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   bool isCommentFilled = false;
   bool showPinned = true;
   File? fileToUpload;
+
+  String? base64File;
+
   bool _isLoadingMore = false;
   // bool _shouldScrollToBottom = true;
   double _previousScrollOffset = 0.0;
@@ -141,6 +146,56 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     });
   }
 
+  void ShowDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.whiteColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              12,
+            ),
+          ),
+          title: Column(
+            children: [
+              SvgPicture.asset(
+                'assets/event-coming-soon.svg',
+                fit: BoxFit.contain,
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Only group member can reply to the messages in this group',
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+                softWrap: true,
+              ),
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                ),
+                child: Text(
+                  'Join Now',
+                  style: TextStyle(
+                    color: AppColors.whiteColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   /// dispose method
   @override
   void dispose() {
@@ -158,11 +213,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     });
 
     if (image != null) {
-      setState(() {
-        fileToUpload = File(image.path);
+      final fileBytes = await File(image.path).readAsBytes();
 
-        // TODO: send image as message
-        // chatGroupCubit.sendMessage(message: '', image: fileToUpload);
+      setState(() {
+        base64File = base64Encode(fileBytes);
+        fileToUpload = File(image.path);
       });
     }
   }
@@ -180,6 +235,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             //chatGroupCubit.
             context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
             Navigator.pop(context);
+            return;
           },
         ),
         const SizedBox(
@@ -281,23 +337,21 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             ///send button
             InkWell(
               onTap: () {
-                // final payload = {
-                //   "msg_id": string,
-                //   "group_id": string,
-                //   "senderName": string,
-                //   "msg": string,
-                //   "sent_at": string,
-                //   "mediaLink": string,
-                //   "senderPhoto": string,
-                // };
-                if (messageEC.text.trim() != "") {
-                  final payload = {
-                    'groupId': widget.roomId,
-                    'message': messageEC.text
-                  };
-                  context.read<ChatGroupCubit>().sendMessage(payload, true);
-                  // fileToUpload = null;
-                  messageEC.clear();
+                if (!widget.room.isJoined) {
+                  ShowDialog();
+                } else {
+                  if (messageEC.text.trim() != "") {
+                    final payload = {
+                      'groupId': widget.roomId,
+                      'message': messageEC.text,
+                      'parentMessageId': null,
+                      'file': base64File,
+                    };
+                    print(payload);
+                    context.read<ChatGroupCubit>().sendMessage(payload, true);
+                    base64File = null;
+                    messageEC.clear();
+                  }
                 }
               },
               child: Opacity(
@@ -372,222 +426,230 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[300],
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: appBarTitleArea(),
-        actions: [
-          IconButton(
-            onPressed: () {
-              /// perform action for group chat screen
-            },
-            icon: Icon(
-              Icons.more_vert_outlined,
-              size: 31,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+        Navigator.pop(context);
+      },
+      child: Scaffold(
+        backgroundColor: Colors.grey[300],
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          automaticallyImplyLeading: false,
+          title: appBarTitleArea(),
+          actions: [
+            IconButton(
+              onPressed: () {
+                /// perform action for group chat screen
+              },
+              icon: Icon(
+                Icons.more_vert_outlined,
+                size: 31,
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-        ],
-      ),
-      body: BlocConsumer<ChatGroupCubit, ChatGroupState>(
-        /// listner
-        listener: (context, state) {
-          /// loading state
-          if (state.status == Status.failure) {
-            showSnackBar(
-              context: context,
-              message: state.failure?.message ?? 'oops something went wrong',
-            );
-          }
-          // if (state.status == Status.success && !_isLoadingMore) {
-          //   // _shouldScrollToBottom = true;
-          //   // _scrollToBottom();
-          // }
-          // if (state.status == Status.success && state.page == 1) {
-
-          //   // _scrollToEnd();
-          //   Future.delayed(Duration(milliseconds: 100), () {
-          //     if (_scrollController.hasClients) {
-          //       _scrollToEnd();
-          //     }
-          //   });
-          // }
-          /// success state
-          if (state.status == Status.success && state.page == 1) {
-            // Ensure the scroll action occurs after the widget layout is completed
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _scrollToEnd();
-            });
-          }
-        },
-        builder: (context, state) {
-          int lineCount = 1;
-          String lastDate = '';
-          return BlocBuilder<ChatGroupCubit, ChatGroupState>(
-            builder: (context, state) {
-              var pinnedMessages = <ChatMessageModel>[];
-
-              /// loading state
-              if (state.status == Status.loading) {
-                return Container(
-                  color: Colors.white,
-                  child: ChatMessagesGroupSheemer(),
-                );
-              }
-
-              /// get pinned msg
-              else {
-                pinnedMessages = [
-                  ...state.messages.where((element) => element.isPinned)
-                ];
-              }
-
-              return Container(
-                padding: EdgeInsets.only(top: 1),
-                margin: EdgeInsets.only(top: 1),
-                width: double.infinity,
-                color: Colors.white,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    /// #pinned msg area
-                    if (showPinned && pinnedMessages.isNotEmpty)
-                      pinnedMessageArea(
-                        pinnedMessages,
-                      ),
-
-                    /// Show loading indicator at the top when fetching more messages
-                    if (_isLoadingMore)
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Center(
-                          child: CircularProgressIndicator(),
-                        ),
-                      ),
-
-                    Expanded(
-                      child: Container(
-                        color: Colors.white,
-                        width: double.infinity,
-                        margin: EdgeInsets.symmetric(horizontal: 10),
-                        child: ListView.builder(
-                          controller: _scrollController,
-                          shrinkWrap: true,
-                          itemCount:
-                              state.messages.length + (_isLoadingMore ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index >= state.messages.length) {
-                              return SizedBox.shrink();
-                            }
-
-                            var msg = state.messages[index];
-
-                            // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
-                            //String cheerorbooFromreply = state.messages[index].booOrCheer;
-
-                            var dateSummary = onlyDate(msg.date);
-
-                            /// Show loading indicator at the top when fetching more messages
-                            if (_isLoadingMore &&
-                                index == state.messages.length) {
-                              return Center(child: CircularProgressIndicator());
-                            }
-                            var messageWidget = ChatMessageGroupWidget(
-                              message: msg,
-                              isAdmin: msg.isAdmin,
-                              showIsReaded:
-                                  (lineCount == state.messages.length) &&
-                                      msg.isMine,
-
-                              /// ON TAP PRESS
-                              onTap: (msgSelected) {},
-
-                              /// ON REPLY
-                              onReply: (msgIdToSendReply, message) {
-                                context.push(
-                                    '/chat/group/thread/${msgIdToSendReply.id}',
-                                    extra: {
-                                      'message': msgIdToSendReply,
-                                      'room': widget.room,
-                                    });
-                              },
-
-                              /// on tap reply
-                              onTapReply: (messageToOpen) {
-                                context.push(
-                                    '/chat/group/thread/${messageToOpen.id}',
-                                    extra: {
-                                      'message': messageToOpen,
-                                      'room': widget.room,
-                                    });
-                              },
-
-                              /// on tap cheer
-                              onTapCheer: () {
-                                final payload = {
-                                  'group_id': widget.roomId,
-                                  'message_id': state.messages[index].id,
-                                  'action': 'cheer'
-                                };
-                                context
-                                    .read<ChatGroupCubit>()
-                                    .sendMessage(payload, false);
-                              },
-
-                              /// on tap boo
-                              onTapBool: () {
-                                final payload = {
-                                  'group_id': widget.roomId,
-                                  'message_id': state.messages[index].id,
-                                  'action': 'boo'
-                                };
-                                context
-                                    .read<ChatGroupCubit>()
-                                    .sendMessage(payload, false);
-                              },
-
-                              ///ON REACT
-                              onReact: (messageId, reactOrAward) {},
-                              onReport: (messageId, reason) {},
-                              onShare: (message) {},
-                              onPin: (messageToBePinned) {},
-                            );
-
-                            if (lastDate != dateSummary) {
-                              lastDate = dateSummary;
-                              return Column(
-                                children: [
-                                  if (lastDate != '')
-                                    Text(
-                                      formatDate(dateSummary),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        height: 2.5,
-                                      ),
-                                    ),
-                                  messageWidget,
-                                ],
-                              );
-                            }
-
-                            return messageWidget;
-                          },
-                        ),
-                      ),
-                    ),
-
-                    Divider(height: 1, color: Colors.grey[300]),
-
-                    messageInputSection(),
-                  ],
-                ),
+            const SizedBox(width: 10),
+          ],
+        ),
+        body: BlocConsumer<ChatGroupCubit, ChatGroupState>(
+          /// listner
+          listener: (context, state) {
+            /// loading state
+            if (state.status == Status.failure) {
+              showSnackBar(
+                context: context,
+                message: state.failure?.message ?? 'oops something went wrong',
               );
-            },
-          );
-        },
+            }
+            // if (state.status == Status.success && !_isLoadingMore) {
+            //   // _shouldScrollToBottom = true;
+            //   // _scrollToBottom();
+            // }
+            // if (state.status == Status.success && state.page == 1) {
+
+            //   // _scrollToEnd();
+            //   Future.delayed(Duration(milliseconds: 100), () {
+            //     if (_scrollController.hasClients) {
+            //       _scrollToEnd();
+            //     }
+            //   });
+            // }
+            /// success state
+            if (state.status == Status.success && state.page == 1) {
+              // Ensure the scroll action occurs after the widget layout is completed
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _scrollToEnd();
+              });
+            }
+          },
+          builder: (context, state) {
+            int lineCount = 1;
+            String lastDate = '';
+            return BlocBuilder<ChatGroupCubit, ChatGroupState>(
+              builder: (context, state) {
+                var pinnedMessages = <ChatMessageModel>[];
+
+                /// loading state
+                if (state.status == Status.loading) {
+                  return Container(
+                    color: Colors.white,
+                    child: ChatMessagesGroupSheemer(),
+                  );
+                }
+
+                /// get pinned msg
+                else {
+                  pinnedMessages = [
+                    ...state.messages.where((element) => element.isPinned)
+                  ];
+                }
+
+                return Container(
+                  padding: EdgeInsets.only(top: 1),
+                  margin: EdgeInsets.only(top: 1),
+                  width: double.infinity,
+                  color: Colors.white,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      /// #pinned msg area
+                      if (showPinned && pinnedMessages.isNotEmpty)
+                        pinnedMessageArea(
+                          pinnedMessages,
+                        ),
+
+                      /// Show loading indicator at the top when fetching more messages
+                      if (_isLoadingMore)
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+
+                      Expanded(
+                        child: Container(
+                          color: Colors.white,
+                          width: double.infinity,
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          child: ListView.builder(
+                            controller: _scrollController,
+                            shrinkWrap: true,
+                            itemCount: state.messages.length +
+                                (_isLoadingMore ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index >= state.messages.length) {
+                                return SizedBox.shrink();
+                              }
+
+                              var msg = state.messages[index];
+
+                              // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
+                              //String cheerorbooFromreply = state.messages[index].booOrCheer;
+
+                              var dateSummary = onlyDate(msg.date);
+
+                              /// Show loading indicator at the top when fetching more messages
+                              if (_isLoadingMore &&
+                                  index == state.messages.length) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              }
+                              var messageWidget = ChatMessageGroupWidget(
+                                message: msg,
+                                isAdmin: msg.isAdmin,
+                                showIsReaded:
+                                    (lineCount == state.messages.length) &&
+                                        msg.isMine,
+
+                                /// ON TAP PRESS
+                                onTap: (msgSelected) {},
+
+                                /// ON REPLY
+                                onReply: (msgIdToSendReply, message) {
+                                  context.push(
+                                      '/chat/group/thread/${msgIdToSendReply.id}',
+                                      extra: {
+                                        'message': msgIdToSendReply,
+                                        'room': widget.room,
+                                      });
+                                },
+
+                                /// on tap reply
+                                onTapReply: (messageToOpen) {
+                                  context.push(
+                                      '/chat/group/thread/${messageToOpen.id}',
+                                      extra: {
+                                        'message': messageToOpen,
+                                        'room': widget.room,
+                                      });
+                                },
+
+                                /// on tap cheer
+                                onTapCheer: () {
+                                  final payload = {
+                                    'group_id': widget.roomId,
+                                    'message_id': state.messages[index].id,
+                                    'action': 'cheer'
+                                  };
+                                  context
+                                      .read<ChatGroupCubit>()
+                                      .sendMessage(payload, false);
+                                },
+
+                                /// on tap boo
+                                onTapBool: () {
+                                  final payload = {
+                                    'group_id': widget.roomId,
+                                    'message_id': state.messages[index].id,
+                                    'action': 'boo'
+                                  };
+                                  context
+                                      .read<ChatGroupCubit>()
+                                      .sendMessage(payload, false);
+                                },
+
+                                ///ON REACT
+                                onReact: (messageId, reactOrAward) {},
+                                onReport: (messageId, reason) {},
+                                onShare: (message) {},
+                                onPin: (messageToBePinned) {},
+                              );
+
+                              if (lastDate != dateSummary) {
+                                lastDate = dateSummary;
+                                return Column(
+                                  children: [
+                                    if (lastDate != '')
+                                      Text(
+                                        formatDate(dateSummary),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          height: 2.5,
+                                        ),
+                                      ),
+                                    messageWidget,
+                                  ],
+                                );
+                              }
+
+                              return messageWidget;
+                            },
+                          ),
+                        ),
+                      ),
+
+                      Divider(height: 1, color: Colors.grey[300]),
+
+                      messageInputSection(),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

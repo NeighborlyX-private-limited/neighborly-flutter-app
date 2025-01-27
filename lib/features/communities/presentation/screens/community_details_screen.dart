@@ -263,6 +263,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   /// bottom sheet to leave group confirmation
   Future<dynamic> bottomSheetLeaveConfirm(BuildContext context, String userId) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       backgroundColor: AppColors.whiteColor,
       context: context,
@@ -350,6 +351,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     BuildContext context,
   ) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       backgroundColor: AppColors.whiteColor,
       context: context,
@@ -450,6 +452,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   ///report Confirmation BottomSheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -490,6 +493,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   ///report Reason BottomSheet
   Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -550,6 +554,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   ///leave group bottom sheet
   Future<dynamic> leaveGroupBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       backgroundColor: AppColors.whiteColor,
       context: context,
@@ -668,6 +673,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   /// join group bottom sheet
   Future<dynamic> joinGroupBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       backgroundColor: AppColors.whiteColor,
       context: context,

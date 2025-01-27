@@ -76,6 +76,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
   ///leave group bottom sheet
   Future<dynamic> leaveGroupBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       backgroundColor: AppColors.whiteColor,
       context: context,
@@ -196,6 +197,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
   /// join group bottom sheet
   Future<dynamic> joinGroupBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       backgroundColor: AppColors.whiteColor,
       context: context,
@@ -324,6 +326,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
       child: Card(
         elevation: 1,
         child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           height: 160,
           width: 125,
           decoration: BoxDecoration(
@@ -344,174 +347,136 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
           ),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    Container(
-                      height: 19,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
-                        borderRadius: BorderRadius.circular(50),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                    ),
+                    height: 20,
+                    //width: 59,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Row(
+                      //crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          widget.community.isPublic
+                              ? Icons.public
+                              : Icons.lock_person_outlined,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        Text(
+                          widget.community.isPublic
+                              ? AppLocalizations.of(context)!.public
+                              : AppLocalizations.of(context)!.private,
+                          style: TextStyle(
+                            height: 0.5,
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              Spacer(),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.community.displayName,
+                    textAlign: TextAlign.start,
+                    softWrap: true,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.whiteColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      StackedAvatarIndicator(
+                        avatarUrls: [
+                          ...widget.community.users.map((e) => e.avatarUrl),
+                        ],
+                        showOnly: 3,
+                        avatarSize: 22,
+                        onTap: () {},
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              widget.community.isPublic
-                                  ? Icons.public
-                                  : Icons.lock_person_outlined,
-                              color: Colors.white,
-                              size: 15,
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              widget.community.isPublic
-                                  ? AppLocalizations.of(context)!.public
-                                  : AppLocalizations.of(context)!.private,
+                      SizedBox(
+                        width: 4,
+                      ),
+                      groupMemberCount > 1000
+                          ? Text(
+                              '${groupMemberCount}k+ ${AppLocalizations.of(context)!.members}',
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                height: 0.5,
                                 color: Colors.white,
-                                fontSize: 12,
+                                fontSize: 14,
                               ),
-                            ),
-                          ],
+                            )
+                          : groupMemberCount > 1
+                              ? Text(
+                                  '$groupMemberCount ${AppLocalizations.of(context)!.members}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                )
+                              : Text(
+                                  '$groupMemberCount ${AppLocalizations.of(context)!.member}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  GestureDetector(
+                    onTap: () {
+                      widget.community.isJoined
+                          ? leaveGroupBottomSheet(context)
+                          : joinGroupBottomSheet(context);
+                    },
+                    child: Container(
+                      height: 35,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Color(0xff635BFF),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.community.isJoined
+                              ? AppLocalizations.of(context)!.leave
+                              : AppLocalizations.of(context)!.join,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Spacer(),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10),
-                    bottomRight: Radius.circular(10),
-                  ),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withOpacity(0.1),
-                      Colors.black.withOpacity(0.4),
-                      Colors.black.withOpacity(0.8),
-                      Colors.black.withOpacity(0.8),
-                      Colors.black.withOpacity(0.9),
-                    ],
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.community.displayName,
-                        textAlign: TextAlign.start,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Text(
-                        widget.community.name,
-                        textAlign: TextAlign.start,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 14,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          StackedAvatarIndicator(
-                            avatarUrls: [
-                              ...{
-                                ...widget.community.users
-                                    .map((e) => e.avatarUrl),
-                                // ...widget.community.admins
-                                //     .map((e) => e.avatarUrl),
-                              }
-                            ],
-                            showOnly: 3,
-                            avatarSize: 22,
-                            onTap: () {},
-                          ),
-                          Expanded(
-                            child: groupMemberCount > 1000
-                                ? Text(
-                                    '${groupMemberCount}k+ ${AppLocalizations.of(context)!.members}',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
-                                  )
-                                : groupMemberCount > 1
-                                    ? Text(
-                                        '$groupMemberCount ${AppLocalizations.of(context)!.members}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      )
-                                    : Text(
-                                        '$groupMemberCount ${AppLocalizations.of(context)!.member}',
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: () {
-                          widget.community.isJoined
-                              ? leaveGroupBottomSheet(context)
-                              : joinGroupBottomSheet(context);
-                        },
-                        child: Container(
-                          height: 35,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Color(0xff635BFF),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Center(
-                            child: Text(
-                              widget.community.isJoined
-                                  ? AppLocalizations.of(context)!.leave
-                                  : AppLocalizations.of(context)!.join,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
+                  )
+                ],
               )
             ],
           ),

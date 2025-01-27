@@ -65,9 +65,12 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(0.0);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0.0);
+      }
+    });
+
     // newVersionPlus.showAlertIfNecessary(context: context);
 
     setIsHome();
@@ -82,20 +85,20 @@ class _HomeScreenState extends State<HomeScreen>
     }
     _fetchPosts();
 
-    if (!isDobSet) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!isDobSet) {
         _openBottomSheet();
-      });
-    }
+      }
+    });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(0.0);
-    }
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (_scrollController.hasClients) {
+  //     _scrollController.jumpTo(0.0);
+  //   }
+  // }
 
   ///dispose method
   @override
@@ -282,17 +285,20 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    isBottomNavVisible.value = true;
     super.build(context);
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(0.0);
-    }
+    // Use post-frame callback to trigger jumpTo after layout
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0.0);
+      }
+    });
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           _scaffoldKey.currentState?.closeEndDrawer();
+          // Navigator.of(context).pop();
         },
         child: Builder(
           builder: (BuildContext context) {
@@ -441,6 +447,7 @@ class _HomeScreenState extends State<HomeScreen>
                   InkWell(
                     onTap: () {
                       showModalBottomSheet(
+                        useRootNavigator: true,
                         showDragHandle: true,
                         backgroundColor: AppColors.whiteColor,
                         context: context,
@@ -661,6 +668,9 @@ class _HomeScreenState extends State<HomeScreen>
   /// bottom sheet
   void _openBottomSheet() {
     showModalBottomSheet(
+      // backgroundColor: Colors.transparent,
+      useRootNavigator: true,
+      backgroundColor: AppColors.whiteColor,
       context: context,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(

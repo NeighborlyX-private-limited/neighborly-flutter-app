@@ -208,8 +208,8 @@ class _PostWidgetState extends State<PostWidget> {
                     widget.post.multimedia!.isNotEmpty &&
                     widget.post.multimedia!.length > 1
                 ? ImageSlider(
-                  multimedia: widget.post.multimedia ?? [],
-                )
+                    multimedia: widget.post.multimedia ?? [],
+                  )
                 : Container(),
             widget.post.multimedia != null &&
                     widget.post.multimedia!.isNotEmpty &&
@@ -275,6 +275,7 @@ class _PostWidgetState extends State<PostWidget> {
     }
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
@@ -368,6 +369,7 @@ class _PostWidgetState extends State<PostWidget> {
   ///report Confirmation Bottom Sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -422,6 +424,7 @@ class _PostWidgetState extends State<PostWidget> {
     ];
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(

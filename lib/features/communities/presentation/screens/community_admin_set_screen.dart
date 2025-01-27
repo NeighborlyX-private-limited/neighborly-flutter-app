@@ -45,6 +45,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
   /// delete group confirmation bottom sheet
   void _showConfirmGroupDeletionSheet(BuildContext context) {
     showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       barrierColor: AppColors.transparentColor,
       context: context,

@@ -101,6 +101,7 @@ class _AwardSelectionScreenState extends State<AwardSelectionScreen> {
   /// open bag bottom sheet method
   void _showBagBottomSheet(List<Map<String, int>> selectedAwards) {
     showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       backgroundColor: AppColors.whiteColor,
       context: context,

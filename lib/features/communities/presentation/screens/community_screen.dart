@@ -254,6 +254,7 @@ class _CommunityScreenState extends State<CommunityScreen>
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          automaticallyImplyLeading: false,
           title: Row(
             children: [
               /// app logo
@@ -409,8 +410,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                 child: SvgPicture.asset(
                   'assets/search.svg',
                   fit: BoxFit.contain,
-                  width: 30,
-                  height: 30,
+                  width: 24,
+                  height: 24,
                 ),
               ),
             ),
@@ -425,8 +426,8 @@ class _CommunityScreenState extends State<CommunityScreen>
                 child: SvgPicture.asset(
                   'assets/chat.svg',
                   fit: BoxFit.contain,
-                  width: 30,
-                  height: 30,
+                  width: 24,
+                  height: 24,
                 ),
               ),
             ),

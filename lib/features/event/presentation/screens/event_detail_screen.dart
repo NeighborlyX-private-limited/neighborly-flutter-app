@@ -429,6 +429,7 @@ class ChatArea extends StatelessWidget {
                     lastMessageDate: '',
                     isMuted: false,
                     isGroup: true,
+                    isJoined: false,
                     unreadCount: 0),
               );
             },
@@ -764,14 +765,16 @@ class HostArea extends StatelessWidget {
                   context.push(
                     '/chat/group/${host.id}',
                     extra: ChatRoomModel(
-                        id: host.id,
-                        name: host.name,
-                        avatarUrl: host.avatarUrl,
-                        lastMessage: '',
-                        lastMessageDate: '',
-                        isMuted: false,
-                        isGroup: false,
-                        unreadCount: 0),
+                      id: host.id,
+                      name: host.name,
+                      avatarUrl: host.avatarUrl,
+                      lastMessage: '',
+                      lastMessageDate: '',
+                      isMuted: false,
+                      isGroup: false,
+                      isJoined: false,
+                      unreadCount: 0,
+                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -815,6 +818,7 @@ class AuthorArea extends StatelessWidget {
 
   Future<dynamic> bottomSheetConfirmCancelEvent(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         // String? userId = ShardPrefHelper.getUserID();

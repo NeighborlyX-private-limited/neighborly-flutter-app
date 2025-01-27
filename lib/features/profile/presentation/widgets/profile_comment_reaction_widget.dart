@@ -364,6 +364,7 @@ class _ProfileReactionCommentWidgetState
 
   Future<num?> showBottomSheet() {
     return showModalBottomSheet<num>(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return BlocListener<GiveAwardBloc, GiveAwardState>(
@@ -405,7 +406,8 @@ class _ProfileReactionCommentWidgetState
                 topRight: Radius.circular(20),
               ),
             ),
-            height: 800,
+            // height: 800,
+            height: MediaQuery.of(context).size.height * 0.8,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
             child: SingleChildScrollView(
               child: Column(

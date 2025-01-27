@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/event_coming_soon.dart';
 import 'package:neighborly_flutter_app/core/widgets/not_found_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/screens/community_admin_set_displayname.dart';
@@ -168,6 +169,10 @@ final GoRouter router = GoRouter(
     //   path: '/create',
     //   builder: (context, state) => const CreatePostScreen(),
     // ),
+    // GoRoute(
+    //   path: '/groups/create',
+    //   builder: (context, state) => const CommunityCreateScreen(),
+    // ),
     ShellRoute(
       builder: (context, state, child) {
         final String? childId = state.pathParameters['Home'];
@@ -185,6 +190,10 @@ final GoRouter router = GoRouter(
               tabIndex: tabIndex,
             );
           },
+        ),
+        GoRoute(
+          path: '/coming-soon',
+          builder: (context, state) => const CommingSoonScreen(),
         ),
         GoRoute(
           path: '/events',
