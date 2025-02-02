@@ -192,30 +192,61 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                             ),
                           ),
               ),
-              ElevatedButton(
-                onPressed: () {
-                  onJoinLeavePressed();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    isJoined
-                        ? AppLocalizations.of(context)!.leave
-                        : AppLocalizations.of(context)!.join,
-                    style: TextStyle(
-                      color: AppColors.whiteColor,
-                      fontSize: 18,
-                      height: 0.3,
+              isJoined
+                  ? ElevatedButton(
+                      onPressed: () {
+                        if ((communityCache?.isAdmin ?? false) &&
+                            (communityCache?.isJoined ?? false)) {
+                          context.push(
+                            '/groups/admin',
+                            extra: communityCache,
+                          );
+                        } else {
+                          if (communityCache?.isJoined ?? false) {
+                            userBottomSheetMenu(
+                              context,
+                            );
+                          } else {
+                            joinGroupBottomSheet(context);
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.settings,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontSize: 18,
+                          height: 0.3,
+                        ),
+                      ),
+                    )
+                  : ElevatedButton(
+                      onPressed: () {
+                        onJoinLeavePressed();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Text(
+                        isJoined
+                            ? AppLocalizations.of(context)!.leave
+                            : AppLocalizations.of(context)!.join,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontSize: 18,
+                          height: 0.3,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
             ],
           ),
           Row(
@@ -915,32 +946,33 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     height: 40,
                     decoration: BoxDecoration(
                       color: AppColors.whiteColor,
-                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 0, right: 5),
                       child: TabBar(
+                        controller: _tabController,
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        dividerColor: Colors.transparent,
+                        indicatorSize: TabBarIndicatorSize.label,
                         indicatorColor: AppColors.primaryColor,
+                        labelColor: Colors.black,
+                        labelStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
                         unselectedLabelColor: Colors.grey,
                         unselectedLabelStyle: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
-                          color: Colors.grey,
                         ),
-                        controller: _tabController,
-                        tabAlignment: TabAlignment.start,
-                        isScrollable: true,
                         tabs: [
                           Tab(
-                            child: tabTitle(
-                              AppLocalizations.of(context)!.about,
-                              // 'About'
-                            ),
+                            child:
+                                tabTitle(AppLocalizations.of(context)!.about),
                           ),
                           Tab(
-                            child: tabTitle(AppLocalizations.of(context)!.chat
-                                //  'Chat'
-                                ),
+                            child: tabTitle(AppLocalizations.of(context)!.chat),
                           ),
                         ],
                       ),

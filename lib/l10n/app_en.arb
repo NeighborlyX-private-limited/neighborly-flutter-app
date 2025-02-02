@@ -350,9 +350,9 @@
   "type_something_here":"type something here",
   "image_Cover_Avatar":"Image Cover/Avatar",
   "type_to_search":"type_to_search",
-  "groups":"groups",
-  "events":"events",
-  "create_community":"create community",
+  "groups":"Groups",
+  "events":"Events",
+  "create_community":"Create community",
   "upload_image":"Upload Image",
   "create_description":"create description"
 }

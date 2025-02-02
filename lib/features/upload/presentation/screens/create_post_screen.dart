@@ -8,15 +8,19 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_linear_progress_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/video_compresser.dart';
-import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/bouncing_logo_indicator.dart';
+import '../../../../core/widgets/custom_snackbar.dart';
+import '../../../../core/widgets/indicator/custom_circular_progress_indicator.dart';
+import '../../../../core/widgets/indicator/custom_sizedbox.dart';
 import '../bloc/upload_post_bloc/upload_post_bloc.dart';
+import '../widgets/ban_user_popup.dart';
 import '../widgets/post_button_widget.dart';
 import '../../../../core/constants/imagepickercompress.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -30,47 +34,42 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   /// text editing controllers
-  late TextEditingController _contentController;
   late TextEditingController _titleController;
+  late TextEditingController _contentController;
   late TextEditingController _questionController;
-
-  // List of option controllers and focus nodes
   final List<TextEditingController> _optionControllers = [];
+
+  // focus nodes
+  late FocusNode _titleFocusNode;
+  late FocusNode _contentFocusNode;
   final List<FocusNode> _optionFocusNodes = [];
 
   bool isTitleFilled = false;
   bool isQuestionFilled = false;
   bool allowMultipleVotes = false;
   bool _isButtonActive = true;
+  bool _isKeyboardVisible = false;
 
   late String _condition;
-  late FocusNode _titleFocusNode;
-  late FocusNode _contentFocusNode;
-  bool _isKeyboardVisible = false;
 
   // Store the selected image
   File? _selectedImage;
 
-  /// initstate
+  /// init state method
   @override
   void initState() {
     super.initState();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   isBottomNavVisible.value = false;
-    // });
     if (isLocationOn()) {
       fetchLocationAndUpdate();
     }
-    _contentController = TextEditingController();
     _titleController = TextEditingController();
+    _contentController = TextEditingController();
     _questionController = TextEditingController();
+    _titleFocusNode = FocusNode();
+    _contentFocusNode = FocusNode();
     _condition = 'post';
     _addOption();
     _addOption();
-
-    _titleFocusNode = FocusNode();
-    _contentFocusNode = FocusNode();
-
     _titleFocusNode.addListener(_onTiteFocusChange);
     _contentFocusNode.addListener(_onContentFocusChange);
   }
@@ -78,12 +77,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   /// dispose
   @override
   void dispose() {
-    _videoController?.dispose();
-    _contentController.dispose();
     _titleController.dispose();
+    _contentController.dispose();
     _questionController.dispose();
     _titleFocusNode.dispose();
     _contentFocusNode.dispose();
+    _videoController?.dispose();
     for (var controller in _optionControllers) {
       controller.dispose();
     }
@@ -112,11 +111,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       /// location permission denied
       if (permission == LocationPermission.denied) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!
-                  .location_permissions_are_denied),
-            ),
+          showSnackBar(
+            context: context,
+            message:
+                AppLocalizations.of(context)!.location_permissions_are_denied,
           );
         }
         return false;
@@ -126,11 +124,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     /// location permission forever denied
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .location_permissions_are_permanently_denied_we_cannot_request_permissions),
-          ),
+        showSnackBar(
+          context: context,
+          message: AppLocalizations.of(context)!
+              .location_permissions_are_permanently_denied_we_cannot_request_permissions,
         );
       }
       return false;
@@ -145,11 +142,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     final hasPermission = await _handleLocationPermission();
     if (!hasPermission) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .location_permissions_are_permanently_denied_we_cannot_request_permissions),
-          ),
+        showSnackBar(
+          context: context,
+          message: AppLocalizations.of(context)!
+              .location_permissions_are_permanently_denied_we_cannot_request_permissions,
         );
       }
 
@@ -167,10 +163,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         showLocationAccessDialog(context);
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-          ),
+        showSnackBar(
+          context: context,
+          message: AppLocalizations.of(context)!.oops_something_went_wrong,
         );
       }
     }
@@ -182,8 +177,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       surfaceTintColor: AppColors.whiteColor,
       backgroundColor: AppColors.whiteColor,
       title: Text(AppLocalizations.of(context)!.no_location_access),
-      content: Text(AppLocalizations.of(context)!
-          .device_location_is_turned_off_and_if_you_donot_turn_on_your_location_then_last_location_will_be_used),
+      content: Text(
+        AppLocalizations.of(context)!
+            .device_location_is_turned_off_and_if_you_donot_turn_on_your_location_then_last_location_will_be_used,
+      ),
       actions: [
         ElevatedButton(
           style: ElevatedButton.styleFrom(
@@ -209,6 +206,36 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         return buildLocationAccessDialog(context);
       },
     );
+  }
+
+  void _onTiteFocusChange() {
+    setState(() {
+      _isKeyboardVisible = _titleFocusNode.hasFocus;
+    });
+  }
+
+  void _onContentFocusChange() {
+    setState(() {
+      _isKeyboardVisible = _contentFocusNode.hasFocus;
+    });
+  }
+
+  /// add option
+  void _addOption() {
+    setState(() {
+      _optionControllers.add(TextEditingController());
+      _optionFocusNodes.add(FocusNode());
+    });
+  }
+
+  /// remove option
+  void _removeOption(int index) {
+    setState(() {
+      _optionControllers[index].dispose();
+      _optionFocusNodes[index].dispose();
+      _optionControllers.removeAt(index);
+      _optionFocusNodes.removeAt(index);
+    });
   }
 
   /// check is home
@@ -275,38 +302,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return false;
   }
 
-  /// add option
-  void _addOption() {
-    setState(() {
-      _optionControllers.add(TextEditingController());
-      _optionFocusNodes.add(FocusNode());
-    });
-  }
-
-  /// remove option
-  void _removeOption(int index) {
-    setState(() {
-      _optionControllers[index].dispose();
-      _optionFocusNodes[index].dispose();
-      _optionControllers.removeAt(index);
-      _optionFocusNodes.removeAt(index);
-    });
-  }
-
-  void _onTiteFocusChange() {
-    setState(() {
-      _isKeyboardVisible = _titleFocusNode.hasFocus;
-    });
-  }
-
-  void _onContentFocusChange() {
-    setState(() {
-      _isKeyboardVisible = _contentFocusNode.hasFocus;
-    });
-  }
-
-  /// image and video picking variables
+  ///  isImagePicking is true when user start picking a image or video
   bool isImagePicking = false;
+
+  ///  isImageUploading is true when user start uploading a image or video
   bool isImageUploading = false;
   bool isImage = false;
   bool isPollOptionShow = true;
@@ -702,394 +701,420 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        // WidgetsBinding.instance.addPostFrameCallback((_) {
-        //   // isBottomNavVisible.value = true;
-        // });
-        // Navigator.pop(context);
-        context.go('/home/Home');
+        context.go('/home');
       },
       child: SafeArea(
         child: Scaffold(
-            backgroundColor: AppColors.whiteColor,
-            body: GestureDetector(
-              onTap: () {
-                FocusScope.of(context).unfocus();
-              },
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    isImagePicking
-                        ? LinearProgressIndicator(
-                            color: AppColors.primaryColor,
-                          )
-                        : SizedBox(),
-                    isImageUploading
-                        ? LinearProgressIndicator(
-                            color: AppColors.primaryColor,
-                          )
-                        : SizedBox(),
+          backgroundColor: AppColors.whiteColor,
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  isImagePicking ? CustomLinearIndicator() : CustomSizedBox(),
+                  isImageUploading ? CustomLinearIndicator() : CustomSizedBox(),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: 14.0,
+                      left: 14.0,
+                      right: 14.0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        /// close button
+                        InkWell(
+                          child: const Icon(Icons.close, size: 24),
+                          onTap: () {
+                            if (_condition == 'post') {
+                              isImagePicking = false;
+                              isImageUploading = false;
+                              isImage = false;
+                              _selectedImage = null;
+                              _titleController.clear();
+                              _contentController.clear();
+                              _selectedMedia = [];
+                              context.go('/home');
+                            } else {
+                              setState(() {
+                                _condition = 'post';
+                              });
+                            }
+                          },
+                        ),
+                        _condition == 'post'
+                            ? BlocConsumer<UploadPostBloc, UploadPostState>(
+                                listener: (context, state) {
+                                  /// UploadPostBloc loading state for post
+                                  if (state is UploadPostLoadingState) {
+                                    setState(() {
+                                      isImageUploading = true;
+                                    });
+                                  }
+
+                                  /// UploadPostBloc failure state for post
+                                  if (state is UploadPostFailureState) {
+                                    if (state.error
+                                        .contains("Sorry, you are banned")) {
+                                      isImageUploading = false;
+                                      banUserCustomDialog(context);
+                                    } else {
+                                      isImageUploading = false;
+                                      showSnackBar(
+                                        context: context,
+                                        message: state.error,
+                                      );
+                                    }
+                                  }
+
+                                  /// UploadPostBloc success state for post
+                                  else if (state is UploadPostSuccessState) {
+                                    setState(() {
+                                      isImageUploading = false;
+                                    });
+                                    _contentController.clear();
+                                    _titleController.clear();
+                                    _removeImage();
+                                    showSnackBar(
+                                      context: context,
+                                      message: AppLocalizations.of(context)!
+                                          .post_created,
+                                    );
+
+                                    if (mounted) {
+                                      context.go('/home');
+                                    }
+                                  }
+                                },
+                                builder: (context, state) {
+                                  /// UploadPostBloc loading state for post
+                                  if (state is UploadPostLoadingState) {
+                                    return CustomCircularIndicator();
+                                  }
+
+                                  /// post button
+                                  return PostButtonWidget(
+                                    onTapListener: () async {
+                                      if (!_isButtonActive) {
+                                        return;
+                                      }
+                                      setState(() {
+                                        _isButtonActive = false;
+                                      });
+
+                                      await fetchLocationAndUpdate();
+                                      bool iaLocationOn =
+                                          ShardPrefHelper.getIsLocationOn();
+
+                                      List<double> location =
+                                          ShardPrefHelper.getLocation();
+
+                                      List<double> homeLocation =
+                                          ShardPrefHelper.getHomeLocation();
+
+                                      String city = '';
+                                      List<double> locationCord = [];
+                                      if (iaLocationOn) {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          location[0],
+                                          location[1],
+                                        );
+                                        var lat = location[0];
+                                        var long = location[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      } else {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          homeLocation[0],
+                                          homeLocation[1],
+                                        );
+                                        var lat = homeLocation[0];
+                                        var long = homeLocation[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      }
+
+                                      BlocProvider.of<UploadPostBloc>(context)
+                                          .add(
+                                        UploadPostPressedEvent(
+                                          city: city,
+                                          content:
+                                              _contentController.text.trim(),
+                                          title: _titleController.text.trim(),
+                                          type: 'post',
+                                          multimedia: _selectedMedia,
+                                          thumbnail: _thumbnail,
+                                          allowMultipleVotes: false,
+                                          location: locationCord,
+                                        ),
+                                      );
+                                    },
+                                    isActive: isTitleFilled,
+                                  );
+                                },
+                              )
+                            : BlocConsumer<UploadPostBloc, UploadPostState>(
+                                listener: (context, state) {
+                                  /// UploadPostBloc failure state for poll
+                                  if (state is UploadPostFailureState) {
+                                    _questionController.clear();
+                                    _removeImage();
+                                    showSnackBar(
+                                      context: context,
+                                      message: state.error,
+                                    );
+                                  }
+
+                                  /// UploadPostBloc success state for poll
+                                  else if (state is UploadPostSuccessState) {
+                                    _questionController.clear();
+                                    _removeImage();
+                                    for (var controller in _optionControllers) {
+                                      controller.clear();
+                                    }
+                                    showSnackBar(
+                                      context: context,
+                                      message: AppLocalizations.of(context)!
+                                          .poll_created,
+                                    );
+                                    if (mounted) {
+                                      context.go('/home');
+                                    }
+                                  }
+                                },
+                                builder: (context, state) {
+                                  /// UploadPostBloc loading state for poll
+                                  if (state is UploadPostLoadingState) {
+                                    return CustomCircularIndicator();
+                                  }
+
+                                  /// poll button
+                                  return PostButtonWidget(
+                                    onTapListener: () async {
+                                      if (!_isButtonActive) {
+                                        return;
+                                      }
+                                      setState(() {
+                                        _isButtonActive = false;
+                                      });
+                                      bool iaLocationOn =
+                                          ShardPrefHelper.getIsLocationOn();
+
+                                      List<double> location =
+                                          ShardPrefHelper.getLocation();
+
+                                      List<double> homeLocation =
+                                          ShardPrefHelper.getHomeLocation();
+
+                                      String city = '';
+                                      List<double> locationCord = [];
+                                      if (iaLocationOn) {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          location[0],
+                                          location[1],
+                                        );
+                                        var lat = location[0];
+                                        var long = location[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      } else {
+                                        List<Placemark> placemarks =
+                                            await placemarkFromCoordinates(
+                                          homeLocation[0],
+                                          homeLocation[1],
+                                        );
+                                        var lat = homeLocation[0];
+                                        var long = homeLocation[1];
+                                        locationCord.add(lat);
+                                        locationCord.add(long);
+                                        city = placemarks[0].locality ?? '';
+                                      }
+
+                                      BlocProvider.of<UploadPostBloc>(context)
+                                          .add(
+                                        UploadPostPressedEvent(
+                                          city: city,
+                                          multimedia: _selectedMedia,
+                                          title:
+                                              _questionController.text.trim(),
+                                          options: List.generate(
+                                            _optionControllers.length,
+                                            (index) => {
+                                              "option":
+                                                  _optionControllers[index]
+                                                      .text
+                                                      .trim(),
+                                            },
+                                          ),
+                                          type: 'poll',
+                                          allowMultipleVotes:
+                                              allowMultipleVotes,
+                                          location: locationCord,
+                                          thumbnail: _thumbnail,
+                                        ),
+                                      );
+                                    },
+                                    isActive: checkIsPollActive(),
+                                  );
+                                },
+                              ),
+                      ],
+                    ),
+                  ),
+
+                  /// post text field
+                  if (_condition == 'post')
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 14.0,
                         left: 14.0,
                         right: 14.0,
                       ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
                         children: [
-                          InkWell(
-                            child: const Icon(Icons.close, size: 30),
-                            onTap: () {
-                              if (_condition == 'post') {
-                                isImageUploading = false;
-                                _titleController.clear();
-                                _contentController.clear();
-                                _selectedMedia = [];
-                                isImage = false;
-                                _selectedImage = null;
-                                // Navigator.pop(context);
-                                context.go('/home/Home');
-                                // isBottomNavVisible.value = true;
-                              } else {
-                                setState(() {
-                                  _condition = 'post';
-                                });
-                              }
+                          /// post title text field
+                          TextField(
+                            controller: _titleController,
+                            focusNode: _titleFocusNode,
+                            textCapitalization: TextCapitalization.sentences,
+                            maxLines: null,
+                            minLines: 1,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(
+                              hintText:
+                                  AppLocalizations.of(context)!.title_required,
+                              border: InputBorder.none,
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                isTitleFilled =
+                                    _titleController.text.trim().isNotEmpty;
+                              });
                             },
                           ),
-                          _condition == 'post'
-                              ? BlocConsumer<UploadPostBloc, UploadPostState>(
-                                  listener: (context, state) {
-                                    ///loading state
-                                    if (state is UploadPostLoadingState) {
-                                      setState(() {
-                                        isImageUploading = true;
-                                      });
-                                    }
 
-                                    /// failure state
-                                    if (state is UploadPostFailureState) {
-                                      if (state.error
-                                          .contains("Sorry, you are banned")) {
-                                        isImageUploading = false;
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return Dialog(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(20.0),
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: <Widget>[
-                                                    SvgPicture.asset(
-                                                      'assets/something_went_wrong.svg',
-                                                      width: 150,
-                                                      height: 130,
-                                                    ),
-                                                    const SizedBox(height: 20),
-                                                    Text(
-                                                      AppLocalizations.of(
-                                                              context)!
-                                                          .aaah_something_went_wrong,
-                                                      style: TextStyle(
-                                                        fontSize: 18,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                    const SizedBox(height: 10),
-                                                    Text(
-                                                      AppLocalizations.of(
-                                                              context)!
-                                                          .sorry_you_are_banned_please_try_it_after_some_time,
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        color:
-                                                            AppColors.greyColor,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                    const SizedBox(height: 20),
-                                                    ElevatedButton(
-                                                      onPressed: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor:
-                                                            AppColors
-                                                                .primaryColor,
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(20),
-                                                        ),
-                                                      ),
-                                                      child: Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 10,
-                                                        ),
-                                                        child: Text(
-                                                          AppLocalizations.of(
-                                                                  context)!
-                                                              .go_back,
-                                                          style: TextStyle(
-                                                            fontSize: 16,
-                                                            color: AppColors
-                                                                .whiteColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      } else {
-                                        isImageUploading = false;
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(content: Text(state.error)),
-                                        );
-                                      }
-                                    }
-
-                                    ///success state
-                                    else if (state is UploadPostSuccessState) {
-                                      setState(() {
-                                        isImageUploading = false;
-                                      });
-                                      _contentController.clear();
-                                      _titleController.clear();
-                                      _removeImage();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            AppLocalizations.of(context)!
-                                                .post_created,
-                                          ),
-                                        ),
-                                      );
-                                      if (mounted) {
-                                        //Navigator.pop(context);
-                                        context.go('/home/Home');
-                                      }
-                                    }
-                                  },
-                                  builder: (context, state) {
-                                    ///loading state
-                                    if (state is UploadPostLoadingState) {
-                                      return Center(
-                                          child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .uploading));
-                                    }
-
-                                    ///post button
-                                    return PostButtonWidget(
-                                      onTapListener: () async {
-                                        if (!_isButtonActive) {
-                                          return;
-                                        }
-                                        setState(() {
-                                          _isButtonActive = false;
-                                        });
-
-                                        await fetchLocationAndUpdate();
-                                        bool iaLocationOn =
-                                            ShardPrefHelper.getIsLocationOn();
-
-                                        List<double> location =
-                                            ShardPrefHelper.getLocation();
-
-                                        List<double> homeLocation =
-                                            ShardPrefHelper.getHomeLocation();
-
-                                        String city = '';
-                                        List<double> locationCord = [];
-                                        if (iaLocationOn) {
-                                          List<Placemark> placemarks =
-                                              await placemarkFromCoordinates(
-                                            location[0],
-                                            location[1],
-                                          );
-                                          var lat = location[0];
-                                          var long = location[1];
-                                          locationCord.add(lat);
-                                          locationCord.add(long);
-                                          city = placemarks[0].locality ?? '';
-                                        } else {
-                                          List<Placemark> placemarks =
-                                              await placemarkFromCoordinates(
-                                            homeLocation[0],
-                                            homeLocation[1],
-                                          );
-                                          var lat = homeLocation[0];
-                                          var long = homeLocation[1];
-                                          locationCord.add(lat);
-                                          locationCord.add(long);
-                                          city = placemarks[0].locality ?? '';
-                                        }
-
-                                        BlocProvider.of<UploadPostBloc>(context)
-                                            .add(
-                                          UploadPostPressedEvent(
-                                            city: city,
-                                            content:
-                                                _contentController.text.trim(),
-                                            title: _titleController.text.trim(),
-                                            type: 'post',
-                                            multimedia: _selectedMedia,
-                                            thumbnail: _thumbnail,
-                                            allowMultipleVotes: false,
-                                            location: locationCord,
-                                          ),
-                                        );
-                                      },
-                                      isActive: isTitleFilled,
-                                    );
-                                  },
-                                )
-                              : BlocConsumer<UploadPostBloc, UploadPostState>(
-                                  listener: (context, state) {
-                                    /// failure state
-                                    if (state is UploadPostFailureState) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(content: Text(state.error)),
-                                      );
-                                    }
-
-                                    ///success state
-                                    else if (state is UploadPostSuccessState) {
-                                      _questionController.clear();
-
-                                      _removeImage();
-                                      for (var controller
-                                          in _optionControllers) {
-                                        controller.clear();
-                                      }
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            AppLocalizations.of(context)!
-                                                .poll_created,
-                                          ),
-                                        ),
-                                      );
-                                      // Navigator.pop(context);
-
-                                      context.go('/home/Home');
-                                    }
-                                  },
-                                  builder: (context, state) {
-                                    ///loading state
-                                    if (state is UploadPostLoadingState) {
-                                      return Center(
-                                        child: BouncingLogoIndicator(
-                                          logo: 'images/logo.svg',
-                                        ),
-                                      );
-                                    }
-                                    return PostButtonWidget(
-                                      onTapListener: () async {
-                                        if (!_isButtonActive) {
-                                          return;
-                                        }
-                                        setState(() {
-                                          _isButtonActive = false;
-                                        });
-                                        bool iaLocationOn =
-                                            ShardPrefHelper.getIsLocationOn();
-
-                                        List<double> location =
-                                            ShardPrefHelper.getLocation();
-
-                                        List<double> homeLocation =
-                                            ShardPrefHelper.getHomeLocation();
-
-                                        String city = '';
-                                        List<double> locationCord = [];
-                                        if (iaLocationOn) {
-                                          List<Placemark> placemarks =
-                                              await placemarkFromCoordinates(
-                                            location[0],
-                                            location[1],
-                                          );
-                                          var lat = location[0];
-                                          var long = location[1];
-                                          locationCord.add(lat);
-                                          locationCord.add(long);
-                                          city = placemarks[0].locality ?? '';
-                                        } else {
-                                          List<Placemark> placemarks =
-                                              await placemarkFromCoordinates(
-                                            homeLocation[0],
-                                            homeLocation[1],
-                                          );
-                                          var lat = homeLocation[0];
-                                          var long = homeLocation[1];
-                                          locationCord.add(lat);
-                                          locationCord.add(long);
-                                          city = placemarks[0].locality ?? '';
-                                        }
-
-                                        BlocProvider.of<UploadPostBloc>(context)
-                                            .add(
-                                          UploadPostPressedEvent(
-                                            city: city,
-                                            multimedia: _selectedMedia,
-                                            title:
-                                                _questionController.text.trim(),
-                                            options: List.generate(
-                                              _optionControllers.length,
-                                              (index) => {
-                                                "option":
-                                                    _optionControllers[index]
-                                                        .text
-                                                        .trim(),
-                                              },
-                                            ),
-                                            type: 'poll',
-                                            allowMultipleVotes:
-                                                allowMultipleVotes,
-                                            location: locationCord,
-                                            thumbnail: _thumbnail,
-                                          ),
-                                        );
-                                      },
-                                      isActive: checkIsPollActive(),
-                                    );
-                                  },
-                                ),
+                          /// post content text field
+                          TextField(
+                            controller: _contentController,
+                            focusNode: _contentFocusNode,
+                            textCapitalization: TextCapitalization.sentences,
+                            maxLines: null,
+                            minLines: 1,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(
+                              hintText: AppLocalizations.of(context)!
+                                  .whats_on_your_mind,
+                              border: InputBorder.none,
+                            ),
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                          ),
                         ],
                       ),
                     ),
-                    if (_videoController != null &&
-                        _videoController!.value.isInitialized)
-                      SizedBox(
-                        height: 10,
+
+                  /// poll text field
+                  if (_condition == 'poll')
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: 14.0,
+                        left: 14.0,
+                        right: 14.0,
                       ),
-                    _videoController != null &&
-                            _videoController!.value.isInitialized
-                        ? Stack(
+                      child: Column(
+                        children: [
+                          /// poll question text field
+                          TextField(
+                            controller: _questionController,
+                            focusNode: _contentFocusNode,
+                            textCapitalization: TextCapitalization.sentences,
+                            maxLines: null,
+                            minLines: 1,
+                            keyboardType: TextInputType.multiline,
+                            decoration: InputDecoration(
+                              hintText: AppLocalizations.of(context)!
+                                  .write_your_question_here,
+                              border: InputBorder.none,
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                isQuestionFilled =
+                                    _questionController.text.trim().isNotEmpty;
+                              });
+                            },
+                          ),
+                          const CustomSizedBox(height: 12),
+
+                          /// options text fields
+                          ..._buildOptionFields(),
+
+                          /// add option button
+                          InkWell(
+                            onTap: _addOption,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                const Icon(
+                                  Icons.add,
+                                  color: AppColors.primaryColor,
+                                ),
+                                const CustomSizedBox(width: 5),
+                                Text(
+                                  AppLocalizations.of(context)!.add_option,
+                                  style: blueNormalTextStyle,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const CustomSizedBox(height: 12),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                AppLocalizations.of(context)!
+                                    .allow_multiple_votes,
+                                style: greyonboardingBody1Style,
+                              ),
+
+                              /// allow multiple votes switch button
+                              Switch(
+                                value: allowMultipleVotes,
+                                inactiveThumbColor: AppColors.whiteColor,
+                                inactiveTrackColor: AppColors.greyColor,
+                                activeTrackColor: AppColors.primaryColor,
+                                activeColor: AppColors.whiteColor,
+                                onChanged: (value) {
+                                  setState(() {
+                                    allowMultipleVotes = value;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  /// video widget
+                  if (_videoController != null &&
+                      _videoController!.value.isInitialized)
+                    CustomSizedBox(
+                      height: 10,
+                    ),
+                  _videoController != null &&
+                          _videoController!.value.isInitialized
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 14),
+                          child: Stack(
                             children: [
                               SizedBox(
                                 width: MediaQuery.of(context).size.width,
@@ -1124,515 +1149,392 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     clearVideoController();
                                   },
                                   child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.redColor,
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
                                       shape: BoxShape.circle,
+                                      color: AppColors.greyColor,
                                     ),
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.close,
-                                      color: AppColors.whiteColor,
-                                      size: 24,
+                                      size: 18,
+                                      color: AppColors.lightBackgroundColor,
                                     ),
                                   ),
                                 ),
                               ),
                             ],
-                          )
-                        : _videoController != null
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.primaryColor,
-                                ),
-                              )
-                            : SizedBox(),
-                    if (isImage)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          height: 260,
-                          child: PageView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _selectedMedia!.length,
-                            itemBuilder: (context, index) {
-                              return Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(16),
-                                    child: Image.file(
-                                      _selectedMedia![index],
-                                      width: double.infinity,
-                                      height: 260,
-                                      fit: BoxFit.cover,
-                                    ),
+                          ),
+                        )
+                      : _videoController != null
+                          ? CustomCircularIndicator()
+                          : CustomSizedBox(),
+                  if (isImage)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
+                      child: SizedBox(
+                        height: 260,
+                        child: PageView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _selectedMedia!.length,
+                          itemBuilder: (context, index) {
+                            return Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    _selectedMedia![index],
+                                    width: double.infinity,
+                                    height: 260,
+                                    fit: BoxFit.cover,
                                   ),
-                                  Positioned(
-                                    top: 8,
-                                    right: 8,
-                                    child: GestureDetector(
-                                      onTap: () => _removeImages(index),
-                                      child: Container(
-                                        decoration: const BoxDecoration(
-                                          color: AppColors.greyColor,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const Icon(
-                                          Icons.close,
-                                          color: AppColors.whiteColor,
-                                          size: 24,
-                                        ),
+                                ),
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: GestureDetector(
+                                    onTap: () => _removeImages(index),
+                                    child: Container(
+                                      height: 30,
+                                      width: 30,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppColors.greyColor,
+                                      ),
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 18,
+                                        color: AppColors.lightBackgroundColor,
                                       ),
                                     ),
                                   ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    if (_condition == 'post')
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          top: 14.0,
-                          left: 14.0,
-                          right: 14.0,
-                        ),
-                        child: Column(
-                          children: [
-                            TextField(
-                              textCapitalization: TextCapitalization.sentences,
-                              onChanged: (value) {
-                                setState(() {
-                                  isTitleFilled =
-                                      _titleController.text.trim().isNotEmpty;
-                                });
-                              },
-                              controller: _titleController,
-                              focusNode: _titleFocusNode,
-                              decoration: InputDecoration(
-                                hintText: AppLocalizations.of(context)!
-                                    .title_required,
-                                border: InputBorder.none,
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              minLines: 1,
-                            ),
-                            TextField(
-                              textCapitalization: TextCapitalization.sentences,
-                              onChanged: (value) {
-                                setState(() {});
-                              },
-                              controller: _contentController,
-                              focusNode: _contentFocusNode,
-                              decoration: InputDecoration(
-                                hintText: AppLocalizations.of(context)!
-                                    .whats_on_your_mind,
-                                border: InputBorder.none,
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              minLines: 1,
-                            ),
-                          ],
-                        ),
-                      ),
-                    if (_condition == 'poll')
-                      Padding(
-                        padding: const EdgeInsets.only(
-                            top: 14.0, left: 14.0, right: 14.0),
-                        child: Column(
-                          children: [
-                            TextField(
-                              textCapitalization: TextCapitalization.sentences,
-                              onChanged: (value) {
-                                setState(() {
-                                  isQuestionFilled = _questionController.text
-                                      .trim()
-                                      .isNotEmpty;
-                                });
-                              },
-                              controller: _questionController,
-                              focusNode: _contentFocusNode,
-                              decoration: InputDecoration(
-                                hintText: AppLocalizations.of(context)!
-                                    .write_your_question_here,
-                                border: InputBorder.none,
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              maxLines: null,
-                              minLines: 1,
-                            ),
-                            const SizedBox(height: 12),
-                            ..._buildOptionFields(),
-                            InkWell(
-                              onTap: _addOption,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  const Icon(
-                                    Icons.add,
-                                    color: AppColors.primaryColor,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    AppLocalizations.of(context)!.add_option,
-                                    style: blueNormalTextStyle,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  AppLocalizations.of(context)!
-                                      .allow_multiple_votes,
-                                  style: greyonboardingBody1Style,
-                                ),
-                                Switch(
-                                  value: allowMultipleVotes,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      allowMultipleVotes = value;
-                                    });
-                                  },
-                                  inactiveThumbColor: AppColors.whiteColor,
-                                  inactiveTrackColor: AppColors.greyColor,
-                                  activeTrackColor: AppColors.primaryColor,
-                                  activeColor: AppColors.whiteColor,
                                 ),
                               ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  const CustomSizedBox(height: 200),
+                ],
+              ),
+            ),
+          ),
+          bottomSheet: !_isKeyboardVisible
+              ? Container(
+                  height: 220,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const CustomSizedBox(height: 5),
+                      InkWell(
+                        onTap: _pickImages,
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/add_a_photo.svg'),
+                            const CustomSizedBox(width: 12),
+                            Text(
+                              AppLocalizations.of(context)!.add_a_photo,
+                              style: mediumTextStyleBlack,
                             ),
                           ],
                         ),
                       ),
-                    const SizedBox(height: 200),
-                  ],
+                      const CustomSizedBox(height: 12),
+                      InkWell(
+                        onTap: () {
+                          _pickImageFromCamera();
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color.fromARGB(255, 224, 238, 206),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: const Color.fromARGB(255, 57, 167, 14),
+                              ),
+                            ),
+                            const CustomSizedBox(width: 12),
+                            Text(
+                              AppLocalizations.of(context)!.take_a_picture,
+                              style: mediumTextStyleBlack,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const CustomSizedBox(height: 12),
+                      _condition == 'poll'
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _condition = 'post';
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset('assets/create_a_poll.svg'),
+                                  const CustomSizedBox(width: 12),
+                                  Text(
+                                    AppLocalizations.of(context)!.create_a_post,
+                                    style: mediumTextStyleBlack,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () {
+                                _showVideoPickerOptions();
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: const Color.fromARGB(
+                                          255, 224, 238, 206),
+                                    ),
+                                    child: Icon(
+                                      Icons.video_chat,
+                                      color: const Color.fromARGB(
+                                          255, 57, 167, 14),
+                                    ),
+                                  ),
+                                  const CustomSizedBox(width: 12),
+                                  Text(
+                                    AppLocalizations.of(context)!.add_a_video,
+                                    style: mediumTextStyleBlack,
+                                  ),
+                                ],
+                              ),
+                            ),
+                      const CustomSizedBox(height: 12),
+                      _condition == 'post'
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _condition = 'poll';
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset('assets/create_a_poll.svg'),
+                                  const CustomSizedBox(width: 12),
+                                  Text(
+                                    AppLocalizations.of(context)!.create_a_poll,
+                                    style: mediumTextStyleBlack,
+                                  ),
+                                ],
+                              ),
+                            )
+                          : CustomSizedBox()
+                    ],
+                  ),
+                )
+              : Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        spreadRadius: 1,
+                        blurRadius: 5,
+                        offset: Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      /// pic image from gallery option
+                      InkWell(
+                        onTap: () {
+                          _pickImages();
+                        },
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/add_a_photo.svg'),
+                            const CustomSizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+
+                      ///  pic image from camera option
+                      InkWell(
+                        onTap: () {
+                          _pickImageFromCamera();
+                        },
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: const Color.fromARGB(
+                                  255,
+                                  224,
+                                  238,
+                                  206,
+                                ),
+                              ),
+                              child: Icon(
+                                Icons.camera_alt_outlined,
+                                color: const Color.fromARGB(255, 57, 167, 14),
+                              ),
+                            ),
+                            const CustomSizedBox(width: 10),
+                          ],
+                        ),
+                      ),
+
+                      /// video picker option
+                      _condition == 'poll'
+                          ? CustomSizedBox()
+                          : InkWell(
+                              onTap: () {
+                                _showVideoPickerOptions();
+                              },
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: const Color.fromARGB(
+                                          255, 224, 238, 206),
+                                    ),
+                                    child: Icon(
+                                      Icons.video_chat,
+                                      color: const Color.fromARGB(
+                                          255, 57, 167, 14),
+                                    ),
+                                  ),
+                                  const CustomSizedBox(width: 10),
+                                ],
+                              ),
+                            ),
+
+                      /// create poll option
+                      _condition == 'post'
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _condition = 'poll';
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/create_a_poll.svg',
+                                  ),
+                                  const CustomSizedBox(width: 10),
+                                ],
+                              ),
+                            )
+
+                          /// create post aption
+                          : InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _condition = 'post';
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  SvgPicture.asset(
+                                    'assets/create_a_poll.svg',
+                                  ),
+                                  const CustomSizedBox(width: 10),
+                                ],
+                              ),
+                            )
+                    ],
+                  ),
                 ),
-              ),
-            ),
-            bottomSheet: !_isKeyboardVisible
-                ? Container(
-                    color: AppColors.whiteColor,
-                    height: 260,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 5,
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: _pickImages,
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('assets/add_a_photo.svg'),
-                              const SizedBox(width: 10),
-                              Text(
-                                AppLocalizations.of(context)!.add_a_photo,
-                                style: mediumTextStyleBlack,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        InkWell(
-                          onTap: () {
-                            _pickImageFromCamera();
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      const Color.fromARGB(255, 224, 238, 206),
-                                ),
-                                child: Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: const Color.fromARGB(255, 57, 167, 14),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                AppLocalizations.of(context)!.take_a_picture,
-                                style: mediumTextStyleBlack,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        _condition == 'poll'
-                            ? InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _condition = 'post';
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                        'assets/create_a_poll.svg'),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      AppLocalizations.of(context)!
-                                          .create_a_post,
-                                      style: mediumTextStyleBlack,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : InkWell(
-                                onTap: () {
-                                  _showVideoPickerOptions();
-                                },
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height: 40,
-                                      width: 40,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: const Color.fromARGB(
-                                            255, 224, 238, 206),
-                                      ),
-                                      child: Icon(
-                                        Icons.video_chat,
-                                        color: const Color.fromARGB(
-                                            255, 57, 167, 14),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      AppLocalizations.of(context)!.add_a_video,
-                                      style: mediumTextStyleBlack,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                        const SizedBox(height: 5),
-                        InkWell(
-                          onTap: () {
-                            context.push('/groups/create');
-                            // final result = await context.push('/groups/create');
-                            // if (result == true) {
-                            //   Navigator.pop(context, true);
-                            // } else {
-                            //   print('Pop returned: false or null');
-                            // }
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('assets/communities.svg'),
-                              const SizedBox(width: 10),
-                              Text(
-                                AppLocalizations.of(context)!.create_community,
-                                style: mediumTextStyleBlack,
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // TODO: create a action to this and remove the comment
-
-                        // Row(
-                        //   children: [
-                        //     SvgPicture.asset('assets/add_location.svg'),
-                        //     const SizedBox(width: 10),
-                        //     Text('Add Location', style: mediumTextStyleBlack),
-                        //   ],
-                        // ),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     context.push('/events/create');
-                        //   },
-                        //   child: Row(
-                        //     children: [
-                        //       SvgPicture.asset('assets/create_an_event.svg'),
-                        //       const SizedBox(width: 10),
-                        //       Text('Create an Event',
-                        //           style: mediumTextStyleBlack),
-                        //     ],
-                        //   ),
-                        // ),
-                        const SizedBox(height: 5),
-                        _condition == 'post'
-                            ? InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _condition = 'poll';
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                        'assets/create_a_poll.svg'),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      AppLocalizations.of(context)!
-                                          .create_a_poll,
-                                      style: mediumTextStyleBlack,
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : SizedBox()
-                      ],
-                    ),
-                  )
-                : Container(
-                    color: AppColors.whiteColor,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            _pickImages();
-                          },
-                          child: Row(
-                            children: [
-                              SvgPicture.asset('assets/add_a_photo.svg'),
-                              const SizedBox(width: 10),
-                            ],
-                          ),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            _pickImageFromCamera();
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      const Color.fromARGB(255, 224, 238, 206),
-                                ),
-                                child: Icon(
-                                  Icons.camera_alt_outlined,
-                                  color: const Color.fromARGB(255, 57, 167, 14),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                            ],
-                          ),
-                        ),
-                        _condition == 'poll'
-                            ? SizedBox()
-                            : InkWell(
-                                onTap: () {
-                                  _showVideoPickerOptions();
-                                },
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      height: 40,
-                                      width: 40,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: const Color.fromARGB(
-                                            255, 224, 238, 206),
-                                      ),
-                                      child: Icon(
-                                        Icons.video_chat,
-                                        color: const Color.fromARGB(
-                                            255, 57, 167, 14),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                  ],
-                                ),
-                              ),
-                        _condition == 'post'
-                            ? InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _condition = 'poll';
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                        'assets/create_a_poll.svg'),
-                                    const SizedBox(width: 10),
-                                  ],
-                                ),
-                              )
-                            : InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _condition = 'post';
-                                  });
-                                },
-                                child: Row(
-                                  children: [
-                                    SvgPicture.asset(
-                                        'assets/create_a_poll.svg'),
-                                    const SizedBox(width: 10),
-                                  ],
-                                ),
-                              )
-                      ],
-                    ),
-                  )),
+        ),
       ),
     );
   }
 
   // Build dynamic option fields with the X button for removal
   List<Widget> _buildOptionFields() {
-    return List.generate(_optionControllers.length, (index) {
-      // _optionFocusNodes[index] ??= FocusNode();
-      _optionFocusNodes[index];
+    return List.generate(
+      _optionControllers.length,
+      (index) {
+        _optionFocusNodes[index];
 
-      // Listen to focus changes on each FocusNode
-      _optionFocusNodes[index].addListener(() {
-        setState(() {
-          _isKeyboardVisible = _optionFocusNodes[index].hasFocus;
+        // Listen to focus changes on each FocusNode
+        _optionFocusNodes[index].addListener(() {
+          setState(() {
+            _isKeyboardVisible = _optionFocusNodes[index].hasFocus;
+          });
         });
-      });
 
-      return Column(
-        children: [
-          Stack(
-            children: [
-              TextField(
-                textCapitalization: TextCapitalization.sentences,
-                onChanged: (value) {
-                  setState(() {});
-                },
-                controller: _optionControllers[index],
-                focusNode: _optionFocusNodes[index],
-                decoration: InputDecoration(
-                  labelText:
-                      '${AppLocalizations.of(context)!.option} ${index + 1}',
-                  border: const OutlineInputBorder(),
-                ),
-              ),
-              if (index >= 2)
-                Positioned(
-                  right: 0,
-                  top: 8,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, color: AppColors.redColor),
-                    onPressed: () {
-                      _removeOption(index);
-                    },
+        return Column(
+          children: [
+            Stack(
+              children: [
+                TextField(
+                  controller: _optionControllers[index],
+                  focusNode: _optionFocusNodes[index],
+                  textCapitalization: TextCapitalization.sentences,
+                  decoration: InputDecoration(
+                    labelText:
+                        '${AppLocalizations.of(context)!.option} ${index + 1}',
+                    border: const OutlineInputBorder(),
                   ),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
                 ),
-            ],
-          ),
-          const SizedBox(height: 12),
-        ],
-      );
-    });
+                if (index >= 2)
+                  Positioned(
+                    right: 0,
+                    top: 8,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: AppColors.redColor),
+                      onPressed: () {
+                        _removeOption(index);
+                      },
+                    ),
+                  ),
+              ],
+            ),
+            const CustomSizedBox(height: 12),
+          ],
+        );
+      },
+    );
   }
 
   void _showVideoPickerOptions() {

@@ -434,39 +434,43 @@ class _CommunityScreenState extends State<CommunityScreen>
           ],
         ),
         body: Column(
+          //crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               height: 40,
               decoration: BoxDecoration(
-                color: AppColors.whiteColor,
+                //color: AppColors.redColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 0, right: 5),
-                child: TabBar(
-                  indicatorColor: AppColors.primaryColor,
-                  unselectedLabelColor: Colors.grey,
-                  unselectedLabelStyle: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                  controller: _tabController,
-                  tabAlignment: TabAlignment.start,
-                  isScrollable: true,
-                  tabs: [
-                    Tab(
-                      child: tabTitle(
-                        AppLocalizations.of(context)!.nearby_Groups,
-                      ),
-                    ),
-                    Tab(
-                      child: tabTitle(
-                        AppLocalizations.of(context)!.my_Groups,
-                      ),
-                    ),
-                  ],
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorColor: AppColors.primaryColor,
+                labelColor: Colors.black,
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
                 ),
+                unselectedLabelColor: Colors.grey,
+                unselectedLabelStyle: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+                tabAlignment: TabAlignment.center,
+                tabs: [
+                  Tab(
+                    child: tabTitle(
+                      AppLocalizations.of(context)!.nearby_Groups,
+                    ),
+                  ),
+                  Tab(
+                    child: tabTitle(
+                      AppLocalizations.of(context)!.my_Groups,
+                    ),
+                  ),
+                ],
               ),
             ),
             Expanded(

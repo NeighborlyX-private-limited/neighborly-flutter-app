@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
@@ -9,7 +10,8 @@ import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart'
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
-import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
+import 'package:neighborly_flutter_app/features/homePage/home_page.dart';
+import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_general_cubit.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
@@ -31,8 +33,11 @@ import '../../../notification/data/data_sources/notification_remote_data_source/
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String tabIndex;
-  const HomeScreen({super.key, required this.tabIndex});
+  const HomeScreen({super.key});
+
+  // final String tabIndex;
+  // const HomeScreen({super.key});
+  // const HomeScreen({super.key, required this.tabIndex});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -48,7 +53,9 @@ class _HomeScreenState extends State<HomeScreen>
   String? selectedDay;
   String? selectedMonth;
   String? selectedYear;
+  String? _deepLink;
   bool isDobBtnActive = false;
+  static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
   // final newVersionPlus = NewVersionPlus();
 
   /// Generate lists for day, month, and year
@@ -70,6 +77,8 @@ class _HomeScreenState extends State<HomeScreen>
         _scrollController.jumpTo(0.0);
       }
     });
+    updateFCMtokenNotification();
+    _setDeepLinkListener();
 
     // newVersionPlus.showAlertIfNecessary(context: context);
 
@@ -154,6 +163,49 @@ class _HomeScreenState extends State<HomeScreen>
       city = 'New Delhi';
     }
     ShardPrefHelper.setHomeCity(city);
+  }
+
+  Future<void> _setDeepLinkListener() async {
+    platform.setMethodCallHandler(
+      (MethodCall call) async {
+        if (call.method == "onDeepLink") {
+          setState(
+            () {
+              _deepLink = call.arguments;
+              List? linksplit = _deepLink?.split('neighborly.in');
+              if (linksplit != null && linksplit.length > 1) {
+                if (linksplit[1].contains('post-detail/')) {
+                  try {
+                    context.push(linksplit[1]);
+                  } catch (e) {}
+                } else {
+                  //context.push('/userProfileScreen/${widget.post.userId}');
+                }
+              } else {}
+            },
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> updateFCMtokenNotification() async {
+    try {
+      var result = await BlocProvider.of<NotificationGeneralCubit>(context)
+          .updateFCMTokenUsecase();
+      result.fold(
+        (failure) {},
+        (currentFCMtoken) {
+          ShardPrefHelper.setFCMtoken(currentFCMtoken);
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('FCM token error: $e')),
+        );
+      }
+    }
   }
 
   /// set current location city name

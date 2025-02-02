@@ -6,6 +6,7 @@ import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/models/community_model.dart';
 import '../../../../../core/utils/shared_preference.dart';
+import '../../model/group_join_request_model.dart';
 import '../../model/search_dash_model.dart';
 import '../../model/search_result_model.dart';
 import 'community_remote_data_source.dart';
@@ -210,6 +211,41 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     }
   }
 
+  ///get community api call
+  @override
+  Future<List<GroupJoinRequestModel>> getCommunityJoinRequest(
+      {required String communityId}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'oops omething went wrong');
+    }
+
+    String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/group/get-requests/$communityId';
+
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Cookie': cookieHeader,
+      },
+    );
+    print('res: ${response.body}');
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      return jsonData
+          .map((data) => GroupJoinRequestModel.fromJson(data))
+          .toList();
+    } else {
+      final message = jsonDecode(response.body)['msg'] ??
+          jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          'oops omething went wrong';
+      throw ServerException(message: message);
+    }
+  }
+
   /// make admin api call
   @override
   Future<void> makeAdmin({
@@ -330,6 +366,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   Future<void> leaveCommunity({
     required String communityId,
     required String? userId,
+    required bool isRemove,
   }) async {
     if (userId == null) {
       userId = ShardPrefHelper.getUserID() ?? '';
@@ -342,9 +379,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     }
 
     String cookieHeader = cookies.join('; ');
-
-    String url = '$kBaseUrl/group/remove-user';
-
+    String url = "";
+    if (isRemove) {
+      url = '$kBaseUrl/group/remove-user/$communityId/$userId';
+    } else {
+      url = '$kBaseUrl/group/leave/$communityId';
+    }
+    print('url: $url');
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -358,6 +399,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         },
       ),
     );
+    print('res: ${response.body}');
+    print('res: ${response.body}');
 
     if (response.statusCode == 200) {
     } else {

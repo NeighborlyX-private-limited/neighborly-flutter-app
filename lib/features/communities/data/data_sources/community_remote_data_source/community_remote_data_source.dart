@@ -1,5 +1,6 @@
 import 'dart:io';
 import '../../../../../core/models/community_model.dart';
+import '../../model/group_join_request_model.dart';
 import '../../model/search_dash_model.dart';
 import '../../model/search_result_model.dart';
 
@@ -18,6 +19,11 @@ abstract class CommunityRemoteDataSource {
 
   ///get community details
   Future<CommunityModel> getCommunity({
+    required String communityId,
+  });
+
+  ///get community details
+  Future<List<GroupJoinRequestModel>> getCommunityJoinRequest({
     required String communityId,
   });
 
@@ -43,6 +49,7 @@ abstract class CommunityRemoteDataSource {
   Future<void> leaveCommunity({
     required String communityId,
     required String? userId,
+    required bool isRemove,
   });
 
   ///update group updateDisplayname

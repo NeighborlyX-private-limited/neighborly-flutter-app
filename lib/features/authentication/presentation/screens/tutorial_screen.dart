@@ -106,7 +106,8 @@ class TutorialScreenState extends State<TutorialScreen> {
         listener: (context, state) {
           ///success state
           if (state is TutorialUpdateSuccess) {
-            context.go('/home/Home');
+            // context.go('/home/Home');
+            context.go('/home');
           } else if (state is TutorialUpdateFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

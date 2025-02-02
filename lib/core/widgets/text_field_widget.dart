@@ -6,6 +6,7 @@ class TextFieldWidget extends StatefulWidget {
   final bool isPassword;
   final bool enabled;
   final String lableText;
+  final String hintText;
   final TextInputType? inputType;
   final TextEditingController controller;
   final void Function(String) onChanged;
@@ -19,11 +20,12 @@ class TextFieldWidget extends StatefulWidget {
     super.key,
     required this.border,
     this.isPassword = false,
-    required this.lableText,
+    this.lableText = '',
     required this.controller,
     this.focusNode,
     required this.onChanged,
     this.inputType,
+    this.hintText = '',
     this.height,
     this.digitsOnly = false,
     this.enabled = true,
@@ -53,6 +55,9 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             widget.digitsOnly ? [FilteringTextInputFormatter.digitsOnly] : null,
         maxLength: widget.maxLength,
         decoration: InputDecoration(
+          // hintText: 'HELLO',
+          // hintStyle: TextStyle(color: Colors.red),
+          //hintText: widget.lableText == '' ? widget.hintText : null,
           counterText: '',
           labelText: widget.lableText,
           border: widget.border

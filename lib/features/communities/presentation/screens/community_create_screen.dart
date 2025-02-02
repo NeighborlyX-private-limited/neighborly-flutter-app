@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:neighborly_flutter_app/features/homePage/homePage.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/community_model.dart';
@@ -27,8 +28,10 @@ class CommunityCreateScreen extends StatefulWidget {
 class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   final nameEC = TextEditingController();
   final descriptionEC = TextEditingController();
-  final typeEC = TextEditingController(text: 'public');
+  final typeEC = TextEditingController();
   final radiusEC = TextEditingController();
+  final nameFocusNode = FocusNode();
+  bool bothFieldEnable = false;
 
   /// in future we have plan to add location during create community
   //final locationEC = TextEditingController();
@@ -37,7 +40,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   File? fileToUpload;
   int currentStep = 1;
 
-  ///init method
+  /// init method
   @override
   void initState() {
     super.initState();
@@ -47,13 +50,14 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
     currentStep = 1;
   }
 
-  ///dispose method
+  /// dispose method
   @override
   void dispose() {
     nameEC.dispose();
     descriptionEC.dispose();
     typeEC.dispose();
     radiusEC.dispose();
+    nameFocusNode.dispose();
     //locationEC.dispose();
     super.dispose();
   }
@@ -89,7 +93,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   /// user leave with save with creating gorups confirmation bottom sheet
   Future<dynamic> bottomSheetConfirmNotSaved(BuildContext context) {
     return showModalBottomSheet(
-      //useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -173,21 +176,12 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   }
 
   void processSave() {
-    ///  Save process start
-
-    /// group name can not be empty
     if (nameEC.text.trim() == '') {
       setState(() {
         currentStep = 1;
       });
       if (mounted) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            const SnackBar(
-              content: Text('Name is mandatory'),
-            ),
-          );
+        showSnackBar(context: context, message: 'Name is mandatory');
       }
     } else {
       String radiusInput = radiusEC.text;
@@ -234,9 +228,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
               color: Colors.black,
             ),
             onTap: () {
-              print('hello: $currentStep');
               if (currentStep == 1) {
-                // Navigator.pop(context);
                 bottomSheetConfirmNotSaved(context);
                 return;
               }
@@ -249,7 +241,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
               });
             },
           ),
-          title: Text(titleSelector(currentStep)),
+          //title: Text(titleSelector(currentStep)),
           actions: [
             ElevatedButton(
               onPressed: () {
@@ -269,7 +261,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 5),
                 child: Text(
                   currentStep == 4
-                      ? AppLocalizations.of(context)!.save
+                      ? AppLocalizations.of(context)!.create_community
                       : AppLocalizations.of(context)!.next,
                   style: TextStyle(
                     color: Colors.white,
@@ -284,27 +276,21 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
         ),
         body: BlocConsumer<CommunityCreateCubit, CommunityCreateState>(
           listener: (context, state) {
-            ///failure state
+            /// failure state
             if (state.status == Status.failure) {
               if (mounted) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    SnackBar(
-                      content: Text('oops something went wrong!'),
-                    ),
-                  );
+                showSnackBar(
+                  context: context,
+                  message: state.failure?.message ?? 'Name is mandatory',
+                );
               }
             }
 
-            ///success state
+            /// success state
             if (state.status == Status.success) {
               if (mounted) {
-                // Navigator.pop(
-                //   context,
-                // );
-                //Navigator.pop(context, true);
-                //context.go('/home/Home');
+                Navigator.pop(context, '/groups');
+                //context.go('/groups');
                 context.push('/groups/${state.newCommunityId}');
               }
             }
@@ -327,6 +313,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
                       Step1area(
                         nameController: nameEC,
                         typeController: typeEC,
+                        nameFocusNode: nameFocusNode,
                       ),
                     ],
 
@@ -375,10 +362,12 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
 class Step1area extends StatefulWidget {
   final TextEditingController nameController;
   final TextEditingController typeController;
+  final FocusNode nameFocusNode;
   const Step1area({
     super.key,
     required this.nameController,
     required this.typeController,
+    required this.nameFocusNode,
   });
 
   @override
@@ -387,6 +376,100 @@ class Step1area extends StatefulWidget {
 
 ///step 1 area state for taking group name, choose group type
 class _Step1areaState extends State<Step1area> {
+  void _showCommunityTypeBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      backgroundColor: AppColors.whiteColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          height: 250,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  "Community type",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              ListTile(
+                title: Text(
+                  "Public",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  'Anyone can join, see posts, and participate in discussions.',
+                  softWrap: true,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                leading: SvgPicture.asset(
+                  'assets/outline-public.svg',
+                  height: 30,
+                  width: 30,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _updateCommunityType("Public");
+                },
+              ),
+              ListTile(
+                title: Text(
+                  "Private",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  'Only invited members can join, view posts, and engage in conversations.',
+                  softWrap: true,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.normal,
+                  ),
+                ),
+                leading: SvgPicture.asset(
+                  'assets/outline-lock.svg',
+                  height: 30,
+                  width: 30,
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  _updateCommunityType("Private");
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _updateCommunityType(String type) {
+    setState(() {
+      widget.typeController.text = type;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -394,31 +477,98 @@ class _Step1areaState extends State<Step1area> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            AppLocalizations.of(context)!.name,
-            style: greyonboardingBody1Style,
+          Row(
+            children: [
+              Text(
+                AppLocalizations.of(context)!.community_name,
+                style: greyonboardingBody1Style,
+              ),
+              Text(
+                "*",
+                style: TextStyle(
+                  color: AppColors.redColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 5),
 
           /// name text field
-          TextFieldWidget(
-            border: true,
-            onChanged: (value) {},
+          TextField(
             controller: widget.nameController,
-            lableText: '',
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context)!.community_name,
+              border: const OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: const BorderSide(
+                  color: AppColors.primaryColor,
+                ),
+              ),
+            ),
+            onChanged: (value) {
+              if (widget.typeController.text != 'Choose community type' &&
+                  widget.nameController.text != '') {
+                setState(() {});
+              }
+            },
           ),
+
           const SizedBox(height: 30),
 
           ///group type drop down
-          DropdownSearchField(
-            label: AppLocalizations.of(context)!.choose_your_group_type,
-            items: ['public', 'private'],
-            onChanged: (value) {
-              widget.typeController.text = value ?? 'public';
-            },
-            initialValue: widget.typeController.text,
-            placeholder: AppLocalizations.of(context)!.community_Type,
+          ///
+          GestureDetector(
+            onTap: _showCommunityTypeBottomSheet,
+            child: AbsorbPointer(
+              child: TextField(
+                controller: widget.typeController,
+                decoration: InputDecoration(
+                  hintText: "Choose community type",
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: const BorderSide(
+                      color: AppColors.primaryColor,
+                    ),
+                  ),
+                  suffixIcon: Container(
+                    height: 20,
+                    width: 20,
+                    padding: EdgeInsets.only(top: 12),
+                    child: Center(
+                      child: SvgPicture.asset(
+                        'assets/dropdown-icon.svg',
+                        height: 20,
+                        width: 20,
+                      ),
+                    ),
+                  ),
+                ),
+                onChanged: (value) {
+                  if (widget.typeController.text != 'Choose community type' &&
+                      widget.nameController.text != '') {
+                    setState(() {});
+                  }
+                },
+              ),
+            ),
           ),
+          // DropdownSearchField(
+          //   label: AppLocalizations.of(context)!.community_Type,
+          //   items: ['public', 'private'],
+          //   onChanged: (value) {
+          //     widget.typeController.text = value ?? 'public';
+          //   },
+          //   initialValue: widget.typeController.text,
+          //   placeholder: AppLocalizations.of(context)!.community_Type,
+          // ),
         ],
       ),
     );

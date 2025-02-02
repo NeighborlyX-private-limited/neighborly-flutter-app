@@ -40,10 +40,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   bool isCommentFilled = false;
   bool showPinned = true;
   File? fileToUpload;
-
   String? base64File;
-
   bool _isLoadingMore = false;
+  var pinnedMessages;
   // bool _shouldScrollToBottom = true;
   double _previousScrollOffset = 0.0;
 
@@ -338,7 +337,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             InkWell(
               onTap: () {
                 if (!widget.room.isJoined) {
-                  ShowDialog();
+                  _showJoinGroupBottomSheet(context);
+                  // ShowDialog();
                 } else {
                   if (messageEC.text.trim() != "") {
                     final payload = {
@@ -347,7 +347,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                       'parentMessageId': null,
                       'file': base64File,
                     };
-                    print(payload);
+
                     context.read<ChatGroupCubit>().sendMessage(payload, true);
                     base64File = null;
                     messageEC.clear();
@@ -403,12 +403,13 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     }
   }
 
+  /// pinned message area
   Widget pinnedMessageArea(List<ChatMessageModel> pinnedMessages) {
     return Column(
       children: pinnedMessages
           .map((pinMsg) => ChatMessagePinnedWidget(
                 message: pinMsg,
-                isAdmin: true,
+                isAdmin: false,
                 onClose: () {
                   setState(() {
                     showPinned = false;
@@ -421,6 +422,140 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 },
               ))
           .toList(),
+    );
+  }
+
+  /// show join group sheet
+
+  void _showJoinGroupBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
+                'assets/chat-icon.svg',
+                height: 70,
+                width: 70,
+              ),
+
+              SizedBox(height: 12),
+
+              // Title
+              Text(
+                "Oops! You're not part of this group yet.",
+                textAlign: TextAlign.center,
+                softWrap: true,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+
+              // Subtitle
+              Text(
+                "Become part of the group and join the conversation.",
+                textAlign: TextAlign.center,
+                softWrap: true,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                      child: Text("Cancel"),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Handle join group logic
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                      child: Text(
+                        "Join Group",
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// open bag bottom sheet method
+  void _showBottomSheet(var pinnedMessages) {
+    showModalBottomSheet(
+      useRootNavigator: true,
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
+      context: context,
+      isScrollControlled: true,
+      builder: (_) {
+        return Container(
+          padding: EdgeInsets.all(16), // Add padding for a cleaner look
+          child: Wrap(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  print('pinnedMessages: $pinnedMessages');
+                },
+                child: Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/pinned.svg',
+                      height: 20,
+                      width: 20,
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text('Pinned message'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -441,6 +576,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           actions: [
             IconButton(
               onPressed: () {
+                _showBottomSheet(pinnedMessages);
+
                 /// perform action for group chat screen
               },
               icon: Icon(
@@ -481,13 +618,21 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 _scrollToEnd();
               });
             }
+            if (state.status == Status.success) {
+              // var newPinnedMessages = <ChatMessageModel>[];
+              pinnedMessages = [
+                ...state.messages.where(
+                  (element) => !element.isPinned,
+                )
+              ];
+            }
           },
           builder: (context, state) {
-            int lineCount = 1;
-            String lastDate = '';
+            // int lineCount = 1;
+            // String lastDate = '';
             return BlocBuilder<ChatGroupCubit, ChatGroupState>(
               builder: (context, state) {
-                var pinnedMessages = <ChatMessageModel>[];
+                // var pinnedMessages = <ChatMessageModel>[];
 
                 /// loading state
                 if (state.status == Status.loading) {
@@ -498,15 +643,15 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 }
 
                 /// get pinned msg
-                else {
-                  pinnedMessages = [
-                    ...state.messages.where((element) => element.isPinned)
-                  ];
-                }
+                // else {
+                //   pinnedMessages = [
+                //     ...state.messages.where((element) => element.isPinned)
+                //   ];
+                // }
 
                 return Container(
-                  padding: EdgeInsets.only(top: 1),
-                  margin: EdgeInsets.only(top: 1),
+                  // padding: EdgeInsets.only(top: 1),
+                  // margin: EdgeInsets.only(top: 1),
                   width: double.infinity,
                   color: Colors.white,
                   child: Column(
@@ -514,10 +659,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       /// #pinned msg area
-                      if (showPinned && pinnedMessages.isNotEmpty)
-                        pinnedMessageArea(
-                          pinnedMessages,
-                        ),
+                      // if (showPinned && pinnedMessages.isNotEmpty)
+                      //   pinnedMessageArea(
+                      //     pinnedMessages,
+                      //   ),
 
                       /// Show loading indicator at the top when fetching more messages
                       if (_isLoadingMore)
@@ -548,26 +693,28 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
                               //String cheerorbooFromreply = state.messages[index].booOrCheer;
 
-                              var dateSummary = onlyDate(msg.date);
+                              // var dateSummary = onlyDate(msg.date);
 
                               /// Show loading indicator at the top when fetching more messages
                               if (_isLoadingMore &&
                                   index == state.messages.length) {
                                 return Center(
-                                    child: CircularProgressIndicator());
+                                  child: CircularProgressIndicator(),
+                                );
                               }
                               var messageWidget = ChatMessageGroupWidget(
                                 message: msg,
                                 isAdmin: msg.isAdmin,
-                                showIsReaded:
-                                    (lineCount == state.messages.length) &&
-                                        msg.isMine,
+                                // showIsReaded:
+                                //     (lineCount == state.messages.length) &&
+                                //         msg.isMine,
 
                                 /// ON TAP PRESS
                                 onTap: (msgSelected) {},
 
                                 /// ON REPLY
                                 onReply: (msgIdToSendReply, message) {
+                                  print('on reply tap');
                                   context.push(
                                       '/chat/group/thread/${msgIdToSendReply.id}',
                                       extra: {
@@ -578,6 +725,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
                                 /// on tap reply
                                 onTapReply: (messageToOpen) {
+                                  print('reply tap');
                                   context.push(
                                       '/chat/group/thread/${messageToOpen.id}',
                                       extra: {
@@ -617,22 +765,22 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 onPin: (messageToBePinned) {},
                               );
 
-                              if (lastDate != dateSummary) {
-                                lastDate = dateSummary;
-                                return Column(
-                                  children: [
-                                    if (lastDate != '')
-                                      Text(
-                                        formatDate(dateSummary),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          height: 2.5,
-                                        ),
-                                      ),
-                                    messageWidget,
-                                  ],
-                                );
-                              }
+                              // if (lastDate != dateSummary) {
+                              //   lastDate = dateSummary;
+                              //   return Column(
+                              //     children: [
+                              //       if (lastDate != '')
+                              //         Text(
+                              //           formatDate(dateSummary),
+                              //           style: TextStyle(
+                              //             fontSize: 12,
+                              //             height: 2.5,
+                              //           ),
+                              //         ),
+                              //       messageWidget,
+                              //     ],
+                              //   );
+                              // }
 
                               return messageWidget;
                             },

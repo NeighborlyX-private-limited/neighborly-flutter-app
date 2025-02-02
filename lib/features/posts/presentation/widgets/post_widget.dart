@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/video_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -30,6 +32,16 @@ class PostWidget extends StatefulWidget {
 }
 
 class _PostWidgetState extends State<PostWidget> {
+  String? title;
+  String? content;
+  @override
+  void initState() {
+    super.initState();
+    title = widget.post.title ?? '';
+    content = widget.post.content;
+    print('length: ${title!.length}');
+  }
+
   @override
   Widget build(BuildContext context) {
     void showBottomSheet() {
@@ -172,14 +184,22 @@ class _PostWidgetState extends State<PostWidget> {
               height: 12,
             ),
             widget.post.title != null
-                ? Text(
-                    widget.post.title!,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: Colors.grey[900],
-                      fontWeight: FontWeight.w500,
-                      fontSize: 17,
-                      height: 1.3,
+                ? Linkify(
+                    options: LinkifyOptions(
+                      looseUrl: true,
+                    ),
+                    onOpen: (link) async {
+                      if (await canLaunchUrl(Uri.parse(link.url))) {
+                        await launchUrl(Uri.parse(link.url),
+                            mode: LaunchMode.externalApplication);
+                      } else {
+                        throw "Could not launch ${link.url}";
+                      }
+                    },
+                    text: title!,
+                    style: const TextStyle(fontSize: 17),
+                    linkStyle: const TextStyle(
+                      color: AppColors.primaryColor,
                     ),
                   )
                 : Container(),
@@ -189,15 +209,33 @@ class _PostWidgetState extends State<PostWidget> {
                   )
                 : Container(),
             widget.post.content != null
-                ? Text(
-                    widget.post.content!,
-                    textAlign: TextAlign.start,
-                    style: TextStyle(
-                      color: Colors.grey[800],
-                      fontSize: 15,
-                      height: 1.3,
+                ? Linkify(
+                    options: LinkifyOptions(
+                      looseUrl: true,
+                    ),
+                    onOpen: (link) async {
+                      if (await canLaunchUrl(Uri.parse(link.url))) {
+                        await launchUrl(Uri.parse(link.url),
+                            mode: LaunchMode.externalApplication);
+                      } else {
+                        throw "Could not launch ${link.url}";
+                      }
+                    },
+                    text: content!,
+                    style: const TextStyle(fontSize: 17),
+                    linkStyle: const TextStyle(
+                      color: AppColors.primaryColor,
                     ),
                   )
+                // ? Text(
+                //     widget.post.content!,
+                //     textAlign: TextAlign.start,
+                //     style: TextStyle(
+                //       color: Colors.grey[800],
+                //       fontSize: 15,
+                //       height: 1.3,
+                //     ),
+                //   )
                 : Container(),
             widget.post.multimedia!.isNotEmpty
                 ? const SizedBox(

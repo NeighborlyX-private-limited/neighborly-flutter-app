@@ -193,10 +193,57 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
 
               const SizedBox(height: 5),
 
+              ///member list
+              MenuIconItem(
+                title: AppLocalizations.of(context)!.member_list,
+                // 'Member list',
+                svgPath: 'assets/menu_members.svg',
+                iconSize: 25,
+                onTap: () {
+                  context.push('/groups/admin/members');
+                },
+              ),
+
+              const SizedBox(height: 5),
+
+              /// Manage Join Request
+              MenuIconItem(
+                title: "Manage Join Request",
+                svgPath: 'assets/private-lock-icon.svg',
+                iconSize: 25,
+                onTap: () {
+                  context.push(
+                      '/groups/admin/manage-join-request/${community.id}');
+                },
+              ),
+
+              const SizedBox(height: 5),
+
+              ///community icon
+              MenuIconItem(
+                title: AppLocalizations.of(context)!.community_Icon,
+                svgPath: 'assets/menu_icon.svg',
+                iconSize: 25,
+                onTap: () {
+                  context.push('/groups/admin/icon');
+                },
+              ),
+              const SizedBox(height: 5),
+
+              /// community description
+              MenuIconItem(
+                title: AppLocalizations.of(context)!.description,
+                svgPath: 'assets/menu_description.svg',
+                iconSize: 25,
+                onTap: () {
+                  context.push('/groups/admin/description');
+                },
+              ),
+              const SizedBox(height: 5),
+
               ///community name
               MenuIconItem(
                 title: AppLocalizations.of(context)!.community_name,
-                // 'Community name',
                 svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
@@ -204,21 +251,9 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 },
               ),
 
-              /// community description
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.description,
-                // 'Description',
-                svgPath: 'assets/menu_description.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/groups/admin/description');
-                },
-              ),
-
               /// community type
               MenuIconItem(
                 title: AppLocalizations.of(context)!.community_Type,
-                // 'Community Type',
                 svgPath: 'assets/menu_type.svg',
                 iconSize: 25,
                 onTap: () {
@@ -226,38 +261,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 },
               ),
 
-              ///community icon
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.community_Icon,
-                // 'Community Icon',
-                svgPath: 'assets/menu_icon.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/groups/admin/icon');
-                },
-              ),
-
-              ///location
-              // const SizedBox(height: 5),
-              // MenuIconItem(
-              //   title: 'Location',
-              //   svgPath: 'assets/menu_location.svg',
-              //   iconSize: 25,
-              //   onTap: () {
-              //     context.push('/groups/admin/location');
-              //   },
-              // ),
-
-              ///radius
-              // const SizedBox(height: 5),
-              // MenuIconItem(
-              //   title: 'Radius',
-              //   svgPath: 'assets/menu_location_.svg',
-              //   iconSize: 25,
-              //   onTap: () {
-              //     context.push('/groups/admin/radius');
-              //   },
-              // ),
               /// mute/unmute
               BlocConsumer<UpdateMuteGroupBloc, UpdateMuteGroupState>(
                 listener: (context, state) {
@@ -314,19 +317,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 5),
-
-              ///member list
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.member_list,
-                // 'Member list',
-                svgPath: 'assets/menu_members.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/groups/admin/members');
-                },
-              ),
-
               const SizedBox(height: 5),
 
               ///block user list

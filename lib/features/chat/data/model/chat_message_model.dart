@@ -3,9 +3,7 @@ import '../../../../core/models/post_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
 
-/// ChatMessageModel extends ChatMessageEntity and represents a detailed chat message model
 class ChatMessageModel extends ChatMessageEntity {
-  /// Constructor to initialize ChatMessageModel with the fields inherited from ChatMessageEntity
   const ChatMessageModel({
     required super.id,
     required super.text,
@@ -23,7 +21,6 @@ class ChatMessageModel extends ChatMessageEntity {
     super.author,
   });
 
-  /// Provides a string representation of the model for debugging or logging purposes
   @override
   String toString() {
     return 'ChatMessageModel(id: $id, text: $text, date: $date, isMine: $isMine, readByuser: $readByuser, hasMore: $hasMore, isAdmin: $isAdmin, isPinned: $isPinned, repliesCount: $repliesCount, cheers: $cheers, boos: $boos, booOrCheer: $booOrCheer, pictureUrl: $pictureUrl, author: $author,)';

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:readmore/readmore.dart';
-
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../data/model/chat_message_model.dart';
 
@@ -103,7 +102,10 @@ class ChatMessagePinnedWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     OverlayEntry? overlayEntry;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 18.0,
+        vertical: 10,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

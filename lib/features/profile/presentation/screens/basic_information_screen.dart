@@ -191,13 +191,13 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           _usernameController.clear();
                           _bioController.clear();
 
-                          context.go('/profile');
                           BlocProvider.of<GetProfileBloc>(context)
                               .add(GetProfileButtonPressedEvent());
                           BlocProvider.of<GetMyPostsBloc>(context)
                               .add(GetMyPostsButtonPressedEvent());
                           BlocProvider.of<GetMyCommentsBloc>(context)
                               .add(GetMyCommentsButtonPressedEvent());
+                          context.go('/profile');
                           if (mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

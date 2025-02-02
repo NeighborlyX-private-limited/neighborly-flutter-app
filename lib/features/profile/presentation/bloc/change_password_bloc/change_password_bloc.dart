@@ -23,13 +23,13 @@ class ChangePasswordBloc
         newPassword: event.newPassword,
         flag: event.flag,
       );
-      print('...Result in ChangePasswordBloc $result');
+      
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
+       
         emit(ChangePasswordFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
+        
         emit(ChangePasswordSuccessState(message: response));
       });
     });

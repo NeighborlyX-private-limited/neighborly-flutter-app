@@ -385,11 +385,13 @@ class _CommunityAdminMembersUsersScreenState
                         }
                         return ElevatedButton(
                           onPressed: () {
+                            print('this is call');
                             Navigator.pop(context);
                             BlocProvider.of<AddRemoveUserInGroupBloc>(context)
                                 .add(RemoveUserInGroupButtonPressedEvent(
                               communityId: communityId,
                               userId: userId,
+                              isRemove: true,
                             ));
                           },
                           style: ElevatedButton.styleFrom(

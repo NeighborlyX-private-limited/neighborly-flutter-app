@@ -4,6 +4,7 @@ import 'package:neighborly_flutter_app/core/widgets/event_coming_soon.dart';
 import 'package:neighborly_flutter_app/core/widgets/not_found_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/screens/community_admin_set_displayname.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/screens/manage_join_request_screen.dart';
 
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_of_specific_comment.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/deletd_user_profile_screen.dart';
@@ -40,7 +41,7 @@ import '../../features/event/presentation/screens/event_success_screen.dart';
 import '../../features/event/presentation/screens/event_detail_screen.dart';
 import '../../features/event/presentation/screens/event_main_screen.dart';
 import '../../features/event/presentation/screens/event_search_screen.dart';
-import '../../features/homePage/homePage.dart';
+import '../../features/homePage/home_page.dart';
 import '../../features/notification/presentation/screens/notification_list_screen.dart';
 import '../../features/posts/presentation/screens/home_screen.dart';
 import '../../features/posts/presentation/screens/post_detail_screen.dart';
@@ -70,13 +71,15 @@ String setInitialLocation() {
     return '/';
   } else if (authType == 'phone') {
     if (IsPhoneVarify && cookies!.isNotEmpty) {
-      return '/home/Home';
+      return '/home';
+      // return '/home/Home';
     } else {
       return '/';
     }
   } else if (authType == 'email') {
     if (IsVarify && cookies!.isNotEmpty) {
-      return '/home/Home';
+      return '/home';
+      // return '/home/Home';
     } else {
       return '/';
     }
@@ -175,20 +178,22 @@ final GoRouter router = GoRouter(
     // ),
     ShellRoute(
       builder: (context, state, child) {
-        final String? childId = state.pathParameters['Home'];
+        // final String? childId = state.pathParameters['Home'];
         return MainPage(
-          childId: childId ?? '',
+          // childId: childId ?? '',
           child: child,
         );
       },
       routes: [
         GoRoute(
-          path: '/home/:Home',
+          // path: '/home/:Home',
+          path: '/home',
+          name: 'home',
           builder: (context, state) {
-            final String tabIndex = state.pathParameters['Home'] ?? "Home";
+            // final String tabIndex = state.pathParameters['Home'] ?? "Home";
             return HomeScreen(
-              tabIndex: tabIndex,
-            );
+                //tabIndex: tabIndex,
+                );
           },
         ),
         GoRoute(
@@ -250,6 +255,12 @@ final GoRouter router = GoRouter(
           path: '/groups/admin',
           builder: (context, state) =>
               CommunityAdminSetScreen(community: state.extra as CommunityModel),
+        ),
+        GoRoute(
+          path: '/groups/admin/manage-join-request/:communityId',
+          builder: (context, state) => ManageJoinRequestScreen(
+            communityId: state.pathParameters["communityId"] as String,
+          ),
         ),
         GoRoute(
           path: '/groups/admin/members',

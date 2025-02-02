@@ -54,6 +54,7 @@ class AddRemoveUserInGroupBloc
         final result = await _removeUserCommunityUsecase.call(
           communityId: event.communityId,
           userId: event.userId,
+          isRemove: event.isRemove,
         );
 
         result.fold(

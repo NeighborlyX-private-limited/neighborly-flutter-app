@@ -88,6 +88,7 @@ class _CityDropdownState extends State<CityDropdown> {
     showModalBottomSheet(
       useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
       context: context,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
@@ -102,19 +103,22 @@ class _CityDropdownState extends State<CityDropdown> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Select your location',
+                'City',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
             ),
-            Divider(height: 1.0),
             ListView.builder(
               shrinkWrap: true,
               itemCount: cities.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text(cities[index]),
+                  title: Text(
+                    cities[index],
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                  ),
                   onTap: () {
                     widget.onChanged(cities[index]);
                     Navigator.pop(context); // Close the bottom sheet

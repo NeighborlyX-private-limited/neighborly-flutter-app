@@ -63,13 +63,21 @@
                 <data android:scheme="http" android:host="prod.neighborly.in" />
                 <data android:scheme="https" android:host="prod.neighborly.in" />
             </intent-filter> -->
-
+<!-- <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
+            </intent-filter> -->
             <intent-filter android:autoVerify="true">
     <action android:name="android.intent.action.VIEW" />
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
-    <data android:scheme="http" android:host="prod.neighborly.in" android:pathPrefix="/post-detail" />
-    <data android:scheme="https" android:host="prod.neighborly.in" android:pathPrefix="/post-detail" />
+    <data android:scheme="http"/>
+    <data android:scheme="https"/>
+    <!-- <data android:scheme="http" android:host="prod.neighborly.in" android:pathPrefix="/post-detail" />
+    <data android:scheme="https" android:host="prod.neighborly.in" android:pathPrefix="/post-detail" /> -->
 </intent-filter>
 
 
@@ -83,6 +91,10 @@
     </application>
 
     <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="http"/>
+        </intent>
         <intent>
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="https" />

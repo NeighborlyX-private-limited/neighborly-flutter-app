@@ -19,13 +19,19 @@ class JoinGroupButtonPressedEvent extends JoinGroupEvent {
 /// leave group event trigger
 class LeaveGroupButtonPressedEvent extends JoinGroupEvent {
   final String communityId;
+  final String? userId;
+  final bool isRemove;
 
   LeaveGroupButtonPressedEvent({
     required this.communityId,
+    this.userId,
+    this.isRemove = false,
   });
 
   @override
   List<Object?> get props => [
         communityId,
+        userId,
+        isRemove,
       ];
 }

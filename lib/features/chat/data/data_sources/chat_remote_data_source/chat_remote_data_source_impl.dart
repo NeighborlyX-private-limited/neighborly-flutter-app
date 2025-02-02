@@ -37,9 +37,9 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      print('chat msg: ${jsonDecode(response.body)}');
-      print('chat msg page: $page');
-      print('chat msg limit: ${jsonDecode(response.body).length}');
+      print('CHAT MESSAGE: ${jsonDecode(response.body)}');
+      print('CHAT MESSAGE PAGE: $page');
+      print('CHAT MESSAGE LIMIT: ${jsonDecode(response.body).length}');
       return ChatMessageModel.fromJsonList(jsonDecode(response.body))
           .reversed
           .toList();

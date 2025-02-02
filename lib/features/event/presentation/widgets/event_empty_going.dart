@@ -41,7 +41,7 @@ class EventEmptyGoing extends StatelessWidget {
           onPressed: () {
             // Lógica ao clicar no botão
             // context.go('/groups/create');
-            print('Explore Events');
+            
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.primaryColor,

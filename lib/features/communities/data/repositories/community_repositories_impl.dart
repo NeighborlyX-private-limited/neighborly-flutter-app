@@ -5,6 +5,7 @@ import '../../../../core/models/community_model.dart';
 import '../../../../core/network/network_info.dart';
 import '../../domain/repositories/community_repositories.dart';
 import '../data_sources/community_remote_data_source/community_remote_data_source.dart';
+import '../model/group_join_request_model.dart';
 import '../model/search_dash_model.dart';
 import '../model/search_result_model.dart';
 
@@ -176,12 +177,36 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
   Future<Either<Failure, void>> leaveCommunity({
     required String communityId,
     required String? userId,
+    required bool isRemove,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.leaveCommunity(
           communityId: communityId,
           userId: userId,
+          isRemove: isRemove,
+        );
+
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  /// Community  join request repo impl
+  @override
+  Future<Either<Failure, List<GroupJoinRequestModel>>> getCommunityJoinRequest({
+    required String communityId,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.getCommunityJoinRequest(
+          communityId: communityId,
         );
 
         return Right(result);

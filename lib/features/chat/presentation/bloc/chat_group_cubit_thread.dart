@@ -62,6 +62,7 @@ class ChatGroupCubitThread extends Cubit<ChatGroupStateThread> {
   void sendMessage(var message, [bool isMsg = false]) {
     socketService.sendMessage(state.roomId, message, isMsg);
     if (isMsg) {
+      
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
           'id': DateTime.now().toString(),
@@ -75,7 +76,7 @@ class ChatGroupCubitThread extends Cubit<ChatGroupStateThread> {
           'boos': 0,
           'booOrCheer': '',
           'pictureUrl': '',
-          'text': message['msg'],
+          'text': message['message'],
           'author': {
             "userId": "1111",
             "userName": "$userName",

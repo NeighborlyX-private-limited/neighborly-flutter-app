@@ -21,13 +21,18 @@ class RemoveUserInGroupButtonPressedEvent extends AddRemoveUserInGroupEvent {
   final String communityId;
   final String userId;
 
+  final bool isRemove;
+
   RemoveUserInGroupButtonPressedEvent({
     required this.communityId,
     required this.userId,
+    required this.isRemove,
   });
 
   @override
   List<Object?> get props => [
         communityId,
+        userId,
+        isRemove,
       ];
 }

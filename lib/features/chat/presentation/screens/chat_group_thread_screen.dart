@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -84,7 +85,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
     }
   }
 
-  /// app bar
+  /// app bar title area
   Widget appBarTitleArea() {
     return Row(
       children: [
@@ -190,12 +191,12 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
             InkWell(
               onTap: () {
                 // #send
-                // XXX
 
                 final payload = {
-                  'group_id': widget.room.id, //'${widget.message.id}',
-                  'msg': messageEC.text,
-                  'parent_message_id': widget.message.id
+                  'groupId': widget.room.id,
+                  'message': messageEC.text,
+                  'parentMessageId': widget.message.id,
+                  'file': null,
                 };
 
                 chatGroupCubit.sendMessage(payload, true);
@@ -273,22 +274,13 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
       ),
       body: BlocConsumer<ChatGroupCubitThread, ChatGroupStateThread>(
         listener: (context, state) {
-          switch (state.status) {
-            case Status.loading:
-              break;
-            case Status.failure:
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text('Something went wrong! ${state.failure?.message}'),
-                ),
-              );
-              break;
-            case Status.success:
-              break;
-            case Status.initial:
-              break;
+          if (state.status == Status.failure) {
+            showSnackBar(
+              context: context,
+              message: state.failure?.message ?? 'oops something went wrong',
+            );
           }
+
           if (state.status == Status.success) {
             Future.delayed(Duration(milliseconds: 100), () {
               if (_scrollController.hasClients) {
@@ -298,8 +290,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
           }
         },
         builder: (context, state) {
-          int lineCount = 1;
-          String lastDate = '';
+          // int lineCount = 1;
+          // String lastDate = '';
           return BlocBuilder<ChatGroupCubitThread, ChatGroupStateThread>(
             builder: (context, state) {
               if (state.status == Status.loading) {
@@ -310,8 +302,6 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
               }
 
               return Container(
-                padding: EdgeInsets.only(top: 1),
-                margin: EdgeInsets.only(top: 1),
                 width: double.infinity,
                 color: Colors.white,
                 child: Column(
@@ -326,7 +316,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                         showIsReaded: false,
                         onTap: (msgSelected) {},
                         onReply: (msgIdToSendReply, message) {},
-                        onTapReply: (ChatMessageModel) {},
+                        onTapReply: (chatMessageModel) {},
                         onTapCheer: () {
                           final payload = {
                             'group_id': widget.room.id,
@@ -375,9 +365,9 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                             var messageWidget = ChatMessageGroupWidget(
                               message: msg,
                               showReply: false,
-                              showIsReaded:
-                                  (lineCount == state.messages.length) &&
-                                      msg.isMine,
+                              // showIsReaded:
+                              //     (lineCount == state.messages.length) &&
+                              //         msg.isMine,
                               onTap: (msgSelected) {},
                               onReply: (msgIdToSendReply, message) {},
                               onTapReply: (chatMessageModel) {},
@@ -407,20 +397,20 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                               onPin: (messageToBePinned) {},
                             );
 
-                            if (lastDate != dateSummary) {
-                              lastDate = dateSummary;
-                              return Column(
-                                children: [
-                                  if (lastDate != '')
-                                    Text(
-                                      formatDate(dateSummary),
-                                      style:
-                                          TextStyle(fontSize: 12, height: 2.5),
-                                    ),
-                                  messageWidget,
-                                ],
-                              );
-                            }
+                            // if (lastDate != dateSummary) {
+                            //   lastDate = dateSummary;
+                            //   return Column(
+                            //     children: [
+                            //       if (lastDate != '')
+                            //         Text(
+                            //           formatDate(dateSummary),
+                            //           style:
+                            //               TextStyle(fontSize: 12, height: 2.5),
+                            //         ),
+                            //       messageWidget,
+                            //     ],
+                            //   );
+                            // }
 
                             return messageWidget;
                           },

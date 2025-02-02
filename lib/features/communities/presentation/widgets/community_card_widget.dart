@@ -351,9 +351,9 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
+                      horizontal: 6,
                     ),
-                    height: 20,
+                    height: 25,
                     //width: 59,
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.6),
@@ -394,8 +394,8 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    widget.community.displayName,
-                    textAlign: TextAlign.start,
+                    widget.community.name,
+                    textAlign: TextAlign.center,
                     softWrap: true,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -449,6 +449,92 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                     ],
                   ),
                   const SizedBox(height: 10),
+
+                  // /// show join button
+                  // /// i also need to add some condition so that when backend send
+                  // ///  request status so i need to show Request instead of join
+                  // if (!widget.community.isJoined)
+                  //   GestureDetector(
+                  //     onTap: () {
+                  //       joinGroupBottomSheet(context);
+                  //     },
+                  //     child: Container(
+                  //       height: 35,
+                  //       width: double.infinity,
+                  //       decoration: BoxDecoration(
+                  //         color: Color(0xff635BFF),
+                  //         borderRadius: BorderRadius.circular(20),
+                  //       ),
+                  //       child: Center(
+                  //         child: Text(
+                  //           AppLocalizations.of(context)!.join,
+                  //           textAlign: TextAlign.center,
+                  //           style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontSize: 16,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+
+                  // /// show group leave button when member is not an admin and member of the group
+                  // /// and also need to show some status when it is pending
+                  // if (!widget.community.isAdmin && widget.community.isJoined)
+                  //   GestureDetector(
+                  //     onTap: () {
+                  //       leaveGroupBottomSheet(context);
+                  //     },
+                  //     child: Container(
+                  //       height: 35,
+                  //       width: double.infinity,
+                  //       decoration: BoxDecoration(
+                  //         color: Color(0xff635BFF),
+                  //         borderRadius: BorderRadius.circular(20),
+                  //       ),
+                  //       child: Center(
+                  //         child: Text(
+                  //           AppLocalizations.of(context)!.leave,
+                  //           textAlign: TextAlign.center,
+                  //           style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontSize: 16,
+                  //           ),
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+
+                  // /// if group is public
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     widget.community.isJoined
+                  //         ? leaveGroupBottomSheet(context)
+                  //         : joinGroupBottomSheet(context);
+                  //   },
+                  //   child: Container(
+                  //     height: 35,
+                  //     width: double.infinity,
+                  //     decoration: BoxDecoration(
+                  //       color: Color(0xff635BFF),
+                  //       borderRadius: BorderRadius.circular(20),
+                  //     ),
+                  //     child: Center(
+                  //       child: Text(
+                  //         "",
+                  //         // widget.community.isJoined
+                  //         //     ? AppLocalizations.of(context)!.leave
+                  //         //     : AppLocalizations.of(context)!.request,
+                  //         // textAlign: TextAlign.center,
+                  //         style: TextStyle(
+                  //           color: Colors.white,
+                  //           fontSize: 16,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // )
+
                   GestureDetector(
                     onTap: () {
                       widget.community.isJoined

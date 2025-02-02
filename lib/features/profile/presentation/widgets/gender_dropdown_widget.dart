@@ -44,6 +44,7 @@ class GenderDropdown extends StatelessWidget {
       useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       context: context,
+      showDragHandle: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
@@ -53,19 +54,22 @@ class GenderDropdown extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 AppLocalizations.of(context)!.gender,
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
               ),
             ),
-            Divider(height: 1.0),
             ListView.builder(
               shrinkWrap: true,
               itemCount: genders.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
-                  title: Text(genders[index]),
+                  title: Text(
+                    genders[index],
+                    style:
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+                  ),
                   onTap: () {
                     onChanged(genders[index]);
                     Navigator.pop(context); // Close the bottom sheet

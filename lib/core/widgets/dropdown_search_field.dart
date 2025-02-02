@@ -51,9 +51,21 @@ class _DropdownSearchFieldState extends State<DropdownSearchField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.label != null) ...[
-          Text(
-            widget.label ?? '',
-            style: greyonboardingBody1Style,
+          Row(
+            children: [
+              Text(
+                widget.label ?? '',
+                style: greyonboardingBody1Style,
+              ),
+              Text(
+                "*",
+                style: TextStyle(
+                  color: AppColors.redColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
         ],

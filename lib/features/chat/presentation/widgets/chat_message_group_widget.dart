@@ -1,9 +1,11 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -14,9 +16,9 @@ import '../../data/model/chat_message_model.dart';
 
 class ChatMessageGroupWidget extends StatefulWidget {
   final ChatMessageModel message;
+  final bool? isAdmin;
   final bool? showIsReaded;
   final bool? showReply;
-  final bool? isAdmin;
   final Function(ChatMessageModel) onTap;
   final Function(ChatMessageModel, String)? onReply;
   final Function(String, String) onReact;
@@ -74,78 +76,78 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     repliesCount = widget.message.repliesCount;
 
     /// Load persisted state
-    _loadReactionState();
+    // _loadReactionState();
   }
 
   /// load local reaction state
-  Future<void> _loadReactionState() async {
-    final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('postReactions');
-    setState(() {
-      isCheered = box.get(
-        '${userID}_${widget.message.id}_isCheered',
-        defaultValue: false,
-      );
-      isBooled = box.get(
-        '${userID}_${widget.message.id}_isBooled',
-        defaultValue: false,
-      );
-    });
-  }
+  // Future<void> _loadReactionState() async {
+  //   final userID = ShardPrefHelper.getUserID();
+  //   final box = Hive.box('postReactions');
+  //   setState(() {
+  //     isCheered = box.get(
+  //       '${userID}_${widget.message.id}_isCheered',
+  //       defaultValue: false,
+  //     );
+  //     isBooled = box.get(
+  //       '${userID}_${widget.message.id}_isBooled',
+  //       defaultValue: false,
+  //     );
+  //   });
+  // }
 
   /// save local reaction state
-  Future<void> _saveReactionState() async {
-    final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('postReactions');
-    await box.put('${userID}_${widget.message.id}_isCheered', isCheered);
-    await box.put('${userID}_${widget.message.id}_isBooled', isBooled);
-  }
+  // Future<void> _saveReactionState() async {
+  //   final userID = ShardPrefHelper.getUserID();
+  //   final box = Hive.box('postReactions');
+  //   await box.put('${userID}_${widget.message.id}_isCheered', isCheered);
+  //   await box.put('${userID}_${widget.message.id}_isBooled', isBooled);
+  // }
 
-  Future<void> _removeReactionState() async {
-    final userID = ShardPrefHelper.getUserID();
-    final box = Hive.box('postReactions');
-    await box.put('${userID}_${widget.message.id}_isCheered', false);
-    await box.put('${userID}_${widget.message.id}_isBooled', false);
-  }
+  // Future<void> _removeReactionState() async {
+  //   final userID = ShardPrefHelper.getUserID();
+  //   final box = Hive.box('postReactions');
+  //   await box.put('${userID}_${widget.message.id}_isCheered', false);
+  //   await box.put('${userID}_${widget.message.id}_isBooled', false);
+  // }
 
   /// update reaction state
-  void _updateState(String reaction) {
-    setState(() {
-      if (reaction == 'cheer') {
-        if (isCheered) {
-          // User is un-cheering, decrement count
-          if (cheersCount > 0) cheersCount -= 1;
-          isCheered = false;
-        } else {
-          // User is cheering
-          cheersCount += 1;
-          isCheered = true;
-          if (isBooled) {
-            // Reverse boo if it was already booed
-            if (boolsCount > 0) boolsCount -= 1;
-            isBooled = false;
-          }
-        }
-      } else if (reaction == 'boo') {
-        if (isBooled) {
-          // User is un-booing, decrement count
-          if (boolsCount > 0) boolsCount -= 1;
-          isBooled = false;
-        } else {
-          // User is booing
-          boolsCount += 1;
-          isBooled = true;
-          if (isCheered) {
-            // Reverse cheer if it was already cheered
-            if (cheersCount > 0) cheersCount -= 1;
-            isCheered = false;
-          }
-        }
-      }
-      // Save the new state
-      _saveReactionState();
-    });
-  }
+  // void _updateState(String reaction) {
+  //   setState(() {
+  //     if (reaction == 'cheer') {
+  //       if (isCheered) {
+  //         // User is un-cheering, decrement count
+  //         if (cheersCount > 0) cheersCount -= 1;
+  //         isCheered = false;
+  //       } else {
+  //         // User is cheering
+  //         cheersCount += 1;
+  //         isCheered = true;
+  //         if (isBooled) {
+  //           // Reverse boo if it was already booed
+  //           if (boolsCount > 0) boolsCount -= 1;
+  //           isBooled = false;
+  //         }
+  //       }
+  //     } else if (reaction == 'boo') {
+  //       if (isBooled) {
+  //         // User is un-booing, decrement count
+  //         if (boolsCount > 0) boolsCount -= 1;
+  //         isBooled = false;
+  //       } else {
+  //         // User is booing
+  //         boolsCount += 1;
+  //         isBooled = true;
+  //         if (isCheered) {
+  //           // Reverse cheer if it was already cheered
+  //           if (cheersCount > 0) cheersCount -= 1;
+  //           isCheered = false;
+  //         }
+  //       }
+  //     }
+  //     // Save the new state
+  //     _saveReactionState();
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -179,7 +181,10 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
         child: Text(
           'Admin',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: AppColors.primaryColor),
+          style: TextStyle(
+            fontSize: 12,
+            color: AppColors.primaryColor,
+          ),
         ),
       ),
     );
@@ -356,20 +361,41 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                 ],
                               ),
                               SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: widget.message.pictureUrl != '' &&
-                                        widget.message.text == ''
-                                    ? Image.network(
-                                        '${widget.message.pictureUrl}')
-                                    : Text(
-                                        widget.message.text,
-                                        textAlign: TextAlign.start,
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                      ),
-                              ),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: widget.message.pictureUrl != '' &&
+                                          widget.message.text == ''
+                                      ? Image.network(
+                                          '${widget.message.pictureUrl}')
+                                      : Linkify(
+                                          options: LinkifyOptions(
+                                            looseUrl: true,
+                                          ),
+                                          onOpen: (link) async {
+                                            if (await canLaunchUrl(
+                                                Uri.parse(link.url))) {
+                                              await launchUrl(
+                                                  Uri.parse(link.url),
+                                                  mode: LaunchMode
+                                                      .externalApplication);
+                                            } else {
+                                              throw "Could not launch ${link.url}";
+                                            }
+                                          },
+                                          text: widget.message.text,
+                                          style: const TextStyle(fontSize: 16),
+                                          linkStyle: const TextStyle(
+                                            color: AppColors.primaryColor,
+                                          ),
+                                        )
+                                  // : Text(
+                                  //     widget.message.text,
+                                  //     textAlign: TextAlign.start,
+                                  //     style: TextStyle(
+                                  //       fontSize: 14,
+                                  //       fontWeight: FontWeight.normal,
+                                  //     ),
+                                  //   ),
+                                  ),
                             ],
                           ),
                         ),
@@ -413,22 +439,22 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                reactionCircle(
-                                  assetUrl: 'assets/react5.svg',
-                                  onTap: () {
-                                    _updateState('cheer');
-                                    widget.onTapCheer();
-                                    _removeOverlay();
-                                  },
-                                ),
-                                reactionCircle(
-                                  assetUrl: 'assets/react6.svg',
-                                  onTap: () {
-                                    _updateState('boo');
-                                    widget.onTapBool();
-                                    _removeOverlay();
-                                  },
-                                ),
+                                // reactionCircle(
+                                //   assetUrl: 'assets/react5.svg',
+                                //   onTap: () {
+                                //     _updateState('cheer');
+                                //     widget.onTapCheer();
+                                //     _removeOverlay();
+                                //   },
+                                // ),
+                                // reactionCircle(
+                                //   assetUrl: 'assets/react6.svg',
+                                //   onTap: () {
+                                //     _updateState('boo');
+                                //     widget.onTapBool();
+                                //     _removeOverlay();
+                                //   },
+                                // ),
                                 // reactionCircle(
                                 //   assetUrl: 'assets/Local_Legend.svg',
                                 //   onTap: () {
@@ -700,100 +726,100 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         // Cheers button
-        InkWell(
-          onTap: () {
-            _updateState('cheer');
-            widget.onTapCheer();
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            height: 32,
-            width: 60,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(21),
-              ),
-            ),
-            child: Center(
-              child: Row(
-                children: [
-                  isCheered
-                      ? SvgPicture.asset(
-                          'assets/react5.svg',
-                          width: 24,
-                          height: 24,
-                        )
-                      : SvgPicture.asset(
-                          'assets/react1.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  Text(
-                    cheersCount.toString(),
-                    style: TextStyle(
-                      color: isCheered ? Colors.red : Colors.grey[900],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
+        // InkWell(
+        //   onTap: () {
+        //     _updateState('cheer');
+        //     widget.onTapCheer();
+        //   },
+        //   child: Container(
+        //     padding: const EdgeInsets.symmetric(horizontal: 8),
+        //     height: 32,
+        //     width: 60,
+        //     decoration: BoxDecoration(
+        //       border: Border.all(color: Colors.grey[300]!),
+        //       borderRadius: const BorderRadius.all(
+        //         Radius.circular(21),
+        //       ),
+        //     ),
+        //     child: Center(
+        //       child: Row(
+        //         children: [
+        //           isCheered
+        //               ? SvgPicture.asset(
+        //                   'assets/react5.svg',
+        //                   width: 24,
+        //                   height: 24,
+        //                 )
+        //               : SvgPicture.asset(
+        //                   'assets/react1.svg',
+        //                   width: 24,
+        //                   height: 24,
+        //                 ),
+        //           const SizedBox(
+        //             width: 3,
+        //           ),
+        //           Text(
+        //             cheersCount.toString(),
+        //             style: TextStyle(
+        //               color: isCheered ? Colors.red : Colors.grey[900],
+        //               fontSize: 12,
+        //               fontWeight: FontWeight.w500,
+        //             ),
+        //           )
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        // const SizedBox(width: 8),
 
         // Boos button
-        InkWell(
-          onTap: () {
-            _updateState('boo');
-            widget.onTapBool();
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            height: 32,
-            width: 60,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: const BorderRadius.all(
-                Radius.circular(21),
-              ),
-            ),
-            child: Center(
-              child: Row(
-                children: [
-                  isBooled
-                      ? SvgPicture.asset(
-                          'assets/react6.svg',
-                          width: 24,
-                          height: 24,
-                        )
-                      : SvgPicture.asset(
-                          'assets/react2.svg',
-                          width: 24,
-                          height: 24,
-                        ),
-                  const SizedBox(
-                    width: 3,
-                  ),
-                  Text(
-                    boolsCount.toString(),
-                    style: TextStyle(
-                      color: isBooled ? Colors.blue : Colors.grey[600],
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
+        // InkWell(
+        //   onTap: () {
+        //     _updateState('boo');
+        //     widget.onTapBool();
+        //   },
+        //   child: Container(
+        //     padding: const EdgeInsets.symmetric(horizontal: 8),
+        //     height: 32,
+        //     width: 60,
+        //     decoration: BoxDecoration(
+        //       border: Border.all(color: Colors.grey[300]!),
+        //       borderRadius: const BorderRadius.all(
+        //         Radius.circular(21),
+        //       ),
+        //     ),
+        //     child: Center(
+        //       child: Row(
+        //         children: [
+        //           isBooled
+        //               ? SvgPicture.asset(
+        //                   'assets/react6.svg',
+        //                   width: 24,
+        //                   height: 24,
+        //                 )
+        //               : SvgPicture.asset(
+        //                   'assets/react2.svg',
+        //                   width: 24,
+        //                   height: 24,
+        //                 ),
+        //           const SizedBox(
+        //             width: 3,
+        //           ),
+        //           Text(
+        //             boolsCount.toString(),
+        //             style: TextStyle(
+        //               color: isBooled ? Colors.blue : Colors.grey[600],
+        //               fontSize: 12,
+        //               fontWeight: FontWeight.w500,
+        //             ),
+        //           )
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
+        // const SizedBox(width: 8),
 
         /// reply button
         if (widget.showReply == true)
@@ -876,109 +902,103 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 5.0),
-            child: UserAvatarStyledWidget(
-              avatarUrl: widget.message.author!.avatarUrl,
-              avatarBorderSize: 0,
-              avatarSize: 22,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: UserAvatarStyledWidget(
+            avatarUrl: widget.message.author!.avatarUrl,
+            avatarBorderSize: 0,
+            avatarSize: 20,
+          ),
+        ),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.transparent,
             ),
-          ),
-          const SizedBox(
-            width: 7,
-          ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.transparent,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          widget.message.author?.name ?? '',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        widget.message.author?.name ?? '',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(width: 5),
-                        Text(
-                          formatTime(widget.message.date),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black45,
-                          ),
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        formatTime(widget.message.date),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black45,
                         ),
-                        const SizedBox(width: 5),
-                        if (widget.message.author?.isAdmin == true ||
-                            widget.message.isAdmin == true) ...[
-                          isAdminBubble(),
-                        ],
+                      ),
+                      const SizedBox(width: 5),
+                      if (widget.message.author?.isAdmin == true ||
+                          widget.message.isAdmin == true) ...[
+                        isAdminBubble(),
                       ],
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: GestureDetector(
-                        onTap: () {
-                          _showOverlay(context);
-                        },
-                        child: widget.message.pictureUrl != '' &&
-                                widget.message.text == ''
-                            ? Image.network('${widget.message.pictureUrl}')
-                            : Text(
-                                widget.message.text,
-                                textAlign: TextAlign.start,
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                      ),
-                    ),
-                    if ((widget.message.repliesCount +
-                            widget.message.cheers +
-                            widget.message.boos) >=
-                        0) ...[
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: chatReactionLocalWidget(),
-
-                        // ChatReactionWidget(
-                        //   post: widget.message.toPost(),
-                        //   repliesAvatar: widget.message.repliesAvatas,
-                        //   onTapReply: () {
-
-                        //   },
-                        //   onTapCheer: () {
-
-                        //   },
-                        //   onTapBool: () {
-
-                        //   },
-                        //   onTapMessage: (PostEntity) {
-
-                        //   },
-                        // ),
-                      ),
                     ],
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: GestureDetector(
+                      onTap: () {
+                        _showOverlay(context);
+                      },
+                      child: widget.message.pictureUrl != '' &&
+                              widget.message.text == ''
+                          ? Image.network('${widget.message.pictureUrl}')
+                          : Text(
+                              widget.message.text,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
+                            ),
+                    ),
+                  ),
+                  if ((widget.message.repliesCount +
+                          widget.message.cheers +
+                          widget.message.boos) >=
+                      0) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: chatReactionLocalWidget(),
+
+                      // ChatReactionWidget(
+                      //   post: widget.message.toPost(),
+                      //   repliesAvatar: widget.message.repliesAvatas,
+                      //   onTapReply: () {
+
+                      //   },
+                      //   onTapCheer: () {
+
+                      //   },
+                      //   onTapBool: () {
+
+                      //   },
+                      //   onTapMessage: (PostEntity) {
+
+                      //   },
+                      // ),
+                    ),
                   ],
-                ),
+                ],
               ),
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 }

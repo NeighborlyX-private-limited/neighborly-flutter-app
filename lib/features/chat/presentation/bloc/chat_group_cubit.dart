@@ -31,12 +31,12 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
     /// listen for new messages
     socketService.onNewMessageReceived = (message) {
-      print(message);
+      print('NEW MESSAGE RECEIVED:$message');
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
-          'id': message['groupId'],
+          'id': message['_id'],
           'date': message['sendAt'],
-          'isMine': false,
+          'isMine': userId == message['userId'] ? true : false,
           'readByuser': false,
           'isAdmin': false,
           'isPinned': false,
@@ -54,7 +54,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           }
         }
       ])[0];
-      addMessage(chatmodel);
+      if (message['parentMessageId'] == null) {
+        addMessage(chatmodel);
+      }
     };
   }
 
@@ -76,11 +78,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     required roomId,
   }) async {
     emit(state.copyWith(status: Status.loading));
-
     final result = await getChatGroupRoomMessagesUseCase(
       roomId: state.roomId,
     );
-
     result.fold(
       (failure) {
         emit(
@@ -101,7 +101,6 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
   /// featch older msg with pagination
   Future<void> fetchOlderMessages() async {
-    print('page: ${state.page}');
     try {
       List<ChatMessageModel> olderMessages = state.messages;
 

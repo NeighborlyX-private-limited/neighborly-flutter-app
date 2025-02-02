@@ -28,7 +28,10 @@ class _CommunitySectionChatState extends State<CommunitySectionChat> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: space),
+            Container(
+              height: 8,
+              color: const Color.fromARGB(255, 239, 239, 252),
+            ),
             TileChat(
               name: widget.community.name,
               avatarUrl: widget.community.avatarUrl,

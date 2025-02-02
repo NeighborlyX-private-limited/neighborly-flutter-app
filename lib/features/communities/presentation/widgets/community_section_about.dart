@@ -23,26 +23,41 @@ class CommunitySectionAbout extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(
+              height: 8,
+              color: const Color.fromARGB(255, 239, 239, 252),
+            ),
             DescriptionArea(description: community.description),
-            Divider(),
+            Container(
+              height: 8,
+              color: const Color.fromARGB(255, 239, 239, 252),
+            ),
             TextAndIconArea(
               title: AppLocalizations.of(context)!.karma,
-              // 'Karma',
               text: '${community.karma}',
               svgPath: 'assets/karma.svg',
             ),
+            Container(
+              height: 8,
+              color: const Color.fromARGB(255, 239, 239, 252),
+            ),
             TextAndIconArea(
               title: AppLocalizations.of(context)!.radius,
-              // 'Radius',
               text:
                   '${community.radius} ${AppLocalizations.of(context)!.miles}',
-              // '${community.radius} miles',
               icon: Icons.pin_drop_outlined,
             ),
-            Divider(),
+            Container(
+              height: 8,
+              color: const Color.fromARGB(255, 239, 239, 252),
+            ),
             MembersList(
               members: community.users,
               admins: community.admins,
+            ),
+            Container(
+              height: 8,
+              color: const Color.fromARGB(255, 239, 239, 252),
             ),
           ],
         ),
@@ -51,7 +66,7 @@ class CommunitySectionAbout extends StatelessWidget {
   }
 }
 
-///description area
+/// description area
 class DescriptionArea extends StatelessWidget {
   final String description;
   const DescriptionArea({
@@ -62,13 +77,12 @@ class DescriptionArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(15.0),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             AppLocalizations.of(context)!.group_Description,
-            // 'Group Description',
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.black,
@@ -83,9 +97,7 @@ class DescriptionArea extends StatelessWidget {
             style: TextStyle(fontSize: 14, height: 1.3),
             trimMode: TrimMode.Line,
             trimCollapsedText: AppLocalizations.of(context)!.see_more,
-            //' See more',
             trimExpandedText: AppLocalizations.of(context)!.see_less,
-            // ' See less',
             moreStyle: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.normal,
@@ -122,7 +134,7 @@ class TextAndIconArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,7 +208,6 @@ class _MembersListState extends State<MembersList> {
         padding: const EdgeInsets.all(6.0),
         child: Text(
           AppLocalizations.of(context)!.admin,
-          //  'Admin',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
         ),

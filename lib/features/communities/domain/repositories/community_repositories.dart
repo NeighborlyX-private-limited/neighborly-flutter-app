@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/community_model.dart';
+import '../../data/model/group_join_request_model.dart';
 import '../../data/model/search_dash_model.dart';
 import '../../data/model/search_result_model.dart';
 
@@ -17,6 +18,11 @@ abstract class CommunityRepositories {
 
   ///get user groups
   Future<Either<Failure, List<CommunityModel>>> getUserGroups();
+
+  ///get community join request
+  Future<Either<Failure, List<GroupJoinRequestModel>>> getCommunityJoinRequest({
+    required String communityId,
+  });
 
   ///get community details
   Future<Either<Failure, CommunityModel>> getCommunity({
@@ -45,6 +51,7 @@ abstract class CommunityRepositories {
   Future<Either<Failure, void>> leaveCommunity({
     required String communityId,
     required String? userId,
+    required bool isRemove,
   });
 
   ///updateDisplayName

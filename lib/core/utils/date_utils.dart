@@ -28,8 +28,8 @@ class DateUtilsHelper {
 
       return formattedDate;
     } catch (e) {
-      print('simplifyISOtimeString ERROR: $e [data: $date]');
-      return '';
+      
+      return '$e';
     }
   }
 

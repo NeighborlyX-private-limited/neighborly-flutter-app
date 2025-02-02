@@ -43,7 +43,8 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
 
         final result = await _leaveCommunityUsecase.call(
           communityId: event.communityId,
-          userId: null,
+          userId: event.userId,
+          isRemove: event.isRemove,
         );
 
         result.fold(
