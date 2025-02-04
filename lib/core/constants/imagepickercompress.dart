@@ -39,7 +39,7 @@ Future<XFile> compressImage({
   /// Reduce quality only if the file size is greater than the limit
   int currentQuality = initialQuality;
   while (imageSizeMB > sizeLimitMB && currentQuality > 50) {
-    // Reduce quality by 5% each time until it fits or quality is too low
+    /// Reduce quality by 5% each time until it fits or quality is too low
     currentQuality -= 5;
     compressedImage = await FlutterImageCompress.compressAndGetFile(
       imageFile.path,

@@ -188,7 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     ///success state
                     else if (state is RegisterSuccessState) {
-                      context.go('/otp/${_controller.text}/phone-register');
+                      context.push('/otp/${_controller.text}/phone-register');
                     }
                   },
                   builder: (context, state) {

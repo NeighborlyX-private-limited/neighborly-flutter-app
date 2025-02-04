@@ -22,7 +22,7 @@ class MessageHandlerHelper {
     }
 
     if (messageData['messageId'] != null) {
-      router.push('/chat/group/thread/${messageData['messageId']}');
+      router.push('/group-chat-thread/${messageData['messageId']}');
     }
 
     if (messageData['eventId'] != null) {

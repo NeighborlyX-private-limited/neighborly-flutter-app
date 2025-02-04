@@ -1,4 +1,5 @@
 import 'package:socket_io_client/socket_io_client.dart' as io;
+import '../../../core/constants/constants.dart';
 import '../../../core/utils/shared_preference.dart';
 
 class SocketService {
@@ -16,7 +17,7 @@ class SocketService {
 
     /// Initialize socket connection to the server with token authentication
     _socket = io.io(
-      'http://35.154.40.61:3001',
+      kBaseSocketUrl,
       io.OptionBuilder()
           .setTransports(['websocket'])
           .setAuth({'token': token})

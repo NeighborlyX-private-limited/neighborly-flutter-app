@@ -76,7 +76,7 @@ class _MainPageState extends State<MainPage> {
       if (_lastIndex == 0 || _lastIndex == 3 || _lastIndex == 4) {
         context.push('/create');
       } else if (_lastIndex == 1) {
-        context.push('/groups/create');
+        context.push('/group-create');
       }
       return;
     }

@@ -9,7 +9,10 @@ import 'package:intl/intl.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/widgets/custom_sizedbox.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
+import '../../../communities/presentation/bloc/bloc/join_group_bloc.dart';
+import '../../../communities/presentation/bloc/communities_main_cubit.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../data/model/chat_room_model.dart';
 import '../bloc/chat_group_cubit.dart';
@@ -17,6 +20,7 @@ import '../widgets/chat_message_group_widget.dart';
 import '../widgets/chat_message_pinned_widget.dart';
 import '../widgets/chat_messages_group_sheemer.dart';
 import '../../../../core/constants/imagepickercompress.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChatGroupScreen extends StatefulWidget {
   final String roomId;
@@ -35,6 +39,7 @@ class ChatGroupScreen extends StatefulWidget {
 class _ChatGroupScreenState extends State<ChatGroupScreen> {
   final ScrollController _scrollController = ScrollController();
   late ChatGroupCubit chatGroupCubit;
+  late CommunityMainCubit communityMainCubit;
   final messageEC = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
   bool isCommentFilled = false;
@@ -50,6 +55,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   @override
   void initState() {
     super.initState();
+
+    communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
     chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
     chatGroupCubit.init(widget.roomId);
     _scrollController.addListener(() {
@@ -496,6 +503,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
+                        Navigator.pop(context);
+                        joinGroupBottomSheet(context);
                         // Handle join group logic
                       },
                       style: ElevatedButton.styleFrom(
@@ -521,8 +530,133 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     );
   }
 
+  /// join group bottom sheet
+  Future<dynamic> joinGroupBottomSheet(BuildContext context) async {
+    return showModalBottomSheet(
+      useRootNavigator: true,
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.join_Community,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_join_this_community,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  // Confirm Button
+                  Expanded(
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        /// failure state
+                        if (state is JoinGroupFailureState) {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context)!
+                                      .something_went_wrong,
+                                ),
+                              ),
+                            );
+                          }
+                        }
+
+                        /// success state
+                        if (state is JoinGroupSuccessState) {
+                          communityMainCubit.init();
+                          context.push('/group-details/${widget.roomId}');
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context)!
+                                      .group_joined_successfully,
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is JoinGroupLoadingState) {
+                          return CircularProgressIndicator();
+                        }
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<JoinGroupBloc>(context)
+                                .add(JoinGroupButtonPressedEvent(
+                              communityId: widget.roomId,
+                            ));
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.join,
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   /// open bag bottom sheet method
-  void _showBottomSheet(var pinnedMessages) {
+  void _showBottomSheet(
+    var roomId,
+    List pinnedMassages,
+  ) {
+    print("now here");
     showModalBottomSheet(
       useRootNavigator: true,
       showDragHandle: true,
@@ -531,11 +665,22 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       isScrollControlled: true,
       builder: (_) {
         return Container(
-          padding: EdgeInsets.all(16), // Add padding for a cleaner look
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: 30,
+          ), // Add padding for a cleaner look
           child: Wrap(
             children: [
               GestureDetector(
                 onTap: () {
+                  print("and here here");
+                  Navigator.pop(context);
+                  context.push(
+                    '/group-chat-pinned-message',
+                    extra: pinnedMessages,
+                  );
                   print('pinnedMessages: $pinnedMessages');
                 },
                 child: Row(
@@ -546,11 +691,14 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                       width: 20,
                     ),
                     SizedBox(
-                      width: 4,
+                      width: 8,
                     ),
                     Text('Pinned message'),
                   ],
                 ),
+              ),
+              CustomSizedBox(
+                height: 20,
               ),
             ],
           ),
@@ -576,7 +724,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           actions: [
             IconButton(
               onPressed: () {
-                _showBottomSheet(pinnedMessages);
+                print("here");
+
+                _showBottomSheet(widget.roomId, pinnedMessages);
 
                 /// perform action for group chat screen
               },
@@ -632,7 +782,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             // String lastDate = '';
             return BlocBuilder<ChatGroupCubit, ChatGroupState>(
               builder: (context, state) {
-                // var pinnedMessages = <ChatMessageModel>[];
+                var pinnedMessages = <ChatMessageModel>[];
 
                 /// loading state
                 if (state.status == Status.loading) {
@@ -643,11 +793,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 }
 
                 /// get pinned msg
-                // else {
-                //   pinnedMessages = [
-                //     ...state.messages.where((element) => element.isPinned)
-                //   ];
-                // }
+                else {
+                  pinnedMessages = [
+                    ...state.messages.where((element) => !element.isPinned)
+                  ];
+                }
 
                 return Container(
                   // padding: EdgeInsets.only(top: 1),
@@ -716,7 +866,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 onReply: (msgIdToSendReply, message) {
                                   print('on reply tap');
                                   context.push(
-                                      '/chat/group/thread/${msgIdToSendReply.id}',
+                                      '/group-chat-thread/${msgIdToSendReply.id}',
                                       extra: {
                                         'message': msgIdToSendReply,
                                         'room': widget.room,
@@ -727,7 +877,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 onTapReply: (messageToOpen) {
                                   print('reply tap');
                                   context.push(
-                                      '/chat/group/thread/${messageToOpen.id}',
+                                      '/group-chat-thread/${messageToOpen.id}',
                                       extra: {
                                         'message': messageToOpen,
                                         'room': widget.room,
@@ -762,6 +912,12 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 onReact: (messageId, reactOrAward) {},
                                 onReport: (messageId, reason) {},
                                 onShare: (message) {},
+                                onTapPinned: () {
+                                  print('here');
+                                  context.push(
+                                    '/group-chat-pinned-message/:$pinnedMessages',
+                                  );
+                                },
                                 onPin: (messageToBePinned) {},
                               );
 
@@ -799,6 +955,35 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           },
         ),
       ),
+    );
+  }
+
+  void showOptionsBottomSheet(BuildContext context, String roomId) {
+    showModalBottomSheet(
+      showDragHandle: true,
+      useRootNavigator: true,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Pinned Messages Option
+              ListTile(
+                leading: SvgPicture.asset('assets/pinned.svg'),
+                title: Text('Pinned Messages', style: TextStyle(fontSize: 16)),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

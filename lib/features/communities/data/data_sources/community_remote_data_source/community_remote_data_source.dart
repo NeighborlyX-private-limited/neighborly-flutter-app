@@ -22,7 +22,14 @@ abstract class CommunityRemoteDataSource {
     required String communityId,
   });
 
-  ///get community details
+  ///handleJoinRequest
+  Future<String> handleJoinRequest({
+    required String communityId,
+    required String requestId,
+    required String status,
+  });
+
+  ///getCommunityJoinRequest
   Future<List<GroupJoinRequestModel>> getCommunityJoinRequest({
     required String communityId,
   });

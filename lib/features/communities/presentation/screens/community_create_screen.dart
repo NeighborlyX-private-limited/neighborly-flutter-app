@@ -191,7 +191,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
           id: '',
           name: nameEC.text,
           description: descriptionEC.text,
-          isPublic: typeEC.text != 'public' ? false : true,
+          isPublic: typeEC.text != 'Private' ? true : false,
           radius: radiusDouble.toInt(),
           displayName: '',
           locationStr: '',
@@ -289,9 +289,8 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             /// success state
             if (state.status == Status.success) {
               if (mounted) {
-                Navigator.pop(context, '/groups');
-                //context.go('/groups');
-                context.push('/groups/${state.newCommunityId}');
+                //RNavigator.pop(context, '/groups');
+                context.push('/group-details/${state.newCommunityId}');
               }
             }
           },

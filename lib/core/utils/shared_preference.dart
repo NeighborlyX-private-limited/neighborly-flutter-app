@@ -26,7 +26,7 @@ class ShardPrefHelper {
 
   static Future removeCookie() async => await _preferences.remove(_cookie);
 
-  ///...... setAccessToken
+  ///...... save Access Token
   static Future setAccessToken(String accessToken) async =>
       await _preferences.setString(_accessToken, accessToken);
 
@@ -35,7 +35,7 @@ class ShardPrefHelper {
   static Future removeAccessToken() async =>
       await _preferences.remove(_accessToken);
 
-  ///...... setAccessToken
+  ///...... save  JWT Token
   static Future setJwtToken(String jwtToken) async =>
       await _preferences.setString(_jwtToken, jwtToken);
 
@@ -43,7 +43,7 @@ class ShardPrefHelper {
 
   static Future removeJwtToken() async => await _preferences.remove(_jwtToken);
 
-  ///......setRefreshToken
+  ///......save Refresh Token
   static Future setRefreshToken(String refreshToken) async =>
       await _preferences.setString(_refreshToken, refreshToken);
 
@@ -53,7 +53,7 @@ class ShardPrefHelper {
   static Future removeRefreshToken() async =>
       await _preferences.remove(_refreshToken);
 
-  ///... FCM token
+  ///...save FCM token
   static Future setFCMtoken(String newToken) async =>
       await _preferences.setString('FCMtoken', newToken);
 
@@ -241,58 +241,6 @@ class ShardPrefHelper {
       await _preferences.setString('karma', karmaScore);
 
   static String getKarmaScore() => _preferences.getString('karma') ?? '0';
-
-  // // save is cheered
-  // static Future setIsCheered(String userId, num postId, bool isLiked) async =>
-  //     await _preferences.setBool('$userId-${postId}_isCheered', isLiked);
-  // static bool? getIsCheered(String userId, String postId) =>
-  //     _preferences.getBool('$userId-${postId}_isCheered');
-  // static Future<void> deleteCheeredPosts(String userId) async {
-  //   final keys = _preferences.getKeys();
-  //   final cheeredKeys = keys.where(
-  //       (key) => key.startsWith('$userId-') && key.endsWith('_isCheered'));
-
-  //   for (var key in cheeredKeys) {
-  //     if (_preferences.getBool(key) == true) {
-  //       await _preferences.remove(key);
-  //     }
-  //   }
-  // }
-
-  // // save is  boo
-  // static Future setIsBoo(String userId, num postId, bool isLiked) async =>
-  //     await _preferences.setBool('$userId-${postId}_isBoo', isLiked);
-  // static bool? getIsBoo(String userId, String postId) =>
-  //     _preferences.getBool('$userId-${postId}_isBoo');
-  // static Future<void> deleteBooPosts(String userId) async {
-  //   final keys = _preferences.getKeys();
-  //   final booKeys = keys
-  //       .where((key) => key.startsWith('$userId-') && key.endsWith('_isBoo'));
-
-  //   for (var key in booKeys) {
-  //     if (_preferences.getBool(key) == true) {
-  //       await _preferences.remove(key);
-  //     }
-  //   }
-  // }
-
-  // // save poll vote
-  // static Future setPollVote(
-  //         String userId, num pollId, num voteId, bool vote) async =>
-  //     await _preferences.setBool('$userId-$pollId-$voteId-_pollVote', vote);
-  // static bool? getPollVote(String userId, num pollId, num voteId) =>
-  //     _preferences.getBool('$userId-$pollId-$voteId-_pollVote');
-  // static Future<void> deltePollVotes(String userId) async {
-  //   final keys = _preferences.getKeys();
-  //   final voteKeys = keys.where(
-  //       (key) => key.startsWith('$userId-') && key.endsWith('_pollVote'));
-
-  //   for (var key in voteKeys) {
-  //     if (_preferences.getBool(key) == true) {
-  //       await _preferences.remove(key);
-  //     }
-  //   }
-  // }
 
 ////.... clear _preferences
   static Future<bool> clear() async {

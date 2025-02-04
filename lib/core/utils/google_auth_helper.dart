@@ -8,21 +8,16 @@ class GoogleSignInService {
 
   static Future<Map<String, dynamic>> signInWithGoogle() async {
     try {
-      
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-     
 
       if (googleUser == null) {
-       
         return {'error': 'User cancelled sign in'};
       }
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-      
 
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
-      
 
       return {
         'idToken': googleAuth.idToken,
@@ -30,7 +25,6 @@ class GoogleSignInService {
         'fcmToken': fcmToken,
       };
     } catch (e) {
-      
       return Future.error(e);
     }
   }

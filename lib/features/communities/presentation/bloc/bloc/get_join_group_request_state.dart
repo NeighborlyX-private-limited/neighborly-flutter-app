@@ -15,7 +15,6 @@ class GetJoinGroupRequestLoadingState extends GetJoinGroupRequestState {
 
 class GetJoinGroupRequestSuccessState extends GetJoinGroupRequestState {
   final List<GroupJoinRequestModel> communities;
-  // GetJoinGroupRequestSuccessState({required this.communities});
   GetJoinGroupRequestSuccessState({required this.communities});
 }
 

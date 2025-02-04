@@ -19,9 +19,16 @@ abstract class CommunityRepositories {
   ///get user groups
   Future<Either<Failure, List<CommunityModel>>> getUserGroups();
 
-  ///get community join request
+  ///getCommunityJoinRequest
   Future<Either<Failure, List<GroupJoinRequestModel>>> getCommunityJoinRequest({
     required String communityId,
+  });
+
+  ///handleJoinRequest
+  Future<Either<Failure, String>> handleJoinRequest({
+    required String communityId,
+    required String requestId,
+    required String status,
   });
 
   ///get community details

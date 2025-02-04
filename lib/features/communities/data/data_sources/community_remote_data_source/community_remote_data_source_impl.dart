@@ -30,7 +30,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/create';
-
     Map<String, dynamic> queryParameters;
 
     bool isHome = true;
@@ -211,7 +210,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     }
   }
 
-  ///get community api call
+  ///get community join request api call
   @override
   Future<List<GroupJoinRequestModel>> getCommunityJoinRequest(
       {required String communityId}) async {
@@ -231,12 +230,51 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         'Cookie': cookieHeader,
       },
     );
-    print('res: ${response.body}');
+    ;
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData
           .map((data) => GroupJoinRequestModel.fromJson(data))
           .toList();
+    } else {
+      final message = jsonDecode(response.body)['msg'] ??
+          jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          'oops omething went wrong';
+      throw ServerException(message: message);
+    }
+  }
+
+  ///handleJoinRequest api call
+  @override
+  Future<String> handleJoinRequest(
+      {required String communityId,
+      required String requestId,
+      required String status}) async {
+    List<String>? cookies = ShardPrefHelper.getCookie();
+
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'oops omething went wrong');
+    }
+
+    String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/group/handle-requests/$communityId/$requestId';
+
+    final response = await client.patch(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Cookie': cookieHeader,
+      },
+      body: jsonEncode(<String, String>{
+        "status": status,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonData = jsonDecode(response.body);
+      return jsonDecode(response.body)['message'] ?? "Success";
     } else {
       final message = jsonDecode(response.body)['msg'] ??
           jsonDecode(response.body)['error'] ??
@@ -385,7 +423,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     } else {
       url = '$kBaseUrl/group/leave/$communityId';
     }
-    print('url: $url');
+
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -399,8 +437,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         },
       ),
     );
-    print('res: ${response.body}');
-    print('res: ${response.body}');
 
     if (response.statusCode == 200) {
     } else {
@@ -981,6 +1017,12 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     //   throw ServerException(message: message);
     // }
   }
+
+  // @override
+  // Future<String> handleJoinRequest({required String communityId, required String requestId, required String status}) {
+  //   // TODO: implement handleJoinRequest
+  //   throw UnimplementedError();
+  // }
 
   // getSearchHistoryAndTrends
 }

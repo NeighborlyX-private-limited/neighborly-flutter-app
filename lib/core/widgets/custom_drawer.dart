@@ -134,19 +134,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
           ),
 
-          /// search
-          // ListTile(
-          //   leading: Icon(Icons.search),
-          //   title: Text(AppLocalizations.of(context)!.search),
-          //   onTap: () {
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       SnackBar(
-          //         content: Text("Coming Soon"),
-          //       ),
-          //     );
-          //   },
-          // ),
-
           /// payment
           ListTile(
             leading: Icon(Icons.payment),

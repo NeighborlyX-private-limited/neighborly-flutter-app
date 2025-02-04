@@ -4,8 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
-import 'package:neighborly_flutter_app/core/widgets/indicator/custom_sizedbox.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_sizedbox.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_join_group_request_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/handle_join_request_bloc.dart';
 
 import '../../data/model/group_join_request_model.dart';
 
@@ -132,10 +133,10 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
           List<GroupJoinRequestModel> requestList = state.communities;
           return ListView.builder(
             // itemCount: requestList.length,
-            itemCount: list.length,
+            itemCount: requestList.length,
             itemBuilder: (context, index) {
-              final user = list[index];
-              // final user = requestList[index];
+              // final user = list[index];
+              final user = requestList[index];
 
               return Container(
                 // margin: EdgeInsets.only(bottom: 12),
@@ -163,7 +164,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                     // User Name
                     Expanded(
                       child: Text(
-                        'user.username',
+                        user.username,
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
@@ -174,7 +175,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                     // Accept Button
                     ElevatedButton(
                       onPressed: () {
-                        _showAcceptBottomSheet(context, 'user.username');
+                        _showAcceptBottomSheet(context, user.username, user.id);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryColor,
@@ -196,7 +197,11 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                     // Reject Button (Cross Icon)
                     InkWell(
                       onTap: () {
-                        _showRejectBottomSheet(context, 'user.username');
+                        _showRejectBottomSheet(
+                          context,
+                          user.username,
+                          user.id,
+                        );
                       },
                       child: Icon(
                         Icons.close,
@@ -217,7 +222,11 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
   }
 
   // Bottom Sheet for Accepting
-  void _showAcceptBottomSheet(BuildContext context, String userName) {
+  void _showAcceptBottomSheet(
+    BuildContext context,
+    String userName,
+    String requestId,
+  ) {
     showModalBottomSheet(
       showDragHandle: true,
       useRootNavigator: true,
@@ -233,11 +242,20 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
           AppColors.primaryColor,
           "Accept",
           () {
-            // Handle accept logic
+            print(
+                "requestId $requestId communityId ${widget.communityId} status");
             Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("$userName has been accepted!")),
-            );
+            context
+                .read<HandleJoinRequestBloc>()
+                .add(HandleGroupJoinRequestEvent(
+                  requestId: requestId,
+                  communityId: widget.communityId,
+                  status: "approved",
+                ));
+            // Handle accept logic
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text("$userName has been accepted!")),
+            // );
           },
         );
       },
@@ -245,7 +263,11 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
   }
 
   // Bottom Sheet for Rejecting
-  void _showRejectBottomSheet(BuildContext context, String userName) {
+  void _showRejectBottomSheet(
+    BuildContext context,
+    String userName,
+    String requestId,
+  ) {
     showModalBottomSheet(
       context: context,
       showDragHandle: true,
@@ -264,9 +286,17 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
           "Reject",
           () {
             Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("$userName's request has been rejected!")),
-            );
+            context
+                .read<HandleJoinRequestBloc>()
+                .add(HandleGroupJoinRequestEvent(
+                  requestId: requestId,
+                  communityId: widget.communityId,
+                  status: "declined",
+                ));
+            //Navigator.pop(context);
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   SnackBar(content: Text("$userName's request has been rejected!")),
+            // );
           },
         );
       },
@@ -274,90 +304,189 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
   }
 
   // Common Bottom Sheet Widget
+  // Widget _bottomSheetContent(
+  //   BuildContext context,
+  //   String message,
+  //   String userName,
+  //   Color buttonColor,
+  //   String btnName,
+  //   VoidCallback onConfirm,
+  // ) {
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(horizontal: 16),
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         RichText(
+  //           textAlign: TextAlign.center,
+  //           text: TextSpan(
+  //             style: const TextStyle(
+  //               fontSize: 16,
+  //               color: Colors.black,
+  //             ), // Default text style
+  //             children: [
+  //               TextSpan(text: message),
+  //               const TextSpan(text: "  "),
+  //               TextSpan(
+  //                 text: userName,
+  //                 style: const TextStyle(
+  //                   fontWeight: FontWeight.bold,
+  //                   color: Colors.black,
+  //                 ),
+  //               ),
+  //               const TextSpan(text: "  "),
+  //               const TextSpan(text: "request?"),
+  //             ],
+  //           ),
+  //         ),
+  //         SizedBox(height: 20),
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             ElevatedButton(
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //                 showSnackBar(
+  //                     context: context, message: 'Hy How\'s this snackbar');
+  //               },
+  //               style: ElevatedButton.styleFrom(
+  //                 elevation: 0,
+  //                 backgroundColor: const Color.fromARGB(151, 212, 212, 247),
+  //                 padding: EdgeInsets.symmetric(horizontal: 44, vertical: 12),
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(30),
+  //                 ),
+  //               ),
+  //               child: Text(
+  //                 "Cancel",
+  //                 style: TextStyle(
+  //                   fontSize: 14,
+  //                   color: AppColors.blackColor,
+  //                 ),
+  //               ),
+  //             ),
+  //             ElevatedButton(
+  //               onPressed: onConfirm,
+  //               style: ElevatedButton.styleFrom(
+  //                 elevation: 0,
+  //                 backgroundColor: buttonColor,
+  //                 padding: EdgeInsets.symmetric(horizontal: 44, vertical: 12),
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(30),
+  //                 ),
+  //               ),
+  //               child: Text(
+  //                 btnName,
+  //                 style: TextStyle(
+  //                   fontSize: 14,
+  //                   color: AppColors.whiteColor,
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(height: 10),
+  //       ],
+  //     ),
+  //   );
+  // }
   Widget _bottomSheetContent(
     BuildContext context,
     String message,
-    String userName,
+    String userId,
     Color buttonColor,
     String btnName,
     VoidCallback onConfirm,
   ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black,
-              ), // Default text style
-              children: [
-                TextSpan(text: message),
-                const TextSpan(text: "  "),
-                TextSpan(
-                  text: userName,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-                const TextSpan(text: "  "),
-                const TextSpan(text: "request?"),
-              ],
-            ),
-          ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return BlocConsumer<HandleJoinRequestBloc, HandleJoinRequestState>(
+      listener: (context, state) {
+        if (state is HandleJoinRequestSuccessState) {
+          Navigator.pop(context);
+          showSnackBar(
+            context: context,
+            message: btnName == "Accept"
+                ? "request has been accepted!"
+                : "request has been rejected!",
+          );
+        } else if (state is HandleJoinRequestFailureState) {
+          showSnackBar(context: context, message: "Something went wrong!");
+        }
+      },
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  showSnackBar(
-                      context: context, message: 'Hy How\'s this snackbar');
-                },
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: const Color.fromARGB(151, 212, 212, 247),
-                  padding: EdgeInsets.symmetric(horizontal: 44, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                child: Text(
-                  "Cancel",
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.blackColor,
-                  ),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  children: [
+                    TextSpan(text: message),
+                    const TextSpan(text: "  "),
+                    TextSpan(
+                      text: userId,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const TextSpan(text: "  "),
+                    const TextSpan(text: "request?"),
+                  ],
                 ),
               ),
-              ElevatedButton(
-                onPressed: onConfirm,
-                style: ElevatedButton.styleFrom(
-                  elevation: 0,
-                  backgroundColor: buttonColor,
-                  padding: EdgeInsets.symmetric(horizontal: 44, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: const Color.fromARGB(151, 212, 212, 247),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 44, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: const Text(
+                      "Cancel",
+                      style: TextStyle(fontSize: 14, color: Colors.black),
+                    ),
                   ),
-                ),
-                child: Text(
-                  btnName,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: AppColors.whiteColor,
+                  ElevatedButton(
+                    onPressed: state is HandleJoinRequestLoadingState
+                        ? null
+                        : onConfirm,
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: buttonColor,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 44, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: state is HandleJoinRequestLoadingState
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            btnName,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white,
+                            ),
+                          ),
                   ),
-                ),
+                ],
               ),
+              const SizedBox(height: 10),
             ],
           ),
-          SizedBox(height: 10),
-        ],
-      ),
+        );
+      },
     );
   }
 }

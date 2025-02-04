@@ -576,7 +576,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                                   'Be the first to create a group and start connecting!',
                               buttonText: 'Start a Community',
                               onButtonPressed: () {
-                                context.push('/groups/create');
+                                context.push('/group-create');
                               },
                             );
                           }
@@ -677,7 +677,7 @@ class _CommunityScreenState extends State<CommunityScreen>
                                   'Be the first to create a group and start connecting!',
                               buttonText: 'Start a Community',
                               onButtonPressed: () {
-                                context.push('/groups/create');
+                                context.push('/group-create');
                               },
                             );
                           }

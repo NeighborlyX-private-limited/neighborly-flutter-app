@@ -64,7 +64,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
   void openCommunity(BuildContext context) async {
     if (widget.community.isPublic || widget.community.isJoined) {
       final result = await context.push<bool>(
-        '/groups/${widget.community.id}',
+        '/group-details/${widget.community.id}',
       );
 
       if (result == true) {
@@ -326,7 +326,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
       child: Card(
         elevation: 1,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
           height: 160,
           width: 125,
           decoration: BoxDecoration(
@@ -347,222 +347,250 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
           ),
           child: Column(
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                    ),
-                    height: 25,
-                    //width: 59,
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Row(
-                      //crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          widget.community.isPublic
-                              ? Icons.public
-                              : Icons.lock_person_outlined,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          widget.community.isPublic
-                              ? AppLocalizations.of(context)!.public
-                              : AppLocalizations.of(context)!.private,
-                          style: TextStyle(
-                            height: 0.5,
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                      ),
+                      height: 25,
+                      //width: 59,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                      child: Row(
+                        //crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            widget.community.isPublic
+                                ? Icons.public
+                                : Icons.lock_person_outlined,
                             color: Colors.white,
-                            fontSize: 12,
+                            size: 16,
                           ),
-                        ),
-                      ],
+                          const SizedBox(
+                            width: 4,
+                          ),
+                          Text(
+                            widget.community.isPublic
+                                ? AppLocalizations.of(context)!.public
+                                : AppLocalizations.of(context)!.private,
+                            style: TextStyle(
+                              height: 0.5,
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               Spacer(),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    widget.community.name,
-                    textAlign: TextAlign.center,
-                    softWrap: true,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.whiteColor,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                    ),
+              Container(
+                decoration: BoxDecoration(
+                  // color: Colors.green,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      StackedAvatarIndicator(
-                        avatarUrls: [
-                          ...widget.community.users.map((e) => e.avatarUrl),
-                        ],
-                        showOnly: 3,
-                        avatarSize: 22,
-                        onTap: () {},
-                      ),
-                      SizedBox(
-                        width: 4,
-                      ),
-                      groupMemberCount > 1000
-                          ? Text(
-                              '${groupMemberCount}k+ ${AppLocalizations.of(context)!.members}',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            )
-                          : groupMemberCount > 1
-                              ? Text(
-                                  '$groupMemberCount ${AppLocalizations.of(context)!.members}',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ),
-                                )
-                              : Text(
-                                  '$groupMemberCount ${AppLocalizations.of(context)!.member}',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
-                                  ),
-                                ),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withOpacity(0.1),
+                      Colors.black.withOpacity(0.4),
+                      Colors.black.withOpacity(0.8),
+                      Colors.black.withOpacity(0.8),
+                      Colors.black.withOpacity(0.9),
                     ],
                   ),
-                  const SizedBox(height: 10),
-
-                  // /// show join button
-                  // /// i also need to add some condition so that when backend send
-                  // ///  request status so i need to show Request instead of join
-                  // if (!widget.community.isJoined)
-                  //   GestureDetector(
-                  //     onTap: () {
-                  //       joinGroupBottomSheet(context);
-                  //     },
-                  //     child: Container(
-                  //       height: 35,
-                  //       width: double.infinity,
-                  //       decoration: BoxDecoration(
-                  //         color: Color(0xff635BFF),
-                  //         borderRadius: BorderRadius.circular(20),
-                  //       ),
-                  //       child: Center(
-                  //         child: Text(
-                  //           AppLocalizations.of(context)!.join,
-                  //           textAlign: TextAlign.center,
-                  //           style: TextStyle(
-                  //             color: Colors.white,
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-
-                  // /// show group leave button when member is not an admin and member of the group
-                  // /// and also need to show some status when it is pending
-                  // if (!widget.community.isAdmin && widget.community.isJoined)
-                  //   GestureDetector(
-                  //     onTap: () {
-                  //       leaveGroupBottomSheet(context);
-                  //     },
-                  //     child: Container(
-                  //       height: 35,
-                  //       width: double.infinity,
-                  //       decoration: BoxDecoration(
-                  //         color: Color(0xff635BFF),
-                  //         borderRadius: BorderRadius.circular(20),
-                  //       ),
-                  //       child: Center(
-                  //         child: Text(
-                  //           AppLocalizations.of(context)!.leave,
-                  //           textAlign: TextAlign.center,
-                  //           style: TextStyle(
-                  //             color: Colors.white,
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-
-                  // /// if group is public
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     widget.community.isJoined
-                  //         ? leaveGroupBottomSheet(context)
-                  //         : joinGroupBottomSheet(context);
-                  //   },
-                  //   child: Container(
-                  //     height: 35,
-                  //     width: double.infinity,
-                  //     decoration: BoxDecoration(
-                  //       color: Color(0xff635BFF),
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: Center(
-                  //       child: Text(
-                  //         "",
-                  //         // widget.community.isJoined
-                  //         //     ? AppLocalizations.of(context)!.leave
-                  //         //     : AppLocalizations.of(context)!.request,
-                  //         // textAlign: TextAlign.center,
-                  //         style: TextStyle(
-                  //           color: Colors.white,
-                  //           fontSize: 16,
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // )
-
-                  GestureDetector(
-                    onTap: () {
-                      widget.community.isJoined
-                          ? leaveGroupBottomSheet(context)
-                          : joinGroupBottomSheet(context);
-                    },
-                    child: Container(
-                      height: 35,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color(0xff635BFF),
-                        borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.community.name,
+                      textAlign: TextAlign.center,
+                      softWrap: true,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppColors.whiteColor,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
                       ),
-                      child: Center(
-                        child: Text(
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        StackedAvatarIndicator(
+                          avatarUrls: [
+                            ...widget.community.users.map((e) => e.avatarUrl),
+                          ],
+                          showOnly: 3,
+                          avatarSize: 22,
+                          onTap: () {},
+                        ),
+                        SizedBox(
+                          width: 4,
+                        ),
+                        groupMemberCount > 1000
+                            ? Text(
+                                '${groupMemberCount}k+ ${AppLocalizations.of(context)!.members}',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                              )
+                            : groupMemberCount > 1
+                                ? Text(
+                                    '$groupMemberCount ${AppLocalizations.of(context)!.members}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  )
+                                : Text(
+                                    '$groupMemberCount ${AppLocalizations.of(context)!.member}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    // /// show join button
+                    // /// i also need to add some condition so that when backend send
+                    // ///  request status so i need to show Request instead of join
+                    // if (!widget.community.isJoined)
+                    //   GestureDetector(
+                    //     onTap: () {
+                    //       joinGroupBottomSheet(context);
+                    //     },
+                    //     child: Container(
+                    //       height: 35,
+                    //       width: double.infinity,
+                    //       decoration: BoxDecoration(
+                    //         color: Color(0xff635BFF),
+                    //         borderRadius: BorderRadius.circular(20),
+                    //       ),
+                    //       child: Center(
+                    //         child: Text(
+                    //           AppLocalizations.of(context)!.join,
+                    //           textAlign: TextAlign.center,
+                    //           style: TextStyle(
+                    //             color: Colors.white,
+                    //             fontSize: 16,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+
+                    // /// show group leave button when member is not an admin and member of the group
+                    // /// and also need to show some status when it is pending
+                    // if (!widget.community.isAdmin && widget.community.isJoined)
+                    //   GestureDetector(
+                    //     onTap: () {
+                    //       leaveGroupBottomSheet(context);
+                    //     },
+                    //     child: Container(
+                    //       height: 35,
+                    //       width: double.infinity,
+                    //       decoration: BoxDecoration(
+                    //         color: Color(0xff635BFF),
+                    //         borderRadius: BorderRadius.circular(20),
+                    //       ),
+                    //       child: Center(
+                    //         child: Text(
+                    //           AppLocalizations.of(context)!.leave,
+                    //           textAlign: TextAlign.center,
+                    //           style: TextStyle(
+                    //             color: Colors.white,
+                    //             fontSize: 16,
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+
+                    // /// if group is public
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     widget.community.isJoined
+                    //         ? leaveGroupBottomSheet(context)
+                    //         : joinGroupBottomSheet(context);
+                    //   },
+                    //   child: Container(
+                    //     height: 35,
+                    //     width: double.infinity,
+                    //     decoration: BoxDecoration(
+                    //       color: Color(0xff635BFF),
+                    //       borderRadius: BorderRadius.circular(20),
+                    //     ),
+                    //     child: Center(
+                    //       child: Text(
+                    //         "",
+                    //         // widget.community.isJoined
+                    //         //     ? AppLocalizations.of(context)!.leave
+                    //         //     : AppLocalizations.of(context)!.request,
+                    //         // textAlign: TextAlign.center,
+                    //         style: TextStyle(
+                    //           color: Colors.white,
+                    //           fontSize: 16,
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // )
+
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 10),
+                      child: GestureDetector(
+                        onTap: () {
                           widget.community.isJoined
-                              ? AppLocalizations.of(context)!.leave
-                              : AppLocalizations.of(context)!.join,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
+                              ? leaveGroupBottomSheet(context)
+                              : joinGroupBottomSheet(context);
+                        },
+                        child: Container(
+                          height: 35,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Color(0xff635BFF),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Text(
+                              widget.community.isJoined
+                                  ? AppLocalizations.of(context)!.leave
+                                  : AppLocalizations.of(context)!.join,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               )
             ],
           ),

@@ -341,6 +341,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                         onReport: (messageId, reason) {},
                         onShare: (message) {},
                         onPin: (messageToBePinned) {},
+                        onTapPinned: () {},
                       ),
                     ),
                     Padding(
@@ -394,7 +395,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                               onReact: (messageId, reactOrAward) {},
                               onReport: (messageId, reason) {},
                               onShare: (message) {},
-                              onPin: (messageToBePinned) {},
+                              onPin: (messageToBePinned) {}, onTapPinned: () {},
                             );
 
                             // if (lastDate != dateSummary) {

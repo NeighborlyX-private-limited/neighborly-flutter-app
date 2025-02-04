@@ -3,7 +3,6 @@ import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 class CustomCircularIndicator extends StatelessWidget {
   final Color color;
-
   const CustomCircularIndicator({
     super.key,
     this.color = AppColors.primaryColor,

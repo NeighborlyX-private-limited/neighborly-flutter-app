@@ -192,7 +192,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
 
                     ///success state
                     else if (state is RegisterSuccessState) {
-                      context.go('/otp/${_emailController.text}/email-verify');
+                      context
+                          .push('/otp/${_emailController.text}/email-verify');
                     }
                   },
                   builder: (context, state) {

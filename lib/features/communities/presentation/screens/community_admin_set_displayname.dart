@@ -38,8 +38,9 @@ class _CommunityAdminDisplaynameScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,

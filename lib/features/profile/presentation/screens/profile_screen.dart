@@ -1,10 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
@@ -204,11 +206,34 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   ? Padding(
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20),
-                                      child: Text(
-                                        state.profile.bio!,
-                                        style: mediumGreyTextStyleBlack,
-                                      ),
-                                    )
+                                      child: Linkify(
+                                        options: LinkifyOptions(
+                                          looseUrl: true,
+                                        ),
+                                        onOpen: (link) async {
+                                          if (await canLaunchUrl(
+                                              Uri.parse(link.url))) {
+                                            await launchUrl(Uri.parse(link.url),
+                                                mode: LaunchMode
+                                                    .externalApplication);
+                                          } else {
+                                            throw "Could not launch ${link.url}";
+                                          }
+                                        },
+                                        text: state.profile.bio!,
+                                        style: const TextStyle(fontSize: 16),
+                                        linkStyle: const TextStyle(
+                                          color: AppColors.primaryColor,
+                                        ),
+                                      ))
+                                  // ? Padding(
+                                  //     padding: const EdgeInsets.symmetric(
+                                  //         horizontal: 20),
+                                  //     child: Text(
+                                  //       state.profile.bio!,
+                                  //       style: mediumGreyTextStyleBlack,
+                                  //     ),
+                                  //   )
                                   : const SizedBox(),
                               const SizedBox(height: 15),
                               Center(

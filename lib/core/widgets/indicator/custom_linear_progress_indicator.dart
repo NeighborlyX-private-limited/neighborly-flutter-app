@@ -15,13 +15,9 @@ class CustomLinearIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(4.0),
-      ),
+    return LinearProgressIndicator(
+      color: color,
+      minHeight: height,
     );
   }
 }

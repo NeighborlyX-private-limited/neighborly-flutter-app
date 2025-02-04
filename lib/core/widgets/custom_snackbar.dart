@@ -19,8 +19,11 @@ void showSnackBar({required BuildContext context, required String message}) {
       duration: Duration(seconds: 2),
       elevation: 2,
       behavior: SnackBarBehavior.floating,
-      backgroundColor: AppColors.blackColor,
-      margin: const EdgeInsets.all(20),
+      backgroundColor: Colors.black87,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 5,
+      ),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),

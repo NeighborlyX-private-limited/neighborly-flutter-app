@@ -7,14 +7,6 @@ import '../../../domain/usecases/remove_user_community_usecase.dart';
 part 'add_remove_user_in_group_event.dart';
 part 'add_remove_user_in_group_state.dart';
 
-// class AddRemoveUserInGroupBloc extends Bloc<AddRemoveUserInGroupEvent, AddRemoveUserInGroupState> {
-//   AddRemoveUserInGroupBloc() : super(AddRemoveUserInGroupInitial()) {
-//     on<AddRemoveUserInGroupEvent>((event, emit) {
-//       // TODO: implement event handler
-//     });
-//   }
-// }
-
 class AddRemoveUserInGroupBloc
     extends Bloc<AddRemoveUserInGroupEvent, AddRemoveUserInGroupState> {
   final AddUserCommunityUsecase _addUserCommunityUsecase;

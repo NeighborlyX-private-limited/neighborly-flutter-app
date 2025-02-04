@@ -420,7 +420,7 @@ class ChatArea extends StatelessWidget {
           ? null
           : () {
               context.push(
-                '/chat/group/${event.id}',
+                '/group-chat/${event.id}',
                 extra: ChatRoomModel(
                     id: event.id,
                     name: event.title,

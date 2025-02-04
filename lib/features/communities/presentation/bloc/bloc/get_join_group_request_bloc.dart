@@ -1,10 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:neighborly_flutter_app/features/communities/domain/usecases/add_user_community_usecase.dart';
-
 import '../../../data/model/group_join_request_model.dart';
 import '../../../domain/usecases/get_join_group_request_usecase.dart';
-
 part 'get_join_group_request_event.dart';
 part 'get_join_group_request_state.dart';
 

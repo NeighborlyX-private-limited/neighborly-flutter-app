@@ -31,8 +31,7 @@ class UserAvatarStyledWidget extends StatelessWidget {
         child: avatarUrl.contains('.')
             ? CircleAvatar(
                 radius: proportionalSize - avatarBorderSize!,
-                onBackgroundImageError: (_, __) => SvgPicture.asset(
-                    'assets/vectors/my_profile_placeholder.svg'),
+                onBackgroundImageError: (_, __) => SizedBox(),
                 backgroundImage: CachedNetworkImageProvider(avatarUrl),
               )
             : CircleAvatar(

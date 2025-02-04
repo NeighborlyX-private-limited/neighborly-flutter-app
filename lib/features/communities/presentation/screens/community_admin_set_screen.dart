@@ -200,7 +200,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/members');
+                  context.push('/group-members');
                 },
               ),
 
@@ -212,8 +212,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 svgPath: 'assets/private-lock-icon.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push(
-                      '/groups/admin/manage-join-request/${community.id}');
+                  context.push('/manage-group-join-request/${community.id}');
                 },
               ),
 
@@ -225,7 +224,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 svgPath: 'assets/menu_icon.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/icon');
+                  context.push('/group-icon');
                 },
               ),
               const SizedBox(height: 5),
@@ -236,7 +235,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 svgPath: 'assets/menu_description.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/description');
+                  context.push('/group-description');
                 },
               ),
               const SizedBox(height: 5),
@@ -247,7 +246,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/displayname');
+                  context.push('/group-displayname');
                 },
               ),
 
@@ -257,7 +256,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 svgPath: 'assets/menu_type.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/type');
+                  context.push('/group-type');
                 },
               ),
 
@@ -326,7 +325,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                 svgPath: 'assets/menu_block.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/blocked');
+                  context.push('/group-blocked');
                 },
               ),
 

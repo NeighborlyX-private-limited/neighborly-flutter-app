@@ -29,6 +29,7 @@ class ChatMessageGroupWidget extends StatefulWidget {
   final Function(ChatMessageModel) onTapReply;
   final VoidCallback onTapCheer;
   final VoidCallback onTapBool;
+  final VoidCallback onTapPinned;
 
   const ChatMessageGroupWidget({
     super.key,
@@ -45,6 +46,7 @@ class ChatMessageGroupWidget extends StatefulWidget {
     required this.onReport,
     required this.onShare,
     required this.onPin,
+    required this.onTapPinned,
   });
 
   @override
@@ -55,13 +57,13 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
   OverlayEntry? _overlayEntry;
   bool showReplyInput = false;
 
-  bool isCheered = false;
-  bool isBooled = false;
+  // bool isCheered = false;
+  // bool isBooled = false;
   num repliesCount = 0;
 
   /// State variables to track counts
-  late num cheersCount;
-  late num boolsCount;
+  // late num cheersCount;
+  // late num boolsCount;
 
   final messageEC = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
@@ -71,8 +73,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
   void initState() {
     super.initState();
 
-    cheersCount = widget.message.cheers;
-    boolsCount = widget.message.boos;
+    // cheersCount = widget.message.cheers;
+    // boolsCount = widget.message.boos;
     repliesCount = widget.message.repliesCount;
 
     /// Load persisted state
@@ -280,6 +282,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
   }
 
   void _showOverlay(BuildContext context) {
+    final overlay = Overlay.of(context, rootOverlay: true);
+    if (overlay == null) return; // Prevent crash
     _overlayEntry = OverlayEntry(
       builder: (context) => GestureDetector(
         onTap: () {
@@ -288,311 +292,332 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
           });
           _removeOverlay();
         },
-        child: Container(
-          color: Colors.black54,
-          alignment: Alignment.bottomCenter,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  margin: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, left: 10),
-                        child: UserAvatarStyledWidget(
-                          avatarUrl: widget.message.author!.avatarUrl,
-                          avatarBorderSize: 0,
-                          avatarSize: 22,
+        child: Material(
+          child: Container(
+            color: Colors.black54,
+            alignment: Alignment.bottomCenter,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    margin: EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, left: 10),
+                          child: UserAvatarStyledWidget(
+                            avatarUrl: widget.message.author!.avatarUrl,
+                            avatarBorderSize: 0,
+                            avatarSize: 22,
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        width: 7,
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Text(
-                                    widget.message.author?.name ?? '',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  Text(
-                                    formatTime(widget.message.date),
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black45,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5),
-                                  if (widget.message.author?.isAdmin == true ||
-                                      widget.message.isAdmin == true) ...[
-                                    isAdminBubble(),
-                                  ],
-                                  Expanded(
-                                    child: Align(
-                                      alignment: Alignment.centerRight,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            showReplyInput = false;
-                                            // FocusScope.of(context).requestFocus(messageFocusNode);
-                                          });
-                                          _removeOverlay();
-                                        },
-                                        child: Icon(Icons.close),
+                        const SizedBox(
+                          width: 7,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      widget.message.author?.name ?? '',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  )
-                                ],
-                              ),
-                              SizedBox(
-                                  width: MediaQuery.of(context).size.width,
-                                  child: widget.message.pictureUrl != '' &&
-                                          widget.message.text == ''
-                                      ? Image.network(
-                                          '${widget.message.pictureUrl}')
-                                      : Linkify(
-                                          options: LinkifyOptions(
-                                            looseUrl: true,
-                                          ),
-                                          onOpen: (link) async {
-                                            if (await canLaunchUrl(
-                                                Uri.parse(link.url))) {
-                                              await launchUrl(
-                                                  Uri.parse(link.url),
-                                                  mode: LaunchMode
-                                                      .externalApplication);
-                                            } else {
-                                              throw "Could not launch ${link.url}";
-                                            }
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      formatTime(widget.message.date),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black45,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    if (widget.message.author?.isAdmin ==
+                                            true ||
+                                        widget.message.isAdmin == true) ...[
+                                      isAdminBubble(),
+                                    ],
+                                    Expanded(
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              showReplyInput = false;
+                                              // FocusScope.of(context).requestFocus(messageFocusNode);
+                                            });
+                                            _removeOverlay();
                                           },
-                                          text: widget.message.text,
-                                          style: const TextStyle(fontSize: 16),
-                                          linkStyle: const TextStyle(
-                                            color: AppColors.primaryColor,
-                                          ),
-                                        )
-                                  // : Text(
-                                  //     widget.message.text,
-                                  //     textAlign: TextAlign.start,
-                                  //     style: TextStyle(
-                                  //       fontSize: 14,
-                                  //       fontWeight: FontWeight.normal,
-                                  //     ),
-                                  //   ),
-                                  ),
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-
-                // menu area
-                Container(
-                  height: showReplyInput
-                      ? MediaQuery.of(context).size.height * 0.10
-                      : MediaQuery.of(context).size.height * 0.40,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10),
-                      topRight: Radius.circular(10),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        if (showReplyInput == false) ...[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: 5,
-                                width: 40,
-                                margin: EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(50),
+                                          child: Icon(Icons.close),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              )
-                            ],
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // reactionCircle(
-                                //   assetUrl: 'assets/react5.svg',
-                                //   onTap: () {
-                                //     _updateState('cheer');
-                                //     widget.onTapCheer();
-                                //     _removeOverlay();
-                                //   },
-                                // ),
-                                // reactionCircle(
-                                //   assetUrl: 'assets/react6.svg',
-                                //   onTap: () {
-                                //     _updateState('boo');
-                                //     widget.onTapBool();
-                                //     _removeOverlay();
-                                //   },
-                                // ),
-                                // reactionCircle(
-                                //   assetUrl: 'assets/Local_Legend.svg',
-                                //   onTap: () {
-                                //     // Function(String, String)?
-                                //     widget.onReact(
-                                //         widget.message.id, 'Local Legend');
-                                //     _removeOverlay();
-                                //   },
-                                // ),
-                                // reactionCircle(
-                                //   assetUrl: 'assets/Sunflower.svg',
-                                //   onTap: () {
-                                //     widget.onReact(
-                                //         widget.message.id, 'Sunflower');
-                                //     _removeOverlay();
-                                //   },
-                                // ),
-                                // reactionCircle(
-                                //   assetUrl: 'assets/Streetlight.svg',
-                                //   onTap: () {
-                                //     widget.onReact(
-                                //         widget.message.id, 'Streetlight');
-                                //     _removeOverlay();
-                                //   },
-                                // ),
-                                // reactionCircle(
-                                //   assetUrl: 'assets/Park_Bench.svg',
-                                //   onTap: () {
-                                //     widget.onReact(
-                                //         widget.message.id, 'Park Bench');
-                                //     _removeOverlay();
-                                //   },
-                                // ),
-                                // reactionCircle(
-                                //   assetUrl: 'assets/Map.svg',
-                                //   onTap: () {
-                                //     widget.onReact(widget.message.id, 'Map');
-                                //     _removeOverlay();
-                                //   },
-                                // ),
+                                Container(
+                                    color: AppColors.whiteColor,
+                                    width: MediaQuery.of(context).size.width,
+                                    child: widget.message.pictureUrl != '' &&
+                                            widget.message.text == ''
+                                        ? Image.network(
+                                            '${widget.message.pictureUrl}')
+                                        : Linkify(
+                                            options: LinkifyOptions(
+                                              looseUrl: true,
+                                            ),
+                                            onOpen: (link) async {
+                                              if (await canLaunchUrl(
+                                                  Uri.parse(link.url))) {
+                                                await launchUrl(
+                                                    Uri.parse(link.url),
+                                                    mode: LaunchMode
+                                                        .externalApplication);
+                                              } else {
+                                                throw "Could not launch ${link.url}";
+                                              }
+                                            },
+                                            text: widget.message.text,
+                                            style:
+                                                const TextStyle(fontSize: 16),
+                                            linkStyle: const TextStyle(
+                                              color: AppColors.primaryColor,
+                                            ),
+                                          )
+                                    // : Text(
+                                    //     widget.message.text,
+                                    //     textAlign: TextAlign.start,
+                                    //     style: TextStyle(
+                                    //       fontSize: 14,
+                                    //       fontWeight: FontWeight.normal,
+                                    //     ),
+                                    //   ),
+                                    ),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: MenuIconItem(
-                                title: 'See Replies',
-                                svgPath: 'assets/menu_reply_list.svg',
-                                iconSize: 25,
-                                onTap: () {
-                                  widget.onTapReply(widget.message);
-                                  _removeOverlay();
-                                }),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: MenuIconItem(
-                                title: 'Reply',
-                                svgPath: 'assets/menu_reply.svg',
-                                iconSize: 25,
-                                onTap: () {
-                                  setState(() {
-                                    showReplyInput = true;
-                                    // FocusScope.of(context).requestFocus(messageFocusNode);
-                                  });
-                                  _removeOverlay();
-
-                                  setState(() {
-                                    if (messageFocusNode.canRequestFocus) {
-                                      messageFocusNode.requestFocus();
-                                    }
-                                    // FocusScope.of(context).requestFocus(messageFocusNode);
-                                  });
-                                  _showOverlay(context);
-                                }),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: MenuIconItem(
-                                title: 'Share',
-                                svgPath: 'assets/menu_share.svg',
-                                iconSize: 25,
-                                onTap: () {
-                                  // communityDetailCubit.toggleMute();
-                                  widget.onShare(widget.message);
-
-                                  setState(() {
-                                    showReplyInput = false;
-                                  });
-                                  _removeOverlay();
-                                }),
-                          ),
-
-                          /// show pinned option
-                          if (widget.isAdmin == true)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: MenuIconItem(
-                                  title: 'Pinned Message',
-                                  svgPath: 'assets/menu_pinned.svg',
-                                  iconSize: 25,
-                                  textColor: Colors.black,
-                                  onTap: () {
-                                    setState(() {
-                                      showReplyInput = false;
-                                    });
-                                    _removeOverlay();
-                                    widget.onPin(widget.message);
-                                  }),
-                            ),
-
-                          /// report msg
-                          if (widget.isAdmin == false)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: MenuIconItem(
-                                  title: 'Report',
-                                  svgPath: 'assets/menu_report_core.svg',
-                                  iconSize: 25,
-                                  textColor: Colors.red,
-                                  onTap: () {
-                                    setState(() {
-                                      showReplyInput = false;
-                                    });
-                                    _removeOverlay();
-                                    reportReasonBottomSheet(context);
-                                  }),
-                            ),
-                        ],
-                        if (showReplyInput == true) ...[
-                          messageInputSection(),
-                        ],
+                        )
                       ],
                     ),
                   ),
-                ),
-              ],
+
+                  // menu area
+                  Container(
+                    height: showReplyInput
+                        ? MediaQuery.of(context).size.height * 0.10
+                        : MediaQuery.of(context).size.height * 0.40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          if (showReplyInput == false) ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  height: 5,
+                                  width: 40,
+                                  margin: EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                )
+                              ],
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // reactionCircle(
+                                  //   assetUrl: 'assets/react5.svg',
+                                  //   onTap: () {
+                                  //     _updateState('cheer');
+                                  //     widget.onTapCheer();
+                                  //     _removeOverlay();
+                                  //   },
+                                  // ),
+                                  // reactionCircle(
+                                  //   assetUrl: 'assets/react6.svg',
+                                  //   onTap: () {
+                                  //     _updateState('boo');
+                                  //     widget.onTapBool();
+                                  //     _removeOverlay();
+                                  //   },
+                                  // ),
+                                  // reactionCircle(
+                                  //   assetUrl: 'assets/Local_Legend.svg',
+                                  //   onTap: () {
+                                  //     // Function(String, String)?
+                                  //     widget.onReact(
+                                  //         widget.message.id, 'Local Legend');
+                                  //     _removeOverlay();
+                                  //   },
+                                  // ),
+                                  // reactionCircle(
+                                  //   assetUrl: 'assets/Sunflower.svg',
+                                  //   onTap: () {
+                                  //     widget.onReact(
+                                  //         widget.message.id, 'Sunflower');
+                                  //     _removeOverlay();
+                                  //   },
+                                  // ),
+                                  // reactionCircle(
+                                  //   assetUrl: 'assets/Streetlight.svg',
+                                  //   onTap: () {
+                                  //     widget.onReact(
+                                  //         widget.message.id, 'Streetlight');
+                                  //     _removeOverlay();
+                                  //   },
+                                  // ),
+                                  // reactionCircle(
+                                  //   assetUrl: 'assets/Park_Bench.svg',
+                                  //   onTap: () {
+                                  //     widget.onReact(
+                                  //         widget.message.id, 'Park Bench');
+                                  //     _removeOverlay();
+                                  //   },
+                                  // ),
+                                  // reactionCircle(
+                                  //   assetUrl: 'assets/Map.svg',
+                                  //   onTap: () {
+                                  //     widget.onReact(widget.message.id, 'Map');
+                                  //     _removeOverlay();
+                                  //   },
+                                  // ),
+                                ],
+                              ),
+                            ),
+                            //const SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: MenuIconItem(
+                                  title: 'Pinned',
+                                  svgPath: 'assets/pinned.svg',
+                                  iconSize: 25,
+                                  onTap: () {
+                                    widget.onTapPinned();
+                                    _removeOverlay();
+                                    //widget.onTapReply(widget.message);
+                                    // _removeOverlay();
+                                  }),
+                            ),
+                            //const SizedBox(height: 20),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: MenuIconItem(
+                                  title: 'See Replies',
+                                  svgPath: 'assets/menu_reply_list.svg',
+                                  iconSize: 25,
+                                  onTap: () {
+                                    widget.onTapReply(widget.message);
+                                    _removeOverlay();
+                                  }),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: MenuIconItem(
+                                  title: 'Reply',
+                                  svgPath: 'assets/menu_reply.svg',
+                                  iconSize: 25,
+                                  onTap: () {
+                                    setState(() {
+                                      widget.onTapReply(widget.message);
+                                      //showReplyInput = true;
+                                      // FocusScope.of(context).requestFocus(messageFocusNode);
+                                      _removeOverlay();
+                                    });
+
+                                    // setState(() {
+                                    //   if (messageFocusNode.canRequestFocus) {
+                                    //     messageFocusNode.requestFocus();
+                                    //   }
+                                    //   // FocusScope.of(context).requestFocus(messageFocusNode);
+                                    // });
+                                    // _showOverlay(context);
+                                  }),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: MenuIconItem(
+                                  title: 'Share',
+                                  svgPath: 'assets/menu_share.svg',
+                                  iconSize: 25,
+                                  onTap: () {
+                                    // communityDetailCubit.toggleMute();
+                                    widget.onShare(widget.message);
+
+                                    setState(() {
+                                      showReplyInput = false;
+                                    });
+                                    _removeOverlay();
+                                  }),
+                            ),
+
+                            /// show pinned option
+                            if (widget.isAdmin == true)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: MenuIconItem(
+                                    title: 'Pinned Message',
+                                    svgPath: 'assets/menu_pinned.svg',
+                                    iconSize: 25,
+                                    textColor: Colors.black,
+                                    onTap: () {
+                                      setState(() {
+                                        showReplyInput = false;
+                                      });
+                                      _removeOverlay();
+                                      widget.onPin(widget.message);
+                                    }),
+                              ),
+
+                            /// report msg
+                            if (widget.isAdmin == false)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: MenuIconItem(
+                                    title: 'Report',
+                                    svgPath: 'assets/menu_report_core.svg',
+                                    iconSize: 25,
+                                    textColor: Colors.red,
+                                    onTap: () {
+                                      setState(() {
+                                        showReplyInput = false;
+                                      });
+                                      _removeOverlay();
+                                      reportReasonBottomSheet(context);
+                                    }),
+                              ),
+                          ],
+                          if (showReplyInput == true) ...[
+                            messageInputSection(),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -902,103 +927,139 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: UserAvatarStyledWidget(
-            avatarUrl: widget.message.author!.avatarUrl,
-            avatarBorderSize: 0,
-            avatarSize: 20,
-          ),
-        ),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.transparent,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        print('press');
+        _removeOverlay();
+        //context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+        Navigator.pop(context);
+      },
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: UserAvatarStyledWidget(
+              avatarUrl: widget.message.author!.avatarUrl,
+              avatarBorderSize: 0,
+              avatarSize: 20,
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        widget.message.author?.name ?? '',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+          ),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.transparent,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          widget.message.author?.name ?? '',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                      Text(
-                        formatTime(widget.message.date),
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.black45,
+                        const SizedBox(width: 5),
+                        Text(
+                          formatTime(widget.message.date),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black45,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 5),
-                      if (widget.message.author?.isAdmin == true ||
-                          widget.message.isAdmin == true) ...[
-                        isAdminBubble(),
+                        const SizedBox(width: 5),
+                        if (widget.message.author?.isAdmin == true ||
+                            widget.message.isAdmin == true) ...[
+                          isAdminBubble(),
+                        ],
                       ],
+                    ),
+                    Container(
+                      color: AppColors.whiteColor,
+                      width: MediaQuery.of(context).size.width,
+                      child: InkWell(
+                          onTap: () {
+                            // showBottomSheet(
+                            //   context: context,
+                            //   builder: (context) => Container(
+                            //     height: 100,
+                            //     color: AppColors.blackColor,
+                            //   ),
+                            // );
+                            _showOverlay(context);
+                          },
+                          child: widget.message.pictureUrl != '' &&
+                                  widget.message.text == ''
+                              ? Image.network('${widget.message.pictureUrl}')
+                              : Linkify(
+                                  options: LinkifyOptions(
+                                    looseUrl: true,
+                                  ),
+                                  onOpen: (link) async {
+                                    if (await canLaunchUrl(
+                                        Uri.parse(link.url))) {
+                                      await launchUrl(Uri.parse(link.url),
+                                          mode: LaunchMode.externalApplication);
+                                    } else {
+                                      throw "Could not launch ${link.url}";
+                                    }
+                                  },
+                                  text: widget.message.text,
+                                  style: const TextStyle(fontSize: 16),
+                                  linkStyle: const TextStyle(
+                                    color: AppColors.primaryColor,
+                                  ),
+                                )
+                          // : Text(
+                          //     widget.message.text,
+                          //     textAlign: TextAlign.start,
+                          //     style: TextStyle(
+                          //       fontSize: 14,
+                          //       fontWeight: FontWeight.normal,
+                          //     ),
+                          //   ),
+                          ),
+                    ),
+                    if ((widget.message.repliesCount +
+                            widget.message.cheers +
+                            widget.message.boos) >=
+                        0) ...[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: chatReactionLocalWidget(),
+
+                        // ChatReactionWidget(
+                        //   post: widget.message.toPost(),
+                        //   repliesAvatar: widget.message.repliesAvatas,
+                        //   onTapReply: () {
+
+                        //   },
+                        //   onTapCheer: () {
+
+                        //   },
+                        //   onTapBool: () {
+
+                        //   },
+                        //   onTapMessage: (PostEntity) {
+
+                        //   },
+                        // ),
+                      ),
                     ],
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: GestureDetector(
-                      onTap: () {
-                        _showOverlay(context);
-                      },
-                      child: widget.message.pictureUrl != '' &&
-                              widget.message.text == ''
-                          ? Image.network('${widget.message.pictureUrl}')
-                          : Text(
-                              widget.message.text,
-                              textAlign: TextAlign.start,
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                              ),
-                            ),
-                    ),
-                  ),
-                  if ((widget.message.repliesCount +
-                          widget.message.cheers +
-                          widget.message.boos) >=
-                      0) ...[
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: chatReactionLocalWidget(),
-
-                      // ChatReactionWidget(
-                      //   post: widget.message.toPost(),
-                      //   repliesAvatar: widget.message.repliesAvatas,
-                      //   onTapReply: () {
-
-                      //   },
-                      //   onTapCheer: () {
-
-                      //   },
-                      //   onTapBool: () {
-
-                      //   },
-                      //   onTapMessage: (PostEntity) {
-
-                      //   },
-                      // ),
-                    ),
                   ],
-                ],
+                ),
               ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }

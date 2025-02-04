@@ -4,6 +4,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/add_user_community_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/get_user_groups_usecase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/handle_join_request_usercase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/join_community_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/delete_community_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/remove_admin_community_usecase.dart';
@@ -11,6 +12,7 @@ import 'package:neighborly_flutter_app/features/communities/domain/usecases/upda
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_join_group_request_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/handle_join_request_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
@@ -310,6 +312,7 @@ void init() async {
   sl.registerLazySingleton(() => GetUserGroupsUsecase(sl()));
   sl.registerLazySingleton(() => GetCommunityUsecase(sl()));
   sl.registerLazySingleton(() => GetJoinGroupRequestUsecase(sl()));
+  sl.registerLazySingleton(() => HandleJoinRequestUsercase(sl()));
   sl.registerLazySingleton(() => MakeAdminCommunityUsecase(sl()));
   sl.registerLazySingleton(() => RemoveAdminCommunityUsecase(sl()));
   sl.registerLazySingleton(() => AddUserCommunityUsecase(sl()));
@@ -403,6 +406,8 @@ void init() async {
   sl.registerFactory(() => GetUserGroupsBloc(getUserGroupsUsecase: sl()));
   sl.registerFactory(
       () => GetJoinGroupRequestBloc(getJoinGroupRequestUsecase: sl()));
+  sl.registerFactory(
+      () => HandleJoinRequestBloc(handleJoinRequestUserCase: sl()));
   sl.registerFactory(() => CommunityDetailsCubit(
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
 

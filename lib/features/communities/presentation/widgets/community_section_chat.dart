@@ -40,7 +40,7 @@ class _CommunitySectionChatState extends State<CommunitySectionChat> {
                   .toIso8601String(), //need to fix this is not correct last msg time
               onTap: () {
                 context.push(
-                  '/chat/group/${widget.community.id}',
+                  '/group-chat/${widget.community.id}',
                   extra: ChatRoomModel(
                     id: widget.community.id,
                     name: widget.community.name,

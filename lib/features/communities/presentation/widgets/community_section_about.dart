@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:readmore/readmore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
@@ -91,24 +93,42 @@ class DescriptionArea extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 5),
-          ReadMoreText(
-            description,
-            trimLines: 2,
-            style: TextStyle(fontSize: 14, height: 1.3),
-            trimMode: TrimMode.Line,
-            trimCollapsedText: AppLocalizations.of(context)!.see_more,
-            trimExpandedText: AppLocalizations.of(context)!.see_less,
-            moreStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-              color: Colors.blue,
+          Linkify(
+            options: LinkifyOptions(
+              looseUrl: true,
             ),
-            lessStyle: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.normal,
-              color: Colors.blue,
+            onOpen: (link) async {
+              if (await canLaunchUrl(Uri.parse(link.url))) {
+                await launchUrl(Uri.parse(link.url),
+                    mode: LaunchMode.externalApplication);
+              } else {
+                throw "Could not launch ${link.url}";
+              }
+            },
+            text: description,
+            style: const TextStyle(fontSize: 16),
+            linkStyle: const TextStyle(
+              color: AppColors.primaryColor,
             ),
-          ),
+          )
+          // ReadMoreText(
+          //   description,
+          //   trimLines: 2,
+          //   style: TextStyle(fontSize: 14, height: 1.3),
+          //   trimMode: TrimMode.Line,
+          //   trimCollapsedText: AppLocalizations.of(context)!.see_more,
+          //   trimExpandedText: AppLocalizations.of(context)!.see_less,
+          //   moreStyle: TextStyle(
+          //     fontSize: 14,
+          //     fontWeight: FontWeight.normal,
+          //     color: Colors.blue,
+          //   ),
+          //   lessStyle: TextStyle(
+          //     fontSize: 14,
+          //     fontWeight: FontWeight.normal,
+          //     color: Colors.blue,
+          //   ),
+          // ),
         ],
       ),
     );

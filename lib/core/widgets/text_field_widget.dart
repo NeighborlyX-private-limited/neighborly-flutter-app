@@ -55,9 +55,6 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             widget.digitsOnly ? [FilteringTextInputFormatter.digitsOnly] : null,
         maxLength: widget.maxLength,
         decoration: InputDecoration(
-          // hintText: 'HELLO',
-          // hintStyle: TextStyle(color: Colors.red),
-          //hintText: widget.lableText == '' ? widget.hintText : null,
           counterText: '',
           labelText: widget.lableText,
           border: widget.border

@@ -220,6 +220,32 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
+  /// Community  join request repo impl
+  @override
+  Future<Either<Failure, String>> handleJoinRequest({
+    required String communityId,
+    required String requestId,
+    required String status,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.handleJoinRequest(
+          communityId: communityId,
+          requestId: requestId,
+          status: status,
+        );
+
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
   ///updateDisplayName repo impl
   @override
   Future<Either<Failure, void>> updateDisplayName({

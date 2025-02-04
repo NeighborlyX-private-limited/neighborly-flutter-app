@@ -5,14 +5,6 @@ import 'package:neighborly_flutter_app/features/communities/domain/usecases/upda
 part 'update_mute_group_event.dart';
 part 'update_mute_group_state.dart';
 
-// class UpdateMuteGroupBloc extends Bloc<UpdateMuteGroupEvent, UpdateMuteGroupState> {
-//   UpdateMuteGroupBloc() : super(UpdateMuteGroupInitial()) {
-//     on<UpdateMuteGroupEvent>((event, emit) {
-//       // TODO: implement event handler
-//     });
-//   }
-// }
-
 class UpdateMuteGroupBloc
     extends Bloc<UpdateMuteGroupEvent, UpdateMuteGroupState> {
   final UpdateMuteCommunityUsecase _updateMuteCommunityUsecase;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/constants/status.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
@@ -12,6 +13,7 @@ import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
+import '../bloc/communities_main_cubit.dart';
 import '../bloc/community_detail_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -494,7 +496,9 @@ class _CommunityAdminMembersUsersScreenState
 
                         ///success state
                         if (state is LeaveGroupSuccessState) {
-                          communityCubit.getCommunityDetail(communityId);
+                          //communityCubit.getCommunityDetail(communityId);
+                          BlocProvider.of<CommunityMainCubit>(context).init();
+                          context.go('/groups');
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(
@@ -520,8 +524,8 @@ class _CommunityAdminMembersUsersScreenState
                               communityId: communityId,
                             ));
 
-                            Navigator.pop(context);
-                            Navigator.pop(context);
+                            // Navigator.pop(context);
+                            // Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Color(0xff635BFF),

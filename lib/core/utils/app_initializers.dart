@@ -37,6 +37,6 @@ class AppInitializers {
 
     var FCMtoken = await fcmConfig.getToken() ?? '';
     ShardPrefHelper.setFCMtoken(FCMtoken);
-    print('FCM Token in app initializer: $FCMtoken ');
+    print('FCM token in app initializer: $FCMtoken ');
   }
 }

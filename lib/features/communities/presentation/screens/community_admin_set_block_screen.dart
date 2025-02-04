@@ -208,6 +208,7 @@ class _CommunityAdminBlockedUsersScreenState
     return Scaffold(
       backgroundColor: AppColors.lightBackgroundColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,

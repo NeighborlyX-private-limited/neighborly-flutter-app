@@ -41,6 +41,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
     return Scaffold(
       backgroundColor: AppColors.lightBackgroundColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,

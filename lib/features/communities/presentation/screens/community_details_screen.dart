@@ -198,7 +198,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         if ((communityCache?.isAdmin ?? false) &&
                             (communityCache?.isJoined ?? false)) {
                           context.push(
-                            '/groups/admin',
+                            '/group-admin',
                             extra: communityCache,
                           );
                         } else {
@@ -824,7 +824,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (didPop, result) => Navigator.pop(context, true),
+      onPopInvokedWithResult: (didPop, result) {
+        context.go('/groups');
+      },
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
         extendBodyBehindAppBar: true,
@@ -877,7 +879,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     if ((communityCache?.isAdmin ?? false) &&
                         (communityCache?.isJoined ?? false)) {
                       context.push(
-                        '/groups/admin',
+                        '/group-admin',
                         extra: communityCache,
                       );
                     } else {
