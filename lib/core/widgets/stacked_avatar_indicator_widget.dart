@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 

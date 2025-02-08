@@ -109,7 +109,6 @@ class _PostSectionState extends State<PostSection> {
                       return PostWidget(
                           post: post,
                           onDelete: () {
-                            print('this one is called');
                             //context.read<GetAllPostsBloc>().deletepost(post.id);
                             _onRefresh();
                           });
@@ -117,7 +116,6 @@ class _PostSectionState extends State<PostSection> {
                       return PollWidget(
                           post: post,
                           onDelete: () {
-                            print('this one is called');
                             //context.read<GetAllPostsBloc>().deletepost(post.id);
                             _onRefresh();
                           });

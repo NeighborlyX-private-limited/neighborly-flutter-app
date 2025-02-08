@@ -333,6 +333,7 @@ class _PollWidgetState extends State<PollWidget> {
     }
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
@@ -422,6 +423,7 @@ class _PollWidgetState extends State<PollWidget> {
   ///report Confirmation Bottom Sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -476,6 +478,7 @@ class _PollWidgetState extends State<PollWidget> {
     ];
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(

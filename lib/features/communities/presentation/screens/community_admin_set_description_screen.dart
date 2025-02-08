@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:neighborly_flutter_app/core/constants/status.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminDescriptionScreen extends StatefulWidget {
   const CommunityAdminDescriptionScreen({
@@ -17,21 +20,19 @@ class CommunityAdminDescriptionScreen extends StatefulWidget {
 class _CommunityAdminDescriptionScreenState
     extends State<CommunityAdminDescriptionScreen> {
   late CommunityDetailsCubit communityCubit;
-
   final newDescriptionEC = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     newDescriptionEC.text = communityCubit.state.community?.description ?? '';
   }
 
   @override
   void dispose() {
-    super.dispose();
     newDescriptionEC.dispose();
+    super.dispose();
   }
 
   @override
@@ -49,7 +50,7 @@ class _CommunityAdminDescriptionScreenState
           },
         ),
         title: Text(
-          'Description',
+          AppLocalizations.of(context)!.description,
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -58,30 +59,55 @@ class _CommunityAdminDescriptionScreenState
         ),
         centerTitle: false,
         actions: [
-          TextButton(
-              onPressed: () {
-                if (newDescriptionEC.text.trim() == '') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Select a description to be saved'),
-                    ),
-                  );
-                } else {
-                  print('SAVE');
-                  communityCubit.updateDescription(
+          BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
+            listener: (context, state) {
+              if (state.status == Status.failure) {
+                showSnackBar(
+                  context: context,
+                  message:
+                      state.failure?.message ?? 'oops something went wrong',
+                );
+              }
+              if (state.status == Status.success) {
+                communityCubit.getCommunityDetail(
+                  communityCubit.state.community?.id ?? '',
+                );
+                Navigator.of(context).pop();
+              }
+            },
+            builder: (context, state) {
+              if (state.status == Status.loading) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: BouncingLogoIndicator(logo: ''),
+                );
+              }
+              return TextButton(
+                onPressed: () {
+                  if (newDescriptionEC.text.trim() == '') {
+                    showSnackBar(
+                      context: context,
+                      message: AppLocalizations.of(context)!
+                          .select_a_description_to_be_saved,
+                    );
+                  } else {
+                    communityCubit.updateDescription(
                       communityCubit.state.community?.id ?? '',
-                      newDescriptionEC.text.trim());
-                  Navigator.of(context).pop();
-                }
-              },
-              child: Text(
-                'Save',
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                      newDescriptionEC.text.trim(),
+                    );
+                  }
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.save,
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ))
+              );
+            },
+          ),
         ],
       ),
       body: Container(
@@ -90,15 +116,14 @@ class _CommunityAdminDescriptionScreenState
         color: Colors.white,
         child: SingleChildScrollView(
           child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              //
-              //
               Container(
                 height: 450,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 margin: EdgeInsets.all(15),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.grey),
@@ -108,20 +133,20 @@ class _CommunityAdminDescriptionScreenState
                   textCapitalization: TextCapitalization.sentences,
                   onChanged: (value) {},
                   controller: newDescriptionEC,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'Describe your community',
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.normal,
-                      )),
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText:
+                        AppLocalizations.of(context)!.describe_your_community,
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   minLines: 1,
                 ),
               ),
-              //
-              //
             ],
           ),
         ),
@@ -129,7 +154,3 @@ class _CommunityAdminDescriptionScreenState
     );
   }
 }
-
-// ########################################################################
-// ########################################################################
-// ########################################################################

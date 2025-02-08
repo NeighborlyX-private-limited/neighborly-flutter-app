@@ -148,8 +148,6 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                   // context.go('/groups/create');
                   ShareIt.text(
                       content: message, androidSheetTitle: 'Look this event');
-
-                  // print('shareResult: ${shareResult}');
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
@@ -177,7 +175,8 @@ class EventSuccessSuccessScreen extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(20, 5, 20, 5),
               child: ElevatedButton(
                 onPressed: () {
-                  context.go('/home/Home');
+                  context.go('/home');
+                  // context.go('/home/Home');
                   //  back Home
                   // Navigator.of(context).pop();
                   // if (Navigator.canPop(context)) {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
-
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminRadiusScreen extends StatefulWidget {
   const CommunityAdminRadiusScreen({
@@ -26,7 +26,6 @@ class _CommunityAdminRadiusScreenState
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     newRadiusEC.text = '${communityCubit.state.community?.radius ?? 0}';
   }
 
@@ -51,7 +50,8 @@ class _CommunityAdminRadiusScreenState
           },
         ),
         title: Text(
-          'Radius',
+          AppLocalizations.of(context)!.radius,
+          // 'Radius',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -64,12 +64,15 @@ class _CommunityAdminRadiusScreenState
               onPressed: () {
                 if (newRadiusEC.text.trim() == '') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Select a radius to be saved'),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!
+                            .select_a_radius_to_be_saved,
+                        //  Select a radius to be saved'
+                      ),
                     ),
                   );
                 } else {
-                  print('SAVE');
                   communityCubit.updateRadius(
                       communityCubit.state.community?.id ?? '',
                       double.parse(newRadiusEC.text.trim()));
@@ -77,7 +80,8 @@ class _CommunityAdminRadiusScreenState
                 }
               },
               child: Text(
-                'Save',
+                AppLocalizations.of(context)!.save,
+                // 'Save',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
@@ -93,11 +97,8 @@ class _CommunityAdminRadiusScreenState
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              //
-              //
               FlutterSlider(
                 values: [double.parse(newRadiusEC.text)],
                 max: kMaxRadius,
@@ -108,30 +109,26 @@ class _CommunityAdminRadiusScreenState
                   });
                 },
               ),
-              //
-              //
               Text(
-                '  ${newRadiusEC.text} miles',
+                AppLocalizations.of(context)!.miles.replaceFirst(
+                      '{distance}', newRadiusEC.text,
+
+                      //  '  ${newRadiusEC.text} miles',
+                    ),
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              //               Text(
-              //   'Current Value',
-              //   style: TextStyle(
-              //     fontSize: 15,
-              //     fontWeight: FontWeight.w500,
-              //     color: Colors.grey
-              //   ),
-              // ),
               const SizedBox(
                 height: 30,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Text(
-                  'You can use this slider to increase and decrease the radius of your community',
+                  AppLocalizations.of(context)!
+                      .you_can_use_this_slider_to_increase_and_decrease_the_radius_of_our_community,
+                  // 'You can use this slider to increase and decrease the radius of your community',
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w400,

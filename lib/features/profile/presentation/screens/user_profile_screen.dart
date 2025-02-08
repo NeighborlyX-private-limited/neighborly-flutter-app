@@ -280,6 +280,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
 
   void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -313,10 +314,15 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SvgPicture.asset('assets/react4.svg'),
+                    SvgPicture.asset(
+                      'assets/react4.svg',
+                      color: AppColors.blackColor,
+                    ),
                     const SizedBox(width: 10),
                     Text(AppLocalizations.of(context)!.share_this_profile,
-                        style: onboardingBodyStyle),
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                        )),
                     // Text('Share this profile', style: onboardingBodyStyle),
                   ],
                 ),

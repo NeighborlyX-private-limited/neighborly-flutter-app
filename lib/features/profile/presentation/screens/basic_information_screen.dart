@@ -181,30 +181,32 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               isEmpty = true;
                             });
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.error)),
-                            );
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(state.error)),
+                              );
+                            }
                           }
                         } else if (state is EditProfileSuccessState) {
                           _usernameController.clear();
                           _bioController.clear();
 
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(AppLocalizations.of(context)!
-                                  .profile_updated_successfully),
-                              // content: Text('Profile updated successfully'),
-                            ),
-                          );
-                          //context.go(location)
-                          print('here 1');
-                          context.go('/profile');
                           BlocProvider.of<GetProfileBloc>(context)
                               .add(GetProfileButtonPressedEvent());
                           BlocProvider.of<GetMyPostsBloc>(context)
                               .add(GetMyPostsButtonPressedEvent());
                           BlocProvider.of<GetMyCommentsBloc>(context)
                               .add(GetMyCommentsButtonPressedEvent());
+                          context.go('/profile');
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(AppLocalizations.of(context)!
+                                    .profile_updated_successfully),
+                                // content: Text('Profile updated successfully'),
+                              ),
+                            );
+                          }
                         }
                       },
                       builder: (context, state) {

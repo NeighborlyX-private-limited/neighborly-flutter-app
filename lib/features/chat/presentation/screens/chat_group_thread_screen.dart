@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -20,18 +20,19 @@ class ChatGroupThreadScreen extends StatefulWidget {
   final ChatRoomModel room;
   final ChatMessageModel message;
 
-  const ChatGroupThreadScreen(
-      {super.key,
-      required this.messageId,
-      required this.room,
-      required this.message});
+  const ChatGroupThreadScreen({
+    super.key,
+    required this.messageId,
+    required this.room,
+    required this.message,
+  });
 
   @override
   State<ChatGroupThreadScreen> createState() => _ChatGroupThreadScreenState();
 }
 
 class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
-  late var chatGroupCubit;
+  late ChatGroupCubitThread chatGroupCubit;
 
   final messageEC = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
@@ -39,17 +40,16 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
   File? fileToUpload;
   final ScrollController _scrollController = ScrollController();
 
+  /// init method
   @override
   void initState() {
     super.initState();
-    print('... THREAD INIT first time ${widget.message}');
+
     chatGroupCubit = BlocProvider.of<ChatGroupCubitThread>(context);
-    chatGroupCubit.init(widget.message.id); // widget.roomId;
-    print('... THREAD INIT');
-    print('... room=${widget.room}');
-    print('... message=${widget.message}');
+    chatGroupCubit.init(widget.message.id);
   }
 
+  /// end scroll
   void _scrollToEnd() {
     if (_scrollController.hasClients) {
       Future.delayed(Duration(milliseconds: 300), () {
@@ -62,10 +62,11 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
     }
   }
 
+  /// dispose method
   @override
   void dispose() {
-    super.dispose();
     messageEC.dispose();
+    super.dispose();
   }
 
   Future<void> pickImage() async {
@@ -78,13 +79,14 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
     if (image != null) {
       setState(() {
         fileToUpload = File(image.path);
-        print('Do something with this file: ${fileToUpload?.path}');
+
         // TODO: send image as message
-        chatGroupCubit.sendMessage(message: '', image: fileToUpload);
+        //chatGroupCubit.sendMessage(message: '', image: fileToUpload);
       });
     }
   }
 
+  /// app bar title area
   Widget appBarTitleArea() {
     return Row(
       children: [
@@ -107,19 +109,20 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: Container(
-              child: Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   Expanded(
                     child: Text(
-                      'Thread',
+                      'Reply thread',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                   const SizedBox(
@@ -136,15 +139,16 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black45,
-                          fontSize: 14),
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black45,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                 ],
               ),
             ],
-          )),
+          ),
         ),
       ],
     );
@@ -188,12 +192,12 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
             InkWell(
               onTap: () {
                 // #send
-                // XXX
 
                 final payload = {
-                  'group_id': widget.room.id, //'${widget.message.id}',
-                  'msg': messageEC.text,
-                  'parent_message_id': widget.message.id
+                  'groupId': widget.room.id,
+                  'message': messageEC.text,
+                  'parentMessageId': widget.message.id,
+                  'file': null,
                 };
 
                 chatGroupCubit.sendMessage(payload, true);
@@ -260,10 +264,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
         title: appBarTitleArea(),
         actions: [
           IconButton(
-            onPressed: () {
-              // TEST
-              chatGroupCubit.testReceivingMessage();
-            },
+            onPressed: () {},
             icon: Icon(
               Icons.more_vert_outlined,
               size: 31,
@@ -274,28 +275,13 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
       ),
       body: BlocConsumer<ChatGroupCubitThread, ChatGroupStateThread>(
         listener: (context, state) {
-          switch (state.status) {
-            case Status.loading:
-              break;
-            case Status.failure:
-              // hideLoader();
-              // showError(state.errorMessage ?? 'Some error');
-              print('ERROR ${state.failure?.message}');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text('Something went wrong! ${state.failure?.message}'),
-                ),
-              );
-              break;
-            case Status.success:
-              // print('Success JUMP to ${state.roomId}');
-              // Navigator.of(context).pop();
-              // context.push('/groups/${state.roomId}');
-              break;
-            case Status.initial:
-              break;
+          if (state.status == Status.failure) {
+            showSnackBar(
+              context: context,
+              message: state.failure?.message ?? 'oops something went wrong',
+            );
           }
+
           if (state.status == Status.success) {
             Future.delayed(Duration(milliseconds: 100), () {
               if (_scrollController.hasClients) {
@@ -305,51 +291,34 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
           }
         },
         builder: (context, state) {
-          //
-          //
-          int lineCount = 1;
-          String lastDate = '';
+          // int lineCount = 1;
+          // String lastDate = '';
           return BlocBuilder<ChatGroupCubitThread, ChatGroupStateThread>(
-            bloc: chatGroupCubit,
             builder: (context, state) {
               if (state.status == Status.loading) {
                 return Container(
-                    color: Colors.white, child: ChatMessagesGroupSheemer());
+                  color: Colors.white,
+                  child: ChatMessagesGroupSheemer(),
+                );
               }
 
               return Container(
-                padding: EdgeInsets.only(top: 1),
-                margin: EdgeInsets.only(top: 1),
                 width: double.infinity,
                 color: Colors.white,
                 child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.end,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    //
-                    // Fixed content
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: ChatMessageGroupWidget(
                         message: widget.message,
                         showReply: false,
                         showIsReaded: false,
-                        onTap: (msgSelected) {
-                          print('....selected=$msgSelected');
-                          print('lineCount=$lineCount');
-                        },
-                        onReply: (msgIdToSendReply, message) {
-                          print('#send reply');
-                          print('msgIdToSendReply=$msgIdToSendReply ');
-                          print('message=$message ');
-                        },
-                        onTapReply: (ChatMessageModel) {
-                          print('#onTag reply');
-                        },
+                        onTap: (msgSelected) {},
+                        onReply: (msgIdToSendReply, message) {},
+                        onTapReply: (chatMessageModel) {},
                         onTapCheer: () {
-                          print(
-                              '#onTap cheer - send to remote ${widget.message})');
                           final payload = {
                             'group_id': widget.room.id,
                             'message_id': widget.message.id,
@@ -358,11 +327,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                           context
                               .read<ChatGroupCubitThread>()
                               .sendMessage(payload);
-
-                          print('after cheer ${widget.message}');
                         },
                         onTapBool: () {
-                          print('#onTap bool - send to remote');
                           final payload = {
                             'group_id': widget.room.id,
                             'message_id': widget.message.id,
@@ -372,30 +338,17 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                               .read<ChatGroupCubitThread>()
                               .sendMessage(payload);
                         },
-                        onReact: (messageId, reactOrAward) {
-                          print(
-                              '#onTap react - send to remote award: $reactOrAward');
-                        },
-                        onReport: (messageId, reason) {
-                          print(
-                              '#onTap report - send to remote reason: $reason');
-                        },
-                        onShare: (message) {
-                          print(
-                              '#onTap share - do something to share: $message.id');
-                        },
-                        onPin: (messageToBePinned) {
-                          print(
-                              '#onTap PIN - send to remote: $messageToBePinned.id');
-                        },
+                        onReact: (messageId, reactOrAward) {},
+                        onReport: (messageId, reason) {},
+                        onShare: (message) {},
+                        onPin: (messageToBePinned) {},
+                        onTapPinned: (messageId) {},
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Divider(color: Colors.grey, height: 2),
                     ),
-                    //
-                    //
                     Expanded(
                       child: Container(
                         color: Colors.white,
@@ -404,12 +357,9 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                         child: ListView.builder(
                           controller: _scrollController,
                           shrinkWrap: true,
-                          //reverse: true, // Inverter a ordem da lista
                           itemCount: state.messages.length,
                           itemBuilder: (context, index) {
                             var msg = state.messages[index];
-
-                            // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
 
                             var dateSummary =
                                 onlyDate(state.messages[index].date);
@@ -417,24 +367,13 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                             var messageWidget = ChatMessageGroupWidget(
                               message: msg,
                               showReply: false,
-                              showIsReaded:
-                                  (lineCount == state.messages.length) &&
-                                      msg.isMine,
-                              onTap: (msgSelected) {
-                                print('....selected=$msgSelected');
-                                print('lineCount=$lineCount');
-                              },
-                              onReply: (msgIdToSendReply, message) {
-                                print('#send reply');
-                                print('msgIdToSendReply=$msgIdToSendReply ');
-                                print('message=$message ');
-                              },
-                              onTapReply: (ChatMessageModel) {
-                                print('#onTag reply');
-                              },
+                              // showIsReaded:
+                              //     (lineCount == state.messages.length) &&
+                              //         msg.isMine,
+                              onTap: (msgSelected) {},
+                              onReply: (msgIdToSendReply, message) {},
+                              onTapReply: (chatMessageModel) {},
                               onTapCheer: () {
-                                print(
-                                    '#onTap cheer - send to remote ${widget.room})');
                                 final payload = {
                                   'group_id': widget.room.id,
                                   'message_id': state.messages[index].id,
@@ -445,7 +384,6 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                                     .sendMessage(payload);
                               },
                               onTapBool: () {
-                                print('#onTap bool - send to remote');
                                 final payload = {
                                   'group_id': widget.room.id,
                                   'message_id': state.messages[index].id,
@@ -455,52 +393,35 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                                     .read<ChatGroupCubitThread>()
                                     .sendMessage(payload);
                               },
-                              onReact: (messageId, reactOrAward) {
-                                print(
-                                    '#onTap react - send to remote award: $reactOrAward');
-                              },
-                              onReport: (messageId, reason) {
-                                print(
-                                    '#onTap report - send to remote reason: $reason');
-                              },
-                              onShare: (message) {
-                                print(
-                                    '#onTap share - do something to share: $message.id');
-                              },
-                              onPin: (messageToBePinned) {
-                                print(
-                                    '#onTap PIN - send to remote: $messageToBePinned.id');
-                              },
+                              onReact: (messageId, reactOrAward) {},
+                              onReport: (messageId, reason) {},
+                              onShare: (message) {},
+                              onPin: (messageToBePinned) {},
+                              onTapPinned: (messageId) {},
                             );
 
-                            if (lastDate != dateSummary) {
-                              lastDate = dateSummary;
-                              return Column(
-                                children: [
-                                  if (lastDate != '')
-                                    Text(
-                                      formatDate(dateSummary),
-                                      style:
-                                          TextStyle(fontSize: 12, height: 2.5),
-                                    ),
-                                  messageWidget,
-                                ],
-                              );
-                            }
+                            // if (lastDate != dateSummary) {
+                            //   lastDate = dateSummary;
+                            //   return Column(
+                            //     children: [
+                            //       if (lastDate != '')
+                            //         Text(
+                            //           formatDate(dateSummary),
+                            //           style:
+                            //               TextStyle(fontSize: 12, height: 2.5),
+                            //         ),
+                            //       messageWidget,
+                            //     ],
+                            //   );
+                            // }
 
                             return messageWidget;
                           },
                         ),
                       ),
                     ),
-                    //
-                    //
                     Divider(height: 1, color: Colors.grey[300]),
-                    //
-                    //
                     messageInputSection(),
-                    //
-                    //
                   ],
                 ),
               );

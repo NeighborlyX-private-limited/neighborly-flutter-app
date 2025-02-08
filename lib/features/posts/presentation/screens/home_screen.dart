@@ -1,6 +1,7 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
@@ -9,6 +10,8 @@ import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart'
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
+import 'package:neighborly_flutter_app/features/homePage/home_page.dart';
+import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_general_cubit.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
@@ -30,8 +33,11 @@ import '../../../notification/data/data_sources/notification_remote_data_source/
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
-  final String tabIndex;
-  const HomeScreen({super.key, required this.tabIndex});
+  const HomeScreen({super.key});
+
+  // final String tabIndex;
+  // const HomeScreen({super.key});
+  // const HomeScreen({super.key, required this.tabIndex});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -47,7 +53,9 @@ class _HomeScreenState extends State<HomeScreen>
   String? selectedDay;
   String? selectedMonth;
   String? selectedYear;
+  String? _deepLink;
   bool isDobBtnActive = false;
+  static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
   // final newVersionPlus = NewVersionPlus();
 
   /// Generate lists for day, month, and year
@@ -64,9 +72,14 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(0.0);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0.0);
+      }
+    });
+    updateFCMtokenNotification();
+    _setDeepLinkListener();
+
     // newVersionPlus.showAlertIfNecessary(context: context);
 
     setIsHome();
@@ -81,20 +94,20 @@ class _HomeScreenState extends State<HomeScreen>
     }
     _fetchPosts();
 
-    if (!isDobSet) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!isDobSet) {
         _openBottomSheet();
-      });
-    }
+      }
+    });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(0.0);
-    }
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   if (_scrollController.hasClients) {
+  //     _scrollController.jumpTo(0.0);
+  //   }
+  // }
 
   ///dispose method
   @override
@@ -150,6 +163,49 @@ class _HomeScreenState extends State<HomeScreen>
       city = 'New Delhi';
     }
     ShardPrefHelper.setHomeCity(city);
+  }
+
+  Future<void> _setDeepLinkListener() async {
+    platform.setMethodCallHandler(
+      (MethodCall call) async {
+        if (call.method == "onDeepLink") {
+          setState(
+            () {
+              _deepLink = call.arguments;
+              List? linksplit = _deepLink?.split('neighborly.in');
+              if (linksplit != null && linksplit.length > 1) {
+                if (linksplit[1].contains('post-detail/')) {
+                  try {
+                    context.push(linksplit[1]);
+                  } catch (e) {}
+                } else {
+                  //context.push('/userProfileScreen/${widget.post.userId}');
+                }
+              } else {}
+            },
+          );
+        }
+      },
+    );
+  }
+
+  Future<void> updateFCMtokenNotification() async {
+    try {
+      var result = await BlocProvider.of<NotificationGeneralCubit>(context)
+          .updateFCMTokenUsecase();
+      result.fold(
+        (failure) {},
+        (currentFCMtoken) {
+          ShardPrefHelper.setFCMtoken(currentFCMtoken);
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('FCM token error: $e')),
+        );
+      }
+    }
   }
 
   /// set current location city name
@@ -262,28 +318,39 @@ class _HomeScreenState extends State<HomeScreen>
         }
       }
     }).catchError((error) {
-      if (mounted && (!error.contains('oops something went wrong'))) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(error.toString()),
+            content: Text('oops something went wrong'),
           ),
         );
       }
+      // if (mounted && (!error.contains('oops something went wrong'))) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text(error.toString()),
+      //     ),
+      //   );
+      // }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(0.0);
-    }
+    // Use post-frame callback to trigger jumpTo after layout
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0.0);
+      }
+    });
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           _scaffoldKey.currentState?.closeEndDrawer();
+          // Navigator.of(context).pop();
         },
         child: Builder(
           builder: (BuildContext context) {
@@ -432,6 +499,7 @@ class _HomeScreenState extends State<HomeScreen>
                   InkWell(
                     onTap: () {
                       showModalBottomSheet(
+                        useRootNavigator: true,
                         showDragHandle: true,
                         backgroundColor: AppColors.whiteColor,
                         context: context,
@@ -502,10 +570,20 @@ class _HomeScreenState extends State<HomeScreen>
                       color: AppColors.greyColor,
                       size: 26,
                     ),
-                    onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+                    // onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+                    onPressed: () {
+                      _scaffoldKey.currentState?.openEndDrawer();
+                    },
                   ),
                 ],
               ),
+              onEndDrawerChanged: (isOpened) {
+                if (!isOpened) {
+                  isBottomNavVisible.value = true;
+                } else {
+                  isBottomNavVisible.value = false;
+                }
+              },
               endDrawer: CustomDrawer(
                 scaffoldKey: _scaffoldKey,
               ),
@@ -642,6 +720,9 @@ class _HomeScreenState extends State<HomeScreen>
   /// bottom sheet
   void _openBottomSheet() {
     showModalBottomSheet(
+      // backgroundColor: Colors.transparent,
+      useRootNavigator: true,
+      backgroundColor: AppColors.whiteColor,
       context: context,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(

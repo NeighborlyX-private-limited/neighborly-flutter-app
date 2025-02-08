@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../entities/community_entity.dart';
 import 'user_simple_model.dart';
 
@@ -7,6 +6,7 @@ class CommunityModel extends CommunityEntity {
   const CommunityModel({
     required super.id,
     required super.name,
+    required super.displayName,
     required super.description,
     required super.locationStr,
     required super.createdAt,
@@ -15,7 +15,9 @@ class CommunityModel extends CommunityEntity {
     required super.membersCount,
     required super.isPublic,
     required super.isJoined,
+    required super.isAdmin,
     required super.isMuted,
+    required super.requestStatus,
     required super.users,
     required super.admins,
     required super.blockList,
@@ -27,6 +29,7 @@ class CommunityModel extends CommunityEntity {
     return {
       'id': id,
       'name': name,
+      'displayName': displayName,
       'description': description,
       'createdAt': createdAt,
       'avatarUrl': avatarUrl,
@@ -35,7 +38,9 @@ class CommunityModel extends CommunityEntity {
       'membersCount': membersCount,
       'isPublic': isPublic,
       'isJoined': isJoined,
+      'isAdmin': isAdmin,
       'isMuted': isMuted,
+      'requestStatus': requestStatus,
       'users': users.map((x) => x.toMap()).toList(),
       'admins': admins.map((x) => x.toMap()).toList(),
       'blockList': blockList.map((x) => x.toMap()).toList(),
@@ -44,19 +49,23 @@ class CommunityModel extends CommunityEntity {
     };
   }
 
+  String toJson() => json.encode(toMap());
   factory CommunityModel.fromMap(Map<String, dynamic> map) {
     return CommunityModel(
-      id: map['_id'] ?? map['id'] ?? "0",
+      id: map['id'] ?? map['_id'] ?? "0",
       name: map['name'] ?? '',
+      displayName: map['displayname'] ?? '',
       description: map['description'] ?? '',
       createdAt: map['createdAt'] ?? '',
-      avatarUrl: map['avatarUrl'] ?? '',
+      avatarUrl: map['image'] ?? map['icon'] ?? '',
       karma: map['karma'] ?? 0,
       radius: map['radius'] ?? 0,
       membersCount: map['membersCount'] ?? 0,
       isPublic: map['isOpen'] ?? map['isPublic'] ?? false,
-      isJoined: map['isJoined'] ?? map['isJoined'] ?? false,
-      isMuted: map['isMuted'] ?? map['isMuted'] ?? false,
+      isJoined: map['isJoined'] ?? true,
+      isAdmin: map['isAdmin'] ?? true,
+      isMuted: map['isMuted'] ?? false,
+      requestStatus: map['requestStatus'] ?? '',
       users: map['members'] != null
           ? List<UserSimpleModel>.from(
               map['members']?.map((x) => UserSimpleModel.fromMap(x)))
@@ -65,15 +74,13 @@ class CommunityModel extends CommunityEntity {
           ? List<UserSimpleModel>.from(
               map['admin']?.map((x) => UserSimpleModel.fromMap(x)))
           : [],
-      blockList: map['blockList'] != null
+      blockList: map['blockedList'] != null
           ? List<UserSimpleModel>.from(
-              map['blockList']?.map((x) => UserSimpleModel.fromMap(x)))
+              map['blockedList']?.map((x) => UserSimpleModel.fromMap(x)))
           : [],
       locationStr: map['locationStr'] ?? '',
     );
   }
-
-  String toJson() => json.encode(toMap());
 
   factory CommunityModel.fromJson(Map<String, dynamic> source) =>
       CommunityModel.fromMap(source);
@@ -81,6 +88,7 @@ class CommunityModel extends CommunityEntity {
   CommunityModel copyWith({
     String? id,
     String? name,
+    String? displayName,
     String? description,
     String? location,
     String? createdAt,
@@ -90,7 +98,9 @@ class CommunityModel extends CommunityEntity {
     num? membersCount,
     bool? isPublic,
     bool? isJoined,
+    bool? isAdmin,
     bool? isMuted,
+    String? requestStatus,
     List<UserSimpleModel>? users,
     List<UserSimpleModel>? admins,
     List<UserSimpleModel>? blockList,
@@ -100,6 +110,7 @@ class CommunityModel extends CommunityEntity {
     return CommunityModel(
       id: id ?? this.id,
       name: name ?? this.name,
+      displayName: displayName ?? this.displayName,
       description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
       avatarUrl: avatarUrl ?? this.avatarUrl,
@@ -108,7 +119,9 @@ class CommunityModel extends CommunityEntity {
       membersCount: membersCount ?? this.membersCount,
       isPublic: isPublic ?? this.isPublic,
       isJoined: isJoined ?? this.isJoined,
+      isAdmin: isAdmin ?? this.isAdmin,
       isMuted: isMuted ?? this.isMuted,
+      requestStatus: requestStatus ?? this.requestStatus,
       users: users ?? this.users,
       admins: admins ?? this.admins,
       blockList: blockList ?? this.blockList,
@@ -119,7 +132,7 @@ class CommunityModel extends CommunityEntity {
 
   @override
   String toString() {
-    return 'CommunityModel(id: $id, name: $name, avatarUrl: $avatarUrl, karma: $karma, radius: $radius, membersCount: $membersCount, isPublic: $isPublic, isJoined: $isJoined, usersC: ${users.length}, adminsC: ${admins.length}, blockListC: ${blockList.length}, locationStr: $locationStr, latLong: $latLong)';
+    return 'CommunityModel(id: $id, name: $name, displayName:$displayName,avatarUrl: $avatarUrl, karma: $karma, radius: $radius, membersCount: $membersCount, isPublic: $isPublic, isAdmin:$isAdmin,isJoined: $isJoined, usersC: ${users.length}, adminsC: ${admins.length}, blockListC: ${blockList.length}, locationStr: $locationStr, latLong: $latLong)';
   }
 
   static List<CommunityModel> fromJsonList(List<dynamic> json) {

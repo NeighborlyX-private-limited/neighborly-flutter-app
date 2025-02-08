@@ -22,12 +22,6 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
     required String filterLocation,
   }) async {
 // scope:  nearBy  fromUser
-    print(
-        '... getEvents scope=$scope  myOrOngoing=$myOrOngoing searchTerm=$searchTerm   ');
-    print(
-        '... getEvents filterDateStart=$filterDateStart filterDateEnd=$filterDateEnd');
-    print(
-        '... getEvents filterCategory=$filterCategory filterLocation=$filterLocation');
 
     // near by:   {{URL}}/group/nearby-groups?isHome=false
     // from user: {{URL}}/group//user-groups
@@ -222,9 +216,7 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<void> createEvent(
       {required EventModel event, File? imageCover}) async {
-    print('...DATASOURCE createEvent ');
-    print('...DATASOURCE createEvent event=$event');
-    print('...DATASOURCE createEvent imageCover=${imageCover?.path}');
+   
 
     await Future.delayed(Duration(seconds: 3));
     // List<String>? cookies = ShardPrefHelper.getCookie();
@@ -253,8 +245,8 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
 
   @override
   Future<void> joinEvent({required EventModel event}) async {
-    print('...DATASOURCE joinEvent ');
-    print('...DATASOURCE joinEvent event=$event');
+    
+    
 
     await Future.delayed(Duration(seconds: 3));
     // List<String>? cookies = ShardPrefHelper.getCookie();
@@ -284,9 +276,9 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<void> updateEvent(
       {required EventModel event, File? imageCover}) async {
-    print('...DATASOURCE createEvent ');
-    print('...DATASOURCE createEvent event=$event');
-    print('...DATASOURCE createEvent imageCover=${imageCover?.path}');
+    
+    
+    
 
     await Future.delayed(Duration(seconds: 3));
     // List<String>? cookies = ShardPrefHelper.getCookie();

@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/failures.dart';
 import '../repositories/community_repositories.dart';
 
@@ -13,6 +12,8 @@ class UpdateRadiusCommunityUsecase {
     required num newRadius,
   }) async {
     return await repository.updateRadius(
-        communityId: communityId, newRadius: newRadius);
+      communityId: communityId,
+      newRadius: newRadius,
+    );
   }
 }

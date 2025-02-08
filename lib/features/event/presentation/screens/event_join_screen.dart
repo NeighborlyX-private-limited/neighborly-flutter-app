@@ -35,7 +35,6 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
 
   @override
   void initState() {
-    print('...INITSTATE - create/edit page');
     super.initState();
 
     eventJoinCubit = BlocProvider.of<EventJoinCubit>(context);
@@ -53,6 +52,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
 
   Future<dynamic> bottomSheetConfirmNotSaved(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         // String? userId = ShardPrefHelper.getUserID();
@@ -117,7 +117,7 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                         child: Text(
                           'Yes',
                           style: TextStyle(
-                              color:Colors.white, fontSize: 18, height: 0.3),
+                              color: Colors.white, fontSize: 18, height: 0.3),
                         ),
                       ),
                     ),
@@ -146,12 +146,8 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
         setState(() => isValidForm = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Ops, you forgot to fill: \n${errors
-                    .map((e) => '\n${e}')
-                    .toList()
-                    .toString()
-                    .replaceAll('[', '')
-                    .replaceAll(']', '')}'),
+            content: Text(
+                'Ops, you forgot to fill: \n${errors.map((e) => '\n${e}').toList().toString().replaceAll('[', '').replaceAll(']', '')}'),
           ),
         );
       }
@@ -194,7 +190,6 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
             case Status.loading:
               break;
             case Status.failure:
-              print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content:
@@ -204,8 +199,6 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
               break;
             case Status.success:
               var message = state.successMessage ?? 'success';
-
-              print('...success? $message');
 
               Navigator.of(context).pop();
               context.push('/events/success/join', extra: state.eventJoin);
@@ -233,8 +226,6 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                   ),
                 );
               }
-
-              print(widget.eventToJoin?.avatarUrl);
 
               return Container(
                 padding: EdgeInsets.all(15),
@@ -303,7 +294,6 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                               label: 'Gender',
                               items: [...kGender],
                               onChanged: (value) {
-                                print('gender: $value');
                                 genderEC.text = value ?? '';
                               },
                               initialValue: kGender[0],
@@ -364,9 +354,8 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
                                 processSave();
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: _isChecked
-                                    ? Colors.blue
-                                    : Colors.grey[100],
+                                backgroundColor:
+                                    _isChecked ? Colors.blue : Colors.grey[100],
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(
                                       50), // Ajuste o raio conforme necessário

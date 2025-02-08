@@ -678,6 +678,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     }
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
@@ -773,6 +774,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   /// report confirmation bottom sheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -826,6 +828,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     ];
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(

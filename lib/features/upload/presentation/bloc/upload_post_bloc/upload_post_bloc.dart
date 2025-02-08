@@ -1,10 +1,7 @@
 import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../domain/usecases/upload_post_usecase.dart';
-
 part 'upload_post_event.dart';
 part 'upload_post_state.dart';
 
@@ -29,15 +26,12 @@ class UploadPostBloc extends Bloc<UploadPostEvent, UploadPostState> {
           location: event.location,
           thumbnail: event.thumbnail,
         );
-        print('...Result in UploadPostBloc $result');
 
         result.fold(
           (error) {
-            print('fold error: ${error.toString()}');
             emit(UploadPostFailureState(error: error.toString()));
           },
           (user) {
-            // print('fold user: ${user.toString()}');
             emit(UploadPostSuccessState());
           },
         );

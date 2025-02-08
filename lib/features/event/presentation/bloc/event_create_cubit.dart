@@ -24,7 +24,7 @@ class EventCreateCubit extends Cubit<EventCreateState> {
   ) : super(const EventCreateState());
 
   void init(EventModel? event) async {
-    print('... BLOC init isUpdate=${(event != null)}');
+    
     emit(state.copyWith(
       isUpdate: event != null,
       eventId: event?.id ?? '',
@@ -35,18 +35,18 @@ class EventCreateCubit extends Cubit<EventCreateState> {
   Future onUpdateFile(File fileToUpload) async {
     var result = await uploadFileUsecase(file: fileToUpload);
 
-    print('...BLOC onUpdateFile start');
+   
 
     result.fold(
       (failure) {
-        print('...BLOC onUpdateFile error: ${failure.message}');
+     
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (imageUrl) {
-        print('... BLOC imageUrl=$imageUrl');
+        
         emit(state.copyWith(imageToUpload: fileToUpload, imageUrl: imageUrl));
       },
     );
@@ -76,8 +76,8 @@ class EventCreateCubit extends Cubit<EventCreateState> {
         category: category,
         avatarUrl: state.imageUrl);
 
-    print('...adjustedEvent:');
-    print(adjustedEvent);
+    
+    
 
     emit(state.copyWith(status: Status.initial));
 
@@ -113,8 +113,8 @@ class EventCreateCubit extends Cubit<EventCreateState> {
     if (hourEnd != '') emit(state.copyWith(hourEnd: hourEnd));
     if (category != '') emit(state.copyWith(category: category));
 
-    print('...BLOC dateStart=${state.dateStart} hourStart=${state.hourStart}');
-    print('...BLOC dateEnd=${state.dateEnd} hourEnd=${state.hourEnd}');
-    print('...BLOC category=${state.category} ');
+    
+    
+    
   }
 }

@@ -98,7 +98,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (!isSkippedTutorial && !isViewedTutorial) {
                         context.go('/tutorialScreen');
                       } else {
-                        context.go('/home/Home');
+                        // context.go('/home/Home');
+                        context.go('/home');
                       }
                     }
                   },
@@ -187,7 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     ///success state
                     else if (state is RegisterSuccessState) {
-                      context.go('/otp/${_controller.text}/phone-register');
+                      context.push('/otp/${_controller.text}/phone-register');
                     }
                   },
                   builder: (context, state) {

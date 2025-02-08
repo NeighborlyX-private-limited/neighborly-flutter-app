@@ -19,13 +19,10 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
         verificationFor: event.verificationFor,
         phone: event.phone,
       );
-      print('...Result in OtpBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(OtpLoadFailure(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(OtpLoadSuccess(message: response));
       });
     });

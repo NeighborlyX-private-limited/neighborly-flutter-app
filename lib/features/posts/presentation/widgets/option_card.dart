@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-
 import '../../../../core/entities/option_entity.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/vote_poll_bloc/vote_poll_bloc.dart';

@@ -8,6 +8,7 @@ class ChatRoomEntity extends Equatable {
   final String lastMessageDate;
   final bool isMuted;
   final bool isGroup;
+  final bool isJoined;
   final int unreadCount;
 
   const ChatRoomEntity({
@@ -18,6 +19,7 @@ class ChatRoomEntity extends Equatable {
     required this.lastMessageDate,
     required this.isMuted,
     required this.isGroup,
+    required this.isJoined,
     required this.unreadCount,
   });
 

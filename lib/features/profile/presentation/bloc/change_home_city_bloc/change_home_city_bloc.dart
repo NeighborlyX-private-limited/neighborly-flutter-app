@@ -18,10 +18,9 @@ class CityBloc extends Bloc<CityEvent, CityState> {
 
     try {
       await cityRepository.updateCity(event.city);
-      print('Result in CityBloc...');
+
       emit(CityUpdatedState(event.city));
     } catch (e) {
-      print('error in CityBloc:${e.toString()}');
       emit(CityErrorState(e.toString()));
     }
   }

@@ -18,23 +18,20 @@ class GetAllPostsBloc extends Bloc<GetAllPostsEvent, GetAllPostsState> {
       final result = await _getAllPostsUsecase.call(
         isHome: event.isHome,
       );
-      print('...Result in GetAllPostsBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetAllPostsFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(GetAllPostsSuccessState(post: response));
       });
     });
     // on<DeleteOnePostsButtonPressedEvent>((DeleteOnePostsButtonPressedEvent event,
     //     Emitter<GetAllPostsState> emit) async {
     //    List<PostEntity> oldPost = List<PostEntity>.from(state.post);
-    //    print('old post ${oldPost.length}');
+
     //    oldPost.removeWhere((item) => item.id == event.postId);
     //   //List<PostEntity> updatedpost = oldPost.forEach((e)=> e.id != event.postId);
-    //   print('new post ${oldPost.length}');
+
     //   emit(GetAllPostsSuccessState(post: oldPost));
     // });
   }

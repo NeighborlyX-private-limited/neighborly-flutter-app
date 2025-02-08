@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:neighborly_flutter_app/core/constants/status.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/communities_main_cubit.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
+import '../bloc/bloc/update_mute_group_bloc.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class CommunityAdminSetScreen extends StatelessWidget {
+class CommunityAdminSetScreen extends StatefulWidget {
   final CommunityModel community;
 
   const CommunityAdminSetScreen({
@@ -13,9 +22,136 @@ class CommunityAdminSetScreen extends StatelessWidget {
   });
 
   @override
+  State<CommunityAdminSetScreen> createState() =>
+      _CommunityAdminSetScreenState();
+}
+
+class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
+  late CommunityDetailsCubit communityDetailCubit;
+  late CommunityMainCubit communityMainCubit;
+  late String communitytId;
+  late CommunityModel community;
+
+  ///init state method
+  @override
+  void initState() {
+    super.initState();
+    communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
+    communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
+    community = communityDetailCubit.state.community ?? widget.community;
+    communitytId = community.id;
+  }
+
+  /// delete group confirmation bottom sheet
+  void _showConfirmGroupDeletionSheet(BuildContext context) {
+    showModalBottomSheet(
+      useRootNavigator: true,
+      showDragHandle: true,
+      barrierColor: AppColors.transparentColor,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.delete_Group,
+                // 'Delete Group',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_delete_your_account_this_action_is_irreversible,
+                // 'Are you sure you want to delete this group? This action cannot be undone.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: Colors.grey[300],
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.cancel,
+                      // 'Cancel',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+                  BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
+                    listener: (context, state) {
+                      if (state.status == Status.failure) {
+                        showSnackBar(
+                          context: context,
+                          message: state.failure?.message ??
+                              'oops something went wrong',
+                        );
+                      }
+                      if (state.status == Status.success) {
+                        communityMainCubit.getAllCommunities();
+                        BlocProvider.of<GetUserGroupsBloc>(context)
+                            .add(GetUserGroupsButtonPressedEvent());
+
+                        showSnackBar(
+                          context: context,
+                          message: AppLocalizations.of(context)!.group_deleted,
+                        );
+
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state.status == Status.loading) {
+                        return BouncingLogoIndicator(logo: 'logo');
+                      }
+
+                      return ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          communityDetailCubit.deleteCommunity(communitytId);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 0,
+                          backgroundColor: AppColors.primaryColor,
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.delete,
+                          // 'Delete',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
@@ -26,7 +162,8 @@ class CommunityAdminSetScreen extends StatelessWidget {
           },
         ),
         title: Text(
-          'Settings',
+          AppLocalizations.of(context)!.group_settings,
+          // 'Group settings',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -42,8 +179,10 @@ class CommunityAdminSetScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              ///general
               Text(
-                'General',
+                AppLocalizations.of(context)!.general,
+                //  'General',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Colors.black,
@@ -51,88 +190,156 @@ class CommunityAdminSetScreen extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              //
-              //
+
               const SizedBox(height: 5),
+
+              ///member list
               MenuIconItem(
-                title: 'Member list',
+                title: AppLocalizations.of(context)!.member_list,
+                // 'Member list',
                 svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/members');
+                  context.push('/group-members');
                 },
               ),
-              //
-              //
+
               const SizedBox(height: 5),
+
+              /// Manage Join Request
               MenuIconItem(
-                title: 'Community Icon',
+                title: "Manage Join Request",
+                svgPath: 'assets/private-lock-icon.svg',
+                iconSize: 25,
+                onTap: () {
+                  context.push('/manage-group-join-request/${community.id}');
+                },
+              ),
+
+              const SizedBox(height: 5),
+
+              ///community icon
+              MenuIconItem(
+                title: AppLocalizations.of(context)!.community_Icon,
                 svgPath: 'assets/menu_icon.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/icon');
+                  context.push('/group-icon');
                 },
               ),
-              //
-              //
               const SizedBox(height: 5),
+
+              /// community description
               MenuIconItem(
-                title: 'Description',
+                title: AppLocalizations.of(context)!.description,
                 svgPath: 'assets/menu_description.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/description');
+                  context.push('/group-description');
                 },
               ),
-              //
-              //
               const SizedBox(height: 5),
+
+              ///community name
               MenuIconItem(
-                title: 'Location',
-                svgPath: 'assets/menu_location.svg',
+                title: AppLocalizations.of(context)!.community_name,
+                svgPath: 'assets/menu_members.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/location');
+                  context.push('/group-displayname');
                 },
               ),
-              //
-              //
-              const SizedBox(height: 5),
+
+              /// community type
               MenuIconItem(
-                title: 'Radius',
-                svgPath: 'assets/menu_location_.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/groups/admin/radius');
-                },
-              ),
-              //
-              //
-              const SizedBox(height: 5),
-              MenuIconItem(
-                title: 'Community Type',
+                title: AppLocalizations.of(context)!.community_Type,
                 svgPath: 'assets/menu_type.svg',
                 iconSize: 25,
                 onTap: () {
-                  context.push('/groups/admin/type');
+                  context.push('/group-type');
                 },
               ),
-              //
-              //
+
+              /// mute/unmute
+              BlocConsumer<UpdateMuteGroupBloc, UpdateMuteGroupState>(
+                listener: (context, state) {
+                  /// failure state
+                  if (state is UpdateMuteGroupFailureState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.error),
+                      ),
+                    );
+                  }
+
+                  /// success state
+                  if (state is UpdateMuteGroupSuccessState) {
+                    community.copyWith(isMuted: !(community.isMuted));
+                    communityDetailCubit.getCommunityDetail(community.id);
+                    String msg = community.isMuted
+                        ? AppLocalizations.of(context)!.group_unmuted
+                        : AppLocalizations.of(context)!.group_muted;
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(msg),
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  ///loading state
+                  if (state is UpdateMuteGroupLoadingState) {
+                    return CircularProgressIndicator();
+                  }
+                  // if (state is UpdateMuteGroupSuccessState) {
+                  //   community.copyWith(isMuted: !(community.isMuted));
+                  //   community = communityDetailCubit.state.community!;
+                  // }
+                  return MenuIconItem(
+                    title: community.isMuted
+                        ? AppLocalizations.of(context)!.unmute
+                        : AppLocalizations.of(context)!.mute,
+                    svgPath: community.isMuted
+                        ? 'assets/menu_unmute.svg'
+                        : 'assets/menu_mute.svg',
+                    iconSize: 25,
+                    onTap: () {
+                      BlocProvider.of<UpdateMuteGroupBloc>(context)
+                          .add(UpdateMuteGroupButtonPressedEvent(
+                        communityId: community.id,
+                        isMute: !community.isMuted,
+                      ));
+
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
               const SizedBox(height: 5),
+
+              ///block user list
               MenuIconItem(
-                title: 'Blocked users',
+                title: AppLocalizations.of(context)!.blocked_User,
+                //'Blocked users',
                 svgPath: 'assets/menu_block.svg',
                 iconSize: 25,
                 onTap: () {
-                  print('Tapped');
-                  context.push('/groups/admin/blocked');
+                  context.push('/group-blocked');
                 },
               ),
-              //
-              //
-              const SizedBox(
-                height: 300,
+
+              const SizedBox(height: 5),
+
+              ///delete group
+              MenuIconItem(
+                title: AppLocalizations.of(context)!.delete_community,
+                //'Delete community',
+                svgPath: 'assets/menu_remove.svg',
+                iconSize: 25,
+                onTap: () {
+                  _showConfirmGroupDeletionSheet(context);
+                },
               ),
             ],
           ),
@@ -142,10 +349,7 @@ class CommunityAdminSetScreen extends StatelessWidget {
   }
 }
 
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
+/// menu button
 class MenuIconItem extends StatelessWidget {
   final String title;
   final IconData? icon;

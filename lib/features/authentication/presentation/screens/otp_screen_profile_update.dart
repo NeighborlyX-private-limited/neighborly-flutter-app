@@ -192,7 +192,8 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
                         if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/Home');
+                          // context.go('/home/Home');
+                          context.go('/home');
                         }
 
                         widget.onVerifiedSuccessfully();

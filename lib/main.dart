@@ -1,16 +1,23 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/chat/presentation/bloc/featch_pinned_messages_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_join_group_request_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/handle_join_request_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_mute_group_bloc.dart';
 import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
-// import 'package:uni_links/uni_links.dart';
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
 import 'dependency_injection.dart' as di;
@@ -25,6 +32,7 @@ import 'features/chat/presentation/bloc/chat_group_cubit.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit_thread.dart';
 import 'features/chat/presentation/bloc/chat_main_cubit.dart';
 import 'features/chat/presentation/bloc/chat_private_cubit.dart';
+import 'features/chat/presentation/bloc/pin_message_bloc.dart';
 import 'features/communities/presentation/bloc/communities_create_cubit.dart';
 import 'features/communities/presentation/bloc/communities_main_cubit.dart';
 import 'features/communities/presentation/bloc/communities_search_cubit.dart';
@@ -62,6 +70,7 @@ import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+// import 'package:uni_links/uni_links.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -92,20 +101,15 @@ class MyAppState extends State<MyApp> {
   }
 
   Future<void> _setDeepLinkListener() async {
-    print("deep link received by vinay");
     try {
-      print("deep link received by vinay:");
       platform.setMethodCallHandler((MethodCall call) async {
-        print("deep link received by vinay :${call.method}");
         if (call.method == "onDeepLink") {
-          print("deep link received by vinay");
           setState(() {
             _deepLink = call.arguments;
-            print('deep link aaya $_deepLink');
+
             List? linksplit = _deepLink?.split('neighborly.in/');
             if (linksplit != null && linksplit.length > 1) {
               if (linksplit[1].contains('posts/')) {
-                print('this is post');
                 try {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => PostDetailScreen(
@@ -116,35 +120,26 @@ class MyAppState extends State<MyApp> {
                     ),
                   ));
                 } catch (e) {
-                  print("error aaya kch: $e");
                   //handle default page if error
                 }
-              } else {
-                print(
-                    'here you have to handle other navigation for url based on if condition.');
-              }
-            } else {
-              print("Empty means open default page.");
-            }
+              } else {}
+            } else {}
           });
         }
       });
-    } catch (e) {
-      print('error in deep: $e');
-    }
+    } catch (e) {}
   }
 
   // Future<void> _init() async {
-  //   print("init...");
+
   //   await _initUniLinks();
   // }
 
   // Future<void> _initUniLinks() async {
-  //   print("inside _initUniLinks...");
+
   //   try {
   //     _sub = linkStream.listen((String? link) {
-  //       print('is link fetched');
-  //       print('link $link');
+
   //       if (link != null) {
   //         setState(() {
   //           _linkMessage = link;
@@ -153,17 +148,17 @@ class MyAppState extends State<MyApp> {
   //         });
   //       }
   //     }, onError: (err) {
-  //       print('Error in deep link: $err');
+
   //     });
   //   } catch (e) {
-  //     print('error in main: $e');
+
   //   }
   // }
 
   // void _navigateToDeepLink(String link) {
-  //   print('is link fetched ....');
+
   //   try {
-  //     print('is link fetched..');
+
   //     // Parse the link and navigate to the corresponding screen
   //     // Example: If the link is "myapp://profile/123", navigate to profile screen
   //     final uri = Uri.parse(link);
@@ -173,7 +168,7 @@ class MyAppState extends State<MyApp> {
 
   //       switch (path) {
   //         case 'profile':
-  //           print('is link fetched profile');
+
   //           // Navigate to Profile screen
   //           Navigator.of(context).pushNamed('/profile', arguments: id);
   //           break;
@@ -181,7 +176,7 @@ class MyAppState extends State<MyApp> {
   //       }
   //     }
   //   } catch (e) {
-  //     print("error in navigate $e");
+
   //   }
   // }
 
@@ -194,9 +189,6 @@ class MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // if (_deepLink != null) {
-    //   print("deeplink null nahi hai...");
-    // }
     return MultiBlocProvider(
         providers: [
           BlocProvider<PaymentBloc>(
@@ -205,6 +197,8 @@ class MyAppState extends State<MyApp> {
           BlocProvider<AppLocalizationBloc>(
             create: (context) => AppLocalizationBloc()..add(GetLocale()),
           ),
+
+          ///auth bloc
           BlocProvider<RegisterBloc>(
             create: (context) => di.sl<RegisterBloc>(),
           ),
@@ -217,15 +211,59 @@ class MyAppState extends State<MyApp> {
           BlocProvider<ForgotPasswordBloc>(
             create: (context) => di.sl<ForgotPasswordBloc>(),
           ),
-          BlocProvider<OtpBloc>(
-            create: (context) => di.sl<OtpBloc>(),
-          ),
           BlocProvider<GoogleAuthenticationBloc>(
             create: (context) => di.sl<GoogleAuthenticationBloc>(),
           ),
           BlocProvider<ChangePasswordBloc>(
             create: (context) => di.sl<ChangePasswordBloc>(),
           ),
+          BlocProvider<OtpBloc>(
+            create: (context) => di.sl<OtpBloc>(),
+          ),
+          BlocProvider<LogoutBloc>(
+            create: (context) => di.sl<LogoutBloc>(),
+          ),
+
+          ///community/group bloc
+          BlocProvider<CommunityCreateCubit>(
+            create: (context) => di.sl<CommunityCreateCubit>(),
+          ),
+          BlocProvider<CommunityMainCubit>(
+            create: (context) => di.sl<CommunityMainCubit>(),
+          ),
+          BlocProvider<CommunityDetailsCubit>(
+            create: (context) => di.sl<CommunityDetailsCubit>(),
+          ),
+          BlocProvider<GetJoinGroupRequestBloc>(
+            create: (context) => di.sl<GetJoinGroupRequestBloc>(),
+          ),
+          BlocProvider<HandleJoinRequestBloc>(
+            create: (context) => di.sl<HandleJoinRequestBloc>(),
+          ),
+          BlocProvider<GetUserGroupsBloc>(
+            create: (context) => di.sl<GetUserGroupsBloc>(),
+          ),
+          BlocProvider<JoinGroupBloc>(
+            create: (context) => di.sl<JoinGroupBloc>(),
+          ),
+          BlocProvider<AddRemoveUserInGroupBloc>(
+            create: (context) => di.sl<AddRemoveUserInGroupBloc>(),
+          ),
+          BlocProvider<MakeRemoveAdminBloc>(
+            create: (context) => di.sl<MakeRemoveAdminBloc>(),
+          ),
+
+          BlocProvider<CommunitySearchCubit>(
+            create: (context) => di.sl<CommunitySearchCubit>(),
+          ),
+          BlocProvider<UpdateBlockUserBloc>(
+            create: (context) => di.sl<UpdateBlockUserBloc>(),
+          ),
+          BlocProvider<UpdateMuteGroupBloc>(
+            create: (context) => di.sl<UpdateMuteGroupBloc>(),
+          ),
+
+          ///post bloc
           BlocProvider<GetAllPostsBloc>(
             create: (context) => di.sl<GetAllPostsBloc>(),
           ),
@@ -265,15 +303,16 @@ class MyAppState extends State<MyApp> {
           BlocProvider<GiveAwardBloc>(
             create: (context) => di.sl<GiveAwardBloc>(),
           ),
+
+          ///profile bloc
           BlocProvider<GetGenderAndDOBBloc>(
             create: (context) => di.sl<GetGenderAndDOBBloc>(),
           ),
           BlocProvider<GetProfileBloc>(
             create: (context) => di.sl<GetProfileBloc>(),
           ),
-          BlocProvider<LogoutBloc>(
-            create: (context) => di.sl<LogoutBloc>(),
-          ),
+
+          ///post bloc
           BlocProvider<GetMyPostsBloc>(
             create: (context) => di.sl<GetMyPostsBloc>(),
           ),
@@ -298,20 +337,16 @@ class MyAppState extends State<MyApp> {
           BlocProvider<GetMyAwardsBloc>(
             create: (context) => di.sl<GetMyAwardsBloc>(),
           ),
-          BlocProvider<CommunityMainCubit>(
-            create: (context) => di.sl<CommunityMainCubit>(),
-          ),
-          BlocProvider<CommunityCreateCubit>(
-            create: (context) => di.sl<CommunityCreateCubit>(),
-          ),
-          BlocProvider<CommunitySearchCubit>(
-            create: (context) => di.sl<CommunitySearchCubit>(),
-          ),
-          BlocProvider<CommunityDetailsCubit>(
-            create: (context) => di.sl<CommunityDetailsCubit>(),
-          ),
+
+          ///chat bloc
           BlocProvider<ChatMainCubit>(
             create: (context) => di.sl<ChatMainCubit>(),
+          ),
+          BlocProvider<FeatchPinnedMessagesBloc>(
+            create: (context) => di.sl<FeatchPinnedMessagesBloc>(),
+          ),
+          BlocProvider<PinMessageBloc>(
+            create: (context) => di.sl<PinMessageBloc>(),
           ),
           BlocProvider<ChatPrivateCubit>(
             create: (context) => di.sl<ChatPrivateCubit>(),
@@ -322,6 +357,8 @@ class MyAppState extends State<MyApp> {
           BlocProvider<ChatGroupCubitThread>(
             create: (context) => di.sl<ChatGroupCubitThread>(),
           ),
+
+          ///event bloc
           BlocProvider<EventMainCubit>(
             create: (context) => di.sl<EventMainCubit>(),
           ),
@@ -337,12 +374,16 @@ class MyAppState extends State<MyApp> {
           BlocProvider<EventJoinCubit>(
             create: (context) => di.sl<EventJoinCubit>(),
           ),
+
+          ///notification bloc
           BlocProvider<NotificationGeneralCubit>(
             create: (context) => di.sl<NotificationGeneralCubit>(),
           ),
           BlocProvider<NotificationListCubit>(
             create: (context) => di.sl<NotificationListCubit>(),
           ),
+
+          ///others bloc
           BlocProvider<CityBloc>(
             create: (context) => CityBloc(sl<CityRepository>()),
           ),

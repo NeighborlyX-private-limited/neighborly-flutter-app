@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import '../../../../../core/models/post_model.dart';
 import '../../models/auth_response_model.dart';
 import '../../models/post_with_comments_model.dart';
@@ -44,6 +43,5 @@ abstract class ProfileRemoteDataSource {
     File? image,
     String? phoneNumber,
     bool? toggleFindMe,
-    // required List<double> homeCoordinates,
   });
 }

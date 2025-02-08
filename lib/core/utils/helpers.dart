@@ -1,6 +1,4 @@
-import 'package:geocoding/geocoding.dart';
 import 'package:intl/intl.dart';
-
 import '../entities/option_entity.dart';
 
 /// format Time Difference
@@ -25,18 +23,15 @@ String formatTimeDifference(String isoTimestamp) {
   }
 }
 
-///convert Date String
+/// convert Date String
 String convertDateString(String dateString) {
   DateTime dateTime = DateTime.parse(dateString);
-
   DateFormat formatter = DateFormat('MMM dd, HH:mm a');
-
   String formattedDate = formatter.format(dateTime.toLocal());
-
   return formattedDate;
 }
 
-///time Ago
+/// time Ago
 String timeAgo(String dateString) {
   DateTime dateTime = DateTime.parse(dateString).toLocal();
   DateTime now = DateTime.now();
@@ -76,7 +71,7 @@ bool isValidPhoneNumber(String phoneNumber) {
   return phoneRegex.hasMatch(phoneNumber);
 }
 
-///isValidEmail
+/// is Valid Email
 bool isValidEmail(String email) {
   String emailPattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$';
   RegExp regExp = RegExp(emailPattern);
@@ -84,38 +79,44 @@ bool isValidEmail(String email) {
 }
 
 ////calculatePercentage
-double calculatePercentage(double value, double total) {
-  if (total == 0) {
-    return 0;
-  }
-  double percentage = (value / total) * 100;
-  return double.parse(percentage.toStringAsFixed(1));
-}
+// double calculatePercentage(double value, double total) {
+//   if (total == 0) {
+//     return 0;
+//   }
+//   double percentage = (value / total) * 100;
+//   return double.parse(percentage.toStringAsFixed(1));
+// }
 
 ///getAddressFromLatLng
-Future<String> getAddressFromLatLng(List<double> position) async {
-  try {
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(position[0], position[1]);
-    Placemark place = placemarks[0];
+// Future<String> getAddressFromLatLng(List<double> position) async {
+//   try {
+//     List<Placemark> placemarks =
+//         await placemarkFromCoordinates(position[0], position[1]);
+//     Placemark place = placemarks[0];
 
-    if (place.subLocality != null && place.subLocality!.isNotEmpty) {
-      return place.subLocality!;
-    } else {
-      return '';
-    }
-  } catch (e) {
-    return 'Error occurred: $e';
-  }
-}
+//     if (place.subLocality != null && place.subLocality!.isNotEmpty) {
+//       return place.subLocality!;
+//     } else {
+//       return '';
+//     }
+//   } catch (e) {
+//     return 'Error occurred: $e';
+//   }
+// }
 
-///calculateTotalVotes
+/// calculate Total Votes
 double calculateTotalVotes(List<OptionEntity> options) {
   double totalVotes = 0;
-
   for (var option in options) {
     totalVotes += double.parse(option.votes.toString());
   }
-
   return totalVotes;
 }
+
+// Color parseColor(String hexColor) {
+//   // Remove '#' if present
+//   hexColor = hexColor.replaceAll('#', '');
+
+//   // Add '0xFF' for full opacity
+//   return Color(int.parse('0xFF$hexColor'));
+// }

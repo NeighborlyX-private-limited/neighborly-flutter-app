@@ -46,7 +46,9 @@ class RadiusScreenState extends State<RadiusScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         title: Text(AppLocalizations.of(context)!.set_radius),
         // title: const Text('Set Radius'),
         actions: [

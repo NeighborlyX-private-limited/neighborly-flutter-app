@@ -484,6 +484,7 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
   ///showBottomSheet
   Future<num?> showBottomSheet() {
     return showModalBottomSheet<num>(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return BlocListener<GiveAwardBloc, GiveAwardState>(

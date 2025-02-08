@@ -168,6 +168,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 const SizedBox(height: 45),
                 BlocConsumer<RegisterBloc, RegisterState>(
                   listener: (BuildContext context, RegisterState state) {
+                    if (!mounted) return;
+
                     ///failure state
                     if (state is RegisterFailureState) {
                       if (state.error.contains('email') ||
@@ -190,7 +192,8 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
 
                     ///success state
                     else if (state is RegisterSuccessState) {
-                      context.go('/otp/${_emailController.text}/email-verify');
+                      context
+                          .push('/otp/${_emailController.text}/email-verify');
                     }
                   },
                   builder: (context, state) {

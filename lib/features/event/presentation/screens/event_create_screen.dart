@@ -59,7 +59,6 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
 
   @override
   void initState() {
-    print('...INITSTATE - create/edit page');
     super.initState();
 
     eventCreateCubit = BlocProvider.of<EventCreateCubit>(context);
@@ -67,13 +66,11 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
     currentStep = 1;
 
     if (widget.eventToUpdate != null) {
-      print('category? ${widget.eventToUpdate?.category}');
       updateOnEdit();
     }
   }
 
   void updateOnEdit() {
-    print('category? ${widget.eventToUpdate?.category}');
     titleEC.text = widget.eventToUpdate?.title ?? '';
     descriptionEC.text = widget.eventToUpdate?.description ?? '';
     categoryEC.text = widget.eventToUpdate?.category ?? '';
@@ -120,6 +117,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
 
   Future<dynamic> bottomSheetConfirmNotSaved(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         // String? userId = ShardPrefHelper.getUserID();
@@ -284,8 +282,6 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
             color: Colors.black,
           ),
           onTap: () {
-            // print('currentStep=${currentStep}');
-
             if (currentStep == 1) {
               bottomSheetConfirmNotSaved(context);
               return;
@@ -336,7 +332,6 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
             case Status.loading:
               break;
             case Status.failure:
-              print('ERROR ${state.failure?.message}');
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content:
@@ -346,8 +341,6 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
               break;
             case Status.success:
               var message = state.successMessage ?? 'success';
-
-              print('...success? $message');
 
               //  XXX   go to success page
               if (state.isUpdate == false) {
@@ -387,8 +380,6 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                 );
               }
 
-              print(widget.eventToUpdate?.avatarUrl);
-
               return Container(
                 padding: EdgeInsets.only(top: 15),
                 width: double.infinity,
@@ -408,8 +399,6 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                           currentUrl: widget.eventToUpdate?.avatarUrl ?? '',
                           currentFile: fileToUpload,
                           onSelectImage: (newFile) {
-                            print('newFile=${newFile.path}');
-
                             if (newFile != null) {
                               setState(() {
                                 fileToUpload = newFile;
@@ -431,9 +420,6 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
                           category: categoryEC,
                           onChange: (dateStart, hourStart, dateEnd, hourEnd,
                               category) {
-                            print('dateStart=$dateStart hourStart=$hourStart');
-                            print('dateStart=$dateEnd hourStart=$hourEnd');
-
                             // updateDates(String dateStart, String hourStart, String dateEnd, String hourEnd)
                             eventCreateCubit.updateDates(dateStart, hourStart,
                                 dateEnd, hourEnd, category);
@@ -755,7 +741,6 @@ class _Step2areaState extends State<Step2area> {
                         DateUtilsHelper.simplifyISOtimeString(
                             response['startDateRaw'].toIso8601String());
 
-                    print('...onPressOpenDatesSelection response=$response');
                     widget.onChange(response['startDateRaw'].toIso8601String(),
                         '', '', '', '');
                   },
@@ -770,7 +755,6 @@ class _Step2areaState extends State<Step2area> {
                   // label: 'Choose your location',
                   items: [...kHoursOfDay],
                   onChanged: (value) {
-                    print('start hour: $value');
                     widget.hourStart.text = value ?? '';
                     widget.onChange('', value ?? '', '', '', '');
                   },
@@ -827,7 +811,6 @@ class _Step2areaState extends State<Step2area> {
                             'startDateRaw']
                         .toIso8601String()); // really start on this point, since dialog return a range
 
-                    print('...onPressOpenDatesSelection response=$response');
                     widget.onChange('', '',
                         response['startDateRaw'].toIso8601String(), '', '');
                   },
@@ -840,7 +823,6 @@ class _Step2areaState extends State<Step2area> {
                   // label: 'Choose your location',
                   items: [...kHoursOfDay],
                   onChanged: (value) {
-                    print('end hour: $value');
                     widget.hourEnd.text = value ?? '';
                     widget.onChange('', '', '', value ?? '', '');
                   },
@@ -860,7 +842,6 @@ class _Step2areaState extends State<Step2area> {
             label: 'Category',
             items: [...kEventCategories],
             onChanged: (value) {
-              print('category: $value');
               widget.category.text = value ?? '';
               widget.onChange('', '', '', '', value ?? '');
             },

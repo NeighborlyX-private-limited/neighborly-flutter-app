@@ -39,7 +39,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
     /// drawer
     return Drawer(
-      width: MediaQuery.of(context).size.width * 0.60,
+      width: MediaQuery.of(context).size.width * 0.75,
+      shape: BeveledRectangleBorder(borderRadius: BorderRadius.zero),
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
@@ -133,19 +134,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
             ),
           ),
 
-          /// search
-          // ListTile(
-          //   leading: Icon(Icons.search),
-          //   title: Text(AppLocalizations.of(context)!.search),
-          //   onTap: () {
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //       SnackBar(
-          //         content: Text("Coming Soon"),
-          //       ),
-          //     );
-          //   },
-          // ),
-
           /// payment
           ListTile(
             leading: Icon(Icons.payment),
@@ -153,6 +141,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
             onTap: () {
               widget.scaffoldKey.currentState?.closeEndDrawer();
               showModalBottomSheet(
+                useRootNavigator: true,
                 showDragHandle: true,
                 backgroundColor: AppColors.whiteColor,
                 context: context,
@@ -227,6 +216,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   /// logout bottom sheet
   Future<void> logoutBottomSheet(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(

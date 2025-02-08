@@ -25,12 +25,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         event.password,
         event.phone,
       );
-      print('...Result in RegisterBloc $result');
+
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(RegisterFailureState(error: error.toString()));
       }, (user) {
-        print('fold user: ${user.toString()}');
         emit(RegisterSuccessState());
       });
     });
@@ -41,12 +39,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       emit(RegisterLoadingState());
 
       final result = await _googleLogin.call();
-      print('...Result in GoogleSignUpEvent $result');
+
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(RegisterFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(OAuthSuccessState(message: 'true'));
       });
     });

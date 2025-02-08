@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/error/failures.dart';
 import '../repositories/community_repositories.dart';
 
@@ -8,13 +7,15 @@ class UnblockUserCommunityUsecase {
 
   UnblockUserCommunityUsecase(this.repository);
 
-  Future<Either<Failure, void>> call({
+  Future<Either<Failure, String>> call({
     required String communityId,
     required String userId,
+    required bool isBlock,
   }) async {
-    return await repository.unblockUser(
+    return await repository.updateBlock(
       communityId: communityId,
       userId: userId,
+      isBlock: isBlock,
     );
   }
 }

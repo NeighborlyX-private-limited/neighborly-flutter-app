@@ -192,7 +192,8 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          context.go('/home/Home');
+                          // context.go('/home/Home');
+                          context.go('/home');
                         }
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text(state.message)),

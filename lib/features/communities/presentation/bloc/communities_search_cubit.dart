@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-
 import '../../../../core/constants/status.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/community_model.dart';
@@ -11,7 +9,6 @@ import '../../data/model/search_dash_model.dart';
 import '../../data/model/search_result_model.dart';
 import '../../domain/usecases/get_search_history_communities_usecase.dart';
 import '../../domain/usecases/get_search_results_communities_usecase.dart';
-
 part 'communities_search_state.dart';
 
 class CommunitySearchCubit extends Cubit<CommunitySearchState> {
@@ -33,14 +30,12 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        print('... BLOC SEARCH failure: ${failure.message}');
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (dashData) {
-        // print('... BLOC SEARCH dash: $dashData');
         emit(state.copyWith(
             status: Status.success,
             dashData: dashData,
@@ -56,24 +51,21 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        // print('... BLOC SEARCH failure: ${failure.message}');
-
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (searchresult) {
-        // print('... BLOC SEARCH results: dashData');
-        emit(
-            state.copyWith(status: Status.success, searchResult: searchresult));
+        emit(state.copyWith(
+          status: Status.success,
+          searchResult: searchresult,
+        ));
       },
     );
   }
 
   void deleteHistoryTerm(String toDeleteTerm) {
-    print('... BLOC deleteHistoryTerm toDeleteTerm=$toDeleteTerm');
-
     emit(state.copyWith(histories: [
       ...state.histories.where((element) => element != toDeleteTerm)
     ]));
@@ -81,7 +73,6 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
   // ignore: body_might_complete_norminqueuey_nullable
   FutureOr<List<dynamic>?> suggestionCallback(String searchStr) async {
-    print('CUBIT suggestionCinqueueback searchStr=$searchStr ');
     if (searchStr == "") return <dynamic>[];
     var response = <dynamic>[];
 
@@ -90,14 +81,9 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
     final result = await getSearchResultsCommunitiesUsecase(
         searchTerm: searchStr, isPreview: true);
 
-    // print('..RESPONSE: ${response}');
-
     result.fold(
-      (failure) {
-        print('...ERROR ${failure.message}');
-      },
+      (failure) {},
       (searchResultes) {
-        print('..RESPONSE: $searchResultes');
         response = [...searchResultes.communities, ...searchResultes.people];
       },
     );
@@ -106,7 +92,6 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   }
 
   void cleanSearchTerm() {
-    print('... BLOC cleanSearchTerm');
     emit(state.copyWith(searchTerm: ''));
   }
 
@@ -117,15 +102,12 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        print('... BLOC SEARCH failure: ${failure.message}');
-
         emit(state.copyWith(
             status: Status.failure,
             failure: failure,
             errorMessage: failure.message));
       },
       (searchresult) {
-        print('... BLOC SEARCH results: people: ${searchresult.people}');
         emit(state.copyWith(
           status: Status.success,
           searchTerm: searchTerm,

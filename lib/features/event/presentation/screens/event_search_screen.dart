@@ -54,14 +54,11 @@ class _EventSearchScreenState extends State<EventSearchScreen>
       minDate: DateTime.now(),
       maxDate: DateTime.now().add(const Duration(days: 365)),
       onRangeSelected: (firstDate, secondDate) {
-        print('StartDate: $firstDate');
-        print('endDate: $secondDate');
         setState(() {
           startDate = firstDate;
         });
       },
       onDayTapped: (date) {
-        print('selectedDate: $selectedDate');
         setState(() {
           selectedDate = date;
         });
@@ -85,6 +82,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
 
   Future<dynamic> searchFilterSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -339,7 +337,6 @@ class _EventSearchScreenState extends State<EventSearchScreen>
               onTapOutside: (event) => FocusScope.of(context).unfocus(),
               textAlignVertical: TextAlignVertical.center,
               onFieldSubmitted: (value) {
-                print('submited: ${searchTermEC.text.trim()}');
                 eventSearchCubit.onPressSearch(searchTermEC.text.trim());
               },
               onChanged: (value) {
@@ -400,7 +397,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
                     //   selectedFilter = 'date';
                     //   searchFilterSheet(context);
                     // });
-                    print('DO SOMETHING');
+
                     var response = await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -419,8 +416,6 @@ class _EventSearchScreenState extends State<EventSearchScreen>
                     ); //
 
                     if (response == null) return;
-
-                    print('...onPressOpenDatesSelection response=$response');
 
                     eventSearchCubit.onUpdateDate(
                         response['startDateRaw'].toString(),
@@ -505,15 +500,13 @@ class _EventSearchScreenState extends State<EventSearchScreen>
         body: BlocConsumer<EventSearchCubit, EventSearchState>(
           bloc: eventSearchCubit,
           listener: (context, state) {
-            print('... state.currentUser: ${state.status}');
-
             switch (state.status) {
               case Status.loading:
                 break;
               case Status.failure:
                 // hideLoader();
                 // showError(state.errorMessage ?? 'Some error');
-                print('ERROR ${state.failure?.message}');
+
                 break;
               case Status.success:
                 break;
@@ -596,22 +589,16 @@ class _EventSearchScreenState extends State<EventSearchScreen>
                                   ),
                                 ),
 
-                                ...state.eventsLocal
-                                    .map((event) => Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 8.0),
-                                          child: EventCardWidget(
-                                            event: event,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                ...state.eventsLocal.map((event) => Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: EventCardWidget(
+                                        event: event,
+                                        width:
+                                            MediaQuery.of(context).size.width *
                                                 0.9,
-                                            onSelect: (EventModel) {
-                                              print('selected: $EventModel');
-                                            },
-                                          ),
-                                        ))
-                                    ,
+                                        onSelect: (EventModel) {},
+                                      ),
+                                    )),
 
                                 // Container(
                                 //   height: 300,
@@ -627,7 +614,7 @@ class _EventSearchScreenState extends State<EventSearchScreen>
                                 //           event: state.eventsLocal[index],
                                 //           width: MediaQuery.of(context).size.width * 0.9,
                                 //           onSelect: (EventModel) {
-                                //             print('selected: ${EventModel}');
+                                //
                                 //           },
                                 //         ),
                                 //       );

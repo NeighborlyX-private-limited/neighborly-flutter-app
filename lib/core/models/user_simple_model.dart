@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../entities/user_simple_entity.dart';
 
 class UserSimpleModel extends UserSimpleEntity {
@@ -23,7 +22,7 @@ class UserSimpleModel extends UserSimpleEntity {
 
   factory UserSimpleModel.fromMap(Map<String, dynamic> map) {
     return UserSimpleModel(
-      id: map['userId'] ?? "0",
+      id: map['userId'] ?? "",
       name: map['userName'] ?? '',
       avatarUrl: map['picture'] ??
           'https://eu.ui-avatars.com/api/?name=${map['name']}&background=random&rounded=true',

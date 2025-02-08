@@ -85,7 +85,7 @@ class _GroupSectionState extends State<GroupSection> {
                     final post = state.groups[index];
                     if (post.type == 'post') {
                       // return PostWidget(post: post,onDelete: (){
-                      //   print('this one is called');
+
                       //   //context.read<GetAllPostsBloc>().deletepost(post.id);
                       //   _onRefresh();
                       // });
@@ -93,7 +93,6 @@ class _GroupSectionState extends State<GroupSection> {
                       return PollWidget(
                           post: post,
                           onDelete: () {
-                            print('this one is called');
                             //context.read<GetAllPostsBloc>().deletepost(post.id);
                             _onRefresh();
                           });

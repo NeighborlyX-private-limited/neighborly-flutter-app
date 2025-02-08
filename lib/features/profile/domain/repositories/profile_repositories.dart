@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/entities/auth_response_entity.dart';
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/error/failures.dart';
@@ -47,6 +45,5 @@ abstract class ProfileRepositories {
     File? image,
     String? phoneNumber,
     bool? toggleFindMe,
-    // required List<double> homeCoordinates,
   });
 }

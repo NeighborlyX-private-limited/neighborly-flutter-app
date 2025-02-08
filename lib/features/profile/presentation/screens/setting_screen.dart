@@ -186,6 +186,7 @@ class _SettingScreenState extends State<SettingScreen> {
             InkWell(
               onTap: () {
                 showModalBottomSheet(
+                  useRootNavigator: true,
                   backgroundColor: AppColors.whiteColor,
                   showDragHandle: true,
                   context: context,
@@ -213,6 +214,7 @@ class _SettingScreenState extends State<SettingScreen> {
             InkWell(
               onTap: () {
                 showModalBottomSheet(
+                  useRootNavigator: true,
                   showDragHandle: true,
                   backgroundColor: AppColors.whiteColor,
                   context: context,
@@ -354,6 +356,7 @@ class _SettingScreenState extends State<SettingScreen> {
     bool isUsernameWrong = false;
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       context: context,
@@ -464,6 +467,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<void> logoutBottomSheet(BuildContext context) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(
@@ -644,6 +648,7 @@ class _SettingScreenState extends State<SettingScreen> {
     }
 
     return showModalBottomSheet(
+      useRootNavigator: true,
       showDragHandle: true,
       backgroundColor: AppColors.whiteColor,
       context: context,

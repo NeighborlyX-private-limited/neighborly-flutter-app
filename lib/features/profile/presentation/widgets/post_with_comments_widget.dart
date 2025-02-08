@@ -41,8 +41,6 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
 
   uselocalpost() {
     setState(() {
-      print('post printing');
-      print(widget.post);
       post = widget.post.content;
     });
   }
@@ -109,7 +107,6 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
             const Divider(),
             InkWell(
               onTap: () {
-                print('on click ${widget.post.content.type}');
                 if (widget.post.content.type == 'post') {
                   context.push(
                       '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
@@ -127,7 +124,6 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                     children: [
                       InkWell(
                         onTap: () {
-                          print('pic ${widget.post.content.proPic}');
                           if (widget.post.content.userName
                               .contains('[deleted]')) {
                             context.push('/deleted-user');
@@ -446,6 +442,7 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
 
   Future<dynamic> bottomSheet(BuildContext context, bool isComment) {
     return showModalBottomSheet(
+      useRootNavigator: true,
       context: context,
       builder: (BuildContext context) {
         return Container(

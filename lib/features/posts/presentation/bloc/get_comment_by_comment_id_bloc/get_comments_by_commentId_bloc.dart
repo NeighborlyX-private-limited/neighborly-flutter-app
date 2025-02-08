@@ -22,13 +22,10 @@ class GetCommentByCommentIdBloc
       final result = await _commentByCommentIdUsecase.call(
         id: event.commentId,
       );
-      print('...Result in GetCommentByCommentIdBloc $result');
 
       result.fold((error) {
-        print('fold error: ${error.toString()}');
         emit(GetCommentByCommentIdFailureState(error: error.toString()));
       }, (response) {
-        print('fold response: ${response.toString()}');
         emit(GetCommentByCommentIdSuccessState(comment: response));
       });
     });

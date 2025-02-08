@@ -15,8 +15,6 @@ class EventJoinCubit extends Cubit<EventJoinState> {
   ) : super(const EventJoinState());
 
   void init(EventModel event) async {
-    print('... BLOC - INIT event?=$event');
-
     emit(state.copyWith(eventJoin: event));
   }
 
@@ -25,7 +23,6 @@ class EventJoinCubit extends Cubit<EventJoinState> {
       required String email,
       required String phone,
       required String gender}) async {
-    print('...BLOC eventDetail onPressRegister=${state.eventJoin} ');
     emit(state.copyWith(status: Status.loading));
 
     final result = await joinEventUsecase(

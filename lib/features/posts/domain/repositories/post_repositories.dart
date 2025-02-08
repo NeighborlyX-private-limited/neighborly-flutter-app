@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/error/failures.dart';
 import '../entities/comment_entity.dart';
@@ -10,12 +9,15 @@ abstract class PostRepositories {
   Future<Either<Failure, List<PostEntity>>> getAllPosts({
     required bool isHome,
   });
+
   Future<Either<Failure, PostEntity>> getPostById({
     required num id,
   });
+
   Future<Either<Failure, SpecificCommentModel>> getCommentById({
     required String id,
   });
+
   Future<Either<Failure, void>> deletePost({
     required num id,
     required String type,

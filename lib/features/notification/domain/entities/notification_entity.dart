@@ -5,7 +5,6 @@ class NotificationEntity extends Equatable {
   final String triggerType;
   final String title;
   final String message;
-
   final String? postId;
   final String? eventId;
   final String? messageId;
@@ -14,7 +13,6 @@ class NotificationEntity extends Equatable {
   final String? notificationImage;
   final String? userId;
   final String? userName;
-
   final String timestamp;
   final String status;
   final String posttype;

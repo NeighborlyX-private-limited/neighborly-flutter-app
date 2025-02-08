@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:share_it/share_it.dart';
-
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/community_model.dart';
@@ -13,10 +14,12 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/appbat_button.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
+import '../bloc/bloc/update_mute_group_bloc.dart';
 import '../bloc/community_detail_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
 import '../widgets/community_section_about.dart';
 import '../widgets/community_section_chat.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   final String communityId;
@@ -33,163 +36,248 @@ class CommunityDetailsScreen extends StatefulWidget {
 class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late var communityDetailCubit;
+  late CommunityDetailsCubit communityDetailCubit;
+  late CommunityModel? communityCache;
   late bool isJoined;
   late bool isAdmin;
-  late CommunityModel? communityCache;
+  String? userId;
 
+  /// init method
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
-    communityDetailCubit.init(widget.communityId);
+    communityDetailCubit.getCommunityDetail(widget.communityId);
+    isJoined = true;
     isAdmin = false;
+    communityCache = CommunityModel(
+      requestStatus: '',
+      id: '',
+      name: '',
+      description: '',
+      isPublic: false,
+      radius: 3,
+      displayName: '',
+      locationStr: '',
+      avatarUrl: '',
+      karma: 0,
+      membersCount: 1,
+      isJoined: true,
+      isAdmin: false,
+      isMuted: false,
+      users: [],
+      admins: [],
+      blockList: [],
+      createdAt: DateTime.now().toString(),
+    );
+
+    getUserId();
   }
 
+  ///on refresh
+  Future<void> _onRefresh() async {
+    communityDetailCubit.getCommunityDetail(widget.communityId);
+  }
+
+  ///get user id
+  void getUserId() async {
+    userId = ShardPrefHelper.getUserID();
+    setState(() {});
+  }
+
+  ///dispose method
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
   }
 
+  /// color parser
+  Color parseColor(String hexColor) {
+    hexColor = hexColor.replaceAll('#', '');
+    return Color(int.parse('0xFF$hexColor'));
+  }
+
+  /// group image
   Widget topElement(String avatarUrl) {
+    bool isColor = avatarUrl.length < 9;
     return Container(
       height: MediaQuery.of(context).size.height * 0.30,
       decoration: BoxDecoration(
-        color: Colors.white,
-        // borderRadius: BorderRadius.circular(10),
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: CachedNetworkImageProvider(avatarUrl),
-        ),
+        color: isColor ? parseColor(avatarUrl) : Colors.transparent,
+        image: isColor
+            ? null
+            : DecorationImage(
+                fit: BoxFit.cover,
+                image: CachedNetworkImageProvider(
+                  avatarUrl.contains('#')
+                      ? avatarUrl.replaceFirst('#', '')
+                      : avatarUrl,
+                ),
+              ),
       ),
     );
   }
 
-  Widget titleArea(
-      {required String title,
-      required num userCount,
-      required List<UserSimpleModel> users,
-      required bool isPublic}) {
+  /// title area
+  Widget titleArea({
+    required String displayName,
+    required String title,
+    required int userCount,
+    required List<UserSimpleModel> users,
+    required bool isPublic,
+    required bool isJoined,
+    required VoidCallback onJoinLeavePressed,
+  }) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.end,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Container(
-              // color: Colors.grey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  //
-                  //
+          ///group display name
+          Text(
+            displayName,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 18,
+            ),
+          ),
 
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        // width: 200,
-                        // color: Colors.green,
-                        child: StackedAvatarIndicator(
-                          avatarUrls: users.map((e) => e.avatarUrl).toList(),
-                          showOnly: 4,
-                          avatarSize: 14,
-                          radius: 9,
-                          onTap: () {},
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          '${userCount}k+ Members',
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  //
-                  //
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        isPublic ? Icons.public : Icons.lock_person_outlined,
-                        color: Colors.black,
-                        size: 15,
-                      ),
-                      const SizedBox(
-                        width: 4,
-                      ),
-                      Text(
-                        isPublic ? 'Public' : 'Private',
+          Text(
+            title,
+            style: TextStyle(
+              fontWeight: FontWeight.normal,
+              fontSize: 14,
+              color: AppColors.greyColor,
+            ),
+          ),
+          Row(
+            children: [
+              ///StackedAvatarIndicator
+              StackedAvatarIndicator(
+                avatarUrls: users.map((e) => e.avatarUrl).toList(),
+                showOnly: 4,
+                avatarSize: 14,
+                radius: 9,
+                onTap: () {},
+              ),
+              Expanded(
+                child: userCount > 1000
+                    ? Text(
+                        '$userCount ${AppLocalizations.of(context)!.members}',
+                        // '${userCount}k+ Members',
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          height: 0.5,
                           color: Colors.black,
                           fontSize: 14,
                         ),
+                      )
+                    : userCount > 1
+                        ? Text(
+                            '$userCount ${AppLocalizations.of(context)!.members}',
+                            // '$userCount Members',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          )
+                        : Text(
+                            '$userCount ${AppLocalizations.of(context)!.member}',
+                            // '$userCount Member',
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 14,
+                            ),
+                          ),
+              ),
+              isJoined
+                  ? ElevatedButton(
+                      onPressed: () {
+                        if ((communityCache?.isAdmin ?? false) &&
+                            (communityCache?.isJoined ?? false)) {
+                          context.push(
+                            '/group-admin',
+                            extra: communityCache,
+                          );
+                        } else {
+                          if (communityCache?.isJoined ?? false) {
+                            userBottomSheetMenu(
+                              context,
+                            );
+                          } else {
+                            joinGroupBottomSheet(context);
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
                       ),
-                    ],
-                  ),
-                  //
-                  //
-                ],
-              ),
-            ),
+                      child: Text(
+                        AppLocalizations.of(context)!.settings,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontSize: 18,
+                          height: 0.3,
+                        ),
+                      ),
+                    )
+                  : ElevatedButton(
+                      onPressed: () {
+                        onJoinLeavePressed();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Text(
+                        isJoined
+                            ? AppLocalizations.of(context)!.leave
+                            : AppLocalizations.of(context)!.join,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontSize: 18,
+                          height: 0.3,
+                        ),
+                      ),
+                    ),
+            ],
           ),
-          //
-          //
-          ElevatedButton(
-            onPressed: () {
-              // Lógica ao clicar no botão
-              // context.go('/groups/create');
-              if (isJoined) {
-                bottomSheetMenu(context, '', communityCache?.name ?? '',
-                    communityCache?.isMuted ?? false);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: isJoined ? Colors.white : AppColors.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                    50), // Ajuste o raio conforme necessário
+          Row(
+            children: [
+              Icon(
+                isPublic ? Icons.public : Icons.lock_person_outlined,
+                color: Colors.black,
+                size: 15,
               ),
-              // padding: EdgeInsets.all(15)
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                isJoined ? 'Joined' : 'Join',
+              const SizedBox(
+                width: 4,
+              ),
+              Text(
+                isPublic
+                    ? AppLocalizations.of(context)!.public
+                    : AppLocalizations.of(context)!.private,
                 style: TextStyle(
-                    color: isJoined ? AppColors.primaryColor : Colors.white,
-                    fontSize: 18,
-                    height: 0.3),
+                  height: 0.5,
+                  color: Colors.black,
+                  fontSize: 14,
+                ),
               ),
-            ),
-          )
+            ],
+          ),
         ],
       ),
     );
   }
 
+  /// tab bar area
   Widget tabTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -199,17 +287,19 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
         style: TextStyle(
           fontWeight: FontWeight.w700,
           fontSize: 16,
-          // color: Colors.black,
         ),
       ),
     );
   }
 
+  /// bottom sheet to leave group confirmation
   Future<dynamic> bottomSheetLeaveConfirm(BuildContext context, String userId) {
     return showModalBottomSheet(
+      useRootNavigator: true,
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
       context: context,
       builder: (BuildContext context) {
-        // String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: 120,
@@ -219,7 +309,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Are you sure you make this person Admin?',
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_make_this_person_Admin,
+                // 'Are you sure you make this person Admin?',
                 style: TextStyle(fontSize: 16),
               ),
               Row(
@@ -233,15 +325,14 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        // padding: EdgeInsets.all(15)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context)!.cancel,
+                          //'Cancel',
                           style: TextStyle(
                               color: Colors.black, fontSize: 18, height: 0.3),
                         ),
@@ -255,27 +346,25 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     flex: 40,
                     child: ElevatedButton(
                       onPressed: () {
-                        print(' leaving ');
-
-                        // TODO - insert cubit leave action
-                        communityDetailCubit.leaveCommunity();
                         Navigator.pop(context);
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              50), // Ajuste o raio conforme necessário
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        // padding: EdgeInsets.all(15)
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          'Yes',
+                          AppLocalizations.of(context)!.yes,
+                          // 'Yes',
                           style: TextStyle(
-                              color: Colors.white, fontSize: 18, height: 0.3),
+                            color: Colors.white,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
                         ),
                       ),
                     ),
@@ -289,47 +378,102 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
-  Future<dynamic> bottomSheetMenu(
-      BuildContext context, String userId, String communityName, bool isMuted) {
+  ///bottom sheet to mute.unmute group, join group, report group, leave group
+  Future<dynamic> userBottomSheetMenu(
+    BuildContext context,
+  ) {
     return showModalBottomSheet(
+      useRootNavigator: true,
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
       context: context,
       builder: (BuildContext context) {
-        // String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: Colors.white,
           height: MediaQuery.of(context).size.height * 0.25,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              /// leave button
               MenuIconItem(
-                  title: 'Leave $communityName',
-                  svgPath: 'assets/menu_leave.svg',
-                  iconSize: 25,
-                  onTap: () {
-                    Navigator.pop(context);
-                    bottomSheetLeaveConfirm(context, userId);
-                  }),
+                title:
+                    '${AppLocalizations.of(context)!.leave} ${communityCache?.name}',
+                // 'Leave ${communityCache?.name}',
+                svgPath: 'assets/menu_leave.svg',
+                iconSize: 25,
+                onTap: () {
+                  Navigator.pop(context);
+                  leaveGroupBottomSheet(context);
+                },
+              ),
+
+              ///mute .unmute group
+              BlocConsumer<UpdateMuteGroupBloc, UpdateMuteGroupState>(
+                listener: (context, state) {
+                  /// failure state
+                  if (state is UpdateMuteGroupFailureState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(state.error),
+                      ),
+                    );
+                  }
+
+                  /// success state
+                  if (state is UpdateMuteGroupSuccessState) {
+                    communityCache?.copyWith(
+                        isMuted: !(communityCache?.isMuted ?? false));
+                    communityDetailCubit.getCommunityDetail(widget.communityId);
+                    String msg = !(communityCache?.isMuted ?? false)
+                        ? AppLocalizations.of(context)!.group_unmuted
+                        : AppLocalizations.of(context)!.group_muted;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(msg),
+                      ),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  ///loading state
+                  if (state is UpdateMuteGroupLoadingState) {
+                    return CircularProgressIndicator();
+                  }
+                  return MenuIconItem(
+                    title: !(communityCache?.isMuted ?? false)
+                        ? AppLocalizations.of(context)!.unmute
+                        : AppLocalizations.of(context)!.mute,
+                    svgPath: !(communityCache?.isMuted ?? false)
+                        ? 'assets/menu_unmute.svg'
+                        : 'assets/menu_mute.svg',
+                    iconSize: 25,
+                    onTap: () {
+                      BlocProvider.of<UpdateMuteGroupBloc>(context)
+                          .add(UpdateMuteGroupButtonPressedEvent(
+                        communityId: communityCache?.id ?? '',
+                        isMute: !(communityCache?.isMuted ?? false),
+                      ));
+
+                      Navigator.pop(context);
+                    },
+                  );
+                },
+              ),
+
+              ///report button
               MenuIconItem(
-                  title: isMuted ? 'Unmute' : 'Mute',
-                  svgPath: isMuted
-                      ? 'assets/menu_unmute.svg'
-                      : 'assets/menu_mute.svg',
-                  iconSize: 25,
-                  onTap: () {
-                    communityDetailCubit.toggleMute();
-                    Navigator.pop(context);
-                  }),
-              MenuIconItem(
-                  title: 'Report',
-                  svgPath: 'assets/menu_flag.svg',
-                  iconSize: 20,
-                  textColor: Colors.red,
-                  onTap: () {
-                    Navigator.pop(context);
-                    reportReasonBottomSheet(context);
-                  }),
+                title: AppLocalizations.of(context)!.report,
+                //  'Report',
+                svgPath: 'assets/menu_flag.svg',
+                iconSize: 20,
+                textColor: Colors.red,
+                onTap: () {
+                  Navigator.pop(context);
+                  reportReasonBottomSheet(context);
+                },
+              ),
             ],
           ),
         );
@@ -337,10 +481,19 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
+  ///report Confirmation BottomSheet
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
       context: context,
       builder: (BuildContext context) {
+        Future.delayed(const Duration(seconds: 3), () {
+          if (mounted) {
+            Navigator.pop(context);
+          }
+        });
         return Container(
           color: Colors.white,
           height: 240,
@@ -349,25 +502,17 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
               Image.asset('assets/report_confirmation.png'),
               Text(
-                'Thanks for letting us know',
+                AppLocalizations.of(context)!.thanks_for_letting_us_know,
+                // 'Thanks for letting us know',
                 style: onboardingHeading2Style,
               ),
               Text(
                 textAlign: TextAlign.center,
-                'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
+                AppLocalizations.of(context)!
+                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_Our_team_will_review_the_content_shortly,
+                // 'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
                 style: blackonboardingBody1Style,
               ),
             ],
@@ -377,8 +522,12 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
+  ///report Reason BottomSheet
   Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
+      useRootNavigator: true,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
       context: context,
       builder: (BuildContext context) {
         return SingleChildScrollView(
@@ -389,21 +538,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
-                  child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: const Color(0xffB8B8B8),
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Center(
                   child: Text(
-                    'Reason to Report',
+                    AppLocalizations.of(context)!.reason_to_Report,
+                    // 'Reason to Report',
                     style: onboardingHeading2Style,
                   ),
                 ),
@@ -414,30 +551,27 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ...kReportReasons
-                        .map(
-                          (e) => InkWell(
-                            onTap: () async {
-                              print('...on Select the report reason');
-                              Navigator.of(context).pop();
-                              communityDetailCubit.reportCommunity(e);
-                              await reportConfirmationBottomSheet(context);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    e,
-                                    style: blackonboardingBody1Style,
-                                  ),
-                                ),
-                              ],
+                    ...kReportReasons.map(
+                      (reason) => InkWell(
+                        onTap: () async {
+                          Navigator.of(context).pop();
+                          communityDetailCubit.reportCommunity(reason);
+                          await reportConfirmationBottomSheet(context);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                reason,
+                                style: blackonboardingBody1Style,
+                              ),
                             ),
-                          ),
-                        )
-                        ,
+                          ],
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 10),
                   ],
                 ),
@@ -449,167 +583,446 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     );
   }
 
+  ///leave group bottom sheet
+  Future<dynamic> leaveGroupBottomSheet(BuildContext context) async {
+    return showModalBottomSheet(
+      useRootNavigator: true,
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.leave_Community,
+                // 'Leave Community?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_leave_this_community,
+                // 'Are you sure you want to leave this community?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        // 'Cancel',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  // Confirm Button
+                  Expanded(
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        /// failure state
+                        if (state is JoinGroupFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        /// success state
+                        if (state is LeaveGroupSuccessState) {
+                          communityDetailCubit
+                              .getCommunityDetail(widget.communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!
+                                    .group_leaved_successfully,
+                                // 'Group leaved successfully'
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is JoinGroupLoadingState) {
+                          return CircularProgressIndicator();
+                        }
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<JoinGroupBloc>(context)
+                                .add(LeaveGroupButtonPressedEvent(
+                              communityId: widget.communityId,
+                            ));
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.leave,
+                            // 'Leave',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// join group bottom sheet
+  Future<dynamic> joinGroupBottomSheet(BuildContext context) async {
+    return showModalBottomSheet(
+      useRootNavigator: true,
+      showDragHandle: true,
+      backgroundColor: AppColors.whiteColor,
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.join_Community,
+                // 'Join Community?',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_join_this_community,
+                // 'Are you sure you want to join this community?',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Cancel Button
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        // 'Cancel',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  // Confirm Button
+                  Expanded(
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        /// failure state
+                        if (state is JoinGroupFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+
+                        /// success state
+                        if (state is JoinGroupSuccessState) {
+                          communityDetailCubit
+                              .getCommunityDetail(widget.communityId);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!
+                                    .group_joined_successfully,
+                                // 'Group joined successfully'
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///loading state
+                        if (state is JoinGroupLoadingState) {
+                          return CircularProgressIndicator();
+                        }
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            BlocProvider.of<JoinGroupBloc>(context)
+                                .add(JoinGroupButtonPressedEvent(
+                              communityId: widget.communityId,
+                            ));
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.join,
+                            // 'Join',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        leading: Container(
-          margin: EdgeInsets.all(9.0),
-          height: 40,
-          width: 40,
-          child: AppbatButton(
-            onTap: () {
-              Navigator.pop(context);
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        context.go('/groups');
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+
+          ///back arraow button
+          leading: Container(
+            margin: EdgeInsets.all(9.0),
+            height: 40,
+            width: 40,
+            child: AppbatButton(
+              onTap: () {
+                Navigator.pop(context, true);
+              },
+              icon: Icons.chevron_left_rounded,
+              iconSize: 30,
+            ),
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ///share button
+                AppbatButton(
+                  onTap: () {
+                    String message = AppLocalizations.of(context)!
+                        .hey_check_this_community
+                        .replaceFirst(
+                          '{communityName}',
+                          communityCache?.name ?? '',
+                        );
+                    // String message =
+                    //    'Hey, check this community: ${communityCache?.name}';
+                    ShareIt.text(
+                      content: message,
+                      androidSheetTitle:
+                          AppLocalizations.of(context)!.look_this_event,
+                      // 'Look this event',
+                    );
+                  },
+                  icon: Icons.share,
+                  iconSize: 20,
+                ),
+                const SizedBox(width: 10),
+
+                ///menu button
+                AppbatButton(
+                  onTap: () {
+                    if ((communityCache?.isAdmin ?? false) &&
+                        (communityCache?.isJoined ?? false)) {
+                      context.push(
+                        '/group-admin',
+                        extra: communityCache,
+                      );
+                    } else {
+                      if (communityCache?.isJoined ?? false) {
+                        userBottomSheetMenu(
+                          context,
+                        );
+                      } else {
+                        joinGroupBottomSheet(context);
+                      }
+                    }
+                  },
+                  icon: Icons.more_vert_outlined,
+                  iconSize: 25,
+                ),
+                const SizedBox(width: 10),
+              ],
+            )
+          ],
+        ),
+        body: RefreshIndicator(
+          ///refresh is not working i have to check it.
+          onRefresh: _onRefresh,
+          child: BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
+            listener: (BuildContext context, CommunityDetailsState state) {},
+            builder: (context, state) {
+              ///loadinng state
+              if (state.status == Status.loading) {
+                return const CommunityDetailsSheemer();
+              }
+              if (state.status == Status.failure) {
+                /// have to replace with error widget
+                return Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.oops_something_went_wrong,
+                  ),
+                );
+              }
+
+              /// success state
+              if (state.status == Status.success) {
+                communityCache = state.community;
+              }
+              return Column(
+                children: [
+                  topElement(communityCache?.avatarUrl ?? ''),
+                  titleArea(
+                    displayName: communityCache?.displayName ?? '',
+                    title: communityCache?.name ?? '',
+                    isPublic: communityCache?.isPublic ?? false,
+                    isJoined: communityCache?.isJoined ?? false,
+                    userCount: (communityCache?.users.length ?? 0),
+                    users: [
+                      ...(communityCache?.users ?? []),
+                    ],
+                    onJoinLeavePressed: () {
+                      if (communityCache?.isJoined ?? false) {
+                        leaveGroupBottomSheet(context);
+                      } else {
+                        joinGroupBottomSheet(context);
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 0, right: 5),
+                      child: TabBar(
+                        controller: _tabController,
+                        isScrollable: true,
+                        tabAlignment: TabAlignment.start,
+                        dividerColor: Colors.transparent,
+                        indicatorSize: TabBarIndicatorSize.label,
+                        indicatorColor: AppColors.primaryColor,
+                        labelColor: Colors.black,
+                        labelStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                        unselectedLabelColor: Colors.grey,
+                        unselectedLabelStyle: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                        tabs: [
+                          Tab(
+                            child:
+                                tabTitle(AppLocalizations.of(context)!.about),
+                          ),
+                          Tab(
+                            child: tabTitle(AppLocalizations.of(context)!.chat),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        RefreshIndicator(
+                          onRefresh: _onRefresh,
+                          child: CommunitySectionAbout(
+                            community: communityCache!,
+                          ),
+                        ),
+
+                        // CommunitySectionPosts(
+                        //     isLoading: false,
+                        //     isEmpty: (state.status != Status.loading && state.posts.isEmpty),
+                        //     posts: state.posts,
+                        //     onReport: (postId) {
+
+                        //     },
+                        //     onDelete: (postId) {
+
+                        //     },
+                        //     onTap: (postId) {
+
+                        //     },
+                        //     onReact: (postId) {
+
+                        //     }),
+                        //
+
+                        ///  chat section
+                        RefreshIndicator(
+                            onRefresh: _onRefresh,
+                            child: CommunitySectionChat(
+                                community: communityCache!)),
+                      ],
+                    ),
+                  ),
+                ],
+              );
             },
-            // icon: LineIcons.angleLeft,
-            icon: Icons.chevron_left_rounded,
-            iconSize: 30,
           ),
         ),
-        backgroundColor: Colors.transparent,
-        // title: const Text('community create'),
-        actions: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              AppbatButton(
-                onTap: () {
-                  String message = '''
-                  Hey, check this community:   ${communityCache?.name} 
-                  ''';
-                  // Lógica ao clicar no botão
-                  // context.go('/groups/create');
-                  ShareIt.text(
-                      content: message, androidSheetTitle: 'Look this event');
-
-                  // TODO: remove this, only for presentation/test porpouse
-                  context.push('/groups/admin', extra: communityCache);
-                },
-                icon: Icons.share,
-                iconSize: 20,
-              ),
-              const SizedBox(width: 10),
-              AppbatButton(
-                onTap: () {
-                  print('...TAP menu settings');
-
-                  if (isAdmin) {
-                    context.push('/groups/admin', extra: communityCache);
-                  } else {
-                    if (isJoined) {
-                      bottomSheetMenu(context, '', communityCache?.name ?? '',
-                          communityCache?.isMuted ?? false);
-                    }
-                  }
-                },
-                // icon: LineIcons.verticalEllipsis,
-                icon: Icons.more_vert_outlined,
-                iconSize: 25,
-              ),
-              const SizedBox(width: 10),
-            ],
-          )
-        ],
-      ),
-      body: BlocBuilder<CommunityDetailsCubit, CommunityDetailsState>(
-        bloc: communityDetailCubit,
-        builder: (context, state) {
-          isJoined = state.community?.isJoined ?? false;
-          communityCache = state.community;
-
-          if (state.status == Status.loading) {
-            return const CommunityDetailsSheemer();
-          }
-
-          // print('... community${state.community}');
-          print('... isMuted${state.community?.isMuted}');
-
-          return Column(
-            children: [
-              //
-              topElement(state.community!.avatarUrl),
-              //
-              //
-              titleArea(
-                title: state.community?.name ?? '...',
-                userCount: state.community?.users.length ?? 0,
-                users: state.community?.users ?? [],
-                isPublic: state.community?.isPublic ?? false,
-              ),
-              //
-              //
-              const SizedBox(height: 15),
-              Container(
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 0, right: 5),
-                  child: TabBar(
-                    indicatorColor: AppColors.primaryColor,
-                    unselectedLabelColor: Colors.grey,
-                    unselectedLabelStyle: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      color: Colors.grey,
-                    ),
-
-                    // labelColor: AppColors.primaryColor.withOpacity(0.8),
-                    controller: _tabController,
-                    tabAlignment: TabAlignment.start,
-                    isScrollable: true,
-                    // labelPadding: EdgeInsets.only(left: 0, right: 20),
-                    tabs: [
-                      Tab(child: tabTitle('About')),
-                      // Tab(child: tabTitle('Feed')),
-                      Tab(child: tabTitle('Chat')),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    //
-                    // section ABOUT
-                    CommunitySectionAbout(
-                      community: state.community!,
-                    ),
-                    //
-                    //
-                    // CommunitySectionPosts(
-                    //     isLoading: false,
-                    //     isEmpty: (state.status != Status.loading && state.posts.isEmpty),
-                    //     posts: state.posts,
-                    //     onReport: (postId) {
-                    //       print('postId=$postId');
-                    //     },
-                    //     onDelete: (postId) {
-                    //       print('postId=$postId');
-                    //     },
-                    //     onTap: (postId) {
-                    //       print('postId=$postId');
-                    //     },
-                    //     onReact: (postId) {
-                    //       print('postId=$postId');
-                    //     }),
-                    //
-                    //  section CHAT
-                    CommunitySectionChat(community: state.community!),
-                    //
-                    //
-                  ],
-                ),
-              ),
-              //
-              //
-            ],
-          );
-        },
       ),
     );
   }

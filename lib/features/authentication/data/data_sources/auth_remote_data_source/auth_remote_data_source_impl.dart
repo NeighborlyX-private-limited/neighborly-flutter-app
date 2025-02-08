@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
@@ -30,11 +29,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
     required String password,
   }) async {
-    print('.....start login with');
-    print('email: $email');
-    print('password: $password');
     String url = '$kBaseUrl/authentication/login';
-    print('url: $url');
+
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -45,9 +41,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'password': password,
       }),
     );
-    print('...login response status code: ${response.statusCode}');
-    print('...login response: ${response.body}');
+
     if (response.statusCode == 200) {
+      final jwtToken = response.headers['authorization'] ?? '';
+
       /// Assuming the response headers contain the Set-Cookie header
       /// extract data from response
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
@@ -71,6 +68,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
 
       /// set data to local
+      ShardPrefHelper.setJwtToken(jwtToken);
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setAccessToken(accessToken);
       ShardPrefHelper.setRefreshToken(refreshToken);
@@ -90,7 +88,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      print("login error: ${jsonDecode(response.body)['message']}");
       String error =
           jsonDecode(response.body)['message'] ?? 'Something went wrong';
       throw ServerException(message: error);
@@ -103,13 +100,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? email,
     String? phone,
   }) async {
-    print('.....start resendOtp with');
-    print('email: $email');
-    print('phone: $phone');
     String urlForEmail = '$kBaseUrl/authentication/send-otp';
     String urlForPhone = '$kBaseUrl/authentication/send-phone-otp';
-    print('urlForEmail:  $urlForEmail');
-    print('urlForPhone: $urlForPhone');
+
     final response = await client.post(
       Uri.parse(email != null ? urlForEmail : urlForPhone),
       headers: <String, String>{
@@ -123,8 +116,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'phoneNumber': phone!,
             }),
     );
-    print('resendOtp response status code :${response.statusCode}');
-    print('resendOtp response:${response.body}');
+
     if (response.statusCode == 200) {
       return "OTP sent successfully";
     } else {
@@ -132,7 +124,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'Too many requests, please try again after a minute.') {
         throw ServerException(message: 'Please try again after 1 minute');
       }
-      print('resendOtp error: ${jsonDecode(response.body)['message']}');
+
       throw ServerException(message: jsonDecode(response.body)['message']);
     }
   }
@@ -144,14 +136,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? password,
     String? phone,
   }) async {
-    print('......signup start with');
-    print('email: $email');
-    print('password: $password');
-    print('phone: $phone');
     String url = '$kBaseUrl/authentication/register';
-    print('url... : $url');
+
     String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
-    print('fcmToken... : $fcmToken');
 
     final response = await client.post(
       Uri.parse(url),
@@ -169,12 +156,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'fcmToken': fcmToken,
             }),
     );
-    print('...signup response status code: ${response.statusCode}');
-    print('...signup response: ${response.body}');
 
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       /// extract data from response
+      final jwtToken = response.headers['authorization'] ?? '';
+      ShardPrefHelper.setJwtToken(jwtToken);
+
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
@@ -227,12 +215,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } else if (response.statusCode == 400) {
       String error =
           jsonDecode(response.body)['error'] ?? 'Something went wrong';
-      print("sign up else if error: $error");
+
       throw ServerException(message: error);
     } else {
       String error =
           jsonDecode(response.body)['error'] ?? 'Something went wrong';
-      print("sign up error: $error");
+
       throw ServerException(message: error);
     }
   }
@@ -245,15 +233,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? verificationFor,
     String? phone,
   }) async {
-    print('.....verifyOtp start with');
-    print('email: $email');
-    print('phone: $phone');
-    print('otp: $otp');
-    print('verificationFor: $verificationFor');
     String urlForEmail = '$kBaseUrl/authentication/verify-otp';
     String urlForPhone = '$kBaseUrl/authentication/verify-phone-otp';
-    print('urlForEmail:  $urlForEmail');
-    print('urlForPhone: $urlForPhone');
+
     final response = await client.post(
       Uri.parse(email != null ? urlForEmail : urlForPhone),
       headers: {
@@ -270,8 +252,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'otp': otp,
             },
     );
-    print('otp response status code:${response.statusCode}');
-    print('otp response ${response.body}');
+
     if (response.statusCode == 200) {
       // Assuming the response headers contain the Set-Cookie header
       /// extract data from response
@@ -301,6 +282,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         String authType = jsonDecode(response.body)['user']['auth_type'];
+        final jwtToken = response.headers['authorization'] ?? '';
+        ShardPrefHelper.setJwtToken(jwtToken);
 
         /// set data to local
         if (email != null) {
@@ -328,13 +311,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } else if (response.statusCode == 401) {
       String error =
           jsonDecode(response.body)['message'] ?? 'Something went wrong';
-      print('else if otp varify error: $error');
+
       throw ServerException(message: error);
     } else {
       String error =
           jsonDecode(response.body)['error'] ?? 'Something went wrong';
 
-      print('otp varify error: $error');
       throw ServerException(message: error);
     }
   }
@@ -342,10 +324,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   /// forgotPassword function
   @override
   Future<String> forgotPassword({required String email}) async {
-    print('.....forgotPassword start with');
-    print('email: $email');
     String url = '$kBaseUrl/authentication/forgot-password';
-    print('url: $url');
+
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -356,14 +336,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }),
     );
 
-    print('forgotPassword response status code:${response.statusCode}');
-    print('forgotPassword response ${response.body}');
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['msg'];
     } else {
       String error =
           jsonDecode(response.body)['message'] ?? 'Something went wrong';
-      print('forgotPassword  error: $error');
+
       throw ServerException(message: error);
     }
   }
@@ -372,33 +350,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<dynamic> googleAuthentication() async {
     try {
-      print(".....googleAuthentication start");
-
       String url = '$kBaseUrl/authentication/google/login';
-      print("url: $url");
 
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
-      print('fcmToken : $fcmToken');
 
       final GoogleSignIn googleSignIn = GoogleSignIn();
-      print("googleSignIn response: $googleSignIn");
 
       await googleSignIn.signOut();
-      print("signOut done");
 
       var signInResult = await GoogleSignInService.signInWithGoogle();
-      print('signInWithGoogle result: $signInResult');
+
       if (signInResult['error'] != null) {
-        print('signInResult error: ${signInResult['error']}');
         throw ServerException(message: signInResult['error']);
       }
       if (signInResult.containsKey('error')) {
-        print('signInResult: ${signInResult['error']}');
         throw ServerException(message: signInResult['error']);
       }
 
       String tokenID = signInResult['idToken'];
-      print('signInWithGoogle tokenID: $tokenID');
+
       final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
@@ -408,8 +378,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'fcmToken': fcmToken,
         }),
       );
-      print('googleAuthentication response status code:${response.statusCode}');
-      print('googleAuthentication response ${response.body}');
 
       if (response.statusCode == 200) {
         /// extract data from response
@@ -429,6 +397,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         String authType = 'email';
+        final jwtToken = response.headers['authorization'] ?? '';
+        ShardPrefHelper.setJwtToken(jwtToken);
 
         /// set data to local
         ShardPrefHelper.setCookie(cookies);
@@ -446,16 +416,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         return jsonDecode(response.body);
       } else {
-        print(
-            'googleAuthentication  error: ${jsonDecode(response.body)['message']}');
-        print(
-            'googleAuthentication  error: ${jsonDecode(response.body)['error_description']}');
         String error = jsonDecode(response.body)['error_description'] ??
             'Something went wrong';
         throw ServerException(message: error);
       }
     } catch (e) {
-      print('googleAuthentication  catch error: ${e.toString()}');
       throw ServerException(message: e.toString());
     }
   }

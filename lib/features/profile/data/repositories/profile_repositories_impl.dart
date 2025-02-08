@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:dartz/dartz.dart';
-
 import '../../../../core/entities/auth_response_entity.dart';
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/error/failures.dart';
@@ -34,19 +32,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
           email: email,
           flag: flag,
         );
-        print('result in changePassword ProfileRepositoriesImpl: $result');
 
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in changePassword ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in changePassword ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in changePassword ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -57,18 +50,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.updateLocation(location: location);
-        // print('result in updateLocation ProfileRepositoriesImpl: $result');
+        //
         return const Right(null);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in updateLocation ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in updateLocation ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in updateLocation ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -82,18 +71,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
           gender: gender,
           dob: dob,
         );
-        // print('result in getGenderAndDOB ProfileRepositoriesImpl: $result');
+        //
         return const Right(null);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getGenderAndDOB ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getGenderAndDOB ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in getGenderAndDOB ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -103,18 +88,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getProfile();
-        print('result in getProfile ProfileRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getProfile ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getProfile ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in getProfile ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -124,17 +105,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.logout();
-        //  print('result in logout ProfileRepositoriesImpl: $result');
+        //
         return const Right(null);
       } on ServerFailure catch (e) {
-        print('Server Failure in logout ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in logout ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in logout ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -148,18 +126,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
         final result = await remoteDataSource.getMyPosts(
           userId: userId,
         );
-        print('result in getMyPosts ProfileRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getMyPosts ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getMyPosts ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in getMyPosts ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -169,18 +143,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.sendFeedback(feedback: feedback);
-        //  print('result in sendFeedback ProfileRepositoriesImpl: $result');
+
         return const Right(null);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in sendFeedback ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in sendFeedback ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in sendFeedback ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -190,18 +160,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.deleteAccount();
-        //  print('result in deleteAccount ProfileRepositoriesImpl: $result');
+
         return const Right(null);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in deleteAccounts ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in deleteAccount ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in deleteAccount ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -212,18 +178,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getUserInfo(userId: userId);
-        print('result in getUserInfo ProfileRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getUserInfo ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getUserInfo ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in getUserInfo ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -234,18 +196,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getMyComments(userId: userId);
-        print('result in getMyComments ProfileRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getMyComments ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getMyComments ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in getMyComments ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -255,18 +213,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getMyGroups(userId: userId);
-        print('result in getMyGroups ProfileRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getMyGroups ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getMyGroups ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in getMyGroups ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -292,18 +246,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
           toggleFindMe: toggleFindMe,
           gender: gender,
         );
-        //  print('result in editProfile ProfileRepositoriesImpl: $result');
+        //
         return const Right(null);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in editProfile ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in editProfile ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in editProfile ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -313,18 +263,14 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getMyAwards();
-        print('result in getMyAwards ProfileRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getMyAwards ProfileRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getMyAwards ProfileRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('else error in getMyAwards ProfileRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }

@@ -188,7 +188,8 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                       } else if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                         context.go('/tutorialScreen');
                       } else {
-                        context.go('/home/Home');
+                        // context.go('/home/Home');
+                        context.go('/home');
                       }
                     }
                   },

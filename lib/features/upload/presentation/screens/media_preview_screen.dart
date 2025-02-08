@@ -75,7 +75,7 @@
 //     if (_controller != null) {
 //       await _controller!.setVolume(0.0);
 //     }
-//     if (context.mounted) {
+//     if (mounted) {
 //       if (isVideo) {
 //         final XFile? file = await _picker.pickVideo(
 //             source: source, maxDuration: const Duration(seconds: 10));

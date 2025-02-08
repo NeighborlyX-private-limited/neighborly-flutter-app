@@ -15,26 +15,24 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<Either<Failure, AuthResponseEntity>> loginWithEmail(
-      {required String email, required String password}) async {
+  Future<Either<Failure, AuthResponseEntity>> loginWithEmail({
+    required String email,
+    required String password,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.loginWithEmail(
           email: email,
           password: password,
         );
-        print('loginWithEmail result in auth repo impl: $result');
 
         return Right(result);
       } on ServerFailure catch (e) {
-        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -52,17 +50,14 @@ class AuthRepositoryImpl implements AuthRepository {
           password: password,
           phone: phone,
         );
-        print('signup result in auth repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: e.toString()));
       }
     } else {
-      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -78,17 +73,14 @@ class AuthRepositoryImpl implements AuthRepository {
           email: email,
           phone: phone,
         );
-        print('resendOtp result in auth repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -108,34 +100,30 @@ class AuthRepositoryImpl implements AuthRepository {
           verificationFor: verificationFor,
           phone: phone,
         );
-        print('verifyOtp result in auth repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
 
   @override
-  Future<Either<Failure, String>> forgotPassword(
-      {required String email}) async {
+  Future<Either<Failure, String>> forgotPassword({
+    required String email,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.forgotPassword(email: email);
-        print('forgotPassword result in auth repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -148,17 +136,14 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.googleAuthentication();
-        print('googleAuthentication result in auth repo impl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print('Server Failure in auth repo impl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in auth repo impl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }

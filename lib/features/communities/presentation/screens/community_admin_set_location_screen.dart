@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/dropdown_search_field.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminLocationScreen extends StatefulWidget {
   const CommunityAdminLocationScreen({
@@ -26,7 +26,6 @@ class _CommunityAdminLocationScreenState
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     newLocationEC.text = communityCubit.state.community?.locationStr ?? '';
   }
 
@@ -51,7 +50,8 @@ class _CommunityAdminLocationScreenState
           },
         ),
         title: Text(
-          'Location',
+          AppLocalizations.of(context)!.location,
+          // 'Location',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -64,12 +64,15 @@ class _CommunityAdminLocationScreenState
               onPressed: () {
                 if (newLocationEC.text.trim() == '') {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Select a location to be saved'),
+                    SnackBar(
+                      content: Text(
+                        AppLocalizations.of(context)!
+                            .select_a_location_to_be_saved,
+                        // 'Select a location to be saved'
+                      ),
                     ),
                   );
                 } else {
-                  print('SAVE');
                   communityCubit.updateLocation(
                       communityCubit.state.community?.id ?? '',
                       newLocationEC.text.trim());
@@ -77,7 +80,8 @@ class _CommunityAdminLocationScreenState
                 }
               },
               child: Text(
-                'Save',
+                AppLocalizations.of(context)!.save,
+                // 'Save',
                 style: TextStyle(
                   color: AppColors.primaryColor,
                   fontSize: 16,
@@ -91,35 +95,26 @@ class _CommunityAdminLocationScreenState
         width: double.infinity,
         color: Colors.white,
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            //
-            //
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(18.0),
                 child: DropdownSearchField(
-                  // label: 'Choose your location',
                   items: [...kLocationList],
                   onChanged: (value) {
                     newLocationEC.text = value ?? '';
                   },
                   initialValue: newLocationEC.text,
-                  placeholder: 'Type to search location',
-                  // validator: Validatorless.required('Preenchimento é obrigatório'),
+                  placeholder:
+                      AppLocalizations.of(context)!.type_to_search_location,
+                  // 'Type to search location',
                 ),
               ),
             ),
-            //
-            //
           ],
         ),
       ),
     );
   }
 }
-
-// ########################################################################
-// ########################################################################
-// ########################################################################

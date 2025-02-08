@@ -20,8 +20,6 @@ class EventDetailCubit extends Cubit<EventDetailState> {
   ) : super(const EventDetailState());
 
   void init(String eventId, EventModel event) async {
-    print('... BLOC - INIT eventDetails?=${state.eventDetails}');
-
     // emit(state.copyWith(eventDetails: event, newEventId: eventId));
 
     emit(state.copyWith(
@@ -39,10 +37,6 @@ class EventDetailCubit extends Cubit<EventDetailState> {
             isJoined: event.isJoined,
             isMine: event.isMine),
         newEventId: event.id));
-    print('...BLOC eventDetail eventId=$eventId event=$event');
-    print('\n\n\n... BLOC - EVENT name=${state.eventDetails!.title}');
-    print('... BLOC - EVENT isMine=${state.eventDetails!.isMine}');
-    print('... BLOC - EVENT isJoined=${state.eventDetails!.isJoined}');
   }
 
   Future cancelEvent(String? reason) async {
@@ -68,7 +62,6 @@ class EventDetailCubit extends Cubit<EventDetailState> {
   Future joinEvent(EventModel newEvent, String? reason) async {}
 
   Future onPressJoin() async {
-    print('...BLOC eventDetail onPressJoin=${state.eventDetails} ');
     emit(state.copyWith(status: Status.loading));
 
     final result = await joinEventUsecase(

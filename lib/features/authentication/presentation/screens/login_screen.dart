@@ -78,7 +78,8 @@ class _LoginScreenState extends State<LoginScreen> {
               if (!isSkippedTutorial && !isViewedTutorial) {
                 context.go('/tutorialScreen');
               } else {
-                context.go('/home/Home');
+                // context.go('/home/Home');
+                context.go('/home');
               }
             }
           },

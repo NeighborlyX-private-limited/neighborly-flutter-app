@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../../../core/models/community_model.dart';
 import 'search_history_model.dart';
 

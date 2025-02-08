@@ -123,7 +123,6 @@ class _FindMeScreenState extends State<FindMeScreen> {
                             });
                             String? userName = ShardPrefHelper.getUsername();
                             String? gender = ShardPrefHelper.getGender();
-                            print('find Me $allowFindMe');
 
                             BlocProvider.of<EditProfileBloc>(context).add(
                               EditProfileButtonPressedEvent(

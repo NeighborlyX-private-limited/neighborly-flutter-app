@@ -38,8 +38,6 @@ class EventDetailState extends Equatable {
       File? imageToUpload,
       String? newEventId,
       EventModel? eventDetails}) {
-    print('---eventDetails=${eventDetails?.id}');
-    print('---this.eventDetails=${this.eventDetails?.id}');
     return EventDetailState(
       status: status ?? this.status,
       failure: failure ?? this.failure,

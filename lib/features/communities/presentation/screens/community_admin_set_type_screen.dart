@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-
+import 'package:neighborly_flutter_app/core/constants/status.dart';
+import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunityAdminTypeScreen extends StatefulWidget {
   const CommunityAdminTypeScreen({
@@ -23,7 +26,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
   void initState() {
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     selectedOption =
         communityCubit.state.community?.isPublic == true ? 'public' : 'private';
   }
@@ -39,6 +41,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
     return Scaffold(
       backgroundColor: AppColors.lightBackgroundColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
@@ -49,7 +52,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
           },
         ),
         title: Text(
-          'Community Type',
+          AppLocalizations.of(context)!.community_Type,
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
@@ -58,22 +61,47 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
         ),
         centerTitle: false,
         actions: [
-          TextButton(
-              onPressed: () {
-                print('SAVE');
-                communityCubit.updateType(
-                    communityCubit.state.community?.id ?? '',
-                    selectedOption ?? 'public');
+          BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
+            listener: (context, state) {
+              if (state.status == Status.failure) {
+                showSnackBar(
+                  context: context,
+                  message:
+                      state.failure?.message ?? 'oops something went wrong',
+                );
+              }
+              if (state.status == Status.success) {
+                communityCubit.getCommunityDetail(
+                  communityCubit.state.community?.id ?? '',
+                );
                 Navigator.of(context).pop();
-              },
-              child: Text(
-                'Save',
-                style: TextStyle(
-                  color: AppColors.primaryColor,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
+              }
+            },
+            builder: (context, state) {
+              if (state.status == Status.loading) {
+                return Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: BouncingLogoIndicator(logo: ''),
+                );
+              }
+              return TextButton(
+                onPressed: () {
+                  communityCubit.updateType(
+                    communityCubit.state.community?.id ?? '',
+                    selectedOption ?? 'public',
+                  );
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.save,
+                  style: TextStyle(
+                    color: AppColors.primaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ))
+              );
+            },
+          )
         ],
       ),
       body: Container(
@@ -81,18 +109,16 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
         width: double.infinity,
         color: Colors.white,
         child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            //
-            //
             ListTile(
-              title: const Text(
-                'Public',
+              title: Text(
+                AppLocalizations.of(context)!.public,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: const Text(
-                'Anyone can join, see posts, and participate in discussions. ',
+              subtitle: Text(
+                AppLocalizations.of(context)!
+                    .anyone_can_join_see_posts_and_participate_in_discussions,
                 style: TextStyle(fontWeight: FontWeight.normal),
               ),
               leading: Container(
@@ -100,7 +126,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(50),
                   color: AppColors.lightBackgroundColor,
-                  // color: Colors.red,
                 ),
                 child: Icon(
                   Icons.public,
@@ -117,15 +142,14 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
             const SizedBox(
               height: 15,
             ),
-            //
-            //
             ListTile(
-              title: const Text(
-                'Private',
+              title: Text(
+                AppLocalizations.of(context)!.private,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: const Text(
-                'Only invited members can join, view posts, and engage in conversations',
+              subtitle: Text(
+                AppLocalizations.of(context)!
+                    .only_invited_members_can_join_view_posts_and_engage_in_conversations,
                 style: TextStyle(fontWeight: FontWeight.normal),
               ),
               leading: Container(
@@ -133,7 +157,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(50),
                   color: AppColors.lightBackgroundColor,
-                  // color: Colors.red,
                 ),
                 child: Icon(
                   Icons.privacy_tip_outlined,
@@ -147,8 +170,6 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 onChanged: _handleRadioValueChange,
               ),
             ),
-            //
-            //
           ],
         ),
       ),
@@ -156,14 +177,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
   }
 }
 
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
+///menu button
 class MenuIconItem extends StatelessWidget {
   final String title;
   final IconData? icon;

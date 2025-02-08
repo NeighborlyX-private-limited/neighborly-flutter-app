@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import '../../domain/entities/notification_entity.dart';
 
 class NotificationModel extends NotificationEntity {

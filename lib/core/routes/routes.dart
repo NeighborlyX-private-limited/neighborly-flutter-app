@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/event_coming_soon.dart';
 import 'package:neighborly_flutter_app/core/widgets/not_found_widget.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/screens/tutorial_screen.dart';
-
+import 'package:neighborly_flutter_app/features/communities/presentation/screens/community_admin_set_displayname.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/screens/manage_join_request_screen.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_of_specific_comment.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/deletd_user_profile_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/screens/radius_screen.dart';
@@ -19,6 +21,7 @@ import '../../features/chat/presentation/screens/chat_group_screen.dart';
 import '../../features/chat/presentation/screens/chat_group_thread_screen.dart';
 import '../../features/chat/presentation/screens/chat_main_screen.dart';
 import '../../features/chat/presentation/screens/chat_private_screen.dart';
+import '../../features/chat/presentation/screens/group_pinned_message_screen.dart';
 import '../../features/communities/presentation/screens/community_admin_set_block_screen.dart';
 import '../../features/communities/presentation/screens/community_admin_set_description_screen.dart';
 import '../../features/communities/presentation/screens/community_admin_set_icon_screen.dart';
@@ -38,7 +41,7 @@ import '../../features/event/presentation/screens/event_success_screen.dart';
 import '../../features/event/presentation/screens/event_detail_screen.dart';
 import '../../features/event/presentation/screens/event_main_screen.dart';
 import '../../features/event/presentation/screens/event_search_screen.dart';
-import '../../features/homePage/homePage.dart';
+import '../../features/homePage/home_page.dart';
 import '../../features/notification/presentation/screens/notification_list_screen.dart';
 import '../../features/posts/presentation/screens/home_screen.dart';
 import '../../features/posts/presentation/screens/post_detail_screen.dart';
@@ -59,7 +62,7 @@ import '../utils/shared_preference.dart';
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 List<String>? cookies = ShardPrefHelper.getCookie();
-
+// initial route
 String setInitialLocation() {
   var IsPhoneVarify = ShardPrefHelper.getIsPhoneVerified();
   var IsVarify = ShardPrefHelper.getIsVerified();
@@ -68,13 +71,13 @@ String setInitialLocation() {
     return '/';
   } else if (authType == 'phone') {
     if (IsPhoneVarify && cookies!.isNotEmpty) {
-      return '/home/Home';
+      return '/home';
     } else {
       return '/';
     }
   } else if (authType == 'email') {
     if (IsVarify && cookies!.isNotEmpty) {
-      return '/home/Home';
+      return '/home';
     } else {
       return '/';
     }
@@ -86,6 +89,7 @@ final GoRouter router = GoRouter(
   initialLocation: setInitialLocation(),
   navigatorKey: _rootNavigatorKey,
   routes: <RouteBase>[
+    /// authentication routes
     GoRoute(
       path: '/',
       name: RouteConstants.onboardingScreenRouteName,
@@ -100,8 +104,6 @@ final GoRouter router = GoRouter(
         return const RegisterScreen();
       },
     ),
-
-    /// login screen route
     GoRoute(
       path: '/loginScreen',
       name: RouteConstants.loginScreenRouteName,
@@ -136,9 +138,6 @@ final GoRouter router = GoRouter(
       builder: (BuildContext context, GoRouterState state) {
         final String data = state.pathParameters['data']!;
         final String verificationFor = state.pathParameters['verificationFor']!;
-        print('data:$data');
-        print('verificationFor:$verificationFor');
-
         return OtpScreen(data: data, verificationFor: verificationFor);
       },
     ),
@@ -147,7 +146,6 @@ final GoRouter router = GoRouter(
       name: RouteConstants.newPasswordScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
         final String data = state.pathParameters['data']!;
-
         return NewPasswordScreen(data: data);
       },
     ),
@@ -158,161 +156,48 @@ final GoRouter router = GoRouter(
         return const ForgotPasswordScreen();
       },
     ),
-    GoRoute(
-      path: '/deleted-user',
-      name: RouteConstants.deletedUserRouteName,
-      builder: (BuildContext context, GoRouterState state) {
-        return const DeletedUserProfileScreen();
-      },
-    ),
+
+    /// shell route
     ShellRoute(
       builder: (context, state, child) {
-        final String? childId = state.pathParameters['Home'];
         return MainPage(
-          childId: childId ?? '',
           child: child,
         );
       },
       routes: [
         GoRoute(
-          path: '/home/:Home',
+          path: '/home',
           builder: (context, state) {
-            final String tabIndex = state.pathParameters['Home'] ?? "Home";
-            return HomeScreen(
-              tabIndex: tabIndex,
-            );
+            return HomeScreen();
           },
-        ),
-        GoRoute(
-          path: '/events',
-          builder: (context, state) => const EventMainScreen(),
-        ),
-        GoRoute(
-          path: '/events/create',
-          builder: (context, state) => const EventCreateScreen(),
-        ),
-        GoRoute(
-          path: '/events/edit',
-          builder: (context, state) => EventCreateScreen(
-            eventToUpdate:
-                state.extra != null ? state.extra as EventModel : null,
-          ),
-        ),
-        GoRoute(
-          path: '/events/join',
-          builder: (context, state) => EventJoinScreen(
-            eventToJoin: state.extra != null ? state.extra as EventModel : null,
-          ),
-        ),
-        GoRoute(
-          path: '/events/success/:type',
-          builder: (context, state) => EventSuccessSuccessScreen(
-            type: state.pathParameters["type"] as String,
-            event: state.extra as EventModel,
-          ),
-        ),
-        GoRoute(
-          path: '/events/search',
-          builder: (context, state) => const EventSearchScreen(),
-        ),
-        GoRoute(
-          path: '/events/detail/:eventId',
-          builder: (context, state) => EventDetailScreen(
-            eventId: state.pathParameters["eventId"] as String,
-            event: state.extra != null ? state.extra as EventModel : null,
-          ),
-        ),
-        GoRoute(
-          path: '/create',
-          builder: (context, state) => const CreatePostScreen(),
         ),
         GoRoute(
           path: '/groups',
           builder: (context, state) => const CommunityScreen(),
         ),
         GoRoute(
-          path: '/groups/create',
-          builder: (context, state) => const CommunityCreateScreen(),
+          path: '/events',
+          builder: (context, state) => const EventMainScreen(),
         ),
         GoRoute(
-          path: '/groups/admin',
-          builder: (context, state) =>
-              CommunityAdminSetScreen(community: state.extra as CommunityModel),
-        ),
-        GoRoute(
-          path: '/groups/admin/members',
-          builder: (context, state) => const CommunityAdminMembersUsersScreen(),
-        ),
-        GoRoute(
-          path: '/groups/admin/type',
-          builder: (context, state) => const CommunityAdminTypeScreen(),
-        ),
-        GoRoute(
-          path: '/groups/admin/radius',
-          builder: (context, state) => const CommunityAdminRadiusScreen(),
-        ),
-        GoRoute(
-          path: '/groups/admin/description',
-          builder: (context, state) => const CommunityAdminDescriptionScreen(),
-        ),
-        GoRoute(
-          path: '/groups/admin/icon',
-          builder: (context, state) => const CommunityAdminIconScreen(),
-        ),
-        GoRoute(
-          path: '/groups/admin/location',
-          builder: (context, state) => const CommunityAdminLocationScreen(),
-        ),
-        GoRoute(
-          path: '/groups/admin/blocked',
-          builder: (context, state) => const CommunityAdminBlockedUsersScreen(),
-        ),
-        GoRoute(
-          path: '/groups/search',
-          builder: (context, state) => const CommunitySearchScreen(),
-        ),
-        GoRoute(
-          path: '/groups/:communityId',
-          builder: (context, state) => CommunityDetailsScreen(
-              communityId: state.pathParameters["communityId"] as String),
-        ),
-        GoRoute(
-          path: '/chat',
-          builder: (context, state) => const ChatMainScreen(),
-        ),
-        GoRoute(
-          path: '/chat/group/:roomId',
-          builder: (context, state) => ChatGroupScreen(
-            roomId: state.pathParameters["roomId"] as String,
-            room: state.extra as ChatRoomModel,
-          ),
-        ),
-        GoRoute(
-          path: '/chat/group/thread/:messageId',
-          builder: (context, state) {
-            return ChatGroupThreadScreen(
-              messageId: state.pathParameters["messageId"] as String,
-              room: (state.extra as Map<String, dynamic>)['room'],
-              message: (state.extra as Map<String, dynamic>)['message'],
-            );
-          },
-        ),
-        GoRoute(
-          path: '/chat/private/:roomId',
-          builder: (context, state) => ChatPrivateScreen(
-            roomId: state.pathParameters["roomId"] as String,
-            room: state.extra as ChatRoomModel,
-          ),
+          path: '/coming-soon',
+          builder: (context, state) => const CommingSoonScreen(),
         ),
         GoRoute(
           path: '/profile',
           builder: (context, state) => const ProfileScreen(),
         ),
-        GoRoute(
-          path: '/notifications',
-          builder: (context, state) => const NotificationListScreen(),
-        ),
       ],
+    ),
+
+    /// home routes
+    GoRoute(
+      path: '/create',
+      builder: (context, state) => const CreatePostScreen(),
+    ),
+    GoRoute(
+      path: '/notifications',
+      builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/post-detail/:postId/:isPost/:userId/:commentId',
@@ -334,33 +219,174 @@ final GoRouter router = GoRouter(
       path: '/post-detail-of-specific-comment/:commentId',
       name: RouteConstants.postDetailOfSpecificCommentScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
-        print('here');
         final String commentId = state.pathParameters['commentId'] ?? '0';
         return PostDetailOfSpecificComment(
           commentId: commentId,
         );
       },
     ),
+
+    /// group routes
+    GoRoute(
+      path: '/group-create',
+      builder: (context, state) => const CommunityCreateScreen(),
+    ),
+    GoRoute(
+      path: '/group-admin',
+      builder: (context, state) =>
+          CommunityAdminSetScreen(community: state.extra as CommunityModel),
+    ),
+    GoRoute(
+      path: '/manage-group-join-request/:communityId',
+      builder: (context, state) => ManageJoinRequestScreen(
+        communityId: state.pathParameters["communityId"] as String,
+      ),
+    ),
+    GoRoute(
+      path: '/group-members',
+      builder: (context, state) => const CommunityAdminMembersUsersScreen(),
+    ),
+    GoRoute(
+      path: '/group-type',
+      builder: (context, state) => const CommunityAdminTypeScreen(),
+    ),
+    GoRoute(
+      path: '/group-radius',
+      builder: (context, state) => const CommunityAdminRadiusScreen(),
+    ),
+    GoRoute(
+      path: '/group-description',
+      builder: (context, state) => const CommunityAdminDescriptionScreen(),
+    ),
+    GoRoute(
+      path: '/group-displayname',
+      builder: (context, state) => const CommunityAdminDisplaynameScreen(),
+    ),
+    GoRoute(
+      path: '/group-icon',
+      builder: (context, state) => const CommunityAdminIconScreen(),
+    ),
+    GoRoute(
+      path: '/group-location',
+      builder: (context, state) => const CommunityAdminLocationScreen(),
+    ),
+    GoRoute(
+      path: '/group-blocked',
+      builder: (context, state) => const CommunityAdminBlockedUsersScreen(),
+    ),
+    GoRoute(
+      path: '/group-search',
+      builder: (context, state) => const CommunitySearchScreen(),
+    ),
+    GoRoute(
+      path: '/group-details/:communityId',
+      builder: (context, state) => CommunityDetailsScreen(
+        communityId: state.pathParameters["communityId"] as String,
+      ),
+    ),
+
+    /// group chat routes
+    GoRoute(
+      path: '/chat',
+      builder: (context, state) => const ChatMainScreen(),
+    ),
+    GoRoute(
+      path: '/chat/private/:roomId',
+      builder: (context, state) => ChatPrivateScreen(
+        roomId: state.pathParameters["roomId"] as String,
+        room: state.extra as ChatRoomModel,
+      ),
+    ),
+    GoRoute(
+      path: '/group-chat/:roomId',
+      builder: (context, state) {
+        String roomId = state.pathParameters["roomId"] as String;
+
+        final extra = state.extra as Map?;
+        if (extra == null ||
+            !extra.containsKey('chatModel') ||
+            !extra.containsKey('memberList') ||
+            !extra.containsKey('adminList')) {
+          return Scaffold(body: Center(child: Text("Invalid data!")));
+        }
+        final chatRoom = extra['chatModel'] as ChatRoomModel;
+        final member = extra['memberList'] as List;
+        final admin = extra['adminList'] as List;
+
+        return ChatGroupScreen(
+          member: member,
+          admin: admin,
+          room: chatRoom,
+          roomId: roomId,
+        );
+      },
+    ),
+    GoRoute(
+      path: '/group-chat-pinned-message/:groupId',
+      builder: (context, state) => GroupPinnedMessagesScreen(
+        groupId: state.pathParameters["groupId"] as String,
+      ),
+    ),
+    GoRoute(
+      path: '/group-chat-thread/:messageId',
+      builder: (context, state) {
+        return ChatGroupThreadScreen(
+          messageId: state.pathParameters["messageId"] as String,
+          room: (state.extra as Map<String, dynamic>)['room'],
+          message: (state.extra as Map<String, dynamic>)['message'],
+        );
+      },
+    ),
+
+    ///event routes
+    GoRoute(
+      path: '/events/create',
+      builder: (context, state) => const EventCreateScreen(),
+    ),
+    GoRoute(
+      path: '/events/edit',
+      builder: (context, state) => EventCreateScreen(
+        eventToUpdate: state.extra != null ? state.extra as EventModel : null,
+      ),
+    ),
+    GoRoute(
+      path: '/events/join',
+      builder: (context, state) => EventJoinScreen(
+        eventToJoin: state.extra != null ? state.extra as EventModel : null,
+      ),
+    ),
+    GoRoute(
+      path: '/events/success/:type',
+      builder: (context, state) => EventSuccessSuccessScreen(
+        type: state.pathParameters["type"] as String,
+        event: state.extra as EventModel,
+      ),
+    ),
+    GoRoute(
+      path: '/events/search',
+      builder: (context, state) => const EventSearchScreen(),
+    ),
+    GoRoute(
+      path: '/events/detail/:eventId',
+      builder: (context, state) => EventDetailScreen(
+        eventId: state.pathParameters["eventId"] as String,
+        event: state.extra != null ? state.extra as EventModel : null,
+      ),
+    ),
+
+    /// profile routes
     GoRoute(
       path: '/settingsScreen/:karma/:findMe',
       name: RouteConstants.settingsScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
         final String karma = state.pathParameters['karma']!;
         final bool findMe = state.pathParameters['findMe'] == 'true';
-
         return SettingScreen(
           karma: karma,
           findMe: findMe,
         );
       },
     ),
-    // GoRoute(
-    //   path: '/media-preview',
-    //   name: RouteConstants.mediaPreviewScreenRouteName,
-    //   builder: (BuildContext context, GoRouterState state) {
-    //     return const MediaPreviewScreen();
-    //   },
-    // ),
     GoRoute(
       path: '/securityScreen',
       name: RouteConstants.securityScreenRouteName,
@@ -392,13 +418,7 @@ final GoRouter router = GoRouter(
         return const FindMeScreen();
       },
     ),
-    GoRoute(
-      path: '/communitiesScreen',
-      name: RouteConstants.communitiesScreenRouteName,
-      builder: (BuildContext context, GoRouterState state) {
-        return const CommunitiesScreen();
-      },
-    ),
+
     GoRoute(
       path: '/userProfileScreen/:userId',
       name: RouteConstants.userProfileScreenRouteName,
@@ -421,6 +441,20 @@ final GoRouter router = GoRouter(
       name: RouteConstants.radiusScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
         return const RadiusScreen();
+      },
+    ),
+    GoRoute(
+      path: '/communitiesScreen',
+      name: RouteConstants.communitiesScreenRouteName,
+      builder: (BuildContext context, GoRouterState state) {
+        return const CommunitiesScreen();
+      },
+    ),
+    GoRoute(
+      path: '/deleted-user',
+      name: RouteConstants.deletedUserRouteName,
+      builder: (BuildContext context, GoRouterState state) {
+        return const DeletedUserProfileScreen();
       },
     ),
   ],

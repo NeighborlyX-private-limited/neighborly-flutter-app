@@ -60,7 +60,7 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
     if (image != null) {
       setState(() {
         fileToUpload = File(image.path);
-        print('Do something with this file: ${fileToUpload?.path}');
+
         // TODO: send image as message
         chatPrivateCubit.sendMessage(message: '', image: fileToUpload);
       });
@@ -250,15 +250,13 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
       ),
       body: BlocConsumer<ChatPrivateCubit, ChatPrivateState>(
         listener: (context, state) {
-          print('... state.currentUser: ${state.status}');
-
           switch (state.status) {
             case Status.loading:
               break;
             case Status.failure:
               // hideLoader();
               // showError(state.errorMessage ?? 'Some error');
-              print('ERROR ${state.failure?.message}');
+
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content:
@@ -267,7 +265,7 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
               );
               break;
             case Status.success:
-              // print('Success JUMP to ${state.roomId}');
+
               // Navigator.of(context).pop();
               // context.push('/groups/${state.roomId}');
               break;
@@ -321,10 +319,7 @@ class _ChatPrivateScreenState extends State<ChatPrivateScreen> {
                                 showIsReaded:
                                     (lineCount == state.messages.length) &&
                                         msg.isMine,
-                                onTap: (msgSelected) {
-                                  print('....selected=$msgSelected');
-                                  print('lineCount=$lineCount');
-                                });
+                                onTap: (msgSelected) {});
 
                             if (lastDate != dateSummary) {
                               lastDate = dateSummary;

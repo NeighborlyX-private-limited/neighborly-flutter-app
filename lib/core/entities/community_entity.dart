@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
-
 import '../models/user_simple_model.dart';
 
 class CommunityEntity extends Equatable {
   final String id;
   final String name;
+  final String displayName;
   final String description;
   final String createdAt;
   final String avatarUrl;
@@ -13,7 +13,9 @@ class CommunityEntity extends Equatable {
   final num membersCount;
   final bool isPublic;
   final bool isJoined;
+  final bool isAdmin;
   final bool isMuted;
+  final String requestStatus;
   final List<UserSimpleModel> users;
   final List<UserSimpleModel> admins;
   final List<UserSimpleModel> blockList;
@@ -24,6 +26,7 @@ class CommunityEntity extends Equatable {
   const CommunityEntity({
     required this.id,
     required this.name,
+    required this.displayName,
     required this.description,
     required this.createdAt,
     required this.avatarUrl,
@@ -32,7 +35,9 @@ class CommunityEntity extends Equatable {
     required this.membersCount,
     required this.isPublic,
     required this.isJoined,
+    required this.isAdmin,
     required this.isMuted,
+    required this.requestStatus,
     required this.users,
     required this.admins,
     required this.blockList,

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../posts/presentation/widgets/post_sheemer_widget.dart';
 import '../../../posts/presentation/widgets/post_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommunitySectionPosts extends StatelessWidget {
   final bool isLoading;
@@ -31,7 +31,6 @@ class CommunitySectionPosts extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: AppColors.lightBackgroundColor,
-      // color: AppColors.lightBackgroundColor,
       child: isLoading
           ? PostSheemerWidget()
           : isEmpty
@@ -43,11 +42,11 @@ class CommunitySectionPosts extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 8),
                       child: PostWidget(
                         post: posts[index],
-                        onDelete: (){
-                              }
+                        onDelete: () {},
                       ),
                     );
-                  }),
+                  },
+                ),
     );
   }
 }
@@ -58,14 +57,16 @@ class PostListEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      // color: Colors.grey,
       height: 500,
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Flexible(
-            child: Text('No posts so far'),
+            child: Text(
+              AppLocalizations.of(context)!.no_posts_so_far,
+             // 'No posts so far'
+              ),
           ),
         ],
       ),

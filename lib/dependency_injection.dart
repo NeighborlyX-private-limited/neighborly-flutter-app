@@ -2,6 +2,21 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/add_user_community_usecase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/get_user_groups_usecase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/handle_join_request_usercase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/join_community_usecase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/delete_community_usecase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/remove_admin_community_usecase.dart';
+import 'package:neighborly_flutter_app/features/communities/domain/usecases/update_community_displayname.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_join_group_request_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/handle_join_request_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
+import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_mute_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/data/datasources/payment_remote_data_source.dart';
 import 'package:neighborly_flutter_app/features/payment/data/repositories/payment_repository_impl.dart';
 import 'package:neighborly_flutter_app/features/payment/domain/repositories/payment_repository.dart';
@@ -12,7 +27,6 @@ import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_commen
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comment_by_comment_id_bloc/get_comments_by_commentId_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
-
 import 'core/network/network_info.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source_impl.dart';
@@ -38,16 +52,20 @@ import 'features/chat/data/repositories/chat_repositories_impl.dart';
 import 'features/chat/data/repositories/chat_repositories_impl_thread.dart';
 import 'features/chat/domain/repositories/chat_repositories.dart';
 import 'features/chat/domain/repositories/chat_repositories_thread.dart';
+import 'features/chat/domain/usecases/featch_pinned_messages_usecase.dart';
 import 'features/chat/domain/usecases/get_all_chat_rooms_usecase.dart';
 import 'features/chat/domain/usecases/get_chat_group_room_messages_usecase .dart';
 import 'features/chat/domain/usecases/get_chat_room_messages_usecase.dart';
 import 'features/chat/domain/usecases/get_all_chat_rooms_usecase_thread.dart';
 import 'features/chat/domain/usecases/get_chat_group_room_messages_usecase_thread.dart';
 import 'features/chat/domain/usecases/get_chat_room_messages_usecase_thread.dart';
+import 'features/chat/domain/usecases/pin_message_usecase.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit_thread.dart';
 import 'features/chat/presentation/bloc/chat_main_cubit.dart';
 import 'features/chat/presentation/bloc/chat_private_cubit.dart';
+import 'features/chat/presentation/bloc/featch_pinned_messages_bloc.dart';
+import 'features/chat/presentation/bloc/pin_message_bloc.dart';
 import 'features/communities/data/data_sources/community_remote_data_source/community_remote_data_source.dart';
 import 'features/communities/data/data_sources/community_remote_data_source/community_remote_data_source_impl.dart';
 import 'features/communities/data/repositories/community_repositories_impl.dart';
@@ -55,6 +73,7 @@ import 'features/communities/domain/repositories/community_repositories.dart';
 import 'features/communities/domain/usecases/create_community_usecase.dart';
 import 'features/communities/domain/usecases/get_all_communities_usecase.dart';
 import 'features/communities/domain/usecases/get_community_usecase.dart';
+import 'features/communities/domain/usecases/get_join_group_request_usecase.dart';
 import 'features/communities/domain/usecases/get_search_history_communities_usecase.dart';
 import 'features/communities/domain/usecases/get_search_results_communities_usecase.dart';
 import 'features/communities/domain/usecases/leave_community_usecase.dart';
@@ -156,71 +175,102 @@ import 'features/upload/domain/usecases/upload_file_usecase.dart';
 import 'features/upload/domain/usecases/upload_post_usecase.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
-import 'features/chat/Socket/socketService.dart';
+import 'features/chat/Socket/socket_service.dart';
 
+/// getit instance
 final sl = GetIt.instance;
 
 void init() async {
-  //payment di
-  // Data Sources
-  sl.registerLazySingleton(() => PaymentRemoteDataSource(client: sl()));
-
-  // Repositories
-  sl.registerLazySingleton<PaymentRepository>(
-      () => PaymentRepositoryImpl(remoteDataSource: sl()));
-
-  // Use Cases
-  sl.registerLazySingleton(() => CreateOrderUseCase(repository: sl()));
-  sl.registerLazySingleton(() => VerifyPaymentUseCase(repository: sl()));
-
   // Bloc
   sl.registerFactory(
       () => PaymentBloc(createOrderUseCase: sl(), verifyPaymentUseCase: sl()));
 
-  // register repository
+  ///........... register repository
+  /// auth repository
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  /// profile repository
   sl.registerLazySingleton<ProfileRepositories>(
       () => ProfileRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  /// post repository
   sl.registerLazySingleton<PostRepositories>(
       () => PostRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  /// uploade repository
   sl.registerLazySingleton<UploadRepositories>(
       () => UploadRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  /// community/group repository
   sl.registerLazySingleton<CommunityRepositories>(() =>
       CommunityRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  /// chat repository
   sl.registerLazySingleton<ChatRepositories>(
       () => ChatRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  /// chat repository thread
   sl.registerLazySingleton<ChatRepositoriesThread>(() =>
       ChatRepositoriesImplThread(remoteDataSource: sl(), networkInfo: sl()));
+
+  /// event repository
   sl.registerLazySingleton<EventRepositories>(
       () => EventRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  /// notification repository
   sl.registerLazySingleton<NotificationRepositories>(() =>
       NotificationRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
 
+  /// city repository
   sl.registerLazySingleton<CityRepository>(() => CityRepository());
 
-  // register datasource
+  /// payment Repositories
+  sl.registerLazySingleton<PaymentRepository>(
+      () => PaymentRepositoryImpl(remoteDataSource: sl()));
+
+  ///.......... register datasource
+  ///auth datasource
   sl.registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(client: sl()));
+
+  ///profile datasource
   sl.registerLazySingleton<ProfileRemoteDataSource>(
       () => ProfileRemoteDataSourceImpl(client: sl()));
+
+  ///post datasource
   sl.registerLazySingleton<PostRemoteDataSource>(
       () => PostRemoteDataSourceImpl(client: sl()));
+
+  ///uploade datasource
   sl.registerLazySingleton<UploadRemoteDataSource>(
       () => UploadRemoteDataSourceImpl(client: sl()));
+
+  ///community/group datasource
   sl.registerLazySingleton<CommunityRemoteDataSource>(
       () => CommunityRemoteDataSourceImpl(client: sl()));
+
+  ///chat datasource
   sl.registerLazySingleton<ChatRemoteDataSource>(
       () => ChatRemoteDataSourceImpl(client: sl()));
+
+  ///chat datasource thread
   sl.registerLazySingleton<ChatRemoteDataSourceThread>(
       () => ChatRemoteDataSourceImplThread(client: sl()));
+
+  ///event datasource
   sl.registerLazySingleton<EventRemoteDataSource>(
       () => EventRemoteDataSourceImpl(client: sl()));
+
+  ///notification datasource
   sl.registerLazySingleton<NotificationRemoteDataSource>(
       () => NotificationRemoteDataSourceImpl(client: sl()));
-  sl.registerLazySingleton<SocketService>(() => SocketService());
 
-  // register usecase
+  ///payment datasource
+  sl.registerLazySingleton(() => PaymentRemoteDataSource(client: sl()));
+
+  ///.................. register usecase
+  ///auth usecase
   sl.registerLazySingleton(() => SignupUsecase(sl()));
   sl.registerLazySingleton(() => LoginWithEmailUsecase(sl()));
   sl.registerLazySingleton(() => ResendOTPUsecase(sl()));
@@ -228,62 +278,91 @@ void init() async {
   sl.registerLazySingleton(() => VerifyOTPUsecase(sl()));
   sl.registerLazySingleton(() => GoogleAuthenticationUsecase(sl()));
   sl.registerLazySingleton(() => ChangePasswordUsecase(sl()));
+  sl.registerLazySingleton(() => LogoutUsecase(sl()));
+
+  ///post usecase
   sl.registerLazySingleton(() => GetAllPostsUsecase(sl()));
-  sl.registerLazySingleton(() => UploadPostUsecase(sl()));
   sl.registerLazySingleton(() => ReportPostUsecase(sl()));
   sl.registerLazySingleton(() => FeedbackUsecase(sl()));
   sl.registerLazySingleton(() => GetPostByIdUsecase(sl()));
   sl.registerLazySingleton(() => GetCommentsByPostIdUsecase(sl()));
   sl.registerLazySingleton(() => UpdateLocationUsecase(sl()));
   sl.registerLazySingleton(() => DeletePostUsecase(sl()));
-  sl.registerLazySingleton(() => UploadFileUsecase(sl()));
   sl.registerLazySingleton(() => AddCommentUsecase(sl()));
   sl.registerLazySingleton(() => VotePollUsecase(sl()));
   sl.registerLazySingleton(() => FetchCommentReplyUsecase(sl()));
   sl.registerLazySingleton(() => GiveAwardUsecase(sl()));
   sl.registerLazySingleton(() => GetGenderAndDOBUsecase(sl()));
-  sl.registerLazySingleton(() => GetProfileUsecase(sl()));
-  sl.registerLazySingleton(() => LogoutUsecase(sl()));
   sl.registerLazySingleton(() => GetMyPostsUsecase(sl()));
   sl.registerLazySingleton(() => SendFeedbackUsecase(sl()));
+  sl.registerLazySingleton(() => GetCommentByCommentIdUsecase(sl()));
+
+  ///uploade usecase
+  sl.registerLazySingleton(() => UploadFileUsecase(sl()));
+  sl.registerLazySingleton(() => UploadPostUsecase(sl()));
+
+  /// profile usecase
+  sl.registerLazySingleton(() => GetProfileUsecase(sl()));
   sl.registerLazySingleton(() => DeleteAccountUsecase(sl()));
   sl.registerLazySingleton(() => GetUserInfoUsecase(sl()));
   sl.registerLazySingleton(() => GetMyCommentsUsecase(sl()));
   sl.registerLazySingleton(() => GetMyGroupUsecase(sl()));
   sl.registerLazySingleton(() => EditProfileUsecase(sl()));
   sl.registerLazySingleton(() => GetMyAwardsUsecase(sl()));
-  sl.registerLazySingleton(() => GetAllCommunitiesUsecase(sl()));
-  sl.registerLazySingleton(() => GetCommunityUsecase(sl()));
-  sl.registerLazySingleton(() => MakeAdminCommunityUsecase(sl()));
-  sl.registerLazySingleton(() => RemoveUserCommunityUsecase(sl()));
-  sl.registerLazySingleton(() => UnblockUserCommunityUsecase(sl()));
-  sl.registerLazySingleton(() => UpdateTypeCommunityUsecase(sl()));
+
+  /// community/group usecase
   sl.registerLazySingleton(() => CreateCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => GetAllCommunitiesUsecase(sl()));
+  sl.registerLazySingleton(() => GetUserGroupsUsecase(sl()));
+  sl.registerLazySingleton(() => GetCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => GetJoinGroupRequestUsecase(sl()));
+  sl.registerLazySingleton(() => HandleJoinRequestUsercase(sl()));
+  sl.registerLazySingleton(() => MakeAdminCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => RemoveAdminCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => AddUserCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => RemoveUserCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => JoinCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => LeaveCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => ReportCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => DeleteCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateIconCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateDisplayNameCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateDescriptionCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => UpdateTypeCommunityUsecase(sl()));
+  sl.registerLazySingleton(() => UnblockUserCommunityUsecase(sl()));
   sl.registerLazySingleton(() => UpdateLocationCommunityUsecase(sl()));
   sl.registerLazySingleton(() => UpdateRadiusCommunityUsecase(sl()));
-  sl.registerLazySingleton(() => LeaveCommunityUsecase(sl()));
   sl.registerLazySingleton(() => UpdateMuteCommunityUsecase(sl()));
-  sl.registerLazySingleton(() => ReportCommunityUsecase(sl()));
-  sl.registerLazySingleton(() => UpdateIconCommunityUsecase(sl()));
-  sl.registerLazySingleton(() => UpdateDescriptionCommunityUsecase(sl()));
   sl.registerLazySingleton(() => GetSearchHistoryCommunitiesUsecase(sl()));
   sl.registerLazySingleton(() => GetSearchResultsCommunitiesUsecase(sl()));
+
+  ///payment usecase
+  sl.registerLazySingleton(() => CreateOrderUseCase(repository: sl()));
+  sl.registerLazySingleton(() => VerifyPaymentUseCase(repository: sl()));
+
+  ///chat usecase
+  sl.registerLazySingleton(() => FeatchPinnedMessagesUsecase(sl()));
+  sl.registerLazySingleton(() => PinnedMessagesUsecase(sl()));
   sl.registerLazySingleton(() => GetAllChatRoomsUsecase(sl()));
   sl.registerLazySingleton(() => GetAllChatRoomsUsecaseThread(sl()));
   sl.registerLazySingleton(() => GetChatRoomMessagesUseCaseThread(sl()));
   sl.registerLazySingleton(() => GetChatGroupRoomMessagesUseCaseThread(sl()));
   sl.registerLazySingleton(() => GetChatRoomMessagesUseCase(sl()));
   sl.registerLazySingleton(() => GetChatGroupRoomMessagesUseCase(sl()));
-  sl.registerLazySingleton(() => GetEventsUsecase(sl()));
+
+  ///event usecase
   sl.registerLazySingleton(() => CreateEventUsecase(sl()));
+  sl.registerLazySingleton(() => GetEventsUsecase(sl()));
   sl.registerLazySingleton(() => CancelEventUsecase(sl()));
   sl.registerLazySingleton(() => UpdateEventUsecase(sl()));
   sl.registerLazySingleton(() => JoinEventUsecase(sl()));
+
+  ///notification usecase
   sl.registerLazySingleton(() => UpdateFCMTokenUsecase(sl()));
   sl.registerLazySingleton(() => GetAllNotificationsUsecase(sl()));
-  sl.registerLazySingleton(() => GetCommentByCommentIdUsecase(sl()));
 
-  // register bloc
+  ///........... register bloc
+  ///auth bloc
   sl.registerFactory(
       () => RegisterBloc(registerUseCase: sl(), googleLoginCase: sl()));
   sl.registerFactory(
@@ -294,8 +373,12 @@ void init() async {
   sl.registerFactory(
       () => GoogleAuthenticationBloc(googleAuthenticationaUsecase: sl()));
   sl.registerFactory(() => ChangePasswordBloc(changePasswordUsecase: sl()));
-  sl.registerFactory(() => GetAllPostsBloc(getAllPostsUsecase: sl()));
+  sl.registerFactory(() => LogoutBloc(logoutUsecase: sl()));
+
+  ///post bloc
   sl.registerFactory(() => UploadPostBloc(uploadPostUsecase: sl()));
+  sl.registerFactory(() => UploadFileBloc(uploadFileUsecase: sl()));
+  sl.registerFactory(() => GetAllPostsBloc(getAllPostsUsecase: sl()));
   sl.registerFactory(() => ReportPostBloc(reportPostUsecase: sl()));
   sl.registerFactory(() => FeedbackBloc(feedbackUsecase: sl()));
   sl.registerFactory(() => GetPostByIdBloc(getPostByIdUsecase: sl()));
@@ -303,47 +386,77 @@ void init() async {
       () => GetCommentsByPostIdBloc(getCommentsByPostIdUsecase: sl()));
   sl.registerFactory(
       () => GetCommentByCommentIdBloc(commentByCommentIdUsecase: sl()));
-  // sl.registerFactory(
-  //     () => GetCommentByCommentIdBloc(commentByCommentIdUsecase: sl()));
   sl.registerFactory(() => UpdateLocationBloc(updateLocationUsecase: sl()));
   sl.registerFactory(() => DeletePostBloc(deletePostUsecase: sl()));
-  sl.registerFactory(() => UploadFileBloc(uploadFileUsecase: sl()));
   sl.registerFactory(() => AddCommentBloc(addCommentUsecase: sl()));
   sl.registerFactory(() => VotePollBloc(votePollUsecase: sl()));
   sl.registerFactory(
       () => FetchCommentReplyBloc(fetchCommentReplyUsecase: sl()));
   sl.registerFactory(() => GiveAwardBloc(giveAwardUsecase: sl()));
-  sl.registerFactory(() => GetGenderAndDOBBloc(getGenderAndDOBUsecase: sl()));
-  sl.registerFactory(() => GetProfileBloc(getProfileUsecase: sl()));
-  sl.registerFactory(() => LogoutBloc(logoutUsecase: sl()));
-  sl.registerFactory(() => GetMyPostsBloc(getMyPostsUsecase: sl()));
   sl.registerFactory(() => SendFeedbackBloc(sendFeedbackUsecase: sl()));
+
+  ///profile bloc
+  sl.registerFactory(() => GetProfileBloc(getProfileUsecase: sl()));
+  sl.registerFactory(() => GetMyPostsBloc(getMyPostsUsecase: sl()));
   sl.registerFactory(() => DeleteAccountBloc(deleteAccountUsecase: sl()));
   sl.registerFactory(() => GetUserInfoBloc(getUserInfoUsecase: sl()));
   sl.registerFactory(() => GetMyCommentsBloc(getMyCommentsUsecase: sl()));
   sl.registerFactory(() => GetMyGroupsBloc(getMyGroupsUsecase: sl()));
   sl.registerFactory(() => EditProfileBloc(editProfileUsecase: sl()));
   sl.registerFactory(() => GetMyAwardsBloc(getMyAwardsUsecase: sl()));
+  sl.registerFactory(() => GetGenderAndDOBBloc(getGenderAndDOBUsecase: sl()));
+
+  ///community bloc
+  sl.registerFactory(() => CommunityCreateCubit(sl()));
   sl.registerFactory(() => CommunityMainCubit(sl()));
-  sl.registerFactory(() => CommunityDetailsCubit(sl(), sl(), sl(), sl(), sl(),
+  sl.registerFactory(() => GetUserGroupsBloc(getUserGroupsUsecase: sl()));
+  sl.registerFactory(
+      () => GetJoinGroupRequestBloc(getJoinGroupRequestUsecase: sl()));
+  sl.registerFactory(
+      () => HandleJoinRequestBloc(handleJoinRequestUserCase: sl()));
+  sl.registerFactory(() => CommunityDetailsCubit(
       sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl(), sl()));
-  sl.registerFactory(() => CommunityCreateCubit(sl(), sl()));
+
+  sl.registerFactory(() =>
+      JoinGroupBloc(joinCommunityUsecase: sl(), leaveCommunityUsecase: sl()));
+  sl.registerFactory(() => AddRemoveUserInGroupBloc(
+      addUserCommunityUsecase: sl(), removeUserCommunityUsecase: sl()));
+  sl.registerFactory(() => MakeRemoveAdminBloc(
+      makeAdminCommunityUsecase: sl(), removeAdminCommunityUsecase: sl()));
   sl.registerFactory(() => CommunitySearchCubit(sl(), sl()));
+  sl.registerFactory(
+      () => UpdateBlockUserBloc(unblockUserCommunityUsecase: sl()));
+  sl.registerFactory(
+      () => UpdateMuteGroupBloc(updateMuteCommunityUsecase: sl()));
+
+  ///chat bloc
+  sl.registerFactory(
+      () => FeatchPinnedMessagesBloc(featchPinnedMessagesUsecase: sl()));
   sl.registerFactory(() => ChatMainCubit(sl()));
+  sl.registerFactory(() => PinMessageBloc(pinnedMessagesUsecase: sl()));
   sl.registerFactory(() => ChatPrivateCubit(sl()));
   sl.registerFactory(() => ChatGroupCubit(sl(), sl<SocketService>()));
   sl.registerFactory(() => ChatGroupCubitThread(sl(), sl<SocketService>()));
+
+  ///event bloc
   sl.registerFactory(() => EventMainCubit(sl()));
   sl.registerFactory(() => EventCreateCubit(sl(), sl(), sl()));
   sl.registerFactory(() => EventDetailCubit(sl(), sl()));
   sl.registerFactory(() => EventSearchCubit(sl()));
   sl.registerFactory(() => EventJoinCubit(sl()));
+
+  ///notification bloc
   sl.registerFactory(() => NotificationGeneralCubit(sl()));
   sl.registerFactory(() => NotificationListCubit(sl()));
+
+  ///others bloc
   sl.registerFactory<TutorialCubit>(() => TutorialCubit(sl()));
   sl.registerFactory(() => CityBloc(sl<CityRepository>()));
 
-  // register network info
+  /// register socket services
+  sl.registerLazySingleton<SocketService>(() => SocketService());
+
+  /// register network info
   sl.registerLazySingleton<http.Client>(() => http.Client());
   sl.registerLazySingleton<NetworkInfo>(
     () => NetworkInfoImpl(

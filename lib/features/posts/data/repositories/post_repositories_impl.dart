@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
-
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/network/network_info.dart';
@@ -18,6 +17,7 @@ class PostRepositoriesImpl implements PostRepositories {
     required this.networkInfo,
   });
 
+  /// get all post repo impl
   @override
   Future<Either<Failure, List<PostEntity>>> getAllPosts({
     required bool isHome,
@@ -27,23 +27,19 @@ class PostRepositoriesImpl implements PostRepositories {
         final result = await remoteDataSource.getAllPosts(
           isHome: isHome,
         );
-        print('result in getAllPosts PostRepositoriesImpl: $result');
 
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getAllPosts PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getAllPosts PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in getAllPosts PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
 
+  /// report post repo impl
   @override
   Future<Either<Failure, void>> reportPost({
     required String reason,
@@ -60,19 +56,16 @@ class PostRepositoriesImpl implements PostRepositories {
 
         return const Right(null);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in reportPost PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in reportPost PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in reportPost PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
 
+  /// feedback repo impl
   @override
   Future<Either<Failure, void>> feedback({
     required num id,
@@ -88,14 +81,11 @@ class PostRepositoriesImpl implements PostRepositories {
         );
         return const Right(null);
       } on ServerFailure catch (e) {
-        print('Server Failure in feedback PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in feedback PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in feedback PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -105,18 +95,14 @@ class PostRepositoriesImpl implements PostRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getPostById(id: id);
-        print('result in getPostById PostRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getPostById PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getPostById PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in getPostById PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -127,18 +113,14 @@ class PostRepositoriesImpl implements PostRepositories {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getCommentById(id: id);
-        print('result in getCommentById PostRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getCommentById PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getCommentById PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in getCommentById PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -152,19 +134,14 @@ class PostRepositoriesImpl implements PostRepositories {
           postId: postId,
           commentId: commentId,
         );
-        print('result in getCommentsByPostId PostRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in getCommentsByPostId PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in getCommentsByPostId PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print(
-          'No Internet Connection in getCommentsByPostId PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -177,15 +154,11 @@ class PostRepositoriesImpl implements PostRepositories {
         await remoteDataSource.deletePost(id: id, type: type);
         return const Right(null);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in deletePost PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in deletePost PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in deletePost PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -202,15 +175,11 @@ class PostRepositoriesImpl implements PostRepositories {
         );
         return const Right(null);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in addComment PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in addComment PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in addComment PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -226,14 +195,11 @@ class PostRepositoriesImpl implements PostRepositories {
         );
         return const Right(null);
       } on ServerFailure catch (e) {
-        print('Server Failure in votePoll PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in votePoll PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in votePoll PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -246,18 +212,14 @@ class PostRepositoriesImpl implements PostRepositories {
         final result = await remoteDataSource.fetchCommentReply(
           commentId: commentId,
         );
-        print('result in fetchCommentReply PostRepositoriesImpl: $result');
+
         return Right(result);
       } on ServerFailure catch (e) {
-        print(
-            'Server Failure in fetchCommentReply PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in fetchCommentReply PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in fetchCommentReply PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
@@ -276,14 +238,11 @@ class PostRepositoriesImpl implements PostRepositories {
         );
         return const Right(null);
       } on ServerFailure catch (e) {
-        print('Server Failure in giveAward PostRepositoriesImpl: ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('catch in giveAward PostRepositoriesImpl: $e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
-      print('No Internet Connection in giveAward PostRepositoriesImpl');
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
