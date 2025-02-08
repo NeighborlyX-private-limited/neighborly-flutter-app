@@ -3,6 +3,7 @@ class GroupJoinRequestEntity {
   final String groupId;
   final String userId;
   final String username;
+  final String userpic;
   final String email;
   final String status;
   final DateTime requestedAt;
@@ -13,6 +14,7 @@ class GroupJoinRequestEntity {
   const GroupJoinRequestEntity({
     required this.id,
     required this.groupId,
+    required this.userpic,
     required this.userId,
     required this.username,
     required this.email,

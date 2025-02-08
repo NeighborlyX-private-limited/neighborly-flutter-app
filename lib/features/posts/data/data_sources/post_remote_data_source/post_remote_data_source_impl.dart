@@ -34,9 +34,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       double lat = location[0];
       double long = location[1];
 
-      print('isHome:$isHome');
-      print('url:$lat');
-      print('url:$long');
       queryParameters = {
         'latitude': '$lat',
         'longitude': '$long',
@@ -47,9 +44,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       List<double> location = ShardPrefHelper.getLocation();
       double lat = location[0];
       double long = location[1];
-      print('isHome:$isHome');
-      print('url:$lat');
-      print('url:$long');
 
       queryParameters = {
         'home': 'false',
@@ -58,9 +52,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'range': '$radius',
       };
     }
-    print(
-      Uri.parse(url).replace(queryParameters: queryParameters),
-    );
 
     // var isMode = ShardPrefHelper.getIsModeLocationOn();
     // if (isMode && !isHome) {
@@ -83,7 +74,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       );
 
       final List<dynamic> jsonData = jsonDecode(response.body);
-      print(jsonData);
 
       if (response.statusCode == 200) {
         return jsonData.map((data) => PostModel.fromJson(data)).toList();

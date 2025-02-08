@@ -188,6 +188,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
       double radiusDouble = double.parse(radiusInput);
       communityCreateCubit.createCommunity(
         CommunityModel(
+          requestStatus: '',
           id: '',
           name: nameEC.text,
           description: descriptionEC.text,

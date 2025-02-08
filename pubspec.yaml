@@ -89,6 +89,12 @@ dependencies:
   # flutter_staggered_animations: 1.0.0
   flutter_linkify: ^6.0.0
   url_launcher: ^6.3.1
+  flutter_slidable: ^3.1.2
+  swipe_to: ^1.0.6
+  chat_message_timestamp: ^0.0.1
+  flutter_downloader: ^1.11.8
+  open_file: ^3.5.10
+  syncfusion_flutter_pdfviewer: ^28.2.4
  
 
 dev_dependencies:

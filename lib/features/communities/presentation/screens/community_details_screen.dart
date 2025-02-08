@@ -52,6 +52,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     isJoined = true;
     isAdmin = false;
     communityCache = CommunityModel(
+      requestStatus: '',
       id: '',
       name: '',
       description: '',
@@ -984,8 +985,11 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     child: TabBarView(
                       controller: _tabController,
                       children: [
-                        CommunitySectionAbout(
-                          community: communityCache!,
+                        RefreshIndicator(
+                          onRefresh: _onRefresh,
+                          child: CommunitySectionAbout(
+                            community: communityCache!,
+                          ),
                         ),
 
                         // CommunitySectionPosts(
@@ -1007,7 +1011,10 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         //
 
                         ///  chat section
-                        CommunitySectionChat(community: communityCache!),
+                        RefreshIndicator(
+                            onRefresh: _onRefresh,
+                            child: CommunitySectionChat(
+                                community: communityCache!)),
                       ],
                     ),
                   ),

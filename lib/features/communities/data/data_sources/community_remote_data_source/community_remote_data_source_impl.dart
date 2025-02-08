@@ -222,7 +222,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     String cookieHeader = cookies.join('; ');
 
-    String url = '$kBaseUrl/group/get-requests/$communityId';
+    String url = '$kBaseUrl/group/get-requests/$communityId?status=pending';
 
     final response = await client.get(
       Uri.parse(url),
@@ -247,10 +247,11 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
   ///handleJoinRequest api call
   @override
-  Future<String> handleJoinRequest(
-      {required String communityId,
-      required String requestId,
-      required String status}) async {
+  Future<String> handleJoinRequest({
+    required String communityId,
+    required String requestId,
+    required String status,
+  }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
 
     if (cookies == null || cookies.isEmpty) {

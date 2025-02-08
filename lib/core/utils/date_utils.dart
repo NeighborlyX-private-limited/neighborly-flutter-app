@@ -1,5 +1,18 @@
 import 'package:intl/intl.dart';
 
+String convertToIndianTime(String utcTime) {
+  // Parse the UTC time
+  DateTime utcDateTime = DateTime.parse(utcTime);
+
+  // Convert to IST (Indian Standard Time)
+  DateTime istDateTime = utcDateTime.add(Duration(hours: 5, minutes: 30));
+
+  // Format the IST time
+  String formattedTime = DateFormat('hh:mm a').format(istDateTime);
+
+  return formattedTime;
+}
+
 class DateUtilsHelper {
   // static DateTime dateFormatter(String date) =>
   //     DateFormat('dd/MM/yyyy HH:mm').parse(date);

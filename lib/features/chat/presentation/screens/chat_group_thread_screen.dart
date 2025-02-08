@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
@@ -341,7 +342,7 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                         onReport: (messageId, reason) {},
                         onShare: (message) {},
                         onPin: (messageToBePinned) {},
-                        onTapPinned: () {},
+                        onTapPinned: (messageId) {},
                       ),
                     ),
                     Padding(
@@ -395,7 +396,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                               onReact: (messageId, reactOrAward) {},
                               onReport: (messageId, reason) {},
                               onShare: (message) {},
-                              onPin: (messageToBePinned) {}, onTapPinned: () {},
+                              onPin: (messageToBePinned) {},
+                              onTapPinned: (messageId) {},
                             );
 
                             // if (lastDate != dateSummary) {

@@ -6,6 +6,7 @@ import '../../domain/repositories/chat_repositories.dart';
 import '../data_sources/chat_remote_data_source/chat_remote_data_source.dart';
 import '../model/chat_message_model.dart';
 import '../model/chat_room_model.dart';
+import '../model/pinned_message_model.dart';
 
 class ChatRepositoriesImpl implements ChatRepositories {
   final ChatRemoteDataSource remoteDataSource;
@@ -39,6 +40,49 @@ class ChatRepositoriesImpl implements ChatRepositories {
       try {
         final result = await remoteDataSource.getRoomMessages(
           roomId: roomId,
+        );
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<PinnedMessageModel>>> featchPinnedMessages({
+    required String groupId,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.featchPinnedMessages(
+          groupId: groupId,
+        );
+        return Right(result);
+      } on ServerFailure catch (e) {
+        return Left(ServerFailure(message: e.message));
+      } catch (e) {
+        return Left(ServerFailure(message: '$e'));
+      }
+    } else {
+      return const Left(ServerFailure(message: 'No internet connection'));
+    }
+  }
+
+  // Future<String> pinnedMessage({
+  //   required String messagesId,
+  // });
+  @override
+  Future<Either<Failure, String>> pinnedMessage({
+    required String messageId,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.pinnedMessage(
+          messageId: messageId,
         );
         return Right(result);
       } on ServerFailure catch (e) {

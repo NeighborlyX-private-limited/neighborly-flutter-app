@@ -44,7 +44,8 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           'cheers': message['cheers'],
           'boos': message['boos'],
           'booOrCheer': '',
-          'pictureUrl': '',
+          'pictureUrl': message['mediaLink'],
+          // 'https://s3.amazonaws.com/www.neighborly.in/452e36e5-4afd-480b-90ce-c8119355110c-2025-02-06%2022%3A52%3A01.345569_compressed.jpeg',
           'text': message['message'],
           'author': {
             "userId": message['userId'],
@@ -54,9 +55,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           }
         }
       ])[0];
-      if (message['parentMessageId'] == null) {
-        addMessage(chatmodel);
-      }
+      //if (message['parentMessageId'] == null) {
+      addMessage(chatmodel);
+      //}
     };
   }
 
@@ -140,6 +141,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     Map<String, dynamic> payload,
     bool isMsg,
   ) {
+    print(payload);
     socketService.sendMessage(state.roomId, payload, isMsg);
   }
 

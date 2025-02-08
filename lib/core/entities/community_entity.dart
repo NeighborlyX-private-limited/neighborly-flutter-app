@@ -15,6 +15,7 @@ class CommunityEntity extends Equatable {
   final bool isJoined;
   final bool isAdmin;
   final bool isMuted;
+  final String requestStatus;
   final List<UserSimpleModel> users;
   final List<UserSimpleModel> admins;
   final List<UserSimpleModel> blockList;
@@ -36,6 +37,7 @@ class CommunityEntity extends Equatable {
     required this.isJoined,
     required this.isAdmin,
     required this.isMuted,
+    required this.requestStatus,
     required this.users,
     required this.admins,
     required this.blockList,

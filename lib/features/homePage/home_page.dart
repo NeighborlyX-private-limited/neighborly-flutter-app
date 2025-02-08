@@ -99,7 +99,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('_getCurrentIndex');
     print(_getCurrentIndex(context));
     return SafeArea(
       child: Scaffold(

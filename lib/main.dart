@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/chat/presentation/bloc/featch_pinned_messages_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_join_group_request_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
@@ -31,6 +32,7 @@ import 'features/chat/presentation/bloc/chat_group_cubit.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit_thread.dart';
 import 'features/chat/presentation/bloc/chat_main_cubit.dart';
 import 'features/chat/presentation/bloc/chat_private_cubit.dart';
+import 'features/chat/presentation/bloc/pin_message_bloc.dart';
 import 'features/communities/presentation/bloc/communities_create_cubit.dart';
 import 'features/communities/presentation/bloc/communities_main_cubit.dart';
 import 'features/communities/presentation/bloc/communities_search_cubit.dart';
@@ -339,6 +341,12 @@ class MyAppState extends State<MyApp> {
           ///chat bloc
           BlocProvider<ChatMainCubit>(
             create: (context) => di.sl<ChatMainCubit>(),
+          ),
+          BlocProvider<FeatchPinnedMessagesBloc>(
+            create: (context) => di.sl<FeatchPinnedMessagesBloc>(),
+          ),
+          BlocProvider<PinMessageBloc>(
+            create: (context) => di.sl<PinMessageBloc>(),
           ),
           BlocProvider<ChatPrivateCubit>(
             create: (context) => di.sl<ChatPrivateCubit>(),

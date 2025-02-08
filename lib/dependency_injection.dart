@@ -52,16 +52,20 @@ import 'features/chat/data/repositories/chat_repositories_impl.dart';
 import 'features/chat/data/repositories/chat_repositories_impl_thread.dart';
 import 'features/chat/domain/repositories/chat_repositories.dart';
 import 'features/chat/domain/repositories/chat_repositories_thread.dart';
+import 'features/chat/domain/usecases/featch_pinned_messages_usecase.dart';
 import 'features/chat/domain/usecases/get_all_chat_rooms_usecase.dart';
 import 'features/chat/domain/usecases/get_chat_group_room_messages_usecase .dart';
 import 'features/chat/domain/usecases/get_chat_room_messages_usecase.dart';
 import 'features/chat/domain/usecases/get_all_chat_rooms_usecase_thread.dart';
 import 'features/chat/domain/usecases/get_chat_group_room_messages_usecase_thread.dart';
 import 'features/chat/domain/usecases/get_chat_room_messages_usecase_thread.dart';
+import 'features/chat/domain/usecases/pin_message_usecase.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit_thread.dart';
 import 'features/chat/presentation/bloc/chat_main_cubit.dart';
 import 'features/chat/presentation/bloc/chat_private_cubit.dart';
+import 'features/chat/presentation/bloc/featch_pinned_messages_bloc.dart';
+import 'features/chat/presentation/bloc/pin_message_bloc.dart';
 import 'features/communities/data/data_sources/community_remote_data_source/community_remote_data_source.dart';
 import 'features/communities/data/data_sources/community_remote_data_source/community_remote_data_source_impl.dart';
 import 'features/communities/data/repositories/community_repositories_impl.dart';
@@ -337,6 +341,8 @@ void init() async {
   sl.registerLazySingleton(() => VerifyPaymentUseCase(repository: sl()));
 
   ///chat usecase
+  sl.registerLazySingleton(() => FeatchPinnedMessagesUsecase(sl()));
+  sl.registerLazySingleton(() => PinnedMessagesUsecase(sl()));
   sl.registerLazySingleton(() => GetAllChatRoomsUsecase(sl()));
   sl.registerLazySingleton(() => GetAllChatRoomsUsecaseThread(sl()));
   sl.registerLazySingleton(() => GetChatRoomMessagesUseCaseThread(sl()));
@@ -424,7 +430,10 @@ void init() async {
       () => UpdateMuteGroupBloc(updateMuteCommunityUsecase: sl()));
 
   ///chat bloc
+  sl.registerFactory(
+      () => FeatchPinnedMessagesBloc(featchPinnedMessagesUsecase: sl()));
   sl.registerFactory(() => ChatMainCubit(sl()));
+  sl.registerFactory(() => PinMessageBloc(pinnedMessagesUsecase: sl()));
   sl.registerFactory(() => ChatPrivateCubit(sl()));
   sl.registerFactory(() => ChatGroupCubit(sl(), sl<SocketService>()));
   sl.registerFactory(() => ChatGroupCubitThread(sl(), sl<SocketService>()));

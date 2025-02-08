@@ -54,6 +54,7 @@ class SocketService {
 
     /// on receive message
     _socket?.on("receive-message", (message) {
+      print('new message receive:$message');
       if (onNewMessageReceived != null) {
         onNewMessageReceived!(message);
       }

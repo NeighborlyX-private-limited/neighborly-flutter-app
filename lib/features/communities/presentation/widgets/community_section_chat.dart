@@ -39,9 +39,8 @@ class _CommunitySectionChatState extends State<CommunitySectionChat> {
               lastMessageTime: DateTime.now()
                   .toIso8601String(), //need to fix this is not correct last msg time
               onTap: () {
-                context.push(
-                  '/group-chat/${widget.community.id}',
-                  extra: ChatRoomModel(
+                context.push('/group-chat/${widget.community.id}', extra: {
+                  'chatModel': ChatRoomModel(
                     id: widget.community.id,
                     name: widget.community.name,
                     avatarUrl: widget.community.avatarUrl,
@@ -52,7 +51,9 @@ class _CommunitySectionChatState extends State<CommunitySectionChat> {
                     isJoined: widget.community.isJoined,
                     unreadCount: 0,
                   ),
-                );
+                  'memberList': widget.community.users.toList(),
+                  'adminList': widget.community.admins.toList(),
+                });
               },
             ),
           ],

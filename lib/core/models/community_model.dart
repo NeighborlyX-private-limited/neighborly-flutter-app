@@ -17,6 +17,7 @@ class CommunityModel extends CommunityEntity {
     required super.isJoined,
     required super.isAdmin,
     required super.isMuted,
+    required super.requestStatus,
     required super.users,
     required super.admins,
     required super.blockList,
@@ -39,6 +40,7 @@ class CommunityModel extends CommunityEntity {
       'isJoined': isJoined,
       'isAdmin': isAdmin,
       'isMuted': isMuted,
+      'requestStatus': requestStatus,
       'users': users.map((x) => x.toMap()).toList(),
       'admins': admins.map((x) => x.toMap()).toList(),
       'blockList': blockList.map((x) => x.toMap()).toList(),
@@ -63,6 +65,7 @@ class CommunityModel extends CommunityEntity {
       isJoined: map['isJoined'] ?? true,
       isAdmin: map['isAdmin'] ?? true,
       isMuted: map['isMuted'] ?? false,
+      requestStatus: map['requestStatus'] ?? '',
       users: map['members'] != null
           ? List<UserSimpleModel>.from(
               map['members']?.map((x) => UserSimpleModel.fromMap(x)))
@@ -97,6 +100,7 @@ class CommunityModel extends CommunityEntity {
     bool? isJoined,
     bool? isAdmin,
     bool? isMuted,
+    String? requestStatus,
     List<UserSimpleModel>? users,
     List<UserSimpleModel>? admins,
     List<UserSimpleModel>? blockList,
@@ -117,6 +121,7 @@ class CommunityModel extends CommunityEntity {
       isJoined: isJoined ?? this.isJoined,
       isAdmin: isAdmin ?? this.isAdmin,
       isMuted: isMuted ?? this.isMuted,
+      requestStatus: requestStatus ?? this.requestStatus,
       users: users ?? this.users,
       admins: admins ?? this.admins,
       blockList: blockList ?? this.blockList,

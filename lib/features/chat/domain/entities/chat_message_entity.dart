@@ -15,6 +15,7 @@ class ChatMessageEntity extends Equatable {
   final int repliesCount;
   final int cheers;
   final int boos;
+  // final String? mediaLink;
   final String booOrCheer;
   final String? pictureUrl;
   final UserSimpleModel? author;
@@ -23,6 +24,7 @@ class ChatMessageEntity extends Equatable {
     required this.id,
     required this.text,
     required this.date,
+    // required this.mediaLink,
     required this.isMine,
     required this.readByuser,
     required this.hasMore,

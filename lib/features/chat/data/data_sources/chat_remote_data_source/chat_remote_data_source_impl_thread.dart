@@ -235,13 +235,14 @@ class ChatRemoteDataSourceImplThread implements ChatRemoteDataSourceThread {
 
     String cookieHeader = cookies.join('; ');
 
-    String url = '$kBaseUrl/chat/fetch-message-thread/roomId';
+    String url = '$kBaseUrl/chat/fetch-message-thread/$roomId';
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
         'Cookie': cookieHeader,
       },
     );
+
     if (response.statusCode == 200) {
       return ChatMessageModel.fromJsonList(jsonDecode(response.body))
           .reversed

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -118,7 +119,10 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
       ),
       body: BlocConsumer<GetJoinGroupRequestBloc, GetJoinGroupRequestState>(
           listener: (context, state) {
-        if (state is GetJoinGroupRequestFailureState) {}
+        if (state is GetJoinGroupRequestFailureState) {
+          showSnackBar(context: context, message: state.error);
+          //showSnackBar(context: context, message: state.error);
+        }
         if (state is GetJoinGroupRequestSuccessState) {}
       }, builder: (context, state) {
         if (state is GetJoinGroupRequestLoadingState) {
@@ -156,8 +160,9 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                   children: [
                     // User Profile Picture
                     CircleAvatar(
-                      // backgroundImage: NetworkImage(user.ProfilePic),
                       radius: 24,
+                      onBackgroundImageError: (_, __) => SizedBox(),
+                      backgroundImage: CachedNetworkImageProvider(user.userpic),
                     ),
                     SizedBox(width: 8),
 
@@ -235,28 +240,34 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        return _bottomSheetContent(
-          context,
-          "Are you sure you want to approve",
-          "$userName's",
-          AppColors.primaryColor,
-          "Accept",
-          () {
-            print(
-                "requestId $requestId communityId ${widget.communityId} status");
-            Navigator.pop(context);
-            context
-                .read<HandleJoinRequestBloc>()
-                .add(HandleGroupJoinRequestEvent(
-                  requestId: requestId,
-                  communityId: widget.communityId,
-                  status: "approved",
-                ));
-            // Handle accept logic
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   SnackBar(content: Text("$userName has been accepted!")),
-            // );
+        return BlocListener<HandleJoinRequestBloc, HandleJoinRequestState>(
+          listener: (context, state) {
+            if (state is HandleJoinRequestFailureState) {
+              showSnackBar(context: context, message: state.error);
+            }
+            if (state is HandleJoinRequestSuccessState) {
+              BlocProvider.of<GetJoinGroupRequestBloc>(context)
+                  .add(FeatchJoinGroupRequestEvent(
+                communityId: widget.communityId,
+              ));
+            }
           },
+          child: _bottomSheetContent(
+            context,
+            "Are you sure you want to approve",
+            "$userName's",
+            AppColors.primaryColor,
+            "Accept",
+            () {
+              Navigator.pop(context);
+              BlocProvider.of<HandleJoinRequestBloc>(context)
+                  .add(HandleGroupJoinRequestEvent(
+                requestId: requestId,
+                communityId: widget.communityId,
+                status: "approved",
+              ));
+            },
+          ),
         );
       },
     );

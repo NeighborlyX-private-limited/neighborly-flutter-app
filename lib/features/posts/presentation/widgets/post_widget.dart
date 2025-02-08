@@ -39,7 +39,6 @@ class _PostWidgetState extends State<PostWidget> {
     super.initState();
     title = widget.post.title ?? '';
     content = widget.post.content;
-    print('length: ${title!.length}');
   }
 
   @override

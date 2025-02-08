@@ -34,7 +34,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     var isHome = isLocationOn ? 'false' : 'true';
 
     Map<String, dynamic> queryParameters = {'home': isHome};
-    print('location: ${location[0]}${location[1]}');
+
     final request = http.MultipartRequest(
       'POST',
       Uri.parse(url).replace(queryParameters: queryParameters),

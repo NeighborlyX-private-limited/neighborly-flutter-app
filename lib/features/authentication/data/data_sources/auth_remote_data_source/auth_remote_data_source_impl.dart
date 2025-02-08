@@ -44,7 +44,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     if (response.statusCode == 200) {
       final jwtToken = response.headers['authorization'] ?? '';
-      print('jwtToken: $jwtToken');
 
       /// Assuming the response headers contain the Set-Cookie header
       /// extract data from response
@@ -163,7 +162,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       /// extract data from response
       final jwtToken = response.headers['authorization'] ?? '';
       ShardPrefHelper.setJwtToken(jwtToken);
-      print('jwtToken signup: $jwtToken');
+
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
@@ -285,7 +284,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         String authType = jsonDecode(response.body)['user']['auth_type'];
         final jwtToken = response.headers['authorization'] ?? '';
         ShardPrefHelper.setJwtToken(jwtToken);
-        print('jwtToken varify otp: $jwtToken');
 
         /// set data to local
         if (email != null) {
@@ -401,7 +399,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         String authType = 'email';
         final jwtToken = response.headers['authorization'] ?? '';
         ShardPrefHelper.setJwtToken(jwtToken);
-        print('oauth signup: $jwtToken');
 
         /// set data to local
         ShardPrefHelper.setCookie(cookies);

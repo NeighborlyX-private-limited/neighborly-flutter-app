@@ -299,15 +299,33 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/group-chat/:roomId',
-      builder: (context, state) => ChatGroupScreen(
-        roomId: state.pathParameters["roomId"] as String,
-        room: state.extra as ChatRoomModel,
-      ),
+      builder: (context, state) {
+        String roomId = state.pathParameters["roomId"] as String;
+
+        final extra = state.extra as Map?;
+        if (extra == null ||
+            !extra.containsKey('chatModel') ||
+            !extra.containsKey('memberList') ||
+            !extra.containsKey('adminList')) {
+          return Scaffold(body: Center(child: Text("Invalid data!")));
+        }
+        final chatRoom = extra['chatModel'] as ChatRoomModel;
+        final member = extra['memberList'] as List;
+        final admin = extra['adminList'] as List;
+
+        return ChatGroupScreen(
+          member: member,
+          admin: admin,
+          room: chatRoom,
+          roomId: roomId,
+        );
+      },
     ),
     GoRoute(
-      path: '/group-chat-pinned-message',
-      builder: (context, state) =>
-          GroupPinnedMessagesScreen(pineedMessages: (state.extra as List)),
+      path: '/group-chat-pinned-message/:groupId',
+      builder: (context, state) => GroupPinnedMessagesScreen(
+        groupId: state.pathParameters["groupId"] as String,
+      ),
     ),
     GoRoute(
       path: '/group-chat-thread/:messageId',

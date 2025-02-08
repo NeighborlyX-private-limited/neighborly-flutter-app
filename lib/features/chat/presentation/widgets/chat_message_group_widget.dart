@@ -3,13 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
-import '../../../../core/utils/shared_preference.dart';
+import '../../../../core/utils/date_utils.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/chat_message_model.dart';
@@ -29,7 +27,7 @@ class ChatMessageGroupWidget extends StatefulWidget {
   final Function(ChatMessageModel) onTapReply;
   final VoidCallback onTapCheer;
   final VoidCallback onTapBool;
-  final VoidCallback onTapPinned;
+  final Function(String) onTapPinned;
 
   const ChatMessageGroupWidget({
     super.key,
@@ -157,18 +155,18 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     messageEC.dispose();
   }
 
-  String formatTime(String lastMessageDate) {
-    if (lastMessageDate == '') return lastMessageDate;
-    DateTime parsedDate = DateTime.parse(lastMessageDate);
+  // String formatTime(String lastMessageDate) {
+  //   if (lastMessageDate == '') return lastMessageDate;
+  //   DateTime parsedDate = DateTime.parse(lastMessageDate);
 
-    // Format the date as "YYYY-MM-DD HH:mm:ss"
-    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
+  //   // Format the date as "YYYY-MM-DD HH:mm:ss"
+  //   String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
 
-    final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
-    final DateFormat timeFormat = DateFormat('hh:mm a');
-    DateTime dateTime = dateFormat.parse(formattedDate);
-    return timeFormat.format(dateTime);
-  }
+  //   final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+  //   final DateFormat timeFormat = DateFormat('hh:mm a');
+  //   DateTime dateTime = dateFormat.parse(formattedDate);
+  //   return timeFormat.format(dateTime);
+  // }
 
   /// admin bubble
   Widget isAdminBubble() {
@@ -192,27 +190,29 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     );
   }
 
-  Widget reactionCircle(
-      {required String assetUrl, required VoidCallback onTap}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 40,
-        width: 40,
-        decoration: BoxDecoration(
-          color: AppColors.lightBackgroundColor,
-          borderRadius: BorderRadius.circular(50),
-          border: Border.all(
-            color: Colors.grey,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(6.0),
-          child: SvgPicture.asset(assetUrl),
-        ),
-      ),
-    );
-  }
+  // Widget reactionCircle({
+  //   required String assetUrl,
+  //   required VoidCallback onTap,
+  // }) {
+  //   return GestureDetector(
+  //     onTap: onTap,
+  //     child: Container(
+  //       height: 40,
+  //       width: 40,
+  //       decoration: BoxDecoration(
+  //         color: AppColors.lightBackgroundColor,
+  //         borderRadius: BorderRadius.circular(50),
+  //         border: Border.all(
+  //           color: Colors.grey,
+  //         ),
+  //       ),
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(6.0),
+  //         child: SvgPicture.asset(assetUrl),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget messageInputSection() {
     // bool isReply = commentToReply != null; // Check if it's a reply
@@ -336,9 +336,15 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                     ),
                                     const SizedBox(width: 5),
                                     Text(
-                                      formatTime(widget.message.date),
+                                      convertToIndianTime(
+                                        widget.message.date,
+                                      ),
+                                      // DateUtilsHelper
+                                      //     .simplifyISOtimeStringOnlyHour(
+                                      //         widget.message.date),
+                                      // formatTime(widget.message.date),
                                       style: TextStyle(
-                                        fontSize: 13,
+                                        fontSize: 19,
                                         fontWeight: FontWeight.w400,
                                         color: Colors.black45,
                                       ),
@@ -508,19 +514,20 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                               ),
                             ),
                             //const SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: MenuIconItem(
-                                  title: 'Pinned',
-                                  svgPath: 'assets/pinned.svg',
-                                  iconSize: 25,
-                                  onTap: () {
-                                    widget.onTapPinned();
-                                    _removeOverlay();
-                                    //widget.onTapReply(widget.message);
-                                    // _removeOverlay();
-                                  }),
-                            ),
+                            if (widget.isAdmin == true)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: MenuIconItem(
+                                    title: 'Pinned message',
+                                    svgPath: 'assets/pinned.svg',
+                                    iconSize: 25,
+                                    onTap: () {
+                                      widget.onTapPinned(widget.message.id);
+                                      _removeOverlay();
+                                      //widget.onTapReply(widget.message);
+                                      // _removeOverlay();
+                                    }),
+                              ),
                             //const SizedBox(height: 20),
                             Padding(
                               padding: const EdgeInsets.only(left: 8.0),
@@ -556,40 +563,40 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                     // _showOverlay(context);
                                   }),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: MenuIconItem(
-                                  title: 'Share',
-                                  svgPath: 'assets/menu_share.svg',
-                                  iconSize: 25,
-                                  onTap: () {
-                                    // communityDetailCubit.toggleMute();
-                                    widget.onShare(widget.message);
+                            // Padding(
+                            //   padding: const EdgeInsets.only(left: 8.0),
+                            //   child: MenuIconItem(
+                            //       title: 'Share',
+                            //       svgPath: 'assets/menu_share.svg',
+                            //       iconSize: 25,
+                            //       onTap: () {
+                            //         // communityDetailCubit.toggleMute();
+                            //         widget.onShare(widget.message);
 
-                                    setState(() {
-                                      showReplyInput = false;
-                                    });
-                                    _removeOverlay();
-                                  }),
-                            ),
+                            //         setState(() {
+                            //           showReplyInput = false;
+                            //         });
+                            //         _removeOverlay();
+                            //       }),
+                            // ),
 
                             /// show pinned option
-                            if (widget.isAdmin == true)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: MenuIconItem(
-                                    title: 'Pinned Message',
-                                    svgPath: 'assets/menu_pinned.svg',
-                                    iconSize: 25,
-                                    textColor: Colors.black,
-                                    onTap: () {
-                                      setState(() {
-                                        showReplyInput = false;
-                                      });
-                                      _removeOverlay();
-                                      widget.onPin(widget.message);
-                                    }),
-                              ),
+                            // if (widget.isAdmin == true)
+                            //   Padding(
+                            //     padding: const EdgeInsets.only(left: 8.0),
+                            //     child: MenuIconItem(
+                            //         title: 'Pinned Message',
+                            //         svgPath: 'assets/menu_pinned.svg',
+                            //         iconSize: 25,
+                            //         textColor: Colors.black,
+                            //         onTap: () {
+                            //           setState(() {
+                            //             showReplyInput = false;
+                            //           });
+                            //           _removeOverlay();
+                            //           widget.onPin(widget.message);
+                            //         }),
+                            //   ),
 
                             /// report msg
                             if (widget.isAdmin == false)
@@ -609,9 +616,9 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                                     }),
                               ),
                           ],
-                          if (showReplyInput == true) ...[
-                            messageInputSection(),
-                          ],
+                          // if (showReplyInput == true) ...[
+                          //   messageInputSection(),
+                          // ],
                         ],
                       ),
                     ),
@@ -930,7 +937,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        print('press');
+        //super._removeOverlay()
         _removeOverlay();
         //context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
         Navigator.pop(context);
@@ -967,7 +974,8 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                         ),
                         const SizedBox(width: 5),
                         Text(
-                          formatTime(widget.message.date),
+                          convertToIndianTime(widget.message.date),
+                          // formatTime(widget.message.date),
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -993,7 +1001,7 @@ class _ChatMessageGroupWidgetState extends State<ChatMessageGroupWidget> {
                             //     color: AppColors.blackColor,
                             //   ),
                             // );
-                            _showOverlay(context);
+                            // _showOverlay(context);
                           },
                           child: widget.message.pictureUrl != '' &&
                                   widget.message.text == ''
