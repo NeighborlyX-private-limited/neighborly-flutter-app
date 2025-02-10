@@ -222,7 +222,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     String cookieHeader = cookies.join('; ');
 
-    String url = '$kBaseUrl/group/get-requests/$communityId?status=pending';
+    String url = '$kBaseUrl/group/get-requests/$communityId';
 
     final response = await client.get(
       Uri.parse(url),
@@ -269,12 +269,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         'Cookie': cookieHeader,
       },
       body: jsonEncode(<String, String>{
-        "status": status,
+        "response": status,
       }),
     );
-
+    print('res:${response.body}');
+    print('res:${response.statusCode.runtimeType}');
     if (response.statusCode == 200) {
-      final List<dynamic> jsonData = jsonDecode(response.body);
+      print('1st: ${jsonDecode(response.body)['message']}');
       return jsonDecode(response.body)['message'] ?? "Success";
     } else {
       final message = jsonDecode(response.body)['msg'] ??

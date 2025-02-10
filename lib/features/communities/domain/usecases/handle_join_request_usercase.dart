@@ -11,10 +11,13 @@ class HandleJoinRequestUsercase {
     required String requestId,
     required String status,
   }) async {
-    return await repository.handleJoinRequest(
+    final result = await repository.handleJoinRequest(
       communityId: communityId,
       requestId: requestId,
       status: status,
     );
+
+    print("Use case result: $result");
+    return result;
   }
 }

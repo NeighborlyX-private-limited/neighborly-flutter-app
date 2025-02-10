@@ -6,6 +6,8 @@ class CommunityModel extends CommunityEntity {
   const CommunityModel({
     required super.id,
     required super.name,
+    required super.lastMessageTime,
+    required super.lastMessage,
     required super.displayName,
     required super.description,
     required super.locationStr,
@@ -54,6 +56,8 @@ class CommunityModel extends CommunityEntity {
     return CommunityModel(
       id: map['id'] ?? map['_id'] ?? "0",
       name: map['name'] ?? '',
+      lastMessageTime: map['lastMessageDate'] ?? '',
+      lastMessage: map['lastMessage'] ?? '',
       displayName: map['displayname'] ?? '',
       description: map['description'] ?? '',
       createdAt: map['createdAt'] ?? '',
@@ -65,7 +69,7 @@ class CommunityModel extends CommunityEntity {
       isJoined: map['isJoined'] ?? true,
       isAdmin: map['isAdmin'] ?? true,
       isMuted: map['isMuted'] ?? false,
-      requestStatus: map['requestStatus'] ?? '',
+      requestStatus: map['hasRequest'] ?? false,
       users: map['members'] != null
           ? List<UserSimpleModel>.from(
               map['members']?.map((x) => UserSimpleModel.fromMap(x)))
@@ -93,6 +97,8 @@ class CommunityModel extends CommunityEntity {
     String? location,
     String? createdAt,
     String? avatarUrl,
+    String? lastMessageTime,
+    String? lastMessage,
     num? karma,
     num? radius,
     num? membersCount,
@@ -100,7 +106,7 @@ class CommunityModel extends CommunityEntity {
     bool? isJoined,
     bool? isAdmin,
     bool? isMuted,
-    String? requestStatus,
+    bool? requestStatus,
     List<UserSimpleModel>? users,
     List<UserSimpleModel>? admins,
     List<UserSimpleModel>? blockList,
@@ -110,6 +116,8 @@ class CommunityModel extends CommunityEntity {
     return CommunityModel(
       id: id ?? this.id,
       name: name ?? this.name,
+      lastMessage: name ?? this.lastMessage,
+      lastMessageTime: name ?? this.lastMessageTime,
       displayName: displayName ?? this.displayName,
       description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,

@@ -57,6 +57,7 @@ import '../../features/profile/presentation/screens/user_profile_screen.dart';
 import '../../features/upload/presentation/screens/create_post_screen.dart';
 import '../constants/route_constants.dart';
 import '../models/community_model.dart';
+import '../models/user_simple_model.dart';
 import '../utils/shared_preference.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
@@ -301,31 +302,36 @@ final GoRouter router = GoRouter(
       path: '/group-chat/:roomId',
       builder: (context, state) {
         String roomId = state.pathParameters["roomId"] as String;
-
         final extra = state.extra as Map?;
         if (extra == null ||
             !extra.containsKey('chatModel') ||
-            !extra.containsKey('memberList') ||
-            !extra.containsKey('adminList')) {
+            !extra.containsKey('membersList') ||
+            !extra.containsKey('adminsList')) {
           return Scaffold(body: Center(child: Text("Invalid data!")));
         }
-        final chatRoom = extra['chatModel'] as ChatRoomModel;
-        final member = extra['memberList'] as List;
-        final admin = extra['adminList'] as List;
+        final ChatRoomModel chatRoom = extra['chatModel'];
+        final List<UserSimpleModel> members = extra['membersList'];
+        final List<UserSimpleModel> admins = extra['adminsList'];
 
         return ChatGroupScreen(
-          member: member,
-          admin: admin,
-          room: chatRoom,
           roomId: roomId,
+          chatRoom: chatRoom,
+          members: members,
+          admins: admins,
         );
       },
     ),
     GoRoute(
-      path: '/group-chat-pinned-message/:groupId',
-      builder: (context, state) => GroupPinnedMessagesScreen(
-        groupId: state.pathParameters["groupId"] as String,
-      ),
+      path: '/group-chat-pinned-message/:groupId/:isAdmin',
+      builder: (context, state) {
+        print(state);
+        String isAdmin = state.pathParameters["isAdmin"] as String;
+        debugPrint("here is admin : ${isAdmin}");
+        return GroupPinnedMessagesScreen(
+          groupId: state.pathParameters["groupId"] as String,
+          isAdmin: isAdmin == "true" ? true : false,
+        );
+      },
     ),
     GoRoute(
       path: '/group-chat-thread/:messageId',

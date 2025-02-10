@@ -536,6 +536,8 @@ class _SettingScreenState extends State<SettingScreen> {
                         ShardPrefHelper.removeUsername();
                         ShardPrefHelper.removePhoneNumber();
                         ShardPrefHelper.removeGender();
+                        ShardPrefHelper.clear();
+                        // ShardPrefHelper.re();
 
                         context.go('/');
                       }

@@ -35,6 +35,8 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
 
   @override
   void initState() {
+    print('widget.community: ${widget.community}');
+    print('widget.community: ${widget.community.id}');
     super.initState();
     communityCubit = BlocProvider.of<CommunityDetailsCubit>(context);
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
@@ -62,6 +64,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
   }
 
   void openCommunity(BuildContext context) async {
+    print("community: ${widget.community}");
     if (widget.community.isPublic || widget.community.isJoined) {
       final result = await context.push<bool>(
         '/group-details/${widget.community.id}',
@@ -321,6 +324,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
 
     return GestureDetector(
       onTap: () {
+        print('yes is click on this');
         openCommunity(context);
       },
       child: Card(
@@ -473,7 +477,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                     ),
                     const SizedBox(height: 10),
                     if (!widget.community.isJoined &&
-                        widget.community.requestStatus != 'pending')
+                        !widget.community.requestStatus)
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 10),
@@ -538,10 +542,12 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           ),
                     if (!widget.community.isPublic &&
                         !widget.community.isJoined &&
-                        (widget.community.requestStatus == 'pending'))
+                        widget.community.requestStatus)
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
                         child: GestureDetector(
                           onTap: () {
                             //joinGroupBottomSheet(context);

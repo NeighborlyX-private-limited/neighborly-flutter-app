@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:readmore/readmore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/models/community_model.dart';
@@ -242,39 +243,44 @@ class _MembersListState extends State<MembersList> {
 
   Widget userTile(UserSimpleModel user, bool isAdmin) {
     isAdmin = checkIsAdmin(user);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          UserAvatarStyledWidget(
-            avatarUrl: user.avatarUrl,
-            avatarSize: 18,
-            avatarBorderSize: 0,
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            flex: 50,
-            child: Text(
-              user.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
+    return GestureDetector(
+      onTap: () {
+        context.push('/userProfileScreen/${user.id}');
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            UserAvatarStyledWidget(
+              avatarUrl: user.avatarUrl,
+              avatarSize: 18,
+              avatarBorderSize: 0,
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              flex: 50,
+              child: Text(
+                user.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ),
-          ),
-          if (isAdmin) ...[
-            const SizedBox(width: 5),
-            Expanded(
-              flex: 20,
-              child: isAdminBubble(),
-            ),
-          ]
-        ],
+            if (isAdmin) ...[
+              const SizedBox(width: 5),
+              Expanded(
+                flex: 20,
+                child: isAdminBubble(),
+              ),
+            ]
+          ],
+        ),
       ),
     );
   }

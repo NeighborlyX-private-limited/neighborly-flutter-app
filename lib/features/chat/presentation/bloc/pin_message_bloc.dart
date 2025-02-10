@@ -7,7 +7,6 @@ part 'pin_message_state.dart';
 
 class PinMessageBloc extends Bloc<PinMessagesEvent, PinMessagesState> {
   final PinnedMessagesUsecase _pinnedMessagesUsecase;
-
   PinMessageBloc({
     required PinnedMessagesUsecase pinnedMessagesUsecase,
   })  : _pinnedMessagesUsecase = pinnedMessagesUsecase,

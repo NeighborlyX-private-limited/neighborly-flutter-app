@@ -6,6 +6,8 @@ class CommunityEntity extends Equatable {
   final String name;
   final String displayName;
   final String description;
+  final String lastMessage;
+  final String lastMessageTime;
   final String createdAt;
   final String avatarUrl;
   final num karma;
@@ -15,7 +17,7 @@ class CommunityEntity extends Equatable {
   final bool isJoined;
   final bool isAdmin;
   final bool isMuted;
-  final String requestStatus;
+  final bool requestStatus;
   final List<UserSimpleModel> users;
   final List<UserSimpleModel> admins;
   final List<UserSimpleModel> blockList;
@@ -28,6 +30,8 @@ class CommunityEntity extends Equatable {
     required this.name,
     required this.displayName,
     required this.description,
+    required this.lastMessageTime,
+    required this.lastMessage,
     required this.createdAt,
     required this.avatarUrl,
     required this.karma,

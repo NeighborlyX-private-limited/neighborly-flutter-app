@@ -3,6 +3,7 @@ import '../entities/option_entity.dart';
 
 /// format Time Difference
 String formatTimeDifference(String isoTimestamp) {
+  if (isoTimestamp == '') return '';
   DateTime inputTime = DateTime.parse(isoTimestamp);
   DateTime now = DateTime.now();
   Duration difference = now.difference(inputTime);

@@ -19,7 +19,7 @@ void showSnackBar({required BuildContext context, required String message}) {
       duration: Duration(seconds: 2),
       elevation: 2,
       behavior: SnackBarBehavior.floating,
-      backgroundColor: Colors.black87,
+      backgroundColor: AppColors.blackColor.withOpacity(0.8),
       margin: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 5,

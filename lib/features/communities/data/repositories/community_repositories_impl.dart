@@ -234,7 +234,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
           requestId: requestId,
           status: status,
         );
-
+        print('2nd: $result');
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

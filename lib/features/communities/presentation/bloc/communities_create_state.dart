@@ -18,7 +18,9 @@ class CommunityCreateState extends Equatable {
     this.imageUrl = '',
     this.imageToUpload,
     this.communitiyDraft = const CommunityModel(
-      requestStatus: '',
+      lastMessageTime: '',
+      lastMessage: '',
+      requestStatus: false,
       id: '',
       name: '',
       displayName: '',

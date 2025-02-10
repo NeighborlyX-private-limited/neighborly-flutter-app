@@ -8,12 +8,16 @@ import 'package:neighborly_flutter_app/features/chat/data/model/pinned_message_m
 import 'package:neighborly_flutter_app/features/chat/presentation/bloc/featch_pinned_messages_bloc.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';
-import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../bloc/pin_message_bloc.dart';
 
 class GroupPinnedMessagesScreen extends StatefulWidget {
   final String groupId;
-  const GroupPinnedMessagesScreen({super.key, required this.groupId});
+  final bool isAdmin;
+  const GroupPinnedMessagesScreen({
+    super.key,
+    required this.groupId,
+    required this.isAdmin,
+  });
 
   @override
   State<GroupPinnedMessagesScreen> createState() =>
@@ -21,8 +25,6 @@ class GroupPinnedMessagesScreen extends StatefulWidget {
 }
 
 class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
-  List<PinnedMessageModel> pinnedMessages = [];
-
   @override
   void initState() {
     super.initState();
@@ -31,148 +33,159 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
     );
   }
 
+  Future<void> _onRefresh() async {
+    BlocProvider.of<FeatchPinnedMessagesBloc>(context).add(
+      FeatchAllPinnedMessagesEvent(groupId: widget.groupId),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title:
-            BlocListener<FeatchPinnedMessagesBloc, FeatchPinnedMessagesState>(
-          listener: (context, state) {
-            if (state is FeatchPinnedMessagesSuccessState) {
-              pinnedMessages = state.pinnedMessages;
-            }
-          },
-          child: Text(
-            '${pinnedMessages.length} Pinned Messages',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: BlocConsumer<FeatchPinnedMessagesBloc, FeatchPinnedMessagesState>(
-        listener: (context, state) {
-          if (state is FeatchPinnedMessagesFailureState) {
-            showSnackBar(context: context, message: state.error);
-          }
-          if (state is FeatchPinnedMessagesSuccessState) {
-            pinnedMessages = state.pinnedMessages;
-          }
-        },
-        builder: (context, state) {
-          if (state is FeatchPinnedMessagesLoadingState) {
-            return CustomCircularIndicator();
-          }
-          if (state is FeatchPinnedMessagesSuccessState) {
-            if (state.pinnedMessages.isEmpty) {
-              return noPinnedMessage();
-            }
-            return Column(
+    return BlocConsumer<FeatchPinnedMessagesBloc, FeatchPinnedMessagesState>(
+      listener: (context, state) {
+        if (state is FeatchPinnedMessagesFailureState) {
+          showSnackBar(
+            context: context,
+            message: state.error,
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is FeatchPinnedMessagesLoadingState) {
+          return Scaffold(
+            appBar: AppBar(),
+            body: Column(
               children: [
-                Divider(),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 0),
-                    itemCount: pinnedMessages.length,
-                    itemBuilder: (context, index) {
-                      final pinnedMessage = pinnedMessages[index];
-                      final bool isNewDate = index == 0 ||
-                          DateUtilsHelper.simplifyISOtimeString(
-                                pinnedMessage.sendAt.toString(),
-                              ) !=
-                              DateUtilsHelper.simplifyISOtimeString(
-                                pinnedMessages[index - 1].sendAt.toString(),
-                              );
-
-                      // final bool isNewDate = index == 0 ||
-                      //     pinnedMessage.sendAt !=
-                      //         pinnedMessages[index - 1].sendAt;
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (isNewDate)
-                            Center(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
-                                child: Text(
-                                  DateUtilsHelper.simplifyISOtimeString(
-                                    pinnedMessage.sendAt.toString(),
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ListTile(
-                            onTap: () {
-                              showOptionsBottomSheet(
-                                context: context,
-                                messageId: pinnedMessage.id,
-                              );
-                            },
-                            onLongPress: () {
-                              showOptionsBottomSheet(
-                                context: context,
-                                messageId: pinnedMessage.id,
-                              );
-                            },
-                            leading: CircleAvatar(
-                              radius: 20,
-                              onBackgroundImageError: (_, __) => SizedBox(),
-                              backgroundImage: CachedNetworkImageProvider(
-                                  pinnedMessage.userpicture),
-                            ),
-                            // leading: UserAvatarStyledWidget(
-                            //   avatarUrl: pinnedMessage.userpicture,
-                            // ),
-                            title: Row(
-                              children: [
-                                Text(
-                                  pinnedMessage.name,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  DateUtilsHelper.simplifyISOtimeStringOnlyHour(
-                                    pinnedMessage.sendAt.toString(),
-                                  ),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                                SizedBox(width: 5),
-                                Icon(
-                                  Icons.push_pin,
-                                  size: 16,
-                                  color: Colors.grey,
-                                ),
-                              ],
-                            ),
-                            subtitle: Text(pinnedMessage.message),
-                          ),
-                        ],
-                      );
-                    },
+                Center(
+                  child: CustomCircularIndicator(),
+                )
+              ],
+            ),
+          );
+        }
+        if (state is FeatchPinnedMessagesSuccessState) {
+          if (state.pinnedMessages.isEmpty) {
+            return Scaffold(body: noPinnedMessage());
+          }
+        }
+        if (state is FeatchPinnedMessagesSuccessState) {
+          return Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  '${state.pinnedMessages.length} Pinned Messages',
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ],
-            );
-          }
-          return SizedBox();
-        },
-      ),
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back_ios),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ),
+              body: RefreshIndicator(
+                onRefresh: _onRefresh,
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(horizontal: 0),
+                        itemCount: state.pinnedMessages.length,
+                        itemBuilder: (context, index) {
+                          final List<PinnedMessageModel> pinnedMessage =
+                              state.pinnedMessages;
+                          final bool isNewDate = index == 0 ||
+                              DateUtilsHelper.simplifyISOtimeString(
+                                    pinnedMessage[index].sendAt.toString(),
+                                  ) !=
+                                  DateUtilsHelper.simplifyISOtimeString(
+                                    pinnedMessage[index - 1].sendAt.toString(),
+                                  );
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (isNewDate)
+                                Center(
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    child: Text(
+                                      DateUtilsHelper.simplifyISOtimeString(
+                                        pinnedMessage[index].sendAt.toString(),
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ListTile(
+                                onTap: () {
+                                  if (widget.isAdmin) {
+                                    showOptionsBottomSheet(
+                                      context: context,
+                                      messageId: pinnedMessage[index].id,
+                                    );
+                                  }
+                                },
+                                onLongPress: () {
+                                  print(widget.isAdmin);
+                                  if (widget.isAdmin) {
+                                    showOptionsBottomSheet(
+                                      context: context,
+                                      messageId: pinnedMessage[index].id,
+                                    );
+                                  }
+                                },
+                                leading: CircleAvatar(
+                                  radius: 20,
+                                  onBackgroundImageError: (_, __) => SizedBox(),
+                                  backgroundImage: CachedNetworkImageProvider(
+                                    pinnedMessage[index].userpicture,
+                                  ),
+                                ),
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      pinnedMessage[index].name,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      DateUtilsHelper
+                                          .simplifyISOtimeStringOnlyHour(
+                                        pinnedMessage[index].sendAt.toString(),
+                                      ),
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    SizedBox(width: 5),
+                                    Icon(
+                                      Icons.push_pin,
+                                      size: 16,
+                                      color: Colors.grey,
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Text(pinnedMessage[index].message),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ));
+        }
+        return SizedBox();
+      },
     );
   }
 
@@ -184,7 +197,6 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
         children: [
           SvgPicture.asset(
             'assets/no-request-pending-image.svg',
-            // 'assets/private-lock-icon.svg',
           ),
           CustomSizedBox(
             height: 12,
@@ -230,7 +242,6 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // unPinned Messages Option
               BlocListener<PinMessageBloc, PinMessagesState>(
                 listener: (context, state) {
                   if (state is PinMessagesStateFailureState) {

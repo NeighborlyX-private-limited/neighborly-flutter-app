@@ -1,15 +1,14 @@
 // prod base url
 
-// const kBaseUrl = "https://prod.neighborly.in/api";
-// const kBaseUrlNotification = "https://prod.neighborly.in/notification";
+const kBaseUrl = "https://prod.neighborly.in/api";
+const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 
 // dev base url
 
-const kBaseUrl = "https://dev.neighborly.in/api";
-const kBaseUrlNotification = "https://dev.neighborly.in/notification";
+// const kBaseUrl = "https://dev.neighborly.in/api";
+// const kBaseUrlNotification = "https://dev.neighborly.in/notification";
 
 // socket base url
-
 const kBaseSocketUrl = "http://35.154.40.61:3001";
 
 const double kMaxRadius = 100;

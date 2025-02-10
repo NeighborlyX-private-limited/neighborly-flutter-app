@@ -1,23 +1,23 @@
 import 'dart:io';
-import 'package:chat_message_timestamp/chat_message_timestamp.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:neighborly_flutter_app/core/utils/video_compresser.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
+import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/shared_preference.dart';
-import '../../../../core/utils/uploade_file.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
@@ -32,20 +32,18 @@ import '../widgets/chat_messages_group_sheemer.dart';
 import '../../../../core/constants/imagepickercompress.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../widgets/media_message_widget.dart';
-
 class ChatGroupScreen extends StatefulWidget {
+  final ChatRoomModel chatRoom;
   final String roomId;
-  final ChatRoomModel room;
-  final List admin;
-  final List member;
+  final List<UserSimpleModel> admins;
+  final List<UserSimpleModel> members;
 
   const ChatGroupScreen({
     super.key,
     required this.roomId,
-    required this.room,
-    required this.member,
-    required this.admin,
+    required this.chatRoom,
+    required this.members,
+    required this.admins,
   });
 
   @override
@@ -54,9 +52,9 @@ class ChatGroupScreen extends StatefulWidget {
 
 class _ChatGroupScreenState extends State<ChatGroupScreen> {
   final ScrollController _scrollController = ScrollController();
-
   late ChatGroupCubit chatGroupCubit;
   late CommunityMainCubit communityMainCubit;
+
   final messageEC = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
   bool isCommentFilled = false;
@@ -66,7 +64,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   File? _pickedFile;
   bool isReply = false;
   String? _selectedMessageId;
+  String? _selectedMessageUserId;
   String? _messageToReply;
+  String? _messageToReplyUserName;
   String? base64File;
   bool _isLoadingMore = false;
   OverlayEntry? _overlayEntry;
@@ -74,7 +74,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   double _previousScrollOffset = 0.0;
   String cuurentUserId = '';
 
-  /// init state method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -83,6 +83,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
     chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
     chatGroupCubit.init(widget.roomId);
+
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
               _scrollController.position.minScrollExtent &&
@@ -92,9 +93,14 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     });
   }
 
+// GET CURRENT USER ID
   void getCurrentUserId() {
     cuurentUserId = ShardPrefHelper.getUserID() ?? '';
-    print('cuurentUserId:$cuurentUserId');
+  }
+
+// CHECK IF CURRENT USER IS AN ADMIN
+  bool isCurrentUserAdmin() {
+    return widget.admins.any((admin) => admin.id == cuurentUserId);
   }
 
   // / scroll to bottom
@@ -163,7 +169,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     }
   }
 
-  /// load more msg
+  // LOAD MORE MESSAGE
   Future<void> _loadMoreMessages() async {
     setState(() {
       _isLoadingMore = true;
@@ -181,58 +187,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     });
   }
 
-  /// member is not part of the group and try to send msg
-  void ShowDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: AppColors.whiteColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              12,
-            ),
-          ),
-          title: Column(
-            children: [
-              SvgPicture.asset(
-                'assets/event-coming-soon.svg',
-                fit: BoxFit.contain,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Only group member can reply to the messages in this group',
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
-                softWrap: true,
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                ),
-                child: Text(
-                  'Join Now',
-                  style: TextStyle(
-                    color: AppColors.whiteColor,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  /// dispose method
+  // DISPOSE
   @override
   void dispose() {
     chatGroupCubit.setPagetoDefault();
@@ -240,199 +195,72 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     super.dispose();
   }
 
-  /// pic image
+  // PIC IMAGE
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
-    final XFile? image =
+    final XFile? imageFile =
         await picker.pickImage(source: ImageSource.gallery).then((file) {
       return compressImage(imageFileX: file);
     });
 
-    if (image != null) {
-      print('fileToUpload before: $fileToUpload');
+    if (imageFile != null) {
+      print('IMAGE FILE BEFORE: $fileToUpload');
       setState(() {
-        fileToUpload = File(image.path);
+        fileToUpload = File(imageFile.path);
       });
-      print('fileToUpload after: $fileToUpload');
+      print('IMAGE FILE AFTER: $fileToUpload');
     }
   }
 
-  /// pic image
+  // PIC FILE
   Future<void> pickFile() async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedFile = await picker.pickMedia();
 
     if (pickedFile != null) {
+      print('FILE BEFORE: $pickedFile');
       setState(() {
         _pickedFile = File(pickedFile.path);
-        print('pickedFile:$pickedFile');
-        // fileToUpload = File(image.path);
       });
+      print('FILE AFTER: $pickedFile');
     }
   }
 
-  /// Pick video from gallery
+  // PIC VIDEO
   Future<void> _pickVideoFromGallery() async {
     final ImagePicker picker = ImagePicker();
     try {
-      // Start loading
-      // setState(() {
-      //   isImagePicking = true;
-      // });
-
-      // Pick video from gallery
-      final XFile? pickedFile = await picker.pickVideo(
+      final XFile? pickedVideoFile = await picker.pickVideo(
         source: ImageSource.gallery,
       );
-      print('pickedVideoFile $pickedFile');
-      // Check if a video is picked
-      if (pickedFile != null) {
-        // Get picked video path
-        print('_videoFile 1 $_videoFile');
+
+      if (pickedVideoFile != null) {
+        print('VIDEO FILE BEFORE: $pickedVideoFile');
         setState(() {
-          _videoFile = File(pickedFile.path);
+          _videoFile = File(pickedVideoFile.path);
         });
-        print('_videoFile 2 $_videoFile');
-        //await _generateVideoThumbnail(_videoFile!.path);
-
-        // Calculate video size
-        // int fileSizeInBytes = _videoFile!.lengthSync();
-        // double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
-
-        // if (fileSizeInMB > 50) {
-        //   if (mounted) {
-        //     showSnackBar(
-        //       context: context,
-        //       message: AppLocalizations.of(context)!.this_video_is_too_large,
-        //     );
-        //   }
-        //   setState(() {
-        //     _videoFile = null;
-        //   });
-        //   return;
-        // }
-
-        // Compress video
-        // _videoFile = await compressVideo(_videoFile!);
-
-        // Validate compressed video size
-        // int compressedFileSizeInBytes = _videoFile!.lengthSync();
-        // double compressedFileSizeInMB =
-        //     compressedFileSizeInBytes / (1024 * 1024);
-
-        // if (compressedFileSizeInMB > 15) {
-        //   if (mounted) {
-        //     showSnackBar(
-        //       context: context,
-        //       message: AppLocalizations.of(context)!.this_video_is_too_large,
-        //     );
-        //   }
-        //   setState(() {
-        //     _videoFile = null;
-        //   });
-
-        //   return;
-        // }
-
-        // Initialize video controller
-        // _videoController = VideoPlayerController.file(_videoFile!)
-        //   ..initialize().then((_) {
-        //     setState(() {}); // Refresh the UI after initialization
-        //     _videoController!.pause();
-        //   });
+        print('VIDEO FILE AFTER: $pickedVideoFile');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error in video picking: $e')),
-        );
+        showSnackBar(context: context, message: 'oops something went wrong');
       }
-    } finally {
-      // Stop loading
-      setState(() {
-        // _videoFile = null;
-        // isPollOptionShow = true;
-      });
     }
   }
 
-  /// pic video
-  // Future<void> pickVideo() async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? image =
-  //       await picker.pickVideo(source: ImageSource.gallery).then((file) {
-  //     return compressVideo(imageFileX: file);
-  //   });
-
-  //   if (image != null) {
-  //     setState(() {
-  //       fileToUpload = File(image.path);
-  //     });
-  //   }
-  // }
-
-  /// app bar title area
-  Widget appBarTitleArea() {
-    return Row(
-      children: [
-        GestureDetector(
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-          ),
-          onTap: () {
-            context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
-            Navigator.pop(context);
-            return;
-          },
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        if (widget.room.avatarUrl != '')
-          UserAvatarStyledWidget(
-            avatarUrl: widget.room.avatarUrl,
-            avatarSize: 19,
-            avatarBorderSize: 0,
-          ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.room.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  /// message input section area
+  // MESSAGE INPUT AREA
   Widget messageInputSection() {
     String? imgUrl;
     // String? videoUrl;
-    bool isImageUploading = false;
+    // bool isImageUploading = false;
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16, top: 4),
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 16,
+          top: 4,
+        ),
         child: Row(
           children: [
             Expanded(
@@ -451,7 +279,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 decoration: InputDecoration(
                   suffixIcon: GestureDetector(
                     onTap: showMediaOption,
-                    // onTap: pickImage,
                     child: Icon(
                       Icons.photo_camera_back_outlined,
                       color: Colors.grey[600],
@@ -472,7 +299,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             ),
             const SizedBox(width: 10),
 
-            ///send button
+            // SEND BUTTONS
             // BlocListener<UploadFileBloc, UploadFileState>(
             BlocConsumer<UploadFileBloc, UploadFileState>(
               listener: (context, state) {
@@ -488,7 +315,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
                 if (state is UploadFileSuccessState) {
                   imgUrl = state.url;
-                  print('url: ${state.url}');
+
                   if (messageEC.text.trim() != "" || fileToUpload != null) {
                     final payload = {
                       'groupId': widget.roomId,
@@ -511,21 +338,17 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
               },
               builder: (context, state) {
                 if (state is UploadFileLoadingState) {
-                  return CircularProgressIndicator();
+                  return CustomCircularIndicator();
                 }
                 return InkWell(
                   onTap: () async {
-                    if (!widget.room.isJoined) {
+                    if (!widget.chatRoom.isJoined) {
                       _showJoinGroupBottomSheet(context);
                     } else {
-                      print('video file: $_videoFile');
-                      print('image file: $fileToUpload');
-                      // String? imgUrl;
                       if (fileToUpload != null) {
                         context
                             .read<UploadFileBloc>()
                             .add(UploadFilePressedEvent(file: fileToUpload!));
-                        //imgUrl = await uploadFile(file: fileToUpload!);
                       } else if (_videoFile != null) {
                         context
                             .read<UploadFileBloc>()
@@ -535,13 +358,18 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                             .read<UploadFileBloc>()
                             .add(UploadFilePressedEvent(file: _pickedFile!));
                       } else {
-                        if (messageEC.text.trim() != "" ||
-                            fileToUpload != null) {
+                        if (messageEC.text.trim() != "") {
                           final payload = {
                             'groupId': widget.roomId,
                             'message': messageEC.text,
-                            'parentMessageId':
-                                isReply ? _selectedMessageId : null,
+                            'reply': isReply
+                                ? {
+                                    'userId': _selectedMessageUserId,
+                                    'userName': _messageToReplyUserName,
+                                    'message': _messageToReply,
+                                    'media': null,
+                                  }
+                                : null,
                             'file': imgUrl,
                           };
 
@@ -552,6 +380,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                           fileToUpload = null;
                           _selectedMessageId = null;
                           _messageToReply = null;
+                          _messageToReplyUserName = null;
                           isReply = false;
                           messageEC.clear();
                           _videoFile = null;
@@ -885,7 +714,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                       builder: (context, state) {
                         ///loading state
                         if (state is JoinGroupLoadingState) {
-                          return CircularProgressIndicator();
+                          return CustomCircularIndicator();
                         }
                         return ElevatedButton(
                           style: ElevatedButton.styleFrom(
@@ -917,59 +746,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     );
   }
 
-  ///  bottom sheet method for more vert icon
-  void _showBottomSheet(var roomId) {
-    showModalBottomSheet(
-      useRootNavigator: true,
-      showDragHandle: true,
-      backgroundColor: AppColors.whiteColor,
-      context: context,
-      isScrollControlled: true,
-      builder: (_) {
-        return Container(
-          padding: EdgeInsets.only(
-            left: 16,
-            right: 16,
-            top: 16,
-            bottom: 30,
-          ),
-          child: Wrap(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  context.push(
-                    '/group-chat-pinned-message/${widget.roomId}',
-                  );
-                },
-                child: Row(
-                  children: [
-                    SvgPicture.asset(
-                      'assets/pinned.svg',
-                      height: 20,
-                      width: 20,
-                    ),
-                    SizedBox(
-                      width: 8,
-                    ),
-                    Text('Pinned message'),
-                  ],
-                ),
-              ),
-              CustomSizedBox(
-                height: 20,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   /// NO message screen
-  Widget noMessage() {
+  Widget NoMessage() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -1003,7 +783,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     );
   }
 
-  /// build method
+  // BUILD
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -1019,31 +799,53 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       },
       child: Scaffold(
         backgroundColor: AppColors.lightBackgroundColor,
+        // APPBAR AREA
         appBar: AppBar(
-          backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
+          backgroundColor: AppColors.lightBackgroundColor,
           title: appBarTitleArea(),
           actions: [
             IconButton(
               onPressed: () {
-                _showBottomSheet(widget.roomId);
+                bool isAdmin = isCurrentUserAdmin();
+                print("isAdmin:$isAdmin");
+                context.push(
+                  '/group-chat-pinned-message/${widget.roomId}/${isAdmin ? "true" : "false"}',
+                );
+                // context.push(
+                //   '/group-chat-pinned-message/${widget.roomId}/${isAdmin}',
+                // );
+              },
+              icon: Icon(
+                Icons.push_pin,
+                size: 24,
+                color: AppColors.greyColor,
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                // DO SOME ACTION ONTAP MENU ICON
               },
               icon: Icon(
                 Icons.more_vert_outlined,
-                size: 31,
+                size: 24,
               ),
             ),
             const SizedBox(width: 10),
           ],
         ),
+        // BODY AREA
         body: BlocConsumer<ChatGroupCubit, ChatGroupState>(
+          // BLOC LISTENER
           listener: (context, state) {
+            // FAILURE STATE
             if (state.status == Status.failure) {
               showSnackBar(
                 context: context,
                 message: state.failure?.message ?? 'oops something went wrong',
               );
             }
+            // SUCCESS STATE WITH IS LOADING FALSE
             if (state.status == Status.success && !_isLoadingMore) {
               // _shouldScrollToBottom = true;
               // _scrollToBottom();
@@ -1076,185 +878,171 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             // ];
             // }
           },
+          //  BLOC BUILDER
           builder: (context, state) {
-            // int lineCount = 1;
-            // String lastDate = '';
-            return BlocBuilder<ChatGroupCubit, ChatGroupState>(
-              builder: (context, state) {
-                // var pinnedMessages = <ChatMessageModel>[];
+            // LOADING STATE
+            if (state.status == Status.loading) {
+              return Container(
+                color: Colors.white,
+                child: ChatMessagesGroupSheemer(),
+              );
+            }
+            // SUCCESS STATE
+            return RefreshIndicator(
+              onRefresh: () async {
+                chatGroupCubit.init(widget.roomId);
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  // SHOW LOADING ON THE TOP OF THE SCREEN WHEN FEATCHING OLD MESSAGES
+                  if (_isLoadingMore)
+                    Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: CustomCircularIndicator(),
+                    ),
 
-                /// loading state
-                if (state.status == Status.loading) {
-                  return Container(
-                    color: Colors.white,
-                    child: ChatMessagesGroupSheemer(),
-                  );
-                }
+                  state.status == Status.success && state.messages.isEmpty
+                      // SHOW EMPTY MESSAGE SCREEN
+                      ? Expanded(
+                          child: SingleChildScrollView(
+                            physics: AlwaysScrollableScrollPhysics(),
+                            child: Container(
+                              height: MediaQuery.of(context).size.height,
+                              alignment: Alignment.center,
+                              child: NoMessage(),
+                            ),
+                          ),
+                        )
+                      // PIN MESSAGE BLOC LISTENER
+                      : BlocListener<PinMessageBloc, PinMessagesState>(
+                          listener: (context, state) {
+                            // SUCCESS STATE
+                            if (state is PinMessagesStateSuccessState) {
+                              showSnackBar(
+                                context: context,
+                                message: 'message pinned',
+                              );
+                            }
+                            // FAILURE STATE
+                            if (state is PinMessagesStateFailureState) {
+                              showSnackBar(
+                                context: context,
+                                message: 'oops something went wrong',
+                              );
+                            }
+                          },
+                          child: Expanded(
+                            child: ListView.builder(
+                              controller: _scrollController,
+                              itemCount: state.messages.length +
+                                  (_isLoadingMore ? 1 : 0),
+                              itemBuilder: (context, index) {
+                                if (index >= state.messages.length) {
+                                  return SizedBox.shrink();
+                                }
+                                // CHECK IF THE CURRENT AND PRIVIOUS MESSAGE SENDER IS SAME OR NOT
+                                var msg = state.messages[index];
+                                final bool isNewMsg = index == 0 ||
+                                    msg.author?.id !=
+                                        state.messages[index - 1].author?.id;
+                                // CHECK CURRENT USER IS ADMIN OR NOT
+                                final bool isAdmin = isCurrentUserAdmin();
+                                // NEED TO THINK ABOUT THIS LINE
+                                if (_isLoadingMore &&
+                                    index == state.messages.length) {
+                                  return CustomCircularIndicator();
+                                }
 
-                /// get pinned msg
-                // else {
-                //   pinnedMessages = [
-                //     ...state.messages.where((element) => !element.isPinned)
-                //   ];
-                // }
-
-                return Container(
-                  width: double.infinity,
-                  color: Colors.white,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      /// #pinned msg area
-                      // if (showPinned && pinnedMessages.isNotEmpty)
-                      //   pinnedMessageArea(
-                      //     pinnedMessages,
-                      //   ),
-
-                      /// Show loading indicator at the top when fetching more messages
-                      if (_isLoadingMore)
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: Center(
-                            child: CircularProgressIndicator(),
+                                return ChatMessageGroupWidget(
+                                  isNewMsg: isNewMsg,
+                                  message: msg,
+                                  isAdmin: isAdmin,
+                                  isCurrentUser:
+                                      (msg.author?.id == cuurentUserId),
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      state.status == Status.success && state.messages.isEmpty
-                          ? Expanded(child: noMessage())
-                          : BlocListener<PinMessageBloc, PinMessagesState>(
-                              listener: (context, state) {
-                                if (state is PinMessagesStateSuccessState) {
-                                  showSnackBar(
-                                    context: context,
-                                    message: 'message pinned',
-                                  );
-                                } else if (state
-                                    is PinMessagesStateFailureState) {
-                                  showSnackBar(
-                                    context: context,
-                                    message: state.error,
-                                  );
-                                }
-                              },
-                              child: Expanded(
-                                child: Container(
-                                  color: Colors.white,
-                                  width: double.infinity,
-                                  margin: EdgeInsets.symmetric(horizontal: 10),
-                                  child: ListView.builder(
-                                    controller: _scrollController,
-                                    shrinkWrap: true,
-                                    itemCount: state.messages.length +
-                                        (_isLoadingMore ? 1 : 0),
-                                    itemBuilder: (context, index) {
-                                      if (index >= state.messages.length) {
-                                        return SizedBox.shrink();
-                                      }
-                                      final bool isNewMsg = index == 0 ||
-                                          state.messages[index].author?.id !=
-                                              state.messages[index - 1].author
-                                                  ?.id;
-
-                                      var msg = state.messages[index];
-
-                                      // var dateSummary = state.messages[index].date.split(" ")[0] ?? state.messages[index].date.split("T")[0];
-                                      //String cheerorbooFromreply = state.messages[index].booOrCheer;
-
-                                      // var dateSummary = onlyDate(msg.date);
-
-                                      /// Show loading indicator at the top when fetching more messages
-                                      if (_isLoadingMore &&
-                                          index == state.messages.length) {
-                                        return Center(
-                                          child: CircularProgressIndicator(),
-                                        );
-                                      }
-
-                                      return ChatMessageGroupWidget(
-                                        isNewMsg: isNewMsg,
-                                        message: msg,
-                                        isAdmin: true,
-                                        isCurrentUser:
-                                            (msg.author?.id == cuurentUserId),
-                                      );
-                                    },
+                  // IF REPLY IS TRUE SHOW REPLYING TO CARD ABOVE TEXT FIELD
+                  if (isReply)
+                    Container(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                      color: Colors.grey.shade100,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.reply, size: 20),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Replying to: ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.blackColor,
+                                    ),
                                   ),
-                                ),
+                                  TextSpan(
+                                    text: '$_messageToReply',
+                                    style: TextStyle(
+                                      color: AppColors.blackColor,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                      // if (fileToUpload != null)
-                      //   Stack(
-                      //     children: [
-                      //       Positioned.fill(
-                      //         child: Image.file(
-                      //           fileToUpload!,
-                      //           fit: BoxFit.contain,
-                      //         ),
-                      //       ),
-                      //     ],
-                      //   ),
-
-                      if (isReply)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8,
-                            right: 8,
                           ),
-                          child: Container(
-                            color: Colors.grey.shade100,
-                            child: Row(
-                              children: [
-                                Icon(Icons.reply, size: 20),
-                                SizedBox(width: 8),
-                                Expanded(
-                                  child: Text('Replying to: $_messageToReply'),
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.close),
-                                  onPressed: _clearReply,
-                                ),
-                              ],
+                          GestureDetector(
+                            onTap: _clearReply,
+                            child: Icon(Icons.close, size: 24),
+                          ),
+                        ],
+                      ),
+                    ),
+                  // SHOW PICKED MEDIA PREVIEW
+                  if (fileToUpload != null)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: Container(
+                        color: Colors.grey.shade100,
+                        child: Row(
+                          children: [
+                            Expanded(
+                                child: Image.file(
+                              fileToUpload!,
+                              width: 200,
+                              height: 200,
+                            )),
+                            IconButton(
+                              icon: Icon(Icons.close),
+                              onPressed: () {
+                                setState(() {
+                                  fileToUpload = null;
+                                });
+                              },
                             ),
-                          ),
+                          ],
                         ),
-                      if (fileToUpload != null)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 8,
-                            right: 8,
-                          ),
-                          child: Container(
-                            color: Colors.grey.shade100,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                    child: Image.file(
-                                  fileToUpload!,
-                                  width: 200,
-                                  height: 200,
-                                )),
-                                // Icon(Icons.reply, size: 20),
-                                // SizedBox(width: 8),
-                                // Expanded(
-                                //   child: Text('Replying to: $_messageToReply'),
-                                // ),
-                                IconButton(
-                                  icon: Icon(Icons.close),
-                                  onPressed: () {
-                                    setState(() {
-                                      fileToUpload = null;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      messageInputSection(),
-                    ],
-                  ),
-                );
-              },
+                      ),
+                    ),
+                  messageInputSection(),
+                ],
+              ),
             );
           },
         ),
@@ -1262,7 +1050,46 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     );
   }
 
-// clear reply
+  // APPBAR TITLE AREA
+  Widget appBarTitleArea() {
+    return Row(
+      children: [
+        GestureDetector(
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.blackColor,
+          ),
+          onTap: () {
+            context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+            Navigator.pop(context);
+          },
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        if (widget.chatRoom.avatarUrl != '')
+          UserAvatarStyledWidget(
+            avatarUrl: widget.chatRoom.avatarUrl,
+            avatarSize: 19,
+            avatarBorderSize: 0,
+          ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            widget.chatRoom.name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+// CLEAR REPLY
   void _clearReply() {
     setState(() {
       _selectedMessageId = null;
@@ -1271,171 +1098,231 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     });
   }
 
-  /// admin bubble widget
+  // CHAT MESSAGE CARD
+  // NEED TO IMPROVE THE MESSAGE WIDGET
+  Widget ChatMessageGroupWidget({
+    required ChatMessageModel message,
+    required bool isNewMsg,
+    required bool isCurrentUser,
+    required bool isAdmin,
+  }) {
+    return Align(
+      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: GestureDetector(
+        onLongPress: () {
+          if (isAdmin) {
+            showPinMessageDialog(
+              context: context,
+              message: message,
+              onPin: () {
+                BlocProvider.of<PinMessageBloc>(context).add(
+                  PinnedAMessagesEvent(
+                    messageId: message.id,
+                  ),
+                );
+              },
+            );
+          }
+        },
+        child: Row(
+          mainAxisAlignment:
+              isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (!isCurrentUser && isNewMsg)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage(message.author!.avatarUrl),
+                  radius: 16,
+                  backgroundColor: AppColors.greyColor,
+                ),
+              ),
+            if (!isCurrentUser && !isNewMsg)
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.transparent,
+                ),
+              ),
+            Column(
+              crossAxisAlignment: isCurrentUser
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              children: [
+                // MESSAGE CARD
+                SwipeTo(
+                  onRightSwipe: (details) {
+                    setState(() {
+                      isReply = true;
+                      _messageToReplyUserName = message.author!.name;
+                      _selectedMessageUserId = message.author?.id;
+                      _selectedMessageId = message.id;
+                      _messageToReply = message.text;
+                    });
+                    FocusScope.of(context).requestFocus(messageFocusNode);
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 4, right: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isCurrentUser
+                          ? const Color.fromARGB(255, 250, 250, 255)
+                          : Colors.grey.shade50,
+                      borderRadius: BorderRadius.only(
+                        topLeft: !isCurrentUser && isNewMsg
+                            ? Radius.zero
+                            : const Radius.circular(10),
+                        topRight: isCurrentUser && isNewMsg
+                            ? Radius.zero
+                            : const Radius.circular(10),
+                        bottomLeft: const Radius.circular(10),
+                        bottomRight: const Radius.circular(10),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // SENDER NAME
+                        if (!isCurrentUser)
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                message.author?.name ?? '',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              // CHECK IF SENDER IS AN ADMIN
+                              if (isAdmin) isAdminBubble(),
+                            ],
+                          ),
+                        // if (message.pictureUrl != '')
+                        //   MediaMessageWidget(
+                        //     fileUrl: message.pictureUrl!,
+                        //   ),
+
+                        // SHOW ACTUAL MESSAGE
+                        if (message.text != '')
+                          Padding(
+                            padding: const EdgeInsets.only(top: 0),
+                            child: Linkify(
+                              options: LinkifyOptions(
+                                looseUrl: true,
+                              ),
+                              onOpen: (link) async {
+                                if (await canLaunchUrl(Uri.parse(link.url))) {
+                                  await launchUrl(Uri.parse(link.url),
+                                      mode: LaunchMode.externalApplication);
+                                } else {
+                                  throw "Could not launch ${link.url}";
+                                }
+                              },
+                              text: message.text,
+                              style: const TextStyle(fontSize: 16),
+                              linkStyle: const TextStyle(
+                                color: AppColors.primaryColor,
+                              ),
+                            ),
+                          ),
+                        Text(
+                          convertToIndianTime(message.date),
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black45,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ADMIN BUBBLE
   Widget isAdminBubble() {
     return Container(
       margin: const EdgeInsets.only(left: 5),
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
+        color: AppColors.primaryColor.withOpacity(.1),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
         "Admin",
         style: TextStyle(
           color: AppColors.primaryColor,
           fontSize: 12,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.normal,
         ),
       ),
     );
   }
 
-  /// chat message group widget
-  Widget ChatMessageGroupWidget({
-    required bool isNewMsg,
+// PINNED MESSAGE POP UP
+  void showPinMessageDialog({
+    required BuildContext context,
     required ChatMessageModel message,
-    required bool isAdmin,
-    required bool isCurrentUser,
+    required VoidCallback onPin,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 0),
-      child: Align(
-        alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-        child: InkWell(
-          onLongPress: () {
-            _showOverlay(context, message);
-            return;
-          },
-          child: Row(
-            mainAxisAlignment:
-                isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (!isCurrentUser && isNewMsg)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(message.author!.avatarUrl),
-                    radius: 18,
-                    backgroundColor: Colors.red,
-                  ),
-                ),
-              if (!isCurrentUser && !isNewMsg)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.transparent,
-                  ),
-                ),
-              Column(
-                crossAxisAlignment: isCurrentUser
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-                children: [
-                  /// **Sender Name & Time**
-                  if (!isCurrentUser && isNewMsg)
-                    Row(
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final double maxHeight = MediaQuery.of(context).size.height * 0.7;
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              return BlocConsumer<PinMessageBloc, PinMessagesState>(
+                listener: (context, state) {
+                  if (state is PinMessagesStateFailureState) {
+                    Navigator.pop(context);
+                    showSnackBar(
+                        context: context,
+                        message: "oops something went wrong!");
+                  } else if (state is PinMessagesStateSuccessState) {
+                    showSnackBar(
+                        context: context,
+                        message: "Message pinned successfully!");
+                  }
+                },
+                builder: (context, state) {
+                  return Container(
+                    padding: EdgeInsets.all(16),
+                    constraints: BoxConstraints(
+                      maxHeight: maxHeight,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          message.author?.name ?? '',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        if (widget.admin.contains(message.author?.id))
-                          isAdminBubble(),
-                      ],
-                    ),
-
-                  /// **Message Bubble**
-
-                  SwipeTo(
-                    swipeSensitivity: 5,
-                    onRightSwipe: (details) {
-                      setState(() {
-                        isReply = true;
-                        _messageToReply = message.text;
-                        _selectedMessageId = message.id;
-                      });
-                      FocusScope.of(context).requestFocus(messageFocusNode);
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 4, right: 8),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 8,
-                      ),
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width * 0.7,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isCurrentUser
-                            ? const Color.fromARGB(255, 250, 250, 255)
-                            : Colors.grey.shade50,
-                        borderRadius: BorderRadius.only(
-                          topLeft: const Radius.circular(10),
-                          topRight: const Radius.circular(10),
-                          bottomLeft: isCurrentUser
-                              ? const Radius.circular(10)
-                              : Radius.zero,
-                          bottomRight: isCurrentUser
-                              ? Radius.zero
-                              : const Radius.circular(10),
-                        ),
-                      ),
-
-                      // child: message.text != ''
-                      //     ? TimestampedChatMessage(
-                      //         text: message.text,
-                      //         sentAt: convertToIndianTime(message.date),
-                      //       )
-                      //     : SizedBox(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (message.pictureUrl != '')
-                            MediaMessageWidget(
-                              fileUrl: message.pictureUrl!,
-                            ),
-                          // ClipRRect(
-                          //   borderRadius: BorderRadius.circular(10),
-                          //   child: Image.network(
-                          //     fit: BoxFit.fill,
-                          //     '${message.pictureUrl}',
-                          //   ),
-                          // ),
-                          // if (message.text != '')
-                          // if (message.id != null)
-                          //   Container(
-                          //     padding: EdgeInsets.all(8),
-                          //     margin: EdgeInsets.only(bottom: 5),
-                          //     decoration: BoxDecoration(
-                          //       color: Colors.grey.shade400,
-                          //       borderRadius: BorderRadius.circular(8),
-                          //     ),
-                          //     child: Text(
-                          //       "ReplyinReplyinReplyingReplyingReplyinggReplyingReplyingReplyingg to:",
-                          //       style: TextStyle(
-                          //         fontSize: 12,
-                          //         fontStyle: FontStyle.italic,
-                          //         color: Colors.black54,
-                          //       ),
-                          //     ),
-                          //   ),
-
-                          // Actual message text
-                          // Text(
-                          //   message.text,
-                          //   style: TextStyle(fontSize: 16),
-                          // ),
-
-                          if (message.text != '')
-                            Padding(
-                              padding: const EdgeInsets.only(top: 0),
+                        Flexible(
+                          child: SingleChildScrollView(
+                            child: Container(
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
                               child: Linkify(
                                 options: LinkifyOptions(
                                   looseUrl: true,
@@ -1455,24 +1342,52 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 ),
                               ),
                             ),
-                          Text(
-                            convertToIndianTime(message.date),
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black45,
-                            ),
                           ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            TextButton.icon(
+                              onPressed: () => Navigator.pop(context),
+                              icon: Icon(
+                                Icons.cancel,
+                                color: AppColors.greyColor,
+                              ),
+                              label: Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  color: AppColors.greyColor,
+                                ),
+                              ),
+                            ),
+                            TextButton.icon(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                onPin();
+                              },
+                              icon: Icon(
+                                Icons.push_pin,
+                                color: AppColors.primaryColor,
+                              ),
+                              label: Text(
+                                "Pin Message",
+                                style: TextStyle(
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  );
+                },
+              );
+            },
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -1746,7 +1661,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                         '/group-chat-thread/${message.id}',
                                         extra: {
                                           'message': message,
-                                          'room': widget.room,
+                                          'room': widget.chatRoom,
                                         });
                                     //widget.onTapReply(widget.message);
                                     _removeOverlay();
@@ -1768,7 +1683,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                           '/group-chat-thread/${message.id}',
                                           extra: {
                                             'message': message,
-                                            'room': widget.room,
+                                            'room': widget.chatRoom,
                                           });
                                     });
 
@@ -1852,7 +1767,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     Overlay.of(context).insert(_overlayEntry!);
   }
 
-  /// report reason bottom sheet
+  // REPORT MESSAGE BOTTOM SHEET
   Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
       useRootNavigator: true,
@@ -1923,6 +1838,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     );
   }
 
+// CONFIRM REPORT BOTTOM SHEET
   Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
     return showModalBottomSheet(
       useRootNavigator: true,

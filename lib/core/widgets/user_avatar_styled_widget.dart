@@ -30,7 +30,9 @@ class UserAvatarStyledWidget extends StatelessWidget {
         child: avatarUrl.contains('.')
             ? CircleAvatar(
                 radius: proportionalSize - avatarBorderSize!,
-                onBackgroundImageError: (_, __) => SizedBox(),
+                onBackgroundImageError: (_, __) => CircleAvatar(
+                  radius: proportionalSize - avatarBorderSize!,
+                ),
                 backgroundImage: CachedNetworkImageProvider(avatarUrl),
               )
             : CircleAvatar(

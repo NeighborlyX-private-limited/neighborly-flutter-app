@@ -25,7 +25,7 @@ class StackedAvatarIndicator extends StatelessWidget {
     final widthMultiplier =
         avatarUrls.length < showOnly! ? avatarUrls.length : showOnly;
 
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         if (onTap != null) onTap!();
       },

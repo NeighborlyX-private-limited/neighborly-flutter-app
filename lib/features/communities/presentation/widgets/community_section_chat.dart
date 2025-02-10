@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../chat/data/model/chat_room_model.dart';
 
@@ -21,7 +20,6 @@ class CommunitySectionChat extends StatefulWidget {
 class _CommunitySectionChatState extends State<CommunitySectionChat> {
   @override
   Widget build(BuildContext context) {
-    double space = 6;
     return Container(
       width: double.infinity,
       color: AppColors.whiteColor,
@@ -35,25 +33,31 @@ class _CommunitySectionChatState extends State<CommunitySectionChat> {
             TileChat(
               name: widget.community.name,
               avatarUrl: widget.community.avatarUrl,
-              lastMessage: "This is the last message",
-              lastMessageTime: DateTime.now()
-                  .toIso8601String(), //need to fix this is not correct last msg time
+              lastMessage: widget.community.lastMessage,
+              lastMessageTime: formatTimeDifference(
+                widget.community.lastMessageTime,
+              ),
               onTap: () {
-                context.push('/group-chat/${widget.community.id}', extra: {
-                  'chatModel': ChatRoomModel(
-                    id: widget.community.id,
-                    name: widget.community.name,
-                    avatarUrl: widget.community.avatarUrl,
-                    lastMessage: '',
-                    lastMessageDate: DateTime.now().toIso8601String(),
-                    isMuted: widget.community.isMuted,
-                    isGroup: true,
-                    isJoined: widget.community.isJoined,
-                    unreadCount: 0,
-                  ),
-                  'memberList': widget.community.users.toList(),
-                  'adminList': widget.community.admins.toList(),
-                });
+                context.push(
+                  '/group-chat/${widget.community.id}',
+                  extra: {
+                    'chatModel': ChatRoomModel(
+                      id: widget.community.id,
+                      name: widget.community.name,
+                      avatarUrl: widget.community.avatarUrl,
+                      lastMessage: widget.community.lastMessage,
+                      lastMessageDate: formatTimeDifference(
+                        widget.community.lastMessageTime,
+                      ),
+                      isMuted: widget.community.isMuted,
+                      isJoined: widget.community.isJoined,
+                      isGroup: true,
+                      unreadCount: 0,
+                    ),
+                    'membersList': widget.community.users,
+                    'adminsList': widget.community.admins,
+                  },
+                );
               },
             ),
           ],
@@ -91,7 +95,8 @@ class TileChat extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Avatar
+                // COMMUNITY ICON
+
                 UserAvatarStyledWidget(
                   avatarUrl: avatarUrl,
                   avatarSize: 18,
@@ -99,13 +104,12 @@ class TileChat extends StatelessWidget {
                 ),
                 const SizedBox(width: 15),
 
-                // Name, Last Message, and Time
                 Expanded(
                   flex: 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Chat Name
+                      // GROUP NAME
                       Text(
                         name,
                         maxLines: 1,
@@ -117,7 +121,7 @@ class TileChat extends StatelessWidget {
                         ),
                       ),
 
-                      // Last Message
+                      // LAST MESSAGE
                       Text(
                         lastMessage,
                         maxLines: 1,
@@ -131,9 +135,9 @@ class TileChat extends StatelessWidget {
                   ),
                 ),
 
-                // Time
+                //LAST MESSAGE TIME
                 Text(
-                  _formatTime(lastMessageTime),
+                  lastMessageTime,
                   style: TextStyle(
                     color: Colors.grey.shade500,
                     fontSize: 12,
@@ -145,18 +149,5 @@ class TileChat extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  // Helper function to format time
-  String _formatTime(String isoTime) {
-    final dateTime = DateTime.parse(isoTime);
-    final now = DateTime.now();
-    final difference = now.difference(dateTime);
-
-    if (difference.inDays > 0) {
-      return "${dateTime.day}/${dateTime.month}/${dateTime.year}";
-    } else {
-      return "${dateTime.hour}:${dateTime.minute}";
-    }
   }
 }

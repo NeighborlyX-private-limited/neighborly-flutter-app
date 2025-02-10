@@ -23,10 +23,10 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   void init(String roomId) async {
     emit(state.copyWith(roomId: roomId));
 
-    /// socket connect
+    // CONNECT SOCKET
     socketService.connect(groupId: roomId);
 
-    /// featch group messages
+    // FEATCH GROUP MESSAGES
     await getGroupRoomMessages(roomId: roomId);
 
     /// listen for new messages
