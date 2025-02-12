@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -28,14 +30,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   bool phoneAlreadyExists = false;
   bool isPhoneValid = true;
 
-  ///init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController();
   }
 
-  ///dispose method
+  // DISPOSE
   @override
   void dispose() {
     _controller.dispose();
@@ -51,8 +53,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
-              Icons.arrow_back,
-              size: 20,
+              Icons.arrow_back_ios,
             ),
             onTap: () {
               context.pop();
@@ -88,7 +89,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 40),
                 BlocConsumer<RegisterBloc, RegisterState>(
                   listener: (BuildContext context, RegisterState state) {
-                    ///Oauth success state
+                    // OAUTH SUCCESS STATE
                     if (state is OAuthSuccessState) {
                       bool isSkippedTutorial =
                           ShardPrefHelper.getIsSkippedTutorial();
@@ -98,13 +99,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       if (!isSkippedTutorial && !isViewedTutorial) {
                         context.go('/tutorialScreen');
                       } else {
-                        // context.go('/home/Home');
                         context.go('/home');
                       }
                     }
+                    // FAILURE STATE
+                    if (state is RegisterFailureState) {
+                      showSnackBar(
+                        context: context,
+                        message: state.error,
+                        durationInSeconds: 5,
+                      );
+                    }
                   },
                   builder: (context, state) {
-                    /// goolge login button
+                    // GOOGLE SIGNUP BUTTON
                     return RegisterOption(
                       title: AppLocalizations.of(context)!.continue_with_google,
                       image: Image.asset('assets/google_icon.png'),
@@ -123,7 +131,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 10),
 
-                /// email login button
+                // EMAIL SIGNUP BUTTON
                 RegisterOption(
                   title: AppLocalizations.of(context)!.continue_with_email,
                   image: Image.asset('assets/email_icon.png'),
@@ -135,8 +143,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const OrDividerWidget(),
                 const SizedBox(height: 20),
 
-                /// phone number text field
-                /// phone signup
+                // PHONE NUMBER TEXT FIELD
                 TextFieldWidget(
                   controller: _controller,
                   isPassword: false,
@@ -168,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const SizedBox(height: 15),
                 BlocConsumer<RegisterBloc, RegisterState>(
                   listener: (context, state) {
-                    ///failure state
+                    // FAILURE STATE
                     if (state is RegisterFailureState) {
                       if (state.error.contains('exists') ||
                           state.error.contains('registered')) {
@@ -180,28 +187,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           noConnection = true;
                         });
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.error)),
-                        );
+                        showSnackBar(context: context, message: state.error);
                       }
                     }
 
-                    ///success state
+                    // SUCCESS STATE
                     else if (state is RegisterSuccessState) {
                       context.push('/otp/${_controller.text}/phone-register');
                     }
                   },
                   builder: (context, state) {
-                    ///loading state
+                    // LOADING STATE
                     if (state is RegisterLoadingState) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
+                      return CustomCircularIndicator();
                     }
 
-                    ///continue button
+                    // CONTINUE BUTTON
                     return ButtonContainerWidget(
                       text: AppLocalizations.of(context)!.continues,
                       color: AppColors.primaryColor,

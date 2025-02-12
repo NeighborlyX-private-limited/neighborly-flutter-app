@@ -88,7 +88,7 @@ class MyApp extends StatefulWidget {
 }
 
 class MyAppState extends State<MyApp> {
-  String? _linkMessage;
+  // String? _linkMessage;
   StreamSubscription? _sub;
   static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
   String? _deepLink;
@@ -100,16 +100,52 @@ class MyAppState extends State<MyApp> {
     _setDeepLinkListener();
   }
 
+  // Future<void> _setDeepLinkListener() async {
+  //   print("DEEP LINK HANDLER CALLED");
+  //   try {
+  //     platform.setMethodCallHandler((MethodCall call) async {
+  //       print("DEEP LINK HANDLER CALLED");
+  //       if (call.method == "onDeepLink") {
+  //         setState(() {
+  //           _deepLink = call.arguments;
+
+  //           List? linksplit = _deepLink?.split('neighborly.in/');
+  //           if (linksplit != null && linksplit.length > 1) {
+  //             if (linksplit[1].contains('posts/')) {
+  //               try {
+  //                 Navigator.of(context).push(MaterialPageRoute(
+  //                   builder: (context) => PostDetailScreen(
+  //                     postId: '201',
+  //                     isPost: false,
+  //                     userId: '667d0d6d621041da2c7b79e8',
+  //                     commentId: '',
+  //                   ),
+  //                 ));
+  //               } catch (e) {
+  //                 //handle default page if error
+  //               }
+  //             } else {}
+  //           } else {}
+  //         });
+  //       }
+  //     });
+  //   } catch (e) {}
+  // }
   Future<void> _setDeepLinkListener() async {
+    print("deep link received by vinay");
     try {
+      print("deep link received by vinay:");
       platform.setMethodCallHandler((MethodCall call) async {
+        print("deep link received by vinay :${call.method}");
         if (call.method == "onDeepLink") {
+          print("deep link received by vinay");
           setState(() {
             _deepLink = call.arguments;
-
+            print('deep link aaya $_deepLink');
             List? linksplit = _deepLink?.split('neighborly.in/');
             if (linksplit != null && linksplit.length > 1) {
               if (linksplit[1].contains('posts/')) {
+                print('this is post');
                 try {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => PostDetailScreen(
@@ -120,16 +156,23 @@ class MyAppState extends State<MyApp> {
                     ),
                   ));
                 } catch (e) {
+                  print("error aaya kch: $e");
                   //handle default page if error
                 }
-              } else {}
-            } else {}
+              } else {
+                print(
+                    'here you have to handle other navigation for url based on if condition.');
+              }
+            } else {
+              print("Empty means open default page.");
+            }
           });
         }
       });
-    } catch (e) {}
+    } catch (e) {
+      print('error in deep: $e');
+    }
   }
-
   // Future<void> _init() async {
 
   //   await _initUniLinks();

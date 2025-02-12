@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../theme/colors.dart';
 
-void showSnackBar({required BuildContext context, required String message}) {
+void showSnackBar({
+  required BuildContext context,
+  required String message,
+  int durationInSeconds = 3,
+}) {
   // Hide any current SnackBar
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
 
@@ -16,7 +20,7 @@ void showSnackBar({required BuildContext context, required String message}) {
           fontWeight: FontWeight.w400,
         ),
       ),
-      duration: Duration(seconds: 2),
+      duration: Duration(seconds: durationInSeconds),
       elevation: 2,
       behavior: SnackBarBehavior.floating,
       backgroundColor: AppColors.blackColor.withOpacity(0.8),

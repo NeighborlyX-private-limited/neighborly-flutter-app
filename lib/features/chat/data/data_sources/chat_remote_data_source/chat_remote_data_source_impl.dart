@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../model/chat_message_model.dart';
 import '../../model/chat_room_model.dart';
@@ -13,7 +14,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   ChatRemoteDataSourceImpl({required this.client});
 
-  /// get group chat room messages
+  // GET GROUP CHAT
   @override
   Future<List<ChatMessageModel>> getGroupRoomMessages({
     required String roomId,
@@ -28,7 +29,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     String cookieHeader = cookies.join('; ');
 
     String url =
-        '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=20';
+        '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=100';
 
     final response = await client.get(
       Uri.parse(url),
@@ -38,9 +39,9 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      print('CHAT MESSAGE: ${jsonDecode(response.body)}');
       print('CHAT MESSAGE PAGE: $page');
       print('CHAT MESSAGE LIMIT: ${jsonDecode(response.body).length}');
+      print('CHAT MESSAGE: ${jsonDecode(response.body)}');
       return ChatMessageModel.fromJsonList(jsonDecode(response.body))
           .reversed
           .toList();
@@ -51,6 +52,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     }
   }
 
+// GET ALL CHAT ROOMS
   @override
   Future<List<ChatRoomModel>> getAllChatRooms() async {
     List<String>? cookies = ShardPrefHelper.getCookie();
@@ -68,7 +70,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
         'Cookie': cookieHeader,
       },
     );
-
+    debugPrint('GET ALL CHAT ROOMS RESPONSE: ${response.body}');
     if (response.statusCode == 200) {
       return ChatRoomModel.fromJsonList(jsonDecode(response.body));
     } else {

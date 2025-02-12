@@ -166,19 +166,39 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Future<void> _setDeepLinkListener() async {
+    print('hello 1');
     platform.setMethodCallHandler(
       (MethodCall call) async {
+        print('hello 2');
         if (call.method == "onDeepLink") {
+          print('hello 3');
           setState(
             () {
               _deepLink = call.arguments;
               List? linksplit = _deepLink?.split('neighborly.in');
               if (linksplit != null && linksplit.length > 1) {
+                print('link:$linksplit');
                 if (linksplit[1].contains('post-detail/')) {
                   try {
                     context.push(linksplit[1]);
-                  } catch (e) {}
-                } else {
+                  } catch (e) {
+                    print('hello 4 catch error');
+                  }
+                } else if (linksplit[1].contains('group-details/')) {
+                  try {
+                    context.push(linksplit[1]);
+                  } catch (e) {
+                    print('hello 4 catch error');
+                  }
+
+                  //context.push('/userProfileScreen/${widget.post.userId}');
+                } else if (linksplit[1].contains('userProfileScreen/')) {
+                  try {
+                    context.push(linksplit[1]);
+                  } catch (e) {
+                    print('hello 4 catch error');
+                  }
+
                   //context.push('/userProfileScreen/${widget.post.userId}');
                 }
               } else {}

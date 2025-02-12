@@ -6,7 +6,6 @@ import '../../data/model/chat_room_model.dart';
 import '../../data/model/pinned_message_model.dart';
 
 abstract class ChatRepositories {
-  Future<Either<Failure, List<ChatRoomModel>>> getAllChatRooms();
   Future<Either<Failure, List<PinnedMessageModel>>> featchPinnedMessages({
     required String groupId,
   });
@@ -17,8 +16,9 @@ abstract class ChatRepositories {
   Future<Either<Failure, String>> pinnedMessage({
     required String messageId,
   });
-
-  /// get group chat room messages
+  // GET ALL CHAT ROOM
+  Future<Either<Failure, List<ChatRoomModel>>> getAllChatRooms();
+  // GET GROUP CHAT
   Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages({
     required String roomId,
     bool isreply = false,

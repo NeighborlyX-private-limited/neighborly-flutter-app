@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -33,7 +35,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
 
-  ///init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -42,7 +44,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
     _confirmPasswordController = TextEditingController();
   }
 
-  ///dispose method
+  // DISPOSE
   @override
   void dispose() {
     _emailController.dispose();
@@ -51,8 +53,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
     super.dispose();
   }
 
-  ///check active method
-  ///for button enable or disable
+  // CHECK IF ALL TEXT FIELDS ARE FILLED AND PASSWORD AND CONFIRM PASSWORD ARE SAME
   bool checkIsActive() {
     return isEmailFilled &&
         isPasswordFilled &&
@@ -69,8 +70,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
-              Icons.arrow_back,
-              size: 20,
+              Icons.arrow_back_ios,
             ),
             onTap: () {
               context.pop();
@@ -110,8 +110,9 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                 ),
                 const SizedBox(height: 25),
 
-                ///email text field
+                // EMAIL TEXT FIELD
                 TextFieldWidget(
+                  inputType: TextInputType.emailAddress,
                   controller: _emailController,
                   border: true,
                   lableText: AppLocalizations.of(context)!.enter_email_address,
@@ -131,7 +132,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                     : const SizedBox(),
                 const SizedBox(height: 12),
 
-                /// password text field
+                // PASSWORD TEXT FIELD
                 TextFieldWidget(
                   controller: _passwordController,
                   border: true,
@@ -152,7 +153,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                     : const SizedBox(),
                 const SizedBox(height: 12),
 
-                ///confirm password text field
+                // CONFIRM PASSWORD TEXT FIELD
                 TextFieldWidget(
                   controller: _confirmPasswordController,
                   border: true,
@@ -170,7 +171,7 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                   listener: (BuildContext context, RegisterState state) {
                     if (!mounted) return;
 
-                    ///failure state
+                    // FAILURE STATE
                     if (state is RegisterFailureState) {
                       if (state.error.contains('email') ||
                           state.error.contains('registered')) {
@@ -185,28 +186,22 @@ class _RegisterWithEmailScreenState extends State<RegisterWithEmailScreen> {
                         });
                         return;
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.error)),
-                      );
+                      showSnackBar(context: context, message: state.error);
                     }
 
-                    ///success state
+                    // SUCCESS STATE
                     else if (state is RegisterSuccessState) {
                       context
                           .push('/otp/${_emailController.text}/email-verify');
                     }
                   },
                   builder: (context, state) {
-                    ///loading state
+                    // LOADING STATE
                     if (state is RegisterLoadingState) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
+                      return CustomCircularIndicator();
                     }
 
-                    ///signup button
+                    // SIGNUP BUTTON
                     return ButtonContainerWidget(
                       text: AppLocalizations.of(context)!.signup,
                       color: AppColors.primaryColor,

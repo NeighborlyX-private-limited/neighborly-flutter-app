@@ -16,11 +16,10 @@ class HandleJoinRequestBloc
     on<HandleGroupJoinRequestEvent>(_onHandleGroupJoinRequestEvent);
   }
 
-  Future<void> _onHandleGroupJoinRequestEvent(HandleGroupJoinRequestEvent event,
-      Emitter<HandleJoinRequestState> emit) async {
-    print(
-        "BLoC: Event received - communityId: ${event.communityId}, requestId: ${event.requestId}, status: ${event.status}");
-
+  Future<void> _onHandleGroupJoinRequestEvent(
+    HandleGroupJoinRequestEvent event,
+    Emitter<HandleJoinRequestState> emit,
+  ) async {
     emit(HandleJoinRequestLoadingState());
 
     try {
@@ -30,20 +29,17 @@ class HandleJoinRequestBloc
         status: event.status,
       );
 
-      print("BLoC: Result from use case: $result");
-
       result.fold(
         (error) {
-          print("BLoC: Error received: $error");
+          print('HANDLE REQUEST ERROR:$error');
           emit(HandleJoinRequestFailureState(error: error.toString()));
         },
         (response) {
-          print("BLoC: Response received: $response");
+          print('HANDLE REQUEST RESPONSE:$response');
           emit(HandleJoinRequestSuccessState(msg: response));
         },
       );
     } catch (e) {
-      print("BLoC: Exception caught - $e");
       emit(HandleJoinRequestFailureState(error: e.toString()));
     }
   }

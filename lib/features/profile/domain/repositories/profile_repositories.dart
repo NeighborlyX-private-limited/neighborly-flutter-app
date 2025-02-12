@@ -6,6 +6,7 @@ import '../../../../core/error/failures.dart';
 import '../entities/post_with_comments_entity.dart';
 
 abstract class ProfileRepositories {
+  // PASSWORD CHANGE
   Future<Either<Failure, String>> changePassword({
     String? currentPassword,
     required String newPassword,

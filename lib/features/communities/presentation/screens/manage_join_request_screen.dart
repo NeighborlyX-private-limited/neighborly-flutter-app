@@ -8,7 +8,6 @@ import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_pr
 import 'package:neighborly_flutter_app/core/widgets/custom_sizedbox.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_join_group_request_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/handle_join_request_bloc.dart';
-import '../../data/model/group_join_request_model.dart';
 
 class ManageJoinRequestScreen extends StatefulWidget {
   final String communityId;
@@ -20,6 +19,7 @@ class ManageJoinRequestScreen extends StatefulWidget {
 }
 
 class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -29,8 +29,8 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
     ));
   }
 
+// REFRESH CALL
   Future<void> _onRefresh() async {
-    print('refresh call');
     BlocProvider.of<GetJoinGroupRequestBloc>(context)
         .add(FeatchJoinGroupRequestEvent(
       communityId: widget.communityId,
@@ -74,26 +74,29 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
       body: RefreshIndicator(
         onRefresh: _onRefresh,
         child: BlocConsumer<GetJoinGroupRequestBloc, GetJoinGroupRequestState>(
+          // FAILURE STATE
           listener: (context, state) {
             if (state is GetJoinGroupRequestFailureState) {
               showSnackBar(context: context, message: state.error);
             }
           },
           builder: (context, state) {
+            // LOADING STATE
             if (state is GetJoinGroupRequestLoadingState) {
               return CustomCircularIndicator();
             }
+            // SUCCESS STATE WITH EMPTY REQUEST
             if (state is GetJoinGroupRequestSuccessState &&
                 state.communities.isEmpty) {
               return noPendingRequestScreen();
             }
+            // SUCCESS REQUEST WITH REQUEST
             if (state is GetJoinGroupRequestSuccessState &&
                 state.communities.isNotEmpty) {
-              List<GroupJoinRequestModel> requestList = state.communities;
               return ListView.builder(
-                itemCount: requestList.length,
+                itemCount: state.communities.length,
                 itemBuilder: (context, index) {
-                  final user = requestList[index];
+                  final user = state.communities[index];
 
                   return Container(
                     padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -110,7 +113,6 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                     ),
                     child: Row(
                       children: [
-                        // User Profile Picture
                         CircleAvatar(
                           radius: 24,
                           onBackgroundImageError: (_, __) => SizedBox(),
@@ -119,7 +121,6 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                         ),
                         SizedBox(width: 8),
 
-                        // User Name
                         Expanded(
                           child: Text(
                             user.username,
@@ -130,13 +131,16 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                           ),
                         ),
 
-                        // Accept Button
+                        // ACCEPT BUTTON
                         ElevatedButton(
                           onPressed: () {
                             _showAcceptBottomSheet(
                               context,
                               user.username,
                               user.id,
+                              () {
+                                _onRefresh();
+                              },
                             );
                           },
                           style: ElevatedButton.styleFrom(
@@ -156,13 +160,16 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                         CustomSizedBox(
                           width: 4,
                         ),
-
+                        // REJECT BUTTON
                         InkWell(
                           onTap: () {
                             _showRejectBottomSheet(
                               context,
                               user.username,
                               user.id,
+                              () {
+                                _onRefresh();
+                              },
                             );
                           },
                           child: Icon(
@@ -185,11 +192,12 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
     );
   }
 
-  // Bottom Sheet for Accepting
+  // ACCEPT BOTTOM SHEET
   void _showAcceptBottomSheet(
     BuildContext context,
     String userName,
     String requestId,
+    VoidCallback onTap,
   ) {
     showModalBottomSheet(
       showDragHandle: true,
@@ -201,19 +209,22 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
       builder: (context) {
         return BlocConsumer<HandleJoinRequestBloc, HandleJoinRequestState>(
           listener: (context, state) {
+            // SUCCESS STATE
             if (state is HandleJoinRequestSuccessState) {
-              BlocProvider.of<GetJoinGroupRequestBloc>(context).add(
-                FeatchJoinGroupRequestEvent(
-                  communityId: widget.communityId,
-                ),
-              );
-
+              Navigator.pop(context);
+              onTap();
               showSnackBar(
                 context: context,
                 message: "request has been accepted!",
               );
-            } else if (state is HandleJoinRequestFailureState) {
-              showSnackBar(context: context, message: "Something went wrong!");
+            }
+            // FAILURE STATE
+            else if (state is HandleJoinRequestFailureState) {
+              Navigator.pop(context);
+              showSnackBar(
+                context: context,
+                message: "oops something went wrong!",
+              );
             }
           },
           builder: (context, state) {
@@ -245,6 +256,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      // CANCEL BUTTON
                       ElevatedButton(
                         onPressed: () => Navigator.pop(context),
                         style: ElevatedButton.styleFrom(
@@ -264,9 +276,9 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                       ),
+                      // ACCEPT BUTTON
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
                           BlocProvider.of<HandleJoinRequestBloc>(context).add(
                             HandleGroupJoinRequestEvent(
                               requestId: requestId,
@@ -287,8 +299,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                           ),
                         ),
                         child: state is HandleJoinRequestLoadingState
-                            ? const CircularProgressIndicator(
-                                color: Colors.white)
+                            ? const CustomCircularIndicator()
                             : Text(
                                 "Accept",
                                 style: const TextStyle(
@@ -309,11 +320,12 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
     );
   }
 
-  // Bottom Sheet for Rejecting
+  // REJECT BOTTOM SHEET
   void _showRejectBottomSheet(
     BuildContext context,
     String userName,
     String requestId,
+    VoidCallback onTap,
   ) {
     showModalBottomSheet(
       context: context,
@@ -327,17 +339,22 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
       builder: (context) {
         return BlocConsumer<HandleJoinRequestBloc, HandleJoinRequestState>(
           listener: (context, state) {
+            // SUCCESS STATE
             if (state is HandleJoinRequestSuccessState) {
-              print("success state call");
-              _onRefresh();
-
+              Navigator.pop(context);
+              onTap();
               showSnackBar(
                 context: context,
                 message: "request has been rejected!",
               );
             }
+            // FAILURE STATE
             if (state is HandleJoinRequestFailureState) {
-              showSnackBar(context: context, message: "Something went wrong!");
+              Navigator.pop(context);
+              showSnackBar(
+                context: context,
+                message: "oops something went wrong!",
+              );
             }
           },
           builder: (context, state) {
@@ -369,6 +386,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      // CANCEL BUTTON
                       ElevatedButton(
                         onPressed: () => Navigator.pop(context),
                         style: ElevatedButton.styleFrom(
@@ -388,9 +406,9 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                           style: TextStyle(fontSize: 14, color: Colors.black),
                         ),
                       ),
+                      // REJECT BUTTON
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.pop(context);
                           BlocProvider.of<HandleJoinRequestBloc>(context).add(
                             HandleGroupJoinRequestEvent(
                               requestId: requestId,
@@ -411,9 +429,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
                           ),
                         ),
                         child: state is HandleJoinRequestLoadingState
-                            ? const CircularProgressIndicator(
-                                color: AppColors.primaryColor,
-                              )
+                            ? const CustomCircularIndicator()
                             : Text(
                                 "Reject",
                                 style: const TextStyle(

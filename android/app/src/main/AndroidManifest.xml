@@ -1,5 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.neighborlyx.neighborlysocial">
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.CAMERA" />
@@ -7,9 +7,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER"/>
-
+    <!-- APPLICATION TAG -->
     <application
-
         android:label="Neighborly"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
@@ -17,22 +16,26 @@
         android:enableOnBackInvokedCallback="true"
         android:requestLegacyExternalStorage="true"
         android:exported="true">
+        <!-- PROVIDER OPENING TAG -->
         <provider
-    android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
-    android:authorities="${applicationId}.flutter_downloader.provider"
-    android:exported="false"
-    android:grantUriPermissions="true">
-    <meta-data
-        android:name="android.support.FILE_PROVIDER_PATHS"
-        android:resource="@xml/provider_paths"/>
-</provider>
+            android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"
+            android:authorities="${applicationId}.flutter_downloader.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        <!-- PROVIDER CLOSING TAG -->
+        </provider>
+
+        <!-- ACTIVITY SELF CLOSING TAG -->
         <activity
-        android:name="com.yalantis.ucrop.UCropActivity"
-        android:screenOrientation="portrait"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+        />
+        <!-- ACTIVITY MAIN OPENING ACTIVITY TAG -->
         <activity
-            
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
@@ -40,15 +43,17 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
             android:windowSoftInputMode="adjustResize">
-            
 
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
             <meta-data android:name="com.google.firebase.messaging.default_notification_icon"
                 android:resource="@mipmap/ic_notification" />
+
             <meta-data android:name="com.google.firebase.messaging.default_notification_color"
                 android:resource="@color/colorPrimary" />
+
             <meta-data
-              android:name="io.flutter.embedding.android.NormalTheme"
-              android:resource="@style/NormalTheme" />
+                android:name="io.flutter.embedding.android.NormalTheme"
+                android:resource="@style/NormalTheme" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/> 
@@ -67,35 +72,22 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
 
-            <!-- <intent-filter android:autoVerify="true">
+          
+            <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" android:host="prod.neighborly.in" />
-                <data android:scheme="https" android:host="prod.neighborly.in" />
-            </intent-filter> -->
-<!-- <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="http"/>
-                <data android:scheme="https"/>
-            </intent-filter> -->
-            <intent-filter android:autoVerify="true">
-    <action android:name="android.intent.action.VIEW" />
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-    <data android:scheme="http"/>
-    <data android:scheme="https"/>
-    <!-- <data android:scheme="http" android:host="prod.neighborly.in" android:pathPrefix="/post-detail" />
-    <data android:scheme="https" android:host="prod.neighborly.in" android:pathPrefix="/post-detail" /> -->
-</intent-filter>
-
-
-
-
+                <!-- <data android:scheme="http"/>
+                <data android:scheme="https"/> -->
+                <data android:scheme="http" android:host="prod.neighborly.in" android:pathPrefix="/post-detail" />
+                <data android:scheme="https" android:host="prod.neighborly.in" android:pathPrefix="/post-detail" />
+                   <data android:scheme="http" android:host="prod.neighborly.in" android:pathPrefix="/group-details" />
+                <data android:scheme="https" android:host="prod.neighborly.in" android:pathPrefix="/group-details" />
+                   <data android:scheme="http" android:host="prod.neighborly.in" android:pathPrefix="/userProfileScreen" />
+                <data android:scheme="https" android:host="prod.neighborly.in" android:pathPrefix="/userProfileScreen" />
+            </intent-filter>
+        <!-- ACTIVITY MAIN CLOSING ACTIVITY TAG -->
         </activity>
-
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

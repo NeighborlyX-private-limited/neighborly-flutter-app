@@ -17,7 +17,6 @@ class HandleJoinRequestUsercase {
       status: status,
     );
 
-    print("Use case result: $result");
     return result;
   }
 }

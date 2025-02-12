@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -25,7 +27,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
 
-  /// init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -33,7 +35,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     _confirmPasswordController = TextEditingController();
   }
 
-  ///dispose method
+  // DISPOSE
   @override
   void dispose() {
     _passwordController.dispose();
@@ -41,7 +43,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     super.dispose();
   }
 
-  /// is acitve method for button disable or enable
+  // CHECK IF BOTH TEXT FIELDS ARE FILLED AND PASSWORD AND CONFIRM PASSWORD IS SAME
   bool checkIsActive() {
     if (isPasswordFilled &&
         isConfirmPasswordFilled &&
@@ -60,8 +62,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
-              Icons.arrow_back,
-              size: 20,
+              Icons.arrow_back_ios,
             ),
             onTap: () {
               context.pop();
@@ -107,7 +108,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   height: 20,
                 ),
 
-                ///password text field
+                // PASSWORD TEXT FIELD
                 TextFieldWidget(
                   border: true,
                   onChanged: (value) {
@@ -124,7 +125,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   height: 8,
                 ),
 
-                /// confirm password text field
+                // CONFIRM PASSWORD TEXT FIELD
                 TextFieldWidget(
                   border: true,
                   onChanged: (value) {
@@ -142,32 +143,24 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 ),
                 BlocConsumer<ChangePasswordBloc, ChangePasswordState>(
                   listener: (context, state) {
-                    ///failure state
+                    // FAILURE STATE
                     if (state is ChangePasswordFailureState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.error)),
-                      );
+                      showSnackBar(context: context, message: state.error);
                     }
 
-                    ///success state
+                    // SUCCESS STATE
                     else if (state is ChangePasswordSuccessState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.message)),
-                      );
+                      showSnackBar(context: context, message: state.message);
                       context.go('/loginScreen');
                     }
                   },
                   builder: (context, state) {
-                    ///loading state
+                    // LOADING STATE
                     if (state is ChangePasswordLoadingState) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
+                      return CustomCircularIndicator();
                     }
 
-                    ///continue button
+                    // CONTINUE BUTTON
                     return ButtonContainerWidget(
                       text: 'Continue',
                       color: AppColors.primaryColor,

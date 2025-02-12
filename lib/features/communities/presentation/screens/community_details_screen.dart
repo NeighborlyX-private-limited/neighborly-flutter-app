@@ -6,6 +6,7 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
+import 'package:share_it/share_it.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/community_model.dart';
@@ -163,7 +164,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
               community.isJoined
                   ? ElevatedButton(
                       onPressed: () {
-                        print(community.isAdmin);
                         if ((community.isAdmin) && (community.isJoined)) {
                           context.push(
                             '/group-admin',
@@ -808,7 +808,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
         return PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, result) {
-            context.go('/groups');
+            Navigator.pop(context, true);
+            // context.go('/groups');
           },
           child: Scaffold(
             backgroundColor: AppColors.whiteColor,
@@ -832,19 +833,19 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     // SHARE BUTTON IS NOT WORKING
-                    // AppbatButton(
-                    //   onTap: () {
-                    //     String message =
-                    //         'Hey, check this community: ${communityCache?.name}';
-                    //     ShareIt.text(
-                    //       content: message,
-                    //       androidSheetTitle: 'Share',
-                    //     );
-                    //   },
-                    //   icon: Icons.share,
-                    //   iconSize: 20,
-                    // ),
-                    // const SizedBox(width: 10),
+                    AppbatButton(
+                      onTap: () {
+                        String link =
+                            'Hey, check this community: https://prod.neighborly.in/group-details/${widget.communityId}';
+                        ShareIt.text(
+                          content: link,
+                          androidSheetTitle: 'Share',
+                        );
+                      },
+                      icon: Icons.share,
+                      iconSize: 20,
+                    ),
+                    const SizedBox(width: 10),
 
                     // MENU BUTTON
                     AppbatButton(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/chat_main_cubit.dart';
@@ -18,19 +18,19 @@ class ChatMainScreen extends StatefulWidget {
 }
 
 class _ChatMainScreenState extends State<ChatMainScreen> {
-  late var chatMainCubit;
+  late ChatMainCubit chatMainCubit;
   bool showSearch = false;
 
   final searchEC = TextEditingController();
+  // INIT STATE
   @override
   void initState() {
     super.initState();
-
     chatMainCubit = BlocProvider.of<ChatMainCubit>(context);
-
     chatMainCubit.init();
   }
 
+// DISPOSE
   @override
   void dispose() {
     super.dispose();
@@ -44,13 +44,13 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
           ),
           onTap: () {
             Navigator.of(context).pop();
           },
         ),
         title: showSearch
+            // APP BAR SEARCH BOX
             ? TextFormField(
                 controller: searchEC,
                 onTapOutside: (event) => FocusScope.of(context).unfocus(),
@@ -67,14 +67,17 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                   filled: true,
                   // fillColor: widget.isDarkmode! ? Colors.grey[800] : Colors.grey[200],
                   fillColor: AppColors.lightBackgroundColor,
-                  hintText: 'type to search your groups', // 'Buscar',
+                  hintText: 'type to search your groups',
                   contentPadding: EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 5), // Inside box padding
+                    horizontal: 20,
+                    vertical: 5,
+                  ),
                   // hintStyle: TextStyle(color: widget.isDarkmode! ? Colors.white.withOpacity(0.4) : Colors.black26),
                   hintStyle: TextStyle(
-                      color: Colors.black.withOpacity(0.6),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400),
+                    color: Colors.black.withOpacity(0.6),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+                  ),
                   border: OutlineInputBorder(
                     gapPadding: 0,
                     borderSide: BorderSide(
@@ -94,17 +97,18 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                 ),
                 cursorColor: Colors.black,
               )
+            // APP BAR TITLE
             : Text(
                 'Chat',
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
         centerTitle: true,
         actions: [
+          // SEARCH BOX
           IconButton(
             onPressed: () {
               setState(() {
                 showSearch = !showSearch;
-
                 if (!showSearch) {
                   chatMainCubit.cleanSearchFilter();
                 }
@@ -112,7 +116,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
             },
             icon: Icon(
               showSearch ? Icons.close : Icons.search,
-              size: 31,
+              size: 24,
             ),
           ),
           const SizedBox(width: 10),
@@ -120,61 +124,56 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
       ),
       body: BlocConsumer<ChatMainCubit, ChatMainState>(
         listener: (context, state) {
-          switch (state.status) {
-            case Status.loading:
-              break;
-            case Status.failure:
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content:
-                      Text('Something went wrong! ${state.failure?.message}'),
-                ),
-              );
-              break;
-            case Status.success:
-              break;
-            case Status.initial:
-              break;
+          // FAILURE STATE
+          if (state.status == Status.failure) {
+            showSnackBar(
+              context: context,
+              message: "oops something went wrong",
+            );
           }
         },
         builder: (context, state) {
-          return BlocBuilder<ChatMainCubit, ChatMainState>(
-            bloc: chatMainCubit,
-            builder: (context, state) {
-              if (state.status == Status.loading) {
-                return const ChatRoomsSheemer();
-              }
+          // LOADING STATE
+          if (state.status == Status.loading) {
+            return const ChatRoomsSheemer();
+          }
+          // NO LOADING STATE WITH EMPTY ROOM
+          if (state.status != Status.loading &&
+              state.rooms.isEmpty &&
+              state.isSearching == false) {
+            return ChatEmptyWidget();
+          }
+          // NO SEARCHED ROOM FOUND
+          if (state.isSearching == true && state.rooms.isEmpty) {
+            return ChatSearchEmptyWidget(searchTem: searchEC.text);
+          }
 
-              if (state.status != Status.loading &&
-                  state.rooms.isEmpty &&
-                  state.isSearching == false) {
-                return ChatEmptyWidget();
-              }
-
-              if (state.isSearching == true && state.rooms.isEmpty) {
-                return ChatSearchEmptyWidget(searchTem: searchEC.text);
-              }
-
-              return Container(
-                padding: EdgeInsets.only(top: 15),
-                width: double.infinity,
-                color: Colors.white,
-                child: ListView.builder(
-                  itemCount: state.rooms.length,
-                  itemBuilder: ((context, index) {
-                    return ChatTileWidget(
-                      room: state.rooms[index],
-                      onTap: (selectedRoom) {
-                        var goTo = selectedRoom.isGroup ? 'group' : 'private';
-
-                        context.push('/chat/$goTo/${state.rooms[index].id}',
-                            extra: state.rooms[index]);
-                      },
-                    );
-                  }),
-                ),
-              );
-            },
+          return Container(
+            padding: EdgeInsets.only(top: 15),
+            width: double.infinity,
+            color: Colors.white,
+            child: ListView.builder(
+              itemCount: state.rooms.length,
+              itemBuilder: ((context, index) {
+                return ChatTileWidget(
+                  room: state.rooms[index],
+                  onTap: (selectedRoom) {
+                    print('selectedRoom:${selectedRoom.isGroup}');
+                    if (selectedRoom.isGroup) {
+                      context.push(
+                        '/chat/private/${state.rooms[index].id}',
+                        extra: state.rooms[index],
+                      );
+                    } else {
+                      context.push(
+                        '/group-chat/${state.rooms[index].id}',
+                        extra: state.rooms[index],
+                      );
+                    }
+                  },
+                );
+              }),
+            ),
           );
         },
       ),

@@ -4,6 +4,7 @@ import '../../models/auth_response_model.dart';
 import '../../models/post_with_comments_model.dart';
 
 abstract class ProfileRemoteDataSource {
+  //CHANGE PASSWORD
   Future<String> changePassword({
     String? currentPassword,
     required String newPassword,

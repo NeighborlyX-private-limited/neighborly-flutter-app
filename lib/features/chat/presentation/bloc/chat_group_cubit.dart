@@ -29,7 +29,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     // FEATCH GROUP MESSAGES
     await getGroupRoomMessages(roomId: roomId);
 
-    /// listen for new messages
+    // LISTEN NEW MESSAGE
     socketService.onNewMessageReceived = (message) {
       print('NEW MESSAGE RECEIVED:$message');
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
@@ -45,36 +45,42 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           'boos': message['boos'],
           'booOrCheer': '',
           'pictureUrl': message['mediaLink'],
-          // 'https://s3.amazonaws.com/www.neighborly.in/452e36e5-4afd-480b-90ce-c8119355110c-2025-02-06%2022%3A52%3A01.345569_compressed.jpeg',
           'text': message['message'],
           'author': {
             "userId": message['userId'],
             "userName": message['name'],
             "picture": "$userImage",
             "karma": 1
-          }
+          },
+          'repliedTo': message['repliedTo'] != null
+              ? {
+                  "messageId": message['repliedTo']["messageId"],
+                  "userId": message['repliedTo']["userId"],
+                  "name": message['repliedTo']["name"],
+                  "message": message['repliedTo']["message"],
+                  "media": message['repliedTo']["media"] ?? "",
+                }
+              : null,
         }
       ])[0];
-      //if (message['parentMessageId'] == null) {
+      print('CHAT MODEL:$chatmodel');
       addMessage(chatmodel);
-      //}
     };
   }
 
-  /// add msg
-  addMessage(ChatMessageModel message) {
-    List<ChatMessageModel> updatedMessages =
+  // ADD RECEIVED MESSAGE INTO THE CURRENT STATE
+  addMessage(ChatMessageModel newMessage) {
+    List<ChatMessageModel> oldMessages =
         List<ChatMessageModel>.from(state.messages);
 
-    // Emit the updated state with the new list of messages
-    final updatedMessagesList = [
-      ...updatedMessages,
-      ...[message]
+    final updatedMessageList = [
+      ...oldMessages,
+      ...[newMessage]
     ];
-    emit(state.copyWith(status: Status.success, messages: updatedMessagesList));
+    emit(state.copyWith(status: Status.success, messages: updatedMessageList));
   }
 
-  /// get group msgs
+  // GET GROUP MESSAGES
   Future getGroupRoomMessages({
     required roomId,
   }) async {
@@ -100,7 +106,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     );
   }
 
-  /// featch older msg with pagination
+  // FEATCH OLDER MESSAGE WITH PAGIGATION
   Future<void> fetchOlderMessages() async {
     try {
       List<ChatMessageModel> olderMessages = state.messages;
@@ -136,18 +142,17 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     }
   }
 
-  /// send msg
+  // SEND MESSAGE
   void sendMessage(
     Map<String, dynamic> payload,
     bool isMsg,
   ) {
-    print(payload);
     socketService.sendMessage(state.roomId, payload, isMsg);
   }
 
-  /// on disconnect
+  // LEAVE ROOM
   void disconnectChat(String roomId) async {
-    socketService.dispose(state.roomId);
+    socketService.dispose(roomId);
   }
 
   // updateMessage(ChatMessageModel updatedMessage) {

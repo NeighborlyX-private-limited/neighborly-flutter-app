@@ -121,6 +121,7 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
 
                 /// otp text field
                 TextFieldWidget(
+                  inputType: TextInputType.number,
                   controller: _otpController,
                   lableText: AppLocalizations.of(context)!.enter_otp,
                   isPassword: false,

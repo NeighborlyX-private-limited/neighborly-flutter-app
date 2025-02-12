@@ -11,15 +11,17 @@ class LoginWithEmailBloc
   final LoginWithEmailUsecase _loginUser;
   final GoogleAuthenticationUsecase _googleLogin;
 
-  LoginWithEmailBloc(
-      {required LoginWithEmailUsecase loginUseCase,
-      required GoogleAuthenticationUsecase googleLoginCase})
-      : _googleLogin = googleLoginCase,
+  LoginWithEmailBloc({
+    required LoginWithEmailUsecase loginUseCase,
+    required GoogleAuthenticationUsecase googleLoginCase,
+  })  : _googleLogin = googleLoginCase,
         _loginUser = loginUseCase,
         super(LoginInitialState()) {
-    ///LoginButtonPressedEvent
-    on<LoginButtonPressedEvent>((LoginButtonPressedEvent event,
-        Emitter<LoginWithEmailState> emit) async {
+    // LOGIN WITH EMAIL BUTTON EVENT
+    on<LoginButtonPressedEvent>((
+      LoginButtonPressedEvent event,
+      Emitter<LoginWithEmailState> emit,
+    ) async {
       emit(LoginLoadingState());
 
       final result = await _loginUser.call(event.email, event.password);
@@ -31,7 +33,7 @@ class LoginWithEmailBloc
       });
     });
 
-    ///GoogleLoginEvent
+    // GOOGLE LOGIN
     on<GoogleLoginEvent>((
       GoogleLoginEvent event,
       Emitter<LoginWithEmailState> emit,
@@ -39,10 +41,12 @@ class LoginWithEmailBloc
       emit(LoginLoadingState());
 
       final result = await _googleLogin.call();
-
+      print('RESULT IN BLOC:$result');
       result.fold((error) {
+        print('ERROR RESULT IN BLOC:${error.toString()}');
         emit(LoginFailureState(error: error.toString()));
       }, (response) {
+        print('SUCCESS RESULT IN BLOC:$response');
         emit(OAuthSuccessState(message: 'true'));
       });
     });

@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
@@ -23,7 +25,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl({required this.client});
 
-  /// loginWithEmail function
+  // LOGIN WITH EMAILDF
   @override
   Future<AuthResponseModel> loginWithEmail({
     required String email,
@@ -41,14 +43,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'password': password,
       }),
     );
-
+    log('EMAIL OR PHONE LOGIN:${jsonDecode(response.body)}');
+    debugPrint('EMAIL OR PHONE LOGIN:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
-      final jwtToken = response.headers['authorization'] ?? '';
-
-      /// Assuming the response headers contain the Set-Cookie header
-      /// extract data from response
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
-      String accessToken = jsonDecode(response.body)['refreshToken'];
+      String accessToken = jsonDecode(response.body)['accessToken'];
       String refreshToken = jsonDecode(response.body)['refreshToken'];
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
@@ -66,9 +65,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           jsonDecode(response.body)['user']['viewedTutorial'];
       String authType = jsonDecode(response.body)['user']['auth_type'];
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
+      print("ACCESS TOKEN IN LOGIN RESPONSE::$accessToken");
+      print("USERNAME IN LOGIN RESPONSE:$username");
+      print("USERID IN LOGIN RESPONSE:$userID");
 
-      /// set data to local
-      ShardPrefHelper.setJwtToken(jwtToken);
+      // SET DATA IN LOCAL
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setAccessToken(accessToken);
       ShardPrefHelper.setRefreshToken(refreshToken);
@@ -85,51 +86,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setAuthtype(authType);
       ShardPrefHelper.setIsVerified(isVerified);
+      print(
+          "ACCESS TOKEN IN LOGIN RESPONSE:${ShardPrefHelper.getAccessToken()}");
+      print("USERNAME IN LOGIN RESPONSE:${ShardPrefHelper.getUsername()}");
+      print("USERID IN LOGIN RESPONSE:${ShardPrefHelper.getUserID()}");
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       String error =
-          jsonDecode(response.body)['message'] ?? 'Something went wrong';
+          jsonDecode(response.body)['message'] ?? 'oops something went wrong';
       throw ServerException(message: error);
     }
   }
 
-  /// resendOtp function
-  @override
-  Future<String> resendOtp({
-    String? email,
-    String? phone,
-  }) async {
-    String urlForEmail = '$kBaseUrl/authentication/send-otp';
-    String urlForPhone = '$kBaseUrl/authentication/send-phone-otp';
-
-    final response = await client.post(
-      Uri.parse(email != null ? urlForEmail : urlForPhone),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: email != null
-          ? jsonEncode(<String, String>{
-              'email': email,
-            })
-          : jsonEncode(<String, String>{
-              'phoneNumber': phone!,
-            }),
-    );
-
-    if (response.statusCode == 200) {
-      return "OTP sent successfully";
-    } else {
-      if (response.body ==
-          'Too many requests, please try again after a minute.') {
-        throw ServerException(message: 'Please try again after 1 minute');
-      }
-
-      throw ServerException(message: jsonDecode(response.body)['message']);
-    }
-  }
-
-  /// signup function
+  // EMAIL AND PHONE SIGNUP
   @override
   Future<AuthResponseModel> signup({
     String? email,
@@ -156,13 +126,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'fcmToken': fcmToken,
             }),
     );
-
+    log('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
+    debugPrint('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
-      // Assuming the response headers contain the Set-Cookie header
-      /// extract data from response
-      final jwtToken = response.headers['authorization'] ?? '';
-      ShardPrefHelper.setJwtToken(jwtToken);
-
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
@@ -189,7 +155,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
       String authType = jsonDecode(response.body)['user']['auth_type'];
 
-      /// set data to local
+      // SET ALL DATA IN LOCAL
       ShardPrefHelper.setCookie(cookies);
       ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setUserProfilePicture(proPic);
@@ -212,20 +178,51 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setAuthtype(authType);
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
-    } else if (response.statusCode == 400) {
-      String error =
-          jsonDecode(response.body)['error'] ?? 'Something went wrong';
-
-      throw ServerException(message: error);
     } else {
       String error =
-          jsonDecode(response.body)['error'] ?? 'Something went wrong';
+          jsonDecode(response.body)['error'] ?? 'oops something went wrong';
 
       throw ServerException(message: error);
     }
   }
 
-  /// verifyOtp function
+  // SEND OTP FOR PHONE AND EMAIL
+  @override
+  Future<String> resendOtp({
+    String? email,
+    String? phone,
+  }) async {
+    String urlForEmail = '$kBaseUrl/authentication/send-otp';
+    String urlForPhone = '$kBaseUrl/authentication/send-phone-otp';
+
+    final response = await client.post(
+      Uri.parse(email != null ? urlForEmail : urlForPhone),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+      },
+      body: email != null
+          ? jsonEncode(<String, String>{
+              'email': email,
+            })
+          : jsonEncode(<String, String>{
+              'phoneNumber': phone!,
+            }),
+    );
+    log('SEND OTP FOR EMAIL OR PHONE:${jsonDecode(response.body)}');
+    debugPrint('SEND OTP FOR EMAIL OR PHONE:${jsonDecode(response.body)}');
+    if (response.statusCode == 200) {
+      return "OTP sent successfully";
+    } else {
+      if (response.body ==
+          'Too many requests, please try again after a minute.') {
+        throw ServerException(message: 'Please try again after 1 minute');
+      }
+
+      throw ServerException(message: jsonDecode(response.body)['message']);
+    }
+  }
+
+  // VERIFY OTP FOR EMAIL AND PHONE
   @override
   Future<String> verifyOtp({
     String? email,
@@ -238,9 +235,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     final response = await client.post(
       Uri.parse(email != null ? urlForEmail : urlForPhone),
-      headers: {
-        //'Content-Type': 'application/json',
-      },
       body: email != null
           ? {
               'email': email,
@@ -252,10 +246,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'otp': otp,
             },
     );
-
+    log('VERIFY OTP FOR EMAIL OR PHONE:${jsonDecode(response.body)}');
+    debugPrint('VERIFY OTP FOR EMAIL OR PHONE:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
-      // Assuming the response headers contain the Set-Cookie header
-      /// extract data from response
       if (verificationFor != 'forgot-password') {
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
         String userID = jsonDecode(response.body)['user']['_id'];
@@ -282,10 +275,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         String authType = jsonDecode(response.body)['user']['auth_type'];
-        final jwtToken = response.headers['authorization'] ?? '';
-        ShardPrefHelper.setJwtToken(jwtToken);
 
-        /// set data to local
+        // SET DATA IN LOCAL
         if (email != null) {
           ShardPrefHelper.setIsEmailLogin(true);
         } else {
@@ -310,18 +301,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       return 'Account is verified';
     } else if (response.statusCode == 401) {
       String error =
-          jsonDecode(response.body)['message'] ?? 'Something went wrong';
+          jsonDecode(response.body)['message'] ?? 'oops something went wrong';
 
       throw ServerException(message: error);
     } else {
       String error =
-          jsonDecode(response.body)['error'] ?? 'Something went wrong';
+          jsonDecode(response.body)['error'] ?? 'oops something went wrong';
 
       throw ServerException(message: error);
     }
   }
 
-  /// forgotPassword function
+  // FORGOT PASSWORD
   @override
   Future<String> forgotPassword({required String email}) async {
     String url = '$kBaseUrl/authentication/forgot-password';
@@ -335,18 +326,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'email': email,
       }),
     );
-
+    log('FORGOT PASSWORD RESPONSE:${jsonDecode(response.body)}');
+    debugPrint('FORGOT PASSWORD RESPONSE:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
       return jsonDecode(response.body)['msg'];
     } else {
       String error =
-          jsonDecode(response.body)['message'] ?? 'Something went wrong';
+          jsonDecode(response.body)['message'] ?? 'oops something went wrong';
 
       throw ServerException(message: error);
     }
   }
 
-  /// googleAuthentication function
+  // GOOGLE AUTH
   @override
   Future<dynamic> googleAuthentication() async {
     try {
@@ -355,12 +347,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
 
       final GoogleSignIn googleSignIn = GoogleSignIn();
+      print('GOOGLE SIGN IN RESULT:$googleSignIn');
 
       await googleSignIn.signOut();
 
       var signInResult = await GoogleSignInService.signInWithGoogle();
+      print('GOOGLE SIGN IN RESULT AFTER LOGOUT:$signInResult');
 
       if (signInResult['error'] != null) {
+        print('GOOGLE SIGN IN ERROR AFTER LOGOUT:${signInResult['error']}');
         throw ServerException(message: signInResult['error']);
       }
       if (signInResult.containsKey('error')) {
@@ -368,6 +363,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       String tokenID = signInResult['idToken'];
+      print('GOOGLE SIGN IN TOKEN :$tokenID');
 
       final response = await http.post(
         Uri.parse(url),
@@ -378,9 +374,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'fcmToken': fcmToken,
         }),
       );
-
+      log('GOOGLE AUTH RESPONSE:${jsonDecode(response.body)}');
+      debugPrint('GOOGLE AUTH RESPONSE:${jsonDecode(response.body)}');
       if (response.statusCode == 200) {
-        /// extract data from response
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
         String userID = jsonDecode(response.body)['user']['_id'];
         String proPic = jsonDecode(response.body)['user']['picture'];
@@ -400,7 +396,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         final jwtToken = response.headers['authorization'] ?? '';
         ShardPrefHelper.setJwtToken(jwtToken);
 
-        /// set data to local
+        // SET DATA IN LOCAL
         ShardPrefHelper.setCookie(cookies);
         ShardPrefHelper.setUserID(userID);
         ShardPrefHelper.setUserProfilePicture(proPic);
@@ -417,7 +413,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         return jsonDecode(response.body);
       } else {
         String error = jsonDecode(response.body)['error_description'] ??
-            'Something went wrong';
+            jsonDecode(response.body)['message'] ??
+            'oops something went wrong';
         throw ServerException(message: error);
       }
     } catch (e) {

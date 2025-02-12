@@ -1,21 +1,15 @@
-// ignore_for_file: unused_field
-
 import 'dart:async';
 import 'dart:math';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:socket_io_client/socket_io_client.dart';
-
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/utils/shared_preference.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../data/model/chat_room_model.dart';
 import '../../domain/usecases/get_all_chat_rooms_usecase.dart';
-
 part 'chat_main_state.dart';
 
 class ChatMainCubit extends Cubit<ChatMainState> {
@@ -36,20 +30,29 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     _setupChatSocket();
   }
 
+// GET ALL CHAT ROOMS
   Future getAllRooms() async {
     emit(state.copyWith(status: Status.loading));
     final result = await getAllChatRoomsUsecase();
 
     result.fold(
       (failure) {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (roomList) {
-        emit(state.copyWith(
-            status: Status.success, rooms: roomList, roomsOriginal: roomList));
+        emit(
+          state.copyWith(
+            status: Status.success,
+            rooms: roomList,
+            roomsOriginal: roomList,
+          ),
+        );
       },
     );
   }

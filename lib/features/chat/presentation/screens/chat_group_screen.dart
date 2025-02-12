@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
@@ -32,6 +31,8 @@ import '../widgets/chat_messages_group_sheemer.dart';
 import '../../../../core/constants/imagepickercompress.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../widgets/media_message_widget.dart';
+
 class ChatGroupScreen extends StatefulWidget {
   final ChatRoomModel chatRoom;
   final String roomId;
@@ -57,29 +58,34 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
   final messageEC = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
+  String cuurentUserId = '';
+
   bool isCommentFilled = false;
+  bool isReply = false;
   bool showPinned = true;
-  File? fileToUpload;
+
+  File? imageToUpload;
   File? _videoFile;
   File? _pickedFile;
-  bool isReply = false;
+
   String? _selectedMessageId;
   String? _selectedMessageUserId;
   String? _messageToReply;
   String? _messageToReplyUserName;
-  String? base64File;
-  bool _isLoadingMore = false;
-  OverlayEntry? _overlayEntry;
-  bool _shouldScrollToBottom = true;
-  double _previousScrollOffset = 0.0;
-  String cuurentUserId = '';
 
+  bool _isLoadingMore = false;
+
+  final bool _shouldScrollToBottom = true;
+  double _previousScrollOffset = 0.0;
+
+  OverlayEntry? _overlayEntry;
   // INIT STATE
   @override
   void initState() {
     super.initState();
 
     getCurrentUserId();
+
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
     chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
     chatGroupCubit.init(widget.roomId);
@@ -101,6 +107,28 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 // CHECK IF CURRENT USER IS AN ADMIN
   bool isCurrentUserAdmin() {
     return widget.admins.any((admin) => admin.id == cuurentUserId);
+  }
+
+// CHECK IF SENDER USER IS AN ADMIN
+  bool isSenderAnAdmin(String userId) {
+    return widget.admins.any((admin) => admin.id == userId);
+  }
+
+// GET THE PROFILE PIC OF THE SENDER
+  String getSenderProfilePic(String userId) {
+    final member = widget.members.firstWhere(
+      (member) => member.id == userId,
+      orElse: () => UserSimpleModel(
+        id: '',
+        name: 'Unknown',
+        avatarUrl: 'default',
+      ),
+    );
+
+    if (member.avatarUrl == 'default') {
+      return '';
+    }
+    return member.avatarUrl;
   }
 
   // / scroll to bottom
@@ -204,11 +232,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     });
 
     if (imageFile != null) {
-      print('IMAGE FILE BEFORE: $fileToUpload');
       setState(() {
-        fileToUpload = File(imageFile.path);
+        imageToUpload = File(imageFile.path);
       });
-      print('IMAGE FILE AFTER: $fileToUpload');
     }
   }
 
@@ -218,11 +244,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     final XFile? pickedFile = await picker.pickMedia();
 
     if (pickedFile != null) {
-      print('FILE BEFORE: $pickedFile');
       setState(() {
         _pickedFile = File(pickedFile.path);
       });
-      print('FILE AFTER: $pickedFile');
     }
   }
 
@@ -235,11 +259,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       );
 
       if (pickedVideoFile != null) {
-        print('VIDEO FILE BEFORE: $pickedVideoFile');
         setState(() {
           _videoFile = File(pickedVideoFile.path);
         });
-        print('VIDEO FILE AFTER: $pickedVideoFile');
       }
     } catch (e) {
       if (mounted) {
@@ -250,7 +272,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
   // MESSAGE INPUT AREA
   Widget messageInputSection() {
-    String? imgUrl;
+    // String? imgUrl;
     // String? videoUrl;
     // bool isImageUploading = false;
     return SingleChildScrollView(
@@ -278,7 +300,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 },
                 decoration: InputDecoration(
                   suffixIcon: GestureDetector(
-                    onTap: showMediaOption,
+                    onTap: pickImage,
+                    // onTap: showMediaOption,
                     child: Icon(
                       Icons.photo_camera_back_outlined,
                       color: Colors.grey[600],
@@ -304,35 +327,55 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             BlocConsumer<UploadFileBloc, UploadFileState>(
               listener: (context, state) {
                 if (state is UploadFileFailureState) {
-                  base64File = null;
-                  fileToUpload = null;
-                  _selectedMessageId = null;
-                  _messageToReply = null;
                   isReply = false;
+
                   messageEC.clear();
+
+                  _messageToReply = null;
+                  _selectedMessageId = null;
+                  _messageToReplyUserName = null;
+                  _selectedMessageUserId = null;
+
+                  imageToUpload = null;
+                  _videoFile = null;
+                  _pickedFile = null;
+
                   showSnackBar(context: context, message: state.error);
                 }
 
                 if (state is UploadFileSuccessState) {
-                  imgUrl = state.url;
+                  String fileUrl = state.url;
 
-                  if (messageEC.text.trim() != "" || fileToUpload != null) {
+                  if (messageEC.text.trim() != "" || imageToUpload != null) {
                     final payload = {
                       'groupId': widget.roomId,
                       'message': messageEC.text,
-                      'parentMessageId': isReply ? _selectedMessageId : null,
-                      'file': imgUrl,
+                      'repliedTo': isReply
+                          ? {
+                              'messageId': _selectedMessageId,
+                              'userId': _selectedMessageUserId,
+                              'name': _messageToReplyUserName,
+                              'message': _messageToReply,
+                              'media': null,
+                            }
+                          : null,
+                      'file': fileUrl,
                     };
 
                     context.read<ChatGroupCubit>().sendMessage(payload, true);
-                    base64File = null;
-                    fileToUpload = null;
+
+                    isReply = false;
+
+                    messageEC.clear();
+
+                    _messageToReply = null;
+                    _selectedMessageId = null;
+                    _messageToReplyUserName = null;
+                    _selectedMessageUserId = null;
+
+                    imageToUpload = null;
                     _videoFile = null;
                     _pickedFile = null;
-                    _selectedMessageId = null;
-                    _messageToReply = null;
-                    isReply = false;
-                    messageEC.clear();
                   }
                 }
               },
@@ -345,54 +388,94 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     if (!widget.chatRoom.isJoined) {
                       _showJoinGroupBottomSheet(context);
                     } else {
-                      if (fileToUpload != null) {
-                        context
-                            .read<UploadFileBloc>()
-                            .add(UploadFilePressedEvent(file: fileToUpload!));
-                      } else if (_videoFile != null) {
-                        context
-                            .read<UploadFileBloc>()
-                            .add(UploadFilePressedEvent(file: _videoFile!));
-                      } else if (_pickedFile != null) {
-                        context
-                            .read<UploadFileBloc>()
-                            .add(UploadFilePressedEvent(file: _pickedFile!));
-                      } else {
-                        if (messageEC.text.trim() != "") {
-                          final payload = {
-                            'groupId': widget.roomId,
-                            'message': messageEC.text,
-                            'reply': isReply
-                                ? {
-                                    'userId': _selectedMessageUserId,
-                                    'userName': _messageToReplyUserName,
-                                    'message': _messageToReply,
-                                    'media': null,
-                                  }
-                                : null,
-                            'file': imgUrl,
-                          };
+                      // if (imageToUpload != null) {
+                      //   context
+                      //       .read<UploadFileBloc>()
+                      //       .add(UploadFilePressedEvent(file: imageToUpload!));
+                      // }
+                      if (messageEC.text.trim() != "") {
+                        final payload = {
+                          'groupId': widget.roomId,
+                          'message': messageEC.text,
+                          'repliedTo': isReply
+                              ? {
+                                  'messageId': _selectedMessageId,
+                                  'userId': _selectedMessageUserId,
+                                  'name': _messageToReplyUserName,
+                                  'message': _messageToReply,
+                                  'media': null,
+                                }
+                              : null,
+                          'file': null,
+                        };
 
-                          context
-                              .read<ChatGroupCubit>()
-                              .sendMessage(payload, true);
-                          base64File = null;
-                          fileToUpload = null;
-                          _selectedMessageId = null;
-                          _messageToReply = null;
-                          _messageToReplyUserName = null;
-                          isReply = false;
-                          messageEC.clear();
-                          _videoFile = null;
-                          _pickedFile = null;
-                        }
+                        context
+                            .read<ChatGroupCubit>()
+                            .sendMessage(payload, true);
+                        isReply = false;
+
+                        messageEC.clear();
+
+                        _messageToReply = null;
+                        _selectedMessageId = null;
+                        _messageToReplyUserName = null;
+                        _selectedMessageUserId = null;
+
+                        imageToUpload = null;
+                        _videoFile = null;
+                        _pickedFile = null;
                       }
                     }
+                    // if (imageToUpload != null) {
+                    //   context
+                    //       .read<UploadFileBloc>()
+                    //       .add(UploadFilePressedEvent(file: imageToUpload!));
+                    // } else if (_videoFile != null) {
+                    //   context
+                    //       .read<UploadFileBloc>()
+                    //       .add(UploadFilePressedEvent(file: _videoFile!));
+                    // } else if (_pickedFile != null) {
+                    //   context
+                    //       .read<UploadFileBloc>()
+                    //       .add(UploadFilePressedEvent(file: _pickedFile!));
+                    // } else {
+                    //   if (messageEC.text.trim() != "") {
+                    //     final payload = {
+                    //       'groupId': widget.roomId,
+                    //       'message': messageEC.text,
+                    //       'repliedTo': isReply
+                    //           ? {
+                    //               'messageId': _selectedMessageId,
+                    //               'userId': _selectedMessageUserId,
+                    //               'name': _messageToReplyUserName,
+                    //               'message': _messageToReply,
+                    //               'media': null,
+                    //             }
+                    //           : null,
+                    //       'file': imgUrl,
+                    //     };
+
+                    //     context
+                    //         .read<ChatGroupCubit>()
+                    //         .sendMessage(payload, true);
+
+                    //     imageToUpload = null;
+                    //     _selectedMessageId = null;
+                    //     _messageToReply = null;
+                    //     _messageToReplyUserName = null;
+                    //     isReply = false;
+                    //     messageEC.clear();
+                    //     _videoFile = null;
+                    //     _pickedFile = null;
+                    //   }
+                    // }
+                    // }
                   },
                   child: Opacity(
                     opacity: (isCommentFilled ||
-                            fileToUpload != null ||
-                            _videoFile != null)
+                            imageToUpload != null ||
+                            _videoFile != null ||
+                            _pickedFile != null)
                         ? 1
                         : 0.3,
                     child: Container(
@@ -400,8 +483,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                       width: 48,
                       decoration: BoxDecoration(
                         color: (isCommentFilled ||
-                                fileToUpload != null ||
-                                _videoFile != null)
+                                imageToUpload != null ||
+                                _videoFile != null ||
+                                _pickedFile != null)
                             ? AppColors.primaryColor
                             : Colors.grey[500],
                         shape: BoxShape.circle,
@@ -802,19 +886,16 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         // APPBAR AREA
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          backgroundColor: AppColors.lightBackgroundColor,
+          backgroundColor: AppColors.whiteColor,
           title: appBarTitleArea(),
           actions: [
             IconButton(
               onPressed: () {
                 bool isAdmin = isCurrentUserAdmin();
-                print("isAdmin:$isAdmin");
+
                 context.push(
                   '/group-chat-pinned-message/${widget.roomId}/${isAdmin ? "true" : "false"}',
                 );
-                // context.push(
-                //   '/group-chat-pinned-message/${widget.roomId}/${isAdmin}',
-                // );
               },
               icon: Icon(
                 Icons.push_pin,
@@ -947,8 +1028,18 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 final bool isNewMsg = index == 0 ||
                                     msg.author?.id !=
                                         state.messages[index - 1].author?.id;
+
+                                // CHECK SENDER USER IS ADMIN OR NOT
+                                final bool isSenderAdmin =
+                                    isSenderAnAdmin(msg.author!.id);
+
                                 // CHECK CURRENT USER IS ADMIN OR NOT
                                 final bool isAdmin = isCurrentUserAdmin();
+
+                                // GET PROFILE PIC OF THE  SENDER USER
+                                final String senderProfilePic =
+                                    getSenderProfilePic(msg.author!.id);
+
                                 // NEED TO THINK ABOUT THIS LINE
                                 if (_isLoadingMore &&
                                     index == state.messages.length) {
@@ -956,11 +1047,13 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 }
 
                                 return ChatMessageGroupWidget(
-                                  isNewMsg: isNewMsg,
                                   message: msg,
-                                  isAdmin: isAdmin,
                                   isCurrentUser:
                                       (msg.author?.id == cuurentUserId),
+                                  isAdmin: isAdmin,
+                                  isNewMsg: isNewMsg,
+                                  isSenderAdmin: isSenderAdmin,
+                                  senderProfilePic: senderProfilePic,
                                 );
                               },
                             ),
@@ -969,77 +1062,117 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   // IF REPLY IS TRUE SHOW REPLYING TO CARD ABOVE TEXT FIELD
                   if (isReply)
                     Container(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 68,
                       ),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
-                        vertical: 10,
+                        vertical: 8,
                       ),
-                      color: Colors.grey.shade100,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.reply, size: 20),
-                          SizedBox(width: 8),
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Replying to: ',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.blackColor,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: '$_messageToReply',
-                                    style: TextStyle(
-                                      color: AppColors.blackColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          GestureDetector(
-                            onTap: _clearReply,
-                            child: Icon(Icons.close, size: 24),
-                          ),
-                        ],
-                      ),
-                    ),
-                  // SHOW PICKED MEDIA PREVIEW
-                  if (fileToUpload != null)
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 8,
-                        right: 8,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Container(
-                        color: Colors.grey.shade100,
-                        child: Row(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border(
+                            left: BorderSide(
+                              color: AppColors.primaryColor,
+                              width: 4,
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                                child: Image.file(
-                              fileToUpload!,
-                              width: 200,
-                              height: 200,
-                            )),
-                            IconButton(
-                              icon: Icon(Icons.close),
-                              onPressed: () {
-                                setState(() {
-                                  fileToUpload = null;
-                                });
-                              },
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  '~$_messageToReplyUserName',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: _clearReply,
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Text(
+                              '$_messageToReply',
+                              style: TextStyle(
+                                color: AppColors.blackColor,
+                              ),
                             ),
                           ],
                         ),
                       ),
                     ),
+
+                  // SHOW PICKED MEDIA PREVIEW
+                  if (imageToUpload != null)
+                    Container(
+                      margin: const EdgeInsets.only(
+                        left: 16,
+                        right: 70,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border(
+                            left: BorderSide(
+                              color: AppColors.primaryColor,
+                              width: 4,
+                            ),
+                          ),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Image.file(
+                                imageToUpload!,
+                                width: 250,
+                                height: 150,
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: _clearReply,
+                              child: Icon(
+                                Icons.close,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
                   messageInputSection(),
                 ],
               ),
@@ -1057,7 +1190,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
-            color: AppColors.blackColor,
           ),
           onTap: () {
             context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
@@ -1092,9 +1224,13 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 // CLEAR REPLY
   void _clearReply() {
     setState(() {
-      _selectedMessageId = null;
       _messageToReply = null;
+      _selectedMessageId = null;
+      _messageToReplyUserName = null;
+      _selectedMessageUserId = null;
       isReply = false;
+      FocusScope.of(context).unfocus();
+      // FocusScope.of(context).requestFocus(messageFocusNode);
     });
   }
 
@@ -1102,155 +1238,222 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   // NEED TO IMPROVE THE MESSAGE WIDGET
   Widget ChatMessageGroupWidget({
     required ChatMessageModel message,
-    required bool isNewMsg,
     required bool isCurrentUser,
     required bool isAdmin,
+    required bool isSenderAdmin,
+    required String senderProfilePic,
+    required bool isNewMsg,
   }) {
-    return Align(
-      alignment: isCurrentUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: GestureDetector(
-        onLongPress: () {
-          if (isAdmin) {
-            showPinMessageDialog(
-              context: context,
-              message: message,
-              onPin: () {
-                BlocProvider.of<PinMessageBloc>(context).add(
-                  PinnedAMessagesEvent(
-                    messageId: message.id,
-                  ),
-                );
-              },
-            );
-          }
+    return GestureDetector(
+      onLongPress: () {
+        if (isAdmin) {
+          showPinMessageDialog(
+            context: context,
+            message: message,
+            onPin: () {
+              BlocProvider.of<PinMessageBloc>(context).add(
+                PinnedAMessagesEvent(
+                  messageId: message.id,
+                ),
+              );
+            },
+          );
+        }
+      },
+      child: SwipeTo(
+        onRightSwipe: (details) {
+          setState(() {
+            isReply = true;
+            _messageToReplyUserName = message.author!.name;
+            _selectedMessageUserId = message.author?.id;
+            _selectedMessageId = message.id;
+            _messageToReply = message.text;
+          });
+          FocusScope.of(context).requestFocus(messageFocusNode);
         },
-        child: Row(
-          mainAxisAlignment:
-              isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!isCurrentUser && isNewMsg)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(message.author!.avatarUrl),
-                  radius: 16,
-                  backgroundColor: AppColors.greyColor,
-                ),
-              ),
-            if (!isCurrentUser && !isNewMsg)
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: CircleAvatar(
-                  radius: 18,
-                  backgroundColor: Colors.transparent,
-                ),
-              ),
-            Column(
-              crossAxisAlignment: isCurrentUser
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                // MESSAGE CARD
-                SwipeTo(
-                  onRightSwipe: (details) {
-                    setState(() {
-                      isReply = true;
-                      _messageToReplyUserName = message.author!.name;
-                      _selectedMessageUserId = message.author?.id;
-                      _selectedMessageId = message.id;
-                      _messageToReply = message.text;
-                    });
-                    FocusScope.of(context).requestFocus(messageFocusNode);
-                  },
-                  child: Container(
-                    margin: EdgeInsets.only(bottom: 4, right: 8),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isCurrentUser
-                          ? const Color.fromARGB(255, 250, 250, 255)
-                          : Colors.grey.shade50,
-                      borderRadius: BorderRadius.only(
-                        topLeft: !isCurrentUser && isNewMsg
-                            ? Radius.zero
-                            : const Radius.circular(10),
-                        topRight: isCurrentUser && isNewMsg
-                            ? Radius.zero
-                            : const Radius.circular(10),
-                        bottomLeft: const Radius.circular(10),
-                        bottomRight: const Radius.circular(10),
+        child: Container(
+          color: isCurrentUser
+              ? AppColors.transparentColor
+              : AppColors.transparentColor,
+          width: double.infinity,
+          child: Row(
+            mainAxisAlignment:
+                isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+            children: [
+              Align(
+                alignment: isCurrentUser
+                    ? Alignment.centerRight
+                    : Alignment.centerLeft,
+                child: Row(
+                  mainAxisAlignment: isCurrentUser
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (!isCurrentUser && isNewMsg)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: senderProfilePic != ''
+                            ? CircleAvatar(
+                                backgroundImage: NetworkImage(senderProfilePic),
+                                radius: 16,
+                                backgroundColor: AppColors.greyColor,
+                              )
+                            : SvgPicture.asset(
+                                'assets/default-icon.svg',
+                                height: 26,
+                                width: 26,
+                              ),
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    if (!isCurrentUser && !isNewMsg)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: CircleAvatar(
+                          radius: 18,
+                          backgroundColor: Colors.transparent,
+                        ),
+                      ),
+                    Column(
+                      crossAxisAlignment: isCurrentUser
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
                       children: [
-                        // SENDER NAME
-                        if (!isCurrentUser)
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                message.author?.name ?? '',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              // CHECK IF SENDER IS AN ADMIN
-                              if (isAdmin) isAdminBubble(),
-                            ],
+                        // MESSAGE CARD
+                        Container(
+                          margin: EdgeInsets.only(bottom: 4, right: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
                           ),
-                        // if (message.pictureUrl != '')
-                        //   MediaMessageWidget(
-                        //     fileUrl: message.pictureUrl!,
-                        //   ),
-
-                        // SHOW ACTUAL MESSAGE
-                        if (message.text != '')
-                          Padding(
-                            padding: const EdgeInsets.only(top: 0),
-                            child: Linkify(
-                              options: LinkifyOptions(
-                                looseUrl: true,
-                              ),
-                              onOpen: (link) async {
-                                if (await canLaunchUrl(Uri.parse(link.url))) {
-                                  await launchUrl(Uri.parse(link.url),
-                                      mode: LaunchMode.externalApplication);
-                                } else {
-                                  throw "Could not launch ${link.url}";
-                                }
-                              },
-                              text: message.text,
-                              style: const TextStyle(fontSize: 16),
-                              linkStyle: const TextStyle(
-                                color: AppColors.primaryColor,
-                              ),
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.8,
+                            minWidth: 80,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isCurrentUser
+                                ? Colors.grey.shade300
+                                : Colors.grey.shade300,
+                            borderRadius: BorderRadius.only(
+                              topLeft: !isCurrentUser && isNewMsg
+                                  ? Radius.zero
+                                  : const Radius.circular(10),
+                              topRight: isCurrentUser && isNewMsg
+                                  ? Radius.zero
+                                  : const Radius.circular(10),
+                              bottomLeft: const Radius.circular(10),
+                              bottomRight: const Radius.circular(10),
                             ),
                           ),
-                        Text(
-                          convertToIndianTime(message.date),
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black45,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // SENDER NAME
+                              if (!isCurrentUser)
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      message.author?.name ?? '',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.primaryColor,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    // CHECK IF SENDER IS AN ADMIN
+                                    if (isSenderAdmin) isAdminBubble(),
+                                  ],
+                                ),
+                              // SHOW IMAGE MEDIA
+                              if (message.pictureUrl != '' &&
+                                  message.pictureUrl != null)
+                                MediaMessageWidget(
+                                  fileUrl: message.pictureUrl!,
+                                ),
+
+                              // SHOW REPLIED MESSAGE
+                              if (message.reply != null)
+                                Container(
+                                  //width: double.infinity,
+                                  margin: const EdgeInsets.only(
+                                    top: 4,
+                                    bottom: 4,
+                                  ),
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border(
+                                      left: BorderSide(
+                                        color: AppColors.primaryColor,
+                                        width: 4,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        message.reply!.name,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primaryColor,
+                                        ),
+                                      ),
+                                      Text(
+                                        message.reply!.message!,
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                              // SHOW ACTUAL MESSAGE
+                              if (message.text != '')
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 0),
+                                  child: Linkify(
+                                    options: LinkifyOptions(
+                                      looseUrl: true,
+                                    ),
+                                    onOpen: (link) async {
+                                      if (await canLaunchUrl(
+                                          Uri.parse(link.url))) {
+                                        await launchUrl(Uri.parse(link.url),
+                                            mode:
+                                                LaunchMode.externalApplication);
+                                      } else {
+                                        throw "Could not launch ${link.url}";
+                                      }
+                                    },
+                                    text: message.text,
+                                    style: const TextStyle(fontSize: 16),
+                                    linkStyle: const TextStyle(
+                                      color: AppColors.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              Text(
+                                convertToIndianTime(message.date),
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black45,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

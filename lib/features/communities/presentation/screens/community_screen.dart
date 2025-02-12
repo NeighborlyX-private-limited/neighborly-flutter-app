@@ -250,7 +250,6 @@ class _CommunityScreenState extends State<CommunityScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
@@ -420,7 +419,7 @@ class _CommunityScreenState extends State<CommunityScreen>
             padding: const EdgeInsets.only(right: 16.0),
             child: InkWell(
               onTap: () {
-                // context.push('/chat');
+                context.push('/chat');
               },
               child: SvgPicture.asset(
                 'assets/chat.svg',
@@ -438,38 +437,41 @@ class _CommunityScreenState extends State<CommunityScreen>
           Container(
             height: 40,
             decoration: BoxDecoration(
-              //color: AppColors.redColor,
+              color: AppColors.whiteColor,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: TabBar(
-              controller: _tabController,
-              isScrollable: true,
-              indicatorSize: TabBarIndicatorSize.tab,
-              indicatorColor: AppColors.primaryColor,
-              labelColor: Colors.black,
-              labelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-              ),
-              unselectedLabelColor: Colors.grey,
-              unselectedLabelStyle: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-              tabAlignment: TabAlignment.center,
-              tabs: [
-                Tab(
-                  child: tabTitle(
-                    AppLocalizations.of(context)!.nearby_Groups,
-                  ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TabBar(
+                controller: _tabController,
+                isScrollable: true,
+                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorColor: AppColors.primaryColor,
+                labelColor: Colors.black,
+                labelStyle: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
                 ),
-                Tab(
-                  child: tabTitle(
-                    AppLocalizations.of(context)!.my_Groups,
-                  ),
+                unselectedLabelColor: Colors.grey,
+                unselectedLabelStyle: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  color: Colors.grey,
                 ),
-              ],
+                tabAlignment: TabAlignment.center,
+                tabs: [
+                  Tab(
+                    child: tabTitle(
+                      AppLocalizations.of(context)!.nearby_Groups,
+                    ),
+                  ),
+                  Tab(
+                    child: tabTitle(
+                      AppLocalizations.of(context)!.my_Groups,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(

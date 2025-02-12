@@ -13,6 +13,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   final http.Client client;
 
   ProfileRemoteDataSourceImpl({required this.client});
+  // CHANGE PASSWORD
   @override
   Future<String> changePassword({
     String? currentPassword,
@@ -42,11 +43,12 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return jsonDecode(response.body)['msg'];
     } else if (response.statusCode == 401) {
       throw ServerException(
-          message: jsonDecode(response.body)['msg'] ?? 'Something went wrong');
+          message:
+              jsonDecode(response.body)['msg'] ?? 'oops something went wrong');
     } else {
       throw ServerException(
-          message:
-              jsonDecode(response.body)['error'] ?? 'Something went wrong');
+          message: jsonDecode(response.body)['error'] ??
+              'oops something went wrong');
     }
   }
 
@@ -56,7 +58,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     var city = ShardPrefHelper.getCurrentCity();
 
@@ -75,8 +77,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     if (response.statusCode == 200) {}
     if (response.statusCode != 200) {
       throw ServerException(
-          message:
-              jsonDecode(response.body)['error'] ?? 'Something went wrong');
+          message: jsonDecode(response.body)['error'] ??
+              'oops something went wrong');
     }
   }
 
@@ -84,7 +86,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<void> getGenderAndDOB({String? gender, String? dob}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/user/update-user-dob';
@@ -109,8 +111,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       }
 
       throw ServerException(
-          message:
-              jsonDecode(response.body)['message'] ?? 'Something went wrong');
+          message: jsonDecode(response.body)['message'] ??
+              'oops something went wrong');
     }
   }
 
@@ -118,7 +120,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<AuthResponseModel> getProfile() async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/profile/user-info';
@@ -135,8 +137,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
       throw ServerException(
-          message:
-              jsonDecode(response.body)['error'] ?? 'Something went wrong');
+          message: jsonDecode(response.body)['error'] ??
+              'oops something went wrong');
     }
   }
 
@@ -144,7 +146,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<void> logout() async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/authentication/logout';
@@ -162,7 +164,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
     if (response.statusCode != 200) {
       throw ServerException(
-          message: jsonDecode(response.body)['msg'] ?? 'Something went wrong');
+          message:
+              jsonDecode(response.body)['msg'] ?? 'oops something went wrong');
     }
   }
 
@@ -172,7 +175,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/profile/user-content';
@@ -199,7 +202,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<void> sendFeedback({required String feedback}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/profile/send-feedback';
@@ -224,7 +227,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<void> deleteAccount() async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/profile/delete-account';
@@ -250,7 +253,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<AuthResponseModel> getUserInfo({required String userId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/profile/user-info';
@@ -277,7 +280,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<List<PostWithCommentsModel>> getMyComments({String? userId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/profile/user-comments';
@@ -306,7 +309,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<List> getMyGroups({String? userId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/profile/user-groups';
@@ -339,7 +342,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/profile/edit-user-info';
@@ -367,8 +370,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
     if (response.statusCode != 200) {
       throw ServerException(
-          message:
-              jsonDecode(responseString)['message'] ?? 'Something went wrong');
+          message: jsonDecode(responseString)['message'] ??
+              'oops something went wrong');
     }
   }
 

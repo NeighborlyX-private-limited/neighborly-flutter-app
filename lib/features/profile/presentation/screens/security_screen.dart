@@ -240,7 +240,6 @@ class _SecurityPageState extends State<SecurityPage> {
                         onTap: () => context.push('/forgot-password'),
                         child: Text(
                           AppLocalizations.of(context)!.forgot_your_password,
-                          // 'Forgot your password?',
                           style: onboardingBody2Style,
                         ),
                       )

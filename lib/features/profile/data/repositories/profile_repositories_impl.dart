@@ -16,7 +16,7 @@ class ProfileRepositoriesImpl implements ProfileRepositories {
     required this.remoteDataSource,
     required this.networkInfo,
   });
-
+// CHANGE PASSWORD
   @override
   Future<Either<Failure, String>> changePassword({
     String? currentPassword,

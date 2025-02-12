@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/chat_room_model.dart';
@@ -16,14 +15,13 @@ class ChatTileWidget extends StatelessWidget {
     required this.room,
     required this.onTap,
   });
-
+  // MESSAGE UNREAD BUBBLE
   Widget unreadCounter(int value) {
     return Padding(
       padding: const EdgeInsets.only(left: 4.0),
       child: Container(
         constraints: BoxConstraints(minWidth: 23),
         height: 23,
-        // width: 23,
         decoration: BoxDecoration(
           color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(50),
@@ -47,14 +45,20 @@ class ChatTileWidget extends StatelessWidget {
   bool isDateWithinLastMonth(DateTime date) {
     DateTime now = DateTime.now();
     DateTime oneMonthAgo = DateTime(
-        now.year, now.month - 1, now.day, now.hour, now.minute, now.second);
+      now.year,
+      now.month - 1,
+      now.day,
+      now.hour,
+      now.minute,
+      now.second,
+    );
 
     return date.isAfter(oneMonthAgo);
   }
 
   String timeAgoArea(String lastMessageDate) {
     if (lastMessageDate == '') return lastMessageDate;
-     DateTime parsedDate = DateTime.parse(lastMessageDate);
+    DateTime parsedDate = DateTime.parse(lastMessageDate);
 
     // Format the date as "YYYY-MM-DD HH:mm:ss"
     String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
@@ -84,7 +88,6 @@ class ChatTileWidget extends StatelessWidget {
         color: Colors.white,
         child: Row(
           children: [
-            
             UserAvatarStyledWidget(
               avatarUrl: room.avatarUrl,
               avatarSize: 22,
@@ -92,15 +95,14 @@ class ChatTileWidget extends StatelessWidget {
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: Container(
-                  child: Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                         room.name,
+                          room.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(fontWeight: FontWeight.w500),
@@ -121,8 +123,7 @@ class ChatTileWidget extends StatelessWidget {
                               : Colors.grey,
                         ),
                       ),
-                      if (room.unreadCount > 0)
-                        unreadCounter(room.unreadCount),
+                      if (room.unreadCount > 0) unreadCounter(room.unreadCount),
                     ],
                   ),
                   const SizedBox(height: 7),
@@ -131,13 +132,14 @@ class ChatTileWidget extends StatelessWidget {
                       Expanded(
                         child: Text(
                           room.lastMessage == ''
-                              ? 'no message so far'
+                              ? 'No message so far'
                               : room.lastMessage,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black45),
+                            fontWeight: FontWeight.normal,
+                            color: Colors.black45,
+                          ),
                         ),
                       ),
                       const SizedBox(
@@ -149,14 +151,16 @@ class ChatTileWidget extends StatelessWidget {
                           'assets/mute_filled.svg',
                           width: 20,
                           height: 20,
-                          colorFilter:
-                              ColorFilter.mode(Colors.grey, BlendMode.srcIn),
+                          colorFilter: ColorFilter.mode(
+                            Colors.grey,
+                            BlendMode.srcIn,
+                          ),
                         ),
                       )
                     ],
                   ),
                 ],
-              )),
+              ),
             ),
           ],
         ),

@@ -272,10 +272,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         "response": status,
       }),
     );
-    print('res:${response.body}');
-    print('res:${response.statusCode.runtimeType}');
+
     if (response.statusCode == 200) {
-      print('1st: ${jsonDecode(response.body)['message']}');
       return jsonDecode(response.body)['message'] ?? "Success";
     } else {
       final message = jsonDecode(response.body)['msg'] ??

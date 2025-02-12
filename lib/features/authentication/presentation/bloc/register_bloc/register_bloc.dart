@@ -15,9 +15,11 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   })  : _googleLogin = googleLoginCase,
         _registerUser = registerUseCase,
         super(RegisterInitialState()) {
-    /// phone and email register event
-    on<RegisterButtonPressedEvent>(
-        (RegisterButtonPressedEvent event, Emitter<RegisterState> emit) async {
+    // PHONE AND EMAIL REGISTER EVENT
+    on<RegisterButtonPressedEvent>((
+      RegisterButtonPressedEvent event,
+      Emitter<RegisterState> emit,
+    ) async {
       emit(RegisterLoadingState());
 
       final result = await _registerUser.call(

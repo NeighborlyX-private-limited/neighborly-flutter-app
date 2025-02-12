@@ -106,12 +106,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(Icons.arrow_back, size: 15),
+            // TODO: need to remeber the mix scroll extend of the feed
             onTap: () => context.pop(),
           ),
           centerTitle: true,
-          title: Text(widget.isPost
-              ? AppLocalizations.of(context)!.post
-              : AppLocalizations.of(context)!.poll),
+          title: Text(
+            widget.isPost
+                ? AppLocalizations.of(context)!.post
+                : AppLocalizations.of(context)!.poll,
+          ),
         ),
         body: RefreshIndicator(
           onRefresh: _onRefresh,

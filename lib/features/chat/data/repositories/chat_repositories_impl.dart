@@ -16,7 +16,7 @@ class ChatRepositoriesImpl implements ChatRepositories {
     required this.remoteDataSource,
     required this.networkInfo,
   });
-
+// GET ALL CHAT ROOMS
   @override
   Future<Either<Failure, List<ChatRoomModel>>> getAllChatRooms() async {
     if (await networkInfo.isConnected) {
@@ -95,7 +95,7 @@ class ChatRepositoriesImpl implements ChatRepositories {
     }
   }
 
-  /// featch group chat room messages
+  // GET GROUP CHAT
   @override
   Future<Either<Failure, List<ChatMessageModel>>> getGroupRoomMessages({
     required String roomId,

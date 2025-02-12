@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -32,29 +34,30 @@ class _OtpScreenState extends State<OtpScreen> {
 
   late TextEditingController _otpController;
 
-  /// init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
     _otpController = TextEditingController();
-
-    if (widget.verificationFor == 'phone-login' ||
-        widget.verificationFor == 'phone-register') {
-      BlocProvider.of<ResendOtpBloc>(context).add(
-        ResendOTPButtonPressedEvent(
-          phone: widget.data,
-        ),
-      );
-    } else {
-      BlocProvider.of<ResendOtpBloc>(context).add(
-        ResendOTPButtonPressedEvent(
-          email: widget.data,
-        ),
-      );
+    if (!(widget.verificationFor == 'forgot-password')) {
+      if (widget.verificationFor == 'phone-login' ||
+          widget.verificationFor == 'phone-register') {
+        BlocProvider.of<ResendOtpBloc>(context).add(
+          ResendOTPButtonPressedEvent(
+            phone: widget.data,
+          ),
+        );
+      } else {
+        BlocProvider.of<ResendOtpBloc>(context).add(
+          ResendOTPButtonPressedEvent(
+            email: widget.data,
+          ),
+        );
+      }
     }
   }
 
-  /// dispose method
+  // DISPOSE
   @override
   void dispose() {
     _otpController.dispose();
@@ -69,10 +72,7 @@ class _OtpScreenState extends State<OtpScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
-            child: const Icon(
-              Icons.arrow_back,
-              size: 20,
-            ),
+            child: const Icon(Icons.arrow_back_ios),
             onTap: () {
               context.pop();
             },
@@ -120,8 +120,9 @@ class _OtpScreenState extends State<OtpScreen> {
                   height: 20,
                 ),
 
-                /// otp text field
+                // OTP TEXT FIELD
                 TextFieldWidget(
+                  inputType: TextInputType.number,
                   controller: _otpController,
                   lableText: AppLocalizations.of(context)!.enter_otp,
                   border: true,
@@ -156,7 +157,7 @@ class _OtpScreenState extends State<OtpScreen> {
                 ),
                 BlocConsumer<OtpBloc, OtpState>(
                   listener: (BuildContext context, OtpState state) {
-                    /// failure state
+                    // FAILURE STATE
                     if (state is OtpLoadFailure) {
                       if (state.error.contains('User not found')) {
                         setState(() {
@@ -171,17 +172,14 @@ class _OtpScreenState extends State<OtpScreen> {
                           isInvalidOtp = true;
                         });
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.error)),
-                        );
+                        showSnackBar(context: context, message: state.error);
                       }
                     }
 
-                    /// success state
+                    // SUCCESS STATE
                     else if (state is OtpLoadSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.message)),
-                      );
+                      showSnackBar(context: context, message: state.message);
+
                       if (widget.verificationFor == 'email-verify' ||
                           widget.verificationFor == 'phone-login' ||
                           widget.verificationFor == 'phone-register') {
@@ -192,28 +190,20 @@ class _OtpScreenState extends State<OtpScreen> {
                         if (!isSkippedTutorial && !isViewedTutorial) {
                           context.go('/tutorialScreen');
                         } else {
-                          // context.go('/home/Home');
                           context.go('/home');
                         }
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
-                        );
                       } else if (widget.verificationFor == 'forgot-password') {
                         context.push('/newPassword/${widget.data}');
                       }
                     }
                   },
                   builder: (context, state) {
-                    ///loading state
+                    // LOADING STATE
                     if (state is OtpLoadInProgress) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
+                      return CustomCircularIndicator();
                     }
 
-                    ///verify button
+                    // VERIFY BUTTON
                     return ButtonContainerWidget(
                       text: AppLocalizations.of(context)!.verify,
                       color: AppColors.primaryColor,
@@ -263,7 +253,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   },
                   child: BlocConsumer<ResendOtpBloc, ResendOTPState>(
                     listener: (BuildContext context, ResendOTPState state) {
-                      ///failure state
+                      // FAILURE STATE
                       if (state is ResendOTPFailureState) {
                         if (state.error.contains('User not found')) {
                           setState(() {
@@ -278,25 +268,19 @@ class _OtpScreenState extends State<OtpScreen> {
                             isInvalidOtp = true;
                           });
                         } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(state.error)),
-                          );
+                          showSnackBar(context: context, message: state.error);
                         }
                       }
 
-                      ///success state
+                      // SUCCESS STATE
                       else if (state is ResendOTPSuccessState) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.message)),
-                        );
+                        showSnackBar(context: context, message: state.message);
                       }
                     },
                     builder: (context, state) {
-                      /// loading state
+                      // LOADING STATE
                       if (state is ResendOTPLoadingState) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
+                        CustomCircularIndicator();
                       }
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -326,7 +310,7 @@ class _OtpScreenState extends State<OtpScreen> {
                             ),
                           ),
 
-                          /// sign up text button
+                          // SIGNUP TEXT BUTTON
                           InkWell(
                             onTap: () {
                               context.push('/registerScreen');

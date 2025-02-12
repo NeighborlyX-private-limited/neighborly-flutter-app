@@ -324,9 +324,8 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/group-chat-pinned-message/:groupId/:isAdmin',
       builder: (context, state) {
-        print(state);
         String isAdmin = state.pathParameters["isAdmin"] as String;
-        debugPrint("here is admin : ${isAdmin}");
+
         return GroupPinnedMessagesScreen(
           groupId: state.pathParameters["groupId"] as String,
           isAdmin: isAdmin == "true" ? true : false,

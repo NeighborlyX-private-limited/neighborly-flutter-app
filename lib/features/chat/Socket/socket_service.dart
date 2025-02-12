@@ -8,19 +8,22 @@ class SocketService {
   void connect({String groupId = ''}) {
     // CHECK IF ALREADY CONNECTED TO SOCKET SERVER.
     if (_socket != null && _socket!.connected) {
-      print('Already connected to socket server.');
+      print('ALREADY CONNECTED TO SOCKET SERVER.');
       return;
     }
-    // THIS IS ACCESS TOKEN NO NEED TO GET THIS JWT TOKEN
-    String? token = ShardPrefHelper.getJwtToken();
-    print('Token in socket:$token');
+
+    String? accessToken = ShardPrefHelper.getAccessToken();
+    String? refreshToken = ShardPrefHelper.getRefreshToken();
+
+    print('ACCESS TOKEN IN SOCKET:$accessToken');
+    print('REFRESH TOKEN IN SOCKET:$refreshToken');
 
     // INIT SOCKET AND CONNECT TO SOCKET SERVER
     _socket = io.io(
       kBaseSocketUrl,
       io.OptionBuilder()
           .setTransports(['websocket'])
-          .setAuth({'token': token})
+          .setAuth({'token': accessToken})
           .disableAutoConnect()
           .build(),
     );
@@ -29,27 +32,27 @@ class SocketService {
 
     // SUCCESSFULL CONNECT LISTENER
     _socket?.on("connect", (_) {
-      print("Connected to the socket server.");
-      print("Start joining room with groupId: $groupId");
+      print("SUCCESSFULLY CONNECTED TO SOCKET SERVER.");
+
       joinRoom(groupId);
     });
 
     // ON ERROR LISTENER
     _socket?.on("error", (err) {
-      print("Connection error:  ${err['message']}");
+      print("CONNECTION ERROR:  ${err['message']}");
     });
     // ON ERROR-MESSAGE LISTENER
     _socket?.on("error-message", (data) {
-      print('error-message: $data');
+      print('ERROR: $data');
     });
     // USER JOINED ROOM LISTENER
     _socket?.on("user-joined", (userId) {
-      print('User joined the room with userId: $userId');
+      print('USER JOINED THE ROOM WITH USER ID: $userId');
     });
 
     // USER LEAVE ROOM LISTENER
     _socket?.on("user-left", (userId) {
-      print('User left the room with userId: $userId');
+      print('USER LEFT THE ROOM WITH USER ID: $userId');
     });
 
     // RECEIVE NEW MESSAGE LISTENER
@@ -67,6 +70,7 @@ class SocketService {
     Map<String, dynamic> payload,
     bool isMsg,
   ) {
+    print('SEND MESSAGE:$payload');
     _socket?.emit('send-message', payload);
   }
 
@@ -97,7 +101,7 @@ class SocketService {
     _socket?.disconnect();
     _socket?.dispose();
     _socket = null;
-    print("Socket connection disposed.");
+    print("SOCKET CONNECTION DISPOSE.");
     return;
   }
 }

@@ -11,10 +11,11 @@ class ForgotPasswordBloc
   ForgotPasswordBloc({required ForgotPasswordUsecase forgotPasswordUsecase})
       : _forgotPasswordUsecase = forgotPasswordUsecase,
         super(ForgotPasswordInitialState()) {
-    ///ForgotPasswordButtonPressedEvent
-    on<ForgotPasswordButtonPressedEvent>(
-        (ForgotPasswordButtonPressedEvent event,
-            Emitter<ForgotPasswordState> emit) async {
+    // FORGOT PASSWORD EVENT PRESS
+    on<ForgotPasswordButtonPressedEvent>((
+      ForgotPasswordButtonPressedEvent event,
+      Emitter<ForgotPasswordState> emit,
+    ) async {
       emit(ForgotPasswordLoadingState());
 
       final result = await _forgotPasswordUsecase.call(event.email);

@@ -1,6 +1,5 @@
-import 'dart:io';
 import 'package:equatable/equatable.dart';
-
+import 'package:neighborly_flutter_app/features/chat/data/model/reply_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 
 class ChatMessageEntity extends Equatable {
@@ -15,16 +14,15 @@ class ChatMessageEntity extends Equatable {
   final int repliesCount;
   final int cheers;
   final int boos;
-  // final String? mediaLink;
   final String booOrCheer;
   final String? pictureUrl;
   final UserSimpleModel? author;
+  final MessageReplyModel? reply;
 
   const ChatMessageEntity({
     required this.id,
     required this.text,
     required this.date,
-    // required this.mediaLink,
     required this.isMine,
     required this.readByuser,
     required this.hasMore,
@@ -36,6 +34,7 @@ class ChatMessageEntity extends Equatable {
     required this.booOrCheer,
     this.pictureUrl,
     this.author,
+    this.reply,
   });
 
   @override

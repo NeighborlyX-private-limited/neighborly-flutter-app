@@ -44,7 +44,7 @@ class _MainPageState extends State<MainPage> {
   /// Get the current index based on the active route
   int _getCurrentIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
-    print('Router location : $location');
+    print('ROUTER LOCATION : $location');
     if (location.startsWith('/home')) {
       return 0;
     }
@@ -99,7 +99,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print(_getCurrentIndex(context));
+    print('INDEX:${_getCurrentIndex(context)}');
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,

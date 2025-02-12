@@ -9,7 +9,9 @@ class LoginWithEmailUsecase {
   LoginWithEmailUsecase(this.repository);
 
   Future<Either<Failure, AuthResponseEntity>> call(
-      String email, String password) async {
+    String email,
+    String password,
+  ) async {
     return await repository.loginWithEmail(
       email: email,
       password: password,

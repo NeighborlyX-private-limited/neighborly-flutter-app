@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -20,14 +21,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   late bool isEmailFilled = false;
   late TextEditingController _emailController;
 
-  /// init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController();
   }
 
-  ///dispose method
+  // DISPOSE
   @override
   void dispose() {
     _emailController.dispose();
@@ -43,8 +44,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
-              Icons.arrow_back,
-              size: 20,
+              Icons.arrow_back_ios,
             ),
             onTap: () {
               context.pop();
@@ -90,7 +90,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 const SizedBox(
                   height: 20,
                 ),
+                // EMAIL TEXT FIELD
                 TextFieldWidget(
+                  inputType: TextInputType.emailAddress,
                   border: true,
                   controller: _emailController,
                   lableText: AppLocalizations.of(context)!.enter_email_address,
@@ -106,34 +108,22 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ),
                 BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
                   listener: (BuildContext context, ForgotPasswordState state) {
-                    ///error state
+                    // FAILURE STATE
                     if (state is ForgotPasswordFailureState) {
-                      if (state.error.contains('Invalid Token')) {
-                        context.go('/loginScreen');
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(state.error)),
-                        );
-                      }
+                      showSnackBar(context: context, message: state.error);
                     }
 
-                    ///success state
+                    // SUCCESS STATE
                     else if (state is ForgotPasswordSuccessState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(state.message)),
-                      );
+                      showSnackBar(context: context, message: state.message);
                       context.push(
                           '/otp/${_emailController.text}/forgot-password');
                     }
                   },
                   builder: (context, state) {
-                    /// loading state
+                    // LOADING STATE
                     if (state is ForgotPasswordLoadingState) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
+                      return CustomCircularIndicator();
                     }
 
                     return ButtonContainerWidget(

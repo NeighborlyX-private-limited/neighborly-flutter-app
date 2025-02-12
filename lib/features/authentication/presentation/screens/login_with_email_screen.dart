@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -20,16 +21,16 @@ class LoginWithEmailScreen extends StatefulWidget {
 
 class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   bool isActive = false;
-  bool isEmailFilled = false;
-  bool isPasswordFilled = false;
-  bool isEmailValid = true;
-  bool isPasswordWrong = false;
   bool noConnection = false;
+  bool isEmailFilled = false;
+  bool isEmailValid = true;
+  bool isPasswordFilled = false;
+  bool isPasswordWrong = false;
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
 
-  /// init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -37,7 +38,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
     _passwordController = TextEditingController();
   }
 
-  /// dispose method
+  // DISPOSE
   @override
   void dispose() {
     _emailController.dispose();
@@ -45,8 +46,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
     super.dispose();
   }
 
-  /// check is active
-  /// it is for button enable or disable
+  // CHECK IF BOTH TEXT FIELD ARE FILLED
   bool checkIsActive() {
     if (isEmailFilled && isPasswordFilled) {
       return true;
@@ -63,8 +63,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
-              Icons.arrow_back,
-              size: 20,
+              Icons.arrow_back_ios,
             ),
             onTap: () {
               context.pop();
@@ -110,8 +109,9 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   height: 25,
                 ),
 
-                /// email text field
+                // EMAIL TEXT FIELD
                 TextFieldWidget(
+                  inputType: TextInputType.emailAddress,
                   border: true,
                   controller: _emailController,
                   lableText: AppLocalizations.of(context)!.enter_email_address,
@@ -133,7 +133,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   height: 12,
                 ),
 
-                ///password text field
+                // PASSWORD TEXT FIELD
                 TextFieldWidget(
                   border: true,
                   onChanged: (value) {
@@ -157,7 +157,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                 ),
                 BlocConsumer<LoginWithEmailBloc, LoginWithEmailState>(
                   listener: (BuildContext context, LoginWithEmailState state) {
-                    /// failure state
+                    // LOGIN FAILURE STATE
                     if (state is LoginFailureState) {
                       if (state.error.contains('Invalid Email or Password')) {
                         setState(() {
@@ -173,7 +173,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                       }
                     }
 
-                    ///success state
+                    // LOGIN SUCCESS STATE
                     else if (state is LoginSuccessState) {
                       bool isEmailVerified =
                           state.authResponseEntity.isVerified!;
@@ -184,26 +184,21 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
 
                       if (!isEmailVerified) {
                         context
-                            .go('/otp/${_emailController.text}/email-verify');
+                            .push('/otp/${_emailController.text}/email-verify');
                       } else if ((!isSkippedTutorial) && (!isViewedTutorial)) {
                         context.go('/tutorialScreen');
                       } else {
-                        // context.go('/home/Home');
                         context.go('/home');
                       }
                     }
                   },
                   builder: (context, state) {
-                    /// loading state
+                    // LOGIN LOADING STATE
                     if (state is LoginLoadingState) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
+                      return CustomCircularIndicator();
                     }
 
-                    ///login button
+                    // LOGIN BUTTON
                     return ButtonContainerWidget(
                       text: AppLocalizations.of(context)!.login,
                       color: AppColors.primaryColor,
@@ -233,7 +228,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                   height: 20,
                 ),
 
-                /// forgot password text button
+                // FORGOT PASSWORD TEXT BUTTON
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -13,7 +13,7 @@ class AuthRepositoryImpl implements AuthRepository {
     required this.remoteDataSource,
     required this.networkInfo,
   });
-
+// LOGIN WITH EMAIL
   @override
   Future<Either<Failure, AuthResponseEntity>> loginWithEmail({
     required String email,
@@ -37,6 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+// EMAIL AND PHONE SIGNUP
   @override
   Future<Either<Failure, AuthResponseEntity>> signup({
     String? email,
@@ -58,10 +59,11 @@ class AuthRepositoryImpl implements AuthRepository {
         return Left(ServerFailure(message: e.toString()));
       }
     } else {
-      return const Left(ServerFailure(message: 'No internet connection'));
+      return const Left(ServerFailure(message: 'No internet connection.'));
     }
   }
 
+// SEND OTP FOR EMAIL AND PHONE
   @override
   Future<Either<Failure, String>> resendOtp({
     String? email,
@@ -85,6 +87,7 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+// VERIFY OTP FOR EMAIL AND PASSWORD
   @override
   Future<Either<Failure, String>> verifyOtp({
     String? email,
@@ -112,13 +115,16 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+// FORGOT PASSWORD
   @override
   Future<Either<Failure, String>> forgotPassword({
     required String email,
   }) async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.forgotPassword(email: email);
+        final result = await remoteDataSource.forgotPassword(
+          email: email,
+        );
 
         return Right(result);
       } on ServerFailure catch (e) {
@@ -131,16 +137,19 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+// GOOGLE AUTH
   @override
   Future<Either<Failure, dynamic>> googleAuthentication() async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.googleAuthentication();
-
+        print('RESULT IN REPOSITORY:$result');
         return Right(result);
       } on ServerFailure catch (e) {
+        print('ERROR RESULT IN REPOSITORY:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
+        print('CATCH ERROR RESULT IN REPOSITORY:$e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
