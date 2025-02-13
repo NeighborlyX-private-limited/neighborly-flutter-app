@@ -702,7 +702,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           SnackBar(
                             content: Text(AppLocalizations.of(context)!
                                 .oops_something_went_wrong),
-                            // content: Text('Something went wrong'),
+                            // content: Text('oops something went wrong'),
                           ),
                         );
                       } else if (state is DeleteAccountSuccessState) {

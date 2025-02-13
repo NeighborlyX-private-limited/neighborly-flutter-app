@@ -1028,8 +1028,12 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 if (state is PinMessagesStateSuccessState) {
                                   showSnackBar(
                                     context: context,
-                                    message: 'message pinned',
+                                    message: state.message,
                                   );
+                                  // showSnackBar(
+                                  //   context: context,
+                                  //   message: 'message pinned',
+                                  // );
                                 }
                                 // FAILURE STATE
                                 if (state is PinMessagesStateFailureState) {

@@ -105,7 +105,7 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                 ),
                 // SnackBar(
                 // content:
-                //     Text('Something went wrong! ${state.failure?.message}'),
+                //     Text('oops something went wrong! ${state.failure?.message}'),
                 // ),
               );
               break;

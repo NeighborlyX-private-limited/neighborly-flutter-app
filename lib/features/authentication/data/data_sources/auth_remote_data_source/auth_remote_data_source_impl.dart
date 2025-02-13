@@ -130,6 +130,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     debugPrint('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+      String accessToken = jsonDecode(response.body)['accessToken'];
+      ShardPrefHelper.setAccessToken(accessToken);
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
       String username = jsonDecode(response.body)['user']['username'];
@@ -251,6 +253,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     if (response.statusCode == 200) {
       if (verificationFor != 'forgot-password') {
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+        String accessToken = jsonDecode(response.body)['accessToken'];
+        ShardPrefHelper.setAccessToken(accessToken);
         String userID = jsonDecode(response.body)['user']['_id'];
         String proPic = jsonDecode(response.body)['user']['picture'];
         String username = jsonDecode(response.body)['user']['username'];
@@ -378,6 +382,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       debugPrint('GOOGLE AUTH RESPONSE:${jsonDecode(response.body)}');
       if (response.statusCode == 200) {
         List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+        String accessToken = jsonDecode(response.body)['accessToken'];
+        ShardPrefHelper.setAccessToken(accessToken);
         String userID = jsonDecode(response.body)['user']['_id'];
         String proPic = jsonDecode(response.body)['user']['picture'];
         String username = jsonDecode(response.body)['user']['username'];

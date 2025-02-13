@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import '../theme/colors.dart';
 
-void showCustomBottomSheet({
+Future<void> showCustomBottomSheet({
   required BuildContext context,
   required Widget content,
 }) {
-  showModalBottomSheet(
+  return showModalBottomSheet(
     context: context,
     backgroundColor: AppColors.whiteColor,
     barrierColor: AppColors.greyColor,
     showDragHandle: true,
     isScrollControlled: true,
+    useRootNavigator: true,
     builder: (context) {
       return Container(
         padding: const EdgeInsets.symmetric(

@@ -5,6 +5,8 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/video_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -34,20 +36,21 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   String? title;
   String? content;
+  // INIT STATE
   @override
   void initState() {
     super.initState();
     title = widget.post.title ?? '';
-    content = widget.post.content;
+    content = widget.post.content ?? '';
   }
 
   @override
   Widget build(BuildContext context) {
     void showBottomSheet() {
-      bottomSheet(context);
+      menuBottomSheet(context);
     }
 
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         context.push(
             '/post-detail/${widget.post.id}/${true}/${widget.post.userId}/0');
@@ -62,7 +65,7 @@ class _PostWidgetState extends State<PostWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     if (widget.post.userName.contains('[deleted]')) {
                       context.push('/deleted-user');
@@ -167,7 +170,7 @@ class _PostWidgetState extends State<PostWidget> {
                     ],
                   ),
                 ),
-                InkWell(
+                GestureDetector(
                   onTap: () {
                     showBottomSheet();
                   },
@@ -296,6 +299,7 @@ class _PostWidgetState extends State<PostWidget> {
             const SizedBox(
               height: 20,
             ),
+            // REACTION WIDGET
             ReactionWidget(
               post: widget.post,
             )
@@ -305,153 +309,111 @@ class _PostWidgetState extends State<PostWidget> {
     );
   }
 
-  ///bottomSheet
-  Future<dynamic> bottomSheet(BuildContext context) {
+  // MENU BOTTOM SHEET
+  Future<dynamic> menuBottomSheet(BuildContext context) {
     void showReportReasonBottomSheet() {
       reportReasonBottomSheet(context);
     }
 
     return showModalBottomSheet(
-      useRootNavigator: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
-        return Container(
-          color: AppColors.whiteColor,
-          height: 90,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: userId != widget.post.userId
-              ? InkWell(
-                  onTap: () {
-                    showReportReasonBottomSheet();
-                  },
-                  child: Row(
-                    children: [
-                      Image.asset('assets/report_flag.png'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.report,
-                        style: redOnboardingBody1Style,
+        return SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(
+              children: [
+                userId != widget.post.userId
+                    // REPORT POST OPTION
+                    ? ListTile(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Future.delayed(Duration(milliseconds: 200), () {
+                            showReportReasonBottomSheet();
+                          });
+                        },
+                        leading: Image.asset(
+                          'assets/report_flag.png',
+                          height: 24,
+                          width: 24,
+                        ),
+                        title: Text(
+                          AppLocalizations.of(context)!.report,
+                          style: redOnboardingBody1Style,
+                        ),
+                        minTileHeight: 30,
                       )
-                    ],
-                  ),
-                )
-              : BlocConsumer<DeletePostBloc, DeletePostState>(
-                  listener: (context, state) {
-                    ///Delete Post Success State
-                    if (state is DeletePostSuccessState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content:
-                              Text(AppLocalizations.of(context)!.post_deleted),
-                        ),
-                      );
-
-                      context.pop(context);
-                    }
-
-                    ///Delete Post Failure State
-                    else if (state is DeletePostFailureState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.error),
-                        ),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    ///Delete Post Loading State
-                    if (state is DeletePostLoadingState) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
-                    }
-                    return InkWell(
-                      onTap: () {
-                        context.read<DeletePostBloc>().add(
-                              DeletePostButtonPressedEvent(
-                                postId: widget.post.id,
-                                type: 'post',
-                              ),
+                    // DELETE POST OPTION
+                    : BlocConsumer<DeletePostBloc, DeletePostState>(
+                        listener: (context, state) {
+                          // DELETE POST SUCCESS STATE
+                          if (state is DeletePostSuccessState) {
+                            Navigator.of(context).pop();
+                            showSnackBar(
+                              context: context,
+                              message:
+                                  AppLocalizations.of(context)!.post_deleted,
                             );
-                        widget.onDelete();
-                      },
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.delete,
-                            color: AppColors.redColor,
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            AppLocalizations.of(context)!.delete_post,
-                            style: redOnboardingBody1Style,
-                          )
-                        ],
-                      ),
-                    );
-                  },
-                ),
-        );
-      },
-    );
-  }
+                          }
 
-  ///report Confirmation Bottom Sheet
-  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: AppColors.whiteColor,
-          height: 240,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Image.asset('assets/report_confirmation.png'),
-              Text(
-                AppLocalizations.of(context)!.thanks_for_letting_us_know,
-                style: onboardingHeading2Style,
-              ),
-              Text(
-                textAlign: TextAlign.center,
-                AppLocalizations.of(context)!
-                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
-                style: blackonboardingBody1Style,
-              ),
-            ],
+                          // DELETE POST FAILURE STATE
+                          else if (state is DeletePostFailureState) {
+                            Navigator.of(context).pop();
+                            showSnackBar(
+                              context: context,
+                              message: state.error,
+                            );
+                          }
+                        },
+                        builder: (context, state) {
+                          // DELETE POST LOADING STATE
+                          if (state is DeletePostLoadingState) {
+                            return CustomCircularIndicator();
+                          }
+                          return ListTile(
+                            onTap: () {
+                              context.read<DeletePostBloc>().add(
+                                    DeletePostButtonPressedEvent(
+                                      postId: widget.post.id,
+                                      type: 'post',
+                                    ),
+                                  );
+                              widget.onDelete();
+                            },
+                            leading: Icon(
+                              Icons.delete_outline_outlined,
+                              color: AppColors.redColor,
+                              size: 26,
+                            ),
+                            title: Text(
+                              AppLocalizations.of(context)!.delete_post,
+                              style: redOnboardingBody1Style,
+                            ),
+                            minTileHeight: 30,
+                          );
+                        },
+                      ),
+              ],
+            ),
           ),
         );
       },
     );
   }
 
-  ///report Reason Bottom Sheet
+  // REPORT REASON BOTTOM SHEET
   Future<dynamic> reportReasonBottomSheet(BuildContext context) {
     void showReportConfirmationBottomSheet() {
       reportConfirmationBottomSheet(context);
     }
 
+    // LIST OF REPORT REASON
     List<String> reportReasons = [
       AppLocalizations.of(context)!.inappropriate_content,
       AppLocalizations.of(context)!.spam,
@@ -461,55 +423,37 @@ class _PostWidgetState extends State<PostWidget> {
     ];
 
     return showModalBottomSheet(
-      useRootNavigator: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(
           listener: (context, state) {
-            ///Report Post Success State
+            // REPORT POST SUCCESS STATE
             if (state is ReportPostSuccessState) {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.of(context).pop();
               showReportConfirmationBottomSheet();
             }
 
-            ///Report Post Failure State
+            // REPORT POST FAILURE STATE
             else if (state is ReportPostFailureState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.error),
-                ),
-              );
+              showSnackBar(context: context, message: state.error);
             }
           },
           builder: (context, state) {
             return SingleChildScrollView(
               child: Container(
-                color: AppColors.whiteColor,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: const Color(0xffB8B8B8),
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
+                    // REPORT POST LOADING STATE
                     state is ReportPostLoadingState
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primaryColor,
-                            ),
-                          )
+                        ? const CustomCircularIndicator()
                         : Center(
                             child: Text(
                               AppLocalizations.of(context)!.reason_to_report,
@@ -519,123 +463,174 @@ class _PostWidgetState extends State<PostWidget> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            context.read<ReportPostBloc>().add(
-                                  ReportButtonPressedEvent(
-                                    type: 'content',
-                                    postId: widget.post.id,
-                                    reason: reportReasons[0],
-                                  ),
-                                );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[0],
-                                style: blackonboardingBody1Style,
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.post.id,
+                                reason: reportReasons[0],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            context.read<ReportPostBloc>().add(
-                                  ReportButtonPressedEvent(
-                                    type: 'content',
-                                    postId: widget.post.id,
-                                    reason: reportReasons[1],
-                                  ),
-                                );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[1],
-                                style: blackonboardingBody1Style,
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[0],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.post.id,
+                                reason: reportReasons[1],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
-                                  type: 'content',
-                                  postId: widget.post.id,
-                                  reason: reportReasons[2],
-                                ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[1],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.post.id,
+                                reason: reportReasons[2],
                               ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[2],
-                                style: blackonboardingBody1Style,
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[2],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.post.id,
+                                reason: reportReasons[3],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
-                                  type: 'content',
-                                  postId: widget.post.id,
-                                  reason: reportReasons[3],
-                                ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[3],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.post.id,
+                                reason: reportReasons[4],
                               ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[3],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
-                                  type: 'content',
-                                  postId: widget.post.id,
-                                  reason: reportReasons[4],
-                                ),
-                              ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[4],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[4],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
                     ),
                   ],
                 ),
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+// REPORT POST CONFIRMATION BOTTOM SHEET
+  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        Future.delayed(Duration(seconds: 2), () {
+          if (context.mounted) {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
+          }
+        });
+        return Container(
+          color: AppColors.whiteColor,
+          height: 240,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.asset('assets/report_confirmation.png'),
+              Text(
+                AppLocalizations.of(context)!.thanks_for_letting_us_know,
+                style: onboardingHeading2Style,
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                AppLocalizations.of(context)!
+                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
+                style: blackonboardingBody1Style,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         );
       },
     );

@@ -9,7 +9,7 @@ import '../error/exception.dart';
 Future<String> uploadFile({required File file}) async {
   List<String>? cookies = ShardPrefHelper.getCookie();
   if (cookies == null || cookies.isEmpty) {
-    throw const ServerException(message: 'Something went wrong');
+    throw const ServerException(message: 'oops something went wrong');
   }
   String cookieHeader = cookies.join('; ');
   String url = '$kBaseUrl/user/upload-file';
@@ -34,6 +34,6 @@ Future<String> uploadFile({required File file}) async {
     return '';
     // throw ServerException(
     //     message:
-    //         jsonDecode(responseString)['message'] ?? 'Something went wrong');
+    //         jsonDecode(responseString)['message'] ?? 'oops something went wrong');
   }
 }

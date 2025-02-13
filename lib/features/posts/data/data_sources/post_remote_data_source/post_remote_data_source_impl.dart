@@ -20,7 +20,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
 
     String cookieHeader = cookies.join('; ');
@@ -102,7 +102,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong.');
+      throw const ServerException(message: 'oops something went wrong.');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/report';
@@ -158,7 +158,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       return;
     } else {
       final message =
-          jsonDecode(response.body)['msg'] ?? 'Something went wrong';
+          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
 
       throw ServerException(message: message);
     }
@@ -168,7 +168,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   Future<PostModel> getPostById({required num id}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/fetch-posts/$id';
@@ -195,7 +195,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   Future<SpecificCommentModel> getCommentById({required String id}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/posts/get-comment/$id';
@@ -224,7 +224,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     /*
@@ -264,7 +264,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
 
@@ -295,7 +295,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/posts/add-comment';
@@ -329,7 +329,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/posts/send-poll-vote';
@@ -359,7 +359,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   Future<List<ReplyModel>> fetchCommentReply({required num commentId}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
 

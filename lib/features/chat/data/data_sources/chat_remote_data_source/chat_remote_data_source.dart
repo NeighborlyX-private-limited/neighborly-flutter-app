@@ -12,7 +12,7 @@ abstract class ChatRemoteDataSource {
   Future<String> pinnedMessage({
     required String messageId,
   });
-  // GET ALL CHAT ROOM
+  // GET ALL CHAT ROOMS
   Future<List<ChatRoomModel>> getAllChatRooms();
   // GET GROUP CHAT
   Future<List<ChatMessageModel>> getGroupRoomMessages({

@@ -342,7 +342,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
             // SUCCESS STATE
             if (state is HandleJoinRequestSuccessState) {
               Navigator.pop(context);
-              onTap();
+              onTap;
               showSnackBar(
                 context: context,
                 message: "request has been rejected!",

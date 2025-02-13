@@ -335,7 +335,7 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content:
-                      Text('Something went wrong! ${state.failure?.message}'),
+                      Text('oops something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;

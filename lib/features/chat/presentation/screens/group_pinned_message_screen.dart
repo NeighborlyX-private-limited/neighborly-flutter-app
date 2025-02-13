@@ -302,6 +302,7 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
                     showSnackBar(context: context, message: state.error);
                   }
                   if (state is PinMessagesStateSuccessState) {
+                    showSnackBar(context: context, message: state.message);
                     onTap();
                   }
                 },

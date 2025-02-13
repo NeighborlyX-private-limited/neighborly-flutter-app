@@ -30,7 +30,7 @@ class ReactionWidget extends StatefulWidget {
 
 class _ReactionWidgetState extends State<ReactionWidget> {
   bool isCheered = false;
-  bool isBooled = false;
+  bool isBooed = false;
   num awardsCount = 0;
   bool isLocalLegendAwardAvailable = false;
   bool isParkBenchAwardAvailable = false;
@@ -44,15 +44,19 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   int mapCount = 0;
   late ProfileRemoteDataSourceImpl profileRemoteDataSource;
   late num cheersCount;
-  late num boolsCount;
+  late num boosCount;
 
-  /// init state
+  // INIT STATE
   @override
   void initState() {
+    print('use:${widget.post}');
+    print('user:${widget.post.userFeedback}');
     super.initState();
     cheersCount = widget.post.cheers;
-    boolsCount = widget.post.bools;
+    boosCount = widget.post.bools;
     awardsCount = widget.post.awardType.length;
+    isCheered = widget.post.userFeedback == 'cheer';
+    isBooed = widget.post.userFeedback == 'boo';
     profileRemoteDataSource =
         ProfileRemoteDataSourceImpl(client: http.Client());
 
@@ -62,11 +66,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   /// _loadReactionState method
   Future<void> _loadReactionState() async {
     getmyawards();
-    setState(() {
-      isCheered = widget.post.userFeedback == 'cheer';
-
-      isBooled = widget.post.userFeedback == 'boo';
-    });
+    setState(() {});
   }
 
   ///getmyawards method
@@ -155,15 +155,15 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     });
   }
 
-  ///_saveReactionState in local
+  // SAVE THE REACTION STATE IN LOCAL DB(HIVE)
   Future<void> _saveReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('postReactions');
     await box.put('${userID}_${widget.post.id}_isCheered', isCheered);
-    await box.put('${userID}_${widget.post.id}_isBooled', isBooled);
+    await box.put('${userID}_${widget.post.id}_isBooled', isBooed);
   }
 
-  ///_removeReactionState from  local
+  // REMOVE THE REACTION STATE FROM LOCAL DB(HIVE)
   Future<void> _removeReactionState() async {
     final userID = ShardPrefHelper.getUserID();
     final box = Hive.box('postReactions');
@@ -171,44 +171,48 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     await box.put('${userID}_${widget.post.id}_isBooled', false);
   }
 
-  ///_updateState
+  // UPDATE THE REACTION STATE
   void _updateState(String reaction) {
-    setState(() {
-      if (reaction == 'cheer') {
-        if (isCheered) {
-          /// User is un-cheering, decrement count
-          if (cheersCount > 0) cheersCount -= 1;
-          isCheered = false;
-        } else {
-          /// User is cheering
-          cheersCount += 1;
-          isCheered = true;
-          if (isBooled) {
-            /// Reverse boo if it was already booed
-            if (boolsCount > 0) boolsCount -= 1;
-            isBooled = false;
-          }
+    if (reaction == 'cheer') {
+      // User is un-cheering, decrement count
+      if (isCheered) {
+        if (cheersCount > 0) {
+          cheersCount -= 1;
         }
-      } else if (reaction == 'boo') {
-        if (isBooled) {
-          /// User is un-booing, decrement count
-          if (boolsCount > 0) boolsCount -= 1;
-          isBooled = false;
-        } else {
-          /// User is booing
-          boolsCount += 1;
-          isBooled = true;
-          if (isCheered) {
-            /// Reverse cheer if it was already cheered
-            if (cheersCount > 0) cheersCount -= 1;
-            isCheered = false;
-          }
+        isCheered = false;
+      }
+      // User is cheering, increment count
+      else {
+        cheersCount += 1;
+        isCheered = true;
+        // Reverse boo if it was already booed
+        if (isBooed) {
+          if (boosCount > 0) boosCount -= 1;
+          isBooed = false;
         }
       }
+    } else if (reaction == 'boo') {
+      // User is un-booing, decrement count
+      if (isBooed) {
+        if (boosCount > 0) boosCount -= 1;
+        isBooed = false;
+      }
 
-      /// Save the new state
-      _saveReactionState();
-    });
+      // User is booing, increment count
+      else {
+        boosCount += 1;
+        isBooed = true;
+        // Reverse cheer if it was already cheered
+        if (isCheered) {
+          if (cheersCount > 0) cheersCount -= 1;
+          isCheered = false;
+        }
+      }
+    }
+
+    /// Save the new state
+    _saveReactionState();
+    setState(() {});
   }
 
   @override
@@ -233,10 +237,10 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        // Cheers button
+        // CHEER BUTTON
         BlocListener<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
-            ///Feedback Failure State
+            // FEEDBACK FAILURE STATE
             if (state is FeedbackFailureState) {
               _removeReactionState();
             }
@@ -245,7 +249,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             onTap: () {
               _updateState('cheer');
 
-              /// Trigger BLoC event for cheers
               BlocProvider.of<FeedbackBloc>(context).add(
                 FeedbackButtonPressedEvent(
                   postId: widget.post.id,
@@ -297,9 +300,10 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           ),
         ),
 
-        /// Bools button
+        // BOO BUTTON
         BlocListener<FeedbackBloc, FeedbackState>(
           listener: (context, state) {
+            // FEEDBACK FAILURE STATE
             if (state is FeedbackFailureState) {
               _removeReactionState();
             }
@@ -308,7 +312,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             onTap: () {
               _updateState('boo');
 
-              /// Trigger BLoC event for bools
               BlocProvider.of<FeedbackBloc>(context).add(
                 FeedbackButtonPressedEvent(
                   postId: widget.post.id,
@@ -330,7 +333,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
               child: Center(
                 child: Row(
                   children: [
-                    isBooled
+                    isBooed
                         ? SvgPicture.asset(
                             'assets/react6.svg',
                             width: 24,
@@ -345,11 +348,10 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       width: 3,
                     ),
                     Text(
-                      boolsCount.toString(),
+                      boosCount.toString(),
                       style: TextStyle(
-                        color: isBooled
-                            ? AppColors.primaryColor
-                            : Colors.grey[600],
+                        color:
+                            isBooed ? AppColors.primaryColor : Colors.grey[600],
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                       ),
@@ -360,7 +362,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             ),
           ),
         ),
-
+        // COMMENT BUTTON
+        // **HERE IS A CATCH WHEN YOU PRESS THIS BUTTON IT WILL PRESSED ON THE ENTIRE POST
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           height: 32,
@@ -384,19 +387,21 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                   width: 3,
                 ),
                 widget.post.commentCount != null
-                    ? Text('${widget.post.commentCount}',
+                    ? Text(
+                        '${widget.post.commentCount}',
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
-                        ))
+                        ),
+                      )
                     : const SizedBox(),
               ],
             ),
           ),
         ),
 
-        /// award button
+        // AWARD BUTTON
         InkWell(
           onTap: () async {
             await getmyawards();

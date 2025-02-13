@@ -1,4 +1,4 @@
-// dev base url
+// DEV BASE URL
 
 // const kBaseUrl = "https://dev.neighborly.in/api";
 // const kBaseUrlNotification = "https://dev.neighborly.in/notification";
@@ -7,7 +7,7 @@
 
 // const kBaseSocketUrl = "http://35.154.40.61:3002";
 
-// prod base url
+// PROD BASE URL
 
 const kBaseUrl = "https://prod.neighborly.in/api";
 const kBaseUrlNotification = "https://prod.neighborly.in/notification";

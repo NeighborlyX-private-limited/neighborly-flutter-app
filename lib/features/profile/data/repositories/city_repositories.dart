@@ -11,7 +11,7 @@ class CityRepository {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     final url = Uri.parse('$kBaseUrl/user/update-user-location/$city');

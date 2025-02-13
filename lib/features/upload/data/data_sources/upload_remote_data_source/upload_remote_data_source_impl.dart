@@ -24,7 +24,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
 
     String cookieHeader = cookies.join('; ');
@@ -87,7 +87,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     if (response.statusCode == 200) {
     } else {
       final errorMessage =
-          jsonDecode(responseString)['message'] ?? 'Something went wrong';
+          jsonDecode(responseString)['message'] ?? 'oops something went wrong';
       throw ServerException(message: errorMessage);
     }
   }
@@ -96,7 +96,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
   Future<String> uploadFile({required File file}) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Something went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
     String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/user/upload-file';
@@ -120,7 +120,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     } else {
       throw ServerException(
           message:
-              jsonDecode(responseString)['message'] ?? 'Something went wrong');
+              jsonDecode(responseString)['message'] ?? 'oops something went wrong');
     }
   }
 }

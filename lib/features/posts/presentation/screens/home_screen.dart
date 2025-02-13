@@ -142,9 +142,9 @@ class _HomeScreenState extends State<HomeScreen>
 
   /// refersh the home screen
   Future<void> _onRefresh() async {
-    if (_scrollController.hasClients) {
-      _scrollController.jumpTo(0.0);
-    }
+    // if (_scrollController.hasClients) {
+    //   _scrollController.jumpTo(0.0);
+    // }
     setIsHome();
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context)
@@ -359,11 +359,11 @@ class _HomeScreenState extends State<HomeScreen>
   Widget build(BuildContext context) {
     super.build(context);
     // Use post-frame callback to trigger jumpTo after layout
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.jumpTo(0.0);
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (_scrollController.hasClients) {
+    //     _scrollController.jumpTo(0.0);
+    //   }
+    // });
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: PopScope(
