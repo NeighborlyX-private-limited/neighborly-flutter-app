@@ -118,9 +118,7 @@ class ChatTileWidget extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.normal,
                           fontSize: 14,
-                          color: room.unreadCount > 0
-                              ? AppColors.primaryColor
-                              : Colors.grey,
+                          color: Colors.grey,
                         ),
                       ),
                       if (room.unreadCount > 0) unreadCounter(room.unreadCount),

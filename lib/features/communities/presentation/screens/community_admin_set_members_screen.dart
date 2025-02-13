@@ -5,6 +5,7 @@ import 'package:neighborly_flutter_app/core/constants/status.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
@@ -35,7 +36,7 @@ class _CommunityAdminMembersUsersScreenState
   late String communityId;
   String myUserId = '';
 
-  ///init state method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -50,650 +51,164 @@ class _CommunityAdminMembersUsersScreenState
     getuserId();
   }
 
-  ///get user id
+  // GET CURRENT USER ID
   void getuserId() {
     myUserId = ShardPrefHelper.getUserID() ?? '';
     setState(() {});
   }
 
-  ///make admin confirm bottom sheet
-  Future<dynamic> bottomSheetMakeAdminConfirm(
-    BuildContext context,
-    String userId,
-  ) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          height: 150,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!
-                    .are_you_sure_you_make_this_person_Admin,
-                style: TextStyle(fontSize: 16),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            height: 0.3,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    flex: 40,
-                    child:
-                        BlocConsumer<MakeRemoveAdminBloc, MakeRemoveAdminState>(
-                      listener: (context, state) {
-                        ///failure state
-                        if (state is MakeRemoveAdminFailureState) {
-                          showSnackBar(context: context, message: state.error);
-                        }
+  // REFRESH CALL
+  Future<void> _onRefresh() async {
+    communityCubit.getCommunityDetail(communityId);
+  }
 
-                        ///success state
-                        if (state is MakeAdminSuccessState) {
-                          communityCubit.getCommunityDetail(communityId);
-                          showSnackBar(
-                            context: context,
-                            message: AppLocalizations.of(context)!.admin_made,
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        ///loading state
-                        if (state is MakeRemoveAdminLoadingState) {
-                          return Center(
-                            child: BouncingLogoIndicator(logo: ''),
-                          );
-                        }
-                        return ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            BlocProvider.of<MakeRemoveAdminBloc>(context).add(
-                              MakeAdminButtonPressedEvent(
-                                communityId: communityId,
-                                userId: userId,
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff635BFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              AppLocalizations.of(context)!.yes,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                height: 0.3,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ],
+// CHECK USER IS AN ADMIN
+  bool isUserAnAdmin(String userId) {
+    return admins.any((admin) => admin.id == userId);
+  }
+
+  // BUILD
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
+        leading: GestureDetector(
+          child: Icon(
+            Icons.arrow_back_ios,
           ),
-        );
-      },
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          AppLocalizations.of(context)!.member_list,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 18,
+          ),
+        ),
+      ),
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
+          listener: (context, state) {
+            // FAILURE STATE
+            if (state.status == Status.failure) {
+              showSnackBar(
+                context: context,
+                message: 'oops something went wrong',
+              );
+            }
+            // SUCCESS STATE
+            if (state.status == Status.success) {
+              members = communityCubit.state.community?.users != null
+                  ? [...communityCubit.state.community!.users]
+                  : [];
+              admins = communityCubit.state.community?.admins != null
+                  ? [...communityCubit.state.community!.admins]
+                  : [];
+            }
+          },
+          builder: (context, state) {
+            // LOADING STATE
+            if (state.status == Status.loading) {
+              return CustomCircularIndicator();
+            }
+            // SUCCESS STATE
+            if (state.status == Status.success) {
+              return ListView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: members.length,
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      bottomSheetMenu(
+                        context,
+                        members[index].id,
+                      );
+                    },
+                    child: userTile(
+                      context,
+                      members[index],
+                    ),
+                  );
+                },
+              );
+            }
+            return SizedBox.shrink();
+          },
+        ),
+      ),
     );
   }
 
-  ///remove admin confirm bottom sheet
-  Future<dynamic> bottomSheetRemoveAdminConfirm(
-    BuildContext context,
-    String userId,
-  ) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          height: 180,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!
-                    .are_you_sure_you_want_to_remove_this_person_from_Admin_post,
-                style: TextStyle(fontSize: 16),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            height: 0.3,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    flex: 40,
-                    child:
-                        BlocConsumer<MakeRemoveAdminBloc, MakeRemoveAdminState>(
-                      listener: (context, state) {
-                        /// failure state
-                        if (state is MakeRemoveAdminFailureState) {
-                          showSnackBar(context: context, message: state.error);
-                        }
-
-                        /// success state
-                        if (state is RemoveAdminSuccessState) {
-                          communityCubit.getCommunityDetail(communityId);
-                          showSnackBar(
-                            context: context,
-                            message: AppLocalizations.of(context)!.admin_remove,
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        ///loading state
-                        if (state is MakeRemoveAdminLoadingState) {
-                          return Center(
-                            child: BouncingLogoIndicator(logo: ''),
-                          );
-                        }
-                        return ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            BlocProvider.of<MakeRemoveAdminBloc>(context).add(
-                              RemoveAdminButtonPressedEvent(
-                                communityId: communityId,
-                                userId: userId,
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff635BFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              AppLocalizations.of(context)!.yes,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                height: 0.3,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+// ADMIN BUBBLE
+  Widget isAdminBubble() {
+    return Container(
+      width: 40,
+      decoration: BoxDecoration(
+        color: AppColors.lightBackgroundColor,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Text(
+          AppLocalizations.of(context)!.admin,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
+        ),
+      ),
     );
   }
 
-  ///remove user confirm bottom sheet
-  Future<dynamic> bottomSheetConfirmRemove(
-    BuildContext context,
-    String userId,
-  ) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          height: 140,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!
-                    .are_you_sure_you_want_to_remove_this_person_from_community,
-                style: TextStyle(fontSize: 16),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            height: 0.3,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    flex: 40,
-                    child: BlocConsumer<AddRemoveUserInGroupBloc,
-                        AddRemoveUserInGroupState>(
-                      ///failure state
-                      listener: (context, state) {
-                        if (state is AddRemoveUserInGroupFailureState) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.error),
-                            ),
-                          );
-                        }
-
-                        ///success state
-                        if (state is RemoveUserInGroupSuccessState) {
-                          communityCubit.getCommunityDetail(communityId);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                AppLocalizations.of(context)!.user_removed,
-                                // 'User removed'
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        ///loading state
-                        if (state is AddRemoveUserInGroupLoadingState) {
-                          return CircularProgressIndicator(
-                            color: AppColors.whiteColor,
-                          );
-                        }
-                        return ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            BlocProvider.of<AddRemoveUserInGroupBloc>(context)
-                                .add(RemoveUserInGroupButtonPressedEvent(
-                              communityId: communityId,
-                              userId: userId,
-                              isRemove: true,
-                            ));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff635BFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              AppLocalizations.of(context)!.yes,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                height: 0.3,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ],
+  // USER TILE WIDGET
+  Widget userTile(BuildContext context, UserSimpleModel user) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          UserAvatarStyledWidget(
+            avatarUrl: user.avatarUrl,
+            avatarSize: 18,
+            avatarBorderSize: 0,
           ),
-        );
-      },
+          const SizedBox(width: 15),
+          Expanded(
+            flex: 50,
+            child: Text(
+              user.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          if (isUserAnAdmin(user.id)) ...[
+            const SizedBox(width: 5),
+            Expanded(
+              flex: 20,
+              child: isAdminBubble(),
+            ),
+          ]
+        ],
+      ),
     );
   }
 
-  ///leave community confirm bottom sheet
-  Future<dynamic> bottomSheetLeaveConfirm(
-    BuildContext context,
-  ) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          height: 140,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!
-                    .are_you_sure_you_want_to_leave_this_community,
-                //  'Are you sure you want to leave this community?',
-                style: TextStyle(fontSize: 16),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                          // 'Cancel',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            height: 0.3,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    flex: 40,
-                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
-                      listener: (context, state) {
-                        ///failure state
-                        if (state is JoinGroupFailureState) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.error),
-                            ),
-                          );
-                        }
-
-                        ///success state
-                        if (state is LeaveGroupSuccessState) {
-                          //communityCubit.getCommunityDetail(communityId);
-                          BlocProvider.of<CommunityMainCubit>(context).init();
-                          context.go('/groups');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                AppLocalizations.of(context)!.group_leaved,
-                                // 'Group leaved'
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        ///loading state
-                        if (state is JoinGroupLoadingState) {
-                          return CircularProgressIndicator(
-                            color: AppColors.whiteColor,
-                          );
-                        }
-                        return ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            BlocProvider.of<JoinGroupBloc>(context)
-                                .add(LeaveGroupButtonPressedEvent(
-                              communityId: communityId,
-                            ));
-
-                            // Navigator.pop(context);
-                            // Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff635BFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              AppLocalizations.of(context)!.yes,
-                              // 'Yes',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                height: 0.3,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  ///block user confirm bottom sheet
-  Future<dynamic> bottomSheetBlockConfirm(
-    BuildContext context,
-    String userId,
-  ) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          height: 140,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!
-                    .are_you_sure_you_want_to_block_this_user,
-                //'Are you sure you want to block this user?',
-                style: TextStyle(fontSize: 16),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                          //  'Cancel',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            height: 0.3,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    flex: 40,
-                    child:
-                        BlocConsumer<UpdateBlockUserBloc, UpdateBlockUserState>(
-                      listener: (context, state) {
-                        ///failure state
-                        if (state is UpdateBlockUserFailureState) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.error),
-                            ),
-                          );
-                        }
-
-                        ///success state
-                        if (state is UpdateBlockSuccessState) {
-                          communityCubit.getCommunityDetail(communityId);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.message),
-                            ),
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        ///loading state
-                        if (state is UpdateBlockUserLoadingState) {
-                          return CircularProgressIndicator(
-                            color: AppColors.whiteColor,
-                          );
-                        }
-                        return ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            BlocProvider.of<UpdateBlockUserBloc>(context)
-                                .add(UpdateBlockUserButtonPressedEvent(
-                              communityId: communityId,
-                              userId: userId,
-                              isBlock: true,
-                            ));
-
-                            // Navigator.pop(context);
-                            // Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff635BFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              AppLocalizations.of(context)!.block,
-                              // 'Block',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                height: 0.3,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  /// make admin, remove admin, remove from community, bloc user bottomsheet
+  // MENU BOTTOM SHEET
   Future<dynamic> bottomSheetMenu(
     BuildContext context,
     String userId,
-    bool isAdmin,
   ) {
+    bool isAdmin = isUserAnAdmin(userId);
     return showModalBottomSheet(
       useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
@@ -764,150 +279,579 @@ class _CommunityAdminMembersUsersScreenState
     );
   }
 
-  Widget isAdminBubble() {
-    return Container(
-      width: 40,
-      decoration: BoxDecoration(
-        color: AppColors.lightBackgroundColor,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: Text(
-          AppLocalizations.of(context)!.admin,
-          // 'Admin',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
-        ),
-      ),
-    );
-  }
-
-  ///user/ admin list tile
-  Widget userTile(BuildContext context, UserSimpleModel user, bool isAdmin) {
-    return GestureDetector(
-      onTap: () {
-        bottomSheetMenu(context, user.id, isAdmin);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            UserAvatarStyledWidget(
-              avatarUrl: user.avatarUrl,
-              avatarSize: 18,
-              avatarBorderSize: 0,
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              flex: 50,
-              child: Text(
-                user.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            if (isAdmin) ...[
-              const SizedBox(width: 5),
-              Expanded(
-                flex: 20,
-                child: isAdminBubble(),
-              ),
-            ]
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// build method
-  @override
-  Widget build(BuildContext context) {
-    final bool hasMembers = members.isNotEmpty || admins.isNotEmpty;
-    return Scaffold(
+  // REMOVE ADMIN BOTTOM  SHEET
+  Future<dynamic> bottomSheetRemoveAdminConfirm(
+    BuildContext context,
+    String userId,
+  ) {
+    return showModalBottomSheet(
+      useRootNavigator: true,
       backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        leading: GestureDetector(
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          AppLocalizations.of(context)!.member_list,
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            fontSize: 18,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: BlocBuilder<CommunityDetailsCubit, CommunityDetailsState>(
-          builder: (context, state) {
-            if (state.status == Status.loading) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            if (state.status == Status.success) {
-              communityId = communityCubit.state.community?.id ?? '';
-              members = communityCubit.state.community?.users != null
-                  ? [...communityCubit.state.community!.users]
-                  : [];
-              admins = communityCubit.state.community?.admins != null
-                  ? [...communityCubit.state.community!.admins]
-                  : [];
-              final adminSet = admins.toSet();
-              members = members
-                  .where((member) => !adminSet.contains(member))
-                  .toList();
-              return Padding(
-                padding: EdgeInsets.all(9),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    if (hasMembers == false)
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            AppLocalizations.of(context)!.no_Members,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 16,
-                            ),
+      showDragHandle: true,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 180,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_remove_this_person_from_Admin_post,
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
                           ),
                         ),
                       ),
-                    ...admins.map((admin) => userTile(context, admin, true)),
-                    ...members
-                        .map((member) => userTile(context, member, false)),
-                  ],
-                ),
-              );
-            }
-            return Center(
-              child: Text(
-                state.errorMessage ??
-                    AppLocalizations.of(context)!.something_went_wrong,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child:
+                        BlocConsumer<MakeRemoveAdminBloc, MakeRemoveAdminState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state is MakeRemoveAdminFailureState) {
+                          showSnackBar(context: context, message: state.error);
+                        }
+
+                        // SUCCESS STATE
+                        if (state is RemoveAdminSuccessState) {
+                          Navigator.pop(context);
+                          _onRefresh();
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state is MakeRemoveAdminLoadingState) {
+                          return CustomCircularIndicator();
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            BlocProvider.of<MakeRemoveAdminBloc>(context).add(
+                              RemoveAdminButtonPressedEvent(
+                                communityId: communityId,
+                                userId: userId,
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              AppLocalizations.of(context)!.yes,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
               ),
-            );
-          },
-        ),
-      ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // MAKE ADMIN BOTTOM SHEET
+  Future<dynamic> bottomSheetMakeAdminConfirm(
+    BuildContext context,
+    String userId,
+  ) {
+    return showModalBottomSheet(
+      useRootNavigator: true,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 150,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_make_this_person_Admin,
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child:
+                        BlocConsumer<MakeRemoveAdminBloc, MakeRemoveAdminState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state is MakeRemoveAdminFailureState) {
+                          showSnackBar(context: context, message: state.error);
+                        }
+
+                        // SUCCESS STATE
+                        if (state is MakeAdminSuccessState) {
+                          Navigator.pop(context);
+                          _onRefresh();
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state is MakeRemoveAdminLoadingState) {
+                          return CustomCircularIndicator();
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            BlocProvider.of<MakeRemoveAdminBloc>(context).add(
+                              MakeAdminButtonPressedEvent(
+                                communityId: communityId,
+                                userId: userId,
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              AppLocalizations.of(context)!.yes,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // LEAVE GROUP BOTTOM SHEET
+  Future<dynamic> bottomSheetLeaveConfirm(
+    BuildContext context,
+  ) {
+    return showModalBottomSheet(
+      useRootNavigator: true,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 140,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_leave_this_community,
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state is JoinGroupFailureState) {
+                          showSnackBar(context: context, message: state.error);
+                        }
+
+                        // SUCCESS STATE
+                        if (state is LeaveGroupSuccessState) {
+                          Navigator.pop(context);
+                          BlocProvider.of<CommunityMainCubit>(context).init();
+                          context.go('/groups');
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state is JoinGroupLoadingState) {
+                          return CustomCircularIndicator();
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            BlocProvider.of<JoinGroupBloc>(context)
+                                .add(LeaveGroupButtonPressedEvent(
+                              communityId: communityId,
+                            ));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              AppLocalizations.of(context)!.yes,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+// REMOVE USER FROM GROUP
+  Future<dynamic> bottomSheetConfirmRemove(
+    BuildContext context,
+    String userId,
+  ) {
+    return showModalBottomSheet(
+      useRootNavigator: true,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 140,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_remove_this_person_from_community,
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child: BlocConsumer<AddRemoveUserInGroupBloc,
+                        AddRemoveUserInGroupState>(
+                      // FAILURE STATE
+                      listener: (context, state) {
+                        if (state is AddRemoveUserInGroupFailureState) {
+                          showSnackBar(context: context, message: state.error);
+                        }
+
+                        // SUCCESS STATE
+                        if (state is RemoveUserInGroupSuccessState) {
+                          Navigator.pop(context);
+                          _onRefresh();
+                          showSnackBar(
+                            context: context,
+                            message: AppLocalizations.of(context)!.user_removed,
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state is AddRemoveUserInGroupLoadingState) {
+                          return CustomCircularIndicator();
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            BlocProvider.of<AddRemoveUserInGroupBloc>(context)
+                                .add(RemoveUserInGroupButtonPressedEvent(
+                              communityId: communityId,
+                              userId: userId,
+                              isRemove: true,
+                            ));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              AppLocalizations.of(context)!.yes,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // BLOCK USER FROM GROUP
+  Future<dynamic> bottomSheetBlockConfirm(
+    BuildContext context,
+    String userId,
+  ) {
+    return showModalBottomSheet(
+      useRootNavigator: true,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          height: 140,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_block_this_user,
+                style: TextStyle(fontSize: 16),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child:
+                        BlocConsumer<UpdateBlockUserBloc, UpdateBlockUserState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state is UpdateBlockUserFailureState) {
+                          showSnackBar(context: context, message: state.error);
+                        }
+
+                        // SUCCESS
+                        if (state is UpdateBlockSuccessState) {
+                          Navigator.pop(context);
+                          _onRefresh();
+                          showSnackBar(
+                            context: context,
+                            message: state.message,
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state is UpdateBlockUserLoadingState) {
+                          return CustomCircularIndicator();
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            BlocProvider.of<UpdateBlockUserBloc>(context)
+                                .add(UpdateBlockUserButtonPressedEvent(
+                              communityId: communityId,
+                              userId: userId,
+                              isBlock: true,
+                            ));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              AppLocalizations.of(context)!.block,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -102,7 +102,7 @@ class ChatMessageModel extends ChatMessageEntity {
       boos: map['boos']?.toInt() ?? 0,
       booOrCheer: map['booOrCheer'] ?? '',
       hasMore: map['hasMore'] ?? false,
-      pictureUrl: map['pictureUrl'] ?? '',
+      pictureUrl: map['mediaLink'] ?? '',
       author:
           map['author'] != null ? UserSimpleModel.fromMap(map['author']) : null,
       reply: map['repliedTo'] != null

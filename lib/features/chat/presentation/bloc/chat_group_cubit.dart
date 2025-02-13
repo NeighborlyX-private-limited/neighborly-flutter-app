@@ -44,8 +44,8 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           'cheers': message['cheers'],
           'boos': message['boos'],
           'booOrCheer': '',
-          'pictureUrl': message['mediaLink'],
-          'text': message['message'],
+          'mediaLink': message['mediaLink'] ?? '',
+          'text': message['message'] ?? "",
           'author': {
             "userId": message['userId'],
             "userName": message['name'],
@@ -58,12 +58,12 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
                   "userId": message['repliedTo']["userId"],
                   "name": message['repliedTo']["name"],
                   "message": message['repliedTo']["message"],
-                  "media": message['repliedTo']["media"] ?? "",
+                  "mediaLink": message['repliedTo']["mediaLink"] ?? "",
                 }
               : null,
         }
       ])[0];
-      print('CHAT MODEL:$chatmodel');
+
       addMessage(chatmodel);
     };
   }

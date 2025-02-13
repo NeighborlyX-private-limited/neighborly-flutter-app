@@ -54,8 +54,6 @@ class _CommunitySectionChatState extends State<CommunitySectionChat> {
                       isGroup: true,
                       unreadCount: 0,
                     ),
-                    'membersList': widget.community.users,
-                    'adminsList': widget.community.admins,
                   },
                 );
               },

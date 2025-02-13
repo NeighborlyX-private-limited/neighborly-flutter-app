@@ -7,7 +7,7 @@ class MessageReplyModel extends MessageReplyEntity {
     required super.name,
     required super.userId,
     required super.message,
-    required super.media,
+    required super.mediaLink,
   });
 
   Map<String, dynamic> toMap() {
@@ -16,7 +16,7 @@ class MessageReplyModel extends MessageReplyEntity {
       'name': name,
       'userId': userId,
       'message': message,
-      'media': media,
+      'mediaLink': mediaLink,
     };
   }
 
@@ -26,7 +26,7 @@ class MessageReplyModel extends MessageReplyEntity {
       name: map['name'] ?? '',
       userId: map['userId'] ?? '',
       message: map['message'] ?? '',
-      media: map['media'] ?? '',
+      mediaLink: map['mediaLink'] ?? '',
     );
   }
 

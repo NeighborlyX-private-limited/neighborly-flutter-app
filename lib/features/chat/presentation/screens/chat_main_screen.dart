@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../communities/presentation/bloc/community_detail_cubit.dart';
 import '../bloc/chat_main_cubit.dart';
 import '../widgets/chat_empty_widget.dart';
 import '../widgets/chat_rooms_sheemer.dart';
@@ -19,6 +20,7 @@ class ChatMainScreen extends StatefulWidget {
 
 class _ChatMainScreenState extends State<ChatMainScreen> {
   late ChatMainCubit chatMainCubit;
+
   bool showSearch = false;
 
   final searchEC = TextEditingController();
@@ -26,6 +28,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
   @override
   void initState() {
     super.initState();
+
     chatMainCubit = BlocProvider.of<ChatMainCubit>(context);
     chatMainCubit.init();
   }
@@ -65,14 +68,12 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                 },
                 decoration: InputDecoration(
                   filled: true,
-                  // fillColor: widget.isDarkmode! ? Colors.grey[800] : Colors.grey[200],
                   fillColor: AppColors.lightBackgroundColor,
                   hintText: 'type to search your groups',
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 20,
                     vertical: 5,
                   ),
-                  // hintStyle: TextStyle(color: widget.isDarkmode! ? Colors.white.withOpacity(0.4) : Colors.black26),
                   hintStyle: TextStyle(
                     color: Colors.black.withOpacity(0.6),
                     fontSize: 20,
@@ -104,7 +105,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
               ),
         centerTitle: true,
         actions: [
-          // SEARCH BOX
+          // SEARCH ICON
           IconButton(
             onPressed: () {
               setState(() {
@@ -131,6 +132,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
               message: "oops something went wrong",
             );
           }
+          if (state.status == Status.success) {}
         },
         builder: (context, state) {
           // LOADING STATE
@@ -159,7 +161,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                   room: state.rooms[index],
                   onTap: (selectedRoom) {
                     print('selectedRoom:${selectedRoom.isGroup}');
-                    if (selectedRoom.isGroup) {
+                    if (!selectedRoom.isGroup) {
                       context.push(
                         '/chat/private/${state.rooms[index].id}',
                         extra: state.rooms[index],
@@ -167,7 +169,10 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                     } else {
                       context.push(
                         '/group-chat/${state.rooms[index].id}',
-                        extra: state.rooms[index],
+                        extra: {
+                          'chatModel':
+                              state.rooms[index].copyWith(isJoined: true)
+                        },
                       );
                     }
                   },

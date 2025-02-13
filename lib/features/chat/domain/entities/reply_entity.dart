@@ -5,21 +5,21 @@ class MessageReplyEntity extends Equatable {
   final String userId;
   final String name;
   final String? message;
-  final String? media;
+  final String? mediaLink;
 
   const MessageReplyEntity({
     required this.messageId,
     required this.name,
     required this.userId,
     required this.message,
-    required this.media,
+    required this.mediaLink,
   });
 
   @override
   List<Object?> get props => [
         messageId,
         message,
-        media,
+        mediaLink,
         name,
       ];
 }

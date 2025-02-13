@@ -41,6 +41,7 @@ class ChatRepositoriesImpl implements ChatRepositories {
         final result = await remoteDataSource.getRoomMessages(
           roomId: roomId,
         );
+        print('response:$result');
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

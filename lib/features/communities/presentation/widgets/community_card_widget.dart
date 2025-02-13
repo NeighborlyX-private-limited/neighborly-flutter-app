@@ -290,10 +290,11 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           ),
                           onPressed: () {
                             Navigator.pop(context);
-                            BlocProvider.of<JoinGroupBloc>(context)
-                                .add(JoinGroupButtonPressedEvent(
-                              communityId: widget.community.id,
-                            ));
+                            BlocProvider.of<JoinGroupBloc>(context).add(
+                              JoinGroupButtonPressedEvent(
+                                communityId: widget.community.id,
+                              ),
+                            );
                           },
                           child: Text(
                             AppLocalizations.of(context)!.join,
@@ -476,7 +477,9 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                         !widget.community.requestStatus)
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
                         child: GestureDetector(
                           onTap: () {
                             joinGroupBottomSheet(context);
@@ -504,7 +507,9 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                     widget.community.isJoined && !widget.community.isAdmin
                         ? Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 10),
+                              horizontal: 12,
+                              vertical: 10,
+                            ),
                             child: GestureDetector(
                               onTap: () {
                                 leaveGroupBottomSheet(context);

@@ -45,6 +45,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
     communityDetailCubit.getCommunityDetail(widget.communityId);
     getCurrentUserId();

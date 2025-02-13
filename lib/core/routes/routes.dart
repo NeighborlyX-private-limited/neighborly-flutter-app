@@ -303,21 +303,12 @@ final GoRouter router = GoRouter(
       builder: (context, state) {
         String roomId = state.pathParameters["roomId"] as String;
         final extra = state.extra as Map?;
-        if (extra == null ||
-            !extra.containsKey('chatModel') ||
-            !extra.containsKey('membersList') ||
-            !extra.containsKey('adminsList')) {
-          return Scaffold(body: Center(child: Text("Invalid data!")));
-        }
-        final ChatRoomModel chatRoom = extra['chatModel'];
-        final List<UserSimpleModel> members = extra['membersList'];
-        final List<UserSimpleModel> admins = extra['adminsList'];
+
+        final ChatRoomModel chatRoom = extra!['chatModel'];
 
         return ChatGroupScreen(
           roomId: roomId,
           chatRoom: chatRoom,
-          members: members,
-          admins: admins,
         );
       },
     ),

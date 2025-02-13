@@ -29,7 +29,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     String cookieHeader = cookies.join('; ');
 
     String url =
-        '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=100';
+        '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=50';
 
     final response = await client.get(
       Uri.parse(url),
