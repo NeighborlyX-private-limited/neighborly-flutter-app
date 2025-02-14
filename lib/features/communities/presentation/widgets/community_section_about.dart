@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:readmore/readmore.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/models/user_simple_model.dart';
@@ -16,7 +15,7 @@ class CommunitySectionAbout extends StatelessWidget {
     super.key,
     required this.community,
   });
-
+// BUILD
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,11 +29,13 @@ class CommunitySectionAbout extends StatelessWidget {
               height: 8,
               color: const Color.fromARGB(255, 239, 239, 252),
             ),
+            // COMMUNITY DESCRIPTION
             DescriptionArea(description: community.description),
             Container(
               height: 8,
               color: const Color.fromARGB(255, 239, 239, 252),
             ),
+            // COMMUNITY KARMA SCORE
             TextAndIconArea(
               title: AppLocalizations.of(context)!.karma,
               text: '${community.karma}',
@@ -44,6 +45,7 @@ class CommunitySectionAbout extends StatelessWidget {
               height: 8,
               color: const Color.fromARGB(255, 239, 239, 252),
             ),
+            // COMMUNITY RADIUS
             TextAndIconArea(
               title: AppLocalizations.of(context)!.radius,
               text:
@@ -54,13 +56,10 @@ class CommunitySectionAbout extends StatelessWidget {
               height: 8,
               color: const Color.fromARGB(255, 239, 239, 252),
             ),
+            // COMMUNITY MEMBERS LIST
             MembersList(
               members: community.users,
               admins: community.admins,
-            ),
-            Container(
-              height: 8,
-              color: const Color.fromARGB(255, 239, 239, 252),
             ),
           ],
         ),
@@ -69,7 +68,7 @@ class CommunitySectionAbout extends StatelessWidget {
   }
 }
 
-/// description area
+// COMMUNITY DESCRIPTION WIDGET
 class DescriptionArea extends StatelessWidget {
   final String description;
   const DescriptionArea({
@@ -112,31 +111,13 @@ class DescriptionArea extends StatelessWidget {
               color: AppColors.primaryColor,
             ),
           )
-          // ReadMoreText(
-          //   description,
-          //   trimLines: 2,
-          //   style: TextStyle(fontSize: 14, height: 1.3),
-          //   trimMode: TrimMode.Line,
-          //   trimCollapsedText: AppLocalizations.of(context)!.see_more,
-          //   trimExpandedText: AppLocalizations.of(context)!.see_less,
-          //   moreStyle: TextStyle(
-          //     fontSize: 14,
-          //     fontWeight: FontWeight.normal,
-          //     color: Colors.blue,
-          //   ),
-          //   lessStyle: TextStyle(
-          //     fontSize: 14,
-          //     fontWeight: FontWeight.normal,
-          //     color: Colors.blue,
-          //   ),
-          // ),
         ],
       ),
     );
   }
 }
 
-///text and icon area
+// COMMON WIDGET FOR ICON AND TEXT
 class TextAndIconArea extends StatelessWidget {
   final String title;
   final String text;
@@ -200,7 +181,7 @@ class TextAndIconArea extends StatelessWidget {
   }
 }
 
-///member and admin list area
+// MEMBERS LIST
 class MembersList extends StatefulWidget {
   final List<UserSimpleModel> members;
   final List<UserSimpleModel> admins;
@@ -217,32 +198,78 @@ class MembersList extends StatefulWidget {
 
 class _MembersListState extends State<MembersList> {
   bool showAll = false;
-
-  Widget isAdminBubble() {
-    return Container(
-      width: 40,
-      decoration: BoxDecoration(
-        color: AppColors.lightBackgroundColor,
-        borderRadius: BorderRadius.circular(50),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: Text(
-          AppLocalizations.of(context)!.admin,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
-        ),
-      ),
-    );
-  }
-
+// CHECK IF USER IS AN ADMIN
   bool checkIsAdmin(UserSimpleModel user) {
     bool isAdmin = widget.admins.any((adm) => adm.id == user.id);
     return isAdmin;
   }
 
-  Widget userTile(UserSimpleModel user, bool isAdmin) {
-    isAdmin = checkIsAdmin(user);
+  @override
+  Widget build(BuildContext context) {
+    final bool hasMembers = widget.members.isNotEmpty;
+    return Container(
+      padding: EdgeInsets.all(15),
+      width: double.infinity,
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            AppLocalizations.of(context)!.member_list,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 10),
+          // NO MEMBERS
+          if (hasMembers == false)
+            Text(
+              AppLocalizations.of(context)!.no_Members,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.normal,
+                fontSize: 16,
+              ),
+            ),
+          // COMMUNITY HAS SOME MEMBERS
+          if (hasMembers == true) ...[
+            ...widget.members
+                .take(showAll == true ? widget.members.length : 5)
+                .map((user) => userTile(user)),
+            showAll == false && widget.members.length > 5
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          showAll = !showAll;
+                        });
+                      },
+                      child: Text(
+                        AppLocalizations.of(context)!.view_All_Members,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: AppColors.primaryColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  )
+                : SizedBox.shrink(),
+          ],
+        ],
+      ),
+    );
+  }
+
+// USER LIST
+  Widget userTile(UserSimpleModel user) {
+    bool isAdmin = checkIsAdmin(user);
     return GestureDetector(
       onTap: () {
         context.push('/userProfileScreen/${user.id}');
@@ -285,68 +312,21 @@ class _MembersListState extends State<MembersList> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final bool hasMembers = (widget.members.length + widget.admins.length) > 0;
-
+  // ADMIN BUBBLE
+  Widget isAdminBubble() {
     return Container(
-      padding: EdgeInsets.all(15),
-      width: double.infinity,
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppLocalizations.of(context)!.member_list,
-            // 'Members list',
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          const SizedBox(height: 10),
-          if (hasMembers == false)
-            Text(
-              AppLocalizations.of(context)!.no_Members,
-              //  'No Members',
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: Colors.grey,
-                fontWeight: FontWeight.normal,
-                fontSize: 16,
-              ),
-            ),
-          if (hasMembers == true) ...[
-            //...widget.admins.map((adm) => userTile(adm, true)),
-            ...widget.members
-                .take(showAll == true ? widget.members.length : 5)
-                .map((user) => userTile(user, false)),
-            showAll == false && widget.members.length > 5
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 10.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          showAll = !showAll;
-                        });
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.view_All_Members,
-                        //  'View All Members',
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: AppColors.primaryColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  )
-                : SizedBox.shrink(),
-          ],
-        ],
+      width: 40,
+      decoration: BoxDecoration(
+        color: AppColors.lightBackgroundColor,
+        borderRadius: BorderRadius.circular(50),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Text(
+          AppLocalizations.of(context)!.admin,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 14, color: AppColors.primaryColor),
+        ),
       ),
     );
   }

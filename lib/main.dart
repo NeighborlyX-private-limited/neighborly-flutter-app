@@ -20,6 +20,7 @@ import 'package:neighborly_flutter_app/features/profile/data/repositories/city_r
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
+import 'core/widgets/status_bar_color.dart';
 import 'dependency_injection.dart' as di;
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source_impl.dart';
 import 'features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
@@ -95,6 +96,7 @@ class MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    setStatusBarColor();
     super.initState();
     // _init();
     _setDeepLinkListener();

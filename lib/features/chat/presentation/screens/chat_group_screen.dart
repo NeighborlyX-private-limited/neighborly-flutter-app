@@ -911,7 +911,17 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: AppColors.whiteColor,
-              title: appBarTitleArea(),
+              title: GestureDetector(
+                child: GestureDetector(
+                  onTap: () {
+                    context
+                        .read<ChatGroupCubit>()
+                        .disconnectChat(widget.roomId);
+                    Navigator.pop(context);
+                  },
+                  child: appBarTitleArea(),
+                ),
+              ),
               actions: [
                 IconButton(
                   onPressed: () {
@@ -927,15 +937,15 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     color: AppColors.greyColor,
                   ),
                 ),
-                IconButton(
-                  onPressed: () {
-                    // DO SOME ACTION ONTAP MENU ICON
-                  },
-                  icon: Icon(
-                    Icons.more_vert_outlined,
-                    size: 24,
-                  ),
-                ),
+                // IconButton(
+                //   onPressed: () {
+                //     // DO SOME ACTION ONTAP MENU ICON
+                //   },
+                //   icon: Icon(
+                //     Icons.more_vert_outlined,
+                //     size: 24,
+                //   ),
+                // ),
                 const SizedBox(width: 10),
               ],
             ),
@@ -1002,6 +1012,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     mainAxisSize: MainAxisSize.max,
                     children: [
+                      SizedBox(
+                        height: 2,
+                      ),
                       // SHOW LOADING ON THE TOP OF THE SCREEN WHEN FEATCHING OLD MESSAGES
                       if (_isLoadingMore)
                         Padding(
@@ -1254,10 +1267,16 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           width: 10,
         ),
         if (widget.chatRoom.avatarUrl != '')
-          UserAvatarStyledWidget(
-            avatarUrl: widget.chatRoom.avatarUrl,
-            avatarSize: 19,
-            avatarBorderSize: 0,
+          GestureDetector(
+            onTap: () {
+              context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+              Navigator.pop(context);
+            },
+            child: UserAvatarStyledWidget(
+              avatarUrl: widget.chatRoom.avatarUrl,
+              avatarSize: 19,
+              avatarBorderSize: 0,
+            ),
           ),
         const SizedBox(width: 10),
         Expanded(

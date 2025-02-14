@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/constants/status.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
@@ -210,10 +209,10 @@ class _CommunityAdminMembersUsersScreenState
   ) {
     bool isAdmin = isUserAnAdmin(userId);
     return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      useRootNavigator: true,
+      showDragHandle: true,
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
@@ -221,7 +220,9 @@ class _CommunityAdminMembersUsersScreenState
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
+              // MAKE ADMIN
               myUserId != userId && isAdmin
                   ? MenuIconItem(
                       title: AppLocalizations.of(context)!.remove_Admin,
@@ -232,6 +233,7 @@ class _CommunityAdminMembersUsersScreenState
                         bottomSheetRemoveAdminConfirm(context, userId);
                       })
                   : SizedBox(),
+              // REMOVE ADMIN
               myUserId != userId && !isAdmin
                   ? MenuIconItem(
                       title: AppLocalizations.of(context)!.make_Admin,
@@ -242,6 +244,7 @@ class _CommunityAdminMembersUsersScreenState
                         bottomSheetMakeAdminConfirm(context, userId);
                       })
                   : SizedBox(),
+              // REMOVE FROM COMMUNITY
               myUserId != userId
                   ? MenuIconItem(
                       title:
@@ -285,24 +288,28 @@ class _CommunityAdminMembersUsersScreenState
     String userId,
   ) {
     return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      useRootNavigator: true,
+      showDragHandle: true,
       isScrollControlled: true,
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
-          height: 180,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 AppLocalizations.of(context)!
                     .are_you_sure_you_want_to_remove_this_person_from_Admin_post,
                 style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 10,
               ),
               Row(
                 children: [
@@ -341,6 +348,7 @@ class _CommunityAdminMembersUsersScreenState
                       listener: (context, state) {
                         // FAILURE STATE
                         if (state is MakeRemoveAdminFailureState) {
+                          Navigator.pop(context);
                           showSnackBar(context: context, message: state.error);
                         }
 
@@ -407,16 +415,20 @@ class _CommunityAdminMembersUsersScreenState
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
-          height: 150,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 AppLocalizations.of(context)!
                     .are_you_sure_you_make_this_person_Admin,
                 style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 10,
               ),
               Row(
                 children: [
@@ -455,6 +467,7 @@ class _CommunityAdminMembersUsersScreenState
                       listener: (context, state) {
                         // FAILURE STATE
                         if (state is MakeRemoveAdminFailureState) {
+                          Navigator.pop(context);
                           showSnackBar(context: context, message: state.error);
                         }
 
@@ -567,6 +580,7 @@ class _CommunityAdminMembersUsersScreenState
                       listener: (context, state) {
                         // FAILURE STATE
                         if (state is JoinGroupFailureState) {
+                          Navigator.pop(context);
                           showSnackBar(context: context, message: state.error);
                         }
 
@@ -625,23 +639,26 @@ class _CommunityAdminMembersUsersScreenState
     String userId,
   ) {
     return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      useRootNavigator: true,
+      showDragHandle: true,
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
-          height: 140,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(
                 AppLocalizations.of(context)!
                     .are_you_sure_you_want_to_remove_this_person_from_community,
                 style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(
+                height: 10,
               ),
               Row(
                 children: [
@@ -680,6 +697,7 @@ class _CommunityAdminMembersUsersScreenState
                       // FAILURE STATE
                       listener: (context, state) {
                         if (state is AddRemoveUserInGroupFailureState) {
+                          Navigator.pop(context);
                           showSnackBar(context: context, message: state.error);
                         }
 
@@ -798,6 +816,7 @@ class _CommunityAdminMembersUsersScreenState
                       listener: (context, state) {
                         // FAILURE STATE
                         if (state is UpdateBlockUserFailureState) {
+                          Navigator.pop(context);
                           showSnackBar(context: context, message: state.error);
                         }
 

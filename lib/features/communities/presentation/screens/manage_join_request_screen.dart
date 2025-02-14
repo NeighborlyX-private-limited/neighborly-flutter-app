@@ -23,10 +23,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<GetJoinGroupRequestBloc>(context)
-        .add(FeatchJoinGroupRequestEvent(
-      communityId: widget.communityId,
-    ));
+    _onRefresh();
   }
 
 // REFRESH CALL
@@ -40,7 +37,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: Container(
@@ -53,7 +50,6 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back_ios_new,
-                color: Colors.black,
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -450,6 +446,7 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
     );
   }
 
+// NO PENDING REQUEST SCREEN
   Widget noPendingRequestScreen() {
     return Padding(
       padding: const EdgeInsets.all(16.0),

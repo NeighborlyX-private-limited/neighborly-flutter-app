@@ -91,7 +91,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 12),
                       decoration: const BoxDecoration(
-                        color: AppColors.redColor,
+                        color: AppColors.whiteColor,
                       ),
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

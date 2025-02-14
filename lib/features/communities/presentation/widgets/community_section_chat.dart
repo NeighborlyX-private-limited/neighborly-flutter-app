@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/models/community_model.dart';
-import '../../../../core/theme/colors.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../chat/data/model/chat_room_model.dart';
@@ -20,47 +19,42 @@ class CommunitySectionChat extends StatefulWidget {
 class _CommunitySectionChatState extends State<CommunitySectionChat> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.whiteColor,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              height: 8,
-              color: const Color.fromARGB(255, 239, 239, 252),
-            ),
-            TileChat(
-              name: widget.community.name,
-              avatarUrl: widget.community.avatarUrl,
-              lastMessage: widget.community.lastMessage,
-              lastMessageTime: formatTimeDifference(
-                widget.community.lastMessageTime,
-              ),
-              onTap: () {
-                context.push(
-                  '/group-chat/${widget.community.id}',
-                  extra: {
-                    'chatModel': ChatRoomModel(
-                      id: widget.community.id,
-                      name: widget.community.name,
-                      avatarUrl: widget.community.avatarUrl,
-                      lastMessage: widget.community.lastMessage,
-                      lastMessageDate: formatTimeDifference(
-                        widget.community.lastMessageTime,
-                      ),
-                      isMuted: widget.community.isMuted,
-                      isJoined: widget.community.isJoined,
-                      isGroup: true,
-                      unreadCount: 0,
-                    ),
-                  },
-                );
-              },
-            ),
-          ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          height: 8,
+          color: const Color.fromARGB(255, 239, 239, 252),
         ),
-      ),
+        TileChat(
+          name: widget.community.name,
+          avatarUrl: widget.community.avatarUrl,
+          lastMessage: widget.community.lastMessage,
+          lastMessageTime: formatTimeDifference(
+            widget.community.lastMessageTime,
+          ),
+          onTap: () {
+            context.push(
+              '/group-chat/${widget.community.id}',
+              extra: {
+                'chatModel': ChatRoomModel(
+                  id: widget.community.id,
+                  name: widget.community.name,
+                  avatarUrl: widget.community.avatarUrl,
+                  lastMessage: widget.community.lastMessage,
+                  lastMessageDate: formatTimeDifference(
+                    widget.community.lastMessageTime,
+                  ),
+                  isMuted: widget.community.isMuted,
+                  isJoined: widget.community.isJoined,
+                  isGroup: true,
+                  unreadCount: 0,
+                ),
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 }

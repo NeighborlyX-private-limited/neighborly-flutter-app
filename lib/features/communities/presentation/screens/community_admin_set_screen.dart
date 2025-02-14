@@ -4,9 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/constants/status.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
-import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_user_groups_bloc.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/communities_main_cubit.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
@@ -32,7 +31,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
   late String communitytId;
   late CommunityModel community;
 
-  ///init state method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -42,110 +41,9 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
     communitytId = community.id;
   }
 
-  /// delete group confirmation bottom sheet
-  void _showConfirmGroupDeletionSheet(BuildContext context) {
-    showModalBottomSheet(
-      useRootNavigator: true,
-      showDragHandle: true,
-      barrierColor: AppColors.transparentColor,
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.delete_Group,
-                // 'Delete Group',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                AppLocalizations.of(context)!
-                    .are_you_sure_you_want_to_delete_your_account_this_action_is_irreversible,
-                // 'Are you sure you want to delete this group? This action cannot be undone.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      backgroundColor: Colors.grey[300],
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.cancel,
-                      // 'Cancel',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
-                    listener: (context, state) {
-                      if (state.status == Status.failure) {
-                        showSnackBar(
-                          context: context,
-                          message: state.failure?.message ??
-                              'oops something went wrong',
-                        );
-                      }
-                      if (state.status == Status.success) {
-                        communityMainCubit.getAllCommunities();
-                        BlocProvider.of<GetUserGroupsBloc>(context)
-                            .add(GetUserGroupsButtonPressedEvent());
+  Future<void> _onRefresh() async {}
 
-                        showSnackBar(
-                          context: context,
-                          message: AppLocalizations.of(context)!.group_deleted,
-                        );
-
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state.status == Status.loading) {
-                        return BouncingLogoIndicator(logo: 'logo');
-                      }
-
-                      return ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          communityDetailCubit.deleteCommunity(communitytId);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          elevation: 0,
-                          backgroundColor: AppColors.primaryColor,
-                        ),
-                        child: Text(
-                          AppLocalizations.of(context)!.delete,
-                          // 'Delete',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
+// BUILD
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -155,7 +53,6 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
           ),
           onTap: () {
             Navigator.pop(context);
@@ -163,193 +60,283 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
         ),
         title: Text(
           AppLocalizations.of(context)!.group_settings,
-          // 'Group settings',
           style: TextStyle(
             color: Colors.black,
             fontWeight: FontWeight.normal,
             fontSize: 18,
           ),
         ),
-        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(15),
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ///general
-              Text(
-                AppLocalizations.of(context)!.general,
-                //  'General',
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            padding: EdgeInsets.all(15),
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // MEMBERS LIST
+                MenuIconItem(
+                  title: AppLocalizations.of(context)!.member_list,
+                  svgPath: 'assets/menu_members.svg',
+                  iconSize: 25,
+                  onTap: () {
+                    context.push('/group-members');
+                  },
                 ),
-              ),
 
-              const SizedBox(height: 5),
+                const SizedBox(height: 5),
 
-              ///member list
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.member_list,
-                // 'Member list',
-                svgPath: 'assets/menu_members.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/group-members');
-                },
-              ),
+                // JOIN REQUEST LIST
+                MenuIconItem(
+                  title: "Manage Join Request",
+                  svgPath: 'assets/private-lock-icon.svg',
+                  iconSize: 25,
+                  onTap: () {
+                    context.push('/manage-group-join-request/${community.id}');
+                  },
+                ),
 
-              const SizedBox(height: 5),
+                const SizedBox(height: 5),
 
-              /// Manage Join Request
-              MenuIconItem(
-                title: "Manage Join Request",
-                svgPath: 'assets/private-lock-icon.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/manage-group-join-request/${community.id}');
-                },
-              ),
+                // COMMUNITY ICON
+                MenuIconItem(
+                  title: AppLocalizations.of(context)!.community_Icon,
+                  svgPath: 'assets/menu_icon.svg',
+                  iconSize: 25,
+                  onTap: () {
+                    context.push('/group-icon');
+                  },
+                ),
+                const SizedBox(height: 5),
 
-              const SizedBox(height: 5),
+                // COMMUNITY DESCRIPTION
+                MenuIconItem(
+                  title: AppLocalizations.of(context)!.description,
+                  svgPath: 'assets/menu_description.svg',
+                  iconSize: 25,
+                  onTap: () {
+                    context.push('/group-description');
+                  },
+                ),
+                const SizedBox(height: 5),
 
-              ///community icon
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.community_Icon,
-                svgPath: 'assets/menu_icon.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/group-icon');
-                },
-              ),
-              const SizedBox(height: 5),
+                // COMMUNITY NAME
+                MenuIconItem(
+                  title: AppLocalizations.of(context)!.community_name,
+                  svgPath: 'assets/menu_members.svg',
+                  iconSize: 25,
+                  onTap: () {
+                    context.push('/group-displayname');
+                  },
+                ),
 
-              /// community description
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.description,
-                svgPath: 'assets/menu_description.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/group-description');
-                },
-              ),
-              const SizedBox(height: 5),
+                // COMMUNITY TYPE
+                MenuIconItem(
+                  title: AppLocalizations.of(context)!.community_Type,
+                  svgPath: 'assets/menu_type.svg',
+                  iconSize: 25,
+                  onTap: () {
+                    context.push('/group-type');
+                  },
+                ),
 
-              ///community name
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.community_name,
-                svgPath: 'assets/menu_members.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/group-displayname');
-                },
-              ),
+                // COMMUNITY MUTE-UNMUTE
+                BlocConsumer<UpdateMuteGroupBloc, UpdateMuteGroupState>(
+                  listener: (context, state) {
+                    // FAILURE STATE
+                    if (state is UpdateMuteGroupFailureState) {
+                      showSnackBar(
+                        context: context,
+                        message: state.error,
+                      );
+                    }
 
-              /// community type
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.community_Type,
-                svgPath: 'assets/menu_type.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/group-type');
-                },
-              ),
-
-              /// mute/unmute
-              BlocConsumer<UpdateMuteGroupBloc, UpdateMuteGroupState>(
-                listener: (context, state) {
-                  /// failure state
-                  if (state is UpdateMuteGroupFailureState) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.error),
-                      ),
-                    );
-                  }
-
-                  /// success state
-                  if (state is UpdateMuteGroupSuccessState) {
-                    community.copyWith(isMuted: !(community.isMuted));
-                    communityDetailCubit.getCommunityDetail(community.id);
-                    String msg = community.isMuted
-                        ? AppLocalizations.of(context)!.group_unmuted
-                        : AppLocalizations.of(context)!.group_muted;
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(msg),
-                      ),
-                    );
-                  }
-                },
-                builder: (context, state) {
-                  ///loading state
-                  if (state is UpdateMuteGroupLoadingState) {
-                    return CircularProgressIndicator();
-                  }
-                  // if (state is UpdateMuteGroupSuccessState) {
-                  //   community.copyWith(isMuted: !(community.isMuted));
-                  //   community = communityDetailCubit.state.community!;
-                  // }
-                  return MenuIconItem(
-                    title: community.isMuted
-                        ? AppLocalizations.of(context)!.unmute
-                        : AppLocalizations.of(context)!.mute,
-                    svgPath: community.isMuted
-                        ? 'assets/menu_unmute.svg'
-                        : 'assets/menu_mute.svg',
-                    iconSize: 25,
-                    onTap: () {
-                      BlocProvider.of<UpdateMuteGroupBloc>(context)
-                          .add(UpdateMuteGroupButtonPressedEvent(
-                        communityId: community.id,
-                        isMute: !community.isMuted,
-                      ));
-
+                    // SUCCESS STATE
+                    if (state is UpdateMuteGroupSuccessState) {
                       Navigator.pop(context);
-                    },
-                  );
-                },
-              ),
-              const SizedBox(height: 5),
+                      community.copyWith(isMuted: !(community.isMuted));
+                      communityDetailCubit.getCommunityDetail(community.id);
+                      String msg = community.isMuted
+                          ? AppLocalizations.of(context)!.group_unmuted
+                          : AppLocalizations.of(context)!.group_muted;
+                      showSnackBar(
+                        context: context,
+                        message: msg,
+                      );
+                    }
+                  },
+                  builder: (context, state) {
+                    // LOADING STATE
+                    if (state is UpdateMuteGroupLoadingState) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            CustomCircularIndicator(),
+                          ],
+                        ),
+                      );
+                    }
 
-              ///block user list
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.blocked_User,
-                //'Blocked users',
-                svgPath: 'assets/menu_block.svg',
-                iconSize: 25,
-                onTap: () {
-                  context.push('/group-blocked');
-                },
-              ),
+                    return MenuIconItem(
+                      title: community.isMuted
+                          ? AppLocalizations.of(context)!.unmute
+                          : AppLocalizations.of(context)!.mute,
+                      svgPath: community.isMuted
+                          ? 'assets/menu_unmute.svg'
+                          : 'assets/menu_mute.svg',
+                      iconSize: 25,
+                      onTap: () {
+                        BlocProvider.of<UpdateMuteGroupBloc>(context).add(
+                          UpdateMuteGroupButtonPressedEvent(
+                            communityId: community.id,
+                            isMute: !community.isMuted,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                const SizedBox(height: 5),
 
-              const SizedBox(height: 5),
+                // BLOCK LIST
+                MenuIconItem(
+                  title: AppLocalizations.of(context)!.blocked_User,
+                  svgPath: 'assets/menu_block.svg',
+                  iconSize: 25,
+                  onTap: () {
+                    context.push('/group-blocked');
+                  },
+                ),
 
-              ///delete group
-              MenuIconItem(
-                title: AppLocalizations.of(context)!.delete_community,
-                //'Delete community',
-                svgPath: 'assets/menu_remove.svg',
-                iconSize: 25,
-                onTap: () {
-                  _showConfirmGroupDeletionSheet(context);
-                },
-              ),
-            ],
+                const SizedBox(height: 5),
+
+                // DELETE GROUP
+                MenuIconItem(
+                  title: AppLocalizations.of(context)!.delete_community,
+                  svgPath: 'assets/menu_remove.svg',
+                  iconSize: 25,
+                  onTap: () {
+                    _showConfirmGroupDeletionSheet(context);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  // DELETE GROUP BOTTOM SHEET
+  void _showConfirmGroupDeletionSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      useRootNavigator: true,
+      showDragHandle: true,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.delete_Group,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppLocalizations.of(context)!
+                    .are_you_sure_you_want_to_delete_your_account_this_action_is_irreversible,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // CANCEL BUTTON
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.grey[300],
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.cancel,
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  // DELETE BUTTON
+                  Expanded(
+                    child: BlocConsumer<CommunityDetailsCubit,
+                        CommunityDetailsState>(
+                      listener: (context, state) {
+                        if (state.status == Status.failure) {
+                          Navigator.pop(context);
+                          showSnackBar(
+                            context: context,
+                            message: state.failure?.message ??
+                                'oops something went wrong',
+                          );
+                        }
+                        if (state.status == Status.success) {
+                          Navigator.pop(context);
+                          context.go('/groups');
+                          showSnackBar(
+                            context: context,
+                            message:
+                                AppLocalizations.of(context)!.group_deleted,
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state.status == Status.loading) {
+                          return CustomCircularIndicator();
+                        }
+
+                        return ElevatedButton(
+                          onPressed: () {
+                            communityDetailCubit.deleteCommunity(communitytId);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          child: Text(
+                            AppLocalizations.of(context)!.delete,
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
-/// menu button
+// COMMON TILE WIDGET
 class MenuIconItem extends StatelessWidget {
   final String title;
   final IconData? icon;

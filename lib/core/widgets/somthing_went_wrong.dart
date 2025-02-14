@@ -28,26 +28,16 @@ class SomethingWentWrong extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.whiteColor,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.blackColor.withOpacity(0.26),
-              blurRadius: 2,
-              offset: Offset(1, 1),
-            ),
-          ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            /// Displaying the image
             SvgPicture.asset(
               imagePath,
               width: 150,
               height: 130,
             ),
             SizedBox(height: 8),
-
-            /// Title text
             Text(
               title,
               style: TextStyle(
@@ -58,16 +48,12 @@ class SomethingWentWrong extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8),
-
-            /// Message text
             Text(
               message,
               style: TextStyle(fontSize: 14, color: AppColors.greyColor),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12),
-
-            /// Retry or go back button
             ElevatedButton(
               onPressed: onButtonPressed,
               style: ElevatedButton.styleFrom(),

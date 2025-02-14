@@ -65,6 +65,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     //     'range': '$radius',
     //   };
     // }
+    print('coockie :$cookieHeader');
     try {
       final response = await client.get(
         Uri.parse(url).replace(queryParameters: queryParameters),
