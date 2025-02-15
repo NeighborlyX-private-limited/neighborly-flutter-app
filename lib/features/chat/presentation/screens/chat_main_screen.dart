@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
-import '../../../communities/presentation/bloc/community_detail_cubit.dart';
 import '../bloc/chat_main_cubit.dart';
 import '../widgets/chat_empty_widget.dart';
 import '../widgets/chat_rooms_sheemer.dart';
@@ -20,10 +19,9 @@ class ChatMainScreen extends StatefulWidget {
 
 class _ChatMainScreenState extends State<ChatMainScreen> {
   late ChatMainCubit chatMainCubit;
-
+  final searchEC = TextEditingController();
   bool showSearch = false;
 
-  final searchEC = TextEditingController();
   // INIT STATE
   @override
   void initState() {
@@ -43,7 +41,9 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
@@ -69,31 +69,31 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: AppColors.lightBackgroundColor,
-                  hintText: 'type to search your groups',
+                  hintText: 'Search',
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 20,
                     vertical: 5,
                   ),
                   hintStyle: TextStyle(
                     color: Colors.black.withOpacity(0.6),
-                    fontSize: 20,
+                    fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
                   border: OutlineInputBorder(
                     gapPadding: 0,
                     borderSide: BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
+                      width: 1,
+                      style: BorderStyle.solid,
                     ),
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                   focusedBorder: OutlineInputBorder(
                     gapPadding: 0,
                     borderSide: BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
+                      width: 1,
+                      style: BorderStyle.solid,
                     ),
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(15),
                   ),
                 ),
                 cursorColor: Colors.black,
@@ -160,7 +160,6 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                 return ChatTileWidget(
                   room: state.rooms[index],
                   onTap: (selectedRoom) {
-                    print('selectedRoom:${selectedRoom.isGroup}');
                     if (!selectedRoom.isGroup) {
                       context.push(
                         '/chat/private/${state.rooms[index].id}',

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/core/constants/status.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,7 +21,7 @@ class _CommunityAdminDisplaynameScreenState
     extends State<CommunityAdminDisplaynameScreen> {
   late CommunityDetailsCubit communityCubit;
   final newDisplaynameEC = TextEditingController();
-
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -29,6 +29,7 @@ class _CommunityAdminDisplaynameScreenState
     newDisplaynameEC.text = communityCubit.state.community?.displayName ?? '';
   }
 
+  // DISPOSE
   @override
   void dispose() {
     newDisplaynameEC.dispose();
@@ -44,7 +45,6 @@ class _CommunityAdminDisplaynameScreenState
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
           ),
           onTap: () {
             Navigator.pop(context);
@@ -62,6 +62,7 @@ class _CommunityAdminDisplaynameScreenState
         actions: [
           BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
             listener: (context, state) {
+              // FAILURE STATE
               if (state.status == Status.failure) {
                 showSnackBar(
                   context: context,
@@ -69,6 +70,7 @@ class _CommunityAdminDisplaynameScreenState
                       state.failure?.message ?? 'oops something went wrong',
                 );
               }
+              // SUCCESS STATE
               if (state.status == Status.success) {
                 communityCubit.getCommunityDetail(
                   communityCubit.state.community?.id ?? '',
@@ -77,10 +79,11 @@ class _CommunityAdminDisplaynameScreenState
               }
             },
             builder: (context, state) {
+              // LOADING STATE
               if (state.status == Status.loading) {
                 return Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: BouncingLogoIndicator(logo: ''),
+                  child: CustomCircularIndicator(),
                 );
               }
               return TextButton(
@@ -131,7 +134,9 @@ class _CommunityAdminDisplaynameScreenState
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: TextField(
-                  onChanged: (value) {},
+                  onChanged: (value) {
+                    // CAN BE ADD SOME CHECK POINT HERE
+                  },
                   controller: newDisplaynameEC,
                   decoration: InputDecoration(
                     border: InputBorder.none,

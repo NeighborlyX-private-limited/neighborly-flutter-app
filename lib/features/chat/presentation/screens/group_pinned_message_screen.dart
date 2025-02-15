@@ -33,9 +33,7 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<FeatchPinnedMessagesBloc>(context).add(
-      FeatchAllPinnedMessagesEvent(groupId: widget.groupId),
-    );
+    _onRefresh();
   }
 
 // REFRESH CALL
@@ -63,6 +61,7 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
           return Scaffold(
             appBar: AppBar(),
             body: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CustomCircularIndicator(),
               ],
@@ -73,7 +72,9 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
         if (state is FeatchPinnedMessagesSuccessState &&
             state.pinnedMessages.isEmpty) {
           return Scaffold(
+            backgroundColor: AppColors.whiteColor,
             appBar: AppBar(
+              backgroundColor: AppColors.whiteColor,
               title: Text(
                 '0 Pinned Messages',
                 style: TextStyle(
@@ -129,22 +130,27 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
                             children: [
                               if (isNewDate)
                                 Center(
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 8),
+                                  child: Container(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 2,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.primaryColor
+                                          .withOpacity(.1),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
                                     child: Text(
                                       '${formatTimeDifference(
                                         pinnedMessage[index].sendAt.toString(),
-                                      )} Ago',
-                                      // convertToIndianTime(
-                                      //   pinnedMessage[index].sendAt.toString(),
-                                      // ),
-                                      // DateUtilsHelper.simplifyISOtimeString(
-                                      //   pinnedMessage[index].sendAt.toString(),
-                                      // ),
+                                      )} ',
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
+                                        color: AppColors.primaryColor,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.normal,
                                       ),
                                     ),
                                   ),
@@ -284,43 +290,52 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
     required VoidCallback onTap,
   }) {
     showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
       showDragHandle: true,
       useRootNavigator: true,
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
       builder: (context) {
         return Container(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              BlocListener<PinMessageBloc, PinMessagesState>(
+              BlocConsumer<PinMessageBloc, PinMessagesState>(
                 listener: (context, state) {
                   if (state is PinMessagesStateFailureState) {
+                    Navigator.pop(context);
                     showSnackBar(context: context, message: state.error);
                   }
                   if (state is PinMessagesStateSuccessState) {
-                    showSnackBar(context: context, message: state.message);
+                    Navigator.pop(context);
                     onTap();
+                    showSnackBar(context: context, message: state.message);
                   }
                 },
-                child: ListTile(
-                  leading: SvgPicture.asset('assets/unpinned.svg'),
-                  title: Text(
-                    'Unpin Message',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    BlocProvider.of<PinMessageBloc>(context).add(
-                      PinnedAMessagesEvent(
-                        messageId: messageId,
-                      ),
+                builder: (context, state) {
+                  if (state is PinMessagesStateLoadingState) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        CustomCircularIndicator(),
+                      ],
                     );
-                  },
-                ),
+                  }
+                  return ListTile(
+                    leading: SvgPicture.asset('assets/unpinned.svg'),
+                    title: Text(
+                      'Unpin Message',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    onTap: () {
+                      BlocProvider.of<PinMessageBloc>(context).add(
+                        PinnedAMessagesEvent(
+                          messageId: messageId,
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

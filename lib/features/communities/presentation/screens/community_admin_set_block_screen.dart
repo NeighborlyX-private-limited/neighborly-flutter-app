@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
@@ -23,7 +25,7 @@ class _CommunityAdminBlockedUsersScreenState
   late List<UserSimpleModel> blockedMembers;
   late String communityId;
 
-  ///init state
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -32,137 +34,67 @@ class _CommunityAdminBlockedUsersScreenState
     blockedMembers = communityCubit.state.community?.blockList != null
         ? [...communityCubit.state.community!.blockList]
         : [];
+    print(blockedMembers);
   }
 
-  Future<dynamic> bottomSheet(BuildContext context, String userId) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          height: 120,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                AppLocalizations.of(context)!
-                    .are_you_sure_you_whant_to_Unblock_this_user,
-                // 'Are you sure you whant to Unblock this user?',
-                style: TextStyle(fontSize: 16),
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    flex: 40,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text(
-                          AppLocalizations.of(context)!.cancel,
-                          //  'Cancel',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            height: 0.3,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    flex: 40,
-                    child:
-                        BlocConsumer<UpdateBlockUserBloc, UpdateBlockUserState>(
-                      listener: (context, state) {
-                        ///failure state
-                        if (state is UpdateBlockUserFailureState) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.error),
-                            ),
-                          );
-                        }
-
-                        ///success state
-                        if (state is UpdateBlockSuccessState) {
-                          communityCubit.getCommunityDetail(communityId);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.message),
-                            ),
-                          );
-                        }
-                      },
-                      builder: (context, state) {
-                        ///loading state
-                        if (state is UpdateBlockUserLoadingState) {
-                          return CircularProgressIndicator(
-                            color: AppColors.whiteColor,
-                          );
-                        }
-                        return ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            BlocProvider.of<UpdateBlockUserBloc>(context)
-                                .add(UpdateBlockUserButtonPressedEvent(
-                              communityId: communityId,
-                              userId: userId,
-                              isBlock: false,
-                            ));
-
-                            // Navigator.pop(context);
-                            // Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff635BFF),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 17),
-                            child: Text(
-                              AppLocalizations.of(context)!.unblock,
-                              // 'Unblock',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                                height: 0.3,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ],
+// BUILD
+  @override
+  Widget build(BuildContext context) {
+    final bool hasMembers = blockedMembers.isNotEmpty;
+    return Scaffold(
+      backgroundColor: AppColors.whiteColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
+        leading: GestureDetector(
+          child: Icon(
+            Icons.arrow_back_ios,
           ),
-        );
-      },
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          AppLocalizations.of(context)!.blocked_User,
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 18,
+          ),
+        ),
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16),
+        width: double.infinity,
+        color: Colors.white,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            if (hasMembers == false)
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'No blocked members',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ...blockedMembers.map((user) => userTile(context, user)),
+          ],
+        ),
+      ),
     );
   }
 
+// COMMON TILE WIDGET
   Widget userTile(BuildContext context, UserSimpleModel user) {
     return GestureDetector(
       onTap: () {
-        bottomSheet(context, user.id);
+        unblockBottomSheet(context, user.id);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
@@ -189,72 +121,128 @@ class _CommunityAdminBlockedUsersScreenState
                 ),
               ),
             ),
-            // if (isAdmin) ...[
-            //   const SizedBox(width: 5),
-            //   Expanded(
-            //     flex: 20,
-            //     child: isAdminBubble(),
-            //   ),
-            // ]
           ],
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final bool hasMembers = blockedMembers.isNotEmpty;
-    return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: AppColors.whiteColor,
-        leading: GestureDetector(
-          child: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.black,
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          AppLocalizations.of(context)!.blocked_User,
-          // 'Blocked User',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.normal,
-            fontSize: 18,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(15),
-        width: double.infinity,
-        color: Colors.white,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            if (hasMembers == false)
-              Expanded(
-                child: Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.no_Members,
-                    // 'No Members',
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 16,
+// UNBLOCK BOTTOM SHEET
+  Future<dynamic> unblockBottomSheet(BuildContext context, String userId) {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      builder: (BuildContext context) {
+        return Container(
+          color: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${AppLocalizations.of(context)!.are_you_sure_you_whant_to_Unblock_this_user} ?',
+                style: TextStyle(fontSize: 16),
+              ),
+              SizedBox(
+                height: 15,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 40,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          AppLocalizations.of(context)!.cancel,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            height: 0.3,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  Expanded(
+                    flex: 40,
+                    child:
+                        BlocConsumer<UpdateBlockUserBloc, UpdateBlockUserState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state is UpdateBlockUserFailureState) {
+                          Navigator.pop(context);
+                          showSnackBar(context: context, message: state.error);
+                        }
+
+                        /// SUCCESS STATE
+                        if (state is UpdateBlockSuccessState) {
+                          Navigator.pop(context);
+                          communityCubit.getCommunityDetail(communityId);
+                          showSnackBar(
+                            context: context,
+                            message: state.message,
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state is UpdateBlockUserLoadingState) {
+                          return CustomCircularIndicator();
+                        }
+                        return ElevatedButton(
+                          onPressed: () {
+                            BlocProvider.of<UpdateBlockUserBloc>(context).add(
+                              UpdateBlockUserButtonPressedEvent(
+                                communityId: communityId,
+                                userId: userId,
+                                isBlock: false,
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xff635BFF),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 17),
+                            child: Text(
+                              AppLocalizations.of(context)!.unblock,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                height: 0.3,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
               ),
-            ...blockedMembers.map((user) => userTile(context, user)),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

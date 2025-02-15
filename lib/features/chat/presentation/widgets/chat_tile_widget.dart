@@ -76,14 +76,12 @@ class ChatTileWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // DateTime lastMessageDate = room.lastMessageDate == '' ? DateTime.now() : DateUtilsHelper.dateFormatter(room.lastMessageDate);
-
     return InkWell(
       onTap: () {
         onTap(room);
       },
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(16),
         width: double.infinity,
         color: Colors.white,
         child: Row(
@@ -121,7 +119,6 @@ class ChatTileWidget extends StatelessWidget {
                           color: Colors.grey,
                         ),
                       ),
-                      if (room.unreadCount > 0) unreadCounter(room.unreadCount),
                     ],
                   ),
                   const SizedBox(height: 7),

@@ -16,6 +16,7 @@ import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/date_utils.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
@@ -77,10 +78,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
   bool _isLoadingMore = false;
 
-  final bool _shouldScrollToBottom = true;
   double _previousScrollOffset = 0.0;
 
-  OverlayEntry? _overlayEntry;
   // INIT STATE
   @override
   void initState() {
@@ -88,9 +87,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
     getCurrentUserId();
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-    communityDetailCubit.getCommunityDetail(widget.roomId);
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
     chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
+
+    communityDetailCubit.getCommunityDetail(widget.roomId);
     chatGroupCubit.init(widget.roomId);
 
     _scrollController.addListener(() {
@@ -110,13 +110,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 // CHECK IF CURRENT USER IS AN ADMIN
   bool isCurrentUserAdmin() {
     return admins!.any((admin) => admin.id == cuurentUserId);
-    // return widget.admins!.any((admin) => admin.id == cuurentUserId);
   }
 
 // CHECK IF SENDER USER IS AN ADMIN
   bool isSenderAnAdmin(String userId) {
     return admins!.any((admin) => admin.id == userId);
-    // return widget.admins!.any((admin) => admin.id == userId);
   }
 
 // GET THE PROFILE PIC OF THE SENDER
@@ -137,7 +135,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     return member?.avatarUrl ?? '';
   }
 
-  // / scroll to bottom
+  // SCROLL TO BOTTOM
   // void _scrollToBottom() {
   //   if (_scrollController.hasClients && _shouldScrollToBottom) {
   //     Future.delayed(Duration(milliseconds: 100), () {
@@ -155,35 +153,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   //   }
   // }
 
-  void _scrollToBottom() {
-    if (_scrollController.hasClients && _shouldScrollToBottom) {
-      Future.delayed(Duration(milliseconds: 300), () {
-        _scrollController.position.animateTo(
-          _previousScrollOffset,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      });
-    }
-  }
-
-  /// SCROLL TO END
-  // void _scrollToEnd() {
-  //   if (_scrollController.hasClients) {
-  //     Future.delayed(Duration(milliseconds: 100), () {
-  //       _scrollController.animateTo(
-  //         _scrollController.position.maxScrollExtent,
-  //         duration: Duration(milliseconds: 100),
-  //         curve: Curves.easeOut,
-  //       );
-  //       setState(() {
-  //         _previousScrollOffset = _scrollController.position.maxScrollExtent;
-  //       });
-  //     });
-  //   }
-  // }
-
-  /// scroll to end
+  // SCROLL TO END
   void _scrollToEnd() {
     if (_scrollController.hasClients) {
       final maxScroll = _scrollController.position.maxScrollExtent;
@@ -207,15 +177,13 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   Future<void> _loadMoreMessages() async {
     setState(() {
       _isLoadingMore = true;
-      // _shouldScrollToBottom = false;
     });
 
-    // Fetch older messages from server via ChatGroupCubit
     await context.read<ChatGroupCubit>().fetchOlderMessages();
     // Restore the previous scroll position after loading more messages
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   _scrollController.jumpTo(_previousScrollOffset + 500);
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollController.jumpTo(_previousScrollOffset + 500);
+    });
     setState(() {
       _isLoadingMore = false;
     });
@@ -276,637 +244,33 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     }
   }
 
-  // MESSAGE INPUT AREA
-  Widget messageInputSection() {
-    // String? imgUrl;
-    // String? videoUrl;
-    // bool isImageUploading = false;
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: 16,
-          right: 16,
-          bottom: 16,
-          top: 4,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextField(
-                maxLines: null,
-                textCapitalization: TextCapitalization.sentences,
-                controller: messageEC,
-                focusNode: messageFocusNode,
-                onChanged: (value) {
-                  if (value.trim() != "") {
-                    setState(() {
-                      isCommentFilled = messageEC.text.isNotEmpty;
-                    });
-                  }
-                },
-                decoration: InputDecoration(
-                  suffixIcon: GestureDetector(
-                    onTap: pickImage,
-                    // onTap: showMediaOption,
-                    child: Icon(
-                      Icons.photo_camera_back_outlined,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  hintText: isReply ? 'Reply' : 'Message',
-                  hintStyle: TextStyle(color: Colors.grey[500]),
-                  border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  isDense: true,
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 10),
-
-            // SEND BUTTONS
-            // BlocListener<UploadFileBloc, UploadFileState>(
-            BlocConsumer<UploadFileBloc, UploadFileState>(
-              listener: (context, state) {
-                if (state is UploadFileFailureState) {
-                  isReply = false;
-
-                  messageEC.clear();
-
-                  _messageToReply = null;
-                  _mediaToReply = null;
-                  _selectedMessageId = null;
-                  _messageToReplyUserName = null;
-                  _selectedMessageUserId = null;
-
-                  imageToUpload = null;
-                  _videoFile = null;
-                  _pickedFile = null;
-
-                  showSnackBar(context: context, message: state.error);
-                }
-
-                if (state is UploadFileSuccessState) {
-                  String fileUrl = state.url;
-
-                  if (messageEC.text.trim() != "" || imageToUpload != null) {
-                    final payload = {
-                      'groupId': widget.roomId,
-                      'message': messageEC.text,
-                      'repliedTo': isReply
-                          ? {
-                              'messageId': _selectedMessageId,
-                              'userId': _selectedMessageUserId,
-                              'name': _messageToReplyUserName,
-                              'message': _messageToReply,
-                              'media': _mediaToReply,
-                            }
-                          : null,
-                      'file': fileUrl,
-                    };
-
-                    context.read<ChatGroupCubit>().sendMessage(payload, true);
-
-                    isReply = false;
-
-                    messageEC.clear();
-
-                    _messageToReply = null;
-                    _mediaToReply = null;
-                    _selectedMessageId = null;
-                    _messageToReplyUserName = null;
-                    _selectedMessageUserId = null;
-
-                    imageToUpload = null;
-                    _videoFile = null;
-                    _pickedFile = null;
-                  }
-                }
-              },
-              builder: (context, state) {
-                if (state is UploadFileLoadingState) {
-                  return CustomCircularIndicator();
-                }
-                return InkWell(
-                  onTap: () async {
-                    if (!widget.chatRoom.isJoined) {
-                      _showJoinGroupBottomSheet(context);
-                    } else {
-                      if (imageToUpload != null) {
-                        context.read<UploadFileBloc>().add(
-                              UploadFilePressedEvent(file: imageToUpload!),
-                            );
-                      } else if (messageEC.text.trim() != "") {
-                        final payload = {
-                          'groupId': widget.roomId,
-                          'message': messageEC.text,
-                          'repliedTo': isReply
-                              ? {
-                                  'messageId': _selectedMessageId,
-                                  'userId': _selectedMessageUserId,
-                                  'name': _messageToReplyUserName,
-                                  'message': _messageToReply,
-                                  'mediaLink': _mediaToReply,
-                                }
-                              : null,
-                          'file': null,
-                        };
-
-                        context
-                            .read<ChatGroupCubit>()
-                            .sendMessage(payload, true);
-                        isReply = false;
-
-                        messageEC.clear();
-                        _mediaToReply = null;
-                        _messageToReply = null;
-                        _selectedMessageId = null;
-                        _messageToReplyUserName = null;
-                        _selectedMessageUserId = null;
-
-                        imageToUpload = null;
-                        _videoFile = null;
-                        _pickedFile = null;
-                      }
-                    }
-                    // if (imageToUpload != null) {
-                    //   context
-                    //       .read<UploadFileBloc>()
-                    //       .add(UploadFilePressedEvent(file: imageToUpload!));
-                    // } else if (_videoFile != null) {
-                    //   context
-                    //       .read<UploadFileBloc>()
-                    //       .add(UploadFilePressedEvent(file: _videoFile!));
-                    // } else if (_pickedFile != null) {
-                    //   context
-                    //       .read<UploadFileBloc>()
-                    //       .add(UploadFilePressedEvent(file: _pickedFile!));
-                    // } else {
-                    //   if (messageEC.text.trim() != "") {
-                    //     final payload = {
-                    //       'groupId': widget.roomId,
-                    //       'message': messageEC.text,
-                    //       'repliedTo': isReply
-                    //           ? {
-                    //               'messageId': _selectedMessageId,
-                    //               'userId': _selectedMessageUserId,
-                    //               'name': _messageToReplyUserName,
-                    //               'message': _messageToReply,
-                    //               'media': null,
-                    //             }
-                    //           : null,
-                    //       'file': imgUrl,
-                    //     };
-
-                    //     context
-                    //         .read<ChatGroupCubit>()
-                    //         .sendMessage(payload, true);
-
-                    //     imageToUpload = null;
-                    //     _selectedMessageId = null;
-                    //     _messageToReply = null;
-                    //     _messageToReplyUserName = null;
-                    //     isReply = false;
-                    //     messageEC.clear();
-                    //     _videoFile = null;
-                    //     _pickedFile = null;
-                    //   }
-                    // }
-                    // }
-                  },
-                  child: Opacity(
-                    opacity: (isCommentFilled ||
-                            imageToUpload != null ||
-                            _videoFile != null ||
-                            _pickedFile != null)
-                        ? 1
-                        : 0.3,
-                    child: Container(
-                      height: 48,
-                      width: 48,
-                      decoration: BoxDecoration(
-                        color: (isCommentFilled ||
-                                imageToUpload != null ||
-                                _videoFile != null ||
-                                _pickedFile != null)
-                            ? AppColors.primaryColor
-                            : Colors.grey[500],
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.arrow_upward,
-                        color: Colors.white,
-                        size: 30,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void showMediaOption() {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.image, color: Colors.blue),
-                title: Text("Pick Image"),
-                onTap: () {
-                  Navigator.pop(context);
-                  pickImage();
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.videocam, color: Colors.red),
-                title: Text("Pick Video"),
-                // onTap: () => _pickVideo(),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickVideoFromGallery();
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.insert_drive_file, color: Colors.green),
-                title: Text("Pick File"),
-                onTap: () {
-                  Navigator.pop(context);
-                  pickFile();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  // static Future<void> _pickImage(BuildContext context) async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-  //   Navigator.pop(context, image?.path);
-  // }
-
-  // static Future<void> _pickVideo(BuildContext context) async {
-  //   final ImagePicker picker = ImagePicker();
-  //   final XFile? video = await picker.pickVideo(source: ImageSource.gallery);
-  //   Navigator.pop(context, video?.path);
-  // }
-
-  // static Future<void> _pickFile(BuildContext context) async {
-  //   FilePickerResult? result = await FilePicker.platform.pickFiles();
-  //   Navigator.pop(context, result?.files.single.path);
-  // }
-
-  String formatDate(String dateStr) {
-    try {
-      DateFormat format = DateFormat("yyyy-MM-dd");
-      DateFormat dateFormat = DateFormat('d MMMM yyyy');
-      DateTime dateTime = format.parse(dateStr);
-
-      return dateFormat.format(dateTime);
-    } catch (e) {
-      return "";
-    }
-  }
-
-  String onlyDate(String dateStr) {
-    try {
-      DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
-      DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-      DateTime dateTime = format.parse(dateStr);
-
-      return dateFormat.format(dateTime);
-    } catch (e) {
-      return "";
-    }
-  }
-
-  /// pinned message area
-  // Widget pinnedMessageArea(List<PinnedMessageModel> pinnedMessages) {
-  //   return Column(
-  //     children: pinnedMessages
-  //         .map((pinMsg) => ChatMessagePinnedWidget(
-  //               message: pinMsg,
-  //               // isAdmin: false,
-  //               onClose: () {
-  //                 setState(() {
-  //                   showPinned = false;
-  //                 });
-  //               },
-  //               // onUnpin: (messageTobeUnPinned) {
-  //               //   setState(() {
-  //               //     showPinned = false;
-  //               //   });
-  //               // },
-  //             ))
-  //         .toList(),
-  //   );
-  // }
-
-  /// show join group sheet
-  void _showJoinGroupBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      useRootNavigator: true,
-      showDragHandle: true,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SvgPicture.asset(
-                'assets/chat-icon.svg',
-                height: 70,
-                width: 70,
-              ),
-
-              SizedBox(height: 12),
-
-              // Title
-              Text(
-                "Oops! You're not part of this group yet.",
-                textAlign: TextAlign.center,
-                softWrap: true,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-
-              // Subtitle
-              Text(
-                "Become part of the group and join the conversation.",
-                textAlign: TextAlign.center,
-                softWrap: true,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.black87,
-                ),
-              ),
-              SizedBox(height: 20),
-
-              // Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(color: Colors.grey),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                      child: Text("Cancel"),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        joinGroupBottomSheet(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                        ),
-                      ),
-                      child: Text(
-                        "Join Group",
-                        style: TextStyle(
-                          color: AppColors.whiteColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  /// join group bottom sheet
-  Future<dynamic> joinGroupBottomSheet(BuildContext context) async {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      showDragHandle: true,
-      backgroundColor: AppColors.whiteColor,
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.join_Community,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 10),
-              Text(
-                AppLocalizations.of(context)!
-                    .are_you_sure_you_want_to_join_this_community,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16),
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Cancel Button
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey[300],
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.cancel,
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  // Confirm Button
-                  Expanded(
-                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
-                      listener: (context, state) {
-                        /// failure state
-                        if (state is JoinGroupFailureState) {
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppLocalizations.of(context)!
-                                      .something_went_wrong,
-                                ),
-                              ),
-                            );
-                          }
-                        }
-
-                        /// success state
-                        if (state is JoinGroupSuccessState) {
-                          communityMainCubit.init();
-                          context.push('/group-details/${widget.roomId}');
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  AppLocalizations.of(context)!
-                                      .group_joined_successfully,
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                      builder: (context, state) {
-                        ///loading state
-                        if (state is JoinGroupLoadingState) {
-                          return CustomCircularIndicator();
-                        }
-                        return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryColor,
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            BlocProvider.of<JoinGroupBloc>(context)
-                                .add(JoinGroupButtonPressedEvent(
-                              communityId: widget.roomId,
-                            ));
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.join,
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  /// NO message screen
-  Widget NoMessage() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            'assets/empty_chat.svg',
-          ),
-          CustomSizedBox(
-            height: 12,
-          ),
-          Text(
-            'Welcome to chat',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          CustomSizedBox(
-            height: 4,
-          ),
-          Text(
-            'Engage by joining communities or sending direct messages.',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.normal,
-            ),
-            textAlign: TextAlign.center,
-            softWrap: true,
-          )
-        ],
-      ),
-    );
-  }
-
   // BUILD
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (_overlayEntry == null) {
-          context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
-          Navigator.pop(context);
-        }
-        if (_overlayEntry != null) {
-          _removeOverlay();
-        }
+        context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+        Navigator.pop(context);
       },
       child: BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
         listener: (BuildContext context, CommunityDetailsState state) {
+          // FAILURE STATE
           if (state.status == Status.failure) {
             showSnackBar(
               context: context,
               message: 'oops something went wrong',
             );
           }
+          // SUCCESS STATE
           if (state.status == Status.success) {
             admins = state.community?.admins ?? [];
             members = state.community?.users ?? [];
-            print('admins:${state.community?.admins}');
-
-            print('member:${state.community?.users}');
           }
         },
         builder: (context, state) {
           return Scaffold(
-            backgroundColor: AppColors.lightBackgroundColor,
+            backgroundColor: AppColors.whiteColor,
             // APPBAR AREA
             appBar: AppBar(
               automaticallyImplyLeading: false,
@@ -926,7 +290,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 IconButton(
                   onPressed: () {
                     bool isAdmin = isCurrentUserAdmin();
-
                     context.push(
                       '/group-chat-pinned-message/${widget.roomId}/${isAdmin ? "true" : "false"}',
                     );
@@ -937,21 +300,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     color: AppColors.greyColor,
                   ),
                 ),
-                // IconButton(
-                //   onPressed: () {
-                //     // DO SOME ACTION ONTAP MENU ICON
-                //   },
-                //   icon: Icon(
-                //     Icons.more_vert_outlined,
-                //     size: 24,
-                //   ),
-                // ),
                 const SizedBox(width: 10),
               ],
             ),
             // BODY AREA
             body: BlocConsumer<ChatGroupCubit, ChatGroupState>(
-              // BLOC LISTENER
               listener: (context, state) {
                 // FAILURE STATE
                 if (state.status == Status.failure) {
@@ -961,23 +314,13 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                         state.failure?.message ?? 'oops something went wrong',
                   );
                 }
-                // SUCCESS STATE WITH IS LOADING FALSE
+                // SUCCESS STATE WITH IS LOADING MORE MESSAGE FALSE
                 if (state.status == Status.success && !_isLoadingMore) {
-                  // _shouldScrollToBottom = true;
-                  // _scrollToBottom();
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     _scrollToEnd();
                   });
                 }
-                // if (state.status == Status.success && state.page == 1) {
 
-                //   // _scrollToEnd();
-                //   Future.delayed(Duration(milliseconds: 100), () {
-                //     if (_scrollController.hasClients) {
-                //       _scrollToEnd();
-                //     }
-                //   });
-                // }
                 /// success state
                 if (state.status == Status.success && state.page == 1) {
                   // Ensure the scroll action occurs after the widget layout is completed
@@ -1043,10 +386,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                     context: context,
                                     message: state.message,
                                   );
-                                  // showSnackBar(
-                                  //   context: context,
-                                  //   message: 'message pinned',
-                                  // );
                                 }
                                 // FAILURE STATE
                                 if (state is PinMessagesStateFailureState) {
@@ -1088,15 +427,56 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                         index == state.messages.length) {
                                       return CustomCircularIndicator();
                                     }
+                                    final bool isNewDate = index == 0 ||
+                                        DateUtilsHelper.simplifyISOtimeString(
+                                              state.messages[index].date
+                                                  .toString(),
+                                            ) !=
+                                            DateUtilsHelper
+                                                .simplifyISOtimeString(
+                                              state.messages[index - 1].date
+                                                  .toString(),
+                                            );
 
-                                    return ChatMessageGroupWidget(
-                                      message: msg,
-                                      isCurrentUser:
-                                          (msg.author?.id == cuurentUserId),
-                                      isAdmin: isAdmin,
-                                      isNewMsg: isNewMsg,
-                                      isSenderAdmin: isSenderAdmin,
-                                      senderProfilePic: senderProfilePic,
+                                    return Column(
+                                      children: [
+                                        if (isNewDate)
+                                          Container(
+                                            margin: const EdgeInsets.symmetric(
+                                              vertical: 12,
+                                            ),
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 12,
+                                              vertical: 2,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.primaryColor
+                                                  .withOpacity(.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                            child: Text(
+                                              '${formatTimeDifference(
+                                                state.messages[index].date
+                                                    .toString(),
+                                              )} ',
+                                              style: TextStyle(
+                                                color: AppColors.primaryColor,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ),
+                                        ChatMessageGroupWidget(
+                                          message: msg,
+                                          isCurrentUser:
+                                              (msg.author?.id == cuurentUserId),
+                                          isAdmin: isAdmin,
+                                          isNewMsg: isNewMsg,
+                                          isSenderAdmin: isSenderAdmin,
+                                          senderProfilePic: senderProfilePic,
+                                        ),
+                                      ],
                                     );
                                   },
                                 ),
@@ -1221,7 +601,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                   child: Image.file(
                                     imageToUpload!,
-                                    // width: 250,
                                     height: 150,
                                     fit: BoxFit.fill,
                                   ),
@@ -1246,6 +625,43 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  // NO MESSAGE WIDGET
+  Widget NoMessage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            'assets/empty_chat.svg',
+          ),
+          CustomSizedBox(
+            height: 12,
+          ),
+          Text(
+            'Welcome to chat',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          CustomSizedBox(
+            height: 4,
+          ),
+          Text(
+            'Engage by joining communities or sending direct messages.',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.normal,
+            ),
+            textAlign: TextAlign.center,
+            softWrap: true,
+          )
+        ],
       ),
     );
   }
@@ -1294,6 +710,198 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     );
   }
 
+  // MESSAGE INPUT AREA
+  Widget messageInputSection() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 16,
+          bottom: 16,
+          top: 4,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                maxLines: null,
+                textCapitalization: TextCapitalization.sentences,
+                controller: messageEC,
+                focusNode: messageFocusNode,
+                onChanged: (value) {
+                  if (value.trim() != "") {
+                    setState(() {
+                      isCommentFilled = messageEC.text.isNotEmpty;
+                    });
+                  }
+                },
+                decoration: InputDecoration(
+                  suffixIcon: GestureDetector(
+                    onTap: pickImage,
+                    // onTap: showMediaOption,
+                    child: Icon(
+                      Icons.photo_camera_back_outlined,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  hintText: isReply ? 'Reply' : 'Message',
+                  hintStyle: TextStyle(color: Colors.grey[500]),
+                  border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  isDense: true,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+
+            // SEND BUTTONS
+
+            BlocConsumer<UploadFileBloc, UploadFileState>(
+              listener: (context, state) {
+                // FAILURE STATE
+                if (state is UploadFileFailureState) {
+                  isReply = false;
+
+                  messageEC.clear();
+
+                  _messageToReply = null;
+                  _mediaToReply = null;
+                  _selectedMessageId = null;
+                  _messageToReplyUserName = null;
+                  _selectedMessageUserId = null;
+
+                  imageToUpload = null;
+                  _videoFile = null;
+                  _pickedFile = null;
+
+                  showSnackBar(context: context, message: state.error);
+                }
+                // SUCCESS STATE
+                if (state is UploadFileSuccessState) {
+                  String fileUrl = state.url;
+
+                  if (messageEC.text.trim() != "" || imageToUpload != null) {
+                    final payload = {
+                      'groupId': widget.roomId,
+                      'message': messageEC.text,
+                      'repliedTo': isReply
+                          ? {
+                              'messageId': _selectedMessageId,
+                              'userId': _selectedMessageUserId,
+                              'name': _messageToReplyUserName,
+                              'message': _messageToReply,
+                              'media': _mediaToReply,
+                            }
+                          : null,
+                      'file': fileUrl,
+                    };
+
+                    context.read<ChatGroupCubit>().sendMessage(payload, true);
+
+                    isReply = false;
+
+                    messageEC.clear();
+
+                    _messageToReply = null;
+                    _mediaToReply = null;
+                    _selectedMessageId = null;
+                    _messageToReplyUserName = null;
+                    _selectedMessageUserId = null;
+
+                    imageToUpload = null;
+                    _videoFile = null;
+                    _pickedFile = null;
+                  }
+                }
+              },
+              builder: (context, state) {
+                // LOADING STATE
+                if (state is UploadFileLoadingState) {
+                  return CustomCircularIndicator();
+                }
+                return InkWell(
+                  onTap: () async {
+                    if (!widget.chatRoom.isJoined) {
+                      _showJoinGroupBottomSheet(context);
+                    } else {
+                      if (imageToUpload != null) {
+                        context.read<UploadFileBloc>().add(
+                              UploadFilePressedEvent(file: imageToUpload!),
+                            );
+                      } else if (messageEC.text.trim() != "") {
+                        final payload = {
+                          'groupId': widget.roomId,
+                          'message': messageEC.text,
+                          'repliedTo': isReply
+                              ? {
+                                  'messageId': _selectedMessageId,
+                                  'userId': _selectedMessageUserId,
+                                  'name': _messageToReplyUserName,
+                                  'message': _messageToReply,
+                                  'mediaLink': _mediaToReply,
+                                }
+                              : null,
+                          'file': null,
+                        };
+
+                        context
+                            .read<ChatGroupCubit>()
+                            .sendMessage(payload, true);
+                        isReply = false;
+
+                        messageEC.clear();
+                        _mediaToReply = null;
+                        _messageToReply = null;
+                        _selectedMessageId = null;
+                        _messageToReplyUserName = null;
+                        _selectedMessageUserId = null;
+
+                        imageToUpload = null;
+                        _videoFile = null;
+                        _pickedFile = null;
+                      }
+                    }
+                  },
+                  child: Opacity(
+                    opacity: (isCommentFilled ||
+                            imageToUpload != null ||
+                            _videoFile != null ||
+                            _pickedFile != null)
+                        ? 1
+                        : 0.3,
+                    child: Container(
+                      height: 48,
+                      width: 48,
+                      decoration: BoxDecoration(
+                        color: (isCommentFilled ||
+                                imageToUpload != null ||
+                                _videoFile != null ||
+                                _pickedFile != null)
+                            ? AppColors.primaryColor
+                            : Colors.grey[500],
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_upward,
+                        color: Colors.white,
+                        size: 30,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 // CLEAR REPLY
   void _clearReply() {
     setState(() {
@@ -1304,7 +912,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       _selectedMessageUserId = null;
       isReply = false;
       FocusScope.of(context).unfocus();
-      // FocusScope.of(context).requestFocus(messageFocusNode);
     });
   }
 
@@ -1318,22 +925,21 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     required String senderProfilePic,
     required bool isNewMsg,
   }) {
-    print('url:${message.pictureUrl}');
     return GestureDetector(
       onLongPress: () {
-        if (isAdmin) {
-          showPinMessageDialog(
-            context: context,
-            message: message,
-            onPin: () {
-              BlocProvider.of<PinMessageBloc>(context).add(
-                PinnedAMessagesEvent(
-                  messageId: message.id,
-                ),
-              );
-            },
-          );
-        }
+        showMessageOptions(
+          context: context,
+          isAdmin: isAdmin,
+          isOwnMessage: message.isMine,
+          onPin: () {
+            FocusScope.of(context).unfocus();
+            BlocProvider.of<PinMessageBloc>(context).add(
+              PinnedAMessagesEvent(
+                messageId: message.id,
+              ),
+            );
+          },
+        );
       },
       child: SwipeTo(
         onRightSwipe: (details) {
@@ -1347,12 +953,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           });
 
           Future.delayed(Duration(milliseconds: 100), () {
-            print('this is url:$_mediaToReply');
-            if (context.mounted) {
+            if (mounted) {
               FocusScope.of(context).requestFocus(messageFocusNode);
             }
           });
-          // FocusScope.of(context).requestFocus(messageFocusNode);
         },
         child: Container(
           color: isCurrentUser
@@ -1561,6 +1165,82 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       ),
     );
   }
+// SHOW MESSAGE OPTIONS
+
+  void showMessageOptions({
+    required BuildContext context,
+    required bool isAdmin,
+    required bool isOwnMessage,
+    required VoidCallback onPin,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      useRootNavigator: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) {
+        return Wrap(
+          children: [
+            if (isAdmin)
+              BlocConsumer<PinMessageBloc, PinMessagesState>(
+                listener: (context, state) {
+                  if (state is PinMessagesStateFailureState) {
+                    Navigator.pop(context);
+                    showSnackBar(
+                      context: context,
+                      message: "oops something went wrong!",
+                    );
+                  } else if (state is PinMessagesStateSuccessState) {
+                    Navigator.pop(context);
+                    showSnackBar(
+                      context: context,
+                      message: "Message pinned successfully!",
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  if (state is PinMessagesStateLoadingState) {
+                    return Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: CustomCircularIndicator(),
+                        ),
+                      ],
+                    );
+                  }
+                  return ListTile(
+                    leading: Icon(Icons.push_pin),
+                    title: Text('Pin Message'),
+                    onTap: () {
+                      onPin();
+                    },
+                  );
+                },
+              ),
+            if (isOwnMessage || isAdmin)
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text('Delete Message'),
+                onTap: () {
+                  // Handle delete message logic
+                  Navigator.pop(context);
+                },
+              ),
+            ListTile(
+              leading: Icon(Icons.report),
+              title: Text('Report Message'),
+              onTap: () {
+                // Handle report message logic
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   // ADMIN BUBBLE
   Widget isAdminBubble() {
@@ -1582,495 +1262,182 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     );
   }
 
-// PINNED MESSAGE POP UP
-  void showPinMessageDialog({
-    required BuildContext context,
-    required ChatMessageModel message,
-    required VoidCallback onPin,
-  }) {
-    showDialog(
+  // SHOW JOIN COMMUNITY BOTTOM SHEET
+  void _showJoinGroupBottomSheet(BuildContext context) {
+    showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
-        final double maxHeight = MediaQuery.of(context).size.height * 0.7;
-        return Dialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return BlocConsumer<PinMessageBloc, PinMessagesState>(
-                listener: (context, state) {
-                  if (state is PinMessagesStateFailureState) {
-                    Navigator.pop(context);
-                    showSnackBar(
-                        context: context,
-                        message: "oops something went wrong!");
-                  } else if (state is PinMessagesStateSuccessState) {
-                    showSnackBar(
-                        context: context,
-                        message: "Message pinned successfully!");
-                  }
-                },
-                builder: (context, state) {
-                  return Container(
-                    padding: EdgeInsets.all(16),
-                    constraints: BoxConstraints(
-                      maxHeight: maxHeight,
+      backgroundColor: Colors.white,
+      useRootNavigator: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SvgPicture.asset(
+                'assets/chat-icon.svg',
+                height: 70,
+                width: 70,
+              ),
+
+              SizedBox(height: 12),
+
+              // TITLE
+              Text(
+                "Oops! You're not part of this group yet.",
+                textAlign: TextAlign.center,
+                softWrap: true,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+
+              // SUBTITLE
+              Text(
+                "Become part of the group and join the conversation.",
+                textAlign: TextAlign.center,
+                softWrap: true,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // CANCEL BUTTON
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                      ),
+                      child: Text("Cancel"),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: SingleChildScrollView(
-                            child: Container(
-                              padding: EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade200,
-                                borderRadius: BorderRadius.circular(8),
+                  ),
+                  SizedBox(width: 12),
+                  // JOIN GROUP BUTTOM
+                  Expanded(
+                    child: BlocConsumer<JoinGroupBloc, JoinGroupState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state is JoinGroupFailureState) {
+                          if (mounted) {
+                            Navigator.pop(context);
+                            showSnackBar(
+                              context: context,
+                              message: state.error,
+                            );
+                          }
+                        }
+
+                        // SUCCESS STATE
+                        if (state is JoinGroupSuccessState) {
+                          Navigator.pop(context);
+                          communityMainCubit.init();
+                          context.push('/group-details/${widget.roomId}');
+                          showSnackBar(
+                            context: context,
+                            message: AppLocalizations.of(context)!
+                                .group_joined_successfully,
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state is JoinGroupLoadingState) {
+                          return CustomCircularIndicator();
+                        }
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                          ),
+                          onPressed: () {
+                            BlocProvider.of<JoinGroupBloc>(context).add(
+                              JoinGroupButtonPressedEvent(
+                                communityId: widget.roomId,
                               ),
-                              child: Linkify(
-                                options: LinkifyOptions(
-                                  looseUrl: true,
-                                ),
-                                onOpen: (link) async {
-                                  if (await canLaunchUrl(Uri.parse(link.url))) {
-                                    await launchUrl(Uri.parse(link.url),
-                                        mode: LaunchMode.externalApplication);
-                                  } else {
-                                    throw "Could not launch ${link.url}";
-                                  }
-                                },
-                                text: message.text,
-                                style: const TextStyle(fontSize: 16),
-                                linkStyle: const TextStyle(
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
+                            );
+                          },
+                          child: Text(
+                            AppLocalizations.of(context)!.join,
+                            style: TextStyle(
+                              color: Colors.white,
                             ),
                           ),
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            TextButton.icon(
-                              onPressed: () => Navigator.pop(context),
-                              icon: Icon(
-                                Icons.cancel,
-                                color: AppColors.greyColor,
-                              ),
-                              label: Text(
-                                "Cancel",
-                                style: TextStyle(
-                                  color: AppColors.greyColor,
-                                ),
-                              ),
-                            ),
-                            TextButton.icon(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                onPin();
-                              },
-                              icon: Icon(
-                                Icons.push_pin,
-                                color: AppColors.primaryColor,
-                              ),
-                              label: Text(
-                                "Pin Message",
-                                style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        );
+                      },
                     ),
-                  );
-                },
-              );
-            },
+                  ),
+                ],
+              ),
+            ],
           ),
         );
       },
     );
   }
 
-  void _removeOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-  }
-
-  void _showOverlay(BuildContext context, ChatMessageModel message) {
-    final overlay = Overlay.of(context, rootOverlay: true);
-    if (overlay == null) return; // Prevent crash
-    _overlayEntry = OverlayEntry(
-      builder: (context) => GestureDetector(
-        onTap: () {
-          // setState(() {
-          //   showReplyInput = false;
-          // });
-          _removeOverlay();
-        },
-        child: Material(
-          child: Container(
-            color: Colors.black54,
-            alignment: Alignment.bottomCenter,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    margin: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10, left: 10),
-                          child: UserAvatarStyledWidget(
-                            avatarUrl: message.author!.avatarUrl,
-                            avatarBorderSize: 0,
-                            avatarSize: 22,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 7,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      message.author?.name ?? '',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      convertToIndianTime(
-                                        message.date,
-                                      ),
-                                      // DateUtilsHelper
-                                      //     .simplifyISOtimeStringOnlyHour(
-                                      //         widget.message.date),
-                                      // formatTime(widget.message.date),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black45,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    if (message.author?.isAdmin == true ||
-                                        message.isAdmin == true) ...[
-                                      isAdminBubble(),
-                                    ],
-                                    Expanded(
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              // showReplyInput = false;
-                                              // FocusScope.of(context).requestFocus(messageFocusNode);
-                                            });
-                                            _removeOverlay();
-                                          },
-                                          child: Icon(Icons.close),
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Container(
-                                    color: AppColors.whiteColor,
-                                    width: MediaQuery.of(context).size.width,
-                                    child: message.pictureUrl != '' &&
-                                            message.text == ''
-                                        ? Image.network('${message.pictureUrl}')
-                                        : Linkify(
-                                            options: LinkifyOptions(
-                                              looseUrl: true,
-                                            ),
-                                            onOpen: (link) async {
-                                              if (await canLaunchUrl(
-                                                  Uri.parse(link.url))) {
-                                                await launchUrl(
-                                                    Uri.parse(link.url),
-                                                    mode: LaunchMode
-                                                        .externalApplication);
-                                              } else {
-                                                throw "Could not launch ${link.url}";
-                                              }
-                                            },
-                                            text: message.text,
-                                            style:
-                                                const TextStyle(fontSize: 16),
-                                            linkStyle: const TextStyle(
-                                              color: AppColors.primaryColor,
-                                            ),
-                                          )
-                                    // : Text(
-                                    //     widget.message.text,
-                                    //     textAlign: TextAlign.start,
-                                    //     style: TextStyle(
-                                    //       fontSize: 14,
-                                    //       fontWeight: FontWeight.normal,
-                                    //     ),
-                                    //   ),
-                                    ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-
-                  // menu area
-                  Container(
-                    height:
-                        // showReplyInput
-                        //     ? MediaQuery.of(context).size.height * 0.10
-                        //     :
-                        MediaQuery.of(context).size.height * 0.40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      ),
-                    ),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          if (true) ...[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  height: 5,
-                                  width: 40,
-                                  margin: EdgeInsets.all(15),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  // reactionCircle(
-                                  //   assetUrl: 'assets/react5.svg',
-                                  //   onTap: () {
-                                  //     _updateState('cheer');
-                                  //     widget.onTapCheer();
-                                  //     _removeOverlay();
-                                  //   },
-                                  // ),
-                                  // reactionCircle(
-                                  //   assetUrl: 'assets/react6.svg',
-                                  //   onTap: () {
-                                  //     _updateState('boo');
-                                  //     widget.onTapBool();
-                                  //     _removeOverlay();
-                                  //   },
-                                  // ),
-                                  // reactionCircle(
-                                  //   assetUrl: 'assets/Local_Legend.svg',
-                                  //   onTap: () {
-                                  //     // Function(String, String)?
-                                  //     widget.onReact(
-                                  //         widget.message.id, 'Local Legend');
-                                  //     _removeOverlay();
-                                  //   },
-                                  // ),
-                                  // reactionCircle(
-                                  //   assetUrl: 'assets/Sunflower.svg',
-                                  //   onTap: () {
-                                  //     widget.onReact(
-                                  //         widget.message.id, 'Sunflower');
-                                  //     _removeOverlay();
-                                  //   },
-                                  // ),
-                                  // reactionCircle(
-                                  //   assetUrl: 'assets/Streetlight.svg',
-                                  //   onTap: () {
-                                  //     widget.onReact(
-                                  //         widget.message.id, 'Streetlight');
-                                  //     _removeOverlay();
-                                  //   },
-                                  // ),
-                                  // reactionCircle(
-                                  //   assetUrl: 'assets/Park_Bench.svg',
-                                  //   onTap: () {
-                                  //     widget.onReact(
-                                  //         widget.message.id, 'Park Bench');
-                                  //     _removeOverlay();
-                                  //   },
-                                  // ),
-                                  // reactionCircle(
-                                  //   assetUrl: 'assets/Map.svg',
-                                  //   onTap: () {
-                                  //     widget.onReact(widget.message.id, 'Map');
-                                  //     _removeOverlay();
-                                  //   },
-                                  // ),
-                                ],
-                              ),
-                            ),
-                            //const SizedBox(height: 20),
-                            if (message.isAdmin == true)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: MenuIconItem(
-                                    title: 'Pinned message',
-                                    svgPath: 'assets/pinned.svg',
-                                    iconSize: 25,
-                                    onTap: () {
-                                      //widget.onTapPinned(widget.message.id);
-                                      _removeOverlay();
-                                      BlocProvider.of<PinMessageBloc>(context)
-                                          .add(
-                                        PinnedAMessagesEvent(
-                                          messageId: message.id,
-                                        ),
-                                      );
-                                      //widget.onTapReply(widget.message);
-                                      // _removeOverlay();
-                                    }),
-                              ),
-                            //const SizedBox(height: 20),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: MenuIconItem(
-                                  title: 'See Replies',
-                                  svgPath: 'assets/menu_reply_list.svg',
-                                  iconSize: 25,
-                                  onTap: () {
-                                    context.push(
-                                        '/group-chat-thread/${message.id}',
-                                        extra: {
-                                          'message': message,
-                                          'room': widget.chatRoom,
-                                        });
-                                    //widget.onTapReply(widget.message);
-                                    _removeOverlay();
-                                  }),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: MenuIconItem(
-                                  title: 'Reply',
-                                  svgPath: 'assets/menu_reply.svg',
-                                  iconSize: 25,
-                                  onTap: () {
-                                    setState(() {
-                                      //widget.onTapReply(widget.message);
-                                      //showReplyInput = true;
-                                      // FocusScope.of(context).requestFocus(messageFocusNode);
-                                      _removeOverlay();
-                                      context.push(
-                                          '/group-chat-thread/${message.id}',
-                                          extra: {
-                                            'message': message,
-                                            'room': widget.chatRoom,
-                                          });
-                                    });
-
-                                    // setState(() {
-                                    //   if (messageFocusNode.canRequestFocus) {
-                                    //     messageFocusNode.requestFocus();
-                                    //   }
-                                    //   // FocusScope.of(context).requestFocus(messageFocusNode);
-                                    // });
-                                    // _showOverlay(context);
-                                  }),
-                            ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(left: 8.0),
-                            //   child: MenuIconItem(
-                            //       title: 'Share',
-                            //       svgPath: 'assets/menu_share.svg',
-                            //       iconSize: 25,
-                            //       onTap: () {
-                            //         // communityDetailCubit.toggleMute();
-                            //         widget.onShare(widget.message);
-
-                            //         setState(() {
-                            //           showReplyInput = false;
-                            //         });
-                            //         _removeOverlay();
-                            //       }),
-                            // ),
-
-                            /// show pinned option
-                            // if (widget.isAdmin == true)
-                            //   Padding(
-                            //     padding: const EdgeInsets.only(left: 8.0),
-                            //     child: MenuIconItem(
-                            //         title: 'Pinned Message',
-                            //         svgPath: 'assets/menu_pinned.svg',
-                            //         iconSize: 25,
-                            //         textColor: Colors.black,
-                            //         onTap: () {
-                            //           setState(() {
-                            //             showReplyInput = false;
-                            //           });
-                            //           _removeOverlay();
-                            //           widget.onPin(widget.message);
-                            //         }),
-                            //   ),
-
-                            /// report msg
-                            if (message.isAdmin == false)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: MenuIconItem(
-                                    title: 'Report',
-                                    svgPath: 'assets/menu_report_core.svg',
-                                    iconSize: 25,
-                                    textColor: Colors.red,
-                                    onTap: () {
-                                      // setState(() {
-                                      //   showReplyInput = false;
-                                      // });
-                                      _removeOverlay();
-                                      reportReasonBottomSheet(context);
-                                    }),
-                              ),
-                          ],
-                          // if (showReplyInput == true) ...[
-                          //   messageInputSection(),
-                          // ],
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
+// SHOW MEDIA OPTION
+  void showMediaOption() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      useRootNavigator: true,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(
+                  Icons.image,
+                  color: AppColors.blackColor,
+                ),
+                title: Text("Pick Image"),
+                onTap: () {
+                  Navigator.pop(context);
+                  pickImage();
+                },
               ),
-            ),
+              ListTile(
+                leading: Icon(
+                  Icons.videocam,
+                  color: AppColors.blackColor,
+                ),
+                title: Text("Pick Video"),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickVideoFromGallery();
+                },
+              ),
+              ListTile(
+                leading: Icon(
+                  Icons.insert_drive_file,
+                  color: AppColors.blackColor,
+                ),
+                title: Text("Pick File"),
+                onTap: () {
+                  Navigator.pop(context);
+                  pickFile();
+                },
+              ),
+            ],
           ),
-        ),
-      ),
+        );
+      },
     );
-
-    Overlay.of(context).insert(_overlayEntry!);
   }
 
   // REPORT MESSAGE BOTTOM SHEET

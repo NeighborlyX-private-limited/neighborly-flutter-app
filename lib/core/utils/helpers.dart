@@ -9,16 +9,16 @@ String formatTimeDifference(String isoTimestamp) {
   Duration difference = now.difference(inputTime);
 
   if (difference.inDays > 10) {
-    return '${inputTime.day.toString().padLeft(2, '0')}-${inputTime.month.toString().padLeft(2, '0')}-${inputTime.year}';
+    return '${inputTime.day.toString().padLeft(2, '0')}-${inputTime.month.toString().padLeft(2, '0')}-${inputTime.year} ago';
   } else if (difference.inDays >= 1) {
-    return '${difference.inDays}d';
+    return '${difference.inDays} day ago';
   } else if (difference.inHours >= 1) {
     if (difference.inHours == 1) {
-      return '${difference.inHours}hr';
+      return '${difference.inHours} hour ago';
     }
-    return '${difference.inHours}hrs';
+    return '${difference.inHours} hours ago';
   } else if (difference.inMinutes >= 1) {
-    return '${difference.inMinutes}m';
+    return '${difference.inMinutes} mints ago';
   } else {
     return 'Just now';
   }

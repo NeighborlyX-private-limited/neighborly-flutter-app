@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:neighborly_flutter_app/core/constants/status.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,7 +22,7 @@ class CommunityAdminTypeScreen extends StatefulWidget {
 class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
   late CommunityDetailsCubit communityCubit;
   String? selectedOption;
-
+// INIT STATE
   @override
   void initState() {
     super.initState();
@@ -30,22 +31,23 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
         communityCubit.state.community?.isPublic == true ? 'public' : 'private';
   }
 
+// UPDATE COMMUNITY SELECTED TYPE
   void _handleRadioValueChange(String? value) {
     setState(() {
       selectedOption = value;
     });
   }
 
+// BUILD
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
           ),
           onTap: () {
             Navigator.pop(context);
@@ -61,8 +63,10 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
         ),
         centerTitle: false,
         actions: [
+          // SAVE BUTTON
           BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
             listener: (context, state) {
+              // FAILURE STATE
               if (state.status == Status.failure) {
                 showSnackBar(
                   context: context,
@@ -70,6 +74,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                       state.failure?.message ?? 'oops something went wrong',
                 );
               }
+              // SUCCESS STATE
               if (state.status == Status.success) {
                 communityCubit.getCommunityDetail(
                   communityCubit.state.community?.id ?? '',
@@ -81,7 +86,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
               if (state.status == Status.loading) {
                 return Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: BouncingLogoIndicator(logo: ''),
+                  child: CustomCircularIndicator(),
                 );
               }
               return TextButton(
@@ -134,6 +139,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 ),
               ),
               trailing: Radio<String>(
+                activeColor: AppColors.primaryColor,
                 value: 'public',
                 groupValue: selectedOption,
                 onChanged: _handleRadioValueChange,
@@ -165,6 +171,7 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
                 ),
               ),
               trailing: Radio<String>(
+                activeColor: AppColors.primaryColor,
                 value: 'private',
                 groupValue: selectedOption,
                 onChanged: _handleRadioValueChange,

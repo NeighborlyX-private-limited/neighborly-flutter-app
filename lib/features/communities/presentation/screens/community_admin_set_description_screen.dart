@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:neighborly_flutter_app/core/constants/status.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,7 +21,7 @@ class _CommunityAdminDescriptionScreenState
     extends State<CommunityAdminDescriptionScreen> {
   late CommunityDetailsCubit communityCubit;
   final newDescriptionEC = TextEditingController();
-
+// INIT STATE
   @override
   void initState() {
     super.initState();
@@ -29,21 +29,23 @@ class _CommunityAdminDescriptionScreenState
     newDescriptionEC.text = communityCubit.state.community?.description ?? '';
   }
 
+// DISPOSE
   @override
   void dispose() {
     newDescriptionEC.dispose();
     super.dispose();
   }
 
+// BUILD
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         leading: GestureDetector(
           child: Icon(
             Icons.arrow_back_ios,
-            color: Colors.black,
           ),
           onTap: () {
             Navigator.pop(context);
@@ -59,8 +61,10 @@ class _CommunityAdminDescriptionScreenState
         ),
         centerTitle: false,
         actions: [
+          // SAVE BUTTON
           BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
             listener: (context, state) {
+              // FAILURE STATE
               if (state.status == Status.failure) {
                 showSnackBar(
                   context: context,
@@ -68,6 +72,7 @@ class _CommunityAdminDescriptionScreenState
                       state.failure?.message ?? 'oops something went wrong',
                 );
               }
+              // SUCCESS STATE
               if (state.status == Status.success) {
                 communityCubit.getCommunityDetail(
                   communityCubit.state.community?.id ?? '',
@@ -76,10 +81,11 @@ class _CommunityAdminDescriptionScreenState
               }
             },
             builder: (context, state) {
+              // LOADING STATE
               if (state.status == Status.loading) {
                 return Padding(
                   padding: EdgeInsets.only(right: 10),
-                  child: BouncingLogoIndicator(logo: ''),
+                  child: CustomCircularIndicator(),
                 );
               }
               return TextButton(
@@ -111,7 +117,7 @@ class _CommunityAdminDescriptionScreenState
         ],
       ),
       body: Container(
-        padding: EdgeInsets.only(top: 15),
+        padding: EdgeInsets.only(top: 16),
         width: double.infinity,
         color: Colors.white,
         child: SingleChildScrollView(
