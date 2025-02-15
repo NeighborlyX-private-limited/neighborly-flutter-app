@@ -15,7 +15,7 @@ import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
-import '../../../../core/widgets/bouncing_logo_indicator.dart';
+
 import '../../../../core/widgets/custom_snackbar.dart';
 import '../../../../core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';

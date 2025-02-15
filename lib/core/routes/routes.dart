@@ -57,7 +57,6 @@ import '../../features/profile/presentation/screens/user_profile_screen.dart';
 import '../../features/upload/presentation/screens/create_post_screen.dart';
 import '../constants/route_constants.dart';
 import '../models/community_model.dart';
-import '../models/user_simple_model.dart';
 import '../utils/shared_preference.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =

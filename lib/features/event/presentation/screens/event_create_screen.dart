@@ -13,7 +13,6 @@ import 'package:mobkit_dashed_border/mobkit_dashed_border.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/user_simple_model.dart';
-import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/widgets/dropdown_search_field.dart';
@@ -334,8 +333,8 @@ class _EventCreateScreenState extends State<EventCreateScreen> {
             case Status.failure:
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                      Text('oops something went wrong! ${state.failure?.message}'),
+                  content: Text(
+                      'oops something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;

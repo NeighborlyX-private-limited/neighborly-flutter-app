@@ -62,6 +62,27 @@ class SocketService {
         onNewMessageReceived!(message);
       }
     });
+    // MESSAGE DELETED
+    _socket?.on("message-deleted", (data) {
+      print('MESSAGE DELETED:$data');
+      String deletedMessageId = data["messageId"] ?? '';
+      print("MESSAGE DELETED: $deletedMessageId");
+      if (messageDeleted != null) {
+        messageDeleted!(deletedMessageId);
+      }
+    });
+  }
+
+// DELETE MESSAGE
+  void deleteMessage(String groupId, String messageId) {
+    print('MESSAGE DELETE:$groupId $messageId');
+    _socket?.emit(
+      "delete-message",
+      {
+        "groupId": groupId,
+        "messageId": messageId,
+      },
+    );
   }
 
   // SEND MESSAGE EMITTER
@@ -76,6 +97,7 @@ class SocketService {
 
   // CALL BACK FOR NEW MESSAGE RECEIVE
   Function(Map<String, dynamic>)? onNewMessageReceived;
+  Function(String)? messageDeleted;
 
   // JOIN ROOM EMITTER
   void joinRoom(String groupId) async {

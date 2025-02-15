@@ -16,7 +16,7 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/appbat_button.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
-import '../../../../core/widgets/status_bar_color.dart';
+
 import '../bloc/bloc/update_mute_group_bloc.dart';
 import '../bloc/community_detail_cubit.dart';
 import '../widgets/community_details_sheemer.dart';

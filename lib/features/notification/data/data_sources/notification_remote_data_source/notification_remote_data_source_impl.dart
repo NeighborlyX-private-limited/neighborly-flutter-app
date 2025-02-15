@@ -38,7 +38,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
       // ignore: unused_local_variable
       final jsonData = jsonDecode(response.body);
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      // final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
     }
     return currentToken ?? '';
   }

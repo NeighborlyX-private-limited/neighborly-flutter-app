@@ -5,7 +5,6 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:swipe_to/swipe_to.dart';
@@ -19,7 +18,7 @@ import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';
-import '../../../../core/widgets/menu_icon_widget.dart';
+
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../communities/presentation/bloc/bloc/join_group_bloc.dart';
 import '../../../communities/presentation/bloc/communities_main_cubit.dart';
@@ -111,6 +110,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   bool isCurrentUserAdmin() {
     return admins!.any((admin) => admin.id == cuurentUserId);
   }
+
+  // void _deleteMessage(String messageId, String groupId) {
+  //   chatGroupCubit.deleteMessage(groupId, messageId);
+  // }
 
 // CHECK IF SENDER USER IS AN ADMIN
   bool isSenderAnAdmin(String userId) {
@@ -942,6 +945,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         );
       },
       child: SwipeTo(
+        // swipeSensitivity: 5,
         onRightSwipe: (details) {
           setState(() {
             isReply = true;
@@ -978,19 +982,26 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!isCurrentUser && isNewMsg)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: senderProfilePic != ''
-                            ? CircleAvatar(
-                                backgroundImage: NetworkImage(senderProfilePic),
-                                radius: 16,
-                                backgroundColor: AppColors.greyColor,
-                              )
-                            : SvgPicture.asset(
-                                'assets/default-icon.svg',
-                                height: 26,
-                                width: 26,
-                              ),
+                      GestureDetector(
+                        onTap: () {
+                          context
+                              .push('/userProfileScreen/${message.author?.id}');
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: senderProfilePic != ''
+                              ? CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(senderProfilePic),
+                                  radius: 16,
+                                  backgroundColor: AppColors.greyColor,
+                                )
+                              : SvgPicture.asset(
+                                  'assets/default-icon.svg',
+                                  height: 26,
+                                  width: 26,
+                                ),
+                        ),
                       ),
                     if (!isCurrentUser && !isNewMsg)
                       Padding(
@@ -1036,21 +1047,27 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                             children: [
                               // SENDER NAME
                               if (!isCurrentUser)
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      message.author?.name ?? '',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppColors.primaryColor,
+                                GestureDetector(
+                                  onTap: () {
+                                    context.push(
+                                        '/userProfileScreen/${message.author?.id}');
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        message.author?.name ?? '',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primaryColor,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    // CHECK IF SENDER IS AN ADMIN
-                                    if (isSenderAdmin) isAdminBubble(),
-                                  ],
+                                      const SizedBox(width: 5),
+                                      // CHECK IF SENDER IS AN ADMIN
+                                      if (isSenderAdmin) isAdminBubble(),
+                                    ],
+                                  ),
                                 ),
 
                               // SHOW REPLIED MESSAGE

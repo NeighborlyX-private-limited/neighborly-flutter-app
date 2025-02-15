@@ -9,7 +9,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../../../core/constants/status.dart';
 import '../../../../core/error/failures.dart';
-import '../../../../core/utils/shared_preference.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../data/model/chat_room_model.dart';
 import '../../domain/usecases/get_all_chat_rooms_usecase_thread.dart';

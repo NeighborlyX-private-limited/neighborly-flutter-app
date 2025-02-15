@@ -192,13 +192,13 @@ class _EventJoinScreenState extends State<EventJoinScreen> {
             case Status.failure:
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                      Text('oops something went wrong! ${state.failure?.message}'),
+                  content: Text(
+                      'oops something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
             case Status.success:
-              var message = state.successMessage ?? 'success';
+              // var message = state.successMessage ?? 'success';
 
               Navigator.of(context).pop();
               context.push('/events/success/join', extra: state.eventJoin);

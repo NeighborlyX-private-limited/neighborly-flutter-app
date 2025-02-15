@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
@@ -361,8 +361,8 @@ class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
                           itemBuilder: (context, index) {
                             var msg = state.messages[index];
 
-                            var dateSummary =
-                                onlyDate(state.messages[index].date);
+                            // var dateSummary =
+                            //     onlyDate(state.messages[index].date);
 
                             var messageWidget = ChatMessageGroupWidget(
                               message: msg,

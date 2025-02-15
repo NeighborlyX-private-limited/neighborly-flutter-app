@@ -29,6 +29,25 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     // FEATCH GROUP MESSAGES
     await getGroupRoomMessages(roomId: roomId);
 
+    // LISTEN DELETED MESSAGE
+
+    // addMessage(String messageId) {
+    //   List<ChatMessageModel> oldMessages =
+    //       List<ChatMessageModel>.from(state.messages);
+
+    //   // oldMessages = oldMessages.map((message) {
+    //   //   if (message.id == messageId) {
+    //   //     return state.copyWith(isDeleted: true);
+    //   //   }
+    //   //   return message;
+    //   // }).toList();
+    //   final updatedMessageList = [
+    //     ...oldMessages,
+    //   ];
+    //   emit(
+    //       state.copyWith(status: Status.success, messages: updatedMessageList));
+    // }
+
     // LISTEN NEW MESSAGE
     socketService.onNewMessageReceived = (message) {
       print('NEW MESSAGE RECEIVED:$message');
