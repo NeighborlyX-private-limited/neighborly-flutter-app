@@ -26,7 +26,7 @@ class ChatGroupState extends Equatable {
         errorMessage,
         imageToUpload,
         roomId,
-        messages,
+        List.of(messages),
         page,
       ];
 

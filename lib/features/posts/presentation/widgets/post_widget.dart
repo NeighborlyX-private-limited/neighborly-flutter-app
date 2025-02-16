@@ -229,15 +229,6 @@ class _PostWidgetState extends State<PostWidget> {
                       color: AppColors.primaryColor,
                     ),
                   )
-                // ? Text(
-                //     widget.post.content!,
-                //     textAlign: TextAlign.start,
-                //     style: TextStyle(
-                //       color: Colors.grey[800],
-                //       fontSize: 15,
-                //       height: 1.3,
-                //     ),
-                //   )
                 : Container(),
             widget.post.multimedia!.isNotEmpty
                 ? const SizedBox(
@@ -468,7 +459,7 @@ class _PostWidgetState extends State<PostWidget> {
                         context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                 type: 'content',
-                                postId: widget.post.id,
+                                postId: widget.post.id.toString(),
                                 reason: reportReasons[0],
                               ),
                             );
@@ -492,7 +483,7 @@ class _PostWidgetState extends State<PostWidget> {
                         context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                 type: 'content',
-                                postId: widget.post.id,
+                                postId: widget.post.id.toString(),
                                 reason: reportReasons[1],
                               ),
                             );
@@ -516,7 +507,7 @@ class _PostWidgetState extends State<PostWidget> {
                         context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                 type: 'content',
-                                postId: widget.post.id,
+                                postId: widget.post.id.toString(),
                                 reason: reportReasons[2],
                               ),
                             );
@@ -540,7 +531,7 @@ class _PostWidgetState extends State<PostWidget> {
                         context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                 type: 'content',
-                                postId: widget.post.id,
+                                postId: widget.post.id.toString(),
                                 reason: reportReasons[3],
                               ),
                             );
@@ -564,7 +555,7 @@ class _PostWidgetState extends State<PostWidget> {
                         context.read<ReportPostBloc>().add(
                               ReportButtonPressedEvent(
                                 type: 'content',
-                                postId: widget.post.id,
+                                postId: widget.post.id.toString(),
                                 reason: reportReasons[4],
                               ),
                             );

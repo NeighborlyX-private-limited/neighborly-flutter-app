@@ -11,6 +11,7 @@ class ChatMessageEntity extends Equatable {
   final bool hasMore;
   final bool isAdmin;
   final bool isPinned;
+  final bool isDeleted;
   final int repliesCount;
   final int cheers;
   final int boos;
@@ -28,6 +29,7 @@ class ChatMessageEntity extends Equatable {
     required this.hasMore,
     required this.isAdmin,
     required this.isPinned,
+    required this.isDeleted,
     required this.repliesCount,
     required this.cheers,
     required this.boos,
@@ -38,5 +40,22 @@ class ChatMessageEntity extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [
+        id,
+        text,
+        date,
+        isMine,
+        readByuser,
+        hasMore,
+        isAdmin,
+        isPinned,
+        isDeleted,
+        repliesCount,
+        cheers,
+        boos,
+        booOrCheer,
+        pictureUrl,
+        author,
+        reply
+      ];
 }

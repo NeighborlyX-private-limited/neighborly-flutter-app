@@ -23,6 +23,7 @@ import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../communities/presentation/bloc/bloc/join_group_bloc.dart';
 import '../../../communities/presentation/bloc/communities_main_cubit.dart';
 import '../../../communities/presentation/bloc/community_detail_cubit.dart';
+import '../../../posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import '../../../upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../data/model/chat_room_model.dart';
@@ -928,10 +929,33 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     required String senderProfilePic,
     required bool isNewMsg,
   }) {
+    if (message.isDeleted) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                "This message was deleted",
+                style:
+                    TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return GestureDetector(
       onLongPress: () {
         showMessageOptions(
           context: context,
+          messageId: message.id,
           isAdmin: isAdmin,
           isOwnMessage: message.isMine,
           onPin: () {
@@ -1186,6 +1210,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
   void showMessageOptions({
     required BuildContext context,
+    required String messageId,
     required bool isAdmin,
     required bool isOwnMessage,
     required VoidCallback onPin,
@@ -1241,6 +1266,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 leading: Icon(Icons.delete),
                 title: Text('Delete Message'),
                 onTap: () {
+                  context.read<ChatGroupCubit>().deleteMessage(
+                        groupId: widget.roomId,
+                        messageId: messageId,
+                      );
                   // Handle delete message logic
                   Navigator.pop(context);
                 },
@@ -1249,11 +1278,240 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
               leading: Icon(Icons.report),
               title: Text('Report Message'),
               onTap: () {
-                // Handle report message logic
                 Navigator.pop(context);
+                reportReasonBottomSheet(context, messageId);
               },
             ),
           ],
+        );
+      },
+    );
+  }
+
+  // REPORT REASON BOTTOM SHEET
+  Future<dynamic> reportReasonBottomSheet(
+    BuildContext context,
+    String messageId,
+  ) {
+    // LIST OF REPORT REASON
+    List<String> reportReasons = [
+      AppLocalizations.of(context)!.inappropriate_content,
+      AppLocalizations.of(context)!.spam,
+      AppLocalizations.of(context)!.harassment_or_hate_speech,
+      AppLocalizations.of(context)!.violence_or_dangerous_organizations,
+      AppLocalizations.of(context)!.intellectual_property_violation,
+    ];
+
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return BlocConsumer<ReportPostBloc, ReportPostState>(
+          listener: (context, state) {
+            // REPORT POST SUCCESS STATE
+            if (state is ReportPostSuccessState) {
+              Navigator.of(context).pop();
+              reportConfirmationBottomSheet(context);
+            }
+
+            // REPORT POST FAILURE STATE
+            else if (state is ReportPostFailureState) {
+              Navigator.of(context).pop();
+              showSnackBar(context: context, message: state.error);
+            }
+          },
+          builder: (context, state) {
+            return SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                child: Column(
+                  children: [
+                    // REPORT POST LOADING STATE
+                    state is ReportPostLoadingState
+                        ? const CustomCircularIndicator()
+                        : Center(
+                            child: Text(
+                              AppLocalizations.of(context)!.reason_to_report,
+                              style: onboardingHeading2Style,
+                            ),
+                          ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'message',
+                                postId: messageId,
+                                reason: reportReasons[0],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[0],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'message',
+                                postId: messageId,
+                                reason: reportReasons[1],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[1],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'message',
+                                postId: messageId,
+                                reason: reportReasons[2],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[2],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'message',
+                                postId: messageId,
+                                reason: reportReasons[3],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[3],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'message',
+                                postId: messageId,
+                                reason: reportReasons[4],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[4],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+// REPORT POST CONFIRMATION BOTTOM SHEET
+  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        Future.delayed(Duration(seconds: 2), () {
+          if (context.mounted) {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
+          }
+        });
+        return Container(
+          color: AppColors.whiteColor,
+          height: 240,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.asset('assets/report_confirmation.png'),
+              Text(
+                AppLocalizations.of(context)!.thanks_for_letting_us_know,
+                style: onboardingHeading2Style,
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                AppLocalizations.of(context)!
+                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
+                style: blackonboardingBody1Style,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         );
       },
     );
@@ -1449,119 +1707,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   Navigator.pop(context);
                   pickFile();
                 },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  // REPORT MESSAGE BOTTOM SHEET
-  Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: const Color(0xffB8B8B8),
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                Center(
-                  child: Text(
-                    'Reason to Report',
-                    style: onboardingHeading2Style,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ...kReportReasons.map(
-                      (e) => InkWell(
-                        onTap: () async {
-                          Navigator.of(context).pop();
-
-                          await reportConfirmationBottomSheet(context);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                e,
-                                style: blackonboardingBody1Style,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-// CONFIRM REPORT BOTTOM SHEET
-  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          height: 240,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Image.asset('assets/report_confirmation.png'),
-              Text(
-                'Thanks for letting us know',
-                style: onboardingHeading2Style,
-              ),
-              Text(
-                textAlign: TextAlign.center,
-                'We appreciate your help in keeping our community safe and respectful. Our team will review the content shortly.',
-                style: blackonboardingBody1Style,
               ),
             ],
           ),

@@ -459,7 +459,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                             context.read<ReportPostBloc>().add(
                                   ReportButtonPressedEvent(
                                     type: 'comment',
-                                    postId: widget.comment.commentid,
+                                    postId: widget.comment.commentid.toString(),
                                     reason: reportReasons[0],
                                   ),
                                 );
@@ -482,7 +482,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                             context.read<ReportPostBloc>().add(
                                   ReportButtonPressedEvent(
                                     type: 'comment',
-                                    postId: widget.comment.commentid,
+                                    postId: widget.comment.commentid.toString(),
                                     reason: reportReasons[1],
                                   ),
                                 );
@@ -504,7 +504,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                   type: 'comment',
-                                  postId: widget.comment.commentid,
+                                  postId: widget.comment.commentid.toString(),
                                   reason: reportReasons[2],
                                 ),
                               ),
@@ -525,7 +525,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                   type: 'comment',
-                                  postId: widget.comment.commentid,
+                                  postId: widget.comment.commentid.toString(),
                                   reason: reportReasons[3],
                                 ),
                               ),
@@ -546,7 +546,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                   type: 'comment',
-                                  postId: widget.comment.commentid,
+                                  postId: widget.comment.commentid.toString(),
                                   reason: reportReasons[4],
                                 ),
                               ),

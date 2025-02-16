@@ -900,7 +900,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             context.read<ReportPostBloc>().add(
                                   ReportButtonPressedEvent(
                                     type: 'post',
-                                    postId: int.parse(widget.postId),
+                                    postId: widget.postId.toString(),
                                     reason: reportReasons[0],
                                   ),
                                 );
@@ -923,7 +923,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             context.read<ReportPostBloc>().add(
                                   ReportButtonPressedEvent(
                                     type: 'post',
-                                    postId: int.parse(widget.postId),
+                                    postId: widget.postId,
                                     reason: reportReasons[1],
                                   ),
                                 );
@@ -945,7 +945,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                   type: 'post',
-                                  postId: int.parse(widget.postId),
+                                  postId: widget.postId,
                                   reason: reportReasons[2],
                                 ),
                               ),
@@ -966,7 +966,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                   type: 'post',
-                                  postId: int.parse(widget.postId),
+                                  postId: widget.postId,
                                   reason: reportReasons[3],
                                 ),
                               ),
@@ -986,7 +986,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         InkWell(
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
-                                  postId: int.parse(widget.postId),
+                                  postId: widget.postId,
                                   type: 'post',
                                   reason: reportReasons[4],
                                 ),

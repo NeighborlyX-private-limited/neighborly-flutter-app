@@ -25,7 +25,7 @@ abstract class PostRepositories {
   Future<Either<Failure, void>> reportPost({
     required String reason,
     required String type,
-    required num postId,
+    required String postId,
   });
   Future<Either<Failure, void>> feedback({
     required num id,

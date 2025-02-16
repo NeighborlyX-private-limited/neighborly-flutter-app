@@ -17,7 +17,7 @@ abstract class PostRemoteDataSource {
   Future<void> reportPost({
     required String reason,
     required String type,
-    required num postId,
+    required String postId,
   });
   Future<void> feedback({
     required num id,

@@ -17,7 +17,7 @@ class ReportPostBloc extends Bloc<ReportPostEvent, ReportPostState> {
       final result = await _reportPostUsecase.call(
         reason: event.reason,
         type: event.type,
-        postId: event.postId,
+        postId: event.postId.toString(),
       );
 
       result.fold((error) {

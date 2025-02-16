@@ -25,7 +25,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   AuthRemoteDataSourceImpl({required this.client});
 
-  // LOGIN WITH EMAILDF
+  // LOGIN WITH EMAIL ID
   @override
   Future<AuthResponseModel> loginWithEmail({
     required String email,
@@ -47,6 +47,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     debugPrint('EMAIL OR PHONE LOGIN:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+
       String accessToken = jsonDecode(response.body)['accessToken'];
       String refreshToken = jsonDecode(response.body)['refreshToken'];
       String userID = jsonDecode(response.body)['user']['_id'];
@@ -132,6 +133,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
       String accessToken = jsonDecode(response.body)['accessToken'];
       ShardPrefHelper.setAccessToken(accessToken);
+
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
       String username = jsonDecode(response.body)['user']['username'];

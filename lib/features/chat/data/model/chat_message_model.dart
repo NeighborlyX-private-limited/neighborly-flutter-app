@@ -16,6 +16,7 @@ class ChatMessageModel extends ChatMessageEntity {
     required super.isAdmin,
     required super.isPinned,
     required super.repliesCount,
+    required super.isDeleted,
     required super.cheers,
     required super.boos,
     required super.booOrCheer,
@@ -25,7 +26,7 @@ class ChatMessageModel extends ChatMessageEntity {
 
   @override
   String toString() {
-    return 'ChatMessageModel(id: $id, text: $text, date: $date, isMine: $isMine, readByuser: $readByuser, hasMore: $hasMore, isAdmin: $isAdmin, isPinned: $isPinned, repliesCount: $repliesCount, cheers: $cheers, boos: $boos, booOrCheer: $booOrCheer, pictureUrl: $pictureUrl, author: $author,)';
+    return 'ChatMessageModel(id: $id, text: $text, date: $date, isMine: $isMine, readByuser: $readByuser, hasMore: $hasMore, isAdmin: $isAdmin, isPinned: $isPinned, repliesCount: $repliesCount, cheers: $cheers, boos: $boos, booOrCheer: $booOrCheer, pictureUrl: $pictureUrl, author: $author,isDeleted:$isDeleted)';
   }
 
   /// Helper function to extract all numbers from a string and concatenate them into a single number
@@ -66,6 +67,45 @@ class ChatMessageModel extends ChatMessageEntity {
     );
   }
 
+  /// CopyWith method for creating a new instance with updated values
+  ChatMessageModel copyWith({
+    String? id,
+    String? text,
+    String? date,
+    bool? isMine,
+    bool? readByuser,
+    bool? hasMore,
+    bool? isAdmin,
+    bool? isPinned,
+    int? repliesCount,
+    bool? isDeleted,
+    int? cheers,
+    int? boos,
+    String? booOrCheer,
+    String? pictureUrl,
+    UserSimpleModel? author,
+    MessageReplyModel? reply,
+  }) {
+    return ChatMessageModel(
+      id: id ?? this.id,
+      text: text ?? this.text,
+      date: date ?? this.date,
+      isMine: isMine ?? this.isMine,
+      readByuser: readByuser ?? this.readByuser,
+      hasMore: hasMore ?? this.hasMore,
+      isAdmin: isAdmin ?? this.isAdmin,
+      isPinned: isPinned ?? this.isPinned,
+      repliesCount: repliesCount ?? this.repliesCount,
+      isDeleted: isDeleted ?? this.isDeleted,
+      cheers: cheers ?? this.cheers,
+      boos: boos ?? this.boos,
+      booOrCheer: booOrCheer ?? this.booOrCheer,
+      pictureUrl: pictureUrl ?? this.pictureUrl,
+      author: author ?? this.author,
+      reply: reply ?? this.reply,
+    );
+  }
+
   /// Converts the ChatMessageModel instance into a Map<String, dynamic>
   Map<String, dynamic> toMap() {
     return {
@@ -77,6 +117,7 @@ class ChatMessageModel extends ChatMessageEntity {
       'hasMore': hasMore,
       'isAdmin': isAdmin,
       'isPinned': isPinned,
+      'isDeleted': isDeleted,
       'repliesCount': repliesCount,
       'cheers': cheers,
       'boos': boos,
@@ -98,6 +139,7 @@ class ChatMessageModel extends ChatMessageEntity {
       repliesCount: map['repliesCount']?.toInt() ?? 0,
       isAdmin: map['isAdmin'] ?? false,
       isPinned: map['isPinned'] ?? false,
+      isDeleted: map['isDeleted'] ?? false,
       cheers: map['cheers']?.toInt() ?? 0,
       boos: map['boos']?.toInt() ?? 0,
       booOrCheer: map['booOrCheer'] ?? '',

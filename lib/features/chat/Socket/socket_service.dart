@@ -66,7 +66,7 @@ class SocketService {
     _socket?.on("message-deleted", (data) {
       print('MESSAGE DELETED:$data');
       String deletedMessageId = data["messageId"] ?? '';
-      print("MESSAGE DELETED: $deletedMessageId");
+
       if (messageDeleted != null) {
         messageDeleted!(deletedMessageId);
       }
@@ -74,7 +74,7 @@ class SocketService {
   }
 
 // DELETE MESSAGE
-  void deleteMessage(String groupId, String messageId) {
+  void deleteMessage({required String groupId, required String messageId}) {
     print('MESSAGE DELETE:$groupId $messageId');
     _socket?.emit(
       "delete-message",

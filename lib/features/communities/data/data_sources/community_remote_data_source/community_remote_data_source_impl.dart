@@ -390,7 +390,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         },
       ),
     );
-
+    print('JOIN GROUP RESPONSE:${response.body}');
     if (response.statusCode == 200) {
     } else {
       final message =
@@ -738,7 +738,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/report-group';
-
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -752,6 +751,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         },
       ),
     );
+    print('REPORT RESPONSE:${response.body}');
 
     if (response.statusCode == 200) {
     } else {

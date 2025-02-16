@@ -29,24 +29,10 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     // FEATCH GROUP MESSAGES
     await getGroupRoomMessages(roomId: roomId);
 
-    // LISTEN DELETED MESSAGE
-
-    // addMessage(String messageId) {
-    //   List<ChatMessageModel> oldMessages =
-    //       List<ChatMessageModel>.from(state.messages);
-
-    //   // oldMessages = oldMessages.map((message) {
-    //   //   if (message.id == messageId) {
-    //   //     return state.copyWith(isDeleted: true);
-    //   //   }
-    //   //   return message;
-    //   // }).toList();
-    //   final updatedMessageList = [
-    //     ...oldMessages,
-    //   ];
-    //   emit(
-    //       state.copyWith(status: Status.success, messages: updatedMessageList));
-    // }
+    socketService.messageDeleted = (messageId) {
+      print('DELETED MESSAGE ID: $messageId');
+      updateMessage(messageId);
+    };
 
     // LISTEN NEW MESSAGE
     socketService.onNewMessageReceived = (message) {
@@ -59,6 +45,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           'readByuser': false,
           'isAdmin': false,
           'isPinned': false,
+          'isDeleted': message['isDeleted'],
           'repliesCount': 0,
           'cheers': message['cheers'],
           'boos': message['boos'],
@@ -85,6 +72,22 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
       addMessage(chatmodel);
     };
+  }
+
+  void updateMessage(String id) {
+    List<ChatMessageModel> newMessages = state.messages
+        .map((message) =>
+            message.id == id ? message.copyWith(isDeleted: true) : message)
+        .toList(); // ✅ Creates a new list reference
+
+    print('🚀 State Before Emit: $newMessages');
+
+    emit(state.copyWith(
+      status: Status.success,
+      messages: List.from(newMessages), // ✅ Ensures new list reference
+    ));
+
+    print('🔥 State After Emit: ${state.messages}');
   }
 
   // ADD RECEIVED MESSAGE INTO THE CURRENT STATE
@@ -169,29 +172,18 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     socketService.sendMessage(state.roomId, payload, isMsg);
   }
 
+  // DELETE  MESSAGE
+  void deleteMessage({
+    required String groupId,
+    required String messageId,
+  }) {
+    print('DELETE MESSAGE CALLED IN CUBIT');
+    socketService.deleteMessage(groupId: groupId, messageId: messageId);
+  }
+
   // LEAVE ROOM
   void disconnectChat(String roomId) async {
     socketService.dispose(roomId);
-  }
-
-  // updateMessage(ChatMessageModel updatedMessage) {
-  //   final updatedMessages = state.messages.map((message) {
-  //     if(message.id == updatedMessage.id){
-
-  //     }
-  //       return message.id == updatedMessage.id ? updatedMessage : message;
-  //     }).toList();
-
-  //    emit(state.copyWith(
-  //           status: Status.failure,
-  //           errorMessage: 'dfsaf'));
-  //   emit(state.copyWith(status: Status.success, messages: updatedMessages));
-  // }
-
-  @override
-  Future<void> close() {
-    //socketService.dispose(); // Clean up the socket connection
-    return super.close();
   }
 
   void setPagetoDefault() {

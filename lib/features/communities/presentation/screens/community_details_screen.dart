@@ -17,6 +17,7 @@ import '../../../../core/widgets/appbat_button.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
 
+import '../../../posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import '../bloc/bloc/update_mute_group_bloc.dart';
 import '../bloc/community_detail_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
@@ -77,102 +78,102 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
   }
 
   // REPORT CONFIRMATION SHEET
-  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
-      context: context,
-      builder: (BuildContext context) {
-        Future.delayed(const Duration(seconds: 3), () {});
-        if (mounted) {
-          Navigator.pop(context);
-        }
-        return Container(
-          color: Colors.white,
-          height: 240,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Image.asset('assets/report_confirmation.png'),
-              Text(
-                AppLocalizations.of(context)!.thanks_for_letting_us_know,
-                style: onboardingHeading2Style,
-              ),
-              Text(
-                textAlign: TextAlign.center,
-                AppLocalizations.of(context)!
-                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_Our_team_will_review_the_content_shortly,
-                style: blackonboardingBody1Style,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
+  // Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
+  //   return showModalBottomSheet(
+  //     useRootNavigator: true,
+  //     backgroundColor: AppColors.whiteColor,
+  //     showDragHandle: true,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       Future.delayed(const Duration(seconds: 3), () {});
+  //       if (mounted) {
+  //         Navigator.pop(context);
+  //       }
+  //       return Container(
+  //         color: Colors.white,
+  //         height: 240,
+  //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             Image.asset('assets/report_confirmation.png'),
+  //             Text(
+  //               AppLocalizations.of(context)!.thanks_for_letting_us_know,
+  //               style: onboardingHeading2Style,
+  //             ),
+  //             Text(
+  //               textAlign: TextAlign.center,
+  //               AppLocalizations.of(context)!
+  //                   .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_Our_team_will_review_the_content_shortly,
+  //               style: blackonboardingBody1Style,
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
-  // PICK REPORT REASON
-  Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
-      showDragHandle: true,
-      context: context,
-      builder: (BuildContext context) {
-        return SingleChildScrollView(
-          child: Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Text(
-                    AppLocalizations.of(context)!.reason_to_Report,
-                    style: onboardingHeading2Style,
-                  ),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ...kReportReasons.map(
-                      (reason) => InkWell(
-                        onTap: () async {
-                          Navigator.of(context).pop();
-                          communityDetailCubit.reportCommunity(reason);
-                          await reportConfirmationBottomSheet(context);
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                reason,
-                                style: blackonboardingBody1Style,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // // PICK REPORT REASON
+  // Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
+  //   return showModalBottomSheet(
+  //     useRootNavigator: true,
+  //     backgroundColor: AppColors.whiteColor,
+  //     showDragHandle: true,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return SingleChildScrollView(
+  //         child: Container(
+  //           color: Colors.white,
+  //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+  //           child: Column(
+  //             crossAxisAlignment: CrossAxisAlignment.start,
+  //             children: [
+  //               Center(
+  //                 child: Text(
+  //                   AppLocalizations.of(context)!.reason_to_Report,
+  //                   style: onboardingHeading2Style,
+  //                 ),
+  //               ),
+  //               const SizedBox(
+  //                 height: 10,
+  //               ),
+  //               Column(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   ...kReportReasons.map(
+  //                     (reason) => InkWell(
+  //                       onTap: () async {
+  //                         Navigator.of(context).pop();
+  //                         communityDetailCubit.reportCommunity(reason);
+  //                         await reportConfirmationBottomSheet(context);
+  //                       },
+  //                       child: Row(
+  //                         mainAxisAlignment: MainAxisAlignment.start,
+  //                         children: [
+  //                           Padding(
+  //                             padding: const EdgeInsets.all(8.0),
+  //                             child: Text(
+  //                               reason,
+  //                               style: blackonboardingBody1Style,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   const SizedBox(height: 10),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
 // BUILD
   @override
@@ -640,16 +641,248 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
 
               // GROUP REPORT OPTION
               // NOTE: REPORT IS NOT WORKING FOR GROUPS NEED TO CHECK
-              // MenuIconItem(
-              //   title: AppLocalizations.of(context)!.report,
-              //   svgPath: 'assets/menu_flag.svg',
-              //   iconSize: 20,
-              //   textColor: Colors.red,
-              //   onTap: () {
-              //     Navigator.pop(context);
-              //     reportReasonBottomSheet(context);
-              //   },
-              // ),
+              MenuIconItem(
+                title: AppLocalizations.of(context)!.report,
+                svgPath: 'assets/menu_flag.svg',
+                iconSize: 20,
+                textColor: Colors.red,
+                onTap: () {
+                  Navigator.pop(context);
+                  reportReasonBottomSheet(
+                    context,
+                    community?.id ?? '',
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // REPORT REASON BOTTOM SHEET
+  Future<dynamic> reportReasonBottomSheet(
+    BuildContext context,
+    String communityId,
+  ) {
+    // LIST OF REPORT REASON
+    List<String> reportReasons = [
+      AppLocalizations.of(context)!.inappropriate_content,
+      AppLocalizations.of(context)!.spam,
+      AppLocalizations.of(context)!.harassment_or_hate_speech,
+      AppLocalizations.of(context)!.violence_or_dangerous_organizations,
+      AppLocalizations.of(context)!.intellectual_property_violation,
+    ];
+
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return BlocConsumer<ReportPostBloc, ReportPostState>(
+          listener: (context, state) {
+            // REPORT POST SUCCESS STATE
+            if (state is ReportPostSuccessState) {
+              Navigator.of(context).pop();
+              reportConfirmationBottomSheet(context);
+            }
+
+            // REPORT POST FAILURE STATE
+            else if (state is ReportPostFailureState) {
+              Navigator.of(context).pop();
+              showSnackBar(context: context, message: state.error);
+            }
+          },
+          builder: (context, state) {
+            return SingleChildScrollView(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+                child: Column(
+                  children: [
+                    // REPORT POST LOADING STATE
+                    state is ReportPostLoadingState
+                        ? const CustomCircularIndicator()
+                        : Center(
+                            child: Text(
+                              AppLocalizations.of(context)!.reason_to_report,
+                              style: onboardingHeading2Style,
+                            ),
+                          ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'group',
+                                postId: communityId,
+                                reason: reportReasons[0],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[0],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'group',
+                                postId: communityId,
+                                reason: reportReasons[1],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[1],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'group',
+                                postId: communityId,
+                                reason: reportReasons[2],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[2],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'group',
+                                postId: communityId,
+                                reason: reportReasons[3],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[3],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'group',
+                                postId: communityId,
+                                reason: reportReasons[4],
+                              ),
+                            );
+                      },
+                      leading: Icon(
+                        Icons.circle,
+                        size: 8,
+                        color: AppColors.blackColor,
+                      ),
+                      title: Text(
+                        reportReasons[4],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+// REPORT POST CONFIRMATION BOTTOM SHEET
+  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        Future.delayed(Duration(seconds: 2), () {
+          if (context.mounted) {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            }
+          }
+        });
+        return Container(
+          color: AppColors.whiteColor,
+          height: 240,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.asset('assets/report_confirmation.png'),
+              Text(
+                AppLocalizations.of(context)!.thanks_for_letting_us_know,
+                style: onboardingHeading2Style,
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                AppLocalizations.of(context)!
+                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
+                style: blackonboardingBody1Style,
+                textAlign: TextAlign.center,
+              ),
             ],
           ),
         );

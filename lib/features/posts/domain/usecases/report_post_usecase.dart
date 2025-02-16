@@ -10,7 +10,7 @@ class ReportPostUsecase {
   Future<Either<Failure, void>> call({
     required String reason,
     required String type,
-    required num postId,
+    required String postId,
   }) async {
     return await repository.reportPost(
       reason: reason,

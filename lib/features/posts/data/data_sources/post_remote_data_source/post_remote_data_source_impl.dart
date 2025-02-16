@@ -99,7 +99,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   Future<void> reportPost({
     required String reason,
     required String type,
-    required num postId,
+    required String postId,
   }) async {
     List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
@@ -120,7 +120,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'reason': reason,
       }),
     );
-
+    print('REPORT RESPONSE: ${response.body}');
     if (response.statusCode == 200) {
       return;
     } else {

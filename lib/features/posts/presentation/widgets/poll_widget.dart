@@ -543,7 +543,7 @@ class _PollWidgetState extends State<PollWidget> {
                             context.read<ReportPostBloc>().add(
                                   ReportButtonPressedEvent(
                                     type: 'content',
-                                    postId: widget.post.id,
+                                    postId: widget.post.id.toString(),
                                     reason: reportReasons[0],
                                   ),
                                 );
@@ -566,7 +566,7 @@ class _PollWidgetState extends State<PollWidget> {
                             context.read<ReportPostBloc>().add(
                                   ReportButtonPressedEvent(
                                     type: 'content',
-                                    postId: widget.post.id,
+                                    postId: widget.post.id.toString(),
                                     reason: reportReasons[1],
                                   ),
                                 );
@@ -588,7 +588,7 @@ class _PollWidgetState extends State<PollWidget> {
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: widget.post.id,
+                                  postId: widget.post.id.toString(),
                                   reason: reportReasons[2],
                                 ),
                               ),
@@ -609,7 +609,7 @@ class _PollWidgetState extends State<PollWidget> {
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: widget.post.id,
+                                  postId: widget.post.id.toString(),
                                   reason: reportReasons[3],
                                 ),
                               ),
@@ -630,7 +630,7 @@ class _PollWidgetState extends State<PollWidget> {
                           onTap: () => context.read<ReportPostBloc>().add(
                                 ReportButtonPressedEvent(
                                   type: 'content',
-                                  postId: widget.post.id,
+                                  postId: widget.post.id.toString(),
                                   reason: reportReasons[4],
                                 ),
                               ),

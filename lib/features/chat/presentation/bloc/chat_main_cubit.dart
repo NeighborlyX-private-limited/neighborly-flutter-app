@@ -154,6 +154,7 @@ class ChatMainCubit extends Cubit<ChatMainState> {
           pictureUrl: 'pictureUrl',
           isAdmin: false,
           isPinned: false,
+          isDeleted: false,
           repliesCount: 0,
           cheers: 0,
           boos: 0,

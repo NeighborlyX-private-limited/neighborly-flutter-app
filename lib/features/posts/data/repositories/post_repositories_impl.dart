@@ -44,7 +44,7 @@ class PostRepositoriesImpl implements PostRepositories {
   Future<Either<Failure, void>> reportPost({
     required String reason,
     required String type,
-    required num postId,
+    required String postId,
   }) async {
     if (await networkInfo.isConnected) {
       try {

@@ -6,6 +6,8 @@ import 'package:neighborly_flutter_app/features/payment/presentation/bloc/paymen
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../constants/razorpay_constants.dart';
+
 class BagBottomSheet extends StatefulWidget {
   final List<Map<String, int>> selectedAwards;
   final Map<String, String> awardImages;
@@ -145,7 +147,7 @@ class _BagBottomSheetState extends State<BagBottomSheet> {
                   listener: (context, state) {
                     if (state is PaymentCreated) {
                       _razorpay.open({
-                        "key": "razorpayKey",
+                        "key": razorpayKey,
                         "order_id": state.orderData['orderId'],
                         "amount": state.orderData['amount'],
                       });
