@@ -226,7 +226,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<void> deleteAccount() async {
     List<String>? cookies = ShardPrefHelper.getCookie();
-    print('cookies: $cookieHeader');
+    // print('cookies: $cookieHeader');
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }

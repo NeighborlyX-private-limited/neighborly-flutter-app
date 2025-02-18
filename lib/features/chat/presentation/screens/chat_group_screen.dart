@@ -961,6 +961,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           context: context,
           messageId: message.id,
           isAdmin: isAdmin,
+          isPin: message.isPinned,
           isOwnMessage: message.isMine,
           onPin: () {
             FocusScope.of(context).unfocus();
@@ -1188,13 +1189,26 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                     ),
                                   ),
                                 ),
-                              Text(
-                                convertToIndianTime(message.date),
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black45,
-                                ),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    convertToIndianTime(message.date),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black45,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5),
+                                  message.isPinned
+                                      ? Icon(
+                                          Icons.push_pin,
+                                          size: 16,
+                                          color: Colors.grey,
+                                        )
+                                      : SizedBox(),
+                                ],
                               ),
                             ],
                           ),
@@ -1217,6 +1231,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     required String messageId,
     required bool isAdmin,
     required bool isOwnMessage,
+    required bool isPin,
     required VoidCallback onPin,
   }) {
     showModalBottomSheet(
@@ -1238,11 +1253,12 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                       message: "oops something went wrong!",
                     );
                   } else if (state is PinMessagesStateSuccessState) {
+                    chatGroupCubit.updateMessageForPinned(messageId, !isPin);
                     Navigator.pop(context);
-                    showSnackBar(
-                      context: context,
-                      message: "Message pinned successfully!",
-                    );
+                    // showSnackBar(
+                    //   context: context,
+                    //   message: "Message pinned successfully!",
+                    // );
                   }
                 },
                 builder: (context, state) {
@@ -1257,8 +1273,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     );
                   }
                   return ListTile(
-                    leading: Icon(Icons.push_pin),
-                    title: Text('Pin Message'),
+                    leading: Icon(
+                      isPin ? Icons.push_pin : Icons.push_pin_outlined,
+                    ),
+                    title: isPin ? Text('Unpin Message') : Text('Pin Message'),
                     onTap: () {
                       onPin();
                     },

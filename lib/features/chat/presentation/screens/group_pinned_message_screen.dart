@@ -12,6 +12,7 @@ import '../../../../core/theme/colors.dart';
 import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';
+import '../bloc/chat_group_cubit.dart';
 import '../bloc/pin_message_bloc.dart';
 
 class GroupPinnedMessagesScreen extends StatefulWidget {
@@ -29,10 +30,12 @@ class GroupPinnedMessagesScreen extends StatefulWidget {
 }
 
 class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
+  late ChatGroupCubit chatGroupCubit;
   // INIT STATE
   @override
   void initState() {
     super.initState();
+    chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
     _onRefresh();
   }
 
@@ -307,6 +310,7 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
                     showSnackBar(context: context, message: state.error);
                   }
                   if (state is PinMessagesStateSuccessState) {
+                    chatGroupCubit.updateMessageForPinned(messageId, false);
                     Navigator.pop(context);
                     onTap();
                     showSnackBar(context: context, message: state.message);
