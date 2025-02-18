@@ -16,7 +16,7 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
-import 'package:new_version_plus/new_version_plus.dart';
+
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
@@ -47,7 +47,7 @@ class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  bool isHome = true;
+  bool isHome = false;
   bool isDobSet = true;
   late String _selectedCity;
   String? selectedDay;
@@ -82,17 +82,19 @@ class _HomeScreenState extends State<HomeScreen>
 
     // newVersionPlus.showAlertIfNecessary(context: context);
 
-    setIsHome();
     fetchLocationAndUpdate();
-    setCityHomeName();
     setCityCurrentName();
+    setCityHomeName();
     getUnreadNotificationCount();
+    setIsHome();
+    handleToggle(false);
     isDobSet = ShardPrefHelper.getDob();
+
     _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
     if (_selectedCity.toLowerCase() == 'delhi') {
       _selectedCity = 'New Delhi';
     }
-    _fetchPosts();
+    // _fetchPosts();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!isDobSet) {
@@ -128,8 +130,9 @@ class _HomeScreenState extends State<HomeScreen>
       _selectedCity = 'New Delhi';
     }
     setState(() {});
-    BlocProvider.of<GetAllPostsBloc>(context)
-        .add(GetAllPostsButtonPressedEvent(isHome: isHome));
+    BlocProvider.of<GetAllPostsBloc>(context).add(
+      GetAllPostsButtonPressedEvent(isHome: isHome),
+    );
   }
 
   /// set the location of  user whether their home location is on or current location in
@@ -147,8 +150,9 @@ class _HomeScreenState extends State<HomeScreen>
     // }
     setIsHome();
     getUnreadNotificationCount();
-    BlocProvider.of<GetAllPostsBloc>(context)
-        .add(GetAllPostsButtonPressedEvent(isHome: isHome));
+    BlocProvider.of<GetAllPostsBloc>(context).add(
+      GetAllPostsButtonPressedEvent(isHome: isHome),
+    );
   }
 
   /// set home location city name
@@ -315,6 +319,7 @@ class _HomeScreenState extends State<HomeScreen>
       );
 
       ShardPrefHelper.setLocation([position.latitude, position.longitude]);
+      _fetchPosts();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

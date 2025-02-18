@@ -198,8 +198,7 @@ class ShardPrefHelper {
   static Future setIsLocationOn(bool isLocationOn) async =>
       await _preferences.setBool('isLocationOn', isLocationOn);
 
-  static bool getIsLocationOn() =>
-      _preferences.getBool('isLocationOn') ?? false;
+  static bool getIsLocationOn() => _preferences.getBool('isLocationOn') ?? true;
 
   ///.... save Authtype
   static Future setAuthtype(String authtype) async =>

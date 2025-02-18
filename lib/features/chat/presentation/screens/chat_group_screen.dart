@@ -933,7 +933,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment:
+              message.isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -943,8 +945,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
               ),
               child: Text(
                 "This message was deleted",
-                style:
-                    TextStyle(fontStyle: FontStyle.italic, color: Colors.grey),
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: Colors.grey,
+                ),
               ),
             ),
           ],

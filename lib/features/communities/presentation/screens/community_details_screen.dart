@@ -206,7 +206,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
           return PopScope(
             canPop: false,
             onPopInvokedWithResult: (didPop, result) {
-              Navigator.of(context).pop(true);
+              context.go('/groups');
+              // Navigator.of(context).pop(true);
             },
             child: SafeArea(
               child: Scaffold(
@@ -220,7 +221,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     width: 40,
                     child: AppbatButton(
                       onTap: () {
-                        Navigator.pop(context, true);
+                        context.go('/groups');
+                        // Navigator.pop(context, true);
                       },
                       icon: Icons.chevron_left_rounded,
                       iconSize: 30,
@@ -944,7 +946,18 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         // FAILURE STATE
                         if (state is JoinGroupFailureState) {
                           Navigator.pop(context);
-                          showSnackBar(context: context, message: state.error);
+                          if (state.error.contains('BlockList')) {
+                            showSnackBar(
+                              context: context,
+                              message:
+                                  'You are blocked and can not join group again!',
+                            );
+                          } else {
+                            showSnackBar(
+                              context: context,
+                              message: state.error,
+                            );
+                          }
                         }
 
                         // SUCCESS STATE
@@ -1047,7 +1060,18 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         // FAILURE STATE
                         if (state is JoinGroupFailureState) {
                           Navigator.pop(context);
-                          showSnackBar(context: context, message: state.error);
+                          if (state.error.contains('BlockList')) {
+                            showSnackBar(
+                              context: context,
+                              message:
+                                  'You are blocked and can not join group again!',
+                            );
+                          } else {
+                            showSnackBar(
+                              context: context,
+                              message: state.error,
+                            );
+                          }
                         }
 
                         // SUCCESS STATE

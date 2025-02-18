@@ -352,10 +352,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
 
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-      print('GOOGLE SIGN IN RESULT:$googleSignIn');
+      // final GoogleSignIn googleSignIn = GoogleSignIn();
+      // print('GOOGLE SIGN IN RESULT:$googleSignIn');
 
-      await googleSignIn.signOut();
+      // await googleSignIn.signOut();
 
       var signInResult = await GoogleSignInService.signInWithGoogle();
       print('GOOGLE SIGN IN RESULT AFTER LOGOUT:$signInResult');
@@ -370,6 +370,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       String tokenID = signInResult['idToken'];
       print('GOOGLE SIGN IN TOKEN :$tokenID');
+      print('FCM TOKEN :$fcmToken');
 
       final response = await http.post(
         Uri.parse(url),
@@ -398,13 +399,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         List<dynamic> location = jsonDecode(response.body)['user']
             ['current_coordinates']['coordinates'];
+        bool isSkippedTutorial =
+            jsonDecode(response.body)['user']['skippedTutorial'];
 
+        bool isViewedTutorial =
+            jsonDecode(response.body)['user']['viewedTutorial'];
         bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         String authType = 'email';
         final jwtToken = response.headers['authorization'] ?? '';
         ShardPrefHelper.setJwtToken(jwtToken);
 
         // SET DATA IN LOCAL
+        ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
+        ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
         ShardPrefHelper.setCookie(cookies);
         ShardPrefHelper.setUserID(userID);
         ShardPrefHelper.setUserProfilePicture(proPic);

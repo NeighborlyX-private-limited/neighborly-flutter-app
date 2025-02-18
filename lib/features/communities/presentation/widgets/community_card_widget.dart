@@ -393,11 +393,18 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                         if (state is JoinGroupFailureState) {
                           if (mounted) {
                             Navigator.pop(context);
-                            showSnackBar(
-                              context: context,
-                              message: AppLocalizations.of(context)!
-                                  .something_went_wrong,
-                            );
+                            if (state.error.contains('BlockList')) {
+                              showSnackBar(
+                                context: context,
+                                message:
+                                    'You are blocked and can not join group again!',
+                              );
+                            } else {
+                              showSnackBar(
+                                context: context,
+                                message: state.error,
+                              );
+                            }
                           }
                         }
 
@@ -502,11 +509,18 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                         if (state is JoinGroupFailureState) {
                           if (mounted) {
                             Navigator.pop(context);
-                            showSnackBar(
-                              context: context,
-                              message: AppLocalizations.of(context)!
-                                  .something_went_wrong,
-                            );
+                            if (state.error.contains('BlockList')) {
+                              showSnackBar(
+                                context: context,
+                                message:
+                                    'You are blocked and can not join group again!',
+                              );
+                            } else {
+                              showSnackBar(
+                                context: context,
+                                message: state.error,
+                              );
+                            }
                           }
                         }
 

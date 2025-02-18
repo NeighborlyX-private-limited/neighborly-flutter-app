@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 
 class CommingSoonScreen extends StatelessWidget {
   const CommingSoonScreen({super.key});
@@ -56,7 +57,13 @@ class CommingSoonScreen extends StatelessWidget {
                 height: 16,
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  showSnackBar(
+                    context: context,
+                    message:
+                        'You’ll be notified as soon as the event goes live!',
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primaryColor,
                   elevation: 0,

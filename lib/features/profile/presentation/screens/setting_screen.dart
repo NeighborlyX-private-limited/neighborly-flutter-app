@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
@@ -10,6 +11,7 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/delete
 
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
+import '../../../../core/utils/google_auth_helper.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/logout_bloc.dart/logout_bloc.dart';
@@ -526,6 +528,7 @@ class _SettingScreenState extends State<SettingScreen> {
                           ),
                         );
                       } else if (state is LogoutSuccessState) {
+                        GoogleSignInService.signOutGoogle();
                         ShardPrefHelper.removeUserID();
                         ShardPrefHelper.removeCookie();
                         if (ShardPrefHelper.getEmail() != null) {
@@ -537,6 +540,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         ShardPrefHelper.removePhoneNumber();
                         ShardPrefHelper.removeGender();
                         ShardPrefHelper.clear();
+
                         // ShardPrefHelper.re();
 
                         context.go('/');

@@ -90,6 +90,22 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     print('🔥 State After Emit: ${state.messages}');
   }
 
+  void updateMessageForPinned(String id, bool isPinned) {
+    List<ChatMessageModel> newMessages = state.messages
+        .map((message) =>
+            message.id == id ? message.copyWith(isPinned: isPinned) : message)
+        .toList(); // ✅ Creates a new list reference
+
+    print('🚀 State Before Emit: $newMessages');
+
+    emit(state.copyWith(
+      status: Status.success,
+      messages: List.from(newMessages), // ✅ Ensures new list reference
+    ));
+
+    print('🔥 State After Emit: ${state.messages}');
+  }
+
   // ADD RECEIVED MESSAGE INTO THE CURRENT STATE
   addMessage(ChatMessageModel newMessage) {
     List<ChatMessageModel> oldMessages =

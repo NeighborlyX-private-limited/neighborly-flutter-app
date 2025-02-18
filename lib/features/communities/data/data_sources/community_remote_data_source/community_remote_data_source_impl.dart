@@ -823,12 +823,12 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      final msg = jsonDecode(response.body)['msg'] ??
-          'check what msg is comming from backend';
+      final msg =
+          jsonDecode(response.body)['message'] ?? 'oops omething went wrong';
       return msg;
     } else {
       final message =
-          jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
+          jsonDecode(response.body)['message'] ?? 'oops omething went wrong';
       throw ServerException(message: message);
     }
   }
