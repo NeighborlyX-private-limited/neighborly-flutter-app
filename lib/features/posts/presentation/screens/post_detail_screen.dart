@@ -110,7 +110,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           appBar: AppBar(
             backgroundColor: AppColors.whiteColor,
             leading: InkWell(
-              child: const Icon(Icons.arrow_back, size: 15),
+              child: const Icon(Icons.arrow_back_ios),
               onTap: () => context.pop(),
             ),
             centerTitle: true,

@@ -92,7 +92,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                         backgroundColor: AppColors.whiteColor,
                         expandedHeight: 300.0,
                         leading: IconButton(
-                          icon: const Icon(Icons.arrow_back),
+                          icon: const Icon(Icons.arrow_back_ios),
                           onPressed: () {
                             context.pop();
                           },

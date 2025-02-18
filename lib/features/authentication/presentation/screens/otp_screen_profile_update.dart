@@ -69,8 +69,7 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
           backgroundColor: AppColors.whiteColor,
           leading: InkWell(
             child: const Icon(
-              Icons.arrow_back,
-              size: 20,
+              Icons.arrow_back_ios,
             ),
             onTap: () {
               context.pop();

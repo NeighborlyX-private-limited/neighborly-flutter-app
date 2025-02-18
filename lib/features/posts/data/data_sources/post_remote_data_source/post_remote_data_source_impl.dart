@@ -33,7 +33,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       List<double> location = ShardPrefHelper.getHomeLocation();
       double lat = location[0];
       double long = location[1];
-
+      print('locayion:${lat}${long}');
       queryParameters = {
         'latitude': '$lat',
         'longitude': '$long',
@@ -44,7 +44,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       List<double> location = ShardPrefHelper.getLocation();
       double lat = location[0];
       double long = location[1];
-
+      print('locayion:${lat}${long}');
       queryParameters = {
         'home': 'false',
         'latitude': '$lat',

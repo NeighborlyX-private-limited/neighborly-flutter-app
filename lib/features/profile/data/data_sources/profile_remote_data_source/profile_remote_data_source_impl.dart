@@ -226,10 +226,13 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   @override
   Future<void> deleteAccount() async {
     List<String>? cookies = ShardPrefHelper.getCookie();
+    print('cookies: $cookieHeader');
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
+
     String cookieHeader = cookies.join('; ');
+    print('cookies: $cookieHeader');
     String url = '$kBaseUrl/profile/delete-account';
 
     final response = await client.delete(

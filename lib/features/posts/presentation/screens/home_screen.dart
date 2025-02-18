@@ -47,7 +47,9 @@ class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool isHome = false;
+
   bool isDobSet = true;
   late String _selectedCity;
   String? selectedDay;
@@ -72,6 +74,7 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+    setIsHome();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(0.0);
@@ -86,8 +89,7 @@ class _HomeScreenState extends State<HomeScreen>
     setCityCurrentName();
     setCityHomeName();
     getUnreadNotificationCount();
-    setIsHome();
-    handleToggle(false);
+    handleToggle(isHome);
     isDobSet = ShardPrefHelper.getDob();
 
     _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
