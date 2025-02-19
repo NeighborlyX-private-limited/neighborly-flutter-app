@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/models/community_model.dart';
+import '../../../../../core/utils/set_auth.dart';
 import '../../../../../core/utils/shared_preference.dart';
 import '../../model/group_join_request_model.dart';
 import '../../model/search_dash_model.dart';
@@ -22,12 +23,12 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required CommunityModel community,
     File? pictureFile,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    // //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/create';
     Map<String, dynamic> queryParameters;
@@ -61,7 +62,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       'POST',
       Uri.parse(url).replace(queryParameters: queryParameters),
     )
-      ..headers['Cookie'] = cookieHeader
+      ..headers['Cookie'] = cookies
       ..fields['name'] = community.name
       ..fields['isOpen'] = community.isPublic.toString()
       ..fields['description'] = community.description
@@ -85,6 +86,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     final responseString = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return jsonDecode(responseString)['group']['_id'];
     } else {
       final errorMessage = jsonDecode(responseString)['error'] ??
@@ -97,12 +99,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   /// get all community api call
   @override
   Future<List<CommunityModel>> getAllCommunities() async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    // //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/nearby-groups';
 
@@ -136,11 +139,14 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     } else {
@@ -153,23 +159,27 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   /// get user group api call
   @override
   Future<List<CommunityModel>> getUserGroups() async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    // //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/user-groups';
 
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     } else {
@@ -182,24 +192,28 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   ///get community api call
   @override
   Future<CommunityModel> getCommunity({required String communityId}) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
 
-    String cookieHeader = cookies.join('; ');
+    // //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/fetch-group-details/$communityId';
 
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return CommunityModel.fromJson(jsonDecode(response.body));
     } else {
       final message = jsonDecode(response.body)['msg'] ??
@@ -214,24 +228,28 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   @override
   Future<List<GroupJoinRequestModel>> getCommunityJoinRequest(
       {required String communityId}) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
 
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/get-requests/$communityId';
 
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
     ;
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData
           .map((data) => GroupJoinRequestModel.fromJson(data))
@@ -252,13 +270,14 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String requestId,
     required String status,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
 
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/handle-requests/$communityId/$requestId';
 
@@ -266,7 +285,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(<String, String>{
         "response": status,
@@ -274,6 +294,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return jsonDecode(response.body)['message'] ?? "Success";
     } else {
       final message = jsonDecode(response.body)['msg'] ??
@@ -290,12 +311,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required String userId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/add-admin';
 
@@ -303,7 +325,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, String>{
@@ -314,6 +337,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
@@ -327,12 +351,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required String userId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/remove-admin';
 
@@ -340,7 +365,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, String>{
@@ -351,6 +377,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
@@ -368,12 +395,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       userId = ShardPrefHelper.getUserID() ?? '';
     }
 
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/add-user';
 
@@ -381,7 +409,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, String>{
@@ -392,6 +421,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
     print('JOIN GROUP RESPONSE:${response.body}');
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
@@ -410,13 +440,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       userId = ShardPrefHelper.getUserID() ?? '';
     }
 
-    List<String>? cookies = ShardPrefHelper.getCookie();
-
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
 
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
     String url = "";
     if (isRemove) {
       url = '$kBaseUrl/group/remove-user/$communityId/$userId';
@@ -428,7 +458,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -439,6 +470,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message = jsonDecode(response.body)['message'] ??
           jsonDecode(response.body)['msg'] ??
@@ -453,12 +485,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required String newDisplayname,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/update-group-details';
 
@@ -466,7 +499,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -477,6 +511,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
@@ -490,12 +525,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required String newDescription,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/update-group-details';
 
@@ -503,7 +539,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -514,6 +551,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
@@ -527,12 +565,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required String newType,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/update-group-details';
 
@@ -545,7 +584,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -556,6 +596,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
@@ -569,13 +610,14 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     File? pictureFile,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
 
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/update-group-details';
 
@@ -584,7 +626,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       'PUT',
       Uri.parse(url),
     )
-      ..headers['Cookie'] = cookieHeader
+      ..headers['Cookie'] = cookies
       ..fields['groupId'] = communityId;
 
     if (pictureFile != null) {
@@ -603,6 +645,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     final responseString = await response.stream.bytesToString();
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final errorMessage = jsonDecode(responseString)['msg'];
       throw ServerException(message: errorMessage);
@@ -615,12 +658,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required String newLocation,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/update-group-details';
 
@@ -628,7 +672,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -639,6 +684,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final jsonData = jsonDecode(response.body);
     } else {
       final message =
@@ -653,12 +699,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required num newRadius,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/update-group-details';
 
@@ -666,7 +713,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -677,6 +725,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final jsonData = jsonDecode(response.body);
     } else {
       final message =
@@ -692,12 +741,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required bool isMute,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/mute-group';
 
@@ -705,7 +755,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -716,6 +767,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 204) {
+      handleAuthHeaders(response.headers);
     } else {
       final message = jsonDecode(response.body)['msg'] ??
           jsonDecode(response.body)['message'] ??
@@ -730,19 +782,21 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String communityId,
     required String reason,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/report-group';
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -754,6 +808,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     print('REPORT RESPONSE:${response.body}');
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
@@ -766,12 +821,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   Future<void> deleteCommunity({
     required String communityId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/delete-group/$communityId';
 
@@ -779,11 +835,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
@@ -798,12 +856,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String userId,
     required bool isBlock,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/group/block-user';
 
@@ -811,7 +870,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(
         <String, dynamic>{
@@ -823,6 +883,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final msg =
           jsonDecode(response.body)['message'] ?? 'oops omething went wrong';
       return msg;
@@ -863,11 +924,11 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     final fakeJson = json.decode(fakeData);
     return SearchDashModel.fromMap(fakeJson);
 
-    // List<String>? cookies = ShardPrefHelper.getCookie();
+    // String? cookies = ShardPrefHelper.getCookie();
     // if (cookies == null || cookies.isEmpty) {
     //   throw const ServerException(message: 'oops omething went wrong');
     // }
-    // String cookieHeader = cookies.join('; ');
+    // //String cookieHeader = cookies.join('; ');
     // String url = '$kBaseUrl/wall/fetch-posts';
     // Map<String, dynamic> queryParameters = {'home': '$isHome'};
 
@@ -994,11 +1055,11 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     final fakeJson = json.decode(fakeData);
     return SearchResultModel.fromMap(fakeJson);
 
-    // List<String>? cookies = ShardPrefHelper.getCookie();
+    // String? cookies = ShardPrefHelper.getCookie();
     // if (cookies == null || cookies.isEmpty) {
     //   throw const ServerException(message: 'oops omething went wrong');
     // }
-    // String cookieHeader = cookies.join('; ');
+    // //String cookieHeader = cookies.join('; ');
     // String url = '$kBaseUrl/wall/fetch-posts';
     // Map<String, dynamic> queryParameters = {'home': '$isHome'};
 

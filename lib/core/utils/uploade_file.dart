@@ -7,15 +7,17 @@ import 'package:http/http.dart' as http;
 import '../error/exception.dart';
 
 Future<String> uploadFile({required File file}) async {
-  List<String>? cookies = ShardPrefHelper.getCookie();
+  // List<String>? cookies = ShardPrefHelper.getCookie();
+  String? cookies = ShardPrefHelper.getCookie();
   if (cookies == null || cookies.isEmpty) {
     throw const ServerException(message: 'oops something went wrong');
   }
-  String cookieHeader = cookies.join('; ');
+  // String cookieHeader = cookies.join('; ');
   String url = '$kBaseUrl/user/upload-file';
 
   final request = http.MultipartRequest('POST', Uri.parse(url))
-    ..headers['Cookie'] = cookieHeader
+    ..headers['Cookie'] = cookies
+    // ..headers['Cookie'] = cookieHeader
     ..files.add(
       http.MultipartFile(
         'file',

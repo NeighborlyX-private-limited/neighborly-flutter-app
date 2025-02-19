@@ -61,7 +61,8 @@ import '../utils/shared_preference.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
-List<String>? cookies = ShardPrefHelper.getCookie();
+String? cookies = ShardPrefHelper.getCookie();
+// List<String>? cookies = ShardPrefHelper.getCookie();
 // initial route
 String setInitialLocation() {
   var IsPhoneVarify = ShardPrefHelper.getIsPhoneVerified();

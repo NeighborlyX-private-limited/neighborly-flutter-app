@@ -6,34 +6,30 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 
 class CityRepository {
   Future<void> updateCity(String city) async {
-    
-    
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
-      
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    // String cookieHeader = cookies.join('; ');
     final url = Uri.parse('$kBaseUrl/user/update-user-location/$city');
-    
 
     try {
       final response = await http.put(
         url,
-        headers: {
+        headers: <String, String>{
           'Content-Type': 'application/json',
-          'Cookie': cookieHeader,
+          'Authorization': 'Bearer $accessToken',
+          'Cookie': cookies,
         },
       );
-      
-    
+
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         String message = responseMap['message'];
         List<String> words = message.split(' ');
         String lastWord = words.last;
-        
-       
+
         if (lastWord.toLowerCase() == 'delhi') {
           lastWord = "New Delhi";
         }
@@ -42,15 +38,12 @@ class CityRepository {
           responseMap['user_coordinates'][0],
           responseMap['user_coordinates'][1]
         ]);
-        
       } else {
-    
         final message =
             jsonDecode(response.body)['message'] ?? 'Someting went wrong';
         throw Exception(message);
       }
     } catch (e) {
-      
       rethrow;
     }
   }

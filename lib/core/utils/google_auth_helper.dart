@@ -81,7 +81,7 @@ class GoogleSignInService {
       }
 
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      print('GOOGLE USER: $googleUser');
+      // print('GOOGLE USER: $googleUser');
 
       if (googleUser == null) {
         return {'error': 'User cancelled sign-in'};
@@ -89,7 +89,7 @@ class GoogleSignInService {
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
-      print('GOOGLE AUTH: $googleAuth');
+      // print('GOOGLE AUTH: $googleAuth');
 
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
 
@@ -99,7 +99,7 @@ class GoogleSignInService {
         'fcmToken': fcmToken,
       };
     } catch (e) {
-      print("Google Sign-In Error: $e");
+      // print("Google Sign-In Error: $e");
       return {'error': e.toString()};
     }
   }
@@ -111,9 +111,9 @@ class GoogleSignInService {
       }
 
       await _googleSignIn.signOut();
-      print("User successfully signed out");
+      // print("User successfully signed out");
     } catch (e) {
-      print("Error during sign-out: $e");
+      // print("Error during sign-out: $e");
     }
   }
 }

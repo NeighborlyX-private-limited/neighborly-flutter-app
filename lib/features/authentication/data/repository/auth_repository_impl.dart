@@ -143,13 +143,13 @@ class AuthRepositoryImpl implements AuthRepository {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.googleAuthentication();
-        print('RESULT IN REPOSITORY:$result');
+        // print('RESULT IN REPOSITORY:$result');
         return Right(result);
       } on ServerFailure catch (e) {
-        print('ERROR RESULT IN REPOSITORY:${e.message}');
+        // print('ERROR RESULT IN REPOSITORY:${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('CATCH ERROR RESULT IN REPOSITORY:$e');
+        // print('CATCH ERROR RESULT IN REPOSITORY:$e');
         return Left(ServerFailure(message: '$e'));
       }
     } else {

@@ -5,6 +5,7 @@ import 'package:neighborly_flutter_app/features/posts/data/model/specific_commen
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/models/post_model.dart';
+import '../../../../../core/utils/set_auth.dart';
 import '../../../../../core/utils/shared_preference.dart';
 import '../../model/comments_model.dart';
 import '../../model/reply_model.dart';
@@ -18,12 +19,12 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   Future<List<PostModel>> getAllPosts({
     required bool isHome,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
 
-    String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/fetch-posts';
 
     Map<String, dynamic> queryParameters;
@@ -33,7 +34,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       List<double> location = ShardPrefHelper.getHomeLocation();
       double lat = location[0];
       double long = location[1];
-      print('location not home:${lat}${long}');
       queryParameters = {
         'latitude': '$lat',
         'longitude': '$long',
@@ -44,7 +44,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       List<double> location = ShardPrefHelper.getLocation();
       double lat = location[0];
       double long = location[1];
-      print('location home:${lat}${long}');
       queryParameters = {
         'home': 'false',
         'latitude': '$lat',
@@ -53,50 +52,36 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       };
     }
 
-    // var isMode = ShardPrefHelper.getIsModeLocationOn();
-    // if (isMode && !isHome) {
-    //   List<double> modeLocation = ShardPrefHelper.getModeLocation();
-    //   double lat = modeLocation[0];
-    //   double long = modeLocation[1];
-    //   queryParameters = {
-    //     'home': 'false',
-    //     'latitude': '$lat',
-    //     'longitude': '$long',
-    //     'range': '$radius',
-    //   };
-    // }
-    print('coockie :$cookieHeader');
     try {
       final response = await client.get(
         Uri.parse(url).replace(queryParameters: queryParameters),
         headers: <String, String>{
-          'Cookie': cookieHeader,
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+          'Cookie': cookies,
         },
       );
 
       final List<dynamic> jsonData = jsonDecode(response.body);
-      print("jsonData:${jsonDecode(response.body)}");
+
       if (response.statusCode == 200) {
-        print("jsonData NEW DATA IN 200 RES:${jsonDecode(response.body)}");
+        handleAuthHeaders(response.headers);
+
         List<PostModel> data =
             jsonData.map((data) => PostModel.fromJson(data)).toList();
-        print('what is data$data');
+
         return data;
-        // return jsonData.map((data) => PostModel.fromJson(data)).toList();
       } else {
-        print('what is data else error');
         final message =
             jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
 
         throw ServerException(message: message);
       }
     } on SocketException catch (_) {
-      print('what is data socket error');
       throw ServerException(
         message: 'oops something went wrong',
       );
     } catch (e) {
-      print('what is data catch ${e.toString()}');
       throw ServerException(
         message: 'oops something went wrong',
       );
@@ -109,18 +94,20 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     required String type,
     required String postId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong.');
     }
-    String cookieHeader = cookies.join('; ');
+
     String url = '$kBaseUrl/wall/report';
 
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(<String, dynamic>{
         'id': postId,
@@ -128,8 +115,9 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'reason': reason,
       }),
     );
-    print('REPORT RESPONSE: ${response.body}');
+
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return;
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
@@ -144,26 +132,29 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     required String feedback,
     required String type,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'Someting went wrong');
     }
-    String cookieHeader = cookies.join('; ');
-    String url = '$kBaseUrl/wall/feedback';
 
+    String url = '$kBaseUrl/wall/feedback';
     final response = await client.put(
       Uri.parse(url),
-      headers: {
-        'Cookie': cookieHeader,
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
-      body: {
+      body: jsonEncode({
         'id': '$id',
         'feedback': feedback,
         'type': type,
-      },
+      }),
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return;
     } else {
       final message =
@@ -175,22 +166,26 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
   @override
   Future<PostModel> getPostById({required num id}) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+
     String url = '$kBaseUrl/wall/fetch-posts/$id';
 
     Map<String, dynamic> queryParameters = {'home': 'true'};
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => PostModel.fromJson(data)).toList()[0];
     } else {
@@ -202,21 +197,25 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
   @override
   Future<SpecificCommentModel> getCommentById({required String id}) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+
     String url = '$kBaseUrl/posts/get-comment/$id';
 
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final Map<String, dynamic> jsonData = jsonDecode(response.body);
       return SpecificCommentModel.fromJson(jsonData);
     } else {
@@ -231,18 +230,12 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     required num postId,
     required String commentId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
-    /*
-    TODO: Vinay here you have to replace fetch-comment-thread/$commentId with new commentid api , bharat will provide you and check
-    fetch-comments and commentid both api response should be same model type else you will get error
-    */
 
-    //String url = commentId == '0'? '$kBaseUrl/posts/fetch-comments/$postId' : '$kBaseUrl/posts/fetch-comment-thread/$commentId';
-    // String url = '$kBaseUrl/posts/fetch-comments/$postId';
     int pagenumber = 1;
     String url =
         '$kBaseUrl/posts/fetch-comments/$postId?page=${pagenumber ?? 1}?limit=100';
@@ -250,11 +243,14 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
       return jsonData
           .map((data) => CommentModel.fromJson(data, postId))
@@ -271,11 +267,11 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     required num id,
     required String type,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/wall/delete/$type/$id';
 
@@ -283,11 +279,13 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return;
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
@@ -302,18 +300,20 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     required String text,
     num? commentId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+
     String url = '$kBaseUrl/posts/add-comment';
 
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(<String, dynamic>{
         'contentid': postId,
@@ -323,6 +323,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     );
 
     if (response.statusCode == 201) {
+      handleAuthHeaders(response.headers);
       return;
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
@@ -336,18 +337,20 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     required num pollId,
     required num optionId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+
     String url = '$kBaseUrl/posts/send-poll-vote';
 
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(<String, dynamic>{
         'contentid': pollId,
@@ -356,6 +359,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     );
 
     if (response.statusCode == 201) {
+      handleAuthHeaders(response.headers);
       return;
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
@@ -366,22 +370,25 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
   @override
   Future<List<ReplyModel>> fetchCommentReply({required num commentId}) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/posts/fetch-comment-thread/$commentId';
 
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body);
 
       return jsonData.map((data) => ReplyModel.fromJson(data)).toList();
@@ -398,11 +405,13 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     required String awardType,
     required String type,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
+    // List<String>? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'Someting went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    //String cookieHeader = cookies.join('; '); cookies.join('; ');
 
     String url = '$kBaseUrl/wall/give-award';
 
@@ -410,7 +419,8 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json',
-        'Cookie': cookieHeader,
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
       body: jsonEncode(<String, dynamic>{
         'id': id,
@@ -420,6 +430,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return;
     } else {
       final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
@@ -437,7 +448,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   //   if (cookies == null || cookies.isEmpty) {
   //     throw const ServerException(message: 'No cookies found');
   //   }
-  //   String cookieHeader = cookies.join('; ');
+  //   //String cookieHeader = cookies.join('; '); cookies.join('; ');
 
   //   String url = '$kBaseUrl/posts/add-comment';
   //   final response = await client.post(

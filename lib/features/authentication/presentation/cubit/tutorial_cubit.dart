@@ -6,6 +6,8 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'dart:convert';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_state.dart';
 
+import '../../../../core/utils/set_auth.dart';
+
 class TutorialCubit extends Cubit<TutorialState> {
   final http.Client httpClient;
 
@@ -16,12 +18,13 @@ class TutorialCubit extends Cubit<TutorialState> {
     emit(TutorialUpdateLoading());
 
     try {
-      List<String>? cookies = ShardPrefHelper.getCookie();
+      String? cookies = ShardPrefHelper.getCookie();
+      String? accessToken = ShardPrefHelper.getAccessToken();
       if (cookies == null || cookies.isEmpty) {
         throw const ServerException(message: 'No cookies found');
       }
 
-      String cookieHeader = cookies.join('; ');
+      // String cookieHeader = cookies.join('; ');
 
       //  API URL
       const url = '$kBaseUrl/user/update-tutorial-info';
@@ -38,13 +41,20 @@ class TutorialCubit extends Cubit<TutorialState> {
       final response = await httpClient.put(
         Uri.parse(url),
         headers: <String, String>{
-          'Cookie': cookieHeader,
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+          'Cookie': cookies,
         },
         body: jsonEncode(data),
       );
 
       if (response.statusCode == 200) {
+        handleAuthHeaders(response.headers);
+        // List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+        // String accessToken = response.headers['authorization'] ?? '';
+        // ShardPrefHelper.setCookie(cookies);
+        // ShardPrefHelper.setAccessToken(accessToken);
+
         bool isSkippedTutorial =
             jsonDecode(response.body)['user']['skippedTutorial'];
         bool isViewedTutorial =

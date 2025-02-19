@@ -22,12 +22,13 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     required bool allowMultipleVotes,
     File? thumbnail,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
 
-    String cookieHeader = cookies.join('; ');
+    // String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/create-post';
 
     var isLocationOn = ShardPrefHelper.getIsLocationOn();
@@ -39,7 +40,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       'POST',
       Uri.parse(url).replace(queryParameters: queryParameters),
     )
-      ..headers['Cookie'] = cookieHeader
+      ..headers['Cookie'] = cookies
       ..fields['title'] = title
       ..fields['content'] = content ?? ''
       ..fields['type'] = type
@@ -94,15 +95,16 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
 
   @override
   Future<String> uploadFile({required File file}) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    // String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/user/upload-file';
 
     final request = http.MultipartRequest('POST', Uri.parse(url))
-      ..headers['Cookie'] = cookieHeader
+      ..headers['Cookie'] = cookies
       ..files.add(
         http.MultipartFile(
           'file',
@@ -119,8 +121,8 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       return jsonDecode(responseString)['url'];
     } else {
       throw ServerException(
-          message:
-              jsonDecode(responseString)['message'] ?? 'oops something went wrong');
+          message: jsonDecode(responseString)['message'] ??
+              'oops something went wrong');
     }
   }
 }

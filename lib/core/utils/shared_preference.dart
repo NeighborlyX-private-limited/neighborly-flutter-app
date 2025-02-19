@@ -19,12 +19,19 @@ class ShardPrefHelper {
       _preferences = await SharedPreferences.getInstance();
 
   ///...... save cookies
-  static Future setCookie(List<String> cookie) async =>
-      await _preferences.setStringList(_cookie, cookie);
+  static Future setCookie(String cookie) async =>
+      await _preferences.setString(_cookie, cookie);
 
-  static List<String>? getCookie() => _preferences.getStringList(_cookie) ?? [];
+  static String? getCookie() => _preferences.getString(_cookie) ?? '';
 
   static Future removeCookie() async => await _preferences.remove(_cookie);
+  // ///...... save cookies
+  // static Future setCookie(List<String> cookie) async =>
+  //     await _preferences.setStringList(_cookie, cookie);
+
+  // static List<String>? getCookie() => _preferences.getStringList(_cookie) ?? [];
+
+  // static Future removeCookie() async => await _preferences.remove(_cookie);
 
   ///...... save Access Token
   static Future setAccessToken(String accessToken) async =>

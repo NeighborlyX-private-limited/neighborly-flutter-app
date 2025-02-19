@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import '../../../../../core/utils/set_auth.dart';
 import '../../model/chat_message_model.dart';
 import '../../model/chat_room_model.dart';
 import '../../model/pinned_message_model.dart';
@@ -21,12 +22,14 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     bool isreply = false,
     int page = 1,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    // List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    String cookieHeader = cookies.join('; ');
+    // String cookieHeader = cookies.join('; ');
 
     String url =
         '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=50';
@@ -34,14 +37,17 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
-      print('CHAT MESSAGE PAGE: $page');
-      print('CHAT MESSAGE LIMIT: ${jsonDecode(response.body).length}');
-      print('CHAT MESSAGE: ${jsonDecode(response.body)}');
+      handleAuthHeaders(response.headers);
+      // print('CHAT MESSAGE PAGE: $page');
+      // print('CHAT MESSAGE LIMIT: ${jsonDecode(response.body).length}');
+      // print('CHAT MESSAGE: ${jsonDecode(response.body)}');
       return ChatMessageModel.fromJsonList(jsonDecode(response.body))
           .reversed
           .toList();
@@ -55,23 +61,28 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 // GET ALL CHAT ROOMS
   @override
   Future<List<ChatRoomModel>> getAllChatRooms() async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    // List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
-    String cookieHeader = cookies.join('; ');
+    // String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/chat/fetch-user-chats';
 
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
     debugPrint('GET ALL CHAT ROOMS RESPONSE: ${response.body}');
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return ChatRoomModel.fromJsonList(jsonDecode(response.body));
     } else {
       final message =
@@ -84,23 +95,28 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   Future<List<PinnedMessageModel>> featchPinnedMessages({
     required String groupId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    // List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
-    String cookieHeader = cookies.join('; ');
+    // String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/chat/fetch-pinned-messages/$groupId';
 
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return PinnedMessageModel.fromJsonList(jsonDecode(response.body));
     } else {
       final message =
@@ -113,23 +129,28 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   Future<String> pinnedMessage({
     required String messageId,
   }) async {
-    List<String>? cookies = ShardPrefHelper.getCookie();
+    // List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
-    String cookieHeader = cookies.join('; ');
+    // String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/chat/pin-message/$messageId';
 
     final response = await client.put(
       Uri.parse(url),
       headers: <String, String>{
-        'Cookie': cookieHeader,
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
       },
     );
 
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return (jsonDecode(response.body)['message']);
     } else {
       final message =

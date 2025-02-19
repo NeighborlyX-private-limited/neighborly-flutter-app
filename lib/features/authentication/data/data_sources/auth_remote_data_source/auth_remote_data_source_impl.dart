@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/utils/google_auth_helper.dart';
+import '../../../../../core/utils/set_auth.dart';
 import '../../../../../core/utils/shared_preference.dart';
 import '../../models/auth_response_model.dart';
 import 'auth_remote_data_source.dart';
@@ -46,10 +46,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     log('EMAIL OR PHONE LOGIN:${jsonDecode(response.body)}');
     debugPrint('EMAIL OR PHONE LOGIN:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
-      List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
+      handleAuthHeaders(response.headers);
 
-      String accessToken = jsonDecode(response.body)['accessToken'];
-      String refreshToken = jsonDecode(response.body)['refreshToken'];
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
       String username = jsonDecode(response.body)['user']['username'];
@@ -66,14 +64,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           jsonDecode(response.body)['user']['viewedTutorial'];
       String authType = jsonDecode(response.body)['user']['auth_type'];
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
-      print("ACCESS TOKEN IN LOGIN RESPONSE::$accessToken");
-      print("USERNAME IN LOGIN RESPONSE:$username");
-      print("USERID IN LOGIN RESPONSE:$userID");
 
       // SET DATA IN LOCAL
-      ShardPrefHelper.setCookie(cookies);
-      ShardPrefHelper.setAccessToken(accessToken);
-      ShardPrefHelper.setRefreshToken(refreshToken);
       ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setUsername(username);
@@ -87,10 +79,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setAuthtype(authType);
       ShardPrefHelper.setIsVerified(isVerified);
-      print(
-          "ACCESS TOKEN IN LOGIN RESPONSE:${ShardPrefHelper.getAccessToken()}");
-      print("USERNAME IN LOGIN RESPONSE:${ShardPrefHelper.getUsername()}");
-      print("USERID IN LOGIN RESPONSE:${ShardPrefHelper.getUserID()}");
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
@@ -110,7 +98,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String url = '$kBaseUrl/authentication/register';
 
     String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
-
+    print('FCM TOKEN IN SIGNUP:$fcmToken');
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -130,9 +118,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     log('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
     debugPrint('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
-      List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
-      String accessToken = jsonDecode(response.body)['accessToken'];
-      ShardPrefHelper.setAccessToken(accessToken);
+      handleAuthHeaders(response.headers);
 
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
@@ -160,7 +146,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String authType = jsonDecode(response.body)['user']['auth_type'];
 
       // SET ALL DATA IN LOCAL
-      ShardPrefHelper.setCookie(cookies);
+
       ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setUsername(username);
@@ -215,6 +201,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     log('SEND OTP FOR EMAIL OR PHONE:${jsonDecode(response.body)}');
     debugPrint('SEND OTP FOR EMAIL OR PHONE:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return "OTP sent successfully";
     } else {
       if (response.body ==
@@ -253,10 +240,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     log('VERIFY OTP FOR EMAIL OR PHONE:${jsonDecode(response.body)}');
     debugPrint('VERIFY OTP FOR EMAIL OR PHONE:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       if (verificationFor != 'forgot-password') {
-        List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
-        String accessToken = jsonDecode(response.body)['accessToken'];
-        ShardPrefHelper.setAccessToken(accessToken);
         String userID = jsonDecode(response.body)['user']['_id'];
         String proPic = jsonDecode(response.body)['user']['picture'];
         String username = jsonDecode(response.body)['user']['username'];
@@ -288,7 +273,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         } else {
           ShardPrefHelper.setIsEmailLogin(false);
         }
-        ShardPrefHelper.setCookie(cookies);
+
         ShardPrefHelper.setUserID(userID);
         ShardPrefHelper.setUserProfilePicture(proPic);
         ShardPrefHelper.setUsername(username);
@@ -335,6 +320,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     log('FORGOT PASSWORD RESPONSE:${jsonDecode(response.body)}');
     debugPrint('FORGOT PASSWORD RESPONSE:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
       return jsonDecode(response.body)['msg'];
     } else {
       String error =
@@ -352,16 +338,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
 
-      // final GoogleSignIn googleSignIn = GoogleSignIn();
-      // print('GOOGLE SIGN IN RESULT:$googleSignIn');
-
-      // await googleSignIn.signOut();
-
       var signInResult = await GoogleSignInService.signInWithGoogle();
-      print('GOOGLE SIGN IN RESULT AFTER LOGOUT:$signInResult');
 
       if (signInResult['error'] != null) {
-        print('GOOGLE SIGN IN ERROR AFTER LOGOUT:${signInResult['error']}');
         throw ServerException(message: signInResult['error']);
       }
       if (signInResult.containsKey('error')) {
@@ -369,13 +348,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       }
 
       String tokenID = signInResult['idToken'];
-      print('GOOGLE SIGN IN TOKEN :$tokenID');
-      print('FCM TOKEN :$fcmToken');
 
       final response = await http.post(
         Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
-        body: json.encode({
+        body: jsonEncode({
           'token': tokenID,
           'device': 'android',
           'fcmToken': fcmToken,
@@ -384,9 +361,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       log('GOOGLE AUTH RESPONSE:${jsonDecode(response.body)}');
       debugPrint('GOOGLE AUTH RESPONSE:${jsonDecode(response.body)}');
       if (response.statusCode == 200) {
-        List<String> cookies = response.headers['set-cookie']?.split(',') ?? [];
-        String accessToken = jsonDecode(response.body)['accessToken'];
-        ShardPrefHelper.setAccessToken(accessToken);
+        handleAuthHeaders(response.headers);
+
         String userID = jsonDecode(response.body)['user']['_id'];
         String proPic = jsonDecode(response.body)['user']['picture'];
         String username = jsonDecode(response.body)['user']['username'];
@@ -406,13 +382,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
             jsonDecode(response.body)['user']['viewedTutorial'];
         bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         String authType = 'email';
-        final jwtToken = response.headers['authorization'] ?? '';
-        ShardPrefHelper.setJwtToken(jwtToken);
 
         // SET DATA IN LOCAL
         ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
         ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
-        ShardPrefHelper.setCookie(cookies);
         ShardPrefHelper.setUserID(userID);
         ShardPrefHelper.setUserProfilePicture(proPic);
         ShardPrefHelper.setUsername(username);

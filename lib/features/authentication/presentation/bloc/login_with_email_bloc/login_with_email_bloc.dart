@@ -41,12 +41,12 @@ class LoginWithEmailBloc
       emit(LoginLoadingState());
 
       final result = await _googleLogin.call();
-      print('RESULT IN BLOC:$result');
+      // print('RESULT IN BLOC:$result');
       result.fold((error) {
-        print('ERROR RESULT IN BLOC:${error.toString()}');
+        // print('ERROR RESULT IN BLOC:${error.toString()}');
         emit(LoginFailureState(error: error.toString()));
       }, (response) {
-        print('SUCCESS RESULT IN BLOC:$response');
+        // print('SUCCESS RESULT IN BLOC:$response');
         emit(OAuthSuccessState(message: 'true'));
       });
     });

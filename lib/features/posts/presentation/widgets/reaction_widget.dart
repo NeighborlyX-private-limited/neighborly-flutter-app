@@ -49,8 +49,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   // INIT STATE
   @override
   void initState() {
-    print('use:${widget.post}');
-    print('user:${widget.post.userFeedback}');
+    // print('use:${widget.post}');
+    // print('user:${widget.post.userFeedback}');
     super.initState();
     cheersCount = widget.post.cheers;
     boosCount = widget.post.bools;
@@ -248,7 +248,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           child: InkWell(
             onTap: () {
               _updateState('cheer');
-
+              print('yes cheer');
               BlocProvider.of<FeedbackBloc>(context).add(
                 FeedbackButtonPressedEvent(
                   postId: widget.post.id,

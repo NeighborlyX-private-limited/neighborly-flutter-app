@@ -134,20 +134,20 @@ class MyAppState extends State<MyApp> {
   //   } catch (e) {}
   // }
   Future<void> _setDeepLinkListener() async {
-    print("deep link received by vinay");
+    // print("deep link received by vinay");
     try {
-      print("deep link received by vinay:");
+      // print("deep link received by vinay:");
       platform.setMethodCallHandler((MethodCall call) async {
-        print("deep link received by vinay :${call.method}");
+        // print("deep link received by vinay :${call.method}");
         if (call.method == "onDeepLink") {
-          print("deep link received by vinay");
+          // print("deep link received by vinay");
           setState(() {
             _deepLink = call.arguments;
-            print('deep link aaya $_deepLink');
+            // print('deep link aaya $_deepLink');
             List? linksplit = _deepLink?.split('neighborly.in/');
             if (linksplit != null && linksplit.length > 1) {
               if (linksplit[1].contains('posts/')) {
-                print('this is post');
+                // print('this is post');
                 try {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => PostDetailScreen(
@@ -158,21 +158,21 @@ class MyAppState extends State<MyApp> {
                     ),
                   ));
                 } catch (e) {
-                  print("error aaya kch: $e");
+                  // print("error aaya kch: $e");
                   //handle default page if error
                 }
               } else {
-                print(
-                    'here you have to handle other navigation for url based on if condition.');
+                // print(
+                // 'here you have to handle other navigation for url based on if condition.');
               }
             } else {
-              print("Empty means open default page.");
+              // print("Empty means open default page.");
             }
           });
         }
       });
     } catch (e) {
-      print('error in deep: $e');
+      // print('error in deep: $e');
     }
   }
   // Future<void> _init() async {
