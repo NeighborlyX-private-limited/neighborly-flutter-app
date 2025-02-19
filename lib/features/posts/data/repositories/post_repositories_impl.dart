@@ -27,7 +27,7 @@ class PostRepositoriesImpl implements PostRepositories {
         final result = await remoteDataSource.getAllPosts(
           isHome: isHome,
         );
-
+        print('what is result:$result');
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));

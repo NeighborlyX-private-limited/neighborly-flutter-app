@@ -33,7 +33,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       List<double> location = ShardPrefHelper.getHomeLocation();
       double lat = location[0];
       double long = location[1];
-      print('locayion:${lat}${long}');
+      print('location not home:${lat}${long}');
       queryParameters = {
         'latitude': '$lat',
         'longitude': '$long',
@@ -44,7 +44,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       List<double> location = ShardPrefHelper.getLocation();
       double lat = location[0];
       double long = location[1];
-      print('locayion:${lat}${long}');
+      print('location home:${lat}${long}');
       queryParameters = {
         'home': 'false',
         'latitude': '$lat',
@@ -75,20 +75,28 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       );
 
       final List<dynamic> jsonData = jsonDecode(response.body);
-
+      print("jsonData:${jsonDecode(response.body)}");
       if (response.statusCode == 200) {
-        return jsonData.map((data) => PostModel.fromJson(data)).toList();
+        print("jsonData NEW DATA IN 200 RES:${jsonDecode(response.body)}");
+        List<PostModel> data =
+            jsonData.map((data) => PostModel.fromJson(data)).toList();
+        print('what is data$data');
+        return data;
+        // return jsonData.map((data) => PostModel.fromJson(data)).toList();
       } else {
+        print('what is data else error');
         final message =
             jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
 
         throw ServerException(message: message);
       }
     } on SocketException catch (_) {
+      print('what is data socket error');
       throw ServerException(
         message: 'oops something went wrong',
       );
     } catch (e) {
+      print('what is data catch ${e.toString()}');
       throw ServerException(
         message: 'oops something went wrong',
       );

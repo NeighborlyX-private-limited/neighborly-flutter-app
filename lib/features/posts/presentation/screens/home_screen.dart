@@ -624,6 +624,7 @@ class _HomeScreenState extends State<HomeScreen>
                   ///success state
                   else if (state is GetAllPostsSuccessState) {
                     final posts = state.post;
+                    print('post count: ${posts.length}');
                     return posts.isEmpty
                         ? Center(
                             child: Column(
