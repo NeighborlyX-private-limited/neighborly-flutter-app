@@ -50,7 +50,10 @@ class SomethingWentWrong extends StatelessWidget {
             SizedBox(height: 8),
             Text(
               message,
-              style: TextStyle(fontSize: 14, color: AppColors.greyColor),
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.greyColor,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12),

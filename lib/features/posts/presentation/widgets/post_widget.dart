@@ -36,6 +36,7 @@ class PostWidget extends StatefulWidget {
 class _PostWidgetState extends State<PostWidget> {
   String? title;
   String? content;
+
   // INIT STATE
   @override
   void initState() {
@@ -44,8 +45,10 @@ class _PostWidgetState extends State<PostWidget> {
     content = widget.post.content ?? '';
   }
 
+// BUILD
   @override
   Widget build(BuildContext context) {
+    // SHOW MENU BOTTOM SHEET
     void showBottomSheet() {
       menuBottomSheet(context);
     }
@@ -61,6 +64,7 @@ class _PostWidgetState extends State<PostWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // USER PROFILE, USER NAME, POST DATE & TIME, MENU ICON ROW
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,6 +79,7 @@ class _PostWidgetState extends State<PostWidget> {
                   },
                   child: Row(
                     children: [
+                      // USER PROFILE PIC
                       ClipOval(
                         child: Container(
                           width: 40,
@@ -117,6 +122,7 @@ class _PostWidgetState extends State<PostWidget> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // USER NAME
                           Row(
                             children: [
                               widget.post.userName.contains('[deleted]')
@@ -149,6 +155,7 @@ class _PostWidgetState extends State<PostWidget> {
                               const SizedBox(
                                 width: 6,
                               ),
+                              // POST TIME
                               Text(
                                 formatTimeDifference(widget.post.createdAt),
                                 style: TextStyle(
@@ -158,12 +165,14 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                             ],
                           ),
+                          // CITY NAME
                           Text(
                             widget.post.city,
                             style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                color: Colors.grey[500],
-                                fontSize: 14),
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey[500],
+                              fontSize: 14,
+                            ),
                           ),
                         ],
                       ),
@@ -182,73 +191,80 @@ class _PostWidgetState extends State<PostWidget> {
                 )
               ],
             ),
-            const SizedBox(
-              height: 12,
-            ),
+
             widget.post.title != null
-                ? Linkify(
-                    options: LinkifyOptions(
-                      looseUrl: true,
+                ? Padding(
+                    padding: const EdgeInsets.only(
+                      top: 12,
                     ),
-                    onOpen: (link) async {
-                      if (await canLaunchUrl(Uri.parse(link.url))) {
-                        await launchUrl(Uri.parse(link.url),
-                            mode: LaunchMode.externalApplication);
-                      } else {
-                        throw "Could not launch ${link.url}";
-                      }
-                    },
-                    text: title!,
-                    style: const TextStyle(fontSize: 17),
-                    linkStyle: const TextStyle(
-                      color: AppColors.primaryColor,
+                    child: Linkify(
+                      options: LinkifyOptions(
+                        looseUrl: true,
+                      ),
+                      onOpen: (link) async {
+                        if (await canLaunchUrl(Uri.parse(link.url))) {
+                          await launchUrl(Uri.parse(link.url),
+                              mode: LaunchMode.externalApplication);
+                        } else {
+                          throw "Could not launch ${link.url}";
+                        }
+                      },
+                      text: title!,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      linkStyle: const TextStyle(
+                        color: AppColors.primaryColor,
+                      ),
                     ),
                   )
                 : Container(),
-            widget.post.title != null
-                ? const SizedBox(
-                    height: 10,
-                  )
-                : Container(),
+
             widget.post.content != null
-                ? Linkify(
-                    options: LinkifyOptions(
-                      looseUrl: true,
-                    ),
-                    onOpen: (link) async {
-                      if (await canLaunchUrl(Uri.parse(link.url))) {
-                        await launchUrl(Uri.parse(link.url),
-                            mode: LaunchMode.externalApplication);
-                      } else {
-                        throw "Could not launch ${link.url}";
-                      }
-                    },
-                    text: content!,
-                    style: const TextStyle(fontSize: 17),
-                    linkStyle: const TextStyle(
-                      color: AppColors.primaryColor,
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Linkify(
+                      options: LinkifyOptions(
+                        looseUrl: true,
+                      ),
+                      onOpen: (link) async {
+                        if (await canLaunchUrl(Uri.parse(link.url))) {
+                          await launchUrl(Uri.parse(link.url),
+                              mode: LaunchMode.externalApplication);
+                        } else {
+                          throw "Could not launch ${link.url}";
+                        }
+                      },
+                      text: content!,
+                      style: const TextStyle(fontSize: 16),
+                      linkStyle: const TextStyle(
+                        color: AppColors.primaryColor,
+                      ),
                     ),
                   )
                 : Container(),
-            widget.post.multimedia!.isNotEmpty
-                ? const SizedBox(
-                    height: 10,
-                  )
-                : Container(),
+
             widget.post.multimedia != null &&
                     widget.post.multimedia!.isNotEmpty &&
                     widget.post.multimedia!.length > 1
-                ? ImageSlider(
-                    multimedia: widget.post.multimedia ?? [],
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: ImageSlider(
+                      multimedia: widget.post.multimedia ?? [],
+                    ),
                   )
                 : Container(),
             widget.post.multimedia != null &&
                     widget.post.multimedia!.isNotEmpty &&
                     widget.post.multimedia!.length == 1 &&
                     widget.post.multimedia![0].contains('.mp4')
-                ? VideoDisplayWidget(
-                    videoUrl: widget.post.multimedia![0],
-                    thumbnailUrl: widget.post.thumbnail!,
+                ? Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: VideoDisplayWidget(
+                      videoUrl: widget.post.multimedia![0],
+                      thumbnailUrl: widget.post.thumbnail!,
+                    ),
                   )
                 : Container(),
             widget.post.multimedia != null &&
@@ -285,7 +301,8 @@ class _PostWidgetState extends State<PostWidget> {
                         ),
                         errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
-                    ))
+                    ),
+                  )
                 : Container(),
             const SizedBox(
               height: 20,
@@ -346,6 +363,7 @@ class _PostWidgetState extends State<PostWidget> {
                           // DELETE POST SUCCESS STATE
                           if (state is DeletePostSuccessState) {
                             Navigator.of(context).pop();
+                            widget.onDelete();
                             showSnackBar(
                               context: context,
                               message:
@@ -375,7 +393,6 @@ class _PostWidgetState extends State<PostWidget> {
                                       type: 'post',
                                     ),
                                   );
-                              widget.onDelete();
                             },
                             leading: Icon(
                               Icons.delete_outline_outlined,
@@ -426,10 +443,12 @@ class _PostWidgetState extends State<PostWidget> {
             if (state is ReportPostSuccessState) {
               Navigator.of(context).pop();
               showReportConfirmationBottomSheet();
+              widget.onDelete();
             }
 
             // REPORT POST FAILURE STATE
             else if (state is ReportPostFailureState) {
+              Navigator.of(context).pop();
               showSnackBar(context: context, message: state.error);
             }
           },

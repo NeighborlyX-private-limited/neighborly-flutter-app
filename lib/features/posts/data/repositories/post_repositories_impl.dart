@@ -17,7 +17,7 @@ class PostRepositoriesImpl implements PostRepositories {
     required this.networkInfo,
   });
 
-  /// get all post repo impl
+  // GET ALL POST
   @override
   Future<Either<Failure, List<PostEntity>>> getAllPosts({
     required bool isHome,
@@ -27,7 +27,6 @@ class PostRepositoriesImpl implements PostRepositories {
         final result = await remoteDataSource.getAllPosts(
           isHome: isHome,
         );
-        // print('what is result:$result');
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -65,14 +64,13 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
-  /// feedback repo impl
+  // FEEDBACK REPO
   @override
   Future<Either<Failure, void>> feedback({
     required num id,
     required String feedback,
     required String type,
   }) async {
-    print('yes repo impl');
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.feedback(
@@ -82,11 +80,8 @@ class PostRepositoriesImpl implements PostRepositories {
         );
         return const Right(null);
       } on ServerFailure catch (e) {
-        print('yes repo impl');
-        print('yes repo error  ${e.message}');
         return Left(ServerFailure(message: e.message));
       } catch (e) {
-        print('yes repo error catch ${e.toString()}');
         return Left(ServerFailure(message: '$e'));
       }
     } else {
@@ -150,9 +145,12 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+// DELETE POST OR POLL
   @override
-  Future<Either<Failure, void>> deletePost(
-      {required num id, required String type}) async {
+  Future<Either<Failure, void>> deletePost({
+    required num id,
+    required String type,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.deletePost(id: id, type: type);
@@ -229,10 +227,11 @@ class PostRepositoriesImpl implements PostRepositories {
   }
 
   @override
-  Future<Either<Failure, void>> giveAward(
-      {required num id,
-      required String awardType,
-      required String type}) async {
+  Future<Either<Failure, void>> giveAward({
+    required num id,
+    required String awardType,
+    required String type,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.giveAward(

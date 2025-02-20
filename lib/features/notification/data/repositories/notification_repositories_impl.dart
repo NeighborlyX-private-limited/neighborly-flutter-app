@@ -13,7 +13,7 @@ class NotificationRepositoriesImpl implements NotificationRepositories {
     required this.remoteDataSource,
     required this.networkInfo,
   });
-
+// UPDATE FCM TOKEN
   @override
   Future<Either<Failure, String>> updateFCMtoken() async {
     if (await networkInfo.isConnected) {

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:share_it/share_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/entities/post_enitity.dart';
@@ -49,8 +50,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   // INIT STATE
   @override
   void initState() {
-    // print('use:${widget.post}');
-    // print('user:${widget.post.userFeedback}');
     super.initState();
     cheersCount = widget.post.cheers;
     boosCount = widget.post.bools;
@@ -59,7 +58,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     isBooed = widget.post.userFeedback == 'boo';
     profileRemoteDataSource =
         ProfileRemoteDataSourceImpl(client: http.Client());
-
     _loadReactionState();
   }
 
@@ -69,7 +67,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     setState(() {});
   }
 
-  ///getmyawards method
+  // GET AWARDS
   getmyawards() async {
     List responseMessage = await profileRemoteDataSource.getMyAwards();
     bool localLegendAvailable = false;
@@ -140,7 +138,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       }
     }
 
-    /// Update state once after the loop
+    // UPDATE THE AWARDS
     setState(() {
       isLocalLegendAwardAvailable = localLegendAvailable;
       isParkBenchAwardAvailable = parkBenchAvailable;
@@ -217,6 +215,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // SHOW IMAGE ACCORDING TO AWARD
     String checkStringInList(String str) {
       switch (str) {
         case 'Local Legend':
@@ -248,7 +247,6 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           child: InkWell(
             onTap: () {
               _updateState('cheer');
-              print('yes cheer');
               BlocProvider.of<FeedbackBloc>(context).add(
                 FeedbackButtonPressedEvent(
                   postId: widget.post.id,
@@ -468,9 +466,9 @@ class _ReactionWidgetState extends State<ReactionWidget> {
           ),
         ),
 
+        //  SHARE BUTTON
         InkWell(
           onTap: () {
-            /// #share
             String link =
                 'https://prod.neighborly.in/post-detail/${widget.post.id}/${widget.post.type == 'post' ? 'true' : 'false'}/${widget.post.userId}/0';
             ShareIt.text(content: link, androidSheetTitle: 'Share');
@@ -480,10 +478,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
             height: 32,
             width: 60,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey[300]!),
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(21),
-                )),
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: const BorderRadius.all(
+                Radius.circular(21),
+              ),
+            ),
             child: Center(
               child: SvgPicture.asset(
                 'assets/react4.svg',
@@ -497,64 +496,44 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     );
   }
 
-  ///showBottomSheet
+  // AWARD BOTTOM SHEET
   Future<num?> showBottomSheet() {
     return showModalBottomSheet<num>(
-      useRootNavigator: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return BlocListener<GiveAwardBloc, GiveAwardState>(
           listener: (context, state) {
-            ///Give Award Failure State
+            // FAILURE STATE
             if (state is GiveAwardFailureState) {
               Navigator.pop(context, awardsCount);
               if (state.error.contains('Award not available')) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(AppLocalizations.of(context)!
-                        .award_not_available_you_run_out_of_this_award),
-                  ),
+                showSnackBar(
+                  context: context,
+                  message: AppLocalizations.of(context)!
+                      .award_not_available_you_run_out_of_this_award,
                 );
               }
             }
 
-            ///Give Award Success State
+            // SUCCESS STATE
             else if (state is GiveAwardSuccessState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                      AppLocalizations.of(context)!.award_given_successfully),
-                ),
-              );
               Navigator.pop(context, awardsCount + 1);
+              showSnackBar(
+                context: context,
+                message: AppLocalizations.of(context)!.award_given_successfully,
+              );
             }
           },
           child: Container(
-            decoration: const BoxDecoration(
-              color: AppColors.whiteColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            height: 800,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: SingleChildScrollView(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        color: AppColors.lightGreyColor,
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -573,8 +552,9 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                     ],
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 8,
                   ),
+                  // LOCAL LEGEND
                   InkWell(
                     onTap: !isLocalLegendAwardAvailable
                         ? null
@@ -666,6 +646,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       ],
                     ),
                   ),
+                  // SUN FLOWER
                   InkWell(
                     onTap: !isSunflowerAwardAvailable
                         ? null
@@ -757,6 +738,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       ],
                     ),
                   ),
+                  // STREET LIGHT
                   InkWell(
                     onTap: !isStreetlightAwardAvailable
                         ? null
@@ -848,6 +830,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       ],
                     ),
                   ),
+                  //PARK BENCH
                   InkWell(
                     onTap: !isParkBenchAwardAvailable
                         ? null
@@ -939,6 +922,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                       ],
                     ),
                   ),
+                  //MAP
                   InkWell(
                     onTap: !isMapAwardAvailable
                         ? null

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/core/constants/constants.dart';
 import 'package:neighborly_flutter_app/core/error/exception.dart';
@@ -11,7 +12,7 @@ class CityRepository {
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    // String cookieHeader = cookies.join('; ');
+
     final url = Uri.parse('$kBaseUrl/user/update-user-location/$city');
 
     try {
@@ -23,7 +24,7 @@ class CityRepository {
           'Cookie': cookies,
         },
       );
-
+      debugPrint('UPDATE CITY: ${response.body}');
       if (response.statusCode == 200) {
         Map<String, dynamic> responseMap = jsonDecode(response.body);
         String message = responseMap['message'];

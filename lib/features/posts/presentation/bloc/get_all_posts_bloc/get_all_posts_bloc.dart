@@ -11,10 +11,11 @@ class GetAllPostsBloc extends Bloc<GetAllPostsEvent, GetAllPostsState> {
   GetAllPostsBloc({required GetAllPostsUsecase getAllPostsUsecase})
       : _getAllPostsUsecase = getAllPostsUsecase,
         super(GetAllPostsInitialState()) {
-    on<GetAllPostsButtonPressedEvent>((GetAllPostsButtonPressedEvent event,
-        Emitter<GetAllPostsState> emit) async {
+    on<GetAllPostsButtonPressedEvent>((
+      GetAllPostsButtonPressedEvent event,
+      Emitter<GetAllPostsState> emit,
+    ) async {
       emit(GetAllPostsLoadingState());
-
       final result = await _getAllPostsUsecase.call(
         isHome: event.isHome,
       );
@@ -25,23 +26,5 @@ class GetAllPostsBloc extends Bloc<GetAllPostsEvent, GetAllPostsState> {
         emit(GetAllPostsSuccessState(post: response));
       });
     });
-    // on<DeleteOnePostsButtonPressedEvent>((DeleteOnePostsButtonPressedEvent event,
-    //     Emitter<GetAllPostsState> emit) async {
-    //    List<PostEntity> oldPost = List<PostEntity>.from(state.post);
-
-    //    oldPost.removeWhere((item) => item.id == event.postId);
-    //   //List<PostEntity> updatedpost = oldPost.forEach((e)=> e.id != event.postId);
-
-    //   emit(GetAllPostsSuccessState(post: oldPost));
-    // });
-  }
-
-  void deletepost(num postid) {
-    if (state is GetAllPostsSuccessState) {
-      final successState = state as GetAllPostsSuccessState;
-      List<PostEntity> oldPost = List<PostEntity>.from(successState.post);
-      oldPost.removeWhere((item) => item.id == postid);
-      emit(GetAllPostsSuccessState(post: oldPost));
-    }
   }
 }

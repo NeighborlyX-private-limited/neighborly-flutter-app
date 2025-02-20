@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
@@ -13,7 +14,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
   final http.Client client;
 
   NotificationRemoteDataSourceImpl({required this.client});
-
+// UPDATE FCM TOKEN
   @override
   Future<String> updateFCMtoken() async {
     var currentToken = await FirebaseMessaging.instance.getToken();
@@ -21,31 +22,33 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Someting went wrong');
+      throw const ServerException(message: 'oops something went wrong.');
     }
-    // String cookieHeader = cookies.join('; ');
-    String url = '$kBaseUrl/user/save-fcm-token';
 
+    String url = '$kBaseUrl/user/save-fcm-token';
     String currentUser = ShardPrefHelper.getUserID() ?? '';
 
-    final response =
-        await client.post(Uri.parse(url), headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-      'Cookie': cookies,
-    }, body: {
-      "fcmToken": currentToken,
-      "userId": currentUser,
-    });
-
+    final response = await client.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
+      },
+      body: jsonEncode({
+        "fcmToken": currentToken,
+        "userId": currentUser,
+      }),
+    );
+    debugPrint('SET NEW FCM TOKEN:${response.body} ');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
-      // ignore: unused_local_variable
-      final jsonData = jsonDecode(response.body);
+      return currentToken ?? '';
     } else {
-      // final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      final message =
+          jsonDecode(response.body)['message'] ?? 'oops someting went wrong';
+      throw ServerException(message: message);
     }
-    return currentToken ?? '';
   }
 
   @override
@@ -113,16 +116,16 @@ Future<int> getAllNotificationCount({String? page}) async {
   }
 }
 
+// GET UNREAD NOTIFICATION COUNT
 Future<int> getNotificationUnreadCount() async {
   final http.Client client = http.Client();
   String? cookies = ShardPrefHelper.getCookie();
   String? accessToken = ShardPrefHelper.getAccessToken();
-  String? getAccessToken = ShardPrefHelper.getAccessToken();
+
   if (cookies == null || cookies.isEmpty) {
-    throw const ServerException(message: 'Someting went wrong');
+    throw const ServerException(message: 'oops someting went wrong.');
   }
 
-  // String cookieHeader = cookies.join('; ');
   String url =
       '$kBaseUrlNotification/notifications/get-unread-notification-count';
 
@@ -135,24 +138,24 @@ Future<int> getNotificationUnreadCount() async {
         'Cookie': cookies,
       },
     );
-
+    print('UNREAD NOTIFICATION COUNT:${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final unreadCount = jsonDecode(response.body)["unreadCount"];
       return unreadCount ?? 0;
     } else {
       final message =
-          jsonDecode(response.body)['msg'] ?? 'oops someting went wrong';
+          jsonDecode(response.body)['message'] ?? 'oops someting went wrong';
 
       throw ServerException(message: message);
     }
-  } on SocketException catch (_) {
+  } on SocketException catch (e) {
     throw ServerException(
-      message: 'oops something went wrong',
+      message: e.message,
     );
   } catch (e) {
     throw ServerException(
-      message: 'oops something went wrong',
+      message: e.toString(),
     );
   }
 }

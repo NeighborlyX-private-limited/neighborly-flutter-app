@@ -416,6 +416,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     }
   }
 
+// GET AWARDS
   @override
   Future<List> getMyAwards() async {
     String? cookies = ShardPrefHelper.getCookie();
@@ -423,7 +424,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'No cookies found');
     }
-    //String cookieHeader = cookies.join('; '); cookies.join('; ');
+
     String url = '$kBaseUrl/profile/user-awards';
 
     final response = await client.get(
@@ -439,7 +440,8 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
       handleAuthHeaders(response.headers);
       return jsonDecode(response.body)['awards'];
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'oops someting went wrong';
       throw ServerException(message: message);
     }
   }

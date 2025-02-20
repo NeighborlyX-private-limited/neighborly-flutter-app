@@ -11,9 +11,12 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
       : _feedbackUsecase = feedbackUsecase,
         super(FeedbackInitialState()) {
     on<FeedbackButtonPressedEvent>(
-      (FeedbackButtonPressedEvent event, Emitter<FeedbackState> emit) async {
+      (
+        FeedbackButtonPressedEvent event,
+        Emitter<FeedbackState> emit,
+      ) async {
         emit(FeedbackLoadingState());
-        print('yes event');
+
         final result = await _feedbackUsecase.call(
           id: event.postId,
           feedback: event.feedback,

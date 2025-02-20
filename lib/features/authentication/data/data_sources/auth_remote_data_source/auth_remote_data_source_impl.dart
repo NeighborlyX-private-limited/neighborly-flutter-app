@@ -115,6 +115,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'fcmToken': fcmToken,
             }),
     );
+    log('EMAIL OR PHONE SIGNUP:${response.statusCode}');
     log('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
     debugPrint('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {

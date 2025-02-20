@@ -6,9 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/homePage/home_page.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_general_cubit.dart';
@@ -16,7 +16,6 @@ import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
@@ -35,10 +34,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  // final String tabIndex;
-  // const HomeScreen({super.key});
-  // const HomeScreen({super.key, required this.tabIndex});
-
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -47,20 +42,62 @@ class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  int unreadNotificationCount = 0;
   bool isHome = false;
 
   bool isDobSet = true;
+  bool isDobBtnActive = false;
+
   late String _selectedCity;
+
   String? selectedDay;
   String? selectedMonth;
   String? selectedYear;
-  String? _deepLink;
-  bool isDobBtnActive = false;
-  static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
-  // final newVersionPlus = NewVersionPlus();
 
-  /// Generate lists for day, month, and year
+  String? _deepLink;
+  static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
+
+  // INIT STATE
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0.0);
+      }
+    });
+    updateFCMtokenNotification();
+    // IN DEV IT WILL NOT WORK
+    // getUnreadNotificationCount();
+    _setDeepLinkListener();
+    setIsHome();
+
+    fetchLocationAndUpdate();
+    setCityCurrentName();
+    setCityHomeName();
+
+    handleToggle(isHome);
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
+    if (_selectedCity.toLowerCase() == 'delhi') {
+      _selectedCity = 'New Delhi';
+    }
+
+    isDobSet = ShardPrefHelper.getDob();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!isDobSet) {
+        _openBottomSheet();
+      }
+    });
+  }
+
+  // DISPOSE
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  // GENERATE LISTS OF DAYS, MONTHS AND YEARS
   List<String> days =
       List.generate(31, (index) => (index + 1).toString().padLeft(2, '0'));
   List<String> months =
@@ -70,144 +107,86 @@ class _HomeScreenState extends State<HomeScreen>
     (index) => (DateTime.now().year - 16 - index).toString(),
   );
 
-  /// init method
-  @override
-  void initState() {
-    super.initState();
-    setIsHome();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.jumpTo(0.0);
+// UPDATE FCM TOKEN
+  Future<void> updateFCMtokenNotification() async {
+    try {
+      var result = await BlocProvider.of<NotificationGeneralCubit>(context)
+          .updateFCMTokenUsecase();
+      result.fold(
+        (failure) {
+          showSnackBar(context: context, message: failure.message);
+        },
+        (currentFCMtoken) {
+          ShardPrefHelper.setFCMtoken(currentFCMtoken);
+        },
+      );
+    } catch (e) {
+      if (mounted) {
+        showSnackBar(context: context, message: e.toString());
+      }
+    }
+  }
+
+  // FEATCH UNREAD NOTIFICATION COUNT
+  Future<void> getUnreadNotificationCount() async {
+    getNotificationUnreadCount().then((value) {
+      if (value >= 0) {
+        if (mounted) {
+          setState(() {
+            unreadNotificationCount = value;
+          });
+        }
+      }
+    }).catchError((error) {
+      if (mounted) {
+        showSnackBar(
+          context: context,
+          message: error.toString(),
+        );
       }
     });
-    updateFCMtokenNotification();
-    _setDeepLinkListener();
-
-    // newVersionPlus.showAlertIfNecessary(context: context);
-
-    fetchLocationAndUpdate();
-    setCityCurrentName();
-    setCityHomeName();
-    getUnreadNotificationCount();
-    handleToggle(isHome);
-    isDobSet = ShardPrefHelper.getDob();
-
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
-    if (_selectedCity.toLowerCase() == 'delhi') {
-      _selectedCity = 'New Delhi';
-    }
-    // _fetchPosts();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!isDobSet) {
-        _openBottomSheet();
-      }
-    });
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   if (_scrollController.hasClients) {
-  //     _scrollController.jumpTo(0.0);
-  //   }
-  // }
-
-  ///dispose method
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  /// on notification method
-  void onNotificationRead() {
-    getUnreadNotificationCount();
-  }
-
-  /// fetch post method
-  void _fetchPosts() {
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
-    if (_selectedCity.toLowerCase() == 'delhi') {
-      _selectedCity = 'New Delhi';
-    }
-    setState(() {});
-    BlocProvider.of<GetAllPostsBloc>(context).add(
-      GetAllPostsButtonPressedEvent(isHome: isHome),
-    );
-  }
-
-  /// set the location of  user whether their home location is on or current location in
-  setIsHome() {
-    var isLocationOn = ShardPrefHelper.getIsLocationOn();
-    setState(() {
-      isHome = isLocationOn ? false : true;
-    });
-  }
-
-  /// refersh the home screen
-  Future<void> _onRefresh() async {
-    // if (_scrollController.hasClients) {
-    //   _scrollController.jumpTo(0.0);
-    // }
-    setIsHome();
-    getUnreadNotificationCount();
-    BlocProvider.of<GetAllPostsBloc>(context).add(
-      GetAllPostsButtonPressedEvent(isHome: isHome),
-    );
-  }
-
-  /// set home location city name
-  setCityHomeName() async {
-    List<double> homeLocation = ShardPrefHelper.getHomeLocation();
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      homeLocation[0],
-      homeLocation[1],
-    );
-    var city = placemarks[0].locality ?? 'New Delhi';
-    if (city.toLowerCase() == 'delhi') {
-      city = 'New Delhi';
-    }
-    ShardPrefHelper.setHomeCity(city);
-  }
-
+// DEEP LINK LISTENER FOR UPCOMING DEEP LINK
   Future<void> _setDeepLinkListener() async {
-    print('hello 1');
     platform.setMethodCallHandler(
       (MethodCall call) async {
-        print('hello 2');
         if (call.method == "onDeepLink") {
-          print('hello 3');
           setState(
             () {
               _deepLink = call.arguments;
               List? linksplit = _deepLink?.split('neighborly.in');
               if (linksplit != null && linksplit.length > 1) {
-                print('link:$linksplit');
+                // GO TO POST DETAIL SCREEN
                 if (linksplit[1].contains('post-detail/')) {
                   try {
                     context.push(linksplit[1]);
                   } catch (e) {
-                    print('hello 4 catch error');
+                    showSnackBar(context: context, message: e.toString());
                   }
-                } else if (linksplit[1].contains('group-details/')) {
-                  try {
-                    context.push(linksplit[1]);
-                  } catch (e) {
-                    print('hello 4 catch error');
-                  }
-
-                  //context.push('/userProfileScreen/${widget.post.userId}');
-                } else if (linksplit[1].contains('userProfileScreen/')) {
-                  try {
-                    context.push(linksplit[1]);
-                  } catch (e) {
-                    print('hello 4 catch error');
-                  }
-
-                  //context.push('/userProfileScreen/${widget.post.userId}');
                 }
-              } else {}
+                // GO TO GROUP DETAIL SCREEN
+                else if (linksplit[1].contains('group-details/')) {
+                  try {
+                    context.push(linksplit[1]);
+                  } catch (e) {
+                    showSnackBar(context: context, message: e.toString());
+                  }
+                }
+                // GO TO USER PROFILE SCREEN
+                else if (linksplit[1].contains('userProfileScreen/')) {
+                  try {
+                    context.push(linksplit[1]);
+                  } catch (e) {
+                    showSnackBar(context: context, message: e.toString());
+                  }
+                }
+              } else {
+                showSnackBar(
+                  context: context,
+                  message: 'oops something went wrong.',
+                );
+              }
             },
           );
         }
@@ -215,59 +194,15 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  Future<void> updateFCMtokenNotification() async {
-    try {
-      var result = await BlocProvider.of<NotificationGeneralCubit>(context)
-          .updateFCMTokenUsecase();
-      result.fold(
-        (failure) {},
-        (currentFCMtoken) {
-          ShardPrefHelper.setFCMtoken(currentFCMtoken);
-        },
-      );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('FCM token error: $e')),
-        );
-      }
-    }
+  // CHECK IF USER'S CURRENT LOCATION IS ON OR OFF
+  setIsHome() {
+    var isLocationOn = ShardPrefHelper.getIsLocationOn();
+    setState(() {
+      isHome = isLocationOn ? false : true;
+    });
   }
 
-  /// set current location city name
-  setCityCurrentName() async {
-    List<double> location = ShardPrefHelper.getLocation();
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      location[0],
-      location[1],
-    );
-    var city = placemarks[0].locality ?? 'New Delhi';
-    ShardPrefHelper.setCurrentCity(city);
-  }
-
-  void handleToggle(bool value) async {
-    if (mounted) {
-      setState(() {
-        isHome = value;
-      });
-    }
-    if (!isHome) {
-      fetchLocationAndUpdate();
-    }
-    _fetchPosts();
-  }
-
-  String formatDOB(String day, String month, String year) {
-    year = year.length == 2 ? '20$year' : year;
-    year = int.parse(year) > 2021 ? '2021' : year;
-    month = month.length == 1 ? '0$month' : month;
-    month = int.parse(month) > 12 ? '12' : month;
-    day = int.parse(day) > 31 ? '31' : day;
-    day = day.length == 1 ? '0$day' : day;
-    return '$year-$month-$day';
-  }
-
-  /// location permission checker
+  // ASK LOCATION PERMISSION
   Future<bool> _handleLocationPermission() async {
     LocationPermission permission;
     var checkPushPermission = await Permission.notification.isDenied;
@@ -279,38 +214,36 @@ class _HomeScreenState extends State<HomeScreen>
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
 
-      /// if location is denied
+      // LOCATION PERMISSION DENIED
       if (permission == LocationPermission.denied) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context)!
-                  .location_permissions_are_denied),
-            ),
+          showSnackBar(
+            context: context,
+            message:
+                AppLocalizations.of(context)!.location_permissions_are_denied,
           );
         }
         return false;
       }
     }
 
-    /// if location is forever denied
+    // LOCATION PERMISSION PERMANANT DENIED
     if (permission == LocationPermission.deniedForever) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!
-                .location_permissions_are_permanently_denied_we_cannot_request_permissions),
-          ),
+        showSnackBar(
+          context: context,
+          message: AppLocalizations.of(context)!
+              .location_permissions_are_permanently_denied_we_cannot_request_permissions,
         );
       }
       return false;
     }
 
-    /// if location is granted
+    // LOCATION PERMISSION GRANTED
     return true;
   }
 
-  /// fetch the user location and upldate it.
+  // FEATCH USER'S CURRENT LOCATION AND UPDATE.
   Future<void> fetchLocationAndUpdate() async {
     final hasPermission = await _handleLocationPermission();
     if (!hasPermission) return;
@@ -324,60 +257,79 @@ class _HomeScreenState extends State<HomeScreen>
       _fetchPosts();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-          ),
-        );
+        showSnackBar(context: context, message: e.toString());
       }
     }
   }
 
-  ///fetch the unread notification count
-  int unreadNotificationCount = 0;
-  Future<void> getUnreadNotificationCount() async {
-    getNotificationUnreadCount().then((value) {
-      if (value >= 0) {
-        if (mounted) {
-          setState(() {
-            unreadNotificationCount = value;
-          });
-        }
-      }
-    }).catchError((error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('oops something went wrong'),
-          ),
-        );
-      }
-      // if (mounted && (!error.contains('oops something went wrong'))) {
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(
-      //       content: Text(error.toString()),
-      //     ),
-      //   );
-      // }
-    });
+  // SET HOME LOCATION CITY NAME
+  setCityHomeName() async {
+    List<double> homeLocation = ShardPrefHelper.getHomeLocation();
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      homeLocation[0],
+      homeLocation[1],
+    );
+    var city = placemarks[0].locality ?? 'New Delhi';
+    if (city.toLowerCase() == 'delhi') {
+      city = 'New Delhi';
+    }
+    ShardPrefHelper.setHomeCity(city);
+  }
+
+  // SET CURRENT LOCATION CITY NAME
+  setCityCurrentName() async {
+    List<double> location = ShardPrefHelper.getLocation();
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      location[0],
+      location[1],
+    );
+    var city = placemarks[0].locality ?? 'New Delhi';
+    ShardPrefHelper.setCurrentCity(city);
+  }
+
+// TOGGLE LOCATION BUTTON
+  void handleToggle(bool value) async {
+    if (mounted) {
+      setState(() {
+        isHome = value;
+      });
+    }
+    if (!isHome) {
+      fetchLocationAndUpdate();
+    }
+    _fetchPosts();
+  }
+
+  // FEATCH ALL POST
+  void _fetchPosts() {
+    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
+    if (_selectedCity.toLowerCase() == 'delhi') {
+      _selectedCity = 'New Delhi';
+    }
+    setState(() {});
+    BlocProvider.of<GetAllPostsBloc>(context).add(
+      GetAllPostsButtonPressedEvent(isHome: isHome),
+    );
+  }
+
+  // REFRESH
+  Future<void> _onRefresh() async {
+    setIsHome();
+    getUnreadNotificationCount();
+    BlocProvider.of<GetAllPostsBloc>(context).add(
+      GetAllPostsButtonPressedEvent(isHome: isHome),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    // Use post-frame callback to trigger jumpTo after layout
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (_scrollController.hasClients) {
-    //     _scrollController.jumpTo(0.0);
-    //   }
-    // });
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, result) {
           _scaffoldKey.currentState?.closeEndDrawer();
-          // Navigator.of(context).pop();
         },
         child: Builder(
           builder: (BuildContext context) {
@@ -414,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen>
                                   : AppColors.blackColor,
                             ),
 
-                            /// Home Button
+                            // HOME BUTTON
                             InkWell(
                               onTap: () {
                                 ShardPrefHelper.setIsLocationOn(false);
@@ -443,29 +395,21 @@ class _HomeScreenState extends State<HomeScreen>
                               width: 5,
                             ),
 
-                            /// Dropdown for city selection
+                            // DROP DOWN FOR CITY
                             BlocListener<CityBloc, CityState>(
                               listener: (context, state) {
-                                ///success state
+                                // SUCCESS STATE
                                 if (state is CityUpdatedState) {
                                   ShardPrefHelper.setIsLocationOn(false);
                                   handleToggle(true);
                                   _fetchPosts();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          '${AppLocalizations.of(context)!.city_updated_to} ${state.city}!'),
-                                    ),
-                                  );
                                 }
 
-                                /// failure state
+                                // FAILURE STATE
                                 else if (state is CityErrorState) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text('Error: ${state.errorMessage}'),
-                                    ),
+                                  showSnackBar(
+                                    context: context,
+                                    message: state.errorMessage,
                                   );
                                 }
                               },
@@ -481,7 +425,6 @@ class _HomeScreenState extends State<HomeScreen>
                               ),
                             ),
 
-                            /// Vertical Divider
                             Container(
                               height: 25,
                               width: 1,
@@ -491,7 +434,7 @@ class _HomeScreenState extends State<HomeScreen>
                               width: 5,
                             ),
 
-                            /// Location Button
+                            // LOCATION ICON
                             InkWell(
                               onTap: () {
                                 ShardPrefHelper.setIsLocationOn(true);
@@ -522,29 +465,8 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
                 actions: [
-                  /// buy awrad button
-                  InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        useRootNavigator: true,
-                        showDragHandle: true,
-                        backgroundColor: AppColors.whiteColor,
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (_) => const AwardSelectionScreen(),
-                      );
-                    },
-                    child: SvgPicture.asset(
-                      'assets/award.svg',
-                      height: 24.0,
-                      width: 24.0,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 24,
-                  ),
-
-                  /// notification icon button
+                  // NOTIFICATION ICON
+                  // NEED TO ADD BLOC BUILDER HERE FOR NOTIFICATION COUNT
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
                     child: GestureDetector(
@@ -557,11 +479,13 @@ class _HomeScreenState extends State<HomeScreen>
                                   ? Text(
                                       "$unreadNotificationCount",
                                       style: TextStyle(
-                                          color: AppColors.whiteColor),
+                                        color: AppColors.whiteColor,
+                                      ),
                                     )
                                   : null,
                               badgeStyle: BadgeStyle(
-                                  badgeColor: AppColors.primaryColor),
+                                badgeColor: AppColors.primaryColor,
+                              ),
                               position:
                                   badges.BadgePosition.custom(end: 0, top: -8),
                               child: SvgPicture.asset(
@@ -590,14 +514,13 @@ class _HomeScreenState extends State<HomeScreen>
                     ),
                   ),
 
-                  /// drawer menu icon
+                  // DRAWER ICON
                   IconButton(
                     icon: Icon(
                       Icons.menu,
                       color: AppColors.greyColor,
                       size: 26,
                     ),
-                    // onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
                     onPressed: () {
                       _scaffoldKey.currentState?.openEndDrawer();
                     },
@@ -616,16 +539,16 @@ class _HomeScreenState extends State<HomeScreen>
               ),
               body: BlocBuilder<GetAllPostsBloc, GetAllPostsState>(
                 builder: (context, state) {
-                  /// loading state
+                  // LOADING STATE
                   if (state is GetAllPostsLoadingState) {
                     return const PostSheemerWidget();
                   }
 
-                  ///success state
+                  // SUCCESS STATE
                   else if (state is GetAllPostsSuccessState) {
                     final posts = state.post;
-                    print('post count: ${posts.length}');
                     return posts.isEmpty
+                        // 0 POST
                         ? Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -639,8 +562,11 @@ class _HomeScreenState extends State<HomeScreen>
                                 SizedBox(
                                   height: 10,
                                 ),
-                                Text(AppLocalizations.of(context)!
-                                    .time_to_be_the_hero_this_wall_needs_start_the),
+                                Text(
+                                  AppLocalizations.of(context)!
+                                      .time_to_be_the_hero_this_wall_needs_start_the,
+                                  textAlign: TextAlign.center,
+                                ),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -653,13 +579,15 @@ class _HomeScreenState extends State<HomeScreen>
                                   },
                                   child: Text(
                                     AppLocalizations.of(context)!.create_a_post,
-                                    style:
-                                        TextStyle(color: AppColors.whiteColor),
+                                    style: TextStyle(
+                                      color: AppColors.whiteColor,
+                                    ),
                                   ),
                                 )
                               ],
                             ),
                           )
+                        // HAVE SOME POST
                         : ListView.separated(
                             controller: _scrollController,
                             itemCount: posts.length,
@@ -680,8 +608,10 @@ class _HomeScreenState extends State<HomeScreen>
                               }
                               return const SizedBox();
                             },
-                            separatorBuilder:
-                                (BuildContext context, int index) {
+                            separatorBuilder: (
+                              BuildContext context,
+                              int index,
+                            ) {
                               return const Padding(
                                 padding: EdgeInsets.only(bottom: 10.0),
                               );
@@ -689,7 +619,7 @@ class _HomeScreenState extends State<HomeScreen>
                           );
                   }
 
-                  /// failure state
+                  // FAILURE STATE
                   else if (state is GetAllPostsFailureState) {
                     if (state.error.contains('Invalid Token')) {
                       context.go('/loginScreen');
@@ -699,7 +629,9 @@ class _HomeScreenState extends State<HomeScreen>
                         child: Text(
                           AppLocalizations.of(context)!
                               .oops_something_went_wrong,
-                          style: TextStyle(color: AppColors.redColor),
+                          style: TextStyle(
+                            color: AppColors.greyColor,
+                          ),
                         ),
                       );
                     }
@@ -730,11 +662,9 @@ class _HomeScreenState extends State<HomeScreen>
                       );
                     }
 
-                    return Center(child: Text(state.error));
+                    return Center(child: Text('oops something went wrong'));
                   } else {
-                    return Center(
-                      child: Text(AppLocalizations.of(context)!.no_data),
-                    );
+                    return SizedBox.shrink();
                   }
                 },
               ),
@@ -748,14 +678,11 @@ class _HomeScreenState extends State<HomeScreen>
   /// bottom sheet
   void _openBottomSheet() {
     showModalBottomSheet(
-      // backgroundColor: Colors.transparent,
-      useRootNavigator: true,
-      backgroundColor: AppColors.whiteColor,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      useRootNavigator: true,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      showDragHandle: true,
       builder: (context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {

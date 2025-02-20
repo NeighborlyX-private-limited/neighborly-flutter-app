@@ -40,6 +40,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       'POST',
       Uri.parse(url).replace(queryParameters: queryParameters),
     )
+      // ..headers['Authorization'] = 'Bearer $accessToken'
       ..headers['Cookie'] = cookies
       ..fields['title'] = title
       ..fields['content'] = content ?? ''
@@ -82,6 +83,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     final response = await request.send();
     final responseString = await response.stream.bytesToString();
 
+    print('error HERE: ${response.statusCode}.');
     if (response.statusCode == 403) {
       throw responseString;
     }
@@ -89,6 +91,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     } else {
       final errorMessage =
           jsonDecode(responseString)['message'] ?? 'oops something went wrong';
+      print('error: $errorMessage');
       throw ServerException(message: errorMessage);
     }
   }

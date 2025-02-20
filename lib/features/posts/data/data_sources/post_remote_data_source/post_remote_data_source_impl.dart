@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
 import '../../../../../core/constants/constants.dart';
@@ -22,7 +23,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'oops something went wrong');
+      throw const ServerException(message: 'oops something went wrong.');
     }
 
     String url = '$kBaseUrl/wall/fetch-posts';
@@ -37,7 +38,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       queryParameters = {
         'latitude': '$lat',
         'longitude': '$long',
-        'home': 'false',
         'range': '$radius',
       };
     } else {
@@ -45,7 +45,6 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       double lat = location[0];
       double long = location[1];
       queryParameters = {
-        'home': 'false',
         'latitude': '$lat',
         'longitude': '$long',
         'range': '$radius',
@@ -63,10 +62,9 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       );
 
       final List<dynamic> jsonData = jsonDecode(response.body);
-
+      debugPrint('FEATCH ALL POST:${response.body}');
       if (response.statusCode == 200) {
         handleAuthHeaders(response.headers);
-
         List<PostModel> data =
             jsonData.map((data) => PostModel.fromJson(data)).toList();
 
@@ -74,14 +72,16 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       } else {
         final message =
             jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
-
+        debugPrint('FEATCH ALL POST ERROR:$message');
         throw ServerException(message: message);
       }
     } on SocketException catch (_) {
+      debugPrint('FEATCH ALL POST ERROR');
       throw ServerException(
         message: 'oops something went wrong',
       );
     } catch (e) {
+      debugPrint('FEATCH ALL POST ERROR:$e');
       throw ServerException(
         message: 'oops something went wrong',
       );
@@ -126,6 +126,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     }
   }
 
+// FEEDBACK
   @override
   Future<void> feedback({
     required num id,
@@ -152,7 +153,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'type': type,
       }),
     );
-
+    print('FEEDBACK: ${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       return;
@@ -262,6 +263,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     }
   }
 
+// DELETE POST OR POLL
   @override
   Future<void> deletePost({
     required num id,
@@ -283,12 +285,13 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    debugPrint('DELETE POST: ${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'oops someting went wrong';
 
       throw ServerException(message: message);
     }
@@ -407,11 +410,10 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   }) async {
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
-    // List<String>? cookies = ShardPrefHelper.getCookie();
+
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'Someting went wrong');
     }
-    //String cookieHeader = cookies.join('; '); cookies.join('; ');
 
     String url = '$kBaseUrl/wall/give-award';
 

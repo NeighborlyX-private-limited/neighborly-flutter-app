@@ -11,8 +11,10 @@ class DeletePostBloc extends Bloc<DeletePostEvent, DeletePostState> {
       : _deletePostUsecase = deletePostUsecase,
         super(DeletePostInitialState()) {
     on<DeletePostButtonPressedEvent>(
-      (DeletePostButtonPressedEvent event,
-          Emitter<DeletePostState> emit) async {
+      (
+        DeletePostButtonPressedEvent event,
+        Emitter<DeletePostState> emit,
+      ) async {
         emit(DeletePostLoadingState());
 
         final result = await _deletePostUsecase.call(

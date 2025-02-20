@@ -60,10 +60,9 @@ class ShardPrefHelper {
   static Future removeRefreshToken() async =>
       await _preferences.remove(_refreshToken);
 
-  ///...save FCM token
-  static Future setFCMtoken(String newToken) async =>
-      await _preferences.setString('FCMtoken', newToken);
-
+  // SAVE FCM TOKEN
+  static Future setFCMtoken(String newFCMToken) async =>
+      await _preferences.setString('FCMtoken', newFCMToken);
   static String? getFCMtoken() => _preferences.getString('FCMtoken');
 
   ///...... save user image url
@@ -158,7 +157,7 @@ class ShardPrefHelper {
 
   static Future removeCurrentCity() async => await _preferences.remove('city');
 
-  ///... Save location
+  // SAVE USER'S CURRENT LOCATION
   static Future setLocation(List<double> doubleList) async {
     List<String> stringList = doubleList.map((e) => e.toString()).toList();
     return await _preferences.setStringList(_doubleListKey, stringList);

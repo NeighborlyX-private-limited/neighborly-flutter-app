@@ -25,7 +25,7 @@ class _MainPageState extends State<MainPage> {
   int _lastIndex = 0;
   int currentIndex = 0;
 
-  /// init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -34,17 +34,16 @@ class _MainPageState extends State<MainPage> {
     newVersionPlus.showAlertIfNecessary(context: context);
   }
 
-  /// dispose method
+  // DISPOSE
   @override
   void dispose() {
     pageController.dispose();
     super.dispose();
   }
 
-  /// Get the current index based on the active route
   int _getCurrentIndex(BuildContext context) {
     final String location = GoRouterState.of(context).uri.toString();
-    print('ROUTER LOCATION : $location');
+
     if (location.startsWith('/home')) {
       return 0;
     }
@@ -65,7 +64,6 @@ class _MainPageState extends State<MainPage> {
     return 0;
   }
 
-  /// Handle bottom navigation taps
   void _onItemTapped(int index) {
     currentIndex = _getCurrentIndex(context);
     setState(() {
@@ -99,8 +97,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('INDEX:${_getCurrentIndex(context)}');
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,

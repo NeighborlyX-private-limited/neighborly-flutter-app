@@ -12,7 +12,6 @@ class FeedbackUsecase {
     required String feedback,
     required String type,
   }) async {
-    print('yes repo');
     return await repository.feedback(
       id: id,
       feedback: feedback,

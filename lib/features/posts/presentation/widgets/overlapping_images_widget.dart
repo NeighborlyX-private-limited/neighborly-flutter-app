@@ -11,10 +11,8 @@ class OverlappingImages extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// Ensure the images list has at most 3 images
     List<String> imagesToShow = images.take(3).toList();
 
-    /// Calculate total width needed based on overlap
     double imageWidth = 23;
     double overlap = imageWidth / 2;
     double totalWidth = (imagesToShow.length - 1) * overlap + imageWidth;

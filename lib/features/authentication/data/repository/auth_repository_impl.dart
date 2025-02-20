@@ -59,7 +59,7 @@ class AuthRepositoryImpl implements AuthRepository {
         return Left(ServerFailure(message: e.toString()));
       }
     } else {
-      return const Left(ServerFailure(message: 'No internet connection.'));
+      return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
 

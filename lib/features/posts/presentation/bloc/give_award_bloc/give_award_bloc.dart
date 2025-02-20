@@ -10,8 +10,10 @@ class GiveAwardBloc extends Bloc<GiveAwardEvent, GiveAwardState> {
   GiveAwardBloc({required GiveAwardUsecase giveAwardUsecase})
       : _giveAwardUsecase = giveAwardUsecase,
         super(GiveAwardInitialState()) {
-    on<GiveAwardButtonPressedEvent>((GiveAwardButtonPressedEvent event,
-        Emitter<GiveAwardState> emit) async {
+    on<GiveAwardButtonPressedEvent>((
+      GiveAwardButtonPressedEvent event,
+      Emitter<GiveAwardState> emit,
+    ) async {
       emit(GiveAwardLoadingState());
 
       final result = await _giveAwardUsecase.call(

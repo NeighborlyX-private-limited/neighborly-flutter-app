@@ -12,8 +12,6 @@ class NotificationGeneralCubit extends Cubit<NotificationGeneralState> {
     this.updateFCMTokenUsecase,
   ) : super(const NotificationGeneralState());
 
-  void init() async {}
-
   Future<Either<Failure, String>> updateFCMtoken() async {
     return await updateFCMTokenUsecase();
   }
@@ -30,7 +28,6 @@ class NotificationGeneralCubit extends Cubit<NotificationGeneralState> {
             errorMessage: failure.message,
           ),
         );
-        return '';
       },
       (currentFCMtoken) {
         emit(
@@ -39,22 +36,7 @@ class NotificationGeneralCubit extends Cubit<NotificationGeneralState> {
             currentFCMtoken: currentFCMtoken,
           ),
         );
-        return currentFCMtoken;
       },
     );
   }
-
-  // Future createNotification(  NotificationModel newNotification, File? pictureFile ) async {
-  //   emit(state.copyWith(status: Status.loading));
-  //   final result = await createNotificationUsecase( community: newNotification);
-
-  //   result.fold(
-  //     (failure) {
-  //       emit(state.copyWith(status: Status.failure, failure: failure, errorMessage: failure.message  ));
-  //     },
-  //     (newNotificationId) {
-  //       emit(state.copyWith(status: Status.success, newNotificationId: newNotificationId));
-  //     },
-  //   );
-  // }
 }
