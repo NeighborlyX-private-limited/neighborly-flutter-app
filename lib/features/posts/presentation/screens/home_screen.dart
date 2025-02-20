@@ -675,7 +675,7 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  /// bottom sheet
+  // DOB BOTTOM SHEET
   void _openBottomSheet() {
     showModalBottomSheet(
       context: context,
@@ -702,29 +702,18 @@ class _HomeScreenState extends State<HomeScreen>
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: AppColors.greyColor,
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Center(
-                      child: Text(
-                        AppLocalizations.of(context)!
-                            .one_last_thing_before_we_get_started,
-                        style: onboardingHeading2Style,
-                      ),
+                    Text(
+                      AppLocalizations.of(context)!
+                          .one_last_thing_before_we_get_started,
+                      style: blackonboardingBody2Style,
                     ),
                     const Divider(
                       color: AppColors.greyColor,
                     ),
-                    Text(AppLocalizations.of(context)!.date_of_birth,
-                        style: blackonboardingBody1Style),
+                    Text(
+                      AppLocalizations.of(context)!.date_of_birth,
+                      style: blackonboardingBody1Style,
+                    ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
