@@ -50,6 +50,7 @@ import '../../features/profile/presentation/screens/basic_information_screen.dar
 import '../../features/profile/presentation/screens/communities_screen.dart';
 import '../../features/profile/presentation/screens/feedback_screen.dart';
 import '../../features/profile/presentation/screens/find_me_screen.dart';
+import '../../features/profile/presentation/screens/location_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/security_screen.dart';
 import '../../features/profile/presentation/screens/setting_screen.dart';
@@ -58,6 +59,7 @@ import '../../features/upload/presentation/screens/create_post_screen.dart';
 import '../constants/route_constants.dart';
 import '../models/community_model.dart';
 import '../utils/shared_preference.dart';
+import '../widgets/google_map_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
@@ -405,6 +407,18 @@ final GoRouter router = GoRouter(
       name: RouteConstants.feedbackScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
         return const FeedbackScreen();
+      },
+    ),
+    GoRoute(
+      path: '/locationScreen',
+      builder: (BuildContext context, GoRouterState state) {
+        return const LocationScreen();
+      },
+    ),
+    GoRoute(
+      path: '/googleMapScreen',
+      builder: (BuildContext context, GoRouterState state) {
+        return LocationPickerScreen();
       },
     ),
     GoRoute(

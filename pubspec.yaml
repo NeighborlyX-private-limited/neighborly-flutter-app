@@ -95,6 +95,8 @@ dependencies:
   flutter_downloader: ^1.11.8
   open_file: ^3.5.10
   syncfusion_flutter_pdfviewer: ^28.2.4
+  google_maps_flutter: ^2.10.0
+  google_places_flutter: ^2.0.9
  
 
 dev_dependencies:

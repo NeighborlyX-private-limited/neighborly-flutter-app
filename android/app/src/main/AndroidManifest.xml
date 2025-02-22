@@ -16,6 +16,9 @@
         android:enableOnBackInvokedCallback="true"
         android:requestLegacyExternalStorage="true"
         android:exported="true">
+         <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="AIzaSyByCyGvfaMDCyXXaZwYNE3jK6qXCFABo7A"/>
         <!-- PROVIDER OPENING TAG -->
         <provider
             android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"

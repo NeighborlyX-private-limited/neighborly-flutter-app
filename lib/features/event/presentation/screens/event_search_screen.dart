@@ -475,11 +475,11 @@ class _EventSearchScreenState extends State<EventSearchScreen>
                 height: 34,
               ),
               const SizedBox(width: 10),
-              CustomToggleSwitch(
-                imagePath1: 'assets/home.svg',
-                imagePath2: 'assets/location.svg',
-                onToggle: handleToggle, // Pass the callback function
-              ),
+              // CustomToggleSwitch(
+              //   imagePath1: 'assets/home.svg',
+              //   imagePath2: 'assets/location.svg',
+              //   onToggle: handleToggle, // Pass the callback function
+              // ),
             ],
           ),
           actions: [

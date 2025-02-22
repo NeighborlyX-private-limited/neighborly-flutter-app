@@ -137,6 +137,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
         );
       },
       (messageList) {
+        int pageNumber = state.page;
+        print('message length: ${messageList.length} and page $pageNumber');
+
         emit(
           state.copyWith(status: Status.success, messages: messageList),
         );
@@ -146,6 +149,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
   // FEATCH OLDER MESSAGE WITH PAGIGATION
   Future<void> fetchOlderMessages() async {
+    if (state.status == Status.loading) return;
     try {
       List<ChatMessageModel> olderMessages = state.messages;
 
@@ -165,14 +169,20 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           );
         },
         (messageList) {
-          int pageNumber = state.page;
-          final updatedMessages = [...messageList, ...olderMessages];
-          if (messageList.length < 10) {
-            pageNumber = pageNumber;
-          } else {
-            pageNumber += 1;
+          int newPage = state.page;
+          // If messages exist, append them
+          if (messageList.length >= 15) {
+            newPage += 1;
           }
-          emit(state.copyWith(messages: updatedMessages, page: pageNumber));
+          // int pageNumber = state.page;
+          // print('message length: ${messageList.length} and page $pageNumber');
+          final updatedMessages = [...messageList, ...olderMessages];
+          // if (messageList.length < 15) {
+          //   pageNumber = pageNumber;
+          // } else {
+          //   pageNumber += 1;
+          // }
+          emit(state.copyWith(messages: updatedMessages, page: newPage));
         },
       );
     } catch (e) {

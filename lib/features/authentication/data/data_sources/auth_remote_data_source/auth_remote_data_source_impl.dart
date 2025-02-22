@@ -73,8 +73,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setGender(gender);
       ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setIsEmailLogin(true);
-      ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
-      ShardPrefHelper.setLocation([location[0], location[1]]);
+      // ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+      // ShardPrefHelper.setLocation([location[0], location[1]]);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setAuthtype(authType);
@@ -154,8 +154,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setEmail(email ?? '');
       ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setGender(gender);
-      ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
-      ShardPrefHelper.setLocation([location[0], location[1]]);
+      // ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+      // ShardPrefHelper.setLocation([location[0], location[1]]);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
 
@@ -281,8 +281,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ShardPrefHelper.setEmail(email ?? '');
         ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setGender(gender);
-        ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
-        ShardPrefHelper.setLocation([location[0], location[1]]);
+        // ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+        // ShardPrefHelper.setLocation([location[0], location[1]]);
         ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
         ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
         ShardPrefHelper.setIsVerified(isVerified);
@@ -393,8 +393,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ShardPrefHelper.setEmail(email ?? '');
         ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setGender(gender);
-        ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
-        ShardPrefHelper.setLocation([location[0], location[1]]);
+        // ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
+        // ShardPrefHelper.setLocation([location[0], location[1]]);
         ShardPrefHelper.setIsVerified(isVerified);
         ShardPrefHelper.setAuthtype(authType);
         ShardPrefHelper.setIsEmailLogin(false);

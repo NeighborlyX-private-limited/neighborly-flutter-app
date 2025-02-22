@@ -131,6 +131,32 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             InkWell(
               onTap: () {
+                context.push('/locationScreen');
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    'assets/menu_location.svg',
+                    height: 24,
+                    width: 24,
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    'Location',
+                    // 'Set Radius',
+                    style: blackonboardingBody1Style,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () {
                 context.push('/activityAndStatsScreen/${widget.karma}');
               },
               child: Row(

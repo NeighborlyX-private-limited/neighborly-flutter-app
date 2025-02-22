@@ -595,53 +595,53 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Text(
-                            AppLocalizations.of(context)!.city,
-                            // 'City',
-                            style: greyonboardingBody1Style,
-                          ),
-                          const SizedBox(
-                            height: 5,
-                          ),
-                          BlocProvider(
-                            create: (context) => CityBloc(
-                              sl<CityRepository>(),
-                            ),
-                            child: BlocListener<CityBloc, CityState>(
-                              listener: (context, state) {
-                                if (state is CityUpdatedState) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          '${AppLocalizations.of(context)!.city_updated_to} ${state.city} ${AppLocalizations.of(context)!.successfully}'),
-                                      // 'City updated to ${state.city} successfully!'),
-                                    ),
-                                  );
-                                } else if (state is CityErrorState) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                          'Failed to update city: ${state.errorMessage}'),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: CityDropdown(
-                                selectCity: _selectedCity,
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _selectedCity = newValue!;
-                                  });
+                          // Text(
+                          //   AppLocalizations.of(context)!.city,
+                          //   // 'City',
+                          //   style: greyonboardingBody1Style,
+                          // ),
+                          // const SizedBox(
+                          //   height: 5,
+                          // ),
+                          // BlocProvider(
+                          //   create: (context) => CityBloc(
+                          //     sl<CityRepository>(),
+                          //   ),
+                          //   child: BlocListener<CityBloc, CityState>(
+                          //     listener: (context, state) {
+                          //       if (state is CityUpdatedState) {
+                          //         ScaffoldMessenger.of(context).showSnackBar(
+                          //           SnackBar(
+                          //             content: Text(
+                          //                 '${AppLocalizations.of(context)!.city_updated_to} ${state.city} ${AppLocalizations.of(context)!.successfully}'),
+                          //             // 'City updated to ${state.city} successfully!'),
+                          //           ),
+                          //         );
+                          //       } else if (state is CityErrorState) {
+                          //         ScaffoldMessenger.of(context).showSnackBar(
+                          //           SnackBar(
+                          //             content: Text(
+                          //                 'Failed to update city: ${state.errorMessage}'),
+                          //           ),
+                          //         );
+                          //       }
+                          //     },
+                          //     child: CityDropdown(
+                          //       selectCity: _selectedCity,
+                          //       onChanged: (String? newValue) {
+                          //         setState(() {
+                          //           _selectedCity = newValue!;
+                          //         });
 
-                                  if (newValue != null) {
-                                    context.read<CityBloc>().add(
-                                          UpdateCityEvent(newValue),
-                                        );
-                                  }
-                                },
-                              ),
-                            ),
-                          ),
+                          //         if (newValue != null) {
+                          //           context.read<CityBloc>().add(
+                          //                 UpdateCityEvent(newValue),
+                          //               );
+                          //         }
+                          //       },
+                          //     ),
+                          //   ),
+                          // ),
                           const SizedBox(
                             height: 10,
                           ),
@@ -664,7 +664,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: TextField(
-                              maxLength: 200,
+                              maxLength: 100,
                               textCapitalization: TextCapitalization.sentences,
                               onChanged: (value) {},
                               controller: _bioController,

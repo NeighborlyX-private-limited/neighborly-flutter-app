@@ -63,10 +63,10 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    var city = ShardPrefHelper.getCurrentCity();
+    // var city = ShardPrefHelper.getCurrentCity();
 
     // //String cookieHeader = cookies.join('; '); cookies.join('; ');
-    String url = '$kBaseUrl/user/update-user-location/$city';
+    String url = '$kBaseUrl/user/update-user-location';
 
     final response = await client.put(
       Uri.parse(url),
@@ -175,7 +175,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
 
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
-      ShardPrefHelper.setIsLocationOn(false);
+      // ShardPrefHelper.setIsLocationOn(false);
     }
     if (response.statusCode != 200) {
       throw ServerException(

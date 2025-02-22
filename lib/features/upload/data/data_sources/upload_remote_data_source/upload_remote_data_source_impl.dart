@@ -23,22 +23,25 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     File? thumbnail,
   }) async {
     String? cookies = ShardPrefHelper.getCookie();
+    city = ShardPrefHelper.getCity() ?? '';
+    var lat = ShardPrefHelper.getLat();
+    var lng = ShardPrefHelper.getLng();
     String? accessToken = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-
+    print('lat and long and city :$lat $lng $city');
     // String cookieHeader = cookies.join('; ');
     String url = '$kBaseUrl/wall/create-post';
 
-    var isLocationOn = ShardPrefHelper.getIsLocationOn();
-    var isHome = isLocationOn ? 'false' : 'true';
+    // var isLocationOn = ShardPrefHelper.getIsLocationOn();
+    // var isHome = isLocationOn ? 'false' : 'true';
 
-    Map<String, dynamic> queryParameters = {'home': isHome};
+    // Map<String, dynamic> queryParameters = {'home': isHome};
 
     final request = http.MultipartRequest(
       'POST',
-      Uri.parse(url).replace(queryParameters: queryParameters),
+      Uri.parse(url),
     )
       // ..headers['Authorization'] = 'Bearer $accessToken'
       ..headers['Cookie'] = cookies
@@ -47,8 +50,8 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       ..fields['type'] = type
       ..fields['city'] = city
       ..fields['pollOptions'] = jsonEncode(options ?? [])
-      ..fields['location[0]'] = location[0].toString()
-      ..fields['location[1]'] = location[1].toString()
+      ..fields['location[0]'] = lat.toString()
+      ..fields['location[1]'] = lng.toString()
       ..fields['allowMultipleVotes'] = allowMultipleVotes.toString();
 
     /// Add multimedia files if available

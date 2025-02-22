@@ -34,9 +34,10 @@ class _CommunityScreenState extends State<CommunityScreen>
     with SingleTickerProviderStateMixin {
   late CommunityMainCubit communityMainCubit;
   late TabController _tabController;
-  late String _selectedCity;
+  // late String _selectedCity;
   int _currentIndex = 0;
-  bool isHome = true;
+  // bool isHome = true;
+  bool isLocationDenied = false;
 
   // INIT STATE
   @override
@@ -44,7 +45,8 @@ class _CommunityScreenState extends State<CommunityScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
-    _onNearbyTabRefresh();
+    fetchLocationAndUpdate();
+    // _onNearbyTabRefresh();
     _tabController.addListener(() {
       if (_tabController.index != _currentIndex &&
           !_tabController.indexIsChanging) {
@@ -56,14 +58,14 @@ class _CommunityScreenState extends State<CommunityScreen>
 
   // REFRESH NEARBY TAB
   Future<void> _onNearbyTabRefresh() async {
-    setIsHome();
+    // setIsHome();
     fetchLocationAndUpdate();
-    setCityHomeName();
-    setCityCurrentName();
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
-    if (_selectedCity.toLowerCase() == 'delhi') {
-      _selectedCity = 'New Delhi';
-    }
+    // setCityHomeName();
+    // setCityCurrentName();
+    // _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
+    // if (_selectedCity.toLowerCase() == 'delhi') {
+    //   _selectedCity = 'New Delhi';
+    // }
 
     communityMainCubit.init();
     BlocProvider.of<GetUserGroupsBloc>(context).add(
@@ -84,33 +86,100 @@ class _CommunityScreenState extends State<CommunityScreen>
 
   // CHECK IF USER IS USING  CURRENT LOCATION
   // isHome IS TRUE WHEN HE IS NOT USING THEIR CURRENT LOCATION
-  setIsHome() {
-    var isLocationOn = ShardPrefHelper.getIsLocationOn();
-    setState(() {
-      isHome = isLocationOn ? false : true;
-    });
-  }
+  // setIsHome() {
+  //   var isLocationOn = ShardPrefHelper.getIsLocationOn();
+  //   setState(() {
+  //     isHome = isLocationOn ? false : true;
+  //   });
+  // }
 
   // FEATCH THE CURRENT LOCATION AND UPDATE IT.
+  // Future<void> fetchLocationAndUpdate() async {
+  //   final hasPermission = await _handleLocationPermission();
+  //   if (!hasPermission) return;
+
+  //   try {
+  //     Position position = await Geolocator.getCurrentPosition(
+  //       desiredAccuracy: LocationAccuracy.high,
+  //     );
+
+  //     ShardPrefHelper.setLocation(
+  //       [
+  //         position.latitude,
+  //         position.longitude,
+  //       ],
+  //     );
+  //   } catch (e) {
+  //     if (mounted) {
+  //       showSnackBar(context: context, message: e.toString());
+  //     }
+  //   }
+  // }
   Future<void> fetchLocationAndUpdate() async {
     final hasPermission = await _handleLocationPermission();
-    if (!hasPermission) return;
+    print('what is permisssion: $hasPermission');
+    if (!hasPermission) {
+      bool isLocationOn = ShardPrefHelper.getCurrent() ?? true;
 
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      ShardPrefHelper.setLocation(
-        [
-          position.latitude,
-          position.longitude,
-        ],
-      );
-    } catch (e) {
-      if (mounted) {
-        showSnackBar(context: context, message: e.toString());
+      setState(() {
+        isLocationDenied = true;
+      });
+      if (!isLocationOn) {
+        print('try to featch post with other city');
+        communityMainCubit.init();
+        BlocProvider.of<GetUserGroupsBloc>(context).add(
+          GetUserGroupsButtonPressedEvent(),
+        );
+        // _fetchPosts();
       }
+    } else {
+      bool isLocationOn = ShardPrefHelper.getCurrent() ?? true;
+      print('what is location on:$isLocationOn');
+      if (isLocationOn) {
+        try {
+          Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high,
+          );
+
+          await ShardPrefHelper.setLat(position.latitude);
+          await ShardPrefHelper.setLng(position.longitude);
+          await ShardPrefHelper.setCurrent(true);
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude,
+            position.longitude,
+          );
+          var city = placemarks[0].locality ?? '';
+          await ShardPrefHelper.setCity(city);
+          communityMainCubit.init();
+          BlocProvider.of<GetUserGroupsBloc>(context).add(
+            GetUserGroupsButtonPressedEvent(),
+          );
+        } catch (e) {
+          bool isLocationOn = ShardPrefHelper.getCurrent() ?? true;
+          print('isLocationOn : $isLocationOn');
+          setState(() {
+            isLocationDenied = true;
+          });
+          if (!isLocationOn) {
+            print('try to featch post with other city');
+            communityMainCubit.init();
+            BlocProvider.of<GetUserGroupsBloc>(context).add(
+              GetUserGroupsButtonPressedEvent(),
+            );
+          } else {
+            if (mounted) {
+              showSnackBar(
+                context: context,
+                message: e.toString(),
+              );
+            }
+          }
+        }
+      }
+      communityMainCubit.init();
+      BlocProvider.of<GetUserGroupsBloc>(context).add(
+        GetUserGroupsButtonPressedEvent(),
+      );
     }
   }
 
@@ -156,29 +225,29 @@ class _CommunityScreenState extends State<CommunityScreen>
   }
 
   // SET HOME CITY NAME
-  setCityHomeName() async {
-    List<double> homeLocation = ShardPrefHelper.getHomeLocation();
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      homeLocation[0],
-      homeLocation[1],
-    );
-    var city = placemarks[0].locality ?? 'New Delhi';
-    if (city.toLowerCase() == 'delhi') {
-      city = 'New Delhi';
-    }
-    ShardPrefHelper.setHomeCity(city);
-  }
+  // setCityHomeName() async {
+  //   List<double> homeLocation = ShardPrefHelper.getHomeLocation();
+  //   List<Placemark> placemarks = await placemarkFromCoordinates(
+  //     homeLocation[0],
+  //     homeLocation[1],
+  //   );
+  //   var city = placemarks[0].locality ?? 'New Delhi';
+  //   if (city.toLowerCase() == 'delhi') {
+  //     city = 'New Delhi';
+  //   }
+  //   ShardPrefHelper.setHomeCity(city);
+  // }
 
   // SET CURRENT LOCATION CITY NAME
-  setCityCurrentName() async {
-    List<double> location = ShardPrefHelper.getLocation();
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      location[0],
-      location[1],
-    );
-    var city = placemarks[0].locality ?? 'New Delhi';
-    ShardPrefHelper.setCurrentCity(city);
-  }
+  // setCityCurrentName() async {
+  //   List<double> location = ShardPrefHelper.getLocation();
+  //   List<Placemark> placemarks = await placemarkFromCoordinates(
+  //     location[0],
+  //     location[1],
+  //   );
+  //   var city = placemarks[0].locality ?? 'New Delhi';
+  //   ShardPrefHelper.setCurrentCity(city);
+  // }
 
   // DISPOSE
   @override
@@ -188,24 +257,24 @@ class _CommunityScreenState extends State<CommunityScreen>
   }
 
   // HANDLE THE LOCATION TOGGLE BUTTON
-  void handleToggle(bool value) async {
-    if (mounted) {
-      setState(() {
-        isHome = value;
-      });
-    }
-    if (!isHome) {
-      fetchLocationAndUpdate();
-      setCityHomeName();
-      setCityCurrentName();
-    }
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
-    if (_selectedCity.toLowerCase() == 'delhi') {
-      _selectedCity = 'New Delhi';
-    }
-    setState(() {});
-    communityMainCubit.init();
-  }
+  // void handleToggle(bool value) async {
+  //   if (mounted) {
+  //     setState(() {
+  //       isHome = value;
+  //     });
+  //   }
+  //   if (!isHome) {
+  //     fetchLocationAndUpdate();
+  //     setCityHomeName();
+  //     setCityCurrentName();
+  //   }
+  //   _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
+  //   if (_selectedCity.toLowerCase() == 'delhi') {
+  //     _selectedCity = 'New Delhi';
+  //   }
+  //   setState(() {});
+  //   communityMainCubit.init();
+  // }
 
 // BUILD
   @override
@@ -226,122 +295,122 @@ class _CommunityScreenState extends State<CommunityScreen>
             const SizedBox(width: 10),
 
             // LOCATION BUTTON
-            Flexible(
-              child: Container(
-                height: 40,
-                width: 160,
-                decoration: BoxDecoration(
-                  color: AppColors.inActivePrimaryColor,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: isHome
-                          ? AppColors.primaryColor
-                          : AppColors.blackColor,
-                    ),
+            // Flexible(
+            //   child: Container(
+            //     height: 40,
+            //     width: 160,
+            //     decoration: BoxDecoration(
+            //       color: AppColors.inActivePrimaryColor,
+            //       borderRadius: BorderRadius.circular(100),
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.center,
+            //       children: [
+            //         Icon(
+            //           Icons.location_on,
+            //           size: 16,
+            //           color: isHome
+            //               ? AppColors.primaryColor
+            //               : AppColors.blackColor,
+            //         ),
 
-                    // HOME BUTTON
-                    InkWell(
-                      onTap: () {
-                        ShardPrefHelper.setIsLocationOn(false);
-                        handleToggle(true);
-                      },
-                      child: SizedBox(
-                        height: 35,
-                        width: 60,
-                        child: Center(
-                          child: Text(
-                            _selectedCity,
-                            style: TextStyle(
-                              fontWeight:
-                                  isHome ? FontWeight.w900 : FontWeight.normal,
-                              fontSize: 16,
-                              color: isHome
-                                  ? AppColors.primaryColor
-                                  : AppColors.blackColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+            //         // HOME BUTTON
+            //         InkWell(
+            //           onTap: () {
+            //             ShardPrefHelper.setIsLocationOn(false);
+            //             handleToggle(true);
+            //           },
+            //           child: SizedBox(
+            //             height: 35,
+            //             width: 60,
+            //             child: Center(
+            //               child: Text(
+            //                 _selectedCity,
+            //                 style: TextStyle(
+            //                   fontWeight:
+            //                       isHome ? FontWeight.w900 : FontWeight.normal,
+            //                   fontSize: 16,
+            //                   color: isHome
+            //                       ? AppColors.primaryColor
+            //                       : AppColors.blackColor,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //         ),
 
-                    SizedBox(
-                      width: 5,
-                    ),
+            //         SizedBox(
+            //           width: 5,
+            //         ),
 
-                    // CITY DROPDOWN
-                    BlocListener<CityBloc, CityState>(
-                      listener: (context, state) {
-                        // SUCCESS STATE
-                        if (state is CityUpdatedState) {
-                          ShardPrefHelper.setIsLocationOn(false);
-                          handleToggle(true);
-                        }
+            //         // CITY DROPDOWN
+            //         BlocListener<CityBloc, CityState>(
+            //           listener: (context, state) {
+            //             // SUCCESS STATE
+            //             if (state is CityUpdatedState) {
+            //               ShardPrefHelper.setIsLocationOn(false);
+            //               handleToggle(true);
+            //             }
 
-                        // FAILURE STATE
-                        else if (state is CityErrorState) {
-                          if (mounted) {
-                            showSnackBar(
-                              context: context,
-                              message: state.errorMessage,
-                            );
-                          }
-                        }
-                      },
-                      child: HomeDropdownCity(
-                        selectCity: _selectedCity,
-                        onChanged: (String? newValue) {
-                          if (newValue != null) {
-                            context
-                                .read<CityBloc>()
-                                .add(UpdateCityEvent(newValue));
-                          }
-                        },
-                      ),
-                    ),
+            //             // FAILURE STATE
+            //             else if (state is CityErrorState) {
+            //               if (mounted) {
+            //                 showSnackBar(
+            //                   context: context,
+            //                   message: state.errorMessage,
+            //                 );
+            //               }
+            //             }
+            //           },
+            //           child: HomeDropdownCity(
+            //             selectCity: _selectedCity,
+            //             onChanged: (String? newValue) {
+            //               if (newValue != null) {
+            //                 context
+            //                     .read<CityBloc>()
+            //                     .add(UpdateCityEvent(newValue));
+            //               }
+            //             },
+            //           ),
+            //         ),
 
-                    Container(
-                      height: 25,
-                      width: 1,
-                      color: AppColors.blackColor,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
+            //         Container(
+            //           height: 25,
+            //           width: 1,
+            //           color: AppColors.blackColor,
+            //         ),
+            //         SizedBox(
+            //           width: 5,
+            //         ),
 
-                    // CURRENT LOCATION BUTTON
-                    InkWell(
-                      onTap: () {
-                        ShardPrefHelper.setIsLocationOn(true);
-                        handleToggle(false);
-                      },
-                      child: Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isHome
-                              ? AppColors.inActivePrimaryColor
-                              : AppColors.primaryColor,
-                        ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            'assets/location.svg',
-                            height: 25,
-                            width: 25,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            //         // CURRENT LOCATION BUTTON
+            //         InkWell(
+            //           onTap: () {
+            //             ShardPrefHelper.setIsLocationOn(true);
+            //             handleToggle(false);
+            //           },
+            //           child: Container(
+            //             height: 35,
+            //             width: 35,
+            //             decoration: BoxDecoration(
+            //               shape: BoxShape.circle,
+            //               color: isHome
+            //                   ? AppColors.inActivePrimaryColor
+            //                   : AppColors.primaryColor,
+            //             ),
+            //             child: Center(
+            //               child: SvgPicture.asset(
+            //                 'assets/location.svg',
+            //                 height: 25,
+            //                 width: 25,
+            //               ),
+            //             ),
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
           ],
         ),
         actions: [

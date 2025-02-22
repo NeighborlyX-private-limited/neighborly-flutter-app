@@ -15,7 +15,6 @@ import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
-
 import '../../../../core/widgets/custom_snackbar.dart';
 import '../../../../core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';
@@ -33,13 +32,11 @@ class CreatePostScreen extends StatefulWidget {
 }
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
-  /// text editing controllers
   late TextEditingController _titleController;
   late TextEditingController _contentController;
   late TextEditingController _questionController;
   final List<TextEditingController> _optionControllers = [];
 
-  // focus nodes
   late FocusNode _titleFocusNode;
   late FocusNode _contentFocusNode;
   final List<FocusNode> _optionFocusNodes = [];
@@ -55,10 +52,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   // Store the selected image
   File? _selectedImage;
 
-  /// init state method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
+
     if (isLocationOn()) {
       fetchLocationAndUpdate();
     }
@@ -74,7 +72,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     _contentFocusNode.addListener(_onContentFocusChange);
   }
 
-  /// dispose
+  // DISPOSE
   @override
   void dispose() {
     _titleController.dispose();
@@ -92,9 +90,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     super.dispose();
   }
 
-  /// is location on
+  // CHECK IS USER USING THEIR CURRENT LOCATION OR ANY PERTICULAR LOCATION
   bool isLocationOn() {
-    bool isLocationOn = ShardPrefHelper.getIsLocationOn();
+    bool isLocationOn = ShardPrefHelper.getCurrent() ?? true;
     if (isLocationOn) {
       return true;
     }
@@ -796,7 +794,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                                   /// post button
                                   return PostButtonWidget(
-                                    onTapListener: () async {
+                                    onTapListener: () {
                                       if (!_isButtonActive) {
                                         return;
                                       }
@@ -804,46 +802,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                         _isButtonActive = false;
                                       });
 
-                                      await fetchLocationAndUpdate();
-                                      bool iaLocationOn =
-                                          ShardPrefHelper.getIsLocationOn();
-
-                                      List<double> location =
-                                          ShardPrefHelper.getLocation();
-
-                                      List<double> homeLocation =
-                                          ShardPrefHelper.getHomeLocation();
-
-                                      String city = '';
-                                      List<double> locationCord = [];
-                                      if (iaLocationOn) {
-                                        List<Placemark> placemarks =
-                                            await placemarkFromCoordinates(
-                                          location[0],
-                                          location[1],
-                                        );
-                                        var lat = location[0];
-                                        var long = location[1];
-                                        locationCord.add(lat);
-                                        locationCord.add(long);
-                                        city = placemarks[0].locality ?? '';
-                                      } else {
-                                        List<Placemark> placemarks =
-                                            await placemarkFromCoordinates(
-                                          homeLocation[0],
-                                          homeLocation[1],
-                                        );
-                                        var lat = homeLocation[0];
-                                        var long = homeLocation[1];
-                                        locationCord.add(lat);
-                                        locationCord.add(long);
-                                        city = placemarks[0].locality ?? '';
-                                      }
-
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
-                                          city: city,
+                                          city: 'city',
                                           content:
                                               _contentController.text.trim(),
                                           title: _titleController.text.trim(),
@@ -851,7 +813,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           multimedia: _selectedMedia,
                                           thumbnail: _thumbnail,
                                           allowMultipleVotes: false,
-                                          location: locationCord,
+                                          location: [],
                                         ),
                                       );
                                     },
@@ -896,52 +858,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                                   /// poll button
                                   return PostButtonWidget(
-                                    onTapListener: () async {
+                                    onTapListener: () {
                                       if (!_isButtonActive) {
                                         return;
                                       }
                                       setState(() {
                                         _isButtonActive = false;
                                       });
-                                      bool iaLocationOn =
-                                          ShardPrefHelper.getIsLocationOn();
-
-                                      List<double> location =
-                                          ShardPrefHelper.getLocation();
-
-                                      List<double> homeLocation =
-                                          ShardPrefHelper.getHomeLocation();
-
-                                      String city = '';
-                                      List<double> locationCord = [];
-                                      if (iaLocationOn) {
-                                        List<Placemark> placemarks =
-                                            await placemarkFromCoordinates(
-                                          location[0],
-                                          location[1],
-                                        );
-                                        var lat = location[0];
-                                        var long = location[1];
-                                        locationCord.add(lat);
-                                        locationCord.add(long);
-                                        city = placemarks[0].locality ?? '';
-                                      } else {
-                                        List<Placemark> placemarks =
-                                            await placemarkFromCoordinates(
-                                          homeLocation[0],
-                                          homeLocation[1],
-                                        );
-                                        var lat = homeLocation[0];
-                                        var long = homeLocation[1];
-                                        locationCord.add(lat);
-                                        locationCord.add(long);
-                                        city = placemarks[0].locality ?? '';
-                                      }
 
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
-                                          city: city,
+                                          city: 'city',
                                           multimedia: _selectedMedia,
                                           title:
                                               _questionController.text.trim(),
@@ -957,7 +885,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                           type: 'poll',
                                           allowMultipleVotes:
                                               allowMultipleVotes,
-                                          location: locationCord,
+                                          location: [],
                                           thumbnail: _thumbnail,
                                         ),
                                       );

@@ -36,26 +36,31 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     bool isHome = true;
     var isLocationOn = ShardPrefHelper.getIsLocationOn();
     isHome = isLocationOn ? false : true;
+    double lat = ShardPrefHelper.getLat() ?? 0.0;
+    double long = ShardPrefHelper.getLng() ?? 0.0;
+    queryParameters = {
+      'latitude': '$lat',
+      'longitude': '$long',
+    };
+    // if (isHome) {
+    //   List<double> location = ShardPrefHelper.getHomeLocation();
+    //   double lat = location[0];
+    //   double long = location[1];
 
-    if (isHome) {
-      List<double> location = ShardPrefHelper.getHomeLocation();
-      double lat = location[0];
-      double long = location[1];
+    //   queryParameters = {
+    //     'latitude': '$lat',
+    //     'longitude': '$long',
+    //   };
+    // } else {
+    //   List<double> location = ShardPrefHelper.getLocation();
+    //   double lat = location[0];
+    //   double long = location[1];
 
-      queryParameters = {
-        'latitude': '$lat',
-        'longitude': '$long',
-      };
-    } else {
-      List<double> location = ShardPrefHelper.getLocation();
-      double lat = location[0];
-      double long = location[1];
-
-      queryParameters = {
-        'latitude': '$lat',
-        'longitude': '$long',
-      };
-    }
+    //   queryParameters = {
+    //     'latitude': '$lat',
+    //     'longitude': '$long',
+    //   };
+    // }
 
     /// Create a multipart request
     final request = http.MultipartRequest(
@@ -114,28 +119,34 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     bool isHome = true;
     var isLocationOn = ShardPrefHelper.getIsLocationOn();
     isHome = isLocationOn ? false : true;
+    double lat = ShardPrefHelper.getLat() ?? 0.0;
+    double lng = ShardPrefHelper.getLng() ?? 0.0;
+    queryParameters = {
+      'latitude': '$lat',
+      'longitude': '$lng',
+    };
 
-    if (isHome) {
-      List<double> location = ShardPrefHelper.getHomeLocation();
-      double lat = location[0];
-      double long = location[1];
-      String city = ShardPrefHelper.getHomeCity() ?? '';
+    // if (isHome) {
+    //   List<double> location = ShardPrefHelper.getHomeLocation();
+    //   double lat = location[0];
+    //   double long = location[1];
+    //   String city = ShardPrefHelper.getHomeCity() ?? '';
 
-      queryParameters = {
-        'latitude': '$lat',
-        'longitude': '$long',
-      };
-    } else {
-      List<double> location = ShardPrefHelper.getLocation();
-      double lat = location[0];
-      double long = location[1];
-      String city = ShardPrefHelper.getCurrentCity() ?? '';
+    //   queryParameters = {
+    //     'latitude': '$lat',
+    //     'longitude': '$long',
+    //   };
+    // } else {
+    //   List<double> location = ShardPrefHelper.getLocation();
+    //   double lat = location[0];
+    //   double long = location[1];
+    //   String city = ShardPrefHelper.getCurrentCity() ?? '';
 
-      queryParameters = {
-        'latitude': '$lat',
-        'longitude': '$long',
-      };
-    }
+    //   queryParameters = {
+    //     'latitude': '$lat',
+    //     'longitude': '$long',
+    //   };
+    // }
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),
       headers: <String, String>{

@@ -94,8 +94,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     chatGroupCubit.init(widget.roomId);
 
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels ==
-              _scrollController.position.minScrollExtent &&
+      if (_scrollController.position.pixels <=
+              _scrollController.position.minScrollExtent +
+                  10 && // Avoid missed triggers
           !_isLoadingMore) {
         _loadMoreMessages();
       }
@@ -179,15 +180,23 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
   // LOAD MORE MESSAGE
   Future<void> _loadMoreMessages() async {
+    print('Fetching older messages...');
+
+    if (_isLoadingMore) return; // Prevent duplicate calls
+
     setState(() {
       _isLoadingMore = true;
+      _previousScrollOffset =
+          _scrollController.position.pixels; // Save scroll position
     });
 
     await context.read<ChatGroupCubit>().fetchOlderMessages();
-    // Restore the previous scroll position after loading more messages
+
+    // Restore scroll position after messages are added
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_previousScrollOffset + 500);
+      _scrollController.jumpTo(_previousScrollOffset);
     });
+
     setState(() {
       _isLoadingMore = false;
     });
@@ -319,11 +328,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   );
                 }
                 // SUCCESS STATE WITH IS LOADING MORE MESSAGE FALSE
-                if (state.status == Status.success && !_isLoadingMore) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _scrollToEnd();
-                  });
-                }
+                // if (state.status == Status.success && !_isLoadingMore) {
+                //   WidgetsBinding.instance.addPostFrameCallback((_) {
+                //     _scrollToEnd();
+                //   });
+                // }
 
                 /// success state
                 if (state.status == Status.success && state.page == 1) {
@@ -351,279 +360,272 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   );
                 }
                 // SUCCESS STATE
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    chatGroupCubit.init(widget.roomId);
-                  },
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SizedBox(
-                        height: 2,
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    SizedBox(
+                      height: 2,
+                    ),
+                    // SHOW LOADING ON THE TOP OF THE SCREEN WHEN FEATCHING OLD MESSAGES
+                    if (_isLoadingMore)
+                      Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: CustomCircularIndicator(),
                       ),
-                      // SHOW LOADING ON THE TOP OF THE SCREEN WHEN FEATCHING OLD MESSAGES
-                      if (_isLoadingMore)
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: CustomCircularIndicator(),
-                        ),
 
-                      state.status == Status.success && state.messages.isEmpty
-                          // SHOW EMPTY MESSAGE SCREEN
-                          ? Expanded(
-                              child: SingleChildScrollView(
-                                physics: AlwaysScrollableScrollPhysics(),
-                                child: Container(
-                                  height: MediaQuery.of(context).size.height,
-                                  alignment: Alignment.center,
-                                  child: NoMessage(),
-                                ),
+                    state.status == Status.success && state.messages.isEmpty
+                        // SHOW EMPTY MESSAGE SCREEN
+                        ? Expanded(
+                            child: SingleChildScrollView(
+                              physics: AlwaysScrollableScrollPhysics(),
+                              child: Container(
+                                height: MediaQuery.of(context).size.height,
+                                alignment: Alignment.center,
+                                child: NoMessage(),
                               ),
-                            )
-                          // PIN MESSAGE BLOC LISTENER
-                          : BlocListener<PinMessageBloc, PinMessagesState>(
-                              listener: (context, state) {
-                                // SUCCESS STATE
-                                if (state is PinMessagesStateSuccessState) {
-                                  showSnackBar(
-                                    context: context,
-                                    message: state.message,
-                                  );
-                                }
-                                // FAILURE STATE
-                                if (state is PinMessagesStateFailureState) {
-                                  showSnackBar(
-                                    context: context,
-                                    message: 'oops something went wrong',
-                                  );
-                                }
-                              },
-                              child: Expanded(
-                                child: ListView.builder(
-                                  controller: _scrollController,
-                                  itemCount: state.messages.length +
-                                      (_isLoadingMore ? 1 : 0),
-                                  itemBuilder: (context, index) {
-                                    if (index >= state.messages.length) {
-                                      return SizedBox.shrink();
-                                    }
-                                    // CHECK IF THE CURRENT AND PRIVIOUS MESSAGE SENDER IS SAME OR NOT
-                                    var msg = state.messages[index];
-                                    final bool isNewMsg = index == 0 ||
-                                        msg.author?.id !=
-                                            state
-                                                .messages[index - 1].author?.id;
+                            ),
+                          )
+                        // PIN MESSAGE BLOC LISTENER
+                        : BlocListener<PinMessageBloc, PinMessagesState>(
+                            listener: (context, state) {
+                              // SUCCESS STATE
+                              if (state is PinMessagesStateSuccessState) {
+                                showSnackBar(
+                                  context: context,
+                                  message: state.message,
+                                );
+                              }
+                              // FAILURE STATE
+                              if (state is PinMessagesStateFailureState) {
+                                showSnackBar(
+                                  context: context,
+                                  message: 'oops something went wrong',
+                                );
+                              }
+                            },
+                            child: Expanded(
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                itemCount: state.messages.length +
+                                    (_isLoadingMore ? 1 : 0),
+                                itemBuilder: (context, index) {
+                                  if (index >= state.messages.length) {
+                                    return SizedBox.shrink();
+                                  }
+                                  // CHECK IF THE CURRENT AND PRIVIOUS MESSAGE SENDER IS SAME OR NOT
+                                  var msg = state.messages[index];
+                                  final bool isNewMsg = index == 0 ||
+                                      msg.author?.id !=
+                                          state.messages[index - 1].author?.id;
 
-                                    // CHECK SENDER USER IS ADMIN OR NOT
-                                    final bool isSenderAdmin =
-                                        isSenderAnAdmin(msg.author!.id);
+                                  // CHECK SENDER USER IS ADMIN OR NOT
+                                  final bool isSenderAdmin =
+                                      isSenderAnAdmin(msg.author!.id);
 
-                                    // CHECK CURRENT USER IS ADMIN OR NOT
-                                    final bool isAdmin = isCurrentUserAdmin();
+                                  // CHECK CURRENT USER IS ADMIN OR NOT
+                                  final bool isAdmin = isCurrentUserAdmin();
 
-                                    // GET PROFILE PIC OF THE  SENDER USER
-                                    final String senderProfilePic =
-                                        getSenderProfilePic(msg.author!.id);
+                                  // GET PROFILE PIC OF THE  SENDER USER
+                                  final String senderProfilePic =
+                                      getSenderProfilePic(msg.author!.id);
 
-                                    // NEED TO THINK ABOUT THIS LINE
-                                    if (_isLoadingMore &&
-                                        index == state.messages.length) {
-                                      return CustomCircularIndicator();
-                                    }
-                                    final bool isNewDate = index == 0 ||
-                                        DateUtilsHelper.simplifyISOtimeString(
+                                  // NEED TO THINK ABOUT THIS LINE
+                                  if (_isLoadingMore &&
+                                      index == state.messages.length) {
+                                    return CustomCircularIndicator();
+                                  }
+                                  final bool isNewDate = index == 0 ||
+                                      DateUtilsHelper.simplifyISOtimeString(
+                                            state.messages[index].date
+                                                .toString(),
+                                          ) !=
+                                          DateUtilsHelper.simplifyISOtimeString(
+                                            state.messages[index - 1].date
+                                                .toString(),
+                                          );
+
+                                  return Column(
+                                    children: [
+                                      if (isNewDate)
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                            vertical: 12,
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primaryColor
+                                                .withOpacity(.1),
+                                            borderRadius:
+                                                BorderRadius.circular(16),
+                                          ),
+                                          child: Text(
+                                            '${formatTimeDifference(
                                               state.messages[index].date
                                                   .toString(),
-                                            ) !=
-                                            DateUtilsHelper
-                                                .simplifyISOtimeString(
-                                              state.messages[index - 1].date
-                                                  .toString(),
-                                            );
-
-                                    return Column(
-                                      children: [
-                                        if (isNewDate)
-                                          Container(
-                                            margin: const EdgeInsets.symmetric(
-                                              vertical: 12,
-                                            ),
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 2,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColors.primaryColor
-                                                  .withOpacity(.1),
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
-                                            ),
-                                            child: Text(
-                                              '${formatTimeDifference(
-                                                state.messages[index].date
-                                                    .toString(),
-                                              )} ',
-                                              style: TextStyle(
-                                                color: AppColors.primaryColor,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.normal,
-                                              ),
+                                            )} ',
+                                            style: TextStyle(
+                                              color: AppColors.primaryColor,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.normal,
                                             ),
                                           ),
-                                        ChatMessageGroupWidget(
-                                          message: msg,
-                                          isCurrentUser:
-                                              (msg.author?.id == cuurentUserId),
-                                          isAdmin: isAdmin,
-                                          isNewMsg: isNewMsg,
-                                          isSenderAdmin: isSenderAdmin,
-                                          senderProfilePic: senderProfilePic,
                                         ),
-                                      ],
-                                    );
-                                  },
-                                ),
+                                      ChatMessageGroupWidget(
+                                        message: msg,
+                                        isCurrentUser:
+                                            (msg.author?.id == cuurentUserId),
+                                        isAdmin: isAdmin,
+                                        isNewMsg: isNewMsg,
+                                        isSenderAdmin: isSenderAdmin,
+                                        senderProfilePic: senderProfilePic,
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
                             ),
-                      // IF REPLY IS TRUE SHOW REPLYING TO CARD ABOVE TEXT FIELD
-                      if (isReply)
-                        Container(
-                          margin: const EdgeInsets.only(
-                            left: 16,
-                            right: 68,
                           ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 8,
-                          ),
+                    // IF REPLY IS TRUE SHOW REPLYING TO CARD ABOVE TEXT FIELD
+                    if (isReply)
+                      Container(
+                        margin: const EdgeInsets.only(
+                          left: 16,
+                          right: 68,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border(
-                                left: BorderSide(
-                                  color: AppColors.primaryColor,
-                                  width: 4,
-                                ),
+                            border: Border(
+                              left: BorderSide(
+                                color: AppColors.primaryColor,
+                                width: 4,
                               ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      '~$_messageToReplyUserName',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.green,
-                                      ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '~$_messageToReplyUserName',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green,
                                     ),
-                                    GestureDetector(
-                                      onTap: _clearReply,
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 20,
-                                      ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: _clearReply,
+                                    child: Icon(
+                                      Icons.close,
+                                      size: 20,
                                     ),
-                                  ],
-                                ),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (_messageToReply != '' &&
-                                        _messageToReply != null)
-                                      Expanded(
-                                        child: Text(
-                                          '$_messageToReply',
-                                          style: TextStyle(
-                                            color: AppColors.blackColor,
-                                          ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (_messageToReply != '' &&
+                                      _messageToReply != null)
+                                    Expanded(
+                                      child: Text(
+                                        '$_messageToReply',
+                                        style: TextStyle(
+                                          color: AppColors.blackColor,
                                         ),
                                       ),
+                                    ),
+                                  SizedBox(
+                                    width: 8,
+                                  ),
+                                  if (_mediaToReply != '' &&
+                                      _mediaToReply != null)
                                     SizedBox(
-                                      width: 8,
-                                    ),
-                                    if (_mediaToReply != '' &&
-                                        _mediaToReply != null)
-                                      SizedBox(
-                                        height: 80,
-                                        child: MediaMessageWidget(
-                                          fileUrl: _mediaToReply!,
-                                        ),
+                                      height: 80,
+                                      child: MediaMessageWidget(
+                                        fileUrl: _mediaToReply!,
                                       ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                                    ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
+                      ),
 
-                      // SHOW PICKED MEDIA PREVIEW
-                      if (imageToUpload != null)
-                        Container(
-                          margin: const EdgeInsets.only(
-                            left: 16,
-                            right: 70,
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 8,
-                          ),
+                    // SHOW PICKED MEDIA PREVIEW
+                    if (imageToUpload != null)
+                      Container(
+                        margin: const EdgeInsets.only(
+                          left: 16,
+                          right: 70,
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.grey.shade100,
                             borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border(
-                                left: BorderSide(
-                                  color: AppColors.primaryColor,
-                                  width: 4,
-                                ),
+                            border: Border(
+                              left: BorderSide(
+                                color: AppColors.primaryColor,
+                                width: 4,
                               ),
                             ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Image.file(
-                                    imageToUpload!,
-                                    height: 150,
-                                    fit: BoxFit.fill,
-                                  ),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.file(
+                                  imageToUpload!,
+                                  height: 150,
+                                  fit: BoxFit.fill,
                                 ),
-                                GestureDetector(
-                                  onTap: _clearReply,
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 20,
-                                  ),
+                              ),
+                              GestureDetector(
+                                onTap: _clearReply,
+                                child: Icon(
+                                  Icons.close,
+                                  size: 20,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
+                      ),
 
-                      messageInputSection(),
-                    ],
-                  ),
+                    messageInputSection(),
+                  ],
                 );
               },
             ),

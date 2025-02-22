@@ -12,10 +12,6 @@ import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/homePage/home_page.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_general_cubit.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/widgets/home_dropdown_city.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_event.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_state.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
@@ -43,17 +39,14 @@ class _HomeScreenState extends State<HomeScreen>
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int unreadNotificationCount = 0;
-  bool isHome = false;
 
   bool isDobSet = true;
   bool isDobBtnActive = false;
-
-  late String _selectedCity;
-
   String? selectedDay;
   String? selectedMonth;
   String? selectedYear;
 
+  bool isLocationDenied = false;
   String? _deepLink;
   static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
 
@@ -66,21 +59,11 @@ class _HomeScreenState extends State<HomeScreen>
         _scrollController.jumpTo(0.0);
       }
     });
-    updateFCMtokenNotification();
-    // IN DEV IT WILL NOT WORK
-    // getUnreadNotificationCount();
-    _setDeepLinkListener();
-    setIsHome();
-
     fetchLocationAndUpdate();
-    setCityCurrentName();
-    setCityHomeName();
-
-    handleToggle(isHome);
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
-    if (_selectedCity.toLowerCase() == 'delhi') {
-      _selectedCity = 'New Delhi';
-    }
+    updateFCMtokenNotification();
+    getUnreadNotificationCount();
+    _setDeepLinkListener();
+    // setIsHome();
 
     isDobSet = ShardPrefHelper.getDob();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -194,23 +177,18 @@ class _HomeScreenState extends State<HomeScreen>
     );
   }
 
-  // CHECK IF USER'S CURRENT LOCATION IS ON OR OFF
-  setIsHome() {
-    var isLocationOn = ShardPrefHelper.getIsLocationOn();
-    setState(() {
-      isHome = isLocationOn ? false : true;
-    });
-  }
-
   // ASK LOCATION PERMISSION
   Future<bool> _handleLocationPermission() async {
     LocationPermission permission;
     var checkPushPermission = await Permission.notification.isDenied;
+    print('check this checkPushPermission: $checkPushPermission');
     if (checkPushPermission) {
+      print('check this checkPushPermission: $checkPushPermission');
       await Permission.notification.request();
     }
 
     permission = await Geolocator.checkPermission();
+    print('check this permission: $permission');
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
 
@@ -223,6 +201,7 @@ class _HomeScreenState extends State<HomeScreen>
                 AppLocalizations.of(context)!.location_permissions_are_denied,
           );
         }
+        print('i am returning false');
         return false;
       }
     }
@@ -236,88 +215,84 @@ class _HomeScreenState extends State<HomeScreen>
               .location_permissions_are_permanently_denied_we_cannot_request_permissions,
         );
       }
+      print('i am returning false');
       return false;
     }
 
     // LOCATION PERMISSION GRANTED
+    print('i am returning true');
     return true;
   }
 
   // FEATCH USER'S CURRENT LOCATION AND UPDATE.
   Future<void> fetchLocationAndUpdate() async {
     final hasPermission = await _handleLocationPermission();
-    if (!hasPermission) return;
+    print('What is permisssion: $hasPermission');
+    if (!hasPermission) {
+      bool isLocationOn = ShardPrefHelper.getIsCurrentLocationOn() ?? true;
 
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      ShardPrefHelper.setLocation([position.latitude, position.longitude]);
-      _fetchPosts();
-    } catch (e) {
-      if (mounted) {
-        showSnackBar(context: context, message: e.toString());
-      }
-    }
-  }
-
-  // SET HOME LOCATION CITY NAME
-  setCityHomeName() async {
-    List<double> homeLocation = ShardPrefHelper.getHomeLocation();
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      homeLocation[0],
-      homeLocation[1],
-    );
-    var city = placemarks[0].locality ?? 'New Delhi';
-    if (city.toLowerCase() == 'delhi') {
-      city = 'New Delhi';
-    }
-    ShardPrefHelper.setHomeCity(city);
-  }
-
-  // SET CURRENT LOCATION CITY NAME
-  setCityCurrentName() async {
-    List<double> location = ShardPrefHelper.getLocation();
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      location[0],
-      location[1],
-    );
-    var city = placemarks[0].locality ?? 'New Delhi';
-    ShardPrefHelper.setCurrentCity(city);
-  }
-
-// TOGGLE LOCATION BUTTON
-  void handleToggle(bool value) async {
-    if (mounted) {
       setState(() {
-        isHome = value;
+        isLocationDenied = true;
       });
+      if (!isLocationOn) {
+        print('Try to featch others citys post');
+        _fetchPosts();
+      }
+    } else {
+      bool isLocationOn = ShardPrefHelper.getIsCurrentLocationOn() ?? true;
+      print('What is location on:$isLocationOn');
+      if (isLocationOn) {
+        try {
+          Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high,
+          );
+
+          List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude,
+            position.longitude,
+          );
+          var city = placemarks[0].locality ?? '';
+          await ShardPrefHelper.setLat(position.latitude);
+          await ShardPrefHelper.setLng(position.longitude);
+          await ShardPrefHelper.setIsCurrentLocationOn(true);
+          await ShardPrefHelper.setCity(city);
+
+          _fetchPosts();
+        } catch (e) {
+          bool isLocationOn = ShardPrefHelper.getIsCurrentLocationOn() ?? true;
+          print('isLocationOn : $isLocationOn');
+          setState(() {
+            isLocationDenied = true;
+          });
+          if (!isLocationOn) {
+            print('Try to featch post with other city');
+            _fetchPosts();
+          } else {
+            if (mounted) {
+              showSnackBar(
+                context: context,
+                message: e.toString(),
+              );
+            }
+          }
+        }
+      }
+      _fetchPosts();
     }
-    if (!isHome) {
-      fetchLocationAndUpdate();
-    }
-    _fetchPosts();
   }
 
   // FEATCH ALL POST
   void _fetchPosts() {
-    _selectedCity = ShardPrefHelper.getHomeCity() ?? 'New Delhi';
-    if (_selectedCity.toLowerCase() == 'delhi') {
-      _selectedCity = 'New Delhi';
-    }
-    setState(() {});
     BlocProvider.of<GetAllPostsBloc>(context).add(
-      GetAllPostsButtonPressedEvent(isHome: isHome),
+      GetAllPostsButtonPressedEvent(isHome: true),
     );
   }
 
   // REFRESH
   Future<void> _onRefresh() async {
-    setIsHome();
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context).add(
-      GetAllPostsButtonPressedEvent(isHome: isHome),
+      GetAllPostsButtonPressedEvent(isHome: true),
     );
   }
 
@@ -346,125 +321,15 @@ class _HomeScreenState extends State<HomeScreen>
                       width: 30,
                       height: 34,
                     ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      child: Container(
-                        height: 40,
-                        width: 160,
-                        decoration: BoxDecoration(
-                          color: AppColors.inActivePrimaryColor,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              size: 16,
-                              color: isHome
-                                  ? AppColors.primaryColor
-                                  : AppColors.blackColor,
-                            ),
-
-                            // HOME BUTTON
-                            InkWell(
-                              onTap: () {
-                                ShardPrefHelper.setIsLocationOn(false);
-                                handleToggle(true);
-                              },
-                              child: SizedBox(
-                                height: 35,
-                                width: 60,
-                                child: Center(
-                                  child: Text(
-                                    _selectedCity,
-                                    style: TextStyle(
-                                      fontWeight: isHome
-                                          ? FontWeight.w900
-                                          : FontWeight.normal,
-                                      fontSize: 16,
-                                      color: isHome
-                                          ? AppColors.primaryColor
-                                          : AppColors.blackColor,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-
-                            // DROP DOWN FOR CITY
-                            BlocListener<CityBloc, CityState>(
-                              listener: (context, state) {
-                                // SUCCESS STATE
-                                if (state is CityUpdatedState) {
-                                  ShardPrefHelper.setIsLocationOn(false);
-                                  handleToggle(true);
-                                  _fetchPosts();
-                                }
-
-                                // FAILURE STATE
-                                else if (state is CityErrorState) {
-                                  showSnackBar(
-                                    context: context,
-                                    message: state.errorMessage,
-                                  );
-                                }
-                              },
-                              child: HomeDropdownCity(
-                                selectCity: _selectedCity,
-                                onChanged: (String? newValue) {
-                                  if (newValue != null) {
-                                    context
-                                        .read<CityBloc>()
-                                        .add(UpdateCityEvent(newValue));
-                                  }
-                                },
-                              ),
-                            ),
-
-                            Container(
-                              height: 25,
-                              width: 1,
-                              color: AppColors.blackColor,
-                            ),
-                            SizedBox(
-                              width: 5,
-                            ),
-
-                            // LOCATION ICON
-                            InkWell(
-                              onTap: () {
-                                ShardPrefHelper.setIsLocationOn(true);
-                                handleToggle(false);
-                              },
-                              child: Container(
-                                height: 35,
-                                width: 35,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: isHome
-                                      ? AppColors.inActivePrimaryColor
-                                      : AppColors.primaryColor,
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/location.svg',
-                                    height: 25,
-                                    width: 25,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 actions: [
+                  IconButton(
+                    onPressed: () {
+                      context.push('/googleMapScreen');
+                    },
+                    icon: Icon(Icons.location_on_outlined),
+                  ),
                   // NOTIFICATION ICON
                   // NEED TO ADD BLOC BUILDER HERE FOR NOTIFICATION COUNT
                   Padding(
@@ -664,7 +529,32 @@ class _HomeScreenState extends State<HomeScreen>
 
                     return Center(child: Text('oops something went wrong'));
                   } else {
-                    return SizedBox.shrink();
+                    bool isLocationOn =
+                        ShardPrefHelper.getIsCurrentLocationOn() ?? true;
+                    if (isLocationDenied && isLocationOn) {
+                      return SizedBox(
+                        child: Center(
+                          child: Text(
+                            'Please on your location from mobile.',
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: AppColors.greyColor,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return SizedBox(
+                      child: Center(
+                        child: Text(
+                          'Location off but no data.',
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: AppColors.greenColor,
+                          ),
+                        ),
+                      ),
+                    );
                   }
                 },
               ),

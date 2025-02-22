@@ -30,26 +30,33 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
     Map<String, dynamic> queryParameters;
     double radius = ShardPrefHelper.getRadius() ?? 3.0;
+    double lat = ShardPrefHelper.getLat() ?? 0.0;
+    double lng = ShardPrefHelper.getLng() ?? 0.0;
+    queryParameters = {
+      'latitude': '$lat',
+      'longitude': '$lng',
+      'range': '$radius',
+    };
 
-    if (isHome) {
-      List<double> location = ShardPrefHelper.getHomeLocation();
-      double lat = location[0];
-      double long = location[1];
-      queryParameters = {
-        'latitude': '$lat',
-        'longitude': '$long',
-        'range': '$radius',
-      };
-    } else {
-      List<double> location = ShardPrefHelper.getLocation();
-      double lat = location[0];
-      double long = location[1];
-      queryParameters = {
-        'latitude': '$lat',
-        'longitude': '$long',
-        'range': '$radius',
-      };
-    }
+    // if (isHome) {
+    //   List<double> location = ShardPrefHelper.getHomeLocation();
+    //   double lat = location[0];
+    //   double long = location[1];
+    //   queryParameters = {
+    //     'latitude': '$lat',
+    //     'longitude': '$long',
+    //     'range': '$radius',
+    //   };
+    // } else {
+    //   List<double> location = ShardPrefHelper.getLocation();
+    //   double lat = location[0];
+    //   double long = location[1];
+    //   queryParameters = {
+    //     'latitude': '$lat',
+    //     'longitude': '$long',
+    //     'range': '$radius',
+    //   };
+    // }
 
     try {
       final response = await client.get(
