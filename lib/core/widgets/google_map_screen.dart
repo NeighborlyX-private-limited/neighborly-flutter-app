@@ -6,6 +6,7 @@ import 'package:google_places_flutter/model/prediction.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/utils/shared_preference.dart';
+import '../constants/razorpay_constants.dart';
 
 class LocationPickerScreen extends StatefulWidget {
   const LocationPickerScreen({super.key});
@@ -120,7 +121,7 @@ class LocationPickerScreenState extends State<LocationPickerScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GooglePlaceAutoCompleteTextField(
               textEditingController: _searchController,
-              googleAPIKey: "AIzaSyD_gdm23ym8o6hVytuEDoQ3jVCmbFS4tSk",
+              googleAPIKey: googlekey,
               debounceTime: 400,
               itemClick: (postalCodeResponse) {
                 _searchController.text = postalCodeResponse.description!;
