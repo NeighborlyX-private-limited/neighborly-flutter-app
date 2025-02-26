@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/constants/app_images.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
@@ -14,6 +14,7 @@ import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
+import '../../../../core/widgets/svg_icon.dart';
 import '../bloc/delete_post_bloc/delete_post_bloc.dart';
 import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'reaction_widget.dart';
@@ -40,6 +41,7 @@ class _PostWidgetState extends State<PostWidget> {
   // INIT STATE
   @override
   void initState() {
+    print('pro pic: ${widget.post.proPic}');
     super.initState();
     title = widget.post.title ?? '';
     content = widget.post.content ?? '';
@@ -103,21 +105,23 @@ class _PostWidgetState extends State<PostWidget> {
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
+                                      CircularSvgImage(
+                                    assetPath: AppImages.defaultProfilePic,
+                                    size: 40,
+                                  ),
                                 )
                               : widget.post.userName.contains('[deleted]')
                                   ? Image.asset(
                                       'assets/deleted_user.png',
-                                      fit: BoxFit.contain,
                                     )
-                                  : Image.asset(
-                                      'assets/second_pro_pic.png',
-                                      fit: BoxFit.contain,
+                                  : CircularSvgImage(
+                                      assetPath: AppImages.defaultProfilePic,
+                                      size: 40,
                                     ),
                         ),
                       ),
                       const SizedBox(
-                        width: 12,
+                        width: 8,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,7 +189,7 @@ class _PostWidgetState extends State<PostWidget> {
                   },
                   child: Icon(
                     Icons.more_horiz,
-                    size: 30,
+                    size: 24,
                     color: Colors.grey[500],
                   ),
                 )
@@ -194,9 +198,7 @@ class _PostWidgetState extends State<PostWidget> {
 
             widget.post.title != null
                 ? Padding(
-                    padding: const EdgeInsets.only(
-                      top: 12,
-                    ),
+                    padding: const EdgeInsets.only(top: 12),
                     child: Linkify(
                       options: LinkifyOptions(
                         looseUrl: true,
@@ -292,14 +294,12 @@ class _PostWidgetState extends State<PostWidget> {
                               padding: EdgeInsets.all(10),
                               height: 50,
                               width: 50,
-                              child: CircularProgressIndicator(
-                                color: AppColors.primaryColor,
-                                strokeWidth: 2,
-                              ),
+                              child: CustomCircularIndicator(),
                             ),
                           ),
                         ),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error_outline_outlined),
                       ),
                     ),
                   )
@@ -397,7 +397,7 @@ class _PostWidgetState extends State<PostWidget> {
                             leading: Icon(
                               Icons.delete_outline_outlined,
                               color: AppColors.redColor,
-                              size: 26,
+                              size: 24,
                             ),
                             title: Text(
                               AppLocalizations.of(context)!.delete_post,

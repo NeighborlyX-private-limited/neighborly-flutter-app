@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/core/widgets/language_bottom_sheet.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
-import 'package:neighborly_flutter_app/features/profile/presentation/widgets/button_widget.dart';
+import 'package:neighborly_flutter_app/core/widgets/svg_icon.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../constants/app_images.dart';
 
 class CustomDrawer extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -22,310 +20,209 @@ class CustomDrawer extends StatefulWidget {
 class _CustomDrawerState extends State<CustomDrawer> {
   late String userName;
   late String userProPic;
+  late String selectedCity;
+  late String karma;
+  late bool findMe;
 
-  /// init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
     userName = ShardPrefHelper.getUsername() ?? '';
     userProPic = ShardPrefHelper.getUserProfilePicture() ?? '';
+    selectedCity = ShardPrefHelper.getCity() ?? '';
+    findMe = ShardPrefHelper.getFineMe();
+    karma = ShardPrefHelper.getKarmaScore();
   }
 
   @override
   Widget build(BuildContext context) {
-    void showLogoutBottomSheet() {
-      logoutBottomSheet(context);
-    }
-
-    /// drawer
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.75,
       shape: BeveledRectangleBorder(borderRadius: BorderRadius.zero),
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: AppColors.primaryColor,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                /// App Logo
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SvgPicture.asset(
-                      color: AppColors.whiteColor,
-                      'assets/logo.svg',
-                      width: 30,
-                      height: 30,
-                    ),
-                    SizedBox(width: 10),
-
-                    ///App Name
-                    Text(
-                      AppLocalizations.of(context)!.neighborly,
-                      style: TextStyle(
-                        color: AppColors.whiteColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-                Spacer(),
-                Container(
-                  height: 60,
-                  width: 60,
+      backgroundColor: AppColors.lightBackgroundColor,
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: <Widget>[
+                DrawerHeader(
+                  margin: EdgeInsets.zero,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    color: AppColors.primaryColor,
                   ),
-
-                  /// User profile pic
-                  child: ClipOval(
-                    child: Image.network(
-                      userProPic,
-                      loadingBuilder: (
-                        BuildContext context,
-                        Widget child,
-                        ImageChunkEvent? loadingProgress,
-                      ) {
-                        if (loadingProgress == null) {
-                          return child;
-                        }
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.whiteColor,
-                            value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded /
-                                    (loadingProgress.expectedTotalBytes ?? 1)
-                                : null,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      // PROFILE PIC
+                      Container(
+                        height: 60,
+                        width: 60,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                        ),
+                        child: ClipOval(
+                          child: Image.network(
+                            userProPic,
+                            fit: BoxFit.cover,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.whiteColor,
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          (loadingProgress.expectedTotalBytes ??
+                                              1)
+                                      : null,
+                                ),
+                              );
+                            },
+                            errorBuilder: (context, exception, stackTrace) {
+                              return CircleAvatar(
+                                radius: 50,
+                                backgroundColor:
+                                    AppColors.whiteColor.withOpacity(0.2),
+                                child: Icon(
+                                  Icons.person,
+                                  color: AppColors.whiteColor,
+                                ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                      errorBuilder: (
-                        BuildContext context,
-                        Object exception,
-                        StackTrace? stackTrace,
-                      ) {
-                        return CircleAvatar(
-                          radius: 40,
-                          child: Icon(Icons.person),
-                        );
-                      },
-                    ),
+                        ),
+                      ),
+
+                      // USER NAME
+                      Text(
+                        userName,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      // CITY NAME
+                      Text(
+                        selectedCity,
+                        style: TextStyle(
+                          color: AppColors.whiteColor,
+                          fontSize: 14,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
 
-                SizedBox(height: 10),
-
-                /// username
-                Text(
-                  userName,
-                  style: TextStyle(
-                    color: AppColors.whiteColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                // BUY AWARD OPTION
+                ListTile(
+                  tileColor: AppColors.whiteColor,
+                  leading: CircularSvgImage(assetPath: AppImages.buyIcon),
+                  title: Text(
+                    AppLocalizations.of(context)!.buy_awards,
+                    style: TextStyle(fontWeight: FontWeight.w500),
                   ),
+                  onTap: () {
+                    widget.scaffoldKey.currentState?.closeEndDrawer();
+                    showModalBottomSheet(
+                      useRootNavigator: true,
+                      showDragHandle: true,
+                      backgroundColor: AppColors.whiteColor,
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (_) => const AwardSelectionScreen(),
+                    );
+                  },
+                ),
+
+                // SELECT APP LANGUAGE OPTION
+                ListTile(
+                  tileColor: AppColors.whiteColor,
+                  leading: CircularSvgImage(assetPath: AppImages.languageIcon),
+                  title: Text(
+                    AppLocalizations.of(context)!.language,
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () {
+                    widget.scaffoldKey.currentState?.closeEndDrawer();
+                    showModalBottomSheet(
+                      backgroundColor: AppColors.whiteColor,
+                      showDragHandle: true,
+                      context: context,
+                      builder: (context) => LanguageBottomSheet(),
+                      isScrollControlled: true,
+                    );
+                  },
+                ),
+
+                // CHANGE LOCATION OPTION
+                ListTile(
+                  tileColor: AppColors.whiteColor,
+                  leading: CircularSvgImage(assetPath: AppImages.locationIcon),
+                  title: Text(
+                    'Change Location',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () {
+                    widget.scaffoldKey.currentState?.closeEndDrawer();
+                    context.push('/locationScreen');
+                  },
+                ),
+
+                // SET RADIUS OPTION
+                ListTile(
+                  tileColor: AppColors.whiteColor,
+                  leading: CircularSvgImage(assetPath: AppImages.radiusIcon),
+                  title: Text(
+                    AppLocalizations.of(context)!.set_radius,
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () {
+                    widget.scaffoldKey.currentState?.closeEndDrawer();
+                    context.push('/radiusScreen');
+                  },
+                ),
+
+                // EDIT PROFILE OPTION
+                ListTile(
+                  tileColor: AppColors.whiteColor,
+                  leading: CircularSvgImage(assetPath: AppImages.editIcon),
+                  title: Text(
+                    'Edit Profile',
+                    style: TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                  onTap: () {
+                    widget.scaffoldKey.currentState?.closeEndDrawer();
+                    context.push('/basicInformationScreen');
+                  },
                 ),
               ],
             ),
           ),
 
-          /// payment
-          ListTile(
-            leading: Icon(Icons.payment),
-            title: Text(AppLocalizations.of(context)!.buy_awards),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              showModalBottomSheet(
-                useRootNavigator: true,
-                showDragHandle: true,
-                backgroundColor: AppColors.whiteColor,
-                context: context,
-                isScrollControlled: true,
-                builder: (_) => const AwardSelectionScreen(),
-              );
-            },
-          ),
-
-          ///language
-          ListTile(
-            leading: Icon(Icons.language),
-            title: Text(AppLocalizations.of(context)!.language),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              showModalBottomSheet(
-                backgroundColor: AppColors.whiteColor,
-                showDragHandle: true,
-                context: context,
-                builder: (context) => LanguageBottomSheet(),
-                isScrollControlled: true,
-              );
-            },
-          ),
-
-          /// set radius
-          ListTile(
-            leading: Icon(Icons.location_on),
-            title: Text(AppLocalizations.of(context)!.set_radius),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              context.push('/radiusScreen');
-            },
-          ),
-
-          /// edit profile info
-          ListTile(
-            leading: Icon(Icons.edit),
-            title: Text(AppLocalizations.of(context)!.edit_profile_info),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              context.push('/basicInformationScreen');
-            },
-          ),
-
-          Divider(),
-
-          /// support and feedback
-          ListTile(
-            leading: Icon(Icons.help),
-            title: Text(AppLocalizations.of(context)!.support_and_feedback),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              context.push('/feedbackScreen');
-            },
-          ),
-
-          ///logout
-          ListTile(
-            leading: Icon(Icons.logout),
-            title: Text(AppLocalizations.of(context)!.logout),
-            onTap: () {
-              widget.scaffoldKey.currentState?.closeEndDrawer();
-              showLogoutBottomSheet();
-            },
+          // SETTINGS OPTION AT THE BOTTOM
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ListTile(
+              tileColor: AppColors.whiteColor,
+              leading: CircularSvgImage(assetPath: AppImages.settingIcon),
+              title: Text(
+                AppLocalizations.of(context)!.settings,
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              onTap: () {
+                widget.scaffoldKey.currentState?.closeEndDrawer();
+                context.push('/settingsScreen/$karma/$findMe');
+              },
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  /// logout bottom sheet
-  Future<void> logoutBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: AppColors.whiteColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            ),
-          ),
-          height: 160,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Text(
-                AppLocalizations.of(context)!
-                    .leaving_so_soon_confirm_if_you_want_to_logout,
-                style: blackonboardingBody1Style,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ButtonWidget(
-                    color: AppColors.lightBackgroundColor,
-                    text: AppLocalizations.of(context)!.cancel,
-                    textColor: AppColors.blackColor,
-                    onTapListener: () {
-                      context.pop();
-                    },
-                    isActive: true,
-                  ),
-                  BlocConsumer<LogoutBloc, LogoutState>(
-                    listener: (context, state) {
-                      /// failure state
-                      if (state is LogoutFailureState) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.error),
-                          ),
-                        );
-                      }
-
-                      ///success state
-                      else if (state is LogoutSuccessState) {
-                        ShardPrefHelper.removeCookie();
-                        ShardPrefHelper.removeUserID();
-                        ShardPrefHelper.removeUserProfilePicture();
-                        ShardPrefHelper.removeImageUrl();
-                        ShardPrefHelper.removeUsername();
-                        ShardPrefHelper.removePhoneNumber();
-                        ShardPrefHelper.removeGender();
-                        if (ShardPrefHelper.getEmail() != null) {
-                          ShardPrefHelper.removeEmail();
-                        }
-
-                        context.go('/');
-                      }
-                    },
-                    builder: (context, state) {
-                      ///loading state
-                      if (state is LogoutLoadingState) {
-                        return const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primaryColor,
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-
-                      ///logout button
-                      return ButtonWidget(
-                        text: AppLocalizations.of(context)!.logout,
-                        color: AppColors.redColor,
-                        textColor: AppColors.whiteColor,
-                        onTapListener: () {
-                          context.read<LogoutBloc>().add(
-                                LogoutButtonPressedEvent(),
-                              );
-                        },
-                        isActive: true,
-                      );
-                    },
-                  ),
-                ],
-              )
-            ],
-          ),
-        );
-      },
     );
   }
 }

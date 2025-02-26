@@ -7,16 +7,16 @@ import '../../data/model/search_dash_model.dart';
 import '../../data/model/search_result_model.dart';
 
 abstract class CommunityRepositories {
-  ///create community repo
+  // CREATE COMMUNITY
   Future<Either<Failure, String>> createCommunity({
     required CommunityModel community,
     File? pictureFile,
   });
 
-  ///get all communities
+  // GET ALL COMMUNITY
   Future<Either<Failure, List<CommunityModel>>> getAllCommunities();
 
-  ///get user groups
+  // GET USER'S COMMUNITY
   Future<Either<Failure, List<CommunityModel>>> getUserGroups();
 
   ///getCommunityJoinRequest
@@ -48,13 +48,13 @@ abstract class CommunityRepositories {
     required String userId,
   });
 
-  ///joinGroup
+  // JOIN COMMUNITY
   Future<Either<Failure, void>> joinGroup({
     required String communityId,
     required String? userId,
   });
 
-  ///leaveCommunity
+  // LEAVE COMMUNITY
   Future<Either<Failure, void>> leaveCommunity({
     required String communityId,
     required String? userId,
@@ -97,7 +97,7 @@ abstract class CommunityRepositories {
     required num newRadius,
   });
 
-  ///update mute
+  // UPDATE MUTE/UNMUTE
   Future<Either<Failure, void>> updateMute({
     required String communityId,
     required bool isMute,

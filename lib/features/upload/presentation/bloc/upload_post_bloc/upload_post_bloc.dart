@@ -12,19 +12,22 @@ class UploadPostBloc extends Bloc<UploadPostEvent, UploadPostState> {
       : _uploadPostUsecase = uploadPostUsecase,
         super(UploadPostInitialState()) {
     on<UploadPostPressedEvent>(
-      (UploadPostPressedEvent event, Emitter<UploadPostState> emit) async {
+      (
+        UploadPostPressedEvent event,
+        Emitter<UploadPostState> emit,
+      ) async {
         emit(UploadPostLoadingState());
 
         final result = await _uploadPostUsecase.call(
+          type: event.type,
           title: event.title,
           content: event.content,
-          type: event.type,
-          multimedia: event.multimedia,
-          city: event.city,
-          allowMultipleVotes: event.allowMultipleVotes,
           options: event.options,
-          location: event.location,
+          allowMultipleVotes: event.allowMultipleVotes,
+          multimedia: event.multimedia,
           thumbnail: event.thumbnail,
+          location: event.location,
+          city: event.city,
         );
 
         result.fold(

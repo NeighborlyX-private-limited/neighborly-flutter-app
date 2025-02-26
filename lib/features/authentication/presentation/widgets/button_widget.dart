@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/colors.dart';
 
 class ButtonContainerWidget extends StatelessWidget {
-  final Color color;
   final String? text;
-  final VoidCallback? onTapListener;
-  final bool isActive;
+  final Color color;
   final bool isFilled;
+  final bool isActive;
+  final VoidCallback? onTapListener;
   const ButtonContainerWidget({
     super.key,
-    required this.color,
     this.text,
+    required this.color,
+    required this.isFilled,
     this.isActive = false,
     this.onTapListener,
-    required this.isFilled,
   });
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: isActive ? onTapListener : null,
       child: Opacity(
         opacity: isActive ? 1 : 0.3,
@@ -27,7 +27,7 @@ class ButtonContainerWidget extends StatelessWidget {
           decoration: BoxDecoration(
             border: isFilled ? null : Border.all(color: color, width: 1),
             color: isFilled ? color : AppColors.whiteColor,
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(24),
           ),
           child: Center(
             child: Text(

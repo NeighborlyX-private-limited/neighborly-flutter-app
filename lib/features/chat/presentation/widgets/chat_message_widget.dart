@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../core/theme/colors.dart';
 import '../../data/model/chat_message_model.dart';
 
@@ -26,7 +25,6 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
     if (lastMessageDate == '') return lastMessageDate;
     DateTime parsedDate = DateTime.parse(lastMessageDate);
 
-    // Format the date as "YYYY-MM-DD HH:mm:ss"
     String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
     final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
     final DateFormat timeFormat = DateFormat('hh:mm a');
@@ -47,7 +45,6 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
             maxWidth: MediaQuery.of(context).size.width * 0.80,
             minWidth: 80,
           ),
-          // padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
           decoration: BoxDecoration(
             color: widget.message.isMine
                 ? Colors.grey[100]
@@ -61,15 +58,13 @@ class _ChatMessageWidgetState extends State<ChatMessageWidget> {
                 child: widget.message.pictureUrl != ''
                     ? Image.network('${widget.message.pictureUrl}')
                     : Text(
-                            // message.date,
-                            widget.message.text,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
+                        widget.message.text,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
               ),
-              //
               Positioned(
                 bottom: 3,
                 right: 7,

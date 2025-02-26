@@ -59,6 +59,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: Colors.transparent,
           leading: InkWell(
             child: const Icon(
               Icons.arrow_back_ios,
@@ -82,7 +83,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
+              horizontal: 16.0,
               vertical: 50.0,
             ),
             child: Column(
@@ -100,7 +101,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                   height: 5,
                 ),
                 Text(
-                  'Set a new password for your account',
+                  'Set a new password for your account.',
                   style: onboardingBodyStyle,
                 ),
                 const SizedBox(
@@ -109,6 +110,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
                 // PASSWORD TEXT FIELD
                 TextFieldWidget(
+                  controller: _passwordController,
+                  lableText: 'Password',
+                  isPassword: true,
                   border: true,
                   onChanged: (value) {
                     setState(() {
@@ -116,9 +120,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           _passwordController.text.trim().isNotEmpty;
                     });
                   },
-                  controller: _passwordController,
-                  lableText: 'Password',
-                  isPassword: true,
                 ),
                 const SizedBox(
                   height: 8,
@@ -126,6 +127,9 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
                 // CONFIRM PASSWORD TEXT FIELD
                 TextFieldWidget(
+                  controller: _confirmPasswordController,
+                  isPassword: true,
+                  lableText: 'Confirm Password',
                   border: true,
                   onChanged: (value) {
                     setState(() {
@@ -133,9 +137,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                           _confirmPasswordController.text.trim().isNotEmpty;
                     });
                   },
-                  controller: _confirmPasswordController,
-                  isPassword: true,
-                  lableText: 'Confirm Password',
                 ),
                 const SizedBox(
                   height: 45,
@@ -149,8 +150,8 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
                     // SUCCESS STATE
                     else if (state is ChangePasswordSuccessState) {
-                      showSnackBar(context: context, message: state.message);
                       context.go('/loginScreen');
+                      showSnackBar(context: context, message: state.message);
                     }
                   },
                   builder: (context, state) {

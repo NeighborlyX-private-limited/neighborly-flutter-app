@@ -35,15 +35,17 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       });
     });
 
-    /// google signup event
-    on<GoogleSignUpEvent>(
-        (GoogleSignUpEvent event, Emitter<RegisterState> emit) async {
+    // GOOGLE SIGNUP EVENT
+    on<GoogleSignUpEvent>((
+      GoogleSignUpEvent event,
+      Emitter<RegisterState> emit,
+    ) async {
       emit(RegisterLoadingState());
 
       final result = await _googleLogin.call();
 
       result.fold((error) {
-        emit(RegisterFailureState(error: error.toString()));
+        emit(OAuthFailureState(error: error.toString()));
       }, (response) {
         emit(OAuthSuccessState(message: 'true'));
       });

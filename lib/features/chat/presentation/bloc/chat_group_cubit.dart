@@ -171,7 +171,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
         (messageList) {
           int newPage = state.page;
           // If messages exist, append them
-          if (messageList.length >= 15) {
+          if (messageList.length>=15) {
             newPage += 1;
           }
           // int pageNumber = state.page;

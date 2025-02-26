@@ -43,15 +43,18 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: AppColors.whiteColor,
-        leading: GestureDetector(
-          child: Icon(
-            Icons.arrow_back_ios,
-          ),
-          onTap: () {
-            Navigator.of(context).pop();
-          },
-        ),
+        leading: showSearch
+            ? null
+            : GestureDetector(
+                child: Icon(
+                  Icons.arrow_back_ios,
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+              ),
         title: showSearch
             // APP BAR SEARCH BOX
             ? TextFormField(
@@ -60,7 +63,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                 textAlignVertical: TextAlignVertical.center,
                 onFieldSubmitted: (value) {},
                 onChanged: (value) {
-                  if (value.length > 3) {
+                  if (value.length > 2) {
                     chatMainCubit.filterRoomList(value);
                   } else {
                     chatMainCubit.cleanSearchFilter();
@@ -84,30 +87,34 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                     borderSide: BorderSide(
                       width: 1,
                       style: BorderStyle.solid,
+                      color: AppColors.greyColor,
                     ),
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                   focusedBorder: OutlineInputBorder(
                     gapPadding: 0,
                     borderSide: BorderSide(
                       width: 1,
                       style: BorderStyle.solid,
+                      color: AppColors.greyColor,
                     ),
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                cursorColor: Colors.black,
+                cursorColor: AppColors.greyColor,
               )
             // APP BAR TITLE
             : Text(
                 'Chat',
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
         centerTitle: true,
         actions: [
           // SEARCH ICON
-          IconButton(
-            onPressed: () {
+          GestureDetector(
+            onTap: () {
               setState(() {
                 showSearch = !showSearch;
                 if (!showSearch) {
@@ -115,12 +122,13 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                 }
               });
             },
-            icon: Icon(
+            child: Icon(
               showSearch ? Icons.close : Icons.search,
               size: 24,
             ),
           ),
-          const SizedBox(width: 10),
+
+          const SizedBox(width: 16),
         ],
       ),
       body: BlocConsumer<ChatMainCubit, ChatMainState>(
@@ -132,7 +140,6 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
               message: "oops something went wrong",
             );
           }
-          if (state.status == Status.success) {}
         },
         builder: (context, state) {
           // LOADING STATE

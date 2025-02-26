@@ -3,38 +3,38 @@ part of 'upload_post_bloc.dart';
 abstract class UploadPostEvent extends Equatable {}
 
 class UploadPostPressedEvent extends UploadPostEvent {
-  final List<double> location;
-  final String? content;
-  final List<File>? multimedia;
-  final String title;
   final String type;
-  final String city;
+  final String title;
+  final String? content;
   final List<dynamic>? options;
   final bool allowMultipleVotes;
+  final List<File>? multimedia;
   final File? thumbnail;
+  final List<double> location;
+  final String city;
 
   UploadPostPressedEvent({
-    required this.location,
+    required this.type,
     required this.title,
     this.content,
-    required this.type,
-    this.multimedia,
-    this.thumbnail,
-    required this.city,
     this.options,
     required this.allowMultipleVotes,
+    this.multimedia,
+    this.thumbnail,
+    required this.location,
+    required this.city,
   });
 
   @override
   List<Object?> get props => [
-        location,
+        type,
         title,
         content,
-        type,
-        multimedia,
-        allowMultipleVotes,
-        city,
         options,
+        allowMultipleVotes,
+        multimedia,
         thumbnail,
+        location,
+        city,
       ];
 }

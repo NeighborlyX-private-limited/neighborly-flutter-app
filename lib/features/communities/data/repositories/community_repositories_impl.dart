@@ -18,7 +18,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     required this.networkInfo,
   });
 
-  /// create community repo impl
+  // CREATE COMMUNITY
   @override
   Future<Either<Failure, String>> createCommunity({
     required CommunityModel community,
@@ -42,7 +42,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
-  ///get all communities repo impl
+  // GET ALL COMMUNITY
   @override
   Future<Either<Failure, List<CommunityModel>>> getAllCommunities() async {
     if (await networkInfo.isConnected) {
@@ -60,7 +60,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
-  ///get user groups  repo impl
+  // GET USER'S COMMUNITY
   @override
   Future<Either<Failure, List<CommunityModel>>> getUserGroups() async {
     if (await networkInfo.isConnected) {
@@ -148,7 +148,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
-  ///joinGroup repo impl
+  // JOIN COMMUNITY
   @override
   Future<Either<Failure, void>> joinGroup({
     required String communityId,
@@ -172,7 +172,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
-  /// leaveCommunity repo impl
+  // LEAVE COMMUNITY
   @override
   Future<Either<Failure, void>> leaveCommunity({
     required String communityId,
@@ -390,7 +390,7 @@ class CommunityRepositoriesImpl implements CommunityRepositories {
     }
   }
 
-  /// update mute repo impl
+  // UPDATE MUTE/UNMUTE
   @override
   Future<Either<Failure, void>> updateMute({
     required String communityId,

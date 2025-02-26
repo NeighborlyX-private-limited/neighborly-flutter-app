@@ -27,9 +27,10 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   final typeEC = TextEditingController();
   final radiusEC = TextEditingController();
   final nameFocusNode = FocusNode();
-  bool bothFieldEnable = false;
 
   late CommunityCreateCubit communityCreateCubit;
+  bool bothFieldEnable = false;
+  bool isButtonActive = false;
 
   File? fileToUpload;
   int currentStep = 1;
@@ -65,13 +66,11 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
   // LEAVE THE SCREEN WITH CREATE GROUP
   Future<dynamic> bottomSheetConfirmNotSaved(BuildContext context) {
     return showModalBottomSheet(
-      backgroundColor: AppColors.whiteColor,
-      barrierColor: AppColors.greyColor,
-      showDragHandle: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
       builder: (BuildContext context) {
         return Container(
-          color: AppColors.whiteColor,
           height: 120,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: Column(
@@ -201,7 +200,6 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
           leading: GestureDetector(
             child: Icon(
               Icons.arrow_back_ios,
-              color: AppColors.blackColor,
             ),
             onTap: () {
               if (currentStep == 1) {
@@ -260,7 +258,7 @@ class _CommunityCreateScreenState extends State<CommunityCreateScreen> {
             // SUCCESS STATE
             if (state.status == Status.success) {
               if (mounted) {
-                context.push('/group-details/${state.newCommunityId}');
+                context.go('/group-details/${state.newCommunityId}');
               }
             }
           },
@@ -340,16 +338,10 @@ class _Step1areaState extends State<Step1area> {
   void _showCommunityTypeBottomSheet() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: AppColors.whiteColor,
       useRootNavigator: true,
       showDragHandle: true,
       isScrollControlled: true,
-      barrierColor: AppColors.greyColor,
-      backgroundColor: AppColors.whiteColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
-        ),
-      ),
       builder: (context) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 16),
@@ -436,7 +428,7 @@ class _Step1areaState extends State<Step1area> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -574,7 +566,7 @@ class _Step2areaState extends State<Step2area> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -703,7 +695,9 @@ class _Step3areaState extends State<Step3area> {
                           width: double.infinity,
                           fit: BoxFit.cover,
                         )
-                      : null,
+                      : Center(
+                          child: Text('Choose a photo'),
+                        ),
                 ),
               ),
               Positioned(

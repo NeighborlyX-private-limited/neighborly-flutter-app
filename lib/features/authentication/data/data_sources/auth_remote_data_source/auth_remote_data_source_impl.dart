@@ -47,17 +47,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     debugPrint('EMAIL OR PHONE LOGIN:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
-
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
       String username = jsonDecode(response.body)['user']['username'];
       String? email = jsonDecode(response.body)['user']['email'];
       String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
+      String karma = jsonDecode(response.body)['user']['karma'].toString();
+      bool findMe = jsonDecode(response.body)['user']['findMe'] ?? true;
       bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
-      List<dynamic> homeLocation =
-          jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
-      List<dynamic> location = jsonDecode(response.body)['user']
-          ['current_coordinates']['coordinates'];
       bool isSkippedTutorial =
           jsonDecode(response.body)['user']['skippedTutorial'];
       bool isViewedTutorial =
@@ -71,10 +68,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setEmail(email ?? '');
       ShardPrefHelper.setGender(gender);
+      ShardPrefHelper.setKarmaScore(karma);
+      ShardPrefHelper.setFineMe(findMe);
       ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setIsEmailLogin(true);
-      // ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
-      // ShardPrefHelper.setLocation([location[0], location[1]]);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
       ShardPrefHelper.setAuthtype(authType);
@@ -82,9 +79,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      String error =
-          jsonDecode(response.body)['message'] ?? 'oops something went wrong';
-      throw ServerException(message: error);
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
+      throw ServerException(message: errorMessage);
     }
   }
 
@@ -99,6 +98,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
     print('FCM TOKEN IN SIGNUP:$fcmToken');
+
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -115,7 +115,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
               'fcmToken': fcmToken,
             }),
     );
-    log('EMAIL OR PHONE SIGNUP:${response.statusCode}');
+
     log('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
     debugPrint('EMAIL OR PHONE SIGNUP:${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
@@ -127,12 +127,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String? email = jsonDecode(response.body)['user']['email'];
       bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
       String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
-
-      List<dynamic> homeLocation =
-          jsonDecode(response.body)['user']['home_coordinates']['coordinates'];
-
-      List<dynamic> location = jsonDecode(response.body)['user']
-          ['current_coordinates']['coordinates'];
 
       bool isSkippedTutorial =
           jsonDecode(response.body)['user']['skippedTutorial'];
@@ -147,15 +141,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String authType = jsonDecode(response.body)['user']['auth_type'];
 
       // SET ALL DATA IN LOCAL
-
       ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setEmail(email ?? '');
       ShardPrefHelper.setDob(isDobSet);
       ShardPrefHelper.setGender(gender);
-      // ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
-      // ShardPrefHelper.setLocation([location[0], location[1]]);
       ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
       ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
 
@@ -170,10 +161,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       return AuthResponseModel.fromJson(jsonDecode(response.body));
     } else {
-      String error =
-          jsonDecode(response.body)['error'] ?? 'oops something went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: error);
+      throw ServerException(message: errorMessage);
     }
   }
 
@@ -210,7 +203,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         throw ServerException(message: 'Please try again after 1 minute');
       }
 
-      throw ServerException(message: jsonDecode(response.body)['message']);
+      String errorMessage = jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
+
+      throw ServerException(message: errorMessage);
     }
   }
 
@@ -250,12 +248,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
         String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
 
-        List<dynamic> homeLocation = jsonDecode(response.body)['user']
-            ['home_coordinates']['coordinates'];
-
-        List<dynamic> location = jsonDecode(response.body)['user']
-            ['current_coordinates']['coordinates'];
-
         bool isSkippedTutorial =
             jsonDecode(response.body)['user']['skippedTutorial'];
 
@@ -274,15 +266,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         } else {
           ShardPrefHelper.setIsEmailLogin(false);
         }
-
         ShardPrefHelper.setUserID(userID);
         ShardPrefHelper.setUserProfilePicture(proPic);
         ShardPrefHelper.setUsername(username);
         ShardPrefHelper.setEmail(email ?? '');
         ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setGender(gender);
-        // ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
-        // ShardPrefHelper.setLocation([location[0], location[1]]);
         ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
         ShardPrefHelper.setIsViewedTutorial(isViewedTutorial);
         ShardPrefHelper.setIsVerified(isVerified);
@@ -290,17 +279,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ShardPrefHelper.setAuthtype(authType);
       }
 
-      return 'Account is verified';
+      return 'Account verified';
     } else if (response.statusCode == 401) {
-      String error =
-          jsonDecode(response.body)['message'] ?? 'oops something went wrong';
+      String errorMessage = jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: error);
+      throw ServerException(message: errorMessage);
     } else {
-      String error =
-          jsonDecode(response.body)['error'] ?? 'oops something went wrong';
+      String errorMessage = jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: error);
+      throw ServerException(message: errorMessage);
     }
   }
 
@@ -324,10 +317,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       handleAuthHeaders(response.headers);
       return jsonDecode(response.body)['msg'];
     } else {
-      String error =
-          jsonDecode(response.body)['message'] ?? 'oops something went wrong';
-
-      throw ServerException(message: error);
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
+      throw ServerException(message: errorMessage);
     }
   }
 
@@ -336,19 +330,23 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<dynamic> googleAuthentication() async {
     try {
       String url = '$kBaseUrl/authentication/google/login';
-
       String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
+      print('FCM TOKEN IN OAUTH SIGNUP: $fcmToken');
 
       var signInResult = await GoogleSignInService.signInWithGoogle();
+      print('GOOGLE SIGNIN RESULT: $signInResult');
 
       if (signInResult['error'] != null) {
+        print('SIGNIN RESULT ERROR: ${signInResult['error']}');
         throw ServerException(message: signInResult['error']);
       }
       if (signInResult.containsKey('error')) {
+        print('SIGNIN RESULT ERROR: ${signInResult['error']}');
         throw ServerException(message: signInResult['error']);
       }
 
       String tokenID = signInResult['idToken'];
+      print('tokenID: $tokenID');
 
       final response = await http.post(
         Uri.parse(url),
@@ -359,6 +357,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'fcmToken': fcmToken,
         }),
       );
+
       log('GOOGLE AUTH RESPONSE:${jsonDecode(response.body)}');
       debugPrint('GOOGLE AUTH RESPONSE:${jsonDecode(response.body)}');
       if (response.statusCode == 200) {
@@ -371,18 +370,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
         String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
 
-        List<dynamic> homeLocation = jsonDecode(response.body)['user']
-            ['home_coordinates']['coordinates'];
-
-        List<dynamic> location = jsonDecode(response.body)['user']
-            ['current_coordinates']['coordinates'];
         bool isSkippedTutorial =
             jsonDecode(response.body)['user']['skippedTutorial'];
 
         bool isViewedTutorial =
             jsonDecode(response.body)['user']['viewedTutorial'];
         bool isVerified = jsonDecode(response.body)['user']['isVerified'];
-        String authType = 'email';
+        String authType = jsonDecode(response.body)['user']['auth_type'];
 
         // SET DATA IN LOCAL
         ShardPrefHelper.setIsSkippedTutorial(isSkippedTutorial);
@@ -393,18 +387,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         ShardPrefHelper.setEmail(email ?? '');
         ShardPrefHelper.setDob(isDobSet);
         ShardPrefHelper.setGender(gender);
-        // ShardPrefHelper.setHomeLocation([homeLocation[0], homeLocation[1]]);
-        // ShardPrefHelper.setLocation([location[0], location[1]]);
         ShardPrefHelper.setIsVerified(isVerified);
         ShardPrefHelper.setAuthtype(authType);
         ShardPrefHelper.setIsEmailLogin(false);
 
         return jsonDecode(response.body);
       } else {
-        String error = jsonDecode(response.body)['error_description'] ??
+        String errorMessage = jsonDecode(response.body)['error'] ??
             jsonDecode(response.body)['message'] ??
+            jsonDecode(response.body)['msg'] ??
+            jsonDecode(response.body)['error_description'] ??
             'oops something went wrong';
-        throw ServerException(message: error);
+        throw ServerException(message: errorMessage);
       }
     } catch (e) {
       throw ServerException(message: e.toString());

@@ -13,10 +13,7 @@ class SocketService {
     }
 
     String? accessToken = ShardPrefHelper.getAccessToken();
-    String? refreshToken = ShardPrefHelper.getRefreshToken();
-
     print('ACCESS TOKEN IN SOCKET:$accessToken');
-    print('REFRESH TOKEN IN SOCKET:$refreshToken');
 
     // INIT SOCKET AND CONNECT TO SOCKET SERVER
     _socket = io.io(

@@ -13,10 +13,11 @@ class GetUserGroupsBloc extends Bloc<GetUserGroupsEvent, GetUserGroupsState> {
     required GetUserGroupsUsecase getUserGroupsUsecase,
   })  : _getUserGroupsUsecase = getUserGroupsUsecase,
         super(GetUserGroupsInitialState()) {
-    /// get user group event trigger
     on<GetUserGroupsButtonPressedEvent>(
-      (GetUserGroupsButtonPressedEvent event,
-          Emitter<GetUserGroupsState> emit) async {
+      (
+        GetUserGroupsButtonPressedEvent event,
+        Emitter<GetUserGroupsState> emit,
+      ) async {
         emit(GetUserGroupsLoadingState());
 
         final result = await _getUserGroupsUsecase.call();

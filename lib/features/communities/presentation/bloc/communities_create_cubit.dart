@@ -14,7 +14,6 @@ class CommunityCreateCubit extends Cubit<CommunityCreateState> {
     this.createCommunityUsecase,
   ) : super(const CommunityCreateState());
 
-  ///  create group cubit
   Future createCommunity(
     CommunityModel newCommunity,
     File? pictureFile,

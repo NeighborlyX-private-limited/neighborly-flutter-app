@@ -5,16 +5,16 @@ import '../../model/search_dash_model.dart';
 import '../../model/search_result_model.dart';
 
 abstract class CommunityRemoteDataSource {
-  ///create Community
+  // CREATE COMMUNITY
   Future<String> createCommunity({
     required CommunityModel community,
     File? pictureFile,
   });
 
-  ///get All Communities
+  // GET ALL COMMUNITY
   Future<List<CommunityModel>> getAllCommunities();
 
-  ///get users groups
+  // GET USER'S COMMUNITY
   Future<List<CommunityModel>> getUserGroups();
 
   ///get community details
@@ -46,13 +46,13 @@ abstract class CommunityRemoteDataSource {
     required String userId,
   });
 
-  ///add user in group
+  // JOIN COMMUNITY
   Future<void> joinGroup({
     required String communityId,
     required String? userId,
   });
 
-  ///leave group
+  // LEAVE COMMUNITY
   Future<void> leaveCommunity({
     required String communityId,
     required String? userId,
@@ -95,7 +95,7 @@ abstract class CommunityRemoteDataSource {
     required num newRadius,
   });
 
-  ///update mute/unmute
+  // UPDATE MUTE/UNMUTE
   Future<void> updateMute({
     required String communityId,
     required bool isMute,

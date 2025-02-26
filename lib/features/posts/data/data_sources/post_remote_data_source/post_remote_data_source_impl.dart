@@ -16,10 +16,9 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   final http.Client client;
   PostRemoteDataSourceImpl({required this.client});
 
+  // GET ALL POSTS
   @override
-  Future<List<PostModel>> getAllPosts({
-    required bool isHome,
-  }) async {
+  Future<List<PostModel>> getAllPosts() async {
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
@@ -32,31 +31,13 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     double radius = ShardPrefHelper.getRadius() ?? 3.0;
     double lat = ShardPrefHelper.getLat() ?? 0.0;
     double lng = ShardPrefHelper.getLng() ?? 0.0;
+    print('Lat in featch post:$lat');
+    print('Lng in featch post:$lng');
     queryParameters = {
       'latitude': '$lat',
       'longitude': '$lng',
       'range': '$radius',
     };
-
-    // if (isHome) {
-    //   List<double> location = ShardPrefHelper.getHomeLocation();
-    //   double lat = location[0];
-    //   double long = location[1];
-    //   queryParameters = {
-    //     'latitude': '$lat',
-    //     'longitude': '$long',
-    //     'range': '$radius',
-    //   };
-    // } else {
-    //   List<double> location = ShardPrefHelper.getLocation();
-    //   double lat = location[0];
-    //   double long = location[1];
-    //   queryParameters = {
-    //     'latitude': '$lat',
-    //     'longitude': '$long',
-    //     'range': '$radius',
-    //   };
-    // }
 
     try {
       final response = await client.get(
@@ -68,43 +49,44 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         },
       );
 
-      final List<dynamic> jsonData = jsonDecode(response.body);
       debugPrint('FEATCH ALL POST:${response.body}');
       if (response.statusCode == 200) {
         handleAuthHeaders(response.headers);
+        final List<dynamic> jsonData = jsonDecode(response.body);
         List<PostModel> data =
             jsonData.map((data) => PostModel.fromJson(data)).toList();
 
         return data;
       } else {
-        final message =
-            jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
-        debugPrint('FEATCH ALL POST ERROR:$message');
-        throw ServerException(message: message);
+        String errorMessage = jsonDecode(response.body)['error'] ??
+            jsonDecode(response.body)['message'] ??
+            jsonDecode(response.body)['msg'] ??
+            'oops something went wrong';
+
+        throw ServerException(message: errorMessage);
       }
-    } on SocketException catch (_) {
-      debugPrint('FEATCH ALL POST ERROR');
+    } on SocketException catch (e) {
       throw ServerException(
         message: 'oops something went wrong',
       );
     } catch (e) {
-      debugPrint('FEATCH ALL POST ERROR:$e');
       throw ServerException(
         message: 'oops something went wrong',
       );
     }
   }
 
+  // REPORT POST
   @override
   Future<void> reportPost({
-    required String reason,
     required String type,
+    required String reason,
     required String postId,
   }) async {
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'oops something went wrong.');
+      throw const ServerException(message: 'oops something went wrong');
     }
 
     String url = '$kBaseUrl/wall/report';
@@ -122,18 +104,21 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'reason': reason,
       }),
     );
-
+    debugPrint('REPORT POST:${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
-// FEEDBACK
+  // FEEDBACK
   @override
   Future<void> feedback({
     required num id,
@@ -143,7 +128,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Someting went wrong');
+      throw const ServerException(message: 'oops something went wrong');
     }
 
     String url = '$kBaseUrl/wall/feedback';
@@ -160,18 +145,21 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'type': type,
       }),
     );
-    print('FEEDBACK: ${response.body}');
+    print('FEEDBACK RESPONSE: ${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       return;
     } else {
-      final message =
-          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
+  // GET POST BY POST ID
   @override
   Future<PostModel> getPostById({required num id}) async {
     String? cookies = ShardPrefHelper.getCookie();
@@ -191,18 +179,22 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    debugPrint('GET POST BY ID:${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((data) => PostModel.fromJson(data)).toList()[0];
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
+  // GET COMMENT BY COMMENT ID
   @override
   Future<SpecificCommentModel> getCommentById({required String id}) async {
     String? cookies = ShardPrefHelper.getCookie();
@@ -221,18 +213,22 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    debugPrint('GET COMMENT BY ID:${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final Map<String, dynamic> jsonData = jsonDecode(response.body);
       return SpecificCommentModel.fromJson(jsonData);
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
+  // GET COMMENTS BY POST ID
   @override
   Future<List<CommentModel>> getCommentsByPostId({
     required num postId,
@@ -256,7 +252,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    debugPrint('FEATCH ALL COMMENTS OF A POST:${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body)['comments'];
@@ -264,13 +260,16 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
           .map((data) => CommentModel.fromJson(data, postId))
           .toList();
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
-// DELETE POST OR POLL
+  // DELETE POST OR POLL
   @override
   Future<void> deletePost({
     required num id,
@@ -297,13 +296,16 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       handleAuthHeaders(response.headers);
       return;
     } else {
-      final message =
-          jsonDecode(response.body)['msg'] ?? 'oops someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
+  // COMMENTS ON A POST OR POLL
   @override
   Future<void> addComment({
     required num postId,
@@ -331,17 +333,21 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'parentCommentid': commentId,
       }),
     );
-
+    debugPrint('ADD COMMENT :${response.body}');
     if (response.statusCode == 201) {
       handleAuthHeaders(response.headers);
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
+  // GIVE A VOTE ON A POLL
   @override
   Future<void> votePoll({
     required num pollId,
@@ -367,17 +373,21 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'optionid': optionId,
       }),
     );
-
+    debugPrint('GIVE VOTE ON A POLL:${response.body}');
     if (response.statusCode == 201) {
       handleAuthHeaders(response.headers);
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
+  // FEATCH REPLIES OF A COMMENT
   @override
   Future<List<ReplyModel>> fetchCommentReply({required num commentId}) async {
     String? cookies = ShardPrefHelper.getCookie();
@@ -396,19 +406,23 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    debugPrint('FEATCH REPLY ON A COMMENT:${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body);
 
       return jsonData.map((data) => ReplyModel.fromJson(data)).toList();
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
 
+  // GIVE AWARDS
   @override
   Future<void> giveAward({
     required num id,
@@ -437,47 +451,17 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         'type': type,
       }),
     );
-
+    debugPrint('GIVE AWARD :${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       return;
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      String errorMessage = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
 
-      throw ServerException(message: message);
+      throw ServerException(message: errorMessage);
     }
   }
-
-  // @override
-  // Future<void> replyComment(
-  //     {required num commentId,
-  //     required String text,
-  //     required num postId}) async {
-  //   List<String>? cookies = ShardPrefHelper.getCookie();
-  //   if (cookies == null || cookies.isEmpty) {
-  //     throw const ServerException(message: 'No cookies found');
-  //   }
-  //   //String cookieHeader = cookies.join('; '); cookies.join('; ');
-
-  //   String url = '$kBaseUrl/posts/add-comment';
-  //   final response = await client.post(
-  //     Uri.parse(url),
-  //     headers: <String, String>{
-  //       'Content-Type': 'application/json',
-  //       'Cookie': cookieHeader,
-  //     },
-  //     body: jsonEncode(<String, dynamic>{
-  //       'parentCommentid': commentId,
-  //       'contentid': postId,
-  //       'text': text,
-  //     }),
-  //   );
-
-  //   if (response.statusCode == 201) {
-  //     return;
-  //   } else {
-  //     final message = jsonDecode(response.body)['msg'] ?? 'Unknown error';
-  //     throw ServerException(message: message);
-  //   }
-  // }
 }

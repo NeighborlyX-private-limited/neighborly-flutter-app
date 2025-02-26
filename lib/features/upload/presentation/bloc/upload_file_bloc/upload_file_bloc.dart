@@ -12,7 +12,10 @@ class UploadFileBloc extends Bloc<UploadFileEvent, UploadFileState> {
       : _uploadFileUsecase = uploadFileUsecase,
         super(UploadFileInitialState()) {
     on<UploadFilePressedEvent>(
-      (UploadFilePressedEvent event, Emitter<UploadFileState> emit) async {
+      (
+        UploadFilePressedEvent event,
+        Emitter<UploadFileState> emit,
+      ) async {
         emit(UploadFileLoadingState());
 
         final result = await _uploadFileUsecase.call(

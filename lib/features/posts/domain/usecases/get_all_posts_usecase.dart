@@ -8,11 +8,7 @@ class GetAllPostsUsecase {
 
   GetAllPostsUsecase(this.repository);
 
-  Future<Either<Failure, List<PostEntity>>> call({
-    required bool isHome,
-  }) async {
-    return await repository.getAllPosts(
-      isHome: isHome,
-    );
+  Future<Either<Failure, List<PostEntity>>> call() async {
+    return await repository.getAllPosts();
   }
 }

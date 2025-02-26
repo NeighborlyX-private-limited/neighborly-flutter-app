@@ -4,8 +4,8 @@ publish_to: "none"
 
 # Version of the app
 # on every new release you have to updtae the version
-version: 2.1.0+19
-
+version: 2.2.0+20
+# // you can use this code because it is not used
 environment:
   sdk: ">=3.3.4 <4.0.0"
 
@@ -113,6 +113,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/image/
+    - assets/icon/
+    - assets/logo/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

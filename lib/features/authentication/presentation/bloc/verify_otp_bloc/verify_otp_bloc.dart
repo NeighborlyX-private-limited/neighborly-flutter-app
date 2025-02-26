@@ -10,21 +10,23 @@ class OtpBloc extends Bloc<OtpEvent, OtpState> {
   OtpBloc({required VerifyOTPUsecase verifyOTPUsecase})
       : _verifyOTPUsecase = verifyOTPUsecase,
         super(OtpIdle()) {
-    on<OtpSubmitted>((OtpSubmitted event, Emitter<OtpState> emit) async {
-      emit(OtpLoadInProgress());
+    on<OtpSubmitted>(
+      (OtpSubmitted event, Emitter<OtpState> emit) async {
+        emit(OtpLoadInProgress());
 
-      final result = await _verifyOTPUsecase.call(
-        email: event.email,
-        otp: event.otp,
-        verificationFor: event.verificationFor,
-        phone: event.phone,
-      );
+        final result = await _verifyOTPUsecase.call(
+          email: event.email,
+          otp: event.otp,
+          verificationFor: event.verificationFor,
+          phone: event.phone,
+        );
 
-      result.fold((error) {
-        emit(OtpLoadFailure(error: error.toString()));
-      }, (response) {
-        emit(OtpLoadSuccess(message: response));
-      });
-    });
+        result.fold((error) {
+          emit(OtpLoadFailure(error: error.toString()));
+        }, (response) {
+          emit(OtpLoadSuccess(message: response));
+        });
+      },
+    );
   }
 }

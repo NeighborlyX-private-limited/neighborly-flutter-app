@@ -32,6 +32,8 @@ class ReactionWidget extends StatefulWidget {
 class _ReactionWidgetState extends State<ReactionWidget> {
   bool isCheered = false;
   bool isBooed = false;
+  late num cheersCount;
+  late num boosCount;
   num awardsCount = 0;
   bool isLocalLegendAwardAvailable = false;
   bool isParkBenchAwardAvailable = false;
@@ -44,31 +46,23 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   int streetlightCount = 0;
   int mapCount = 0;
   late ProfileRemoteDataSourceImpl profileRemoteDataSource;
-  late num cheersCount;
-  late num boosCount;
 
   // INIT STATE
   @override
   void initState() {
     super.initState();
+    profileRemoteDataSource =
+        ProfileRemoteDataSourceImpl(client: http.Client());
     cheersCount = widget.post.cheers;
     boosCount = widget.post.bools;
     awardsCount = widget.post.awardType.length;
     isCheered = widget.post.userFeedback == 'cheer';
     isBooed = widget.post.userFeedback == 'boo';
-    profileRemoteDataSource =
-        ProfileRemoteDataSourceImpl(client: http.Client());
-    _loadReactionState();
-  }
-
-  /// _loadReactionState method
-  Future<void> _loadReactionState() async {
-    getmyawards();
-    setState(() {});
+    getMyAwards();
   }
 
   // GET AWARDS
-  getmyawards() async {
+  getMyAwards() async {
     List responseMessage = await profileRemoteDataSource.getMyAwards();
     bool localLegendAvailable = false;
     bool parkBenchAvailable = false;
@@ -208,7 +202,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       }
     }
 
-    /// Save the new state
+    // SAVE NEW REACTION STATE
     _saveReactionState();
     setState(() {});
   }
@@ -402,7 +396,7 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         // AWARD BUTTON
         InkWell(
           onTap: () async {
-            await getmyawards();
+            await getMyAwards();
             showBottomSheet().then((value) {
               if (value != null) {
                 setState(() {

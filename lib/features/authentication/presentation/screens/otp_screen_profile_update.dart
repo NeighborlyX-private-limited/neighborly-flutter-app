@@ -67,6 +67,7 @@ class _OtpScreenProfileUpdateState extends State<OtpScreenProfileUpdate> {
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: Colors.transparent,
           leading: InkWell(
             child: const Icon(
               Icons.arrow_back_ios,

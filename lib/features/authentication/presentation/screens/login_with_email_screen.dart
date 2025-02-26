@@ -6,6 +6,8 @@ import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_pr
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
+import '../../../../core/widgets/custom_sizedbox.dart';
+import '../../../../core/widgets/custom_snackbar.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/login_with_email_bloc/login_with_email_bloc.dart';
 import '../widgets/button_widget.dart';
@@ -20,11 +22,9 @@ class LoginWithEmailScreen extends StatefulWidget {
 
 class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
   bool isActive = false;
-  bool noConnection = false;
   bool isEmailFilled = false;
   bool isEmailValid = true;
   bool isPasswordFilled = false;
-  bool isPasswordWrong = false;
 
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
@@ -60,18 +60,19 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: Colors.transparent,
+          centerTitle: true,
           leading: InkWell(
             child: const Icon(
               Icons.arrow_back_ios,
             ),
             onTap: () {
-              context.pop();
+              Navigator.pop(context);
             },
           ),
-          centerTitle: true,
           title: Row(
             children: [
-              const SizedBox(width: 100),
+              const CustomSizedBox(width: 100),
               Image.asset(
                 'assets/onboardingIcon.png',
                 width: 25,
@@ -83,38 +84,38 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
+              horizontal: 16.0,
               vertical: 50.0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.asset('assets/big_email_icon.png'),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 20,
                 ),
                 Text(
                   AppLocalizations.of(context)!.continue_with_email,
                   style: onboardingHeading1Style,
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 5,
                 ),
                 Text(
                   AppLocalizations.of(context)!.join_neighborly_with_your_email,
                   style: onboardingBodyStyle,
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 25,
                 ),
 
                 // EMAIL TEXT FIELD
                 TextFieldWidget(
-                  inputType: TextInputType.emailAddress,
-                  border: true,
                   controller: _emailController,
                   lableText: AppLocalizations.of(context)!.enter_email_address,
                   isPassword: false,
+                  inputType: TextInputType.emailAddress,
+                  border: true,
                   onChanged: (value) {
                     setState(() {
                       isEmailFilled = _emailController.text.isNotEmpty;
@@ -127,55 +128,39 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                             .please_enter_a_valid_email_address,
                         style: TextStyle(color: AppColors.redColor),
                       )
-                    : const SizedBox(),
-                const SizedBox(
+                    : const CustomSizedBox(),
+                const CustomSizedBox(
                   height: 12,
                 ),
 
                 // PASSWORD TEXT FIELD
                 TextFieldWidget(
+                  controller: _passwordController,
+                  lableText: AppLocalizations.of(context)!.password,
+                  isPassword: true,
                   border: true,
                   onChanged: (value) {
                     setState(() {
                       isPasswordFilled = _passwordController.text.isNotEmpty;
                     });
                   },
-                  controller: _passwordController,
-                  lableText: AppLocalizations.of(context)!.password,
-                  isPassword: true,
                 ),
-                isPasswordWrong
-                    ? Text(
-                        AppLocalizations.of(context)!
-                            .wrong_password_Try_again_or_click_forgot_password_to_reset_it,
-                        style: TextStyle(color: AppColors.redColor),
-                      )
-                    : const SizedBox(),
-                const SizedBox(
+
+                const CustomSizedBox(
                   height: 45,
                 ),
                 BlocConsumer<LoginWithEmailBloc, LoginWithEmailState>(
                   listener: (BuildContext context, LoginWithEmailState state) {
                     // LOGIN FAILURE STATE
                     if (state is LoginFailureState) {
-                      if (state.error.contains('Invalid Email or Password')) {
-                        setState(() {
-                          isPasswordWrong = true;
-                        });
-                        return;
-                      }
-                      if (state.error.contains('internet')) {
-                        setState(() {
-                          noConnection = true;
-                        });
-                        return;
+                      if (mounted) {
+                        showSnackBar(context: context, message: state.error);
                       }
                     }
 
                     // LOGIN SUCCESS STATE
                     else if (state is LoginSuccessState) {
-                      bool isEmailVerified =
-                          state.authResponseEntity.isVerified!;
+                      bool isEmailVerified = ShardPrefHelper.getIsVerified();
                       bool isSkippedTutorial =
                           ShardPrefHelper.getIsSkippedTutorial();
                       bool isViewedTutorial =
@@ -223,7 +208,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     );
                   },
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 20,
                 ),
 
@@ -240,15 +225,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     )
                   ],
                 ),
-                const SizedBox(height: 15),
-                noConnection
-                    ? Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.no_internet_connection,
-                          style: TextStyle(color: AppColors.redColor),
-                        ),
-                      )
-                    : const SizedBox(),
+                const CustomSizedBox(height: 15),
               ],
             ),
           ),

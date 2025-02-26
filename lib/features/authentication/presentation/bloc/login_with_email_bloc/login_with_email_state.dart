@@ -29,3 +29,8 @@ class OAuthSuccessState extends LoginWithEmailState {
   final String? message;
   OAuthSuccessState({this.message});
 }
+
+class OAuthFailureState extends LoginWithEmailState {
+  final String error;
+  OAuthFailureState({required this.error});
+}

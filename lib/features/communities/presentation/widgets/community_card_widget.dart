@@ -32,6 +32,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
 
   String? userId;
   int groupMemberCount = 0;
+
   //INIT STATE
   @override
   void initState() {
@@ -233,6 +234,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                       ],
                     ),
                     const SizedBox(height: 10),
+
                     // IF USER IS NOT JOINED AND NOT REQUESTED TO JOIN THE GROUP
                     // SHOW JOIN BUTTON
                     if (!widget.community.isJoined &&
@@ -266,6 +268,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           ),
                         ),
                       ),
+
                     // IF USER IS JOINED AND NOT AN ADMIN
                     // SHOW LEAVE BUTTON
                     if (widget.community.isJoined && !widget.community.isAdmin)
@@ -298,6 +301,7 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                           ),
                         ),
                       ),
+
                     // IF COMMUNITY ID PRIVATE AND USER IS NOT JOINED AND ALREADY REQUESTED TO JOIN THE GROUP
                     // SHOW PENDING BUTTON
                     if (!widget.community.isPublic &&
@@ -547,10 +551,11 @@ class _CommunityCardWidgetState extends State<CommunityCardWidget> {
                             backgroundColor: AppColors.primaryColor,
                           ),
                           onPressed: () {
-                            BlocProvider.of<JoinGroupBloc>(context)
-                                .add(LeaveGroupButtonPressedEvent(
-                              communityId: widget.community.id,
-                            ));
+                            BlocProvider.of<JoinGroupBloc>(context).add(
+                              LeaveGroupButtonPressedEvent(
+                                communityId: widget.community.id,
+                              ),
+                            );
                           },
                           child: Text(
                             AppLocalizations.of(context)!.leave,

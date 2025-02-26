@@ -18,7 +18,7 @@
         android:exported="true">
          <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="AIzaSyByCyGvfaMDCyXXaZwYNE3jK6qXCFABo7A"/>
+        android:value="AIzaSyD_gdm23ym8o6hVytuEDoQ3jVCmbFS4tSk"/>
         <!-- PROVIDER OPENING TAG -->
         <provider
             android:name="vn.hunghd.flutterdownloader.DownloadedFileProvider"

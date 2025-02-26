@@ -10,8 +10,10 @@ class ResendOtpBloc extends Bloc<ResendOTPEvent, ResendOTPState> {
   ResendOtpBloc({required ResendOTPUsecase resendOTPUsecase})
       : _resendOTPUsecase = resendOTPUsecase,
         super(ResendOTPInitialState()) {
-    on<ResendOTPButtonPressedEvent>((ResendOTPButtonPressedEvent event,
-        Emitter<ResendOTPState> emit) async {
+    on<ResendOTPButtonPressedEvent>((
+      ResendOTPButtonPressedEvent event,
+      Emitter<ResendOTPState> emit,
+    ) async {
       emit(ResendOTPLoadingState());
 
       final result = await _resendOTPUsecase.call(

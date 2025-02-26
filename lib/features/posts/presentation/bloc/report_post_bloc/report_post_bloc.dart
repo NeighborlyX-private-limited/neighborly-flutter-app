@@ -10,8 +10,10 @@ class ReportPostBloc extends Bloc<ReportPostEvent, ReportPostState> {
   ReportPostBloc({required ReportPostUsecase reportPostUsecase})
       : _reportPostUsecase = reportPostUsecase,
         super(ReportPostInitialState()) {
-    on<ReportButtonPressedEvent>(
-        (ReportButtonPressedEvent event, Emitter<ReportPostState> emit) async {
+    on<ReportButtonPressedEvent>((
+      ReportButtonPressedEvent event,
+      Emitter<ReportPostState> emit,
+    ) async {
       emit(ReportPostLoadingState());
 
       final result = await _reportPostUsecase.call(

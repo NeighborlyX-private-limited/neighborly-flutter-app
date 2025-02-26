@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
@@ -8,7 +7,6 @@ import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import 'package:share_it/share_it.dart';
-import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/theme/colors.dart';
@@ -16,7 +14,6 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/appbat_button.dart';
 import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
-
 import '../../../posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import '../bloc/bloc/update_mute_group_bloc.dart';
 import '../bloc/community_detail_cubit.dart';
@@ -49,7 +46,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
-
     _onRefresh();
     getCurrentUserId();
   }
@@ -77,104 +73,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
     super.dispose();
   }
 
-  // REPORT CONFIRMATION SHEET
-  // Future<dynamic> reportConfirmationBottomSheet(BuildContext context) async {
-  //   return showModalBottomSheet(
-  //     useRootNavigator: true,
-  //     backgroundColor: AppColors.whiteColor,
-  //     showDragHandle: true,
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       Future.delayed(const Duration(seconds: 3), () {});
-  //       if (mounted) {
-  //         Navigator.pop(context);
-  //       }
-  //       return Container(
-  //         color: Colors.white,
-  //         height: 240,
-  //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.center,
-  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //           children: [
-  //             Image.asset('assets/report_confirmation.png'),
-  //             Text(
-  //               AppLocalizations.of(context)!.thanks_for_letting_us_know,
-  //               style: onboardingHeading2Style,
-  //             ),
-  //             Text(
-  //               textAlign: TextAlign.center,
-  //               AppLocalizations.of(context)!
-  //                   .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_Our_team_will_review_the_content_shortly,
-  //               style: blackonboardingBody1Style,
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
-  // // PICK REPORT REASON
-  // Future<dynamic> reportReasonBottomSheet(BuildContext context) async {
-  //   return showModalBottomSheet(
-  //     useRootNavigator: true,
-  //     backgroundColor: AppColors.whiteColor,
-  //     showDragHandle: true,
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return SingleChildScrollView(
-  //         child: Container(
-  //           color: Colors.white,
-  //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Center(
-  //                 child: Text(
-  //                   AppLocalizations.of(context)!.reason_to_Report,
-  //                   style: onboardingHeading2Style,
-  //                 ),
-  //               ),
-  //               const SizedBox(
-  //                 height: 10,
-  //               ),
-  //               Column(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   ...kReportReasons.map(
-  //                     (reason) => InkWell(
-  //                       onTap: () async {
-  //                         Navigator.of(context).pop();
-  //                         communityDetailCubit.reportCommunity(reason);
-  //                         await reportConfirmationBottomSheet(context);
-  //                       },
-  //                       child: Row(
-  //                         mainAxisAlignment: MainAxisAlignment.start,
-  //                         children: [
-  //                           Padding(
-  //                             padding: const EdgeInsets.all(8.0),
-  //                             child: Text(
-  //                               reason,
-  //                               style: blackonboardingBody1Style,
-  //                             ),
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 10),
-  //                 ],
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
 // BUILD
   @override
   Widget build(BuildContext context) {
@@ -195,6 +93,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             child: Scaffold(
               backgroundColor: AppColors.whiteColor,
               appBar: AppBar(
+                automaticallyImplyLeading: false,
                 backgroundColor: AppColors.whiteColor,
               ),
               body: const CommunityDetailsSheemer(),
@@ -207,7 +106,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
             canPop: false,
             onPopInvokedWithResult: (didPop, result) {
               context.go('/groups');
-              // Navigator.of(context).pop(true);
             },
             child: SafeArea(
               child: Scaffold(
@@ -222,10 +120,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                     child: AppbatButton(
                       onTap: () {
                         context.go('/groups');
-                        // Navigator.pop(context, true);
                       },
                       icon: Icons.chevron_left_rounded,
-                      iconSize: 30,
+                      iconSize: 24,
                     ),
                   ),
                   actions: [
@@ -243,7 +140,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                             );
                           },
                           icon: Icons.share,
-                          iconSize: 20,
+                          iconSize: 24,
                         ),
                         const SizedBox(width: 10),
 
@@ -268,9 +165,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                             }
                           },
                           icon: Icons.more_vert_outlined,
-                          iconSize: 25,
+                          iconSize: 24,
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 16),
                       ],
                     )
                   ],

@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import '../entities/option_entity.dart';
 
-/// format Time Difference
+// AGO TIME
 String formatTimeDifference(String isoTimestamp) {
   if (isoTimestamp == '') return '';
   DateTime inputTime = DateTime.parse(isoTimestamp);

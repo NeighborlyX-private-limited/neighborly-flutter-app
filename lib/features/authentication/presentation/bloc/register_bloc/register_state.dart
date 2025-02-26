@@ -26,3 +26,8 @@ class OAuthSuccessState extends RegisterState {
   final String? message;
   OAuthSuccessState({this.message});
 }
+
+class OAuthFailureState extends RegisterState {
+  final String error;
+  OAuthFailureState({required this.error});
+}

@@ -34,11 +34,11 @@ class CityRepository {
         if (lastWord.toLowerCase() == 'delhi') {
           lastWord = "New Delhi";
         }
-        ShardPrefHelper.setHomeCity(lastWord);
-        ShardPrefHelper.setHomeLocation([
-          responseMap['user_coordinates'][0],
-          responseMap['user_coordinates'][1]
-        ]);
+        // ShardPrefHelper.setHomeCity(lastWord);
+        // ShardPrefHelper.setHomeLocation([
+        //   responseMap['user_coordinates'][0],
+        //   responseMap['user_coordinates'][1]
+        // ]);
       } else {
         final message =
             jsonDecode(response.body)['message'] ?? 'Someting went wrong';

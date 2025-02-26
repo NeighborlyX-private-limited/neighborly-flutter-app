@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,22 +43,26 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   bool isTitleFilled = false;
   bool isQuestionFilled = false;
   bool allowMultipleVotes = false;
+  bool isPollOptionShow = true;
   bool _isButtonActive = true;
   bool _isKeyboardVisible = false;
 
-  late String _condition;
+  VideoPlayerController? _videoController;
+  bool isImagePicking = false;
+  bool isImageUploading = false;
+  bool isImage = false;
+  List<File>? _selectedMedia = [];
+  bool _isPlaying = false;
+  File? _thumbnail;
+  File? _videoFile;
 
-  // Store the selected image
-  File? _selectedImage;
+  late String _condition;
 
   // INIT STATE
   @override
   void initState() {
     super.initState();
 
-    if (isLocationOn()) {
-      fetchLocationAndUpdate();
-    }
     _titleController = TextEditingController();
     _contentController = TextEditingController();
     _questionController = TextEditingController();
@@ -90,122 +93,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     super.dispose();
   }
 
-  // CHECK IS USER USING THEIR CURRENT LOCATION OR ANY PERTICULAR LOCATION
-  bool isLocationOn() {
-    bool isLocationOn = ShardPrefHelper.getCurrent() ?? true;
-    if (isLocationOn) {
-      return true;
-    }
-    return false;
-  }
-
-  /// handle location
-  Future<bool> _handleLocationPermission() async {
-    LocationPermission permission;
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-
-      /// location permission denied
-      if (permission == LocationPermission.denied) {
-        if (mounted) {
-          showSnackBar(
-            context: context,
-            message:
-                AppLocalizations.of(context)!.location_permissions_are_denied,
-          );
-        }
-        return false;
-      }
-    }
-
-    /// location permission forever denied
-    if (permission == LocationPermission.deniedForever) {
-      if (mounted) {
-        showSnackBar(
-          context: context,
-          message: AppLocalizations.of(context)!
-              .location_permissions_are_permanently_denied_we_cannot_request_permissions,
-        );
-      }
-      return false;
-    }
-
-    /// location permission forever granted
-    return true;
-  }
-
-  /// fetch the user location and upldate it.
-  Future<void> fetchLocationAndUpdate() async {
-    final hasPermission = await _handleLocationPermission();
-    if (!hasPermission) {
-      if (mounted) {
-        showSnackBar(
-          context: context,
-          message: AppLocalizations.of(context)!
-              .location_permissions_are_permanently_denied_we_cannot_request_permissions,
-        );
-      }
-
-      return;
-    }
-
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      ShardPrefHelper.setLocation([position.latitude, position.longitude]);
-    } catch (e) {
-      if (mounted) {
-        showLocationAccessDialog(context);
-      }
-      if (mounted) {
-        showSnackBar(
-          context: context,
-          message: AppLocalizations.of(context)!.oops_something_went_wrong,
-        );
-      }
-    }
-  }
-
-  /// location access dialog
-  AlertDialog buildLocationAccessDialog(BuildContext context) {
-    return AlertDialog(
-      surfaceTintColor: AppColors.whiteColor,
-      backgroundColor: AppColors.whiteColor,
-      title: Text(AppLocalizations.of(context)!.no_location_access),
-      content: Text(
-        AppLocalizations.of(context)!
-            .device_location_is_turned_off_and_if_you_donot_turn_on_your_location_then_last_location_will_be_used,
-      ),
-      actions: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: AppColors.primaryColor,
-            side: BorderSide(color: AppColors.primaryColor),
-            elevation: 0,
-            backgroundColor: AppColors.whiteColor,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          child: Text(AppLocalizations.of(context)!.ok),
-        ),
-      ],
-    );
-  }
-
-  /// show location access dialog
-  void showLocationAccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return buildLocationAccessDialog(context);
-      },
-    );
-  }
-
   void _onTiteFocusChange() {
     setState(() {
       _isKeyboardVisible = _titleFocusNode.hasFocus;
@@ -218,7 +105,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
-  /// add option
+  // ADD POLL OPTIONS
   void _addOption() {
     setState(() {
       _optionControllers.add(TextEditingController());
@@ -226,7 +113,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
-  /// remove option
+  // REMOVE POLL OPTIONS
   void _removeOption(int index) {
     setState(() {
       _optionControllers[index].dispose();
@@ -236,53 +123,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
-  /// check is home
-  bool checkIsHome() {
-    bool isLocationOn = ShardPrefHelper.getIsLocationOn();
-    if (isLocationOn) {
-      return true;
-    }
-    return false;
-  }
-
-  /// Function to fetch the current city name
-  Future<String?> getCityName() async {
-    try {
-      /// Check for location permissions
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        /// Request permissions if not granted
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied ||
-            permission == LocationPermission.deniedForever) {
-          return 'Location permissions are denied';
-        }
-      }
-
-      /// Get the current position (latitude and longitude)
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-      );
-
-      /// Use the coordinates to get the address details
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-        position.latitude,
-        position.longitude,
-      );
-
-      /// Extract the city name from the first placemark
-      if (placemarks.isNotEmpty) {
-        return placemarks.first.locality;
-      } else {
-        return 'No city found at this location';
-      }
-    } catch (e) {
-      return 'Failed to get city name';
-    }
-  }
-
-  /// Check if all options and question are filled
+  // CHECK IF QUESTIONA AND ALL OPTIONS ARE FILLED
   bool checkIsPollActive() {
     if (isQuestionFilled &&
         _optionControllers
@@ -292,31 +133,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return false;
   }
 
-  /// check is active
-  bool checkIsActive() {
-    if (isTitleFilled) {
-      return true;
-    }
-    return false;
-  }
-
-  ///  isImagePicking is true when user start picking a image or video
-  bool isImagePicking = false;
-
-  ///  isImageUploading is true when user start uploading a image or video
-  bool isImageUploading = false;
-  bool isImage = false;
-  bool isPollOptionShow = true;
-  bool _isPlaying = false;
-  File? _thumbnail;
-  List<File>? _selectedMedia = [];
-  File? _videoFile;
-  VideoPlayerController? _videoController;
-
-  /// get thumbnail
+  // GET THUMBNAIL FROM VIDEO
   Future<void> _generateVideoThumbnail(String videoPath) async {
     try {
-      /// Generate the thumbnail
       Uint8List? thumbnail = await VideoThumbnail.thumbnailData(
         video: videoPath,
         imageFormat: ImageFormat.JPEG,
@@ -325,61 +144,52 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       );
 
       if (thumbnail != null) {
-        /// Get the directory to store the thumbnail
         final directory = await getApplicationDocumentsDirectory();
         final thumbnailPath = '${directory.path}/thumbnail.jpeg';
 
-        /// Save the thumbnail as a file
         File thumbnailFile = File(thumbnailPath);
         await thumbnailFile.writeAsBytes(thumbnail);
 
-        // Get the path of the saved thumbnail
         String filePath = thumbnailFile.path;
 
-        // Optionally, create a File object and send it to your API
         _thumbnail = File(filePath);
 
-        setState(() {}); // Trigger UI update if necessary
+        setState(() {});
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error generating thumbnail: $e')),
+        showSnackBar(
+          context: context,
+          message: 'Error while generating thumbnail: $e',
         );
       }
     }
   }
 
-  /// Pick video from gallery
+  // PICK A VIDEO FROM GALLERY
   Future<void> _pickVideoFromGallery() async {
     final ImagePicker picker = ImagePicker();
     try {
-      // Start loading
       setState(() {
         isImagePicking = true;
       });
 
-      // Pick video from gallery
       final XFile? pickedFile = await picker.pickVideo(
         source: ImageSource.gallery,
       );
 
-      // Check if a video is picked
       if (pickedFile != null) {
-        // Get picked video path
         _videoFile = File(pickedFile.path);
         await _generateVideoThumbnail(_videoFile!.path);
 
-        // Calculate video size
         int fileSizeInBytes = _videoFile!.lengthSync();
         double fileSizeInMB = fileSizeInBytes / (1024 * 1024);
 
         if (fileSizeInMB > 50) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(
-                      AppLocalizations.of(context)!.this_video_is_too_large)),
+            showSnackBar(
+              context: context,
+              message: AppLocalizations.of(context)!.this_video_is_too_large,
             );
           }
           setState(() {
@@ -388,21 +198,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           return;
         }
 
-        // Compress video
         _videoFile = await compressVideo(_videoFile!);
 
-        // Validate compressed video size
         int compressedFileSizeInBytes = _videoFile!.lengthSync();
         double compressedFileSizeInMB =
             compressedFileSizeInBytes / (1024 * 1024);
 
         if (compressedFileSizeInMB > 15) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(
-                      AppLocalizations.of(context)!.this_video_is_too_large)),
-              // SnackBar(content: Text('The video is too large..')),
+            showSnackBar(
+              context: context,
+              message: AppLocalizations.of(context)!.this_video_is_too_large,
             );
           }
           setState(() {
@@ -412,30 +218,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           return;
         }
 
-        // Add compressed video to selected media
         _selectedMedia!.add(_videoFile!);
 
-        // Initialize video controller
         _videoController = VideoPlayerController.file(_videoFile!)
           ..initialize().then((_) {
-            setState(() {}); // Refresh the UI after initialization
+            setState(() {});
             _videoController!.pause();
           });
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Please pick a video')),
+          showSnackBar(
+            context: context,
+            message: 'Please pick a video',
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error in video picking: $e')),
+        showSnackBar(
+          context: context,
+          message: 'Error  in video picking: $e',
         );
       }
     } finally {
-      // Stop loading
       setState(() {
         isImagePicking = false;
         isPollOptionShow = true;
@@ -443,37 +248,30 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
-  /// Pick a video from the camera
+  // PICK VIDEO FROM CAMERA
   Future<void> _pickVideoFromCamera() async {
     final ImagePicker picker = ImagePicker();
     try {
-      // Start loading
       setState(() {
         isImagePicking = true;
       });
 
-      // Pick video from camera
       final XFile? pickedFile = await picker.pickVideo(
         source: ImageSource.camera,
       );
 
-      // Check if a video is picked
       if (pickedFile != null) {
-        // Get picked video path
         _videoFile = File(pickedFile.path);
         await _generateVideoThumbnail(_videoFile!.path);
 
-        // Calculate initial video size
         int initialFileSizeInBytes = _videoFile!.lengthSync();
         double initialFileSizeInMB = initialFileSizeInBytes / (1024 * 1024);
 
-        // Check if the video size is too large
         if (initialFileSizeInMB > 15) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(
-                      AppLocalizations.of(context)!.this_video_is_too_large)),
+            showSnackBar(
+              context: context,
+              message: AppLocalizations.of(context)!.this_video_is_too_large,
             );
           }
           setState(() {
@@ -483,20 +281,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           return;
         }
 
-        // Compress video
         _videoFile = await compressVideo(_videoFile!);
 
-        // Calculate compressed video size
         int compressedFileSizeInBytes = _videoFile!.lengthSync();
         double compressedFileSizeInMB =
             compressedFileSizeInBytes / (1024 * 1024);
 
         if (compressedFileSizeInMB > 15) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(
-                      AppLocalizations.of(context)!.this_video_is_too_large)),
+            showSnackBar(
+              context: context,
+              message: AppLocalizations.of(context)!.this_video_is_too_large,
             );
           }
           setState(() {
@@ -506,7 +301,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           return;
         }
 
-        // Add compressed video to selected media and initialize video controller
         setState(() {
           isPollOptionShow = false;
           _selectedMedia!.add(_videoFile!);
@@ -519,19 +313,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         });
       } else {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('No video was picked')),
+          showSnackBar(
+            context: context,
+            message: 'No video was picked',
           );
         }
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error in video picking: $e')),
+        showSnackBar(
+          context: context,
+          message: 'Error  in video picking: $e',
         );
       }
     } finally {
-      // Stop loading
       setState(() {
         isImagePicking = false;
         isPollOptionShow = true;
@@ -539,133 +334,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
   }
 
-  /// pic one image or multiple images from gallary
-  Future<void> _pickImages() async {
-    final ImagePicker picker = ImagePicker();
-
-    // Check if the user already has 5 images selected
-    if (_selectedMedia!.length >= 5) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
-                AppLocalizations.of(context)!.you_can_select_up_to_5_images)),
-      );
-      setState(() {
-        isImage = false;
-        _selectedMedia = [];
-      });
-      return;
-    }
-
-    try {
-      setState(() {
-        isImagePicking = true;
-      });
-
-      // Pick multiple images
-      List<XFile>? images = await picker.pickMultiImage(
-        imageQuality: 95,
-        limit: 5,
-      );
-
-      if (images.isNotEmpty) {
-        for (XFile imageFile in images) {
-          // Check if adding this image exceeds the limit
-          if (_selectedMedia!.length < 5) {
-            XFile compressedImage = await compressImage(imageFileX: imageFile);
-            setState(() {
-              isImage = true;
-              _selectedMedia!.add(
-                File(
-                  compressedImage.path,
-                ),
-              ); // Update selected images list
-            });
-          } else {
-            // Show a message if the user tries to select more than 5 images
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(AppLocalizations.of(context)!
-                      .you_can_select_up_to_5_images)),
-              // SnackBar(content: Text('You can select up to 5 images only.')),
-            );
-            setState(() {
-              isImage = false;
-              _selectedMedia = [];
-            });
-            break; // Exit the loop if the limit is reached
-          }
-        }
-        setState(() {
-          isImagePicking = false;
-        });
-        return;
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error picking multiple images: $e')),
-        );
-      }
-    } finally {
-      setState(() {
-        isImagePicking = false;
-      });
-    }
-  }
-
-  /// pic image  images from camera
-  Future<void> _pickImageFromCamera() async {
-    final ImagePicker picker = ImagePicker();
-    XFile? image;
-
-    try {
-      setState(() {
-        isImagePicking = true;
-      });
-
-      // Pick image and then compress
-      image = await picker.pickImage(source: ImageSource.camera).then((file) {
-        return compressImage(imageFileX: file);
-      });
-
-      if (image != null) {
-        setState(() {
-          isImage = true;
-          _selectedMedia!.add(File(image!.path));
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error picking image: $e')),
-        );
-      }
-    } finally {
-      setState(() {
-        isImagePicking = false;
-      });
-    }
-  }
-
-  ///remove image
-  void _removeImage() {
-    setState(() {
-      _selectedImage = null;
-    });
-  }
-
-  ///remove images from multiple images
-  void _removeImages(int index) {
-    setState(() {
-      _selectedMedia!.removeAt(index);
-      if (_selectedMedia!.isEmpty) {
-        isImage = false;
-      }
-    });
-  }
-
-  /// is playing video
+  // TOGGLE PLAY AND PAUSE BUTTON FOR VIDEO
   void _togglePlayPause() {
     setState(() {
       if (_videoController!.value.isPlaying) {
@@ -678,7 +347,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
-  /// clear video controller
+  // CLEAR VIDEO CONTROLLER
   void clearVideoController() {
     if (_videoController != null) {
       _videoController!.pause();
@@ -694,6 +363,126 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     });
   }
 
+  // PICK IMAGE FROM GALLERY
+  Future<void> _pickImages() async {
+    final ImagePicker picker = ImagePicker();
+
+    // CHECK IF USER ALREADY SELECTED 5 IMAGES
+    if (_selectedMedia!.length >= 5) {
+      showSnackBar(
+        context: context,
+        message: AppLocalizations.of(context)!.you_can_select_up_to_5_images,
+      );
+      setState(() {
+        isImage = false;
+        _selectedMedia = [];
+      });
+      return;
+    }
+
+    try {
+      setState(() {
+        isImagePicking = true;
+      });
+
+      // PICK ONE OR MULTIPLE IMAGE
+      List<XFile>? images = await picker.pickMultiImage(
+        imageQuality: 95,
+        limit: 5,
+      );
+
+      if (images.isNotEmpty) {
+        for (XFile imageFile in images) {
+          if (_selectedMedia!.length < 5) {
+            XFile compressedImage = await compressImage(imageFileX: imageFile);
+            setState(() {
+              isImage = true;
+              _selectedMedia!.add(
+                File(
+                  compressedImage.path,
+                ),
+              );
+            });
+          } else {
+            // MORE THAN 5 IMAGE SELECTED
+            if (mounted) {
+              showSnackBar(
+                context: context,
+                message:
+                    AppLocalizations.of(context)!.you_can_select_up_to_5_images,
+              );
+            }
+            setState(() {
+              isImage = false;
+              _selectedMedia = [];
+            });
+            break;
+          }
+        }
+        setState(() {
+          isImagePicking = false;
+        });
+        return;
+      }
+    } catch (e) {
+      if (mounted) {
+        showSnackBar(
+          context: context,
+          message: 'Error while picking multiple images: $e',
+        );
+      }
+    } finally {
+      setState(() {
+        isImagePicking = false;
+      });
+    }
+  }
+
+  // PICK IMAGE FROM CAMERA
+  Future<void> _pickImageFromCamera() async {
+    final ImagePicker picker = ImagePicker();
+    XFile? image;
+
+    try {
+      setState(() {
+        isImagePicking = true;
+      });
+
+      image = await picker.pickImage(source: ImageSource.camera).then((file) {
+        return compressImage(imageFileX: file);
+      });
+
+      if (image != null) {
+        setState(() {
+          isImage = true;
+          _selectedMedia!.add(File(image!.path));
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        showSnackBar(
+          context: context,
+          message: 'Error while picking image: $e',
+        );
+      }
+    } finally {
+      setState(() {
+        isImagePicking = false;
+      });
+    }
+  }
+
+  // REMOVE IMAGE IF MULTIPLE IMAGE IS SELECTED
+  void _removeImages(int index) {
+    setState(() {
+      _selectedMedia!.removeAt(index);
+      if (_selectedMedia!.isEmpty) {
+        isImage = false;
+      }
+    });
+  }
+
+// BUILD
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -703,7 +492,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       },
       child: SafeArea(
         child: Scaffold(
-          backgroundColor: AppColors.whiteColor,
+          backgroundColor: AppColors.lightBackgroundColor,
           body: GestureDetector(
             onTap: () {
               FocusScope.of(context).unfocus();
@@ -716,24 +505,23 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   Padding(
                     padding: const EdgeInsets.only(
                       top: 14.0,
-                      left: 14.0,
-                      right: 14.0,
+                      left: 16.0,
+                      right: 16.0,
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        /// close button
+                        // CLOSE BUTTON
                         InkWell(
                           child: const Icon(Icons.close, size: 24),
                           onTap: () {
                             if (_condition == 'post') {
-                              isImagePicking = false;
-                              isImageUploading = false;
-                              isImage = false;
-                              _selectedImage = null;
                               _titleController.clear();
                               _contentController.clear();
                               _selectedMedia = [];
+                              isImagePicking = false;
+                              isImageUploading = false;
+                              isImage = false;
                               context.go('/home');
                             } else {
                               setState(() {
@@ -742,24 +530,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             }
                           },
                         ),
+                        // POST BUTTON
                         _condition == 'post'
                             ? BlocConsumer<UploadPostBloc, UploadPostState>(
                                 listener: (context, state) {
-                                  /// UploadPostBloc loading state for post
-                                  if (state is UploadPostLoadingState) {
-                                    setState(() {
-                                      isImageUploading = true;
-                                    });
-                                  }
-
-                                  /// UploadPostBloc failure state for post
+                                  // FAILURE STATE
                                   if (state is UploadPostFailureState) {
                                     if (state.error
                                         .contains("Sorry, you are banned")) {
-                                      isImageUploading = false;
+                                      _contentController.clear();
+                                      _titleController.clear();
+                                      _selectedMedia = [];
                                       banUserCustomDialog(context);
                                     } else {
-                                      isImageUploading = false;
                                       showSnackBar(
                                         context: context,
                                         message: state.error,
@@ -767,32 +550,29 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     }
                                   }
 
-                                  /// UploadPostBloc success state for post
+                                  // SUCCESS STATE
                                   else if (state is UploadPostSuccessState) {
-                                    setState(() {
-                                      isImageUploading = false;
-                                    });
                                     _contentController.clear();
                                     _titleController.clear();
-                                    _removeImage();
+                                    _selectedMedia = [];
+
+                                    if (mounted) {
+                                      context.go('/home');
+                                    }
                                     showSnackBar(
                                       context: context,
                                       message: AppLocalizations.of(context)!
                                           .post_created,
                                     );
-
-                                    if (mounted) {
-                                      context.go('/home');
-                                    }
                                   }
                                 },
                                 builder: (context, state) {
-                                  /// UploadPostBloc loading state for post
+                                  // LOADING STATE
                                   if (state is UploadPostLoadingState) {
                                     return CustomCircularIndicator();
                                   }
 
-                                  /// post button
+                                  // POST BUTTON
                                   return PostButtonWidget(
                                     onTapListener: () {
                                       if (!_isButtonActive) {
@@ -805,15 +585,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
-                                          city: 'city',
+                                          type: 'post',
+                                          title: _titleController.text.trim(),
                                           content:
                                               _contentController.text.trim(),
-                                          title: _titleController.text.trim(),
-                                          type: 'post',
+                                          allowMultipleVotes: false,
                                           multimedia: _selectedMedia,
                                           thumbnail: _thumbnail,
-                                          allowMultipleVotes: false,
                                           location: [],
+                                          city: 'city',
                                         ),
                                       );
                                     },
@@ -821,42 +601,50 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   );
                                 },
                               )
+                            // POLL BUTTON
                             : BlocConsumer<UploadPostBloc, UploadPostState>(
                                 listener: (context, state) {
-                                  /// UploadPostBloc failure state for poll
+                                  // FAILURE STATE
                                   if (state is UploadPostFailureState) {
-                                    _questionController.clear();
-                                    _removeImage();
-                                    showSnackBar(
-                                      context: context,
-                                      message: state.error,
-                                    );
+                                    if (state.error
+                                        .contains("Sorry, you are banned")) {
+                                      _questionController.clear();
+                                      for (var controller
+                                          in _optionControllers) {
+                                        controller.clear();
+                                      }
+                                      banUserCustomDialog(context);
+                                    } else {
+                                      showSnackBar(
+                                        context: context,
+                                        message: state.error,
+                                      );
+                                    }
                                   }
 
-                                  /// UploadPostBloc success state for poll
+                                  // SUCCESS STATE
                                   else if (state is UploadPostSuccessState) {
                                     _questionController.clear();
-                                    _removeImage();
                                     for (var controller in _optionControllers) {
                                       controller.clear();
+                                    }
+                                    if (mounted) {
+                                      context.go('/home');
                                     }
                                     showSnackBar(
                                       context: context,
                                       message: AppLocalizations.of(context)!
                                           .poll_created,
                                     );
-                                    if (mounted) {
-                                      context.go('/home');
-                                    }
                                   }
                                 },
                                 builder: (context, state) {
-                                  /// UploadPostBloc loading state for poll
+                                  // LOADING STATE
                                   if (state is UploadPostLoadingState) {
                                     return CustomCircularIndicator();
                                   }
 
-                                  /// poll button
+                                  // POLL BUTTON
                                   return PostButtonWidget(
                                     onTapListener: () {
                                       if (!_isButtonActive) {
@@ -869,8 +657,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                       BlocProvider.of<UploadPostBloc>(context)
                                           .add(
                                         UploadPostPressedEvent(
-                                          city: 'city',
-                                          multimedia: _selectedMedia,
+                                          type: 'poll',
                                           title:
                                               _questionController.text.trim(),
                                           options: List.generate(
@@ -882,11 +669,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                                       .trim(),
                                             },
                                           ),
-                                          type: 'poll',
                                           allowMultipleVotes:
                                               allowMultipleVotes,
-                                          location: [],
+                                          multimedia: _selectedMedia,
                                           thumbnail: _thumbnail,
+                                          location: [],
+                                          city: 'city',
                                         ),
                                       );
                                     },
@@ -898,17 +686,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     ),
                   ),
 
-                  /// post text field
+                  // POST TEXT FIELD
                   if (_condition == 'post')
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 14.0,
-                        left: 14.0,
-                        right: 14.0,
+                        left: 16.0,
+                        right: 16.0,
                       ),
                       child: Column(
                         children: [
-                          /// post title text field
+                          // POST TITLE TEXT FIELD
                           TextField(
                             controller: _titleController,
                             focusNode: _titleFocusNode,
@@ -929,7 +717,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             },
                           ),
 
-                          /// post content text field
+                          // POST CONTENT TEXT FIELD
                           TextField(
                             controller: _contentController,
                             focusNode: _contentFocusNode,
@@ -943,24 +731,28 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               border: InputBorder.none,
                             ),
                             onChanged: (value) {
-                              setState(() {});
+                              setState(() {
+                                // WE DO THIS FOR BUTTON ACTIVE
+                                // isTitleFilled =
+                                //     _titleController.text.trim().isNotEmpty;
+                              });
                             },
                           ),
                         ],
                       ),
                     ),
 
-                  /// poll text field
+                  // POLL TEXT FIELDS
                   if (_condition == 'poll')
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 14.0,
-                        left: 14.0,
-                        right: 14.0,
+                        left: 16.0,
+                        right: 16.0,
                       ),
                       child: Column(
                         children: [
-                          /// poll question text field
+                          // POLL QUESTION TEXT FIELD
                           TextField(
                             controller: _questionController,
                             focusNode: _contentFocusNode,
@@ -982,10 +774,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                           ),
                           const CustomSizedBox(height: 12),
 
-                          /// options text fields
+                          // POLL OPTION TEXT FIELDS
                           ..._buildOptionFields(),
 
-                          /// add option button
+                          // ADD NEW POLL OPTION TEXT FIELD BUTTON
                           InkWell(
                             onTap: _addOption,
                             child: Row(
@@ -1013,7 +805,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 style: greyonboardingBody1Style,
                               ),
 
-                              /// allow multiple votes switch button
+                              // ALLOW MULTIPLE VOTE SWITCH BUTTON
                               Switch(
                                 value: allowMultipleVotes,
                                 inactiveThumbColor: AppColors.whiteColor,
@@ -1032,7 +824,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       ),
                     ),
 
-                  /// video widget
+                  // SHOW VIDEO WIDHET
                   if (_videoController != null &&
                       _videoController!.value.isInitialized)
                     CustomSizedBox(
@@ -1100,7 +892,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   if (isImage)
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
+                        horizontal: 16,
                         vertical: 8,
                       ),
                       child: SizedBox(
@@ -1155,7 +947,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               ? Container(
                   height: 220,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
+                    horizontal: 16,
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
@@ -1164,8 +956,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.3),
                         spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: Offset(0, -5),
+                        blurRadius: 1,
+                        offset: Offset(0, -2),
                       ),
                     ],
                   ),
@@ -1173,6 +965,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const CustomSizedBox(height: 5),
+                      // PICK IMAGE FROM GALLERY
                       InkWell(
                         onTap: _pickImages,
                         child: Row(
@@ -1187,6 +980,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ),
                       const CustomSizedBox(height: 12),
+                      // PICK IMAGE FROM CAMERA
                       InkWell(
                         onTap: () {
                           _pickImageFromCamera();
@@ -1214,7 +1008,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ),
                       const CustomSizedBox(height: 12),
+
                       _condition == 'poll'
+                          // CREATE A POST OPTION
                           ? InkWell(
                               onTap: () {
                                 setState(() {
@@ -1232,6 +1028,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                 ],
                               ),
                             )
+                          // PICK VIDEO OPTION
                           : InkWell(
                               onTap: () {
                                 _showVideoPickerOptions();
@@ -1244,12 +1041,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: const Color.fromARGB(
-                                          255, 224, 238, 206),
+                                        255,
+                                        224,
+                                        238,
+                                        206,
+                                      ),
                                     ),
                                     child: Icon(
                                       Icons.video_chat,
                                       color: const Color.fromARGB(
-                                          255, 57, 167, 14),
+                                        255,
+                                        57,
+                                        167,
+                                        14,
+                                      ),
                                     ),
                                   ),
                                   const CustomSizedBox(width: 12),
@@ -1261,6 +1066,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                             ),
                       const CustomSizedBox(height: 12),
+                      // CREATE A POLL OPTION
                       _condition == 'post'
                           ? InkWell(
                               onTap: () {
@@ -1285,8 +1091,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 )
               : Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 5,
+                    horizontal: 16,
+                    vertical: 10,
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.whiteColor,
@@ -1294,15 +1100,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       BoxShadow(
                         color: Colors.black.withOpacity(0.3),
                         spreadRadius: 1,
-                        blurRadius: 5,
-                        offset: Offset(0, -5),
+                        blurRadius: 1,
+                        offset: Offset(0, -2),
                       ),
                     ],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      /// pic image from gallery option
+                      // PICK IMAGE FROM GALLERY
                       InkWell(
                         onTap: () {
                           _pickImages();
@@ -1315,7 +1121,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ),
 
-                      ///  pic image from camera option
+                      // PICK IMAGE FROM CAMERA
                       InkWell(
                         onTap: () {
                           _pickImageFromCamera();
@@ -1344,7 +1150,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         ),
                       ),
 
-                      /// video picker option
+                      // PICK VIDEO OPTION
                       _condition == 'poll'
                           ? CustomSizedBox()
                           : InkWell(
@@ -1359,12 +1165,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: const Color.fromARGB(
-                                          255, 224, 238, 206),
+                                        255,
+                                        224,
+                                        238,
+                                        206,
+                                      ),
                                     ),
                                     child: Icon(
                                       Icons.video_chat,
                                       color: const Color.fromARGB(
-                                          255, 57, 167, 14),
+                                        255,
+                                        57,
+                                        167,
+                                        14,
+                                      ),
                                     ),
                                   ),
                                   const CustomSizedBox(width: 10),
@@ -1372,7 +1186,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                             ),
 
-                      /// create poll option
+                      // CREATE A POLL OPTION
                       _condition == 'post'
                           ? InkWell(
                               onTap: () {
@@ -1390,7 +1204,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                               ),
                             )
 
-                          /// create post aption
+                          // CREATE A POST OPTION
                           : InkWell(
                               onTap: () {
                                 setState(() {
@@ -1414,14 +1228,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  // Build dynamic option fields with the X button for removal
+  // BUILD DYNAMIC OPTION TEXT FIELDS WITH REMOVE BUTTON
   List<Widget> _buildOptionFields() {
     return List.generate(
       _optionControllers.length,
       (index) {
         _optionFocusNodes[index];
 
-        // Listen to focus changes on each FocusNode
         _optionFocusNodes[index].addListener(() {
           setState(() {
             _isKeyboardVisible = _optionFocusNodes[index].hasFocus;
@@ -1465,16 +1278,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
+  // PICK VIDEO OPTION BOTTOM SHEET
   void _showVideoPickerOptions() {
     showModalBottomSheet(
-      useRootNavigator: true,
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
       builder: (BuildContext context) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

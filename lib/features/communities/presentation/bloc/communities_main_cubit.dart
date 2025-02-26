@@ -15,7 +15,6 @@ class CommunityMainCubit extends Cubit<CommunityMainState> {
     await getAllCommunities();
   }
 
-  /// get all community cubit
   Future getAllCommunities() async {
     emit(state.copyWith(status: Status.loading));
     final result = await getAllCommunitiesUseCase();

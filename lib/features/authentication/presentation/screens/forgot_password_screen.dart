@@ -42,6 +42,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: Colors.transparent,
           leading: InkWell(
             child: const Icon(
               Icons.arrow_back_ios,
@@ -65,7 +66,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
+              horizontal: 16.0,
               vertical: 50.0,
             ),
             child: Column(
@@ -115,9 +116,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                     // SUCCESS STATE
                     else if (state is ForgotPasswordSuccessState) {
-                      showSnackBar(context: context, message: state.message);
                       context.push(
                           '/otp/${_emailController.text}/forgot-password');
+                      showSnackBar(context: context, message: state.message);
                     }
                   },
                   builder: (context, state) {

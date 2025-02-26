@@ -1,173 +1,55 @@
-// import 'package:flutter/material.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:geocoding/geocoding.dart';
-// import 'package:geolocator/geolocator.dart';
-// import 'package:google_places_flutter/google_places_flutter.dart';
-// import 'package:google_places_flutter/model/prediction.dart';
-// import 'package:permission_handler/permission_handler.dart';
-// import '../../../../core/utils/shared_preference.dart';
-
-// class LocationPickerScreen extends StatefulWidget {
-//   @override
-//   _LocationPickerScreenState createState() => _LocationPickerScreenState();
-// }
-
-// class _LocationPickerScreenState extends State<LocationPickerScreen> {
-//   GoogleMapController? _mapController;
-//   LatLng _currentLocation = LatLng(28.6139, 77.2088); // Default to Delhi
-//   TextEditingController _searchController = TextEditingController();
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadSavedLocation();
-//   }
-
-//   // Load saved location from SharedPreferences
-//   void _loadSavedLocation() {
-//     double? lat = ShardPrefHelper.getLat();
-//     double? lng = ShardPrefHelper.getLng();
-//     String? city = ShardPrefHelper.getCity();
-
-//     if (lat != null && lng != null) {
-//       setState(() {
-//         _currentLocation = LatLng(lat, lng);
-//         _searchController.text = city ?? "";
-//       });
-//     }
-//   }
-
-//   // Save location to SharedPreferences
-//   Future<void> _saveLocation(LatLng position) async {
-//     print('hello $position');
-//     List<Placemark> placemarks =
-//         await placemarkFromCoordinates(position.latitude, position.longitude);
-//     String city = placemarks.isNotEmpty ? placemarks[0].locality ?? "" : "";
-
-//     await ShardPrefHelper.setLat(position.latitude);
-//     await ShardPrefHelper.setLng(position.longitude);
-//     await ShardPrefHelper.setCity(city);
-
-//     setState(() {
-//       _searchController.text = city;
-//     });
-//   }
-
-//   // Handle map drag
-//   // void _onMapDragEnd(CameraPosition position) {
-//   //   _saveLocation(position.target);
-//   // }
-
-//   // Handle search selection
-//   // void _onPlaceSelected(Prediction prediction) async {
-//   //   List<Location> locations =
-//   //       await locationFromAddress(prediction.description!);
-//   //   if (locations.isNotEmpty) {
-//   //     LatLng newLocation =
-//   //         LatLng(locations.first.latitude, locations.first.longitude);
-//   //     _mapController?.animateCamera(CameraUpdate.newLatLng(newLocation));
-//   //     _saveLocation(newLocation);
-//   //   }
-//   // }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text("Select Location")),
-//       body: Column(
-//         children: [
-//           // Search Box
-//           // Padding(
-//           //   padding: const EdgeInsets.all(8.0),
-//           //   child: GooglePlaceAutoCompleteTextField(
-//           //     itemClick: (postalCodeResponse) {
-//           //       _searchController.text = postalCodeResponse.description!;
-//           //       _onPlaceSelected(postalCodeResponse);
-//           //       FocusScope.of(context).unfocus();
-//           //     },
-//           //     textEditingController: _searchController,
-//           //     googleAPIKey: "AIzaSyByCyGvfaMDCyXXaZwYNE3jK6qXCFABo7A",
-//           //     debounceTime: 400,
-//           //     getPlaceDetailWithLatLng: (Prediction prediction) {
-//           //       _onPlaceSelected(prediction);
-//           //     },
-
-//           //   ),
-//           // ),
-//           Expanded(
-//             child: GoogleMap(
-//               initialCameraPosition: CameraPosition(
-//                 target: _currentLocation,
-//                 zoom: 14,
-//               ),
-//               onMapCreated: (controller) {
-//                 _mapController = controller;
-//               },
-//               //  onCameraIdle: () async {
-//               //   if (_mapController != null) {
-//               //     var position = await _mapController!.getLatLng(_mapController!.getScreenCoordinate(latLng));
-//               //     _onMapDragEnd(position);
-//               //   }
-//               // },
-//               // onCameraIdle: () {
-//               //   _onMapDragEnd(_mapController!.getLatLng(screenCoordinate));
-//               // },
-//               markers: {
-//                 Marker(
-//                   markerId: MarkerId("selected-location"),
-//                   position: _currentLocation,
-//                   draggable: true,
-//                   onDragEnd: (position) {
-//                     _saveLocation(position);
-//                   },
-//                 ),
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
 import 'package:google_places_flutter/model/prediction.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/utils/shared_preference.dart';
 
 class LocationPickerScreen extends StatefulWidget {
+  const LocationPickerScreen({super.key});
+
   @override
-  _LocationPickerScreenState createState() => _LocationPickerScreenState();
+  LocationPickerScreenState createState() => LocationPickerScreenState();
 }
 
-class _LocationPickerScreenState extends State<LocationPickerScreen> {
+class LocationPickerScreenState extends State<LocationPickerScreen> {
   GoogleMapController? _mapController;
-  LatLng _currentLocation = LatLng(28.6139, 77.2088); // Default to Delhi
+  late TextEditingController _searchController;
+  LatLng _currentLocation = LatLng(28.6139, 77.2088);
   LatLng? _pendingLocation;
-  TextEditingController _searchController = TextEditingController();
   Marker _marker = Marker(
     markerId: MarkerId("selected-location"),
     position: LatLng(28.6139, 77.2088),
   );
-
+// INIT STATE
   @override
   void initState() {
     super.initState();
     _loadSavedLocation();
+    _searchController = TextEditingController();
   }
 
-  // Load saved location from SharedPreferences
+// DISPOSE
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // GET USER SAVED LOCATION
   void _loadSavedLocation() {
     double? lat = ShardPrefHelper.getLat();
     double? lng = ShardPrefHelper.getLng();
     String? city = ShardPrefHelper.getCity();
+    print('Lat:$lat');
+    print('Lng:$lng');
+    print('City:$city');
 
     if (lat != null && lng != null) {
       setState(() {
         _currentLocation = LatLng(lat, lng);
-        _searchController.text = city ?? "";
         _marker = _marker.copyWith(
           positionParam: _currentLocation,
         );
@@ -175,23 +57,26 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     }
   }
 
-//   // Handle search selection
   void _onPlaceSelected(Prediction prediction) async {
     List<Location> locations =
         await locationFromAddress(prediction.description!);
     if (locations.isNotEmpty) {
-      LatLng newLocation =
-          LatLng(locations.first.latitude, locations.first.longitude);
+      LatLng newLocation = LatLng(
+        locations.first.latitude,
+        locations.first.longitude,
+      );
       _mapController?.animateCamera(CameraUpdate.newLatLng(newLocation));
-      // _saveLocation(newLocation);
+      _pendingLocation = newLocation;
     }
   }
 
-  // Save location to SharedPreferences
+  // SAVE NEW LOCATION
   Future<void> _saveLocation() async {
     if (_pendingLocation == null) return;
     List<Placemark> placemarks = await placemarkFromCoordinates(
-        _pendingLocation!.latitude, _pendingLocation!.longitude);
+      _pendingLocation!.latitude,
+      _pendingLocation!.longitude,
+    );
     String city = placemarks.isNotEmpty ? placemarks[0].locality ?? "" : "";
 
     await ShardPrefHelper.setLat(_pendingLocation!.latitude);
@@ -200,12 +85,14 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
 
     setState(() {
       _currentLocation = _pendingLocation!;
-      _searchController.text = city;
       _pendingLocation = null;
     });
+    if (mounted) {
+      showSnackBar(context: context, message: 'Location saved');
+    }
   }
 
-  // Update pending location and move marker when map is moved
+  // UPDATE LOCATION WHEN MAP IS DRAGED BY USER
   void _onMapDragEnd() async {
     if (_mapController != null) {
       LatLngBounds bounds = await _mapController!.getVisibleRegion();
@@ -228,18 +115,18 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
       appBar: AppBar(title: Text("Select Location")),
       body: Column(
         children: [
-          //           // Search Box
+          // Search Box
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GooglePlaceAutoCompleteTextField(
+              textEditingController: _searchController,
+              googleAPIKey: "AIzaSyD_gdm23ym8o6hVytuEDoQ3jVCmbFS4tSk",
+              debounceTime: 400,
               itemClick: (postalCodeResponse) {
                 _searchController.text = postalCodeResponse.description!;
                 _onPlaceSelected(postalCodeResponse);
                 FocusScope.of(context).unfocus();
               },
-              textEditingController: _searchController,
-              googleAPIKey: "AIzaSyByCyGvfaMDCyXXaZwYNE3jK6qXCFABo7A",
-              debounceTime: 400,
               getPlaceDetailWithLatLng: (Prediction prediction) {
                 _onPlaceSelected(prediction);
               },
@@ -262,7 +149,20 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: _saveLocation,
-              child: Text("Save Location"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                elevation: 0,
+                minimumSize: Size(
+                  MediaQuery.of(context).size.width * 0.8,
+                  40,
+                ),
+              ),
+              child: Text(
+                "Save Location",
+                style: TextStyle(
+                  color: AppColors.whiteColor,
+                ),
+              ),
             ),
           ),
         ],

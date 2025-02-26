@@ -4,9 +4,7 @@ import '../../model/comments_model.dart';
 import '../../model/reply_model.dart';
 
 abstract class PostRemoteDataSource {
-  Future<List<PostModel>> getAllPosts({
-    required bool isHome,
-  });
+  Future<List<PostModel>> getAllPosts();
   Future<PostModel> getPostById({
     required num id,
   });
@@ -46,6 +44,4 @@ abstract class PostRemoteDataSource {
     required num commentId,
   });
   Future<SpecificCommentModel> getCommentById({required String id});
-  // Future<void> replyComment(
-  //     {required num commentId, required String text, required num postId,});
 }

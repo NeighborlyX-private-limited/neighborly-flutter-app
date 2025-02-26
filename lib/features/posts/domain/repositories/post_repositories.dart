@@ -6,9 +6,7 @@ import '../entities/comment_entity.dart';
 import '../entities/reply_entity.dart';
 
 abstract class PostRepositories {
-  Future<Either<Failure, List<PostEntity>>> getAllPosts({
-    required bool isHome,
-  });
+  Future<Either<Failure, List<PostEntity>>> getAllPosts();
 
   Future<Either<Failure, PostEntity>> getPostById({
     required num id,
@@ -50,11 +48,7 @@ abstract class PostRepositories {
     required String awardType,
     required String type,
   });
-  // Future<Either<Failure, void>> replyComment({
-  //   required num commentId,
-  //   required String text,
-  //   required num postId,
-  // });
+
   Future<Either<Failure, List<ReplyEntity>>> fetchCommentReply({
     required num commentId,
   });

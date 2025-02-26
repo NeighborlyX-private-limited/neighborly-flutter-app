@@ -19,14 +19,10 @@ class PostRepositoriesImpl implements PostRepositories {
 
   // GET ALL POST
   @override
-  Future<Either<Failure, List<PostEntity>>> getAllPosts({
-    required bool isHome,
-  }) async {
+  Future<Either<Failure, List<PostEntity>>> getAllPosts() async {
     if (await networkInfo.isConnected) {
       try {
-        final result = await remoteDataSource.getAllPosts(
-          isHome: isHome,
-        );
+        final result = await remoteDataSource.getAllPosts();
         return Right(result);
       } on ServerFailure catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -38,7 +34,7 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
-  /// report post repo impl
+  // REPORT POST
   @override
   Future<Either<Failure, void>> reportPost({
     required String reason,
@@ -64,7 +60,7 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
-  // FEEDBACK REPO
+  // FEEDBACK
   @override
   Future<Either<Failure, void>> feedback({
     required num id,
@@ -89,6 +85,7 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+// GET POST BY ID
   @override
   Future<Either<Failure, PostEntity>> getPostById({required num id}) async {
     if (await networkInfo.isConnected) {
@@ -106,6 +103,7 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+// GET COMMENT BY ID
   @override
   Future<Either<Failure, SpecificCommentModel>> getCommentById(
       {required String id}) async {
@@ -124,9 +122,12 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+// GET COMMENT BY POST ID
   @override
-  Future<Either<Failure, List<CommentEntity>>> getCommentsByPostId(
-      {required num postId, required String commentId}) async {
+  Future<Either<Failure, List<CommentEntity>>> getCommentsByPostId({
+    required num postId,
+    required String commentId,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.getCommentsByPostId(
@@ -165,9 +166,13 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+// ADD COMMENT
   @override
-  Future<Either<Failure, void>> addComment(
-      {required num postId, required String text, num? commentId}) async {
+  Future<Either<Failure, void>> addComment({
+    required num postId,
+    required String text,
+    num? commentId,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.addComment(
@@ -186,9 +191,12 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+// VOTE POLL
   @override
-  Future<Either<Failure, void>> votePoll(
-      {required num pollId, required num optionId}) async {
+  Future<Either<Failure, void>> votePoll({
+    required num pollId,
+    required num optionId,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         await remoteDataSource.votePoll(
@@ -206,9 +214,11 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+// FEATCH REPLY ON A COMMENT
   @override
-  Future<Either<Failure, List<ReplyEntity>>> fetchCommentReply(
-      {required num commentId}) async {
+  Future<Either<Failure, List<ReplyEntity>>> fetchCommentReply({
+    required num commentId,
+  }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.fetchCommentReply(
@@ -226,6 +236,7 @@ class PostRepositoriesImpl implements PostRepositories {
     }
   }
 
+// GIVE AWARDS
   @override
   Future<Either<Failure, void>> giveAward({
     required num id,
@@ -249,24 +260,4 @@ class PostRepositoriesImpl implements PostRepositories {
       return const Left(ServerFailure(message: 'No internet connection'));
     }
   }
-
-  // @override
-  // Future<Either<Failure, void>> replyComment(
-  //     {required num commentId,
-  //     required String text,
-  //     required num postId}) async {
-  //   if (await networkInfo.isConnected) {
-  //     try {
-  //       await remoteDataSource.replyComment(
-  //           commentId: commentId, text: text, postId: postId);
-  //       return const Right(null);
-  //     } on ServerFailure catch (e) {
-  //       return Left(ServerFailure(message: e.message));
-  //     } catch (e) {
-  //       return Left(ServerFailure(message: '$e'));
-  //     }
-  //   } else {
-  //     return const Left(ServerFailure(message: 'No internet connection'));
-  //   }
-  // }
 }

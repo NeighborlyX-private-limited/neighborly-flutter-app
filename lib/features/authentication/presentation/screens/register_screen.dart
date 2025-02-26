@@ -1,10 +1,13 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_sizedbox.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -24,9 +27,7 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController _controller;
   bool _isButtonActive = true;
-  bool noConnection = false;
   bool isPhoneFilled = false;
-  bool phoneAlreadyExists = false;
   bool isPhoneValid = true;
 
   // INIT STATE
@@ -43,25 +44,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
+  // BUILD
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
+        // APP BAR
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: Colors.transparent,
           leading: InkWell(
             child: const Icon(
               Icons.arrow_back_ios,
             ),
             onTap: () {
-              context.pop();
+              Navigator.pop(context);
             },
           ),
-          centerTitle: true,
           title: Row(
             children: [
-              SizedBox(width: 100),
+              CustomSizedBox(width: 110),
+              // APP LOGO
               Image.asset(
                 'assets/onboardingIcon.png',
                 width: 25,
@@ -73,8 +77,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
-              vertical: 50.0,
+              horizontal: 16.0,
+              vertical: 48.0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +89,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: onboardingHeading1Style,
                   ),
                 ),
-                const SizedBox(height: 40),
+                const CustomSizedBox(height: 40),
+                // GOOGLE SIGNUP BUTTON
                 BlocConsumer<RegisterBloc, RegisterState>(
                   listener: (BuildContext context, RegisterState state) {
                     // OAUTH SUCCESS STATE
@@ -102,7 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }
                     }
                     // FAILURE STATE
-                    if (state is RegisterFailureState) {
+                    if (state is OAuthFailureState) {
                       showSnackBar(
                         context: context,
                         message: state.error,
@@ -111,7 +116,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     }
                   },
                   builder: (context, state) {
-                    // GOOGLE SIGNUP BUTTON
                     return RegisterOption(
                       title: AppLocalizations.of(context)!.continue_with_google,
                       image: Image.asset('assets/google_icon.png'),
@@ -128,7 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 10),
+                const CustomSizedBox(height: 10),
 
                 // EMAIL SIGNUP BUTTON
                 RegisterOption(
@@ -138,9 +142,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     context.push("/registerWithEmailScreen");
                   },
                 ),
-                const SizedBox(height: 20),
+                const CustomSizedBox(height: 20),
                 const OrDividerWidget(),
-                const SizedBox(height: 20),
+                const CustomSizedBox(height: 20),
 
                 // PHONE NUMBER TEXT FIELD
                 TextFieldWidget(
@@ -152,42 +156,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   maxLength: 10,
                   onChanged: (value) {
                     setState(() {
-                      isPhoneFilled = _controller.text.isNotEmpty;
+                      print(value);
+                      isPhoneFilled =
+                          _controller.text.isNotEmpty && value.length == 10;
+                      if (value.length == 10) {
+                        isPhoneValid = true;
+                      }
                     });
                   },
                 ),
 
                 isPhoneValid
-                    ? SizedBox()
+                    ? CustomSizedBox()
                     : Text(
                         AppLocalizations.of(context)!
                             .please_enter_a_valid_phone_number,
                         style: TextStyle(color: AppColors.redColor),
                       ),
-                phoneAlreadyExists
-                    ? Text(
-                        AppLocalizations.of(context)!
-                            .phone_number_already_exists_please_login,
-                        style: TextStyle(color: AppColors.redColor),
-                      )
-                    : const SizedBox(),
-                const SizedBox(height: 15),
+
+                const CustomSizedBox(height: 20),
+                // CONTINUE BUTTON
                 BlocConsumer<RegisterBloc, RegisterState>(
                   listener: (context, state) {
                     // FAILURE STATE
                     if (state is RegisterFailureState) {
-                      if (state.error.contains('exists') ||
-                          state.error.contains('registered')) {
-                        setState(() {
-                          phoneAlreadyExists = true;
-                        });
-                      } else if (state.error.contains('internet')) {
-                        setState(() {
-                          noConnection = true;
-                        });
-                      } else {
-                        showSnackBar(context: context, message: state.error);
-                      }
+                      showSnackBar(context: context, message: state.error);
                     }
 
                     // SUCCESS STATE
@@ -213,6 +206,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             isPhoneValid = false;
                           });
                           return;
+                        } else {
+                          setState(() {
+                            isPhoneValid = true;
+                          });
                         }
 
                         BlocProvider.of<RegisterBloc>(context).add(
@@ -224,33 +221,77 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 15),
 
-                noConnection
-                    ? Center(
-                        child: Text(
-                          AppLocalizations.of(context)!.no_internet_connection,
-                          style: TextStyle(color: AppColors.redColor),
-                        ),
-                      )
-                    : const SizedBox(),
-                const SizedBox(height: 30),
+                const CustomSizedBox(height: 30),
+                // TERMS AND SERVIVCES
                 Center(
-                  child: RichText(
-                    text: TextSpan(
-                      text: AppLocalizations.of(context)!.privacy_policy,
-                      style: const TextStyle(
-                        color: AppColors.lightGreyColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        height: 1.3,
-                      ),
-                      children: <TextSpan>[
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                    ),
+                    child: SizedBox(
+                      width: 350,
+                      child: Text.rich(
                         TextSpan(
-                          text: AppLocalizations.of(context)!.terms_of_service,
-                          style: onboardingBody2Style,
+                          children: [
+                            const TextSpan(
+                              text:
+                                  "By clicking the above button and creating an account, you have read and accepted the ",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                                height: 1.5,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Terms of Service",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.primaryColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  const url =
+                                      "https://neighborly.in/TermsAndCondition";
+                                  if (await canLaunchUrl(Uri.parse(url))) {
+                                    await launchUrl(
+                                      Uri.parse(url),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                },
+                            ),
+                            const TextSpan(
+                              text: " and acknowledged our ",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Privacy Policy.",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.primaryColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  const url =
+                                      "https://neighborly.in/PrivacyPolicy";
+                                  if (await canLaunchUrl(Uri.parse(url))) {
+                                    await launchUrl(
+                                      Uri.parse(url),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                },
+                            ),
+                          ],
                         ),
-                      ],
+                        textAlign: TextAlign.justify,
+                      ),
                     ),
                   ),
                 ),

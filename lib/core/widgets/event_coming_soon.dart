@@ -13,6 +13,7 @@ class CommingSoonScreen extends StatelessWidget {
         backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: Colors.transparent,
           automaticallyImplyLeading: false,
           title: SvgPicture.asset(
             'assets/logo.svg',

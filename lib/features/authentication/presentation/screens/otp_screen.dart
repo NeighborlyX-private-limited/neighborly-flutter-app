@@ -7,6 +7,7 @@ import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
+import '../../../../core/widgets/custom_sizedbox.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import '../bloc/verify_otp_bloc/verify_otp_bloc.dart';
@@ -28,10 +29,6 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   bool isOtpFilled = false;
-  bool isInvalidOtp = false;
-  bool isExpiredOtp = false;
-  bool isUserNotFound = false;
-
   late TextEditingController _otpController;
 
   // INIT STATE
@@ -64,23 +61,27 @@ class _OtpScreenState extends State<OtpScreen> {
     super.dispose();
   }
 
+// BUILD
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
+        // APP BAR
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: Colors.transparent,
+          centerTitle: true,
           leading: InkWell(
             child: const Icon(Icons.arrow_back_ios),
             onTap: () {
-              context.pop();
+              Navigator.pop(context);
             },
           ),
-          centerTitle: true,
           title: Row(
             children: [
-              const SizedBox(width: 100),
+              const CustomSizedBox(width: 110),
+              // APP LOGO
               Image.asset(
                 'assets/onboardingIcon.png',
                 width: 25,
@@ -92,21 +93,21 @@ class _OtpScreenState extends State<OtpScreen> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
+              horizontal: 16.0,
               vertical: 50.0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Image.asset('assets/big_otp_icon.png'),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 20,
                 ),
                 Text(
                   AppLocalizations.of(context)!.enter_verification_code,
                   style: onboardingHeading1Style,
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 5,
                 ),
                 Text(
@@ -116,64 +117,33 @@ class _OtpScreenState extends State<OtpScreen> {
                       : '${AppLocalizations.of(context)!.we_sent_a_verification_code_to_your_email}: ${widget.data}',
                   style: onboardingBodyStyle,
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 20,
                 ),
 
                 // OTP TEXT FIELD
                 TextFieldWidget(
-                  inputType: TextInputType.number,
                   controller: _otpController,
-                  lableText: AppLocalizations.of(context)!.enter_otp,
-                  border: true,
                   isPassword: false,
+                  border: true,
+                  inputType: TextInputType.number,
+                  lableText: AppLocalizations.of(context)!.enter_otp,
                   onChanged: (value) {
                     setState(() {
                       isOtpFilled = _otpController.text.isNotEmpty;
                     });
                   },
                 ),
-                isInvalidOtp
-                    ? Text(
-                        AppLocalizations.of(context)!
-                            .the_otp_entered_is_incorrect_please_try_again,
-                        style: TextStyle(
-                          color: AppColors.redColor,
-                          fontSize: 12,
-                        ),
-                      )
-                    : Container(),
-                isExpiredOtp
-                    ? Text(
-                        AppLocalizations.of(context)!.otp_has_expired,
-                        style: TextStyle(
-                          color: AppColors.redColor,
-                          fontSize: 12,
-                        ),
-                      )
-                    : Container(),
-                const SizedBox(
-                  height: 45,
+
+                const CustomSizedBox(
+                  height: 20,
                 ),
+                // VERIFY BUTTON
                 BlocConsumer<OtpBloc, OtpState>(
                   listener: (BuildContext context, OtpState state) {
                     // FAILURE STATE
                     if (state is OtpLoadFailure) {
-                      if (state.error.contains('User not found')) {
-                        setState(() {
-                          isUserNotFound = true;
-                        });
-                      } else if (state.error.contains('OTP has expired')) {
-                        setState(() {
-                          isExpiredOtp = true;
-                        });
-                      } else if (state.error.contains('Invalid')) {
-                        setState(() {
-                          isInvalidOtp = true;
-                        });
-                      } else {
-                        showSnackBar(context: context, message: state.error);
-                      }
+                      showSnackBar(context: context, message: state.error);
                     }
 
                     // SUCCESS STATE
@@ -203,7 +173,6 @@ class _OtpScreenState extends State<OtpScreen> {
                       return CustomCircularIndicator();
                     }
 
-                    // VERIFY BUTTON
                     return ButtonContainerWidget(
                       text: AppLocalizations.of(context)!.verify,
                       color: AppColors.primaryColor,
@@ -231,10 +200,11 @@ class _OtpScreenState extends State<OtpScreen> {
                     );
                   },
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 10,
                 ),
-                InkWell(
+                // RESEND OTP TEXT BUTTON
+                GestureDetector(
                   onTap: () {
                     if (widget.verificationFor == 'phone-login' ||
                         widget.verificationFor == 'phone-register') {
@@ -255,21 +225,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     listener: (BuildContext context, ResendOTPState state) {
                       // FAILURE STATE
                       if (state is ResendOTPFailureState) {
-                        if (state.error.contains('User not found')) {
-                          setState(() {
-                            isUserNotFound = true;
-                          });
-                        } else if (state.error.contains('OTP has expired')) {
-                          setState(() {
-                            isExpiredOtp = true;
-                          });
-                        } else if (state.error.contains('Invalid OTP')) {
-                          setState(() {
-                            isInvalidOtp = true;
-                          });
-                        } else {
-                          showSnackBar(context: context, message: state.error);
-                        }
+                        showSnackBar(context: context, message: state.error);
                       }
 
                       // SUCCESS STATE
@@ -294,38 +250,6 @@ class _OtpScreenState extends State<OtpScreen> {
                     },
                   ),
                 ),
-                const SizedBox(
-                  height: 20,
-                ),
-                isUserNotFound
-                    ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!
-                                .user_not_found_please_sign_up,
-                            style: TextStyle(
-                              color: AppColors.redColor,
-                              fontSize: 17,
-                            ),
-                          ),
-
-                          // SIGNUP TEXT BUTTON
-                          InkWell(
-                            onTap: () {
-                              context.push('/registerScreen');
-                            },
-                            child: Text(
-                              AppLocalizations.of(context)!.signup,
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontSize: 17,
-                              ),
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),
               ],
             ),
           ),

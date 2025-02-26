@@ -10,51 +10,45 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
   final http.Client client;
 
   UploadRemoteDataSourceImpl({required this.client});
+  // UPLOAD POST
   @override
   Future<void> uploadPost({
-    required String title,
-    required List<double> location,
-    String? content,
     required String type,
-    List<File>? multimedia,
-    required String city,
+    required String title,
+    String? content,
     List<dynamic>? options,
     required bool allowMultipleVotes,
+    List<File>? multimedia,
     File? thumbnail,
+    required List<double> location,
+    required String city,
   }) async {
     String? cookies = ShardPrefHelper.getCookie();
-    city = ShardPrefHelper.getCity() ?? '';
-    var lat = ShardPrefHelper.getLat();
-    var lng = ShardPrefHelper.getLng();
     String? accessToken = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    print('lat and long and city :$lat $lng $city');
-    // String cookieHeader = cookies.join('; ');
+    var city = ShardPrefHelper.getCity() ?? '';
+    var lat = ShardPrefHelper.getLat();
+    var lng = ShardPrefHelper.getLng();
+    print('LAT,LNG AND CITY IN UPLOAD POST :$lat $lng $city');
+
     String url = '$kBaseUrl/wall/create-post';
-
-    // var isLocationOn = ShardPrefHelper.getIsLocationOn();
-    // var isHome = isLocationOn ? 'false' : 'true';
-
-    // Map<String, dynamic> queryParameters = {'home': isHome};
 
     final request = http.MultipartRequest(
       'POST',
       Uri.parse(url),
     )
-      // ..headers['Authorization'] = 'Bearer $accessToken'
       ..headers['Cookie'] = cookies
       ..fields['title'] = title
       ..fields['content'] = content ?? ''
       ..fields['type'] = type
-      ..fields['city'] = city
       ..fields['pollOptions'] = jsonEncode(options ?? [])
+      ..fields['city'] = city
       ..fields['location[0]'] = lat.toString()
       ..fields['location[1]'] = lng.toString()
       ..fields['allowMultipleVotes'] = allowMultipleVotes.toString();
 
-    /// Add multimedia files if available
     if (multimedia != null && multimedia.isNotEmpty) {
       for (var file in multimedia) {
         request.files.add(
@@ -68,7 +62,6 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       }
     }
 
-    /// Add the thumbnail file if available
     if (thumbnail != null) {
       request.files.add(
         http.MultipartFile(
@@ -82,23 +75,25 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
 
     request.fields.forEach((key, value) {});
 
-    /// Send the request and handle the response
     final response = await request.send();
     final responseString = await response.stream.bytesToString();
 
-    print('error HERE: ${response.statusCode}.');
+    print('UPLOAD POST STATUS CODE: ${response.statusCode}.');
+    print('UPLOAD POST RESPONSE: $responseString');
     if (response.statusCode == 403) {
       throw responseString;
     }
     if (response.statusCode == 200) {
     } else {
-      final errorMessage =
-          jsonDecode(responseString)['message'] ?? 'oops something went wrong';
-      print('error: $errorMessage');
+      String errorMessage = jsonDecode(responseString)['message'] ??
+          jsonDecode(responseString)['error'] ??
+          jsonDecode(responseString)['msg'] ??
+          'oops something went wrong';
       throw ServerException(message: errorMessage);
     }
   }
 
+// UPLOAD FILE
   @override
   Future<String> uploadFile({required File file}) async {
     String? cookies = ShardPrefHelper.getCookie();
@@ -106,7 +101,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops something went wrong');
     }
-    // String cookieHeader = cookies.join('; ');
+
     String url = '$kBaseUrl/user/upload-file';
 
     final request = http.MultipartRequest('POST', Uri.parse(url))
@@ -126,9 +121,11 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
     if (response.statusCode == 200) {
       return jsonDecode(responseString)['url'];
     } else {
-      throw ServerException(
-          message: jsonDecode(responseString)['message'] ??
-              'oops something went wrong');
+      String errorMessage = jsonDecode(responseString)['message'] ??
+          jsonDecode(responseString)['error'] ??
+          jsonDecode(responseString)['msg'] ??
+          'oops something went wrong';
+      throw ServerException(message: errorMessage);
     }
   }
 }

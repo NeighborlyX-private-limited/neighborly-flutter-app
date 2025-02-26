@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
-import '../../../posts/presentation/widgets/toggle_button_widget.dart';
 import '../bloc/event_main_cubit.dart';
 import '../widgets/event_card_widget.dart';
 import '../widgets/event_empty_going.dart';

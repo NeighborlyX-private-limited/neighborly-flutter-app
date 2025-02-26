@@ -4,15 +4,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/constants/app_images.dart';
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
 import '../../../../core/widgets/indicator/custom_circular_progress_indicator.dart';
+import '../../../../core/widgets/svg_icon.dart';
 import '../bloc/delete_post_bloc/delete_post_bloc.dart';
 import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'option_card.dart';
@@ -40,15 +41,8 @@ class _PollWidgetState extends State<PollWidget> {
   @override
   void initState() {
     super.initState();
-    uselocalpost();
-  }
-
-  // USE LOCAL POST STATE
-  uselocalpost() {
-    setState(() {
-      title = widget.post.title ?? '';
-      post = widget.post;
-    });
+    title = widget.post.title ?? '';
+    post = widget.post;
   }
 
   @override
@@ -71,7 +65,7 @@ class _PollWidgetState extends State<PollWidget> {
             // USER PROFILE, USER NAME, DATE AND TIME, MENU ICON ROW
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
                   onTap: () {
@@ -107,21 +101,25 @@ class _PollWidgetState extends State<PollWidget> {
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
+                                      CircularSvgImage(
+                                    assetPath: AppImages.defaultProfilePic,
+                                    size: 40,
+                                    color: AppColors.primaryColor,
+                                  ),
                                 )
                               : widget.post.userName.contains('[deleted]')
                                   ? Image.asset(
                                       'assets/deleted_user.png',
-                                      fit: BoxFit.contain,
                                     )
-                                  : Image.asset(
-                                      'assets/second_pro_pic.png',
-                                      fit: BoxFit.contain,
+                                  : CircularSvgImage(
+                                      assetPath: AppImages.defaultProfilePic,
+                                      size: 40,
+                                      color: AppColors.primaryColor,
                                     ),
                         ),
                       ),
                       const SizedBox(
-                        width: 12,
+                        width: 8,
                       ),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,14 +132,16 @@ class _PollWidgetState extends State<PollWidget> {
                                       AppLocalizations.of(context)!
                                           .neighborly_user,
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
                                     )
                                   : Text(
                                       widget.post.userName,
                                       style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14),
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
                                     ),
                               const SizedBox(
                                 width: 6,
@@ -195,9 +195,7 @@ class _PollWidgetState extends State<PollWidget> {
             ),
 
             Padding(
-              padding: const EdgeInsets.only(
-                top: 12,
-              ),
+              padding: const EdgeInsets.only(top: 8),
               child: Linkify(
                 options: LinkifyOptions(
                   looseUrl: true,
@@ -527,8 +525,10 @@ class _PollWidgetState extends State<PollWidget> {
                         style: blackonboardingBody1Style,
                       ),
                       contentPadding: EdgeInsets.zero,
-                      visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4),
+                      visualDensity: VisualDensity(
+                        horizontal: -4,
+                        vertical: -4,
+                      ),
                       minTileHeight: 30,
                     ),
                     ListTile(

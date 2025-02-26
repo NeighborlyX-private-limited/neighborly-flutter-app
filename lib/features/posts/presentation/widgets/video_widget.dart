@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -23,7 +24,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
   bool _isMuted = false;
   bool _showThumbnail = true;
   bool _showLoading = false;
-//// init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
@@ -54,7 +55,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
     return '$minutes:$seconds';
   }
 
-  /// play pause toggle
+  // PLAY AND PAUSE TOGGLE
   void _togglePlayPause() {
     setState(() {
       if (_controller.value.isPlaying) {
@@ -67,14 +68,14 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
     });
   }
 
-  ///dispose method
+  // DISPOSE
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
 
-  /// on visivility change handle method
+  // PLAY AND PAUSE VIDEO ACCORDING TO VIDEO VISIBILITY
   void _onVisibilityChanged(VisibilityInfo info) {
     final visibleFraction = info.visibleFraction;
     if (visibleFraction > 0.5 && !_controller.value.isPlaying) {
@@ -106,7 +107,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                /// Thumbnail image
+                // THUMBNAIL
                 AspectRatio(
                   aspectRatio: 1 / 1.2,
                   child: widget.thumbnailUrl != ''
@@ -117,9 +118,9 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
                       : SizedBox(),
                 ),
 
-                /// Play button on top of the thumbnail
+                // PLAY BUTTON
                 _showLoading
-                    ? CircularProgressIndicator()
+                    ? CustomCircularIndicator()
                     : Icon(
                         Icons.play_circle_filled,
                         color: widget.thumbnailUrl != ''
@@ -216,11 +217,7 @@ class VideoDisplayWidgetState extends State<VideoDisplayWidget> {
               )
             : SizedBox(
                 height: 500,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: AppColors.primaryColor,
-                  ),
-                ),
+                child: CustomCircularIndicator(),
               );
   }
 }

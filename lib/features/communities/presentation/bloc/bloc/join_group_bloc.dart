@@ -15,7 +15,7 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
       : _joinCommunityUsecase = joinCommunityUsecase,
         _leaveCommunityUsecase = leaveCommunityUsecase,
         super(JoinGroupInitialState()) {
-    /// join group event trigger
+    // JOIN GROUP
     on<JoinGroupButtonPressedEvent>(
       (JoinGroupButtonPressedEvent event, Emitter<JoinGroupState> emit) async {
         emit(JoinGroupLoadingState());
@@ -36,7 +36,7 @@ class JoinGroupBloc extends Bloc<JoinGroupEvent, JoinGroupState> {
       },
     );
 
-    /// leave group event trigger
+    // LEAVE GROUP
     on<LeaveGroupButtonPressedEvent>(
       (LeaveGroupButtonPressedEvent event, Emitter<JoinGroupState> emit) async {
         emit(JoinGroupLoadingState());

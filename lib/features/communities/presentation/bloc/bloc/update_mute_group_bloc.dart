@@ -14,8 +14,10 @@ class UpdateMuteGroupBloc
   })  : _updateMuteCommunityUsecase = updateMuteCommunityUsecase,
         super(UpdateMuteGroupInitialState()) {
     on<UpdateMuteGroupButtonPressedEvent>(
-      (UpdateMuteGroupButtonPressedEvent event,
-          Emitter<UpdateMuteGroupState> emit) async {
+      (
+        UpdateMuteGroupButtonPressedEvent event,
+        Emitter<UpdateMuteGroupState> emit,
+      ) async {
         emit(UpdateMuteGroupLoadingState());
 
         final result = await _updateMuteCommunityUsecase.call(

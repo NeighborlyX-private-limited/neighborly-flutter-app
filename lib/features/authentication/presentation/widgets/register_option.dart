@@ -14,7 +14,7 @@ class RegisterOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         onTap();
       },
@@ -24,7 +24,7 @@ class RegisterOption extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.blackColor, width: 1),
           color: AppColors.whiteColor,
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -13,31 +13,31 @@ class UploadRepositoriesImpl implements UploadRepositories {
     required this.remoteDataSource,
     required this.networkInfo,
   });
-
+  // UPLOAD POST
   @override
   Future<Either<Failure, void>> uploadPost({
+    required String type,
     required String title,
     String? content,
-    required String type,
-    List<File>? multimedia,
-    required String city,
     List<dynamic>? options,
-    required List<double> location,
     required bool allowMultipleVotes,
+    List<File>? multimedia,
     File? thumbnail,
+    required List<double> location,
+    required String city,
   }) async {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.uploadPost(
+          type: type,
           title: title,
           content: content,
-          type: type,
-          multimedia: multimedia,
-          allowMultipleVotes: allowMultipleVotes,
-          city: city,
           options: options,
-          location: location,
+          allowMultipleVotes: allowMultipleVotes,
           thumbnail: thumbnail,
+          multimedia: multimedia,
+          location: location,
+          city: city,
         );
 
         return Right(result);
@@ -51,6 +51,7 @@ class UploadRepositoriesImpl implements UploadRepositories {
     }
   }
 
+  // UPLOAD FILE
   @override
   Future<Either<Failure, String>> uploadFile({required File file}) async {
     if (await networkInfo.isConnected) {

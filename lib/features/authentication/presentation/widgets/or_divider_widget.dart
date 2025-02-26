@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_sizedbox.dart';
 
 class OrDividerWidget extends StatelessWidget {
   const OrDividerWidget({super.key});
@@ -16,16 +17,16 @@ class OrDividerWidget extends StatelessWidget {
               thickness: 1,
             ),
           ),
-          SizedBox(width: 10),
+          CustomSizedBox(width: 10),
           Text(
-            "or",
+            'OR',
             style: TextStyle(
               color: AppColors.greyColor,
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(width: 10),
+          CustomSizedBox(width: 10),
           Expanded(
             child: Divider(
               color: AppColors.greyColor,

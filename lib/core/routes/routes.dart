@@ -18,7 +18,6 @@ import '../../features/authentication/presentation/screens/register_screen.dart'
 import '../../features/authentication/presentation/screens/register_with_email_screen.dart';
 import '../../features/chat/data/model/chat_room_model.dart';
 import '../../features/chat/presentation/screens/chat_group_screen.dart';
-import '../../features/chat/presentation/screens/chat_group_thread_screen.dart';
 import '../../features/chat/presentation/screens/chat_main_screen.dart';
 import '../../features/chat/presentation/screens/chat_private_screen.dart';
 import '../../features/chat/presentation/screens/group_pinned_message_screen.dart';
@@ -64,35 +63,47 @@ import '../widgets/google_map_screen.dart';
 final GlobalKey<NavigatorState> _rootNavigatorKey =
     GlobalKey<NavigatorState>(debugLabel: 'root');
 String? cookies = ShardPrefHelper.getCookie();
-// List<String>? cookies = ShardPrefHelper.getCookie();
-// initial route
+
+// INITIAL ROUTE
 String setInitialLocation() {
-  var IsPhoneVarify = ShardPrefHelper.getIsPhoneVerified();
-  var IsVarify = ShardPrefHelper.getIsVerified();
+  var isPhoneVarify = ShardPrefHelper.getIsPhoneVerified();
+  var isEmailVarify = ShardPrefHelper.getIsVerified();
   var authType = ShardPrefHelper.getAuthtype();
+  print('isPhoneVarify:$isPhoneVarify');
+  print('isEmailVarify:$isEmailVarify');
+  print('authType:$authType');
+  // IF COOKIE NOT FOUND
   if (cookies == null || cookies!.isEmpty) {
     return '/';
-  } else if (authType == 'phone') {
-    if (IsPhoneVarify && cookies!.isNotEmpty) {
-      return '/home';
-    } else {
-      return '/';
-    }
-  } else if (authType == 'email') {
-    if (IsVarify && cookies!.isNotEmpty) {
+  }
+  // IS PHONE LOGIN
+  else if (authType == 'phone') {
+    if (isPhoneVarify && cookies!.isNotEmpty) {
       return '/home';
     } else {
       return '/';
     }
   }
+  // IS EMAIL LOGIN
+  else if (authType == 'email') {
+    if (isEmailVarify && cookies!.isNotEmpty) {
+      return '/home';
+    } else {
+      return '/';
+    }
+  }
+  // IS GOOGLE LOGIN
+  else if (authType == 'google') {
+    return '/home';
+  }
   return '/';
 }
 
 final GoRouter router = GoRouter(
-  initialLocation: setInitialLocation(),
   navigatorKey: _rootNavigatorKey,
+  initialLocation: setInitialLocation(),
   routes: <RouteBase>[
-    /// authentication routes
+    // AUTH ROUTES
     GoRoute(
       path: '/',
       name: RouteConstants.onboardingScreenRouteName,
@@ -160,7 +171,7 @@ final GoRouter router = GoRouter(
       },
     ),
 
-    /// shell route
+    // SHELL ROUTES
     ShellRoute(
       builder: (context, state, child) {
         return MainPage(
@@ -193,11 +204,13 @@ final GoRouter router = GoRouter(
       ],
     ),
 
-    /// home routes
+    // POST UPLOAD SCREEN
     GoRoute(
       path: '/create',
       builder: (context, state) => const CreatePostScreen(),
     ),
+
+    // HOME ROUTES
     GoRoute(
       path: '/notifications',
       builder: (context, state) => const NotificationListScreen(),
@@ -229,7 +242,7 @@ final GoRouter router = GoRouter(
       },
     ),
 
-    /// group routes
+    // GROUP ROUTES
     GoRoute(
       path: '/group-create',
       builder: (context, state) => const CommunityCreateScreen(),
@@ -288,7 +301,7 @@ final GoRouter router = GoRouter(
       ),
     ),
 
-    /// group chat routes
+    // GROUP CHAT ROUTES
     GoRoute(
       path: '/chat',
       builder: (context, state) => const ChatMainScreen(),
@@ -325,18 +338,8 @@ final GoRouter router = GoRouter(
         );
       },
     ),
-    GoRoute(
-      path: '/group-chat-thread/:messageId',
-      builder: (context, state) {
-        return ChatGroupThreadScreen(
-          messageId: state.pathParameters["messageId"] as String,
-          room: (state.extra as Map<String, dynamic>)['room'],
-          message: (state.extra as Map<String, dynamic>)['message'],
-        );
-      },
-    ),
 
-    ///event routes
+    // EVENT ROUTES
     GoRoute(
       path: '/events/create',
       builder: (context, state) => const EventCreateScreen(),
@@ -372,7 +375,7 @@ final GoRouter router = GoRouter(
       ),
     ),
 
-    /// profile routes
+    // PROFILE ROUTES
     GoRoute(
       path: '/settingsScreen/:karma/:findMe',
       name: RouteConstants.settingsScreenRouteName,

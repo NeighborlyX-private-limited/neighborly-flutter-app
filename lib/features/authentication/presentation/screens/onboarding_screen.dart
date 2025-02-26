@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_sizedbox.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../widgets/button_widget.dart';
@@ -15,14 +16,14 @@ class OnBoardingScreen extends StatelessWidget {
         backgroundColor: AppColors.whiteColor,
         body: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 20.0,
-            vertical: 70.0,
+            horizontal: 16.0,
+            vertical: 80.0,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset('assets/onboardingIcon.png'),
-              const SizedBox(
+              const CustomSizedBox(
                 height: 25,
               ),
               Text(
@@ -30,8 +31,8 @@ class OnBoardingScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: onboardingHeading1Style,
               ),
-              const SizedBox(
-                height: 20,
+              const CustomSizedBox(
+                height: 15,
               ),
               Text(
                 AppLocalizations.of(context)!
@@ -41,10 +42,10 @@ class OnBoardingScreen extends StatelessWidget {
               ),
               Expanded(child: Container()),
               ButtonContainerWidget(
-                text: AppLocalizations.of(context)!.signup,
-                color: AppColors.primaryColor,
-                isActive: true,
                 isFilled: true,
+                isActive: true,
+                color: AppColors.primaryColor,
+                text: AppLocalizations.of(context)!.signup,
                 onTapListener: () {
                   context.push("/registerScreen");
                 },
@@ -53,10 +54,10 @@ class OnBoardingScreen extends StatelessWidget {
                 height: 20,
               ),
               ButtonContainerWidget(
-                text: AppLocalizations.of(context)!.login,
-                color: AppColors.primaryColor,
                 isFilled: false,
                 isActive: true,
+                color: AppColors.primaryColor,
+                text: AppLocalizations.of(context)!.login,
                 onTapListener: () {
                   context.push("/loginScreen");
                 },

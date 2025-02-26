@@ -11,7 +11,7 @@ import 'package:scrollable_clean_calendar/utils/enums.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
-import '../../../posts/presentation/widgets/toggle_button_widget.dart';
+
 import '../bloc/event_search_cubit.dart';
 import '../widgets/event_card_widget.dart';
 import '../widgets/event_empty_search_local.dart';

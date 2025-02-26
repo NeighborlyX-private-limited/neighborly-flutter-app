@@ -1,10 +1,13 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/helpers.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_sizedbox.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
@@ -46,8 +49,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: AppColors.whiteColor,
+        // APP BAR
         appBar: AppBar(
           backgroundColor: AppColors.whiteColor,
+          surfaceTintColor: Colors.transparent,
           leading: InkWell(
             child: const Icon(
               Icons.arrow_back_ios,
@@ -59,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
           centerTitle: true,
           title: Row(
             children: [
-              const SizedBox(width: 100),
+              const CustomSizedBox(width: 110),
               Image.asset(
                 'assets/onboardingIcon.png',
                 width: 25,
@@ -71,7 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
+              horizontal: 16.0,
               vertical: 50.0,
             ),
             child: Column(
@@ -83,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: onboardingHeading1Style,
                   ),
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 40,
                 ),
 
@@ -103,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     }
                     // FAILURE STATE
-                    if (state is LoginFailureState) {
+                    if (state is OAuthFailureState) {
                       showSnackBar(
                         context: context,
                         message: state.error,
@@ -131,7 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   },
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 10,
                 ),
 
@@ -143,11 +148,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     context.push("/loginWithEmailScreen");
                   },
                 ),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 20,
                 ),
                 const OrDividerWidget(),
-                const SizedBox(
+                const CustomSizedBox(
                   height: 20,
                 ),
 
@@ -159,7 +164,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   maxLength: 10,
                   onChanged: (value) {
                     setState(() {
-                      isPhoneFilled = _controller.text.isNotEmpty;
+                      isPhoneFilled =
+                          _controller.text.isNotEmpty && value.length == 10;
+                      if (value.length == 10) {
+                        isPhoneValid = true;
+                      }
                     });
                   },
                   controller: _controller,
@@ -168,14 +177,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 isPhoneValid
-                    ? SizedBox()
+                    ? CustomSizedBox()
                     : Text(
                         AppLocalizations.of(context)!
                             .please_enter_a_valid_phone_number,
                         style: TextStyle(color: AppColors.redColor),
                       ),
-                const SizedBox(
-                  height: 15,
+                const CustomSizedBox(
+                  height: 20,
                 ),
 
                 // CONTINUE BUTTON
@@ -190,28 +199,86 @@ class _LoginScreenState extends State<LoginScreen> {
                         isPhoneValid = false;
                       });
                       return;
+                    } else {
+                      setState(() {
+                        isPhoneValid = true;
+                      });
                     }
                     context.push('/otp/${_controller.text}/phone-login');
                   },
                 ),
 
-                const SizedBox(height: 30),
+                const CustomSizedBox(height: 30),
+                // TERMS AND CONDITIONS BUTTON
+                // TERMS AND SERVIVCES
                 Center(
-                  child: RichText(
-                    text: TextSpan(
-                      text: AppLocalizations.of(context)!.privacy_policy,
-                      style: const TextStyle(
-                        color: AppColors.lightGreyColor,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        height: 1.3,
-                      ),
-                      children: <TextSpan>[
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                    ),
+                    child: SizedBox(
+                      width: 350,
+                      child: Text.rich(
                         TextSpan(
-                          text: AppLocalizations.of(context)!.terms_of_service,
-                          style: onboardingBody2Style,
+                          children: [
+                            const TextSpan(
+                              text:
+                                  "By clicking the above button and creating an account, you have read and accepted the ",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                                height: 1.5,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Terms of Service",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.primaryColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  const url =
+                                      "https://neighborly.in/TermsAndCondition";
+                                  if (await canLaunchUrl(Uri.parse(url))) {
+                                    await launchUrl(
+                                      Uri.parse(url),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                },
+                            ),
+                            const TextSpan(
+                              text: " and acknowledged our ",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: "Privacy Policy.",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: AppColors.primaryColor,
+                                decoration: TextDecoration.underline,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  const url =
+                                      "https://neighborly.in/PrivacyPolicy";
+                                  if (await canLaunchUrl(Uri.parse(url))) {
+                                    await launchUrl(
+                                      Uri.parse(url),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  }
+                                },
+                            ),
+                          ],
                         ),
-                      ],
+                        textAlign: TextAlign.justify,
+                      ),
                     ),
                   ),
                 ),

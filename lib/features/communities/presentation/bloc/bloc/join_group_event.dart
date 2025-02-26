@@ -2,7 +2,7 @@ part of 'join_group_bloc.dart';
 
 abstract class JoinGroupEvent extends Equatable {}
 
-/// join group event trigger
+// JOIN GROUP
 class JoinGroupButtonPressedEvent extends JoinGroupEvent {
   final String communityId;
 
@@ -16,7 +16,7 @@ class JoinGroupButtonPressedEvent extends JoinGroupEvent {
       ];
 }
 
-/// leave group event trigger
+// LEAVE GROUP
 class LeaveGroupButtonPressedEvent extends JoinGroupEvent {
   final String communityId;
   final String? userId;

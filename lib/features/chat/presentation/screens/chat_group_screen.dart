@@ -9,7 +9,6 @@ import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../../core/constants/constants.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
@@ -18,7 +17,6 @@ import '../../../../core/utils/date_utils.dart';
 import '../../../../core/utils/helpers.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';
-
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../../communities/presentation/bloc/bloc/join_group_bloc.dart';
 import '../../../communities/presentation/bloc/communities_main_cubit.dart';
@@ -32,7 +30,6 @@ import '../bloc/pin_message_bloc.dart';
 import '../widgets/chat_messages_group_sheemer.dart';
 import '../../../../core/constants/imagepickercompress.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../widgets/media_message_widget.dart';
 
 class ChatGroupScreen extends StatefulWidget {
@@ -77,7 +74,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   String? _messageToReplyUserName;
 
   bool _isLoadingMore = false;
-
   double _previousScrollOffset = 0.0;
 
   // INIT STATE
@@ -95,8 +91,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels <=
-              _scrollController.position.minScrollExtent +
-                  10 && // Avoid missed triggers
+              _scrollController.position.minScrollExtent + 10 &&
           !_isLoadingMore) {
         _loadMoreMessages();
       }
@@ -113,10 +108,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     return admins!.any((admin) => admin.id == cuurentUserId);
   }
 
-  // void _deleteMessage(String messageId, String groupId) {
-  //   chatGroupCubit.deleteMessage(groupId, messageId);
-  // }
-
 // CHECK IF SENDER USER IS AN ADMIN
   bool isSenderAnAdmin(String userId) {
     return admins!.any((admin) => admin.id == userId);
@@ -125,7 +116,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 // GET THE PROFILE PIC OF THE SENDER
   String getSenderProfilePic(String userId) {
     final member = members?.firstWhere(
-      // final member = widget.members?.firstWhere(
       (member) => member.id == userId,
       orElse: () => UserSimpleModel(
         id: '',
@@ -182,7 +172,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   Future<void> _loadMoreMessages() async {
     print('Fetching older messages...');
 
-    if (_isLoadingMore) return; // Prevent duplicate calls
+    if (_isLoadingMore) return;
 
     setState(() {
       _isLoadingMore = true;
@@ -931,6 +921,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     required String senderProfilePic,
     required bool isNewMsg,
   }) {
+    print('message:$message');
     if (message.isDeleted) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1236,6 +1227,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     required bool isPin,
     required VoidCallback onPin,
   }) {
+    print('isOwnMessage:$isOwnMessage');
+    print('isAdmin:$isAdmin');
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -1257,10 +1250,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   } else if (state is PinMessagesStateSuccessState) {
                     chatGroupCubit.updateMessageForPinned(messageId, !isPin);
                     Navigator.pop(context);
-                    // showSnackBar(
-                    //   context: context,
-                    //   message: "Message pinned successfully!",
-                    // );
                   }
                 },
                 builder: (context, state) {
@@ -1298,14 +1287,15 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                   Navigator.pop(context);
                 },
               ),
-            ListTile(
-              leading: Icon(Icons.report),
-              title: Text('Report Message'),
-              onTap: () {
-                Navigator.pop(context);
-                reportReasonBottomSheet(context, messageId);
-              },
-            ),
+            if (!isOwnMessage)
+              ListTile(
+                leading: Icon(Icons.report),
+                title: Text('Report Message'),
+                onTap: () {
+                  Navigator.pop(context);
+                  reportReasonBottomSheet(context, messageId);
+                },
+              ),
           ],
         );
       },

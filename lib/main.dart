@@ -71,7 +71,6 @@ import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-// import 'package:uni_links/uni_links.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -98,41 +97,10 @@ class MyAppState extends State<MyApp> {
   void initState() {
     setStatusBarColor();
     super.initState();
-    // _init();
+
     _setDeepLinkListener();
   }
 
-  // Future<void> _setDeepLinkListener() async {
-  //   print("DEEP LINK HANDLER CALLED");
-  //   try {
-  //     platform.setMethodCallHandler((MethodCall call) async {
-  //       print("DEEP LINK HANDLER CALLED");
-  //       if (call.method == "onDeepLink") {
-  //         setState(() {
-  //           _deepLink = call.arguments;
-
-  //           List? linksplit = _deepLink?.split('neighborly.in/');
-  //           if (linksplit != null && linksplit.length > 1) {
-  //             if (linksplit[1].contains('posts/')) {
-  //               try {
-  //                 Navigator.of(context).push(MaterialPageRoute(
-  //                   builder: (context) => PostDetailScreen(
-  //                     postId: '201',
-  //                     isPost: false,
-  //                     userId: '667d0d6d621041da2c7b79e8',
-  //                     commentId: '',
-  //                   ),
-  //                 ));
-  //               } catch (e) {
-  //                 //handle default page if error
-  //               }
-  //             } else {}
-  //           } else {}
-  //         });
-  //       }
-  //     });
-  //   } catch (e) {}
-  // }
   Future<void> _setDeepLinkListener() async {
     // print("deep link received by vinay");
     try {
@@ -175,55 +143,6 @@ class MyAppState extends State<MyApp> {
       // print('error in deep: $e');
     }
   }
-  // Future<void> _init() async {
-
-  //   await _initUniLinks();
-  // }
-
-  // Future<void> _initUniLinks() async {
-
-  //   try {
-  //     _sub = linkStream.listen((String? link) {
-
-  //       if (link != null) {
-  //         setState(() {
-  //           _linkMessage = link;
-  //           // Handle navigation based on the link
-  //           _navigateToDeepLink(link);
-  //         });
-  //       }
-  //     }, onError: (err) {
-
-  //     });
-  //   } catch (e) {
-
-  //   }
-  // }
-
-  // void _navigateToDeepLink(String link) {
-
-  //   try {
-
-  //     // Parse the link and navigate to the corresponding screen
-  //     // Example: If the link is "myapp://profile/123", navigate to profile screen
-  //     final uri = Uri.parse(link);
-  //     if (uri.pathSegments.length > 1) {
-  //       final path = uri.pathSegments[0];
-  //       final id = uri.pathSegments[1];
-
-  //       switch (path) {
-  //         case 'profile':
-
-  //           // Navigate to Profile screen
-  //           Navigator.of(context).pushNamed('/profile', arguments: id);
-  //           break;
-  //         // Add more cases as needed
-  //       }
-  //     }
-  //   } catch (e) {
-
-  //   }
-  // }
 
   @override
   void dispose() {

@@ -22,7 +22,6 @@ class ChatMessagesSheemer extends StatelessWidget {
             const SizedBox(
               height: 20,
             ),
-
             ...List.generate(
               14,
               (index) {
@@ -50,41 +49,6 @@ class ChatMessagesSheemer extends StatelessWidget {
                 );
               },
             ),
-            // ListView(
-            //   children: List.generate(
-            //     4,
-            //     (index) {
-            //       return Row(
-            //         children: [
-            //           Expanded(
-            //             child: Shimmer.fromColors(
-            //               baseColor: Colors.grey[300]!,
-            //               highlightColor: Colors.grey[100]!,
-            //               child: Container(
-            //                 // width: 180,
-            //                 // height: MediaQuery.of(context).size.width * 0.4,
-            //                 height: 230,
-            //                 color: Colors.grey[300],
-            //               ),
-            //             ),
-            //           ),
-            //           const SizedBox(
-            //             width: 20,
-            //           ),
-            //           Shimmer.fromColors(
-            //             baseColor: Colors.grey[300]!,
-            //             highlightColor: Colors.grey[100]!,
-            //             child: Container(
-            //               width: 180,
-            //               height: 230,
-            //               color: Colors.grey[300],
-            //             ),
-            //           ),
-            //         ],
-            //       );
-            //     },
-            //   ),
-            // ),
           ],
         ),
       ),

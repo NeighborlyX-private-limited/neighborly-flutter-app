@@ -6,14 +6,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/homePage/home_page.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_general_cubit.dart';
+import '../../../../core/constants/app_images.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
+import '../../../../core/widgets/svg_icon.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
 import '../../../profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
 import '../bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
@@ -63,7 +65,6 @@ class _HomeScreenState extends State<HomeScreen>
     updateFCMtokenNotification();
     getUnreadNotificationCount();
     _setDeepLinkListener();
-    // setIsHome();
 
     isDobSet = ShardPrefHelper.getDob();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -181,14 +182,13 @@ class _HomeScreenState extends State<HomeScreen>
   Future<bool> _handleLocationPermission() async {
     LocationPermission permission;
     var checkPushPermission = await Permission.notification.isDenied;
-    print('check this checkPushPermission: $checkPushPermission');
+    print('Check Notification Permission: $checkPushPermission');
     if (checkPushPermission) {
-      print('check this checkPushPermission: $checkPushPermission');
       await Permission.notification.request();
     }
 
     permission = await Geolocator.checkPermission();
-    print('check this permission: $permission');
+    print('Check Location Permission: $permission');
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
 
@@ -201,7 +201,6 @@ class _HomeScreenState extends State<HomeScreen>
                 AppLocalizations.of(context)!.location_permissions_are_denied,
           );
         }
-        print('i am returning false');
         return false;
       }
     }
@@ -215,32 +214,39 @@ class _HomeScreenState extends State<HomeScreen>
               .location_permissions_are_permanently_denied_we_cannot_request_permissions,
         );
       }
-      print('i am returning false');
+
       return false;
     }
 
     // LOCATION PERMISSION GRANTED
-    print('i am returning true');
     return true;
   }
 
   // FEATCH USER'S CURRENT LOCATION AND UPDATE.
   Future<void> fetchLocationAndUpdate() async {
     final hasPermission = await _handleLocationPermission();
-    print('What is permisssion: $hasPermission');
+    print('What is Location Permisssion: $hasPermission');
     if (!hasPermission) {
       bool isLocationOn = ShardPrefHelper.getIsCurrentLocationOn() ?? true;
 
-      setState(() {
-        isLocationDenied = true;
-      });
       if (!isLocationOn) {
         print('Try to featch others citys post');
         _fetchPosts();
+      } else {
+        setState(() {
+          isLocationDenied = true;
+        });
+        if (mounted) {
+          showSnackBar(
+            context: context,
+            message: AppLocalizations.of(context)!
+                .location_permissions_are_permanently_denied_we_cannot_request_permissions,
+          );
+        }
       }
     } else {
       bool isLocationOn = ShardPrefHelper.getIsCurrentLocationOn() ?? true;
-      print('What is location on:$isLocationOn');
+      print('Is location on:$isLocationOn');
       if (isLocationOn) {
         try {
           Position position = await Geolocator.getCurrentPosition(
@@ -254,20 +260,21 @@ class _HomeScreenState extends State<HomeScreen>
           var city = placemarks[0].locality ?? '';
           await ShardPrefHelper.setLat(position.latitude);
           await ShardPrefHelper.setLng(position.longitude);
-          await ShardPrefHelper.setIsCurrentLocationOn(true);
           await ShardPrefHelper.setCity(city);
+          await ShardPrefHelper.setIsCurrentLocationOn(true);
 
           _fetchPosts();
         } catch (e) {
           bool isLocationOn = ShardPrefHelper.getIsCurrentLocationOn() ?? true;
-          print('isLocationOn : $isLocationOn');
-          setState(() {
-            isLocationDenied = true;
-          });
+          print('Is Location On : $isLocationOn');
+
           if (!isLocationOn) {
             print('Try to featch post with other city');
             _fetchPosts();
           } else {
+            setState(() {
+              isLocationDenied = true;
+            });
             if (mounted) {
               showSnackBar(
                 context: context,
@@ -276,15 +283,17 @@ class _HomeScreenState extends State<HomeScreen>
             }
           }
         }
+      } else {
+        _fetchPosts();
       }
-      _fetchPosts();
     }
   }
 
   // FEATCH ALL POST
+  // Here isHome is unneccessary
   void _fetchPosts() {
     BlocProvider.of<GetAllPostsBloc>(context).add(
-      GetAllPostsButtonPressedEvent(isHome: true),
+      GetAllPostsButtonPressedEvent(),
     );
   }
 
@@ -292,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen>
   Future<void> _onRefresh() async {
     getUnreadNotificationCount();
     BlocProvider.of<GetAllPostsBloc>(context).add(
-      GetAllPostsButtonPressedEvent(isHome: true),
+      GetAllPostsButtonPressedEvent(),
     );
   }
 
@@ -313,70 +322,72 @@ class _HomeScreenState extends State<HomeScreen>
               backgroundColor: AppColors.lightBackgroundColor,
               appBar: AppBar(
                 backgroundColor: AppColors.whiteColor,
+                surfaceTintColor: AppColors.transparentColor,
+                automaticallyImplyLeading: false,
                 title: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SvgPicture.asset(
                       'assets/logo.svg',
-                      width: 30,
-                      height: 34,
+                      width: 24,
+                      height: 24,
                     ),
                   ],
                 ),
                 actions: [
-                  IconButton(
-                    onPressed: () {
-                      context.push('/googleMapScreen');
-                    },
-                    icon: Icon(Icons.location_on_outlined),
-                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     context.push('/googleMapScreen');
+                  //   },
+                  //   icon: Icon(Icons.location_on_outlined),
+                  // ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     context.push('/tutorialScreen');
+                  //   },
+                  //   icon: Icon(Icons.location_on_outlined),
+                  // ),
+
                   // NOTIFICATION ICON
                   // NEED TO ADD BLOC BUILDER HERE FOR NOTIFICATION COUNT
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16.0),
-                    child: GestureDetector(
-                      onTap: () {
-                        context.push('/notifications');
-                      },
-                      child: unreadNotificationCount > 0
-                          ? badges.Badge(
-                              badgeContent: unreadNotificationCount > 0
-                                  ? Text(
-                                      "$unreadNotificationCount",
-                                      style: TextStyle(
-                                        color: AppColors.whiteColor,
-                                      ),
-                                    )
-                                  : null,
-                              badgeStyle: BadgeStyle(
-                                badgeColor: AppColors.primaryColor,
-                              ),
-                              position:
-                                  badges.BadgePosition.custom(end: 0, top: -8),
-                              child: SvgPicture.asset(
-                                'assets/alarm.svg',
-                                fit: BoxFit.contain,
-                                width: 26,
-                                height: 26,
-                              ),
-                            )
-                          : badges.Badge(
-                              showBadge: false,
-                              badgeStyle: BadgeStyle(
-                                badgeColor: AppColors.primaryColor,
-                              ),
-                              position: badges.BadgePosition.custom(
-                                end: 0,
-                                top: -8,
-                              ),
-                              child: SvgPicture.asset(
-                                'assets/alarm.svg',
-                                fit: BoxFit.contain,
-                                width: 26,
-                                height: 26,
-                              ),
+                  GestureDetector(
+                    onTap: () {
+                      context.push('/notifications');
+                    },
+                    child: unreadNotificationCount > 0
+                        ? badges.Badge(
+                            badgeContent: unreadNotificationCount > 0
+                                ? Text(
+                                    "$unreadNotificationCount",
+                                    style: TextStyle(
+                                      color: AppColors.whiteColor,
+                                    ),
+                                  )
+                                : null,
+                            badgeStyle: BadgeStyle(
+                              badgeColor: AppColors.primaryColor,
                             ),
-                    ),
+                            position: badges.BadgePosition.custom(
+                              end: 0,
+                              top: -8,
+                            ),
+                            child: CircularSvgImage(
+                              assetPath: AppImages.notificationIcon,
+                            ),
+                          )
+                        : badges.Badge(
+                            showBadge: false,
+                            badgeStyle: BadgeStyle(
+                              badgeColor: AppColors.primaryColor,
+                            ),
+                            position: badges.BadgePosition.custom(
+                              end: 0,
+                              top: -8,
+                            ),
+                            child: CircularSvgImage(
+                              assetPath: AppImages.notificationIcon,
+                            ),
+                          ),
                   ),
 
                   // DRAWER ICON
@@ -384,7 +395,7 @@ class _HomeScreenState extends State<HomeScreen>
                     icon: Icon(
                       Icons.menu,
                       color: AppColors.greyColor,
-                      size: 26,
+                      size: 24,
                     ),
                     onPressed: () {
                       _scaffoldKey.currentState?.openEndDrawer();
@@ -410,7 +421,7 @@ class _HomeScreenState extends State<HomeScreen>
                   }
 
                   // SUCCESS STATE
-                  else if (state is GetAllPostsSuccessState) {
+                  if (state is GetAllPostsSuccessState) {
                     final posts = state.post;
                     return posts.isEmpty
                         // 0 POST
@@ -448,7 +459,7 @@ class _HomeScreenState extends State<HomeScreen>
                                       color: AppColors.whiteColor,
                                     ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           )
@@ -485,7 +496,7 @@ class _HomeScreenState extends State<HomeScreen>
                   }
 
                   // FAILURE STATE
-                  else if (state is GetAllPostsFailureState) {
+                  if (state is GetAllPostsFailureState) {
                     if (state.error.contains('Invalid Token')) {
                       context.go('/loginScreen');
                     }
@@ -544,17 +555,7 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       );
                     }
-                    return SizedBox(
-                      child: Center(
-                        child: Text(
-                          'Location off but no data.',
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: AppColors.greenColor,
-                          ),
-                        ),
-                      ),
-                    );
+                    return const PostSheemerWidget();
                   }
                 },
               ),
@@ -608,7 +609,7 @@ class _HomeScreenState extends State<HomeScreen>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        /// Day Dropdown
+                        // DAY
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedDay,
@@ -638,7 +639,7 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         SizedBox(width: 8),
 
-                        /// Month Dropdown
+                        // MONTH
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedMonth,
@@ -668,7 +669,7 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                         SizedBox(width: 8),
 
-                        /// Year Dropdown
+                        // YEAR
                         Expanded(
                           child: DropdownButtonFormField<String>(
                             value: selectedYear,
@@ -702,42 +703,29 @@ class _HomeScreenState extends State<HomeScreen>
                     BlocConsumer<GetGenderAndDOBBloc, GetGenderAndDOBState>(
                       listener:
                           (BuildContext context, GetGenderAndDOBState state) {
-                        ///failure state
+                        // FAILURE STATE
                         if (state is GetGenderAndDOBFailureState) {
                           context.pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(state.error
-                                      .contains('DOB can only be set once.')
-                                  ? AppLocalizations.of(context)!
-                                      .date_of_birth_saved_successfully
-                                  : state.error),
-                            ),
-                          );
+                          showSnackBar(context: context, message: state.error);
                         }
 
-                        ///success state
+                        // SUCCESS STATE
                         else if (state is GetGenderAndDOBSuccessState) {
                           context.pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(AppLocalizations.of(context)!
-                                  .date_of_birth_saved_successfully),
-                            ),
+                          showSnackBar(
+                            context: context,
+                            message: AppLocalizations.of(context)!
+                                .date_of_birth_saved_successfully,
                           );
                         }
                       },
                       builder: (context, state) {
-                        ///loading state
+                        // LOADING STATE
                         if (state is GetGenderAndDOBLoadingState) {
-                          return Center(
-                            child: BouncingLogoIndicator(
-                              logo: 'images/logo.svg',
-                            ),
-                          );
+                          return CustomCircularIndicator();
                         }
 
-                        ///save dob button
+                        // SAVE BUTTON
                         return ButtonContainerWidget(
                           text: AppLocalizations.of(context)!.save,
                           color: AppColors.primaryColor,
