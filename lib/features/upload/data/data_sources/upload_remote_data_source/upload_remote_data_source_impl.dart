@@ -40,6 +40,7 @@ class UploadRemoteDataSourceImpl implements UploadRemoteDataSource {
       Uri.parse(url),
     )
       ..headers['Cookie'] = cookies
+      ..headers['Authorization'] = 'Bearer $accessToken'
       ..fields['title'] = title
       ..fields['content'] = content ?? ''
       ..fields['type'] = type

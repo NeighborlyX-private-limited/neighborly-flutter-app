@@ -38,10 +38,12 @@ class SocketService {
     _socket?.on("error", (err) {
       print("CONNECTION ERROR:  ${err['message']}");
     });
+
     // ON ERROR-MESSAGE LISTENER
     _socket?.on("error-message", (data) {
       print('ERROR: $data');
     });
+
     // USER JOINED ROOM LISTENER
     _socket?.on("user-joined", (userId) {
       print('USER JOINED THE ROOM WITH USER ID: $userId');
@@ -59,9 +61,10 @@ class SocketService {
         onNewMessageReceived!(message);
       }
     });
+
     // MESSAGE DELETED
     _socket?.on("message-deleted", (data) {
-      print('MESSAGE DELETED:$data');
+      print('MESSAGE DELETED :$data');
       String deletedMessageId = data["messageId"] ?? '';
 
       if (messageDeleted != null) {
@@ -72,7 +75,7 @@ class SocketService {
 
 // DELETE MESSAGE
   void deleteMessage({required String groupId, required String messageId}) {
-    print('MESSAGE DELETE:$groupId $messageId');
+    print('DELETE MESSAGE WITH GROUP ID:$groupId AND MESSAGE ID $messageId');
     _socket?.emit(
       "delete-message",
       {
@@ -88,7 +91,7 @@ class SocketService {
     Map<String, dynamic> payload,
     bool isMsg,
   ) {
-    print('SEND MESSAGE:$payload');
+    print('SEND MESSAGE WITH PAYLOAD:$payload');
     _socket?.emit('send-message', payload);
   }
 
@@ -98,6 +101,7 @@ class SocketService {
 
   // JOIN ROOM EMITTER
   void joinRoom(String groupId) async {
+    print('JOIN ROOM WITH GROUP ID:$groupId');
     if (groupId.isNotEmpty) {
       final payload = {'groupId': groupId};
       _socket?.emit('join-room', payload);
@@ -106,6 +110,7 @@ class SocketService {
 
   // LEAVE ROOM EMITTER
   void leaveRoom(String groupId) async {
+    print('LEAVE ROOM WITH GROUP ID:$groupId');
     if (groupId.isNotEmpty) {
       final payload = {'groupId': groupId};
       _socket?.emit('leave-room', payload);
@@ -114,11 +119,13 @@ class SocketService {
 
   // DISPOSE
   void dispose(String roomId) {
+    print('DISPOSE SOCKET WITH GROUP ID:$roomId');
     if (roomId.isNotEmpty) {
       leaveRoom(roomId);
     }
     _socket?.disconnect();
     _socket?.dispose();
+
     _socket = null;
     print("SOCKET CONNECTION DISPOSE.");
     return;

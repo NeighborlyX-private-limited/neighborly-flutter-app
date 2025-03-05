@@ -10,52 +10,26 @@ class LocaleNotificationManager {
   static final StreamController<RemoteMessage> onLocaleClick =
       StreamController<RemoteMessage>.broadcast();
 
-  // static Future _onPayLoad(String? payload) async {
-  //   if (payload == null) return;
-  //   var message = RemoteMessage.fromMap(jsonDecode(payload));
-  //   onLocaleClick.add(message);
-  // }
-
-  // static Future<RemoteMessage?> getInitialMessage() async {
-  //   var _localeNotification = FlutterLocalNotificationsPlugin();
-  //   var payload = await _localeNotification.getNotificationAppLaunchDetails();
-  //   if (payload != null && payload.didNotificationLaunchApp) {
-  //     return RemoteMessage.fromMap(jsonDecode(payload ?? ''));
-  //   }
-  //   return null;
-  // }
-
   static Future init(
-    /// Drawable icon works only in forground
     String? appAndroidIcon,
-
-    /// Required to show head up notification in foreground
     String? androidChannelId,
-
-    /// Required to show head up notification in foreground
     String? androidChannelName,
-
-    /// Required to show head up notification in foreground
     String? androidChannelDescription,
   ) async {
     var flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    //! Android settings
+
     var initializationSettingsAndroid = AndroidInitializationSettings(
       appAndroidIcon ?? '@mipmap/ic_launcher',
     );
-    //! Ios setings
+
     const initializationSettingsIOS = DarwinInitializationSettings();
-    //! macos setings
-    // final initializationSettingsMac = MacOSInitializationSettings();
 
     final initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
-      // macOS: initializationSettingsMac,
     );
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      // onSelectNotification: _onPayLoad,
     );
   }
 
@@ -70,7 +44,6 @@ class LocaleNotificationManager {
     var localeNotification = FlutterLocalNotificationsPlugin();
     var smallIcon = notification.notification?.android?.smallIcon;
 
-    //! Android settings
     var android = AndroidNotificationDetails(
       androidChannelId ??
           notification.notification?.android?.channelId ??
@@ -78,7 +51,6 @@ class LocaleNotificationManager {
       androidChannelName ??
           notification.notification?.android?.channelId ??
           'FCM_Config',
-      // androidChannelDescription ?? notification.notification?.android?.channelId ?? 'FCM_Config',
       importance: _getImportance(notification.notification!),
       priority: Priority.high,
       styleInformation: BigTextStyleInformation(
@@ -87,7 +59,6 @@ class LocaleNotificationManager {
       ),
       ticker: notification.notification?.android?.ticker,
       icon: smallIcon == 'default' ? null : smallIcon,
-      // category: notification.category,
       groupKey: notification.collapseKey,
       showProgress: false,
       sound: notification.isDefaultAndroidSound

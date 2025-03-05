@@ -156,7 +156,11 @@ class LocationScreenState extends State<LocationScreen> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          leading: Icon(Icons.arrow_back_ios),
+          leading: GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Icon(Icons.arrow_back_ios)),
           centerTitle: true,
           title: Text(
             "Location",

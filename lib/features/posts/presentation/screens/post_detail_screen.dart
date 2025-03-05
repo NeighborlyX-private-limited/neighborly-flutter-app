@@ -5,9 +5,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/image_slider.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/widgets/video_widget.dart';
+import '../../../../core/entities/option_entity.dart';
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/helpers.dart';
@@ -27,17 +30,17 @@ import '../widgets/reaction_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostDetailScreen extends StatefulWidget {
-  final String postId;
-  final bool isPost;
   final String userId;
+  final String postId;
   final String commentId;
+  final bool isPost;
 
   const PostDetailScreen({
     super.key,
-    required this.postId,
     required this.userId,
-    required this.isPost,
+    required this.postId,
     required this.commentId,
+    required this.isPost,
   });
 
   @override
@@ -46,20 +49,24 @@ class PostDetailScreen extends StatefulWidget {
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
   late TextEditingController _commentController;
-  final FocusNode _commentFocusNode = FocusNode();
+  late FocusNode _commentFocusNode;
+  PostEntity? postEntity;
+
   bool isCommentFilled = false;
+  bool isrefresh = false;
   List<dynamic> comments = [];
   dynamic commentToReply;
 
-  /// init method
+  // INIT STATE
   @override
   void initState() {
     super.initState();
     _commentController = TextEditingController();
+    _commentFocusNode = FocusNode();
     _fetchPostAndComments();
   }
 
-  ///dispose method
+  // DISPOSE
   @override
   void dispose() {
     _commentController.dispose();
@@ -67,21 +74,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     super.dispose();
   }
 
-  /// fetch post comments
+  // FEATCH POST AND COMMENTS OF THAT POST
   void _fetchPostAndComments() {
     final postId = int.parse(widget.postId);
-    BlocProvider.of<GetPostByIdBloc>(context)
-        .add(GetPostByIdButtonPressedEvent(postId: postId));
-    BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
-        GetCommentsByPostIdButtonPressedEvent(
-            postId: postId, commentId: widget.commentId));
-  }
-
-  /// screen refersh methood
-  Future<void> _onRefresh() async {
-    final postId = int.parse(widget.postId);
-    BlocProvider.of<GetPostByIdBloc>(context)
-        .add(GetPostByIdButtonPressedEvent(postId: postId));
+    BlocProvider.of<GetPostByIdBloc>(context).add(
+      GetPostByIdButtonPressedEvent(postId: postId),
+    );
     BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
       GetCommentsByPostIdButtonPressedEvent(
         postId: postId,
@@ -90,27 +88,45 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
-  /// on replay tap
+  // REFRESH
+  Future<void> _onRefresh() async {
+    final postId = int.parse(widget.postId);
+    BlocProvider.of<GetPostByIdBloc>(context).add(
+      GetPostByIdButtonPressedEvent(postId: postId),
+    );
+    BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
+      GetCommentsByPostIdButtonPressedEvent(
+        postId: postId,
+        commentId: widget.commentId,
+      ),
+    );
+  }
+
+  // WHEN USER TAP ON REPLY BUTTON
   void _handleReplyTap(dynamic commentOrReply) {
     setState(() {
       commentToReply = commentOrReply;
     });
   }
 
+  // BUILD
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        context.go('/home');
+        context.pop();
       },
       child: SafeArea(
         child: Scaffold(
           backgroundColor: AppColors.whiteColor,
+          // APPBAR
           appBar: AppBar(
             backgroundColor: AppColors.whiteColor,
             leading: InkWell(
-              child: const Icon(Icons.arrow_back, size: 15),
+              child: const Icon(
+                Icons.arrow_back_ios,
+              ),
               onTap: () => context.pop(),
             ),
             centerTitle: true,
@@ -118,19 +134,45 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               widget.isPost
                   ? AppLocalizations.of(context)!.post
                   : AppLocalizations.of(context)!.poll,
+              style: onboardingHeading2Style,
             ),
           ),
+
+          // BODY
           body: RefreshIndicator(
             onRefresh: _onRefresh,
-            child: BlocBuilder<GetPostByIdBloc, GetPostByIdState>(
+            // GET POST BY POST ID
+            child: BlocConsumer<GetPostByIdBloc, GetPostByIdState>(
+              listener: (BuildContext context, GetPostByIdState state) {
+                // GET POST BY POST ID SUCCESS STATE
+                if (state is GetPostByIdSuccessState) {
+                  if (state.post.type == 'poll') {
+                    postEntity = state.post;
+                  }
+                }
+              },
               builder: (context, postState) {
-                ///Get Post By Id Loading State
+                // GET POST BY POST ID LOADING STATE
                 if (postState is GetPostByIdLoadingState) {
                   return const PostDetailSheemer();
                 }
 
-                ///Get Post By Id Success State
-                else if (postState is GetPostByIdSuccessState) {
+                // GET POST BY POST ID FAILURE STATE
+                if (postState is GetPostByIdFailureState) {
+                  return SomethingWentWrong(
+                    imagePath: 'assets/not_found.svg',
+                    title:
+                        AppLocalizations.of(context)!.aaah_something_went_wrong,
+                    message: AppLocalizations.of(context)!.post_not_found,
+                    buttonText: AppLocalizations.of(context)!.go_back,
+                    onButtonPressed: () {
+                      context.pop();
+                    },
+                  );
+                }
+
+                // GET POST BY POST ID SUCCESS STATE
+                if (postState is GetPostByIdSuccessState) {
                   return Column(
                     children: [
                       Expanded(
@@ -145,20 +187,31 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                             const SizedBox(height: 10),
                             Divider(color: Colors.grey[300], thickness: 1),
                             const SizedBox(height: 20),
+
+                            // GET COMMENTS BY POST ID
                             BlocBuilder<GetCommentsByPostIdBloc,
                                 GetCommentsByPostIdState>(
                               builder: (context, commentState) {
-                                ///Get comments By Post Id Success State
+                                // GET COMMENTS BY POST ID FAILURE STATE
+                                if (commentState
+                                    is GetcommentsByPostIdFailureState) {
+                                  return Center(
+                                    child: Text(commentState.error),
+                                  );
+                                }
+                                // GET COMMENTS BY POST ID SUCCESS STATE AND 0 COMMENTS
                                 if (commentState
                                     is GetcommentsByPostIdSuccessState) {
                                   comments = commentState.comments;
                                   if (comments.isEmpty) {
                                     return Center(
-                                      child: Text(AppLocalizations.of(context)!
-                                          .no_comments_yet),
+                                      child: Text(
+                                        AppLocalizations.of(context)!
+                                            .no_comments_yet,
+                                      ),
                                     );
                                   }
-
+                                  // GET COMMENTS BY POST ID SUCCESS STATE AND 0+ COMMENTS
                                   return ListView.separated(
                                     shrinkWrap: true,
                                     physics:
@@ -174,7 +227,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                           context
                                               .read<GetCommentsByPostIdBloc>()
                                               .deleteComment(
-                                                  comments[index].commentid);
+                                                comments[index].commentid,
+                                              );
                                         },
                                       );
                                     },
@@ -183,42 +237,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                   );
                                 }
 
-                                ///Get comments By Post Id Failure State
-                                else if (commentState
-                                    is GetcommentsByPostIdFailureState) {
-                                  return Center(
-                                    child: Text(commentState.error),
-                                  );
-                                } else {
-                                  return const SizedBox();
-                                }
+                                return const SizedBox();
                               },
                             ),
                           ],
                         ),
                       ),
 
-                      /// comment input section
+                      // COMMENT INPUT SECTION
                       _buildCommentInputSection(),
                     ],
                   );
                 }
-
-                ///Get Post By Id Failure State
-                else if (postState is GetPostByIdFailureState) {
-                  return SomethingWentWrong(
-                    imagePath: 'assets/not_found.svg',
-                    title:
-                        AppLocalizations.of(context)!.aaah_something_went_wrong,
-                    message: AppLocalizations.of(context)!.post_not_found,
-                    buttonText: AppLocalizations.of(context)!.go_back,
-                    onButtonPressed: () {
-                      context.pop();
-                    },
-                  );
-                } else {
-                  return const SizedBox();
-                }
+                return const SizedBox();
               },
             ),
           ),
@@ -227,7 +258,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
-  /// comment input section
+  // COMMENT INPUT WIDGET
   Widget _buildCommentInputSection() {
     bool isReply = commentToReply != null;
     return SingleChildScrollView(
@@ -235,10 +266,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Row(
           children: [
+            // INPUT TEXT FIELD
             Expanded(
               child: TextField(
-                textCapitalization: TextCapitalization.sentences,
                 controller: _commentController,
+                textCapitalization: TextCapitalization.sentences,
                 focusNode: _commentFocusNode,
                 onChanged: (value) {
                   setState(() {
@@ -250,7 +282,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ? 'Reply to ${commentToReply is CommentEntity ? commentToReply.userName : (commentToReply as ReplyEntity).userName}'
                       : 'Add a comment',
                   border: const OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(48)),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(48),
+                    ),
                   ),
                 ),
               ),
@@ -258,75 +292,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             const SizedBox(width: 10),
             BlocConsumer<AddCommentBloc, AddCommentState>(
               listener: (context, state) {
+                // ADD COMMENT SUCCESS STATE
                 if (state is AddCommentSuccessState) {
                   _fetchPostAndComments();
                 }
-                // if (state is AddCommentSuccessState) {
-                //   showDialog(
-                //     context: context,
-                //     builder: (BuildContext context) {
-                //       return Dialog(
-                //         shape: RoundedRectangleBorder(
-                //           borderRadius: BorderRadius.circular(20),
-                //         ),
-                //         child: Padding(
-                //           padding: const EdgeInsets.all(20.0),
-                //           child: Column(
-                //             mainAxisSize: MainAxisSize.min,
-                //             children: <Widget>[
-                //               // Placeholder for the image
-                //               SvgPicture.asset(
-                //                 'assets/something_went_wrong.svg',
-                //                 width: 150,
-                //                 height: 130,
-                //               ),
-                //               const SizedBox(height: 20),
-                //               const Text(
-                //                 'Aaah! Something went wrong',
-                //                 style: TextStyle(
-                //                   fontSize: 18,
-                //                   fontWeight: FontWeight.bold,
-                //                 ),
-                //                 textAlign: TextAlign.center,
-                //               ),
-                //               const SizedBox(height: 10),
-                //               const Text(
-                //                 "Sorry,You are banned.\nPlease try it after some time",
-                //                 style: TextStyle(
-                //                   fontSize: 14,
-                //                   color: Colors.grey,
-                //                 ),
-                //                 textAlign: TextAlign.center,
-                //               ),
-                //               const SizedBox(height: 20),
-                //               ElevatedButton(
-                //                 onPressed: () {
-                //                   Navigator.of(context).pop();
-                //                 },
-                //                 style: ElevatedButton.styleFrom(
-                //                   backgroundColor: AppColors.primaryColor,
-                //                   shape: RoundedRectangleBorder(
-                //                     borderRadius: BorderRadius.circular(20),
-                //                   ),
-                //                 ),
-                //                 child: const Padding(
-                //                   padding: EdgeInsets.symmetric(
-                //                       horizontal: 20, vertical: 10),
-                //                   child: Text(
-                //                     'Go Back',
-                //                     style: TextStyle(
-                //                         fontSize: 16, color: Colors.white),
-                //                   ),
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //       );
-                //     },
-                //   );
-                // }
-                /// Add Comment Failure State state
+
+                // ADD COMMENT FAILURE STATE
                 if (state is AddCommentFailureState) {
                   if (state.error.contains("Sorry, you are banned")) {
                     showDialog(
@@ -396,33 +367,32 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       },
                     );
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(state.error),
-                      ),
+                    showSnackBar(
+                      context: context,
+                      message: state.error,
                     );
                   }
                 }
               },
               builder: (context, state) {
-                /// comment and reply send button
+                // SEND BUTTON
                 return InkWell(
                   onTap: () {
                     if (isCommentFilled) {
                       final postId = int.parse(widget.postId);
 
-                      /// Handle sending reply to comment
+                      // SEND REPLY
                       if (isReply) {
                         BlocProvider.of<AddCommentBloc>(context).add(
                           AddCommentButtonPressedEvent(
+                            postId: postId,
                             commentId: commentToReply.commentid,
                             text: _commentController.text,
-                            postId: postId,
                           ),
                         );
                       }
 
-                      /// Handle sending new comment
+                      // SEND COMMENT
                       else {
                         String propic =
                             ShardPrefHelper.getUserProfilePicture()!;
@@ -444,7 +414,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 bools: 0,
                                 userFeedback: '',
                                 postid: postId.toString(),
-                                // commenterProfilePicture: '',
                               ),
                             );
                           },
@@ -475,7 +444,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       child: const Icon(
                         Icons.arrow_upward,
                         color: AppColors.whiteColor,
-                        size: 30,
+                        size: 32,
                       ),
                     ),
                   ),
@@ -488,10 +457,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
-  /// poll widget
+  // POLL WIDGET
   Column _buildPollWidget(GetPostByIdSuccessState postState) {
     void showBottomSheet() {
-      bottomSheet(context);
+      menuBottomSheet(context);
     }
 
     return Column(
@@ -665,39 +634,112 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         const SizedBox(
           height: 10,
         ),
-        for (var option in postState.post.pollOptions!)
+        for (var option in postEntity?.pollOptions! ?? [])
           OptionCard(
             key: UniqueKey(),
-            onSelectOptionCallback: () {},
+            onSelectOptionCallback: onSelectOptionCallback,
             option: option,
-            totalVotes: calculateTotalVotes(postState.post.pollOptions!),
+            totalVotes: calculateTotalVotes(postEntity?.pollOptions! ?? []),
             pollId: postState.post.id,
-            allowMultiSelect: postState.post.allowMultipleVotes ?? false,
-            otherOptions: postState.post.pollOptions ?? [],
-            alreadyselected: true,
+            allowMultiSelect: postEntity?.allowMultipleVotes ?? false,
+            otherOptions: postEntity?.pollOptions ?? [],
+            alreadyselected: option.userVoted,
           ),
       ],
     );
   }
 
-  ///report bottom sheet
-  Future<dynamic> bottomSheet(BuildContext context) {
+  // OPTION CARD
+  onSelectOptionCallback(
+    int optionid,
+  ) {
+    print('call');
+    if (postEntity?.allowMultipleVotes ?? false) {
+      print('call 2');
+      List<OptionEntity>? newOptions =
+          List<OptionEntity>.from(postEntity?.pollOptions ?? []);
+
+      for (int i = 0; i < newOptions.length; i++) {
+        newOptions[i] = newOptions[i].copyWith(
+          userVoted: newOptions[i].optionId == optionid
+              ? true
+              : newOptions[i].userVoted,
+          votes: newOptions[i].optionId == optionid
+              ? (newOptions[i].votes ?? 0) + 1
+              : newOptions[i].votes,
+        );
+      }
+
+      setState(() {
+        // _fetchPostAndComments();
+        print('call set');
+        postEntity = postEntity?.copyWith(
+          pollOptions: newOptions,
+        );
+        isrefresh = true;
+      });
+
+      Future.delayed(Duration(milliseconds: 10), () {
+        print('call set 2');
+        setState(() {
+          isrefresh = false;
+        });
+      });
+    } else {
+      print('call4');
+      List<OptionEntity>? newOptions =
+          List<OptionEntity>.from(postEntity?.pollOptions ?? []);
+
+      for (int i = 0; i < newOptions.length; i++) {
+        newOptions[i] = newOptions[i].copyWith(
+          userVoted: newOptions[i].optionId == optionid
+              ? true
+              : newOptions[i].userVoted,
+          votes: newOptions[i].optionId == optionid
+              ? (newOptions[i].votes ?? 0) + 1
+              : newOptions[i].votes,
+        );
+      }
+
+      setState(() {
+        // _fetchPostAndComments();
+        print('call4 set');
+        postEntity = postEntity?.copyWith(
+          pollOptions: newOptions,
+        );
+        isrefresh = true;
+      });
+
+      Future.delayed(Duration(milliseconds: 10), () {
+        print('call 5 set');
+        setState(() {
+          isrefresh = false;
+        });
+      });
+    }
+  }
+
+  // MENU BUTTON SHEET
+  Future<dynamic> menuBottomSheet(BuildContext context) {
     void showReportReasonBottomSheet() {
       reportReasonBottomSheet(context);
     }
 
     return showModalBottomSheet(
-      useRootNavigator: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: AppColors.whiteColor,
-          height: 90,
+          height: 96,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           child: userId != widget.userId
               ? InkWell(
                   onTap: () {
+                    Navigator.pop(context);
                     showReportReasonBottomSheet();
                   },
                   child: Row(
@@ -715,38 +757,31 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 )
               : BlocConsumer<DeletePostBloc, DeletePostState>(
                   listener: (context, state) {
-                    ///Delete Post Success State
+                    // DELETE POST SUCCESS STATE
                     if (state is DeletePostSuccessState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            widget.isPost
-                                ? AppLocalizations.of(context)!.post_deleted
-                                : AppLocalizations.of(context)!.poll_deleted,
-                          ),
-                        ),
+                      showSnackBar(
+                        context: context,
+                        message: widget.isPost
+                            ? AppLocalizations.of(context)!.post_deleted
+                            : AppLocalizations.of(context)!.poll_deleted,
                       );
                       context.pop(context);
                       context.pop(context);
                     }
 
-                    ///Delete Post Failure State
+                    // DELETE POST FAILURE STATE
                     else if (state is DeletePostFailureState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.error),
-                        ),
+                      context.pop(context);
+                      showSnackBar(
+                        context: context,
+                        message: state.error,
                       );
                     }
                   },
                   builder: (context, state) {
-                    ///Delete Post Loading State
+                    // DELETE POST LOADING STATE
                     if (state is DeletePostLoadingState) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
+                      return CustomCircularIndicator();
                     }
                     return InkWell(
                       onTap: () {
@@ -780,54 +815,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
-  /// report confirmation bottom sheet
-  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
-    return showModalBottomSheet(
-      useRootNavigator: true,
-      context: context,
-      builder: (BuildContext context) {
-        return Container(
-          color: AppColors.whiteColor,
-          height: 240,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              const SizedBox(
-                height: 4,
-              ),
-              Image.asset('assets/report_confirmation.png'),
-              Text(
-                AppLocalizations.of(context)!.thanks_for_letting_us_know,
-                style: onboardingHeading2Style,
-              ),
-              Text(
-                textAlign: TextAlign.center,
-                AppLocalizations.of(context)!
-                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
-                style: blackonboardingBody1Style,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
+  // REPORT REASON BOTTOM SHEET
   Future<dynamic> reportReasonBottomSheet(BuildContext context) {
     void showReportConfirmationBottomSheet() {
       reportConfirmationBottomSheet(context);
     }
 
+    // LIST OF REPORT REASON
     List<String> reportReasons = [
       AppLocalizations.of(context)!.inappropriate_content,
       AppLocalizations.of(context)!.spam,
@@ -837,57 +831,38 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     ];
 
     return showModalBottomSheet(
-      useRootNavigator: true,
       context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
       builder: (BuildContext context) {
         return BlocConsumer<ReportPostBloc, ReportPostState>(
           listener: (context, state) {
-            ///Report Post Success State
+            // REPORT POST SUCCESS STATE
             if (state is ReportPostSuccessState) {
-              Navigator.pop(context);
-              Navigator.pop(context);
+              Navigator.of(context).pop();
               showReportConfirmationBottomSheet();
             }
 
-            ///Report Post Failure State
+            // REPORT POST FAILURE STATE
             else if (state is ReportPostFailureState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.error),
-                ),
-              );
+              Navigator.of(context).pop();
+              showSnackBar(context: context, message: state.error);
             }
           },
           builder: (context, state) {
             return SingleChildScrollView(
               child: Container(
-                color: AppColors.whiteColor,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 5,
-                        decoration: BoxDecoration(
-                          color: AppColors.greyColor,
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-
-                    ///Report Post Loading State
+                    // REPORT POST LOADING STATE
                     state is ReportPostLoadingState
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.primaryColor,
-                            ),
-                          )
+                        ? const CustomCircularIndicator()
                         : Center(
                             child: Text(
                               AppLocalizations.of(context)!.reason_to_report,
@@ -897,117 +872,100 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     const SizedBox(
                       height: 10,
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            context.read<ReportPostBloc>().add(
-                                  ReportButtonPressedEvent(
-                                    type: 'post',
-                                    postId: widget.postId.toString(),
-                                    reason: reportReasons[0],
-                                  ),
-                                );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[0],
-                                style: blackonboardingBody1Style,
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.postId.toString(),
+                                reason: reportReasons[0],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () {
-                            context.read<ReportPostBloc>().add(
-                                  ReportButtonPressedEvent(
-                                    type: 'post',
-                                    postId: widget.postId,
-                                    reason: reportReasons[1],
-                                  ),
-                                );
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[1],
-                                style: blackonboardingBody1Style,
+                            );
+                      },
+                      title: Text(
+                        reportReasons[0],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.postId.toString(),
+                                reason: reportReasons[1],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
-                                  type: 'post',
-                                  postId: widget.postId,
-                                  reason: reportReasons[2],
-                                ),
+                            );
+                      },
+                      title: Text(
+                        reportReasons[1],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.postId.toString(),
+                                reason: reportReasons[2],
                               ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[2],
-                                style: blackonboardingBody1Style,
+                            );
+                      },
+                      title: Text(
+                        reportReasons[2],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.postId.toString(),
+                                reason: reportReasons[3],
                               ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
-                                  type: 'post',
-                                  postId: widget.postId,
-                                  reason: reportReasons[3],
-                                ),
+                            );
+                      },
+                      title: Text(
+                        reportReasons[3],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
+                    ),
+                    ListTile(
+                      onTap: () {
+                        context.read<ReportPostBloc>().add(
+                              ReportButtonPressedEvent(
+                                type: 'content',
+                                postId: widget.postId.toString(),
+                                reason: reportReasons[4],
                               ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[3],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        InkWell(
-                          onTap: () => context.read<ReportPostBloc>().add(
-                                ReportButtonPressedEvent(
-                                  postId: widget.postId,
-                                  type: 'post',
-                                  reason: reportReasons[4],
-                                ),
-                              ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                reportReasons[4],
-                                style: blackonboardingBody1Style,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                            );
+                      },
+                      title: Text(
+                        reportReasons[4],
+                        style: blackonboardingBody1Style,
+                      ),
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity:
+                          VisualDensity(horizontal: -4, vertical: -4),
+                      minTileHeight: 30,
                     ),
                   ],
                 ),
@@ -1019,10 +977,292 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
+// REPORT POST CONFIRMATION BOTTOM SHEET
+  Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.whiteColor,
+      showDragHandle: true,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        Future.delayed(Duration(seconds: 2), () {
+          if (context.mounted) {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+              context.pop(context);
+            }
+          }
+        });
+        return Container(
+          color: AppColors.whiteColor,
+          height: 240,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.asset('assets/report_confirmation.png'),
+              Text(
+                AppLocalizations.of(context)!.thanks_for_letting_us_know,
+                style: onboardingHeading2Style,
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                AppLocalizations.of(context)!
+                    .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
+                style: blackonboardingBody1Style,
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  // /// report confirmation bottom sheet
+  // Future<dynamic> reportConfirmationBottomSheet(BuildContext context) {
+  //   return showModalBottomSheet(
+  //     useRootNavigator: true,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         color: AppColors.whiteColor,
+  //         height: 240,
+  //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.center,
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             Container(
+  //               width: 40,
+  //               height: 4,
+  //               decoration: BoxDecoration(
+  //                 color: Colors.grey[300],
+  //                 borderRadius: BorderRadius.circular(40),
+  //               ),
+  //             ),
+  //             const SizedBox(
+  //               height: 4,
+  //             ),
+  //             Image.asset('assets/report_confirmation.png'),
+  //             Text(
+  //               AppLocalizations.of(context)!.thanks_for_letting_us_know,
+  //               style: onboardingHeading2Style,
+  //             ),
+  //             Text(
+  //               textAlign: TextAlign.center,
+  //               AppLocalizations.of(context)!
+  //                   .we_appreciate_your_help_in_keeping_our_community_safe_and_respectful_our_team_will_review_the_content_shortly,
+  //               style: blackonboardingBody1Style,
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  // Future<dynamic> reportReasonBottomSheet(BuildContext context) {
+  //   void showReportConfirmationBottomSheet() {
+  //     reportConfirmationBottomSheet(context);
+  //   }
+
+  //   List<String> reportReasons = [
+  //     AppLocalizations.of(context)!.inappropriate_content,
+  //     AppLocalizations.of(context)!.spam,
+  //     AppLocalizations.of(context)!.harassment_or_hate_speech,
+  //     AppLocalizations.of(context)!.violence_or_dangerous_organizations,
+  //     AppLocalizations.of(context)!.intellectual_property_violation,
+  //   ];
+
+  //   return showModalBottomSheet(
+  //     useRootNavigator: true,
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return BlocConsumer<ReportPostBloc, ReportPostState>(
+  //         listener: (context, state) {
+  //           ///Report Post Success State
+  //           if (state is ReportPostSuccessState) {
+  //             Navigator.pop(context);
+  //             showReportConfirmationBottomSheet();
+  //           }
+
+  //           ///Report Post Failure State
+  //           else if (state is ReportPostFailureState) {
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               SnackBar(
+  //                 content: Text(state.error),
+  //               ),
+  //             );
+  //           }
+  //         },
+  //         builder: (context, state) {
+  //           return SingleChildScrollView(
+  //             child: Container(
+  //               color: AppColors.whiteColor,
+  //               padding:
+  //                   const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Center(
+  //                     child: Container(
+  //                       width: 40,
+  //                       height: 5,
+  //                       decoration: BoxDecoration(
+  //                         color: AppColors.greyColor,
+  //                         borderRadius: BorderRadius.circular(40),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   const SizedBox(
+  //                     height: 15,
+  //                   ),
+
+  //                   ///Report Post Loading State
+  //                   state is ReportPostLoadingState
+  //                       ? const Center(
+  //                           child: CircularProgressIndicator(
+  //                             color: AppColors.primaryColor,
+  //                           ),
+  //                         )
+  //                       : Center(
+  //                           child: Text(
+  //                             AppLocalizations.of(context)!.reason_to_report,
+  //                             style: onboardingHeading2Style,
+  //                           ),
+  //                         ),
+  //                   const SizedBox(
+  //                     height: 10,
+  //                   ),
+  //                   Column(
+  //                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       InkWell(
+  //                         onTap: () {
+  //                           context.read<ReportPostBloc>().add(
+  //                                 ReportButtonPressedEvent(
+  //                                   type: 'content',
+  //                                   postId: widget.postId.toString(),
+  //                                   reason: reportReasons[0],
+  //                                 ),
+  //                               );
+  //                         },
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.start,
+  //                           children: [
+  //                             Text(
+  //                               reportReasons[0],
+  //                               style: blackonboardingBody1Style,
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       const SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       InkWell(
+  //                         onTap: () {
+  //                           context.read<ReportPostBloc>().add(
+  //                                 ReportButtonPressedEvent(
+  //                                   type: 'content',
+  //                                   postId: widget.postId,
+  //                                   reason: reportReasons[1],
+  //                                 ),
+  //                               );
+  //                         },
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.start,
+  //                           children: [
+  //                             Text(
+  //                               reportReasons[1],
+  //                               style: blackonboardingBody1Style,
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       const SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       InkWell(
+  //                         onTap: () => context.read<ReportPostBloc>().add(
+  //                               ReportButtonPressedEvent(
+  //                                 type: 'content',
+  //                                 postId: widget.postId,
+  //                                 reason: reportReasons[2],
+  //                               ),
+  //                             ),
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.start,
+  //                           children: [
+  //                             Text(
+  //                               reportReasons[2],
+  //                               style: blackonboardingBody1Style,
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       const SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       InkWell(
+  //                         onTap: () => context.read<ReportPostBloc>().add(
+  //                               ReportButtonPressedEvent(
+  //                                 type: 'content',
+  //                                 postId: widget.postId,
+  //                                 reason: reportReasons[3],
+  //                               ),
+  //                             ),
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.start,
+  //                           children: [
+  //                             Text(
+  //                               reportReasons[3],
+  //                               style: blackonboardingBody1Style,
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       const SizedBox(
+  //                         height: 10,
+  //                       ),
+  //                       InkWell(
+  //                         onTap: () => context.read<ReportPostBloc>().add(
+  //                               ReportButtonPressedEvent(
+  //                                 postId: widget.postId,
+  //                                 type: 'content',
+  //                                 reason: reportReasons[4],
+  //                               ),
+  //                             ),
+  //                         child: Row(
+  //                           mainAxisAlignment: MainAxisAlignment.start,
+  //                           children: [
+  //                             Text(
+  //                               reportReasons[4],
+  //                               style: blackonboardingBody1Style,
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           );
+  //         },
+  //       );
+  //     },
+  //   );
+  // }
+
   /// build post detail section
   Widget _buildPostDetails(PostEntity post) {
     void showBottomSheet() {
-      bottomSheet(context);
+      menuBottomSheet(context);
     }
 
     return Column(

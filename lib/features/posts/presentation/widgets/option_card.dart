@@ -8,6 +8,7 @@ import '../bloc/vote_poll_bloc/vote_poll_bloc.dart';
 
 class OptionCard extends StatefulWidget {
   final Function onSelectOptionCallback;
+  // final Function onRefresh;
   final OptionEntity option;
   final double totalVotes;
   final num pollId;

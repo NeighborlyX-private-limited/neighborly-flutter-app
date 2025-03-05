@@ -139,7 +139,7 @@ class _CommunityAdminSetScreenState extends State<CommunityAdminSetScreen> {
                   svgPath: 'assets/menu_type.svg',
                   iconSize: 25,
                   onTap: () {
-                    context.push('/group-type');
+                    context.push('/group-type'); // Wait for screen pop
                   },
                 ),
 

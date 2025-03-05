@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../../../core/theme/colors.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/chat_room_model.dart';
 
@@ -110,7 +111,8 @@ class ChatTileWidget extends StatelessWidget {
                         width: 10,
                       ),
                       Text(
-                        timeAgoArea(room.lastMessageDate),
+                        formatTimeDifference(room.lastMessageDate),
+                        // timeAgoArea(room.lastMessageDate),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(

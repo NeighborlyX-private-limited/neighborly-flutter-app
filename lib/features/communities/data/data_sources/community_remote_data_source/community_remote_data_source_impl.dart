@@ -24,6 +24,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     File? pictureFile,
   }) async {
     String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
@@ -44,6 +45,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       Uri.parse(url).replace(queryParameters: queryParameters),
     )
       ..headers['Cookie'] = cookies
+      ..headers['Authorization'] = 'Bearer $accessToken'
       ..fields['name'] = community.name
       ..fields['isOpen'] = community.isPublic.toString()
       ..fields['description'] = community.description
@@ -559,7 +561,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
         },
       ),
     );
-
+    print('UPDATE GROUP TYPE:${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
     } else {

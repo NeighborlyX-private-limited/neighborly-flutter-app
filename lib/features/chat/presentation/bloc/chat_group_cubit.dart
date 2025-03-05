@@ -12,6 +12,7 @@ part 'chat_group_state.dart';
 class ChatGroupCubit extends Cubit<ChatGroupState> {
   final GetChatGroupRoomMessagesUseCase getChatGroupRoomMessagesUseCase;
   final SocketService socketService;
+
   ChatGroupCubit(
     this.getChatGroupRoomMessagesUseCase,
     this.socketService,
@@ -19,24 +20,34 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   String? userName = ShardPrefHelper.getUsername();
   String? userImage = ShardPrefHelper.getUserProfilePicture();
   String? userId = ShardPrefHelper.getUserID();
-
+  int page = 1;
+  bool hasReachedMax = false;
   void init(String roomId) async {
+    page = 1;
+    hasReachedMax = false;
+    print('starting page:$page and starting hasReachedMax:$hasReachedMax');
     emit(state.copyWith(roomId: roomId));
-
+    emit(
+      state.copyWith(
+        roomId: roomId,
+        messages: [],
+        hasReachedMax: hasReachedMax,
+        page: page,
+      ),
+    );
     // CONNECT SOCKET
     socketService.connect(groupId: roomId);
 
     // FEATCH GROUP MESSAGES
     await getGroupRoomMessages(roomId: roomId);
 
+    // UPDATE MESSAGE LIST AFTER DELETE A MESSAGE
     socketService.messageDeleted = (messageId) {
-      print('DELETED MESSAGE ID: $messageId');
       updateMessage(messageId);
     };
 
-    // LISTEN NEW MESSAGE
+    // UPDATE MESSAGE LIST AFTER RECEIVING A NEW MESSAGE
     socketService.onNewMessageReceived = (message) {
-      print('NEW MESSAGE RECEIVED:$message');
       ChatMessageModel chatmodel = ChatMessageModel.fromJsonList([
         {
           'id': message['_id'],
@@ -74,36 +85,34 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     };
   }
 
+  // UPDATE MESSAGE LIST AFTER DELETING A MESSAGE
   void updateMessage(String id) {
     List<ChatMessageModel> newMessages = state.messages
         .map((message) =>
             message.id == id ? message.copyWith(isDeleted: true) : message)
-        .toList(); // ✅ Creates a new list reference
+        .toList();
 
-    print('🚀 State Before Emit: $newMessages');
-
-    emit(state.copyWith(
-      status: Status.success,
-      messages: List.from(newMessages), // ✅ Ensures new list reference
-    ));
-
-    print('🔥 State After Emit: ${state.messages}');
+    emit(
+      state.copyWith(
+        status: Status.success,
+        messages: List.from(newMessages),
+      ),
+    );
   }
 
+  // UPDATE MESSAGE LIST AFTER PINING A MESSAGE
   void updateMessageForPinned(String id, bool isPinned) {
     List<ChatMessageModel> newMessages = state.messages
         .map((message) =>
             message.id == id ? message.copyWith(isPinned: isPinned) : message)
-        .toList(); // ✅ Creates a new list reference
+        .toList();
 
-    print('🚀 State Before Emit: $newMessages');
-
-    emit(state.copyWith(
-      status: Status.success,
-      messages: List.from(newMessages), // ✅ Ensures new list reference
-    ));
-
-    print('🔥 State After Emit: ${state.messages}');
+    emit(
+      state.copyWith(
+        status: Status.success,
+        messages: List.from(newMessages),
+      ),
+    );
   }
 
   // ADD RECEIVED MESSAGE INTO THE CURRENT STATE
@@ -112,8 +121,8 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
         List<ChatMessageModel>.from(state.messages);
 
     final updatedMessageList = [
+      ...[newMessage],
       ...oldMessages,
-      ...[newMessage]
     ];
     emit(state.copyWith(status: Status.success, messages: updatedMessageList));
   }
@@ -122,9 +131,10 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
   Future getGroupRoomMessages({
     required roomId,
   }) async {
+    if (hasReachedMax) return;
     emit(state.copyWith(status: Status.loading));
     final result = await getChatGroupRoomMessagesUseCase(
-      roomId: state.roomId,
+      roomId: roomId,
     );
     result.fold(
       (failure) {
@@ -137,25 +147,29 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
         );
       },
       (messageList) {
-        int pageNumber = state.page;
-        print('message length: ${messageList.length} and page $pageNumber');
+        hasReachedMax = messageList.length < 20;
 
         emit(
-          state.copyWith(status: Status.success, messages: messageList),
+          state.copyWith(
+            status: Status.success,
+            messages: messageList,
+            hasReachedMax: hasReachedMax,
+            page: 1,
+          ),
         );
       },
     );
   }
 
   // FEATCH OLDER MESSAGE WITH PAGIGATION
-  Future<void> fetchOlderMessages() async {
-    if (state.status == Status.loading) return;
+  Future<void> fetchOlderMessages(String roomId) async {
+    if (hasReachedMax || state.status == Status.loading) return;
     try {
       List<ChatMessageModel> olderMessages = state.messages;
 
       final result = await getChatGroupRoomMessagesUseCase(
-        roomId: state.roomId,
-        page: state.page + 1,
+        roomId: roomId,
+        page: page + 1,
       );
 
       result.fold(
@@ -169,20 +183,24 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
           );
         },
         (messageList) {
-          int newPage = state.page;
-          // If messages exist, append them
-          if (messageList.length>=15) {
-            newPage += 1;
+          if (messageList.length < 20) {
+            hasReachedMax = true;
+          } else {
+            page++;
           }
-          // int pageNumber = state.page;
-          // print('message length: ${messageList.length} and page $pageNumber');
-          final updatedMessages = [...messageList, ...olderMessages];
-          // if (messageList.length < 15) {
-          //   pageNumber = pageNumber;
-          // } else {
-          //   pageNumber += 1;
-          // }
-          emit(state.copyWith(messages: updatedMessages, page: newPage));
+
+          final updatedMessages = [
+            ...olderMessages,
+            ...messageList,
+          ];
+
+          emit(
+            state.copyWith(
+              messages: updatedMessages,
+              hasReachedMax: hasReachedMax,
+              page: page,
+            ),
+          );
         },
       );
     } catch (e) {
@@ -203,7 +221,6 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     required String groupId,
     required String messageId,
   }) {
-    print('DELETE MESSAGE CALLED IN CUBIT');
     socketService.deleteMessage(groupId: groupId, messageId: messageId);
   }
 

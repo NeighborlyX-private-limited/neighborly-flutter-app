@@ -145,28 +145,29 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                         const SizedBox(width: 10),
 
                         // MENU BUTTON
-                        AppbatButton(
-                          onTap: () {
-                            if ((state.community?.isAdmin ?? false) &&
-                                (state.community?.isJoined ?? false)) {
-                              context.push(
-                                '/group-admin',
-                                extra: state.community,
-                              );
-                            } else {
-                              if (state.community?.isJoined ?? false) {
-                                userBottomSheetMenu(
-                                  context: context,
-                                  community: state.community,
+                        if (state.community?.isJoined ?? false)
+                          AppbatButton(
+                            onTap: () {
+                              if ((state.community?.isAdmin ?? false) &&
+                                  (state.community?.isJoined ?? false)) {
+                                context.push(
+                                  '/group-admin',
+                                  extra: state.community,
                                 );
                               } else {
-                                joinGroupBottomSheet(context);
+                                if (state.community?.isJoined ?? false) {
+                                  userBottomSheetMenu(
+                                    context: context,
+                                    community: state.community,
+                                  );
+                                } else {
+                                  joinGroupBottomSheet(context);
+                                }
                               }
-                            }
-                          },
-                          icon: Icons.more_vert_outlined,
-                          iconSize: 24,
-                        ),
+                            },
+                            icon: Icons.more_vert_outlined,
+                            iconSize: 24,
+                          ),
                         const SizedBox(width: 16),
                       ],
                     )
@@ -626,11 +627,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[0],
                         style: blackonboardingBody1Style,
@@ -650,11 +646,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[1],
                         style: blackonboardingBody1Style,
@@ -674,11 +665,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[2],
                         style: blackonboardingBody1Style,
@@ -698,11 +684,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[3],
                         style: blackonboardingBody1Style,
@@ -722,11 +703,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[4],
                         style: blackonboardingBody1Style,

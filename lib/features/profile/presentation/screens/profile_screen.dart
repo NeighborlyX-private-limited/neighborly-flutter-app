@@ -93,14 +93,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                         pinned: true,
                         backgroundColor: AppColors.whiteColor,
                         expandedHeight: 300.0,
-                        // leading: IconButton(
-                        //   icon: const Icon(Icons.arrow_back),
-                        //   onPressed: () {
-                        //     context.go('/home/Home');
-                        //   },
-                        // ),
                         automaticallyImplyLeading: false,
-
+                        surfaceTintColor: AppColors.transparentColor,
                         title: _isTabBarVisible
                             ? Text(
                                 state.profile.username,

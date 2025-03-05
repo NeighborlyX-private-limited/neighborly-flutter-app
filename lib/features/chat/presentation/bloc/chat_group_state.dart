@@ -7,6 +7,7 @@ class ChatGroupState extends Equatable {
   final File? imageToUpload;
   final String roomId;
   final int page;
+  final bool hasReachedMax;
   final List<ChatMessageModel> messages;
 
   const ChatGroupState({
@@ -16,6 +17,7 @@ class ChatGroupState extends Equatable {
     this.roomId = '',
     this.imageToUpload,
     this.page = 1,
+    this.hasReachedMax = false,
     this.messages = const [],
   });
 
@@ -28,6 +30,7 @@ class ChatGroupState extends Equatable {
         roomId,
         List.of(messages),
         page,
+        hasReachedMax,
       ];
 
   ChatGroupState copyWith({
@@ -38,6 +41,7 @@ class ChatGroupState extends Equatable {
     String? roomId,
     int? page,
     List<ChatMessageModel>? messages,
+    bool? hasReachedMax,
   }) {
     return ChatGroupState(
       status: status ?? this.status,
@@ -47,6 +51,7 @@ class ChatGroupState extends Equatable {
       roomId: roomId ?? this.roomId,
       messages: messages ?? this.messages,
       page: page ?? this.page,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     );
   }
 }

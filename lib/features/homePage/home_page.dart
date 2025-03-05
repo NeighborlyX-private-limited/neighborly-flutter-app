@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import '../../core/theme/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,7 +22,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   late PageController pageController;
-  late dynamic newVersionPlus;
+  NewVersionPlus newVersionPlus = NewVersionPlus();
   int _lastIndex = 0;
   int currentIndex = 0;
 
@@ -30,8 +31,38 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     pageController = PageController();
-    newVersionPlus = NewVersionPlus();
-    newVersionPlus.showAlertIfNecessary(context: context);
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    // });
+    ShowUpdate();
+  }
+
+// CHECK CAN UPDATE
+  void ShowUpdate() async {
+    VersionStatus? status = await newVersionPlus.getVersionStatus();
+    print('before status:${status?.canUpdate}');
+    print('before status:${status?.localVersion}');
+    print('before status:${status?.storeVersion}');
+    if (status != null && status.canUpdate) {
+      Update();
+    }
+  }
+
+// UPDATE DIALOG
+
+  void Update() async {
+    final status = await newVersionPlus.getVersionStatus();
+    print('after status:${status?.canUpdate}');
+    print('after status:${status?.localVersion}');
+    print('after status:${status?.storeVersion}');
+    newVersionPlus.showUpdateDialog(
+      context: context,
+      versionStatus: status!,
+      dialogTitle: 'New Update Available',
+      dialogText:
+          'Please update the app for new features and better experience.',
+      updateButtonText: 'Update',
+      allowDismissal: false,
+    );
   }
 
   // DISPOSE

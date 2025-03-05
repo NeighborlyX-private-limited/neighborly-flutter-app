@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:neighborly_flutter_app/core/constants/status.dart';
+import 'package:neighborly_flutter_app/core/routes/routes.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/theme/colors.dart';
@@ -75,9 +76,11 @@ class _CommunityAdminTypeScreenState extends State<CommunityAdminTypeScreen> {
               }
               // SUCCESS STATE
               if (state.status == Status.success) {
-                communityCubit.getCommunityDetail(
-                  communityCubit.state.community?.id ?? '',
-                );
+                print('working');
+                // communityCubit.getCommunityDetail(
+                //   communityCubit.state.community?.id ?? '',
+                // );
+                // context.pop();
                 Navigator.of(context).pop();
               }
             },

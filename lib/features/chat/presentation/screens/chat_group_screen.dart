@@ -52,8 +52,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   late CommunityMainCubit communityMainCubit;
   late CommunityDetailsCubit communityDetailCubit;
 
-  List<UserSimpleModel>? admins;
-  List<UserSimpleModel>? members;
+  List<UserSimpleModel> admins = [];
+  List<UserSimpleModel> members = [];
 
   final messageEC = TextEditingController();
   final FocusNode messageFocusNode = FocusNode();
@@ -73,29 +73,27 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   String? _mediaToReply;
   String? _messageToReplyUserName;
 
-  bool _isLoadingMore = false;
-  double _previousScrollOffset = 0.0;
-
   // INIT STATE
   @override
   void initState() {
     super.initState();
 
-    getCurrentUserId();
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
     chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
 
     communityDetailCubit.getCommunityDetail(widget.roomId);
     chatGroupCubit.init(widget.roomId);
+    getCurrentUserId();
+    _scrollController.addListener(_onScroll);
+  }
 
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels <=
-              _scrollController.position.minScrollExtent + 10 &&
-          !_isLoadingMore) {
-        _loadMoreMessages();
-      }
-    });
+  // CHECK IS USER TRY TO FEATCH OLDER MESSAGES
+  void _onScroll() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      await chatGroupCubit.fetchOlderMessages(widget.roomId);
+    }
   }
 
 // GET CURRENT USER ID
@@ -105,17 +103,17 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
 // CHECK IF CURRENT USER IS AN ADMIN
   bool isCurrentUserAdmin() {
-    return admins!.any((admin) => admin.id == cuurentUserId);
+    return admins.any((admin) => admin.id == cuurentUserId);
   }
 
 // CHECK IF SENDER USER IS AN ADMIN
   bool isSenderAnAdmin(String userId) {
-    return admins!.any((admin) => admin.id == userId);
+    return admins.any((admin) => admin.id == userId);
   }
 
 // GET THE PROFILE PIC OF THE SENDER
   String getSenderProfilePic(String userId) {
-    final member = members?.firstWhere(
+    final member = members.firstWhere(
       (member) => member.id == userId,
       orElse: () => UserSimpleModel(
         id: '',
@@ -124,77 +122,16 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       ),
     );
 
-    if (member?.avatarUrl == 'default') {
+    if (member.avatarUrl == 'default') {
       return '';
     }
-    return member?.avatarUrl ?? '';
-  }
-
-  // SCROLL TO BOTTOM
-  // void _scrollToBottom() {
-  //   if (_scrollController.hasClients && _shouldScrollToBottom) {
-  //     Future.delayed(Duration(milliseconds: 100), () {
-  //       final maxScrollExtent = _scrollController.position.maxScrollExtent;
-  //       final targetOffset = (_previousScrollOffset <= maxScrollExtent)
-  //           ? _previousScrollOffset
-  //           : maxScrollExtent;
-
-  //       _scrollController.position.animateTo(
-  //         targetOffset,
-  //         duration: Duration(milliseconds: 100),
-  //         curve: Curves.easeOut,
-  //       );
-  //     });
-  //   }
-  // }
-
-  // SCROLL TO END
-  void _scrollToEnd() {
-    if (_scrollController.hasClients) {
-      final maxScroll = _scrollController.position.maxScrollExtent;
-
-      // Check if scroll controller position is at the bottom
-      if (maxScroll > 0) {
-        _scrollController.animateTo(
-          maxScroll,
-          duration: Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-        );
-
-        setState(() {
-          _previousScrollOffset = maxScroll;
-        });
-      }
-    }
-  }
-
-  // LOAD MORE MESSAGE
-  Future<void> _loadMoreMessages() async {
-    print('Fetching older messages...');
-
-    if (_isLoadingMore) return;
-
-    setState(() {
-      _isLoadingMore = true;
-      _previousScrollOffset =
-          _scrollController.position.pixels; // Save scroll position
-    });
-
-    await context.read<ChatGroupCubit>().fetchOlderMessages();
-
-    // Restore scroll position after messages are added
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_previousScrollOffset);
-    });
-
-    setState(() {
-      _isLoadingMore = false;
-    });
+    return member.avatarUrl;
   }
 
   // DISPOSE
   @override
   void dispose() {
+    _scrollController.dispose();
     chatGroupCubit.setPagetoDefault();
     messageEC.dispose();
     super.dispose();
@@ -254,7 +191,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
         context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
-        Navigator.pop(context);
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
       },
       child: BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
         listener: (BuildContext context, CommunityDetailsState state) {
@@ -303,7 +242,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     color: AppColors.greyColor,
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 16),
               ],
             ),
             // BODY AREA
@@ -317,28 +256,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                         state.failure?.message ?? 'oops something went wrong',
                   );
                 }
-                // SUCCESS STATE WITH IS LOADING MORE MESSAGE FALSE
-                // if (state.status == Status.success && !_isLoadingMore) {
-                //   WidgetsBinding.instance.addPostFrameCallback((_) {
-                //     _scrollToEnd();
-                //   });
-                // }
-
-                /// success state
-                if (state.status == Status.success && state.page == 1) {
-                  // Ensure the scroll action occurs after the widget layout is completed
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _scrollToEnd();
-                  });
-                }
-                // if (state.status == Status.success) {
-                // var newPinnedMessages = <ChatMessageModel>[];
-                // pinnedMessages = [
-                //   ...state.messages.where(
-                //     (element) => !element.isPinned,
-                //   )
-                // ];
-                // }
               },
               //  BLOC BUILDER
               builder: (context, state) {
@@ -357,12 +274,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                     SizedBox(
                       height: 2,
                     ),
-                    // SHOW LOADING ON THE TOP OF THE SCREEN WHEN FEATCHING OLD MESSAGES
-                    if (_isLoadingMore)
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: CustomCircularIndicator(),
-                      ),
 
                     state.status == Status.success && state.messages.isEmpty
                         // SHOW EMPTY MESSAGE SCREEN
@@ -376,6 +287,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               ),
                             ),
                           )
+
                         // PIN MESSAGE BLOC LISTENER
                         : BlocListener<PinMessageBloc, PinMessagesState>(
                             listener: (context, state) {
@@ -386,6 +298,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                   message: state.message,
                                 );
                               }
+
                               // FAILURE STATE
                               if (state is PinMessagesStateFailureState) {
                                 showSnackBar(
@@ -397,17 +310,20 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                             child: Expanded(
                               child: ListView.builder(
                                 controller: _scrollController,
+                                reverse: true,
                                 itemCount: state.messages.length +
-                                    (_isLoadingMore ? 1 : 0),
+                                    (state.hasReachedMax ? 0 : 1),
                                 itemBuilder: (context, index) {
                                   if (index >= state.messages.length) {
-                                    return SizedBox.shrink();
+                                    return CustomCircularIndicator();
                                   }
                                   // CHECK IF THE CURRENT AND PRIVIOUS MESSAGE SENDER IS SAME OR NOT
                                   var msg = state.messages[index];
-                                  final bool isNewMsg = index == 0 ||
+
+                                  final bool isNewMsg = index ==
+                                          state.messages.length - 1 ||
                                       msg.author?.id !=
-                                          state.messages[index - 1].author?.id;
+                                          state.messages[index + 1].author?.id;
 
                                   // CHECK SENDER USER IS ADMIN OR NOT
                                   final bool isSenderAdmin =
@@ -421,19 +337,15 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                       getSenderProfilePic(msg.author!.id);
 
                                   // NEED TO THINK ABOUT THIS LINE
-                                  if (_isLoadingMore &&
-                                      index == state.messages.length) {
-                                    return CustomCircularIndicator();
-                                  }
-                                  final bool isNewDate = index == 0 ||
+
+                                  final bool isNewDate = index ==
+                                          state.messages.length - 1 ||
                                       DateUtilsHelper.simplifyISOtimeString(
-                                            state.messages[index].date
-                                                .toString(),
-                                          ) !=
+                                              state.messages[index].date
+                                                  .toString()) !=
                                           DateUtilsHelper.simplifyISOtimeString(
-                                            state.messages[index - 1].date
-                                                .toString(),
-                                          );
+                                              state.messages[index + 1].date
+                                                  .toString());
 
                                   return Column(
                                     children: [
@@ -921,7 +833,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     required String senderProfilePic,
     required bool isNewMsg,
   }) {
-    print('message:$message');
     if (message.isDeleted) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1189,8 +1100,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                     convertToIndianTime(message.date),
                                     style: TextStyle(
                                       fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black45,
+                                      color: Colors.grey,
                                     ),
                                   ),
                                   SizedBox(width: 5),
@@ -1227,8 +1137,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     required bool isPin,
     required VoidCallback onPin,
   }) {
-    print('isOwnMessage:$isOwnMessage');
-    print('isAdmin:$isAdmin');
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.white,
@@ -1368,11 +1276,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[0],
                         style: blackonboardingBody1Style,
@@ -1392,11 +1295,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[1],
                         style: blackonboardingBody1Style,
@@ -1416,11 +1314,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[2],
                         style: blackonboardingBody1Style,
@@ -1440,11 +1333,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[3],
                         style: blackonboardingBody1Style,
@@ -1464,11 +1352,6 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[4],
                         style: blackonboardingBody1Style,

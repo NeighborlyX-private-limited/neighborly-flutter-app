@@ -51,6 +51,11 @@ class _ReactionWidgetState extends State<ReactionWidget> {
   @override
   void initState() {
     super.initState();
+    print('title: ${widget.post.title}');
+    print('init cheer boo count: ${widget.post.cheers}');
+    print('init cheer boo count: ${widget.post.bools}');
+    print('init cheer boo count: ${widget.post.userFeedback}');
+
     profileRemoteDataSource =
         ProfileRemoteDataSourceImpl(client: http.Client());
     cheersCount = widget.post.cheers;
@@ -58,7 +63,42 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     awardsCount = widget.post.awardType.length;
     isCheered = widget.post.userFeedback == 'cheer';
     isBooed = widget.post.userFeedback == 'boo';
+
+    // _saveReactionState2();
+    _loadReactionState();
     getMyAwards();
+  }
+
+  _saveReactionState2() async {
+    final userID = ShardPrefHelper.getUserID();
+    final box = Hive.box('postReactions');
+    await box.put('${userID}_${widget.post.id}_isCheered',
+        widget.post.userFeedback == 'cheer');
+    await box.put('${userID}_${widget.post.id}_isBooled',
+        widget.post.userFeedback == 'boo');
+    await box.put(
+        '${userID}_${widget.post.id}_cheersCount', widget.post.cheers);
+    await box.put('${userID}_${widget.post.id}_boosCount', widget.post.bools);
+  }
+
+// Load reaction state from Hive
+  void _loadReactionState() async {
+    final userID = ShardPrefHelper.getUserID();
+    final box = Hive.box('postReactions');
+    print('$cheersCount $boosCount');
+    setState(() {
+      isCheered = box.get(
+        '${userID}_${widget.post.id}_isCheered',
+        defaultValue: isCheered,
+      );
+      isBooed = box.get('${userID}_${widget.post.id}_isBooled',
+          defaultValue: isBooed);
+      cheersCount = box.get('${userID}_${widget.post.id}_cheersCount',
+          defaultValue: widget.post.cheers);
+      boosCount = box.get('${userID}_${widget.post.id}_boosCount',
+          defaultValue: widget.post.bools);
+    });
+    print('$cheersCount $boosCount');
   }
 
   // GET AWARDS
@@ -153,6 +193,8 @@ class _ReactionWidgetState extends State<ReactionWidget> {
     final box = Hive.box('postReactions');
     await box.put('${userID}_${widget.post.id}_isCheered', isCheered);
     await box.put('${userID}_${widget.post.id}_isBooled', isBooed);
+    await box.put('${userID}_${widget.post.id}_cheersCount', cheersCount);
+    await box.put('${userID}_${widget.post.id}_boosCount', boosCount);
   }
 
   // REMOVE THE REACTION STATE FROM LOCAL DB(HIVE)
@@ -169,18 +211,25 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       // User is un-cheering, decrement count
       if (isCheered) {
         if (cheersCount > 0) {
-          cheersCount -= 1;
+          setState(() {
+            cheersCount -= 1;
+          });
         }
-        isCheered = false;
+        setState(() {
+          isCheered = false;
+        });
       }
       // User is cheering, increment count
       else {
-        cheersCount += 1;
-        isCheered = true;
+        setState(() {
+          cheersCount += 1;
+          isCheered = true;
+        });
         // Reverse boo if it was already booed
         if (isBooed) {
           if (boosCount > 0) boosCount -= 1;
           isBooed = false;
+          setState(() {});
         }
       }
     } else if (reaction == 'boo') {
@@ -188,23 +237,26 @@ class _ReactionWidgetState extends State<ReactionWidget> {
       if (isBooed) {
         if (boosCount > 0) boosCount -= 1;
         isBooed = false;
+        setState(() {});
       }
 
       // User is booing, increment count
       else {
         boosCount += 1;
         isBooed = true;
+        setState(() {});
         // Reverse cheer if it was already cheered
         if (isCheered) {
           if (cheersCount > 0) cheersCount -= 1;
           isCheered = false;
+          setState(() {});
         }
       }
     }
 
     // SAVE NEW REACTION STATE
+
     _saveReactionState();
-    setState(() {});
   }
 
   @override

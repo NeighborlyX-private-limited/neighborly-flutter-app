@@ -1,17 +1,17 @@
 import '../../../core/routes/routes.dart';
+import '../../../core/utils/shared_preference.dart';
 
 class MessageHandlerHelper {
   Map<String, dynamic> messageData;
   MessageHandlerHelper({
     required this.messageData,
   });
-
   void doTheJump() {
-    // if (messageData['userId'] != null) {
-
-    //   router.push('/userProfileScreen/${messageData['userId']}');
-    // }
-
+    String? cookies = ShardPrefHelper.getCookie();
+    if (cookies == null || cookies.isEmpty) {
+      router.go('/');
+    }
+    print('step 4 with data :$messageData');
     if (messageData['postId'] != null) {
       router.push(
           '/post-detail/${messageData['postId']}/true/${messageData['userId']}/0');
@@ -28,14 +28,5 @@ class MessageHandlerHelper {
     if (messageData['eventId'] != null) {
       router.push('/events/detail/${messageData['eventId']}');
     }
-
-    /*
-    Testing: 
-    userId: 669bfe2c8486500123a10754
-    groupId: 668164e760dbe07a2fd9df5b
-    eventId: 668164e760dbe07a2fd9df5b
-    messageId: 668164e760dbe07a2fd9df5b
-    postId: 163
-      */
   }
 }

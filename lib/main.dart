@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:neighborly_flutter_app/dependency_injection.dart';
 import 'package:neighborly_flutter_app/features/chat/presentation/bloc/featch_pinned_messages_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
@@ -18,9 +19,10 @@ import 'package:neighborly_flutter_app/features/payment/presentation/bloc/paymen
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
+
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
-import 'core/widgets/status_bar_color.dart';
+
 import 'dependency_injection.dart' as di;
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source_impl.dart';
 import 'features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
@@ -95,7 +97,7 @@ class MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    setStatusBarColor();
+    // setStatusBarColor();
     super.initState();
 
     _setDeepLinkListener();
@@ -154,223 +156,224 @@ class MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-          BlocProvider<PaymentBloc>(
-            create: (context) => di.sl<PaymentBloc>(),
-          ),
-          BlocProvider<AppLocalizationBloc>(
-            create: (context) => AppLocalizationBloc()..add(GetLocale()),
-          ),
+      providers: [
+        BlocProvider<PaymentBloc>(
+          create: (context) => di.sl<PaymentBloc>(),
+        ),
+        BlocProvider<AppLocalizationBloc>(
+          create: (context) => AppLocalizationBloc()..add(GetLocale()),
+        ),
 
-          ///auth bloc
-          BlocProvider<RegisterBloc>(
-            create: (context) => di.sl<RegisterBloc>(),
-          ),
-          BlocProvider<LoginWithEmailBloc>(
-            create: (context) => di.sl<LoginWithEmailBloc>(),
-          ),
-          BlocProvider<ResendOtpBloc>(
-            create: (context) => di.sl<ResendOtpBloc>(),
-          ),
-          BlocProvider<ForgotPasswordBloc>(
-            create: (context) => di.sl<ForgotPasswordBloc>(),
-          ),
-          BlocProvider<GoogleAuthenticationBloc>(
-            create: (context) => di.sl<GoogleAuthenticationBloc>(),
-          ),
-          BlocProvider<ChangePasswordBloc>(
-            create: (context) => di.sl<ChangePasswordBloc>(),
-          ),
-          BlocProvider<OtpBloc>(
-            create: (context) => di.sl<OtpBloc>(),
-          ),
-          BlocProvider<LogoutBloc>(
-            create: (context) => di.sl<LogoutBloc>(),
-          ),
+        ///auth bloc
+        BlocProvider<RegisterBloc>(
+          create: (context) => di.sl<RegisterBloc>(),
+        ),
+        BlocProvider<LoginWithEmailBloc>(
+          create: (context) => di.sl<LoginWithEmailBloc>(),
+        ),
+        BlocProvider<ResendOtpBloc>(
+          create: (context) => di.sl<ResendOtpBloc>(),
+        ),
+        BlocProvider<ForgotPasswordBloc>(
+          create: (context) => di.sl<ForgotPasswordBloc>(),
+        ),
+        BlocProvider<GoogleAuthenticationBloc>(
+          create: (context) => di.sl<GoogleAuthenticationBloc>(),
+        ),
+        BlocProvider<ChangePasswordBloc>(
+          create: (context) => di.sl<ChangePasswordBloc>(),
+        ),
+        BlocProvider<OtpBloc>(
+          create: (context) => di.sl<OtpBloc>(),
+        ),
+        BlocProvider<LogoutBloc>(
+          create: (context) => di.sl<LogoutBloc>(),
+        ),
 
-          ///community/group bloc
-          BlocProvider<CommunityCreateCubit>(
-            create: (context) => di.sl<CommunityCreateCubit>(),
-          ),
-          BlocProvider<CommunityMainCubit>(
-            create: (context) => di.sl<CommunityMainCubit>(),
-          ),
-          BlocProvider<CommunityDetailsCubit>(
-            create: (context) => di.sl<CommunityDetailsCubit>(),
-          ),
-          BlocProvider<GetJoinGroupRequestBloc>(
-            create: (context) => di.sl<GetJoinGroupRequestBloc>(),
-          ),
-          BlocProvider<HandleJoinRequestBloc>(
-            create: (context) => di.sl<HandleJoinRequestBloc>(),
-          ),
-          BlocProvider<GetUserGroupsBloc>(
-            create: (context) => di.sl<GetUserGroupsBloc>(),
-          ),
-          BlocProvider<JoinGroupBloc>(
-            create: (context) => di.sl<JoinGroupBloc>(),
-          ),
-          BlocProvider<AddRemoveUserInGroupBloc>(
-            create: (context) => di.sl<AddRemoveUserInGroupBloc>(),
-          ),
-          BlocProvider<MakeRemoveAdminBloc>(
-            create: (context) => di.sl<MakeRemoveAdminBloc>(),
-          ),
+        ///community/group bloc
+        BlocProvider<CommunityCreateCubit>(
+          create: (context) => di.sl<CommunityCreateCubit>(),
+        ),
+        BlocProvider<CommunityMainCubit>(
+          create: (context) => di.sl<CommunityMainCubit>(),
+        ),
+        BlocProvider<CommunityDetailsCubit>(
+          create: (context) => di.sl<CommunityDetailsCubit>(),
+        ),
+        BlocProvider<GetJoinGroupRequestBloc>(
+          create: (context) => di.sl<GetJoinGroupRequestBloc>(),
+        ),
+        BlocProvider<HandleJoinRequestBloc>(
+          create: (context) => di.sl<HandleJoinRequestBloc>(),
+        ),
+        BlocProvider<GetUserGroupsBloc>(
+          create: (context) => di.sl<GetUserGroupsBloc>(),
+        ),
+        BlocProvider<JoinGroupBloc>(
+          create: (context) => di.sl<JoinGroupBloc>(),
+        ),
+        BlocProvider<AddRemoveUserInGroupBloc>(
+          create: (context) => di.sl<AddRemoveUserInGroupBloc>(),
+        ),
+        BlocProvider<MakeRemoveAdminBloc>(
+          create: (context) => di.sl<MakeRemoveAdminBloc>(),
+        ),
 
-          BlocProvider<CommunitySearchCubit>(
-            create: (context) => di.sl<CommunitySearchCubit>(),
-          ),
-          BlocProvider<UpdateBlockUserBloc>(
-            create: (context) => di.sl<UpdateBlockUserBloc>(),
-          ),
-          BlocProvider<UpdateMuteGroupBloc>(
-            create: (context) => di.sl<UpdateMuteGroupBloc>(),
-          ),
+        BlocProvider<CommunitySearchCubit>(
+          create: (context) => di.sl<CommunitySearchCubit>(),
+        ),
+        BlocProvider<UpdateBlockUserBloc>(
+          create: (context) => di.sl<UpdateBlockUserBloc>(),
+        ),
+        BlocProvider<UpdateMuteGroupBloc>(
+          create: (context) => di.sl<UpdateMuteGroupBloc>(),
+        ),
 
-          ///post bloc
-          BlocProvider<GetAllPostsBloc>(
-            create: (context) => di.sl<GetAllPostsBloc>(),
-          ),
-          BlocProvider<UploadPostBloc>(
-            create: (context) => di.sl<UploadPostBloc>(),
-          ),
-          BlocProvider<ReportPostBloc>(
-            create: (context) => di.sl<ReportPostBloc>(),
-          ),
-          BlocProvider<FeedbackBloc>(
-            create: (context) => di.sl<FeedbackBloc>(),
-          ),
-          BlocProvider<GetPostByIdBloc>(
-            create: (context) => di.sl<GetPostByIdBloc>(),
-          ),
-          BlocProvider<GetCommentsByPostIdBloc>(
-            create: (context) => di.sl<GetCommentsByPostIdBloc>(),
-          ),
-          BlocProvider<UpdateLocationBloc>(
-            create: (context) => di.sl<UpdateLocationBloc>(),
-          ),
-          BlocProvider<DeletePostBloc>(
-            create: (context) => di.sl<DeletePostBloc>(),
-          ),
-          BlocProvider<UploadFileBloc>(
-            create: (context) => di.sl<UploadFileBloc>(),
-          ),
-          BlocProvider<AddCommentBloc>(
-            create: (context) => di.sl<AddCommentBloc>(),
-          ),
-          BlocProvider<VotePollBloc>(
-            create: (context) => di.sl<VotePollBloc>(),
-          ),
-          BlocProvider<FetchCommentReplyBloc>(
-            create: (context) => di.sl<FetchCommentReplyBloc>(),
-          ),
-          BlocProvider<GiveAwardBloc>(
-            create: (context) => di.sl<GiveAwardBloc>(),
-          ),
+        ///post bloc
+        BlocProvider<GetAllPostsBloc>(
+          create: (context) => di.sl<GetAllPostsBloc>(),
+        ),
+        BlocProvider<UploadPostBloc>(
+          create: (context) => di.sl<UploadPostBloc>(),
+        ),
+        BlocProvider<ReportPostBloc>(
+          create: (context) => di.sl<ReportPostBloc>(),
+        ),
+        BlocProvider<FeedbackBloc>(
+          create: (context) => di.sl<FeedbackBloc>(),
+        ),
+        BlocProvider<GetPostByIdBloc>(
+          create: (context) => di.sl<GetPostByIdBloc>(),
+        ),
+        BlocProvider<GetCommentsByPostIdBloc>(
+          create: (context) => di.sl<GetCommentsByPostIdBloc>(),
+        ),
+        BlocProvider<UpdateLocationBloc>(
+          create: (context) => di.sl<UpdateLocationBloc>(),
+        ),
+        BlocProvider<DeletePostBloc>(
+          create: (context) => di.sl<DeletePostBloc>(),
+        ),
+        BlocProvider<UploadFileBloc>(
+          create: (context) => di.sl<UploadFileBloc>(),
+        ),
+        BlocProvider<AddCommentBloc>(
+          create: (context) => di.sl<AddCommentBloc>(),
+        ),
+        BlocProvider<VotePollBloc>(
+          create: (context) => di.sl<VotePollBloc>(),
+        ),
+        BlocProvider<FetchCommentReplyBloc>(
+          create: (context) => di.sl<FetchCommentReplyBloc>(),
+        ),
+        BlocProvider<GiveAwardBloc>(
+          create: (context) => di.sl<GiveAwardBloc>(),
+        ),
 
-          ///profile bloc
-          BlocProvider<GetGenderAndDOBBloc>(
-            create: (context) => di.sl<GetGenderAndDOBBloc>(),
-          ),
-          BlocProvider<GetProfileBloc>(
-            create: (context) => di.sl<GetProfileBloc>(),
-          ),
+        ///profile bloc
+        BlocProvider<GetGenderAndDOBBloc>(
+          create: (context) => di.sl<GetGenderAndDOBBloc>(),
+        ),
+        BlocProvider<GetProfileBloc>(
+          create: (context) => di.sl<GetProfileBloc>(),
+        ),
 
-          ///post bloc
-          BlocProvider<GetMyPostsBloc>(
-            create: (context) => di.sl<GetMyPostsBloc>(),
-          ),
-          BlocProvider<SendFeedbackBloc>(
-            create: (context) => di.sl<SendFeedbackBloc>(),
-          ),
-          BlocProvider<DeleteAccountBloc>(
-            create: (context) => di.sl<DeleteAccountBloc>(),
-          ),
-          BlocProvider<GetUserInfoBloc>(
-            create: (context) => di.sl<GetUserInfoBloc>(),
-          ),
-          BlocProvider<GetMyCommentsBloc>(
-            create: (context) => di.sl<GetMyCommentsBloc>(),
-          ),
-          BlocProvider<GetMyGroupsBloc>(
-            create: (context) => di.sl<GetMyGroupsBloc>(),
-          ),
-          BlocProvider<EditProfileBloc>(
-            create: (context) => di.sl<EditProfileBloc>(),
-          ),
-          BlocProvider<GetMyAwardsBloc>(
-            create: (context) => di.sl<GetMyAwardsBloc>(),
-          ),
+        ///post bloc
+        BlocProvider<GetMyPostsBloc>(
+          create: (context) => di.sl<GetMyPostsBloc>(),
+        ),
+        BlocProvider<SendFeedbackBloc>(
+          create: (context) => di.sl<SendFeedbackBloc>(),
+        ),
+        BlocProvider<DeleteAccountBloc>(
+          create: (context) => di.sl<DeleteAccountBloc>(),
+        ),
+        BlocProvider<GetUserInfoBloc>(
+          create: (context) => di.sl<GetUserInfoBloc>(),
+        ),
+        BlocProvider<GetMyCommentsBloc>(
+          create: (context) => di.sl<GetMyCommentsBloc>(),
+        ),
+        BlocProvider<GetMyGroupsBloc>(
+          create: (context) => di.sl<GetMyGroupsBloc>(),
+        ),
+        BlocProvider<EditProfileBloc>(
+          create: (context) => di.sl<EditProfileBloc>(),
+        ),
+        BlocProvider<GetMyAwardsBloc>(
+          create: (context) => di.sl<GetMyAwardsBloc>(),
+        ),
 
-          ///chat bloc
-          BlocProvider<ChatMainCubit>(
-            create: (context) => di.sl<ChatMainCubit>(),
-          ),
-          BlocProvider<FeatchPinnedMessagesBloc>(
-            create: (context) => di.sl<FeatchPinnedMessagesBloc>(),
-          ),
-          BlocProvider<PinMessageBloc>(
-            create: (context) => di.sl<PinMessageBloc>(),
-          ),
-          BlocProvider<ChatPrivateCubit>(
-            create: (context) => di.sl<ChatPrivateCubit>(),
-          ),
-          BlocProvider<ChatGroupCubit>(
-            create: (context) => di.sl<ChatGroupCubit>(),
-          ),
-          BlocProvider<ChatGroupCubitThread>(
-            create: (context) => di.sl<ChatGroupCubitThread>(),
-          ),
+        ///chat bloc
+        BlocProvider<ChatMainCubit>(
+          create: (context) => di.sl<ChatMainCubit>(),
+        ),
+        BlocProvider<FeatchPinnedMessagesBloc>(
+          create: (context) => di.sl<FeatchPinnedMessagesBloc>(),
+        ),
+        BlocProvider<PinMessageBloc>(
+          create: (context) => di.sl<PinMessageBloc>(),
+        ),
+        BlocProvider<ChatPrivateCubit>(
+          create: (context) => di.sl<ChatPrivateCubit>(),
+        ),
+        BlocProvider<ChatGroupCubit>(
+          create: (context) => di.sl<ChatGroupCubit>(),
+        ),
+        BlocProvider<ChatGroupCubitThread>(
+          create: (context) => di.sl<ChatGroupCubitThread>(),
+        ),
 
-          ///event bloc
-          BlocProvider<EventMainCubit>(
-            create: (context) => di.sl<EventMainCubit>(),
-          ),
-          BlocProvider<EventCreateCubit>(
-            create: (context) => di.sl<EventCreateCubit>(),
-          ),
-          BlocProvider<EventDetailCubit>(
-            create: (context) => di.sl<EventDetailCubit>(),
-          ),
-          BlocProvider<EventSearchCubit>(
-            create: (context) => di.sl<EventSearchCubit>(),
-          ),
-          BlocProvider<EventJoinCubit>(
-            create: (context) => di.sl<EventJoinCubit>(),
-          ),
+        ///event bloc
+        BlocProvider<EventMainCubit>(
+          create: (context) => di.sl<EventMainCubit>(),
+        ),
+        BlocProvider<EventCreateCubit>(
+          create: (context) => di.sl<EventCreateCubit>(),
+        ),
+        BlocProvider<EventDetailCubit>(
+          create: (context) => di.sl<EventDetailCubit>(),
+        ),
+        BlocProvider<EventSearchCubit>(
+          create: (context) => di.sl<EventSearchCubit>(),
+        ),
+        BlocProvider<EventJoinCubit>(
+          create: (context) => di.sl<EventJoinCubit>(),
+        ),
 
-          ///notification bloc
-          BlocProvider<NotificationGeneralCubit>(
-            create: (context) => di.sl<NotificationGeneralCubit>(),
-          ),
-          BlocProvider<NotificationListCubit>(
-            create: (context) => di.sl<NotificationListCubit>(),
-          ),
+        ///notification bloc
+        BlocProvider<NotificationGeneralCubit>(
+          create: (context) => di.sl<NotificationGeneralCubit>(),
+        ),
+        BlocProvider<NotificationListCubit>(
+          create: (context) => di.sl<NotificationListCubit>(),
+        ),
 
-          ///others bloc
-          BlocProvider<CityBloc>(
-            create: (context) => CityBloc(sl<CityRepository>()),
-          ),
-        ],
-        child: BlocBuilder<AppLocalizationBloc, AppLocalizationState>(
-          buildWhen: (previous, current) =>
-              previous.selectedLocale != current.selectedLocale,
-          builder: (context, state) {
-            return MaterialApp.router(
-              locale: state.selectedLocale,
-              supportedLocales: AppLocalizations.supportedLocales,
-              localizationsDelegates: AppLocalizations.localizationsDelegates,
-              // routeInformationParser: router.routeInformationParser,
-              // routerDelegate: router.routerDelegate,
-              // routeInformationProvider: router.routeInformationProvider,
-              theme: ThemeData(
-                fontFamily: 'Roboto',
-              ),
-              debugShowCheckedModeBanner: false,
-              title: 'Neighborly',
-              routerConfig: router,
-            );
-          },
-        ));
+        ///others bloc
+        BlocProvider<CityBloc>(
+          create: (context) => CityBloc(sl<CityRepository>()),
+        ),
+      ],
+      child: BlocBuilder<AppLocalizationBloc, AppLocalizationState>(
+        buildWhen: (previous, current) =>
+            previous.selectedLocale != current.selectedLocale,
+        builder: (context, state) {
+          return MaterialApp.router(
+            locale: state.selectedLocale,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            // routeInformationParser: router.routeInformationParser,
+            // routerDelegate: router.routerDelegate,
+            // routeInformationProvider: router.routeInformationProvider,
+            theme: ThemeData(
+              fontFamily: 'Roboto',
+            ),
+            debugShowCheckedModeBanner: false,
+            title: 'Neighborly',
+            routerConfig: router,
+          );
+        },
+      ),
+    );
   }
 }

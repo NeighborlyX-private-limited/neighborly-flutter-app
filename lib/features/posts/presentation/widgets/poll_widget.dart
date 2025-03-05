@@ -52,9 +52,14 @@ class _PollWidgetState extends State<PollWidget> {
     }
 
     return InkWell(
-      onTap: () {
-        context.push(
-            '/post-detail/${widget.post.id}/${false}/${widget.post.userId}/0');
+      onTap: () async {
+        await context
+            .push(
+                '/post-detail/${widget.post.id}/${false}/${widget.post.userId}/0')
+            .then((value) {
+          widget.onDelete();
+        });
+        // print('calling');
       },
       child: Container(
         color: AppColors.whiteColor,
@@ -292,7 +297,9 @@ class _PollWidgetState extends State<PollWidget> {
 
   // OPTION CARD
   onSelectOptionCallback(int optionid) {
+    print('call 1');
     if (widget.post.allowMultipleVotes ?? false) {
+      print('call 2');
       List<OptionEntity>? newOptions =
           List<OptionEntity>.from(post?.pollOptions ?? []);
 
@@ -320,6 +327,7 @@ class _PollWidgetState extends State<PollWidget> {
         });
       });
     } else {
+      print('call32');
       List<OptionEntity>? newOptions =
           List<OptionEntity>.from(post?.pollOptions ?? []);
 
@@ -515,11 +523,6 @@ class _PollWidgetState extends State<PollWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[0],
                         style: blackonboardingBody1Style,
@@ -541,11 +544,6 @@ class _PollWidgetState extends State<PollWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[1],
                         style: blackonboardingBody1Style,
@@ -565,11 +563,6 @@ class _PollWidgetState extends State<PollWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[2],
                         style: blackonboardingBody1Style,
@@ -589,11 +582,6 @@ class _PollWidgetState extends State<PollWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[3],
                         style: blackonboardingBody1Style,
@@ -613,11 +601,6 @@ class _PollWidgetState extends State<PollWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[4],
                         style: blackonboardingBody1Style,

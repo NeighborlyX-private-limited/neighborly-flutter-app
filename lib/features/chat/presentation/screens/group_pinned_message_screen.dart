@@ -134,9 +134,6 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
                               if (isNewDate)
                                 Center(
                                   child: Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      vertical: 12,
-                                    ),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 2,
@@ -198,10 +195,10 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
                                     ),
                                     SizedBox(width: 8),
                                     Text(
-                                      DateUtilsHelper
-                                          .simplifyISOtimeStringOnlyHour(
+                                      convertToIndianTime(
                                         pinnedMessage[index].sendAt.toString(),
                                       ),
+                                      // formatTime(widget.message.date),
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey,

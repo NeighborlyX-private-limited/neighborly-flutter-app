@@ -487,7 +487,7 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          authType == 'email'
+                          authType == 'email' || authType == 'google'
                               ? Text(
                                   AppLocalizations.of(context)!.email_id,
                                   // 'Email Id',
@@ -500,12 +500,12 @@ class _BasicInformationScreenState extends State<BasicInformationScreen> {
                               //     style: greyonboardingBody1Style,
                               //   )
                               : SizedBox(),
-                          authType == 'email'
+                        authType == 'email' || authType == 'google'
                               ? const SizedBox(
                                   height: 5,
                                 )
                               : SizedBox(),
-                          authType == 'email'
+                          authType == 'email' || authType == 'google'
                               ? Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 10,

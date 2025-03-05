@@ -32,7 +32,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     // String cookieHeader = cookies.join('; ');
 
     String url =
-        '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=15000';
+        '$kBaseUrl/chat/fetch-group-messages/$roomId?page=$page&limit=20';
+    print('featch message with room it:$roomId');
 
     final response = await client.get(
       Uri.parse(url),
@@ -45,12 +46,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
-      // print('CHAT MESSAGE PAGE: $page');
-      // print('CHAT MESSAGE LIMIT: ${jsonDecode(response.body).length}');
-      // print('CHAT MESSAGE: ${jsonDecode(response.body)}');
-      return ChatMessageModel.fromJsonList(jsonDecode(response.body))
-          .reversed
-          .toList();
+
+      return ChatMessageModel.fromJsonList(jsonDecode(response.body)).toList();
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops something went wrong';

@@ -12,6 +12,7 @@ import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_pr
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/homePage/home_page.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_general_cubit.dart';
+import 'package:new_version_plus/new_version_plus.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -38,6 +39,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen>
     with AutomaticKeepAliveClientMixin {
+  NewVersionPlus newVersionPlus = NewVersionPlus();
   final ScrollController _scrollController = ScrollController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int unreadNotificationCount = 0;
@@ -56,13 +58,14 @@ class _HomeScreenState extends State<HomeScreen>
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(0.0);
       }
     });
-    fetchLocationAndUpdate();
     updateFCMtokenNotification();
+    fetchLocationAndUpdate();
     getUnreadNotificationCount();
     _setDeepLinkListener();
 
@@ -133,9 +136,18 @@ class _HomeScreenState extends State<HomeScreen>
 
 // DEEP LINK LISTENER FOR UPCOMING DEEP LINK
   Future<void> _setDeepLinkListener() async {
+    print('here 2');
+    String? cookies = ShardPrefHelper.getCookie();
+
+    if (cookies == null || cookies.isEmpty) {
+      print('here ');
+      context.go('/');
+      return;
+    }
     platform.setMethodCallHandler(
       (MethodCall call) async {
         if (call.method == "onDeepLink") {
+          print('why here 2');
           setState(
             () {
               _deepLink = call.arguments;
@@ -335,18 +347,12 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
                 actions: [
-                  // IconButton(
-                  //   onPressed: () {
-                  //     context.push('/googleMapScreen');
-                  //   },
-                  //   icon: Icon(Icons.location_on_outlined),
-                  // ),
-                  // IconButton(
-                  //   onPressed: () {
-                  //     context.push('/tutorialScreen');
-                  //   },
-                  //   icon: Icon(Icons.location_on_outlined),
-                  // ),
+                  IconButton(
+                    onPressed: () {
+                      context.push('/googleMapScreen');
+                    },
+                    icon: Icon(Icons.location_on_outlined),
+                  ),
 
                   // NOTIFICATION ICON
                   // NEED TO ADD BLOC BUILDER HERE FOR NOTIFICATION COUNT

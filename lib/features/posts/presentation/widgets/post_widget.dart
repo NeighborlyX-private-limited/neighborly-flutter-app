@@ -57,8 +57,15 @@ class _PostWidgetState extends State<PostWidget> {
 
     return GestureDetector(
       onTap: () {
-        context.push(
-            '/post-detail/${widget.post.id}/${true}/${widget.post.userId}/0');
+        context
+            .push(
+                '/post-detail/${widget.post.id}/${true}/${widget.post.userId}/0')
+            .then((value) {
+          //   print('calling');
+
+          //   print('calling');
+          widget.onDelete();
+        });
       },
       child: Container(
         color: AppColors.whiteColor,
@@ -483,11 +490,6 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[0],
                         style: blackonboardingBody1Style,
@@ -507,11 +509,6 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[1],
                         style: blackonboardingBody1Style,
@@ -531,11 +528,6 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[2],
                         style: blackonboardingBody1Style,
@@ -555,11 +547,6 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[3],
                         style: blackonboardingBody1Style,
@@ -579,11 +566,6 @@ class _PostWidgetState extends State<PostWidget> {
                               ),
                             );
                       },
-                      leading: Icon(
-                        Icons.circle,
-                        size: 8,
-                        color: AppColors.blackColor,
-                      ),
                       title: Text(
                         reportReasons[4],
                         style: blackonboardingBody1Style,

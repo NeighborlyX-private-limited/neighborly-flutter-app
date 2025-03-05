@@ -18,11 +18,11 @@ class LocationPickerScreen extends StatefulWidget {
 class LocationPickerScreenState extends State<LocationPickerScreen> {
   GoogleMapController? _mapController;
   late TextEditingController _searchController;
-  LatLng _currentLocation = LatLng(28.6139, 77.2088);
+  LatLng _currentLocation = LatLng(26.403539566263397, 75.87451988831162);
   LatLng? _pendingLocation;
   Marker _marker = Marker(
     markerId: MarkerId("selected-location"),
-    position: LatLng(28.6139, 77.2088),
+    position: LatLng(75.87451988831162, 75.87451988831162),
   );
 // INIT STATE
   @override
@@ -78,11 +78,13 @@ class LocationPickerScreenState extends State<LocationPickerScreen> {
       _pendingLocation!.latitude,
       _pendingLocation!.longitude,
     );
+    print('${_pendingLocation!.latitude} ${_pendingLocation!.longitude}');
     String city = placemarks.isNotEmpty ? placemarks[0].locality ?? "" : "";
 
     await ShardPrefHelper.setLat(_pendingLocation!.latitude);
     await ShardPrefHelper.setLng(_pendingLocation!.longitude);
     await ShardPrefHelper.setCity(city);
+    await ShardPrefHelper.setIsCurrentLocationOn(false);
 
     setState(() {
       _currentLocation = _pendingLocation!;

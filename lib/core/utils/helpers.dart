@@ -3,6 +3,7 @@ import '../entities/option_entity.dart';
 
 // AGO TIME
 String formatTimeDifference(String isoTimestamp) {
+  print('time is this $isoTimestamp');
   if (isoTimestamp == '') return '';
   DateTime inputTime = DateTime.parse(isoTimestamp);
   DateTime now = DateTime.now();
@@ -18,7 +19,7 @@ String formatTimeDifference(String isoTimestamp) {
     }
     return '${difference.inHours} hours ago';
   } else if (difference.inMinutes >= 1) {
-    return '${difference.inMinutes} mints ago';
+    return '${difference.inMinutes} mins ago';
   } else {
     return 'Just now';
   }
@@ -79,32 +80,6 @@ bool isValidEmail(String email) {
   return regExp.hasMatch(email);
 }
 
-////calculatePercentage
-// double calculatePercentage(double value, double total) {
-//   if (total == 0) {
-//     return 0;
-//   }
-//   double percentage = (value / total) * 100;
-//   return double.parse(percentage.toStringAsFixed(1));
-// }
-
-///getAddressFromLatLng
-// Future<String> getAddressFromLatLng(List<double> position) async {
-//   try {
-//     List<Placemark> placemarks =
-//         await placemarkFromCoordinates(position[0], position[1]);
-//     Placemark place = placemarks[0];
-
-//     if (place.subLocality != null && place.subLocality!.isNotEmpty) {
-//       return place.subLocality!;
-//     } else {
-//       return '';
-//     }
-//   } catch (e) {
-//     return 'Error occurred: $e';
-//   }
-// }
-
 /// calculate Total Votes
 double calculateTotalVotes(List<OptionEntity> options) {
   double totalVotes = 0;
@@ -113,11 +88,3 @@ double calculateTotalVotes(List<OptionEntity> options) {
   }
   return totalVotes;
 }
-
-// Color parseColor(String hexColor) {
-//   // Remove '#' if present
-//   hexColor = hexColor.replaceAll('#', '');
-
-//   // Add '0xFF' for full opacity
-//   return Color(int.parse('0xFF$hexColor'));
-// }
