@@ -90,15 +90,36 @@ class NotificationTileWidget extends StatelessWidget {
                 if (notification.title == 'You’ve Got a Comment!') {
                   commentid = notification.commentId ?? '0';
                 }
+                //[post,comment,message,award,group]
                 if (notification.triggerType == 'AwardTrigger' &&
                     (notification.postId == null ||
                         notification.postId == '') &&
                     notification.commentId != null) {
+                  print('awards trigger');
                   context.push(
                       '/post-detail-of-specific-comment/${notification.commentId}');
+                } else if (notification.triggerType == 'GroupTrigger') {
+                  context.push('/group-details/${notification.groupId}');
+                  print('group trigger');
+                  // context.push(
+                  //     '/post-detail-of-specific-comment/${notification.commentId}');
+                } else if (notification.triggerType == 'MessageTrigger') {
+                  print('message trigger');
+
+                  context.push('/group-chat/${notification.groupId}');
+                } else if (notification.triggerType == 'PostTrigger' ||
+                    notification.triggerType == 'CommentTrigger' ||
+                    notification.triggerType == 'AwardTrigger' ||
+                    notification.triggerType == 'ReplyTrigger') {
+                  context.push('/post-detail/${notification.postId}');
+                  print('awards trigger');
                 } else if (notification.postId != null) {
-                  context.push(
-                      '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
+                  print('notification');
+                  print(
+                      'post,comment,reply trigger ${notification.triggerType}');
+                  context.push('/post-detail/${notification.postId}');
+                  // context.push(
+                  //     '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
                 }
 
                 /*

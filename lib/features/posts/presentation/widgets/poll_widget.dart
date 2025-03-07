@@ -54,8 +54,10 @@ class _PollWidgetState extends State<PollWidget> {
     return InkWell(
       onTap: () async {
         await context
-            .push(
-                '/post-detail/${widget.post.id}/${false}/${widget.post.userId}/0')
+            .push('/post-detail/${widget.post.id}')
+            // await context
+            //     .push(
+            //         '/post-detail/${widget.post.id}/${false}/${widget.post.userId}/0')
             .then((value) {
           widget.onDelete();
         });

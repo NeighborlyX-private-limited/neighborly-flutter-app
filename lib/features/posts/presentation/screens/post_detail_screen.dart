@@ -1,10 +1,17 @@
+// post/poll--> cheer,boo,comment, award
+// comments--> cheer,boo, reply,award
+// reply -->  cheer,boo, awards
+
+// post, group --> creation
+// group --> creation of group, edit group details, join request, in need group id
+// message--> new message--> for now it will receive to all users, i need group id,
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
@@ -30,17 +37,17 @@ import '../widgets/reaction_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostDetailScreen extends StatefulWidget {
-  final String userId;
+  //final String userId;
   final String postId;
-  final String commentId;
-  final bool isPost;
+  //final String commentId;
+  // final bool isPost;
 
   const PostDetailScreen({
     super.key,
-    required this.userId,
+    // required this.userId,
     required this.postId,
-    required this.commentId,
-    required this.isPost,
+    // required this.commentId,
+    // required this.isPost,
   });
 
   @override
@@ -83,7 +90,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
       GetCommentsByPostIdButtonPressedEvent(
         postId: postId,
-        commentId: widget.commentId,
+        commentId: '',
       ),
     );
   }
@@ -97,7 +104,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     BlocProvider.of<GetCommentsByPostIdBloc>(context).add(
       GetCommentsByPostIdButtonPressedEvent(
         postId: postId,
-        commentId: widget.commentId,
+        commentId: '',
       ),
     );
   }
@@ -130,11 +137,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               onTap: () => context.pop(),
             ),
             centerTitle: true,
-            title: Text(
-              widget.isPost
-                  ? AppLocalizations.of(context)!.post
-                  : AppLocalizations.of(context)!.poll,
-              style: onboardingHeading2Style,
+            title: BlocBuilder<GetPostByIdBloc, GetPostByIdState>(
+              builder: (context, state) {
+                if (state is GetPostByIdSuccessState) {
+                  return Text(
+                    state.post.type == 'post'
+                        ? AppLocalizations.of(context)!.post
+                        : AppLocalizations.of(context)!.poll,
+                    style: onboardingHeading2Style,
+                  );
+                }
+                return Text('');
+              },
             ),
           ),
 
@@ -159,6 +173,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
                 // GET POST BY POST ID FAILURE STATE
                 if (postState is GetPostByIdFailureState) {
+                  // postState.
                   return SomethingWentWrong(
                     imagePath: 'assets/not_found.svg',
                     title:
@@ -179,7 +194,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         child: ListView(
                           padding: const EdgeInsets.all(16.0),
                           children: [
-                            widget.isPost
+                            postState.post.type == 'post'
+                                // widget.isPost
                                 ? _buildPostDetails(postState.post)
                                 : _buildPollWidget(postState),
                             const SizedBox(height: 20),
@@ -222,7 +238,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                         commentFocusNode: _commentFocusNode,
                                         comment: comments[index],
                                         onReplyTap: _handleReplyTap,
-                                        isPost: widget.isPost,
+                                        isPost: postState.post.type == 'post',
+                                        // isPost: widget.isPost,
                                         onDelete: () {
                                           context
                                               .read<GetCommentsByPostIdBloc>()
@@ -460,7 +477,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   // POLL WIDGET
   Column _buildPollWidget(GetPostByIdSuccessState postState) {
     void showBottomSheet() {
-      menuBottomSheet(context);
+      menuBottomSheet(
+          context, postState.post.userId, postState.post.type == 'post');
     }
 
     return Column(
@@ -720,7 +738,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   // MENU BUTTON SHEET
-  Future<dynamic> menuBottomSheet(BuildContext context) {
+  Future<dynamic> menuBottomSheet(
+      BuildContext context, String otherUserId, bool isPost) {
     void showReportReasonBottomSheet() {
       reportReasonBottomSheet(context);
     }
@@ -736,7 +755,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           color: AppColors.whiteColor,
           height: 96,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: userId != widget.userId
+          child: userId != otherUserId
               ? InkWell(
                   onTap: () {
                     Navigator.pop(context);
@@ -761,7 +780,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     if (state is DeletePostSuccessState) {
                       showSnackBar(
                         context: context,
-                        message: widget.isPost
+                        message: isPost
+                            // message: widget.isPost
                             ? AppLocalizations.of(context)!.post_deleted
                             : AppLocalizations.of(context)!.poll_deleted,
                       );
@@ -1262,7 +1282,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   /// build post detail section
   Widget _buildPostDetails(PostEntity post) {
     void showBottomSheet() {
-      menuBottomSheet(context);
+      menuBottomSheet(context, post.userId, post.type == 'post');
     }
 
     return Column(

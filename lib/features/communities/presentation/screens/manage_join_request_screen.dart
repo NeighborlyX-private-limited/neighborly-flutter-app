@@ -28,10 +28,11 @@ class _ManageJoinRequestScreenState extends State<ManageJoinRequestScreen> {
 
 // REFRESH CALL
   Future<void> _onRefresh() async {
-    BlocProvider.of<GetJoinGroupRequestBloc>(context)
-        .add(FeatchJoinGroupRequestEvent(
-      communityId: widget.communityId,
-    ));
+    BlocProvider.of<GetJoinGroupRequestBloc>(context).add(
+      FeatchJoinGroupRequestEvent(
+        communityId: widget.communityId,
+      ),
+    );
   }
 
   @override

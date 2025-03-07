@@ -137,8 +137,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
 
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content:
-                      Text('oops something went wrong! ${state.failure?.message}'),
+                  content: Text(
+                      'oops something went wrong! ${state.failure?.message}'),
                 ),
               );
               break;
@@ -201,21 +201,21 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                             ),
                             //
                             //
-                            DateArea(
-                              dateStart: DateUtilsHelper.simplifyISOtimeString(
-                                  state.eventDetails!
-                                      .dateStart), // 'March 14, 2023', //
-                              dateEnd: DateUtilsHelper.simplifyISOtimeString(
-                                  state.eventDetails!.dateEnd),
-                              hourStart:
-                                  DateUtilsHelper.simplifyISOtimeStringOnlyHour(
-                                      state.eventDetails!
-                                          .dateStart), // '07:00 AM',
-                              hourEnd:
-                                  DateUtilsHelper.simplifyISOtimeStringOnlyHour(
-                                      state
-                                          .eventDetails!.dateEnd), //'09:00 AM',
-                            ),
+                            // DateArea(
+                            //   dateStart: DateUtilsHelper.simplifyISOtimeString(
+                            //       state.eventDetails!
+                            //           .dateStart), // 'March 14, 2023', //
+                            //   dateEnd: DateUtilsHelper.simplifyISOtimeString(
+                            //       state.eventDetails!.dateEnd),
+                            //   hourStart:
+                            //       DateUtilsHelper.simplifyISOtimeStringOnlyHour(
+                            //           state.eventDetails!
+                            //               .dateStart), // '07:00 AM',
+                            //   hourEnd:
+                            //       DateUtilsHelper.simplifyISOtimeStringOnlyHour(
+                            //           state
+                            //               .eventDetails!.dateEnd), //'09:00 AM',
+                            // ),
                             //
                             //
                             ChatArea(event: state.eventDetails!),

@@ -1,5 +1,6 @@
 import '../../../core/routes/routes.dart';
 import '../../../core/utils/shared_preference.dart';
+import 'package:go_router/go_router.dart';
 
 class MessageHandlerHelper {
   Map<String, dynamic> messageData;
@@ -7,26 +8,38 @@ class MessageHandlerHelper {
     required this.messageData,
   });
   void doTheJump() {
+    // context.push
+    print('message data: $messageData');
     String? cookies = ShardPrefHelper.getCookie();
     if (cookies == null || cookies.isEmpty) {
       router.go('/');
     }
-    print('step 4 with data :$messageData');
-    if (messageData['postId'] != null) {
-      router.push(
-          '/post-detail/${messageData['postId']}/true/${messageData['userId']}/0');
-    }
 
-    if (messageData['groupId'] != null) {
-      router.push('/groups/${messageData['groupId']}');
-    }
+    if (messageData['triggerType'] == 'AwardTrigger' &&
+        (messageData['postId'] == null || messageData['postId'] == '') &&
+        messageData['commentId'] != null) {
+      print('awards trigger');
 
-    if (messageData['messageId'] != null) {
-      router.push('/group-chat-thread/${messageData['messageId']}');
-    }
+      router
+          .push('/post-detail-of-specific-comment/${messageData['commentId']}');
+    } else if (messageData['triggerType'] == 'GroupTrigger') {
+      router.push('/group-details/${messageData['groupId']}');
 
-    if (messageData['eventId'] != null) {
-      router.push('/events/detail/${messageData['eventId']}');
+      // router.push('/post-detail-of-specific-comment/${notification.commentId}');
+    } else if (messageData['triggerType'] == 'MessageTrigger') {
+      print('message trigger');
+
+      router.push('/group-chat/${messageData['groupId']}');
+    } else if (messageData['triggerType'] == 'PostTrigger' ||
+        messageData['triggerType'] == 'CommentTrigger' ||
+        messageData['triggerType'] == 'AwardTrigger' ||
+        messageData['triggerType'] == 'ReplyTrigger') {
+      router.push('/post-detail/${messageData['postId']}');
+    } else if (messageData['postId'] != null) {
+      print('post,comment,reply trigger ${messageData['triggerType']}');
+      router.push('/post-detail/${messageData['postId']}');
+      // context.push(
+      //     '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
     }
   }
 }

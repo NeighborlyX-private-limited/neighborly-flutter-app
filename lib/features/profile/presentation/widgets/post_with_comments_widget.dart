@@ -108,11 +108,13 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
             InkWell(
               onTap: () {
                 if (widget.post.content.type == 'post') {
-                  context.push(
-                      '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
+                  context.push('/post-detail/${widget.post.content.id}');
+                  // context.push(
+                  //     '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
                 } else {
-                  context.push(
-                      '/post-detail/${widget.post.content.id}/${false}/${widget.post.userId}/0');
+                  context.push('/post-detail/${widget.post.content.id}');
+                  // context.push(
+                  //     '/post-detail/${widget.post.content.id}/${false}/${widget.post.userId}/0');
                 }
               },
               child: Column(
@@ -182,7 +184,8 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                     ),
                                     Text(
                                       formatTimeDifference(
-                                          widget.post.createdAt),
+                                        widget.post.createdAt,
+                                      ),
                                       style: TextStyle(
                                         color: Colors.grey[500],
                                         fontSize: 14,
@@ -318,8 +321,9 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                     ),
                   InkWell(
                     onTap: () {
-                      context.push(
-                          '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
+                      context.push('/post-detail/${widget.post.content.id}');
+                      // context.push(
+                      //     '/post-detail/${widget.post.content.id}/${true}/${widget.post.userId}/0');
                     },
                     child: ReactionWidget(
                       post: widget.post.content,

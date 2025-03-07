@@ -175,10 +175,10 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                     } else {
                       context.push(
                         '/group-chat/${state.rooms[index].id}',
-                        extra: {
-                          'chatModel':
-                              state.rooms[index].copyWith(isJoined: true)
-                        },
+                        // extra: {
+                        //   'chatModel':
+                        //       state.rooms[index].copyWith(isJoined: true)
+                        // },
                       );
                     }
                   },

@@ -33,13 +33,13 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/media_message_widget.dart';
 
 class ChatGroupScreen extends StatefulWidget {
-  final ChatRoomModel chatRoom;
+  //final ChatRoomModel chatRoom;
   final String roomId;
 
   const ChatGroupScreen({
     super.key,
     required this.roomId,
-    required this.chatRoom,
+    //required this.chatRoom,
   });
 
   @override
@@ -62,6 +62,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   bool isCommentFilled = false;
   bool isReply = false;
   bool showPinned = true;
+  bool isJoined = false;
+  String communityName = '';
+  String communityIcon = '';
 
   File? imageToUpload;
   File? _videoFile;
@@ -81,6 +84,12 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
     communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
     chatGroupCubit = BlocProvider.of<ChatGroupCubit>(context);
+    isJoined = communityDetailCubit.state.community?.isJoined ?? false;
+    communityIcon = communityDetailCubit.state.community?.avatarUrl ?? '';
+    communityName = communityDetailCubit.state.community?.name ?? '';
+    print('group chat data: ${isJoined}');
+    print('group chat data: ${communityIcon}');
+    print('group chat data: ${communityName}');
 
     communityDetailCubit.getCommunityDetail(widget.roomId);
     chatGroupCubit.init(widget.roomId);
@@ -208,6 +217,9 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
           if (state.status == Status.success) {
             admins = state.community?.admins ?? [];
             members = state.community?.users ?? [];
+            isJoined = state.community?.isJoined ?? false;
+            communityIcon = state.community?.avatarUrl ?? '';
+            communityName = state.community?.name ?? '';
           }
         },
         builder: (context, state) {
@@ -590,14 +602,16 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         const SizedBox(
           width: 10,
         ),
-        if (widget.chatRoom.avatarUrl != '')
+        if (communityIcon != '')
+          // if (widget.chatRoom.avatarUrl != '')
           GestureDetector(
             onTap: () {
               context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
               Navigator.pop(context);
             },
             child: UserAvatarStyledWidget(
-              avatarUrl: widget.chatRoom.avatarUrl,
+              avatarUrl: communityIcon,
+              // avatarUrl: widget.chatRoom.avatarUrl,
               avatarSize: 19,
               avatarBorderSize: 0,
             ),
@@ -605,7 +619,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
         const SizedBox(width: 10),
         Expanded(
           child: Text(
-            widget.chatRoom.name,
+            communityName,
+            // widget.chatRoom.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
@@ -734,7 +749,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 }
                 return InkWell(
                   onTap: () async {
-                    if (!widget.chatRoom.isJoined) {
+                    if (!isJoined) {
+                      // if (!widget.chatRoom.isJoined) {
                       _showJoinGroupBottomSheet(context);
                     } else {
                       if (imageToUpload != null) {

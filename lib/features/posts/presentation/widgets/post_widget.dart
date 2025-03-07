@@ -58,8 +58,10 @@ class _PostWidgetState extends State<PostWidget> {
     return GestureDetector(
       onTap: () {
         context
-            .push(
-                '/post-detail/${widget.post.id}/${true}/${widget.post.userId}/0')
+            .push('/post-detail/${widget.post.id}')
+            // context
+            //     .push(
+            //         '/post-detail/${widget.post.id}/${true}/${widget.post.userId}/0')
             .then((value) {
           //   print('calling');
 

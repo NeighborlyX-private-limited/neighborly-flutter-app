@@ -71,7 +71,7 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    print('Notification Res: ${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final notifications = jsonDecode(response.body)["notifications"];

@@ -39,6 +39,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       'latitude': '$lat',
       'longitude': '$long',
     };
+    print('create group lat lng: $lat $long');
 
     final request = http.MultipartRequest(
       'POST',
@@ -65,7 +66,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     final response = await request.send();
     final responseString = await response.stream.bytesToString();
-    print('GET ALL COMMUNITY: $responseString');
+    print('CREATE COMMUNITY: $responseString');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       return jsonDecode(responseString)['group']['_id'];
@@ -98,6 +99,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       'latitude': '$lat',
       'longitude': '$lng',
     };
+    print('featch group lat lng: $lat $lng');
 
     final response = await client.get(
       Uri.parse(url).replace(queryParameters: queryParameters),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +15,7 @@ import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bl
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/make_remove_admin_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_mute_group_bloc.dart';
+import 'package:neighborly_flutter_app/features/notification/config/message_handler_helper.dart';
 import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
@@ -78,6 +80,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppInitializers.init();
   HttpOverrides.global = MyHttpOverrides();
+  final RemoteMessage? message =
+      await FirebaseMessaging.instance.getInitialMessage();
+
+  if (message != null) {
+    print('message ka data: ${message.data}');
+    print('message ka data: ${message.data.runtimeType}');
+    Future.delayed(Duration(seconds: 1), () {
+      MessageHandlerHelper(messageData: message.data).doTheJump();
+    });
+  }
 
   runApp(const MyApp());
 }
@@ -122,9 +134,9 @@ class MyAppState extends State<MyApp> {
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) => PostDetailScreen(
                       postId: '201',
-                      isPost: false,
-                      userId: '667d0d6d621041da2c7b79e8',
-                      commentId: '',
+                      // isPost: false,
+                      //userId: '667d0d6d621041da2c7b79e8',
+                      // commentId: '',
                     ),
                   ));
                 } catch (e) {

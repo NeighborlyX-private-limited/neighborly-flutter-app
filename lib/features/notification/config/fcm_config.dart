@@ -64,7 +64,7 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
       MessageHandlerHelper(messageData: message.data).doTheJump();
     }
 
-    FirebaseMessaging.onMessage.listen((notification) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage notification) {
       if (displayInForeground && notification.notification != null) {
         LocaleNotificationManager.displayNotification(
           notification,

@@ -216,18 +216,19 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
-      path: '/post-detail/:postId/:isPost/:userId/:commentId',
+      path: '/post-detail/:postId',
+      // path: '/post-detail/:postId/:isPost/:userId/:commentId',
       name: RouteConstants.postDetailScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
         final String postId = state.pathParameters['postId']!;
-        final bool isPost = state.pathParameters['isPost'] == 'true';
-        final String userId = state.pathParameters['userId']!;
+        // final bool isPost = state.pathParameters['isPost'] == 'true';
+        // final String userId = state.pathParameters['userId']!;
         final String commentId = state.pathParameters['commentId'] ?? '0';
         return PostDetailScreen(
           postId: postId,
-          isPost: isPost,
-          userId: userId,
-          commentId: commentId,
+          //isPost: isPost,
+          //userId: userId,
+          // commentId: commentId,
         );
       },
     ),
@@ -317,13 +318,13 @@ final GoRouter router = GoRouter(
       path: '/group-chat/:roomId',
       builder: (context, state) {
         String roomId = state.pathParameters["roomId"] as String;
-        final extra = state.extra as Map?;
+        // final extra = state.extra as Map?;
 
-        final ChatRoomModel chatRoom = extra!['chatModel'];
+        // final ChatRoomModel chatRoom = extra!['chatModel'];
 
         return ChatGroupScreen(
           roomId: roomId,
-          chatRoom: chatRoom,
+          //chatRoom: chatRoom,
         );
       },
     ),

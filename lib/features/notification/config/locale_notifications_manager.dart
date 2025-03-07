@@ -3,12 +3,22 @@ import 'dart:convert';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:neighborly_flutter_app/features/notification/config/message_handler_helper.dart';
 
 import 'fcm_extension.dart';
 
 class LocaleNotificationManager {
   static final StreamController<RemoteMessage> onLocaleClick =
       StreamController<RemoteMessage>.broadcast();
+  static void onNotificationTap(NotificationResponse notification) async {
+    // notification.payload.
+    print('payload:${notification.payload}');
+    Map<String, dynamic> message = jsonDecode(notification.payload!);
+
+    print('message: ${message['data']}');
+    print('message: ${message['data'].runtimeType}');
+    MessageHandlerHelper(messageData: message['data']).doTheJump();
+  }
 
   static Future init(
     String? appAndroidIcon,
@@ -30,6 +40,8 @@ class LocaleNotificationManager {
     );
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
+      onDidReceiveBackgroundNotificationResponse: onNotificationTap,
+      onDidReceiveNotificationResponse: onNotificationTap,
     );
   }
 
@@ -99,7 +111,9 @@ class LocaleNotificationManager {
         details,
         payload: jsonEncode(notification.toMap()),
       );
-    } catch (e) {}
+    } catch (e) {
+      print('error in foregroup notification');
+    }
   }
 
   static Importance _getImportance(RemoteNotification notification) {

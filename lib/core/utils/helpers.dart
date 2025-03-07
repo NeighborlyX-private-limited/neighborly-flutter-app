@@ -3,14 +3,13 @@ import '../entities/option_entity.dart';
 
 // AGO TIME
 String formatTimeDifference(String isoTimestamp) {
-  print('time is this $isoTimestamp');
   if (isoTimestamp == '') return '';
   DateTime inputTime = DateTime.parse(isoTimestamp);
   DateTime now = DateTime.now();
   Duration difference = now.difference(inputTime);
 
   if (difference.inDays > 10) {
-    return '${inputTime.day.toString().padLeft(2, '0')}-${inputTime.month.toString().padLeft(2, '0')}-${inputTime.year} ago';
+    return '${inputTime.day.toString().padLeft(2, '0')}-${inputTime.month.toString().padLeft(2, '0')}-${inputTime.year}';
   } else if (difference.inDays >= 1) {
     return '${difference.inDays} day ago';
   } else if (difference.inHours >= 1) {

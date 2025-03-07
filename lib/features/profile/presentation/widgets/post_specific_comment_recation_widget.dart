@@ -337,7 +337,9 @@ class _PostReactionSpecificCommentWidgetState
         InkWell(
           onTap: () {
             String link =
-                'https://prod.neighborly.in/post-detail/${widget.postId}/${widget.isPost}/${widget.postComment.userId}/${widget.postComment.commentId}';
+                'https://prod.neighborly.in/post-detail/${widget.postId}';
+            // String link =
+            //     'https://prod.neighborly.in/post-detail/${widget.postId}/${widget.isPost}/${widget.postComment.userId}/${widget.postComment.commentId}';
             ShareIt.text(content: link, androidSheetTitle: 'Cool Post');
           },
           child: Container(

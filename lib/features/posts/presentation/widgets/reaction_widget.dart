@@ -516,7 +516,9 @@ class _ReactionWidgetState extends State<ReactionWidget> {
         InkWell(
           onTap: () {
             String link =
-                'https://prod.neighborly.in/post-detail/${widget.post.id}/${widget.post.type == 'post' ? 'true' : 'false'}/${widget.post.userId}/0';
+                'https://prod.neighborly.in/post-detail/${widget.post.id}/';
+            // String link =
+            //     'https://prod.neighborly.in/post-detail/${widget.post.id}/${widget.post.type == 'post' ? 'true' : 'false'}/${widget.post.userId}/0';
             ShareIt.text(content: link, androidSheetTitle: 'Share');
           },
           child: Container(

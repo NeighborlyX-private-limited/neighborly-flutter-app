@@ -451,7 +451,8 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
           onTap: () {
             /// #share
             String link =
-                'https://prod.neighborly.in/post-detail/${widget.comment.postid}/${widget.isPost}/${widget.comment.userId}/${widget.comment.commentid}';
+                'https://prod.neighborly.in/post-detail/${widget.comment.postid}';
+            // 'https://prod.neighborly.in/post-detail/${widget.comment.postid}/${widget.isPost}/${widget.comment.userId}/${widget.comment.commentid}';
 
             ShareIt.text(
               content: link,
