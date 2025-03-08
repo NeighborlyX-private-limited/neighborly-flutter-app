@@ -265,7 +265,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    print('delete: ${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
     }

@@ -58,6 +58,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
         return data;
       } else {
+        print('achha to yaha error hai');
         String errorMessage = jsonDecode(response.body)['error'] ??
             jsonDecode(response.body)['message'] ??
             jsonDecode(response.body)['msg'] ??
@@ -66,10 +67,12 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         throw ServerException(message: errorMessage);
       }
     } on SocketException catch (e) {
+      print('achha to yaha se error hai');
       throw ServerException(
         message: 'oops something went wrong',
       );
     } catch (e) {
+      print('achha to yaha pr error hai $e');
       throw ServerException(
         message: 'oops something went wrong',
       );

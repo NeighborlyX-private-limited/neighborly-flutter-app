@@ -684,6 +684,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   BlocConsumer<DeleteAccountBloc, DeleteAccountState>(
                     listener: (context, state) {
                       if (state is DeleteAccountFailureState) {
+                        print('delete account error: ${state.error}');
                         context.pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -702,7 +703,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                         ShardPrefHelper.clear();
                         context.pop();
-                        context.go('/registerScreen');
+                        context.go('/');
                       }
                     },
                     builder: (context, state) {

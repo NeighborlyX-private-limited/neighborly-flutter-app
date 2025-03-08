@@ -59,7 +59,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               Icons.arrow_back_ios,
             ),
             onTap: () {
-              Navigator.pop(context);
+              context.pop();
+              // Navigator.pop(context);
             },
           ),
           title: Row(

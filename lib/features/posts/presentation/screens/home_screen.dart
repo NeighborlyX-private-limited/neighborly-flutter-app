@@ -503,6 +503,7 @@ class _HomeScreenState extends State<HomeScreen>
 
                   // FAILURE STATE
                   if (state is GetAllPostsFailureState) {
+                    print('this is error: ${state.error}');
                     if (state.error.contains('Invalid Token')) {
                       context.go('/loginScreen');
                     }
