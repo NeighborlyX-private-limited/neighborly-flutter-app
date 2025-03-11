@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:neighborly_flutter_app/core/constants/app_images.dart';
 import '../../../../core/theme/colors.dart';
 
 class ChatEmptyWidget extends StatelessWidget {
@@ -11,14 +12,14 @@ class ChatEmptyWidget extends StatelessWidget {
       color: AppColors.whiteColor,
       width: double.infinity,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SvgPicture.asset(
-              'assets/chat_welcome.svg',
+              AppImages.emptyChat,
               width: MediaQuery.of(context).size.width * 0.60,
             ),
             const SizedBox(height: 20),

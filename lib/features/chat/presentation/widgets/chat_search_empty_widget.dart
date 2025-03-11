@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:neighborly_flutter_app/core/constants/app_images.dart';
 import '../../../../core/theme/colors.dart';
 
 class ChatSearchEmptyWidget extends StatelessWidget {
@@ -22,12 +23,12 @@ class ChatSearchEmptyWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SvgPicture.asset(
-              'assets/search-empty.svg',
+              AppImages.emptySearch,
               width: MediaQuery.of(context).size.width * 0.60,
             ),
             const SizedBox(height: 20),
             Text(
-              'No results for "$searchTem"',
+              'No results found for "$searchTem"',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
@@ -43,7 +44,6 @@ class ChatSearchEmptyWidget extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
-            const SizedBox(height: 25),
           ],
         ),
       ),

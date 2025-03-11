@@ -18,6 +18,10 @@ class AppImages {
   static const String eventIcon = 'assets/icon/event.svg';
   static const String profileIcon = 'assets/icon/profile.svg';
   static const String chatIcon = 'assets/icon/chat.svg';
+  static const String searchIcon = 'assets/icon/search.svg';
+  static const String closeIcon = 'assets/icon/close.svg';
+  static const String leftIosArrowIcon = 'assets/icon/left_ios_arrow.svg';
+  static const String muteIcon = 'assets/icon/mute.svg';
 
   // APP IMAGES
   static const String tute1 = 'assets/image/tute1.svg';
@@ -26,7 +30,10 @@ class AppImages {
   static const String tute4 = 'assets/image/tute4.svg';
   static const String tute5 = 'assets/image/tute5_png.png';
 
+  static const String emptySearch = 'assets/image/empty_search.svg';
+  static const String emptyChat = 'assets/image/empty_chat.svg';
+  static const String emptyCommunity = 'assets/image/empty_community.svg';
+
   static const String defaultProfilePic =
       'assets/image/default_profile_pic.svg';
-  static const String emptyCommunity = 'assets/empty_community.svg';
 }

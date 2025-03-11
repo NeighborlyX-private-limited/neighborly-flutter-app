@@ -472,7 +472,7 @@ class _ProfileReactionCommentWidgetState
                               ),
                               Text(
                                 'Recognizing users who consistently contribute high-quality content.',
-                                style: mediumGreyTextStyleBlack,
+                                style: mediumGreyTextStyle,
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],
@@ -517,7 +517,7 @@ class _ProfileReactionCommentWidgetState
                               ),
                               Text(
                                 'For bringing positivity and cheerfulness to the community.',
-                                style: mediumGreyTextStyleBlack,
+                                style: mediumGreyTextStyle,
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],
@@ -562,7 +562,7 @@ class _ProfileReactionCommentWidgetState
                               ),
                               Text(
                                 'For providing clear guidance and valuable insights.',
-                                style: mediumGreyTextStyleBlack,
+                                style: mediumGreyTextStyle,
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],
@@ -607,7 +607,7 @@ class _ProfileReactionCommentWidgetState
                               ),
                               Text(
                                 'For offering comforting and supportive posts.',
-                                style: mediumGreyTextStyleBlack,
+                                style: mediumGreyTextStyle,
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],
@@ -652,7 +652,7 @@ class _ProfileReactionCommentWidgetState
                               ),
                               Text(
                                 'For creating informative and detailed content.',
-                                style: mediumGreyTextStyleBlack,
+                                style: mediumGreyTextStyle,
                                 softWrap: true, // Enables text wrapping
                               ),
                             ],

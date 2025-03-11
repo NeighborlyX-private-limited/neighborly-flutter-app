@@ -136,14 +136,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const CustomSizedBox(height: 10),
 
                 // EMAIL SIGNUP BUTTON
-                RegisterOption(
-                  title: AppLocalizations.of(context)!.continue_with_email,
-                  image: Image.asset('assets/email_icon.png'),
-                  onTap: () {
-                    context.push("/registerWithEmailScreen");
-                  },
-                ),
-                const CustomSizedBox(height: 20),
+                // RegisterOption(
+                //   title: AppLocalizations.of(context)!.continue_with_email,
+                //   image: Image.asset('assets/email_icon.png'),
+                //   onTap: () {
+                //     context.push("/registerWithEmailScreen");
+                //   },
+                // ),
+                // const CustomSizedBox(height: 20),
                 const OrDividerWidget(),
                 const CustomSizedBox(height: 20),
 

@@ -25,6 +25,7 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
 
+import 'core/utils/shared_preference.dart';
 import 'dependency_injection.dart' as di;
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source_impl.dart';
 import 'features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
@@ -101,7 +102,7 @@ class MyApp extends StatefulWidget {
   MyAppState createState() => MyAppState();
 }
 
-class MyAppState extends State<MyApp> {
+class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   // String? _linkMessage;
   StreamSubscription? _sub;
   static const platform = MethodChannel('com.neighborlyx.neighborlysocial');
@@ -111,8 +112,23 @@ class MyAppState extends State<MyApp> {
   void initState() {
     // setStatusBarColor();
     super.initState();
-
+    WidgetsBinding.instance.addObserver(this);
     _setDeepLinkListener();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      print('1 here');
+      String? activeChatRoomId = ShardPrefHelper.getActiveChatRoomId();
+      if (activeChatRoomId == null) {
+        print('yes room id is null');
+      } else {
+        print('room id is : $activeChatRoomId');
+
+        // context.read<ChatGroupCubit>().disconnectChat(activeChatRoomId);
+      }
+    }
   }
 
   Future<void> _setDeepLinkListener() async {
@@ -160,7 +176,9 @@ class MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
+    print('2 here');
     _sub?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

@@ -82,7 +82,7 @@ class _CommunitiesScreenState extends State<CommunitiesScreen> {
                           },
                           child: Text(
                             'Join your first community',
-                            style: bluemediumTextStyleBlack,
+                            style: blueMediumTextStyle,
                           ),
                         ),
                       ],

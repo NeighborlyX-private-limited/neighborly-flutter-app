@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/constants/app_images.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/theme/text_style.dart';
+import '../../../../core/widgets/svg_icon.dart';
 import '../bloc/chat_main_cubit.dart';
 import '../widgets/chat_empty_widget.dart';
 import '../widgets/chat_rooms_sheemer.dart';
@@ -43,16 +46,18 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         backgroundColor: AppColors.whiteColor,
+        automaticallyImplyLeading: false,
+        centerTitle: true,
         leading: showSearch
             ? null
             : GestureDetector(
                 child: Icon(
                   Icons.arrow_back_ios,
+                  size: 20,
                 ),
                 onTap: () {
-                  Navigator.of(context).pop();
+                  context.pop();
                 },
               ),
         title: showSearch
@@ -70,35 +75,27 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                   }
                 },
                 decoration: InputDecoration(
+                  hintText: 'Search',
                   filled: true,
                   fillColor: AppColors.lightBackgroundColor,
-                  hintText: 'Search',
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 20,
-                    vertical: 5,
+                    vertical: 12,
                   ),
-                  hintStyle: TextStyle(
-                    color: Colors.black.withOpacity(0.6),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+                  hintStyle: mediumGreyTextStyle.copyWith(
+                    color: AppColors.lightGreyColor,
                   ),
                   border: OutlineInputBorder(
-                    gapPadding: 0,
-                    borderSide: BorderSide(
-                      width: 1,
-                      style: BorderStyle.solid,
-                      color: AppColors.greyColor,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
                   ),
                   focusedBorder: OutlineInputBorder(
-                    gapPadding: 0,
-                    borderSide: BorderSide(
-                      width: 1,
-                      style: BorderStyle.solid,
-                      color: AppColors.greyColor,
-                    ),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
                   ),
                 ),
                 cursorColor: AppColors.greyColor,
@@ -106,11 +103,8 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
             // APP BAR TITLE
             : Text(
                 'Chat',
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                ),
+                style: blackNormalTextStyle,
               ),
-        centerTitle: true,
         actions: [
           // SEARCH ICON
           GestureDetector(
@@ -119,12 +113,13 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                 showSearch = !showSearch;
                 if (!showSearch) {
                   chatMainCubit.cleanSearchFilter();
+                  searchEC.clear();
                 }
               });
             },
-            child: Icon(
-              showSearch ? Icons.close : Icons.search,
-              size: 24,
+            child: CircularSvgImage(
+              assetPath:
+                  showSearch ? AppImages.closeIcon : AppImages.searchIcon,
             ),
           ),
 
@@ -137,7 +132,7 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
           if (state.status == Status.failure) {
             showSnackBar(
               context: context,
-              message: "oops something went wrong",
+              message: state.failure?.message ?? 'oops something went wrong',
             );
           }
         },
@@ -158,9 +153,8 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
           }
 
           return Container(
-            padding: EdgeInsets.only(top: 15),
             width: double.infinity,
-            color: Colors.white,
+            color: AppColors.whiteColor,
             child: ListView.builder(
               itemCount: state.rooms.length,
               itemBuilder: ((context, index) {
@@ -170,15 +164,10 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
                     if (!selectedRoom.isGroup) {
                       context.push(
                         '/chat/private/${state.rooms[index].id}',
-                        extra: state.rooms[index],
                       );
                     } else {
                       context.push(
                         '/group-chat/${state.rooms[index].id}',
-                        // extra: {
-                        //   'chatModel':
-                        //       state.rooms[index].copyWith(isJoined: true)
-                        // },
                       );
                     }
                   },

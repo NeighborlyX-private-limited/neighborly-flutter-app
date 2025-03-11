@@ -89,7 +89,7 @@ class _FindMeScreenState extends State<FindMeScreen> {
                               AppLocalizations.of(context)!
                                   .you_will_automatically_join_the_community_group_when_it_is_created,
                               // 'You will automatically join the community group when it is created.',
-                              style: mediumGreyTextStyleBlack,
+                              style: mediumGreyTextStyle,
                               softWrap: true,
                             ),
                           ],

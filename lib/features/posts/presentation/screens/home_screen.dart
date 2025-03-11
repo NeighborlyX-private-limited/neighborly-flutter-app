@@ -347,12 +347,12 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
                 actions: [
-                  IconButton(
-                    onPressed: () {
-                      context.push('/googleMapScreen');
-                    },
-                    icon: Icon(Icons.location_on_outlined),
-                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     context.push('/googleMapScreen');
+                  //   },
+                  //   icon: Icon(Icons.location_on_outlined),
+                  // ),
 
                   // NOTIFICATION ICON
                   // NEED TO ADD BLOC BUILDER HERE FOR NOTIFICATION COUNT

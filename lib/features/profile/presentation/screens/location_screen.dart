@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/utils/shared_preference.dart';
@@ -20,6 +22,7 @@ class LocationScreen extends StatefulWidget {
 class LocationScreenState extends State<LocationScreen> {
   String? selectedCity;
   bool? isCurrentLocationOn = false;
+  bool isLoading = false;
 
   // POPULAR CITIES
   List<Map<String, dynamic>> popularLocations = [
@@ -56,6 +59,11 @@ class LocationScreenState extends State<LocationScreen> {
     double lng,
     bool isLocationOn,
   ) async {
+    if (mounted) {
+      setState(() {
+        isLoading = true;
+      });
+    }
     print("Saving City: $city");
     print("Saving Lat: $lat");
     print("Saving Lng: $lng");
@@ -65,6 +73,16 @@ class LocationScreenState extends State<LocationScreen> {
     await ShardPrefHelper.setLat(lat);
     await ShardPrefHelper.setLng(lng);
     await ShardPrefHelper.setIsCurrentLocationOn(isLocationOn);
+    await Future.delayed(Duration(seconds: 1));
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+
+    if (mounted) {
+      context.go('/home');
+    }
   }
 
   // ASK LOCATION PERMISSION
@@ -131,7 +149,7 @@ class LocationScreenState extends State<LocationScreen> {
       if (placemarks.isNotEmpty) {
         String? city = placemarks[0].locality ?? '';
 
-        _saveLocation(
+        await _saveLocation(
           city,
           position.latitude,
           position.longitude,
@@ -169,82 +187,103 @@ class LocationScreenState extends State<LocationScreen> {
             ),
           ),
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // CURRENT LOCATION
-              ListTile(
-                leading: CircularSvgImage(
-                  assetPath: AppImages.currentLocationIcon,
-                  color: isCurrentLocationOn!
-                      ? AppColors.primaryColor
-                      : AppColors.greyColor,
-                ),
-                title: Text(
-                  "Current Location",
-                  style: TextStyle(
-                    color: isCurrentLocationOn! ? AppColors.primaryColor : null,
-                  ),
-                ),
-                subtitle: Text(
-                  "Use Current Location",
-                  style: TextStyle(
-                    color: isCurrentLocationOn! ? AppColors.primaryColor : null,
-                  ),
-                ),
-                onTap: () {
-                  setState(() {
-                    isCurrentLocationOn = true;
-                  });
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // CURRENT LOCATION
+                  ListTile(
+                    leading: CircularSvgImage(
+                      assetPath: AppImages.currentLocationIcon,
+                      color: isCurrentLocationOn!
+                          ? AppColors.primaryColor
+                          : AppColors.greyColor,
+                    ),
+                    title: Text(
+                      "Current Location",
+                      style: TextStyle(
+                        color: isCurrentLocationOn!
+                            ? AppColors.primaryColor
+                            : null,
+                      ),
+                    ),
+                    subtitle: Text(
+                      "Use Current Location",
+                      style: TextStyle(
+                        color: isCurrentLocationOn!
+                            ? AppColors.primaryColor
+                            : null,
+                      ),
+                    ),
+                    onTap: () {
+                      setState(() {
+                        isCurrentLocationOn = true;
+                      });
 
-                  fetchLocationAndUpdate();
-                },
-              ),
-              SizedBox(height: 10),
-              // POPULAR CITY
-              Text(
-                "Popular",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              ...popularLocations.map(
-                (city) => ListTile(
-                  leading: CircularSvgImage(
-                    assetPath: AppImages.locationIcon,
-                    color: selectedCity == city["name"] && !isCurrentLocationOn!
-                        ? AppColors.primaryColor
-                        : AppColors.greyColor,
+                      fetchLocationAndUpdate();
+                      // if (context.mounted) {
+                      //   context.go('/home');
+                      // }
+                    },
                   ),
-                  title: Text(
-                    city["name"],
+                  SizedBox(height: 10),
+                  // POPULAR CITY
+                  Text(
+                    "Popular",
                     style: TextStyle(
-                      color:
-                          selectedCity == city["name"] && !isCurrentLocationOn!
-                              ? AppColors.primaryColor
-                              : null,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  onTap: () {
-                    setState(() {
-                      selectedCity = city["name"];
-                      isCurrentLocationOn = false;
-                    });
+                  ...popularLocations.map(
+                    (city) => ListTile(
+                      leading: CircularSvgImage(
+                        assetPath: AppImages.locationIcon,
+                        color: selectedCity == city["name"] &&
+                                !isCurrentLocationOn!
+                            ? AppColors.primaryColor
+                            : AppColors.greyColor,
+                      ),
+                      title: Text(
+                        city["name"],
+                        style: TextStyle(
+                          color: selectedCity == city["name"] &&
+                                  !isCurrentLocationOn!
+                              ? AppColors.primaryColor
+                              : null,
+                        ),
+                      ),
+                      onTap: () {
+                        setState(() {
+                          selectedCity = city["name"];
+                          isCurrentLocationOn = false;
+                        });
 
-                    _saveLocation(
-                      city["name"],
-                      city["lat"],
-                      city["lng"],
-                      false,
-                    );
-                  },
+                        _saveLocation(
+                          city["name"],
+                          city["lat"],
+                          city["lng"],
+                          false,
+                        );
+                        // if (context.mounted) {
+                        //   context.go('/home');
+                        // }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isLoading)
+              Positioned.fill(
+                child: SizedBox(
+                  child: CustomCircularIndicator(),
                 ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );

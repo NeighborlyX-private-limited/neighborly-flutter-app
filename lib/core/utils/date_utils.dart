@@ -24,7 +24,6 @@ class DateUtilsHelper {
   }
 
   static String simplifyISOtimeString(String date) {
-    print('date: $date');
     try {
       DateTime dateTimeStart = DateTime.parse(date);
       String formattedDate = DateFormat('MMMM d, yyyy').format(dateTimeStart);
@@ -43,5 +42,30 @@ class DateUtilsHelper {
     } catch (e) {
       return '';
     }
+  }
+}
+
+String getTimeAgo(String utcTime) {
+  DateTime postTime = DateTime.parse(utcTime).toLocal();
+
+  final now = DateTime.now();
+  final difference = now.difference(postTime);
+
+  if (difference.inSeconds < 60) {
+    return "Just now";
+  } else if (difference.inMinutes < 60) {
+    return "${difference.inMinutes} min ago";
+  } else if (difference.inHours < 24) {
+    return "${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago";
+  } else if (difference.inDays == 1) {
+    return "Yesterday";
+  } else if (difference.inDays < 7) {
+    return DateFormat('EEEE').format(postTime);
+  } else if (difference.inDays < 30) {
+    return "${(difference.inDays / 7).floor()} week${(difference.inDays / 7).floor() > 1 ? 's' : ''} ago";
+  } else if (difference.inDays < 365) {
+    return "${(difference.inDays / 30).floor()} month${(difference.inDays / 30).floor() > 1 ? 's' : ''} ago";
+  } else {
+    return DateFormat('dd MMM yyyy').format(postTime);
   }
 }

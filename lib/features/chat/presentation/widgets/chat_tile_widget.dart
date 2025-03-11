@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:intl/intl.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import 'package:neighborly_flutter_app/core/constants/app_images.dart';
+import 'package:neighborly_flutter_app/core/theme/text_style.dart';
 import '../../../../core/theme/colors.dart';
-import '../../../../core/utils/helpers.dart';
+import '../../../../core/utils/date_utils.dart';
+import '../../../../core/widgets/svg_icon.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/chat_room_model.dart';
 
@@ -21,8 +21,8 @@ class ChatTileWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 4.0),
       child: Container(
-        constraints: BoxConstraints(minWidth: 23),
-        height: 23,
+        constraints: BoxConstraints(minWidth: 24),
+        height: 24,
         decoration: BoxDecoration(
           color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(50),
@@ -43,38 +43,6 @@ class ChatTileWidget extends StatelessWidget {
     );
   }
 
-  bool isDateWithinLastMonth(DateTime date) {
-    DateTime now = DateTime.now();
-    DateTime oneMonthAgo = DateTime(
-      now.year,
-      now.month - 1,
-      now.day,
-      now.hour,
-      now.minute,
-      now.second,
-    );
-
-    return date.isAfter(oneMonthAgo);
-  }
-
-  String timeAgoArea(String lastMessageDate) {
-    if (lastMessageDate == '') return lastMessageDate;
-    DateTime parsedDate = DateTime.parse(lastMessageDate);
-
-    // Format the date as "YYYY-MM-DD HH:mm:ss"
-    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(parsedDate);
-    DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
-    DateFormat dateFormatSimple = DateFormat('dd/MM/yyyy');
-    DateTime dateTime = format.parse(formattedDate);
-    String timeAgo = timeago.format(dateTime);
-
-    if (isDateWithinLastMonth(dateTime)) {
-      return timeAgo;
-    } else {
-      return dateFormatSimple.format(dateTime);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -84,7 +52,7 @@ class ChatTileWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(16),
         width: double.infinity,
-        color: Colors.white,
+        color: AppColors.whiteColor,
         child: Row(
           children: [
             UserAvatarStyledWidget(
@@ -104,22 +72,17 @@ class ChatTileWidget extends StatelessWidget {
                           room.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                          style: bodyBlackTextStyle,
                         ),
                       ),
                       const SizedBox(
                         width: 10,
                       ),
                       Text(
-                        formatTimeDifference(room.lastMessageDate),
-                        // timeAgoArea(room.lastMessageDate),
+                        getTimeAgo(room.lastMessageDate),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+                        style: smallGreyTextStyle,
                       ),
                     ],
                   ),
@@ -133,9 +96,8 @@ class ChatTileWidget extends StatelessWidget {
                               : room.lastMessage,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black45,
+                          style: mediumGreyTextStyle.copyWith(
+                            color: AppColors.lightGreyColor,
                           ),
                         ),
                       ),
@@ -144,16 +106,12 @@ class ChatTileWidget extends StatelessWidget {
                       ),
                       Visibility(
                         visible: room.isMuted,
-                        child: SvgPicture.asset(
-                          'assets/mute_filled.svg',
-                          width: 20,
-                          height: 20,
-                          colorFilter: ColorFilter.mode(
-                            Colors.grey,
-                            BlendMode.srcIn,
-                          ),
+                        child: CircularSvgImage(
+                          assetPath: AppImages.muteIcon,
+                          color: AppColors.lightGreyColor,
+                          size: 16,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],

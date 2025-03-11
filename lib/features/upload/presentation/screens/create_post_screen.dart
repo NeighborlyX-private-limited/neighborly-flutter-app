@@ -974,7 +974,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             const CustomSizedBox(width: 12),
                             Text(
                               AppLocalizations.of(context)!.add_a_photo,
-                              style: mediumTextStyleBlack,
+                              style: mediumBlackTextStyle,
                             ),
                           ],
                         ),
@@ -1002,7 +1002,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             const CustomSizedBox(width: 12),
                             Text(
                               AppLocalizations.of(context)!.take_a_picture,
-                              style: mediumTextStyleBlack,
+                              style: mediumBlackTextStyle,
                             ),
                           ],
                         ),
@@ -1023,7 +1023,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   const CustomSizedBox(width: 12),
                                   Text(
                                     AppLocalizations.of(context)!.create_a_post,
-                                    style: mediumTextStyleBlack,
+                                    style: mediumBlackTextStyle,
                                   ),
                                 ],
                               ),
@@ -1060,7 +1060,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   const CustomSizedBox(width: 12),
                                   Text(
                                     AppLocalizations.of(context)!.add_a_video,
-                                    style: mediumTextStyleBlack,
+                                    style: mediumBlackTextStyle,
                                   ),
                                 ],
                               ),
@@ -1080,7 +1080,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                                   const CustomSizedBox(width: 12),
                                   Text(
                                     AppLocalizations.of(context)!.create_a_poll,
-                                    style: mediumTextStyleBlack,
+                                    style: mediumBlackTextStyle,
                                   ),
                                 ],
                               ),

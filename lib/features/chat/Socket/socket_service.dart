@@ -22,6 +22,7 @@ class SocketService {
           .setTransports(['websocket'])
           .setAuth({'token': accessToken})
           .disableAutoConnect()
+          .enableForceNewConnection()
           .build(),
     );
 
@@ -109,7 +110,7 @@ class SocketService {
   }
 
   // LEAVE ROOM EMITTER
-  void leaveRoom(String groupId) async {
+  void leaveRoom(String groupId) {
     print('LEAVE ROOM WITH GROUP ID:$groupId');
     if (groupId.isNotEmpty) {
       final payload = {'groupId': groupId};
@@ -118,16 +119,45 @@ class SocketService {
   }
 
   // DISPOSE
-  void dispose(String roomId) {
-    print('DISPOSE SOCKET WITH GROUP ID:$roomId');
-    if (roomId.isNotEmpty) {
-      leaveRoom(roomId);
+  // DISPOSE
+  void dispose(String roomId) async {
+    if (_socket == null) {
+      print("SOCKET ALREADY DISPOSED.");
+      return;
     }
+
+    print('DISPOSE SOCKET WITH GROUP ID:$roomId');
+
+    if (roomId.isNotEmpty) {
+      final payload = {'groupId': roomId};
+      _socket?.emit('leave-room', payload);
+      // leaveRoom(roomId);
+    }
+    await Future.delayed(Duration(milliseconds: 1500));
+
     _socket?.disconnect();
     _socket?.dispose();
 
     _socket = null;
+
     print("SOCKET CONNECTION DISPOSE.");
-    return;
   }
+
+  // void dispose(String roomId) {
+  //   print('DISPOSE SOCKET WITH GROUP ID:$roomId');
+  //   if (roomId.isNotEmpty) {
+  //     leaveRoom(roomId);
+  //   }
+  //   Future.delayed(Duration(milliseconds: 1500), () {
+  //     // Code to execute after 1.5 seconds
+  //     print("Executed after 1.5 seconds");
+  //   });
+
+  //   _socket?.disconnect();
+  //   _socket?.dispose();
+
+  //   _socket = null;
+  //   print("SOCKET CONNECTION DISPOSE.");
+  //   return;
+  // }
 }

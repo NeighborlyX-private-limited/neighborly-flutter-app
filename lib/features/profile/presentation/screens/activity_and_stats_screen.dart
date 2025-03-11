@@ -137,7 +137,7 @@ class _ActivityAndStatsScreenState extends State<ActivityAndStatsScreen> {
                                         AppLocalizations.of(context)!
                                             .karma_description,
                                         // 'Your Karma score reflects your engagement within the community. Share, help, and connect to build your score.',
-                                        style: mediumGreyTextStyleBlack,
+                                        style: mediumGreyTextStyle,
                                         softWrap: true,
                                       ),
                                     ],

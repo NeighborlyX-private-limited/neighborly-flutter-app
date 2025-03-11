@@ -169,14 +169,14 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               state.profile.mostProminentAward != null
                                   ? Text(
                                       state.profile.mostProminentAward!,
-                                      style: itallicMediumGreyTextStyleBlack,
+                                      style: itallicMediumGreyTextStyle,
                                     )
                                   : const SizedBox(),
                               const SizedBox(height: 2),
                               state.profile.bio != null
                                   ? Text(
                                       state.profile.bio!,
-                                      style: mediumGreyTextStyleBlack,
+                                      style: mediumGreyTextStyle,
                                     )
                                   : const SizedBox(),
                               const SizedBox(height: 15),
@@ -193,7 +193,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                       Text(
                                         AppLocalizations.of(context)!.posts,
                                         // 'Post',
-                                        style: mediumGreyTextStyleBlack,
+                                        style: mediumGreyTextStyle,
                                       ),
                                     ],
                                   ),
@@ -208,7 +208,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                       Text(
                                         AppLocalizations.of(context)!.karma,
                                         // 'Karma',
-                                        style: mediumGreyTextStyleBlack,
+                                        style: mediumGreyTextStyle,
                                       ),
                                     ],
                                   ),
@@ -223,7 +223,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                                       Text(
                                         AppLocalizations.of(context)!.awards,
                                         // 'Awards',
-                                        style: mediumGreyTextStyleBlack,
+                                        style: mediumGreyTextStyle,
                                       ),
                                     ],
                                   ),

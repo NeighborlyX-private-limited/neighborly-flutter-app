@@ -71,7 +71,7 @@ class _GroupSectionState extends State<GroupSection> {
                           },
                           child: Text(
                             'Join your first community',
-                            style: bluemediumTextStyleBlack,
+                            style: blueMediumTextStyle,
                           ),
                         ),
                       ],

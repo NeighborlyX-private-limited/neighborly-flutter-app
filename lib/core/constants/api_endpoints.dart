@@ -10,6 +10,7 @@ class ApiEndpoints {
   static const String devNotificationBaseUrl =
       'https://dev.neighborly.in/notification';
   static const String devSocketBaseUrl = 'http://35.154.40.61:3002';
-
+  // AUTH API END POINTS
+  // WALL API END POINTS
   static const String featchPost = '$devBaseUrl/wall/fetch-posts';
 }

@@ -191,271 +191,278 @@ class _CommunityScreenState extends State<CommunityScreen>
 // BUILD
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      appBar: AppBar(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        print('back button press');
+        context.go('/home');
+      },
+      child: Scaffold(
         backgroundColor: AppColors.whiteColor,
-        automaticallyImplyLeading: false,
-        title: Row(
-          children: [
-            // APP LOGO
-            SvgPicture.asset(
-              'assets/logo.svg',
-              width: 24,
-              height: 24,
+        appBar: AppBar(
+          backgroundColor: AppColors.whiteColor,
+          automaticallyImplyLeading: false,
+          title: Row(
+            children: [
+              // APP LOGO
+              SvgPicture.asset(
+                'assets/logo.svg',
+                width: 24,
+                height: 24,
+              ),
+            ],
+          ),
+          actions: [
+            // CHAT BUTTON
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: InkWell(
+                onTap: () {
+                  context.push('/chat');
+                },
+                child: CircularSvgImage(
+                  assetPath: AppImages.chatIcon,
+                ),
+              ),
             ),
           ],
         ),
-        actions: [
-          // CHAT BUTTON
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: InkWell(
-              onTap: () {
-                context.push('/chat');
-              },
-              child: CircularSvgImage(
-                assetPath: AppImages.chatIcon,
+        // BODY AREA
+        body: Column(
+          children: [
+            Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.whiteColor,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicatorColor: AppColors.primaryColor,
+                  labelColor: Colors.black,
+                  labelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                  unselectedLabelColor: Colors.grey,
+                  unselectedLabelStyle: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                  tabAlignment: TabAlignment.center,
+                  tabs: [
+                    Tab(
+                      child: tabTitle(
+                        AppLocalizations.of(context)!.nearby_Groups,
+                      ),
+                    ),
+                    Tab(
+                      child: tabTitle(
+                        AppLocalizations.of(context)!.my_Groups,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
-      ),
-      // BODY AREA
-      body: Column(
-        children: [
-          Container(
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.whiteColor,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TabBar(
+            Expanded(
+              child: TabBarView(
                 controller: _tabController,
-                isScrollable: true,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorColor: AppColors.primaryColor,
-                labelColor: Colors.black,
-                labelStyle: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                ),
-                unselectedLabelColor: Colors.grey,
-                unselectedLabelStyle: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-                tabAlignment: TabAlignment.center,
-                tabs: [
-                  Tab(
-                    child: tabTitle(
-                      AppLocalizations.of(context)!.nearby_Groups,
+                children: [
+                  // NEARBY GROUPS TAB
+                  RefreshIndicator(
+                    onRefresh: _onNearbyTabRefresh,
+                    child: BlocConsumer<CommunityMainCubit, CommunityMainState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state.status == Status.failure) {
+                          if (mounted) {
+                            showSnackBar(
+                              context: context,
+                              message: state.failure?.message ??
+                                  'oops something went wrong',
+                            );
+                          }
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state.status == Status.loading) {
+                          return const CommunityMainSheemer();
+                        }
+
+                        // FAILURE STATE
+                        if (state.status == Status.failure) {
+                          return SomethingWentWrong(
+                            imagePath: 'assets/something_went_wrong.svg',
+                            title: "oops something went wrong",
+                            message: "We could not featch nearby groups.",
+                            buttonText: AppLocalizations.of(context)!.retry,
+                            onButtonPressed: () {
+                              communityMainCubit.init();
+                            },
+                          );
+                        }
+
+                        // SUCCESS STATE
+                        if (state.status == Status.success) {
+                          // COMMUNITY IS NOT EMPTY
+                          if (state.communities.isNotEmpty) {
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int crossAxisCount = 2;
+                                if (constraints.maxWidth >= 600) {
+                                  crossAxisCount = 3;
+                                } else if (constraints.maxWidth >= 900) {
+                                  crossAxisCount = 4;
+                                }
+                                return Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Container(
+                                    color: AppColors.whiteColor,
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 5),
+                                        Expanded(
+                                          child: GridView.builder(
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: crossAxisCount,
+                                              crossAxisSpacing: 10.0,
+                                              mainAxisSpacing: 10.0,
+                                              childAspectRatio: 1 / 1.5,
+                                            ),
+                                            itemCount: state.communities.length,
+                                            itemBuilder: (context, index) {
+                                              return CommunityCardWidget(
+                                                community:
+                                                    state.communities[index],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+
+                          // NO COMMUNITY
+                          if (state.communities.isEmpty) {
+                            return SomethingWentWrong(
+                              imagePath: AppImages.emptyCommunity,
+                              title: 'No Community Yet',
+                              message:
+                                  'Be the first to create a group and start connecting!',
+                              buttonText: 'Start a Community',
+                              onButtonPressed: () {
+                                context.push('/group-create');
+                              },
+                            );
+                          }
+                        }
+
+                        return SizedBox.shrink();
+                      },
                     ),
                   ),
-                  Tab(
-                    child: tabTitle(
-                      AppLocalizations.of(context)!.my_Groups,
+
+                  // MY GROUPS TAB
+                  RefreshIndicator(
+                    onRefresh: _onMyTabRefresh,
+                    child: BlocConsumer<GetUserGroupsBloc, GetUserGroupsState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state is GetUserGroupsFailureState) {
+                          if (context.mounted) {
+                            showSnackBar(
+                              context: context,
+                              message: state.error,
+                            );
+                          }
+                        }
+                      },
+                      builder: (context, state) {
+                        // LOADING STATE
+                        if (state is GetUserGroupsLoadingState) {
+                          return const CommunityMainSheemer();
+                        }
+                        // SUCCESS STATE
+                        if (state is GetUserGroupsSuccessState) {
+                          // COMMUNITY IS NOT EMPTY
+                          if (state.communities.isNotEmpty) {
+                            return LayoutBuilder(
+                              builder: (context, constraints) {
+                                int crossAxisCount = 2;
+                                if (constraints.maxWidth >= 600) {
+                                  crossAxisCount = 3;
+                                } else if (constraints.maxWidth >= 900) {
+                                  crossAxisCount = 4;
+                                }
+                                return Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Container(
+                                    color: AppColors.whiteColor,
+                                    child: Column(
+                                      children: [
+                                        const SizedBox(height: 5),
+                                        Expanded(
+                                          child: GridView.builder(
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: crossAxisCount,
+                                              crossAxisSpacing: 10.0,
+                                              mainAxisSpacing: 10.0,
+                                              childAspectRatio: 1 / 1.5,
+                                            ),
+                                            itemCount: state.communities.length,
+                                            itemBuilder: (context, index) {
+                                              return CommunityCardWidget(
+                                                community:
+                                                    state.communities[index],
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+
+                          // COMMUNITY IS EMPTY
+                          if (state.communities.isEmpty) {
+                            return SomethingWentWrong(
+                              imagePath: AppImages.emptyCommunity,
+                              title: 'No Community Groups Yet',
+                              message:
+                                  'Be the first to create a group and start connecting!',
+                              buttonText: 'Start a Community',
+                              onButtonPressed: () {
+                                context.push('/group-create');
+                              },
+                            );
+                          }
+                        }
+
+                        return SizedBox.shrink();
+                      },
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                // NEARBY GROUPS TAB
-                RefreshIndicator(
-                  onRefresh: _onNearbyTabRefresh,
-                  child: BlocConsumer<CommunityMainCubit, CommunityMainState>(
-                    listener: (context, state) {
-                      // FAILURE STATE
-                      if (state.status == Status.failure) {
-                        if (mounted) {
-                          showSnackBar(
-                            context: context,
-                            message: state.failure?.message ??
-                                'oops something went wrong',
-                          );
-                        }
-                      }
-                    },
-                    builder: (context, state) {
-                      // LOADING STATE
-                      if (state.status == Status.loading) {
-                        return const CommunityMainSheemer();
-                      }
-
-                      // FAILURE STATE
-                      if (state.status == Status.failure) {
-                        return SomethingWentWrong(
-                          imagePath: 'assets/something_went_wrong.svg',
-                          title: "oops something went wrong",
-                          message: "We could not featch nearby groups.",
-                          buttonText: AppLocalizations.of(context)!.retry,
-                          onButtonPressed: () {
-                            communityMainCubit.init();
-                          },
-                        );
-                      }
-
-                      // SUCCESS STATE
-                      if (state.status == Status.success) {
-                        // COMMUNITY IS NOT EMPTY
-                        if (state.communities.isNotEmpty) {
-                          return LayoutBuilder(
-                            builder: (context, constraints) {
-                              int crossAxisCount = 2;
-                              if (constraints.maxWidth >= 600) {
-                                crossAxisCount = 3;
-                              } else if (constraints.maxWidth >= 900) {
-                                crossAxisCount = 4;
-                              }
-                              return Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Container(
-                                  color: AppColors.whiteColor,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 5),
-                                      Expanded(
-                                        child: GridView.builder(
-                                          gridDelegate:
-                                              SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: crossAxisCount,
-                                            crossAxisSpacing: 10.0,
-                                            mainAxisSpacing: 10.0,
-                                            childAspectRatio: 1 / 1.5,
-                                          ),
-                                          itemCount: state.communities.length,
-                                          itemBuilder: (context, index) {
-                                            return CommunityCardWidget(
-                                              community:
-                                                  state.communities[index],
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-
-                        // NO COMMUNITY
-                        if (state.communities.isEmpty) {
-                          return SomethingWentWrong(
-                            imagePath: AppImages.emptyCommunity,
-                            title: 'No Community Yet',
-                            message:
-                                'Be the first to create a group and start connecting!',
-                            buttonText: 'Start a Community',
-                            onButtonPressed: () {
-                              context.push('/group-create');
-                            },
-                          );
-                        }
-                      }
-
-                      return SizedBox.shrink();
-                    },
-                  ),
-                ),
-
-                // MY GROUPS TAB
-                RefreshIndicator(
-                  onRefresh: _onMyTabRefresh,
-                  child: BlocConsumer<GetUserGroupsBloc, GetUserGroupsState>(
-                    listener: (context, state) {
-                      // FAILURE STATE
-                      if (state is GetUserGroupsFailureState) {
-                        if (context.mounted) {
-                          showSnackBar(
-                            context: context,
-                            message: state.error,
-                          );
-                        }
-                      }
-                    },
-                    builder: (context, state) {
-                      // LOADING STATE
-                      if (state is GetUserGroupsLoadingState) {
-                        return const CommunityMainSheemer();
-                      }
-                      // SUCCESS STATE
-                      if (state is GetUserGroupsSuccessState) {
-                        // COMMUNITY IS NOT EMPTY
-                        if (state.communities.isNotEmpty) {
-                          return LayoutBuilder(
-                            builder: (context, constraints) {
-                              int crossAxisCount = 2;
-                              if (constraints.maxWidth >= 600) {
-                                crossAxisCount = 3;
-                              } else if (constraints.maxWidth >= 900) {
-                                crossAxisCount = 4;
-                              }
-                              return Padding(
-                                padding: EdgeInsets.all(10),
-                                child: Container(
-                                  color: AppColors.whiteColor,
-                                  child: Column(
-                                    children: [
-                                      const SizedBox(height: 5),
-                                      Expanded(
-                                        child: GridView.builder(
-                                          gridDelegate:
-                                              SliverGridDelegateWithFixedCrossAxisCount(
-                                            crossAxisCount: crossAxisCount,
-                                            crossAxisSpacing: 10.0,
-                                            mainAxisSpacing: 10.0,
-                                            childAspectRatio: 1 / 1.5,
-                                          ),
-                                          itemCount: state.communities.length,
-                                          itemBuilder: (context, index) {
-                                            return CommunityCardWidget(
-                                              community:
-                                                  state.communities[index],
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-
-                        // COMMUNITY IS EMPTY
-                        if (state.communities.isEmpty) {
-                          return SomethingWentWrong(
-                            imagePath: AppImages.emptyCommunity,
-                            title: 'No Community Groups Yet',
-                            message:
-                                'Be the first to create a group and start connecting!',
-                            buttonText: 'Start a Community',
-                            onButtonPressed: () {
-                              context.push('/group-create');
-                            },
-                          );
-                        }
-                      }
-
-                      return SizedBox.shrink();
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -29,6 +29,7 @@ class ShardPrefHelper {
   static const String _karma = 'karma';
   static const String _findMe = 'findMe';
   static const String _appVersion = 'appVersion';
+  static const String _activeChatRoomId = 'activeChatRoomId';
 
   // INIT
   static Future init() async =>
@@ -180,6 +181,14 @@ class ShardPrefHelper {
   static Future setAppVersion(String newVersion) async =>
       await _preferences.setString(_appVersion, newVersion);
   static String? getAppVersion() => _preferences.getString(_appVersion);
+
+  // SAVE ACTIVE CHAT ROOM ID
+  static Future setActiveChatRoomId(String roomId) async =>
+      await _preferences.setString(_activeChatRoomId, roomId);
+  static String? getActiveChatRoomId() =>
+      _preferences.getString(_activeChatRoomId);
+  static Future removeActiveChatRoomId() async =>
+      await _preferences.remove(_activeChatRoomId);
 
   // SAVE FIND ME
   static Future setFineMe(bool fineMe) async =>

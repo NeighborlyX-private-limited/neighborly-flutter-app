@@ -97,7 +97,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                           AppLocalizations.of(context)!
                               .looks_like_this_profile_is_no_longer_with_us,
                           // 'Boo! Looks like this profile is no longer with us.',
-                          style: mediumGreyTextStyleBlack,
+                          style: mediumGreyTextStyle,
                         ),
                         const SizedBox(height: 15),
                         Center(
@@ -118,7 +118,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                                       Text(
                                         AppLocalizations.of(context)!.posts,
                                         // 'Posts',
-                                        style: mediumGreyTextStyleBlack,
+                                        style: mediumGreyTextStyle,
                                       ),
                                     ],
                                   ),
@@ -132,7 +132,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                                       const SizedBox(height: 5),
                                       Text(
                                         AppLocalizations.of(context)!.karma,
-                                        style: mediumGreyTextStyleBlack,
+                                        style: mediumGreyTextStyle,
                                       ),
                                     ],
                                   ),
@@ -146,7 +146,7 @@ class _DeletedUserProfileScreenState extends State<DeletedUserProfileScreen>
                                       const SizedBox(height: 5),
                                       Text(
                                         AppLocalizations.of(context)!.awards,
-                                        style: mediumGreyTextStyleBlack,
+                                        style: mediumGreyTextStyle,
                                       ),
                                     ],
                                   )

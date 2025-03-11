@@ -26,6 +26,7 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     await getAllRooms();
   }
 
+  // SOCKET INITIALIZATION
   void initSocket() {
     _setupChatSocket();
   }
@@ -57,25 +58,32 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     );
   }
 
+// CLEAR SEARCH FILTER
   void cleanSearchFilter() {
-    emit(state.copyWith(rooms: state.roomsOriginal, isSearching: false));
+    emit(
+      state.copyWith(
+        rooms: state.roomsOriginal,
+        isSearching: false,
+      ),
+    );
   }
 
+// ROOM SEARCH FILTER IN LOCAL ROOM LIST
   void filterRoomList(String termSearch) {
     emit(
       state.copyWith(
         isSearching: true,
         rooms: [
-          ...state.roomsOriginal.where((element) =>
-              element.name.toLowerCase().contains(termSearch.toLowerCase())),
+          ...state.roomsOriginal.where(
+            (element) => element.name.toLowerCase().contains(
+                  termSearch.toLowerCase(),
+                ),
+          ),
         ],
       ),
     );
   }
 
-//
-  //
-  // CHAT ###########################################################################
   void _setupChatSocket() {
     var baseUrlSocket = kBaseSocketUrl;
 
@@ -84,33 +92,23 @@ class ChatMainCubit extends Cubit<ChatMainState> {
     if (socketChat != null) return;
 
     socketChat = io(
-        baseUrlSocket,
-        OptionBuilder()
-            .setTransports(['websocket']) // for Flutter or Dart VM
-            .disableAutoConnect() // disable auto-connection
-            .setExtraHeaders(
-                {'Authorization': 'Bearer ' + _currentUser!.token}) // optional
-            .build());
+      baseUrlSocket,
+      OptionBuilder()
+          .setTransports(['websocket'])
+          .disableAutoConnect()
+          .setExtraHeaders({'Authorization': _currentUser!.token})
+          .build(),
+    );
 
     socketChat!.onConnect((_) {});
 
     socketChat!.on('friendActive', (data) {});
 
     socketChat!.on('getAllConversations', (data) {
-      //
-
       if (data == null) return;
-
-      // var conversations = data.map<ConversationModel>((c) => ConversationModel.fromMap(c)).toList();
-
-      //
-
-      // emit(state.copyWith(conversations: conversations));
     });
 
     socketChat!.on('newMessage', (data) {
-      //
-
       if (data == null) return;
 
       var message = ChatMessageModel.fromMap(data);
@@ -121,9 +119,6 @@ class ChatMainCubit extends Cubit<ChatMainState> {
         showLocalNotification('New Message', message.text);
       }
     });
-
-    // socketChat!.onDisconnect((_) => );
-    // socketChat!.onConnectError((data) => );
 
     socketChat!.connect();
     socketChat!.emit('getConversations');
@@ -142,24 +137,29 @@ class ChatMainCubit extends Cubit<ChatMainState> {
       'conversationId': conversationId,
     });
 
-    emit(state.copyWith(messages: [
-      ...state.messages,
-      ChatMessageModel(
-          id: 'id',
-          text: message,
-          date: DateTime.now().toIso8601String(),
-          isMine: false,
-          readByuser: false,
-          hasMore: false,
-          pictureUrl: 'pictureUrl',
-          isAdmin: false,
-          isPinned: false,
-          isDeleted: false,
-          repliesCount: 0,
-          cheers: 0,
-          boos: 0,
-          booOrCheer: 'message'),
-    ]));
+    emit(
+      state.copyWith(
+        messages: [
+          ...state.messages,
+          ChatMessageModel(
+            id: 'id',
+            text: message,
+            date: DateTime.now().toIso8601String(),
+            isMine: false,
+            readByuser: false,
+            hasMore: false,
+            pictureUrl: 'pictureUrl',
+            isAdmin: false,
+            isPinned: false,
+            isDeleted: false,
+            repliesCount: 0,
+            cheers: 0,
+            boos: 0,
+            booOrCheer: 'message',
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> showLocalNotification(String title, String body) async {
@@ -173,8 +173,8 @@ class ChatMainCubit extends Cubit<ChatMainState> {
 
     AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      androidChannelId, // Substitua pelo ID do seu canal de notificação
-      androidChannelName, // Substitua pelo nome do seu canal de notificação
+      androidChannelId,
+      androidChannelName,
       importance: Importance.max,
       priority: Priority.high,
       ticker: 'ticker',
@@ -184,33 +184,10 @@ class ChatMainCubit extends Cubit<ChatMainState> {
         NotificationDetails(android: androidPlatformChannelSpecifics);
 
     await localeNotification.show(
-      randomNumber, // ID da notificação
+      randomNumber,
       title,
       body,
       platformChannelSpecifics,
     );
   }
-  // int getConversationId(int friendId) {
-  //
-  //
-  //
-
-  //   // )}');
-  //   // }');
-  //   //
-  //   //
-
-  //   try {
-  //     ConversationModel? conversartion = state.conversations.firstWhere(
-  //       (element) => (element.userIds.contains(int.parse(_currentUser.id)) && element.userIds.contains(friendId)),
-  //     );
-
-  //     return conversartion?.id ?? 0;
-  //   } catch (e) {
-  //     return 0;
-  //   }
-  // }
-
-  // END OF CHAT METHODS ############################################################
-  // ################################################################################
 }

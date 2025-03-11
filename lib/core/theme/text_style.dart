@@ -2,6 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
+// NORMAL BLACK
+var bodyBlackTextStyle = GoogleFonts.roboto(
+  color: AppColors.blackColor,
+  fontWeight: FontWeight.w400,
+  fontSize: 16,
+);
+var blackNormalTextStyle = GoogleFonts.roboto(
+  color: AppColors.blackColor,
+  fontWeight: FontWeight.w500,
+  fontSize: 16,
+);
+
 var onboardingHeading1Style = GoogleFonts.roboto(
   color: AppColors.blackColor,
   fontSize: 32,
@@ -62,12 +74,6 @@ var whiteNormalTextStyle = GoogleFonts.roboto(
   fontWeight: FontWeight.w500,
 );
 
-var blackNormalTextStyle = GoogleFonts.roboto(
-  color: AppColors.blackColor,
-  fontSize: 16,
-  fontWeight: FontWeight.w500,
-);
-
 var blueNormalTextStyle = GoogleFonts.roboto(
   color: AppColors.primaryColor,
   fontSize: 16,
@@ -81,27 +87,49 @@ var noUnderlineblueNormalTextStyle = GoogleFonts.roboto(
   fontWeight: FontWeight.w500,
   decorationColor: AppColors.primaryColor,
 );
-
-var mediumTextStyleBlack = GoogleFonts.roboto(
+// FONT SIZE 14
+var mediumBlackTextStyle = GoogleFonts.roboto(
   color: AppColors.blackColor,
-  fontSize: 14,
-  fontWeight: FontWeight.w500,
-);
-
-var bluemediumTextStyleBlack = GoogleFonts.roboto(
-  color: AppColors.primaryColor,
-  fontSize: 14,
-  fontWeight: FontWeight.w500,
-);
-var mediumGreyTextStyleBlack = GoogleFonts.roboto(
-  color: AppColors.greyColor,
-  fontSize: 14,
   fontWeight: FontWeight.w400,
+  fontSize: 14,
+);
+var mediumGreyTextStyle = GoogleFonts.roboto(
+  color: AppColors.greyColor,
+  fontWeight: FontWeight.w400,
+  fontSize: 14,
 );
 
-var itallicMediumGreyTextStyleBlack = GoogleFonts.roboto(
+var itallicMediumGreyTextStyle = GoogleFonts.roboto(
   color: AppColors.greyColor,
-  fontSize: 14,
   fontWeight: FontWeight.w400,
   fontStyle: FontStyle.italic,
+  fontSize: 14,
+);
+var blueMediumTextStyle = GoogleFonts.roboto(
+  color: AppColors.primaryColor,
+  fontWeight: FontWeight.w400,
+  fontSize: 14,
+);
+// FONT SIZE 12
+var smallBlackTextStyle = GoogleFonts.roboto(
+  color: AppColors.blackColor,
+  fontWeight: FontWeight.w400,
+  fontSize: 12,
+);
+var smallGreyTextStyle = GoogleFonts.roboto(
+  color: AppColors.greyColor,
+  fontWeight: FontWeight.w400,
+  fontSize: 12,
+);
+
+var itallicSmallGreyTextStyle = GoogleFonts.roboto(
+  color: AppColors.greyColor,
+  fontWeight: FontWeight.w400,
+  fontStyle: FontStyle.italic,
+  fontSize: 12,
+);
+var blueSmallTextStyle = GoogleFonts.roboto(
+  color: AppColors.primaryColor,
+  fontWeight: FontWeight.w400,
+  fontSize: 12,
 );

@@ -93,13 +93,13 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                   ),
                   Text(
                     widget.post.userName,
-                    style: mediumTextStyleBlack,
+                    style: mediumBlackTextStyle,
                   ),
                   Text(" "),
                   Text(
                     AppLocalizations.of(context)!.commented_on_this,
                     // 'Commented on this',
-                    style: mediumGreyTextStyleBlack,
+                    style: mediumGreyTextStyle,
                   ),
                 ],
               ),

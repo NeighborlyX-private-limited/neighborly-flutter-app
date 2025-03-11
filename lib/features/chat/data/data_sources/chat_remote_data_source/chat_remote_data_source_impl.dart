@@ -58,14 +58,12 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 // GET ALL CHAT ROOMS
   @override
   Future<List<ChatRoomModel>> getAllChatRooms() async {
-    // List<String>? cookies = ShardPrefHelper.getCookie();
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
 
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'No cookies found');
+      throw const ServerException(message: 'oops something went wrong');
     }
-    // String cookieHeader = cookies.join('; ');
 
     String url = '$kBaseUrl/chat/fetch-user-chats';
 
@@ -82,8 +80,10 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       handleAuthHeaders(response.headers);
       return ChatRoomModel.fromJsonList(jsonDecode(response.body));
     } else {
-      final message =
-          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
+      final message = jsonDecode(response.body)['error'] ??
+          jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          'oops something went wrong';
       throw ServerException(message: message);
     }
   }

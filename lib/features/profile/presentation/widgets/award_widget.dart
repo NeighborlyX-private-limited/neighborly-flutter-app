@@ -42,7 +42,7 @@ class AwardWidget extends StatelessWidget {
               ),
               Text(
                 description,
-                style: mediumGreyTextStyleBlack,
+                style: mediumGreyTextStyle,
                 softWrap: true,
               ),
             ],

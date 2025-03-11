@@ -91,7 +91,7 @@ class _PostWithCommentsWidgetState
                   ),
                   Text(
                     widget.post.userName,
-                    style: mediumTextStyleBlack,
+                    style: mediumBlackTextStyle,
                   ),
                   const SizedBox(
                     width: 12,
@@ -99,7 +99,7 @@ class _PostWithCommentsWidgetState
                   Text(
                     AppLocalizations.of(context)!.give_award_on_your_commente,
                     // 'Give award on your commente',
-                    style: mediumGreyTextStyleBlack,
+                    style: mediumGreyTextStyle,
                   ),
                 ],
               ),
