@@ -2,10 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:neighborly_flutter_app/core/utils/helpers.dart';
-import 'package:timeago/timeago.dart' as timeago;
+import '../../../../core/utils/date_utils.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../../data/model/notification_model.dart';
 
@@ -30,44 +28,21 @@ class NotificationTileWidget extends StatelessWidget {
     );
   }
 
-  String timeAgoArea(String lastMessageDate) {
-    if (lastMessageDate == '') return lastMessageDate;
-
-    DateFormat format = DateFormat("yyyy-MM-dd");
-    DateFormat dateFormatSimple = DateFormat('dd/MM/yyyy');
-    DateTime dateTime = format.parse(lastMessageDate);
-    String timeAgo = timeago.format(dateTime);
-
-    if (isDateWithinLastMonth(dateTime)) {
-      return timeAgo;
-    } else {
-      return dateFormatSimple.format(dateTime);
-    }
-  }
-
-  bool isDateWithinLastMonth(DateTime date) {
-    DateTime now = DateTime.now();
-    DateTime oneMonthAgo = DateTime(
-        now.year, now.month - 1, now.day, now.hour, now.minute, now.second);
-
-    return date.isAfter(oneMonthAgo);
-  }
-
   void buildMainArea(BuildContext context) {
     if (notification.messageId != null) {
-      listWidgets.add(GestureDetector(
-        onTap: () {},
-        child: Text(
-          notification.userName ?? 'user',
-          style: TextStyle(fontWeight: FontWeight.bold),
+      listWidgets.add(
+        GestureDetector(
+          onTap: () {},
+          child: Text(
+            notification.userName ?? 'user',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-      ));
+      );
     }
-
     listWidgets.add(Text(notification.message));
   }
 
-  Color tileColor = AppColors.lightGreyColor;
   @override
   Widget build(BuildContext context) {
     buildMainArea(context);
@@ -75,7 +50,7 @@ class NotificationTileWidget extends StatelessWidget {
       color: notification.status == "unread"
           ? Color(0xFFF0F0F0)
           : AppColors.whiteColor,
-      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       width: double.infinity,
       child: Row(
         children: [
@@ -85,72 +60,33 @@ class NotificationTileWidget extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: InkWell(
               onTap: () {
-                bool ispost = notification.posttype == 'post';
-                String commentid = '0';
-                if (notification.title == 'You’ve Got a Comment!') {
-                  commentid = notification.commentId ?? '0';
-                }
-                //[post,comment,message,award,group]
+                // SPECIFIC COMMENT SCREEN REDIRECTION
                 if (notification.triggerType == 'AwardTrigger' &&
                     (notification.postId == null ||
                         notification.postId == '') &&
                     notification.commentId != null) {
-                  print('awards trigger');
                   context.push(
                       '/post-detail-of-specific-comment/${notification.commentId}');
-                } else if (notification.triggerType == 'GroupTrigger') {
+                }
+                // GROUP DETAIL SCREEN REDIRECTION
+                else if (notification.triggerType == 'GroupTrigger') {
                   context.push('/group-details/${notification.groupId}');
-                  print('group trigger');
-                  // context.push(
-                  //     '/post-detail-of-specific-comment/${notification.commentId}');
-                } else if (notification.triggerType == 'MessageTrigger') {
-                  print('message trigger');
-
+                }
+                // GROUP CHAT SCREEN REDIRECTION
+                else if (notification.triggerType == 'MessageTrigger') {
                   context.push('/group-chat/${notification.groupId}');
-                } else if (notification.triggerType == 'PostTrigger' ||
+                }
+                // POST DETAIL SCREEN REDIRECTION
+                else if (notification.triggerType == 'PostTrigger' ||
                     notification.triggerType == 'CommentTrigger' ||
                     notification.triggerType == 'AwardTrigger' ||
                     notification.triggerType == 'ReplyTrigger') {
                   context.push('/post-detail/${notification.postId}');
-                  print('awards trigger');
-                } else if (notification.postId != null) {
-                  print('notification');
-                  print(
-                      'post,comment,reply trigger ${notification.triggerType}');
-                  context.push('/post-detail/${notification.postId}');
-                  // context.push(
-                  //     '/post-detail/${notification.postId}/${ispost.toString()}/${notification.userId}/$commentid');
                 }
-
-                /*
-                TODO: Vinay here you have to add navigation for profile. Check with bharat whether we will get profile notification or not
-                only then its required to implment 
-                */
-
-                // if (notification.eventId != null) {
-                //   // context.push('/events/detail/:eventId/${notification.eventId}');
-
-                // }
-
-                // if (notification.groupId != null) {
-                //   // context.push('/groups/${notification.groupId}');
-
-                // }
-
-                // if (notification.messageId != null) {
-                //   context.push(
-                //     '/chat/private/${notification.notificationImage}',
-                //     extra: ChatRoomModel(
-                //         id: notification.messageId!,
-                //         name: notification.userName ?? '.-.',
-                //         avatarUrl: notification.notificationImage!,
-                //         lastMessage: '',
-                //         lastMessageDate: '',
-                //         isMuted: false,
-                //         isGroup: false,
-                //         unreadCount: 1),
-                //   );
-                // }
+                // POST DETAIL SCREEN REDIRECTION
+                else if (notification.postId != null) {
+                  context.push('/post-detail/${notification.postId}');
+                }
               },
               child: Wrap(
                 runSpacing: 4,
@@ -160,7 +96,7 @@ class NotificationTileWidget extends StatelessWidget {
             ),
           )),
           Text(
-            formatTimeDifference(notification.timestamp),
+            getTimeAgo(notification.timestamp),
             style: TextStyle(
               color: Colors.grey[500],
               fontSize: 14,

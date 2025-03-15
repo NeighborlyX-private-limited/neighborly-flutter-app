@@ -205,16 +205,16 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                           ],
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          showBottomSheet(false);
-                        },
-                        child: Icon(
-                          Icons.more_horiz,
-                          size: 30,
-                          color: Colors.grey[500],
-                        ),
-                      )
+                      // InkWell(
+                      //   onTap: () {
+                      //     showBottomSheet(false);
+                      //   },
+                      //   child: Icon(
+                      //     Icons.more_horiz,
+                      //     size: 30,
+                      //     color: Colors.grey[500],
+                      //   ),
+                      // )
                     ],
                   ),
                   const SizedBox(
@@ -376,16 +376,18 @@ class _PostWithCommentsWidgetState extends State<PostWithCommentsWidget> {
                                             ),
                                           ),
                                           const Spacer(),
-                                          InkWell(
-                                            onTap: () {
-                                              showBottomSheet(true);
-                                            },
-                                            child: Icon(
-                                              Icons.more_horiz,
-                                              size: 30,
-                                              color: Colors.grey[500],
+                                          if (widget.post.userId ==
+                                              ShardPrefHelper.getUserID())
+                                            InkWell(
+                                              onTap: () {
+                                                showBottomSheet(true);
+                                              },
+                                              child: Icon(
+                                                Icons.more_horiz,
+                                                size: 30,
+                                                color: Colors.grey[500],
+                                              ),
                                             ),
-                                          ),
                                         ],
                                       ),
                                       const SizedBox(

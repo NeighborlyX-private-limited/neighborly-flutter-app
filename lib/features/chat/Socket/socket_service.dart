@@ -22,7 +22,6 @@ class SocketService {
           .setTransports(['websocket'])
           .setAuth({'token': accessToken})
           .disableAutoConnect()
-          .enableForceNewConnection()
           .build(),
     );
 
@@ -33,16 +32,6 @@ class SocketService {
       print("SUCCESSFULLY CONNECTED TO SOCKET SERVER.");
 
       joinRoom(groupId);
-    });
-
-    // ON ERROR LISTENER
-    _socket?.on("error", (err) {
-      print("CONNECTION ERROR:  ${err['message']}");
-    });
-
-    // ON ERROR-MESSAGE LISTENER
-    _socket?.on("error-message", (data) {
-      print('ERROR: $data');
     });
 
     // USER JOINED ROOM LISTENER
@@ -71,6 +60,16 @@ class SocketService {
       if (messageDeleted != null) {
         messageDeleted!(deletedMessageId);
       }
+    });
+
+    // ON ERROR LISTENER
+    _socket?.on("error", (err) {
+      print("CONNECTION ERROR:  ${err['message']}");
+    });
+
+    // ON ERROR-MESSAGE LISTENER
+    _socket?.on("error-message", (data) {
+      print('ERROR: $data');
     });
   }
 
@@ -109,16 +108,6 @@ class SocketService {
     }
   }
 
-  // LEAVE ROOM EMITTER
-  void leaveRoom(String groupId) {
-    print('LEAVE ROOM WITH GROUP ID:$groupId');
-    if (groupId.isNotEmpty) {
-      final payload = {'groupId': groupId};
-      _socket?.emit('leave-room', payload);
-    }
-  }
-
-  // DISPOSE
   // DISPOSE
   void dispose(String roomId) async {
     if (_socket == null) {
@@ -131,9 +120,7 @@ class SocketService {
     if (roomId.isNotEmpty) {
       final payload = {'groupId': roomId};
       _socket?.emit('leave-room', payload);
-      // leaveRoom(roomId);
     }
-    await Future.delayed(Duration(milliseconds: 1500));
 
     _socket?.disconnect();
     _socket?.dispose();
@@ -142,22 +129,4 @@ class SocketService {
 
     print("SOCKET CONNECTION DISPOSE.");
   }
-
-  // void dispose(String roomId) {
-  //   print('DISPOSE SOCKET WITH GROUP ID:$roomId');
-  //   if (roomId.isNotEmpty) {
-  //     leaveRoom(roomId);
-  //   }
-  //   Future.delayed(Duration(milliseconds: 1500), () {
-  //     // Code to execute after 1.5 seconds
-  //     print("Executed after 1.5 seconds");
-  //   });
-
-  //   _socket?.disconnect();
-  //   _socket?.dispose();
-
-  //   _socket = null;
-  //   print("SOCKET CONNECTION DISPOSE.");
-  //   return;
-  // }
 }

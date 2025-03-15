@@ -165,7 +165,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   tileColor: AppColors.whiteColor,
                   leading: CircularSvgImage(assetPath: AppImages.locationIcon),
                   title: Text(
-                    'Change Location',
+                    AppLocalizations.of(context)!.change_location,
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   onTap: () {
@@ -193,7 +193,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   tileColor: AppColors.whiteColor,
                   leading: CircularSvgImage(assetPath: AppImages.editIcon),
                   title: Text(
-                    'Edit Profile',
+                    AppLocalizations.of(context)!.edit_profile_info,
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   onTap: () {

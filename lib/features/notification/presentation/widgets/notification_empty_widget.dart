@@ -18,7 +18,6 @@ class NotificationsEmptyWidget extends StatelessWidget {
             'assets/notification_empty.svg',
             width: MediaQuery.of(context).size.width * 0.60,
           ),
-          const SizedBox(height: 20),
           Text(
             AppLocalizations.of(context)!.no_new_notifications,
             textAlign: TextAlign.center,

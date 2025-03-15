@@ -56,10 +56,9 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
     if (cookies == null || cookies.isEmpty) {
-      throw const ServerException(message: 'Someting went wrong');
+      throw const ServerException(message: 'oops someting went wrong');
     }
 
-    // String cookieHeader = cookies.join('; ');
     String url =
         '$kBaseUrlNotification/notifications/fetch-notification?page=$page&limit=100';
 
@@ -71,48 +70,19 @@ class NotificationRemoteDataSourceImpl implements NotificationRemoteDataSource {
         'Cookie': cookies,
       },
     );
-    print('Notification Res: ${response.body}');
+    print('NOTIFICATION RESPONSE: ${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final notifications = jsonDecode(response.body)["notifications"];
       return NotificationModel.fromJsonList(notifications);
     } else {
-      final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+      final message = jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          jsonDecode(response.body)['error'] ??
+          'oops someting went wrong';
 
       throw ServerException(message: message);
     }
-  }
-}
-
-Future<int> getAllNotificationCount({String? page}) async {
-  final http.Client client = http.Client();
-  String? cookies = ShardPrefHelper.getCookie();
-  String? accessToken = ShardPrefHelper.getAccessToken();
-  if (cookies == null || cookies.isEmpty) {
-    throw const ServerException(message: 'Someting went wrong');
-  }
-
-  // String cookieHeader = cookies.join('; ');
-  String url =
-      '$kBaseUrlNotification/notifications/fetch-notification?page=$page&limit=100';
-
-  final response = await client.get(
-    Uri.parse(url),
-    headers: <String, String>{
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $accessToken',
-      'Cookie': cookies,
-    },
-  );
-
-  if (response.statusCode == 200) {
-    handleAuthHeaders(response.headers);
-    final notificationCount = jsonDecode(response.body)["total"];
-    return notificationCount ?? 0;
-  } else {
-    final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
-
-    throw ServerException(message: message);
   }
 }
 
@@ -160,20 +130,17 @@ Future<int> getNotificationUnreadCount() async {
   }
 }
 
+// READ ALL NOTIFICATION
 Future<void> updateNotificationStatus(List<String> notificationIds) async {
   final http.Client client = http.Client();
   String? cookies = ShardPrefHelper.getCookie();
   String? accessToken = ShardPrefHelper.getAccessToken();
-  // String? getAccessToken = ShardPrefHelper.getAccessToken();
 
   if (cookies == null || cookies.isEmpty) {
-    throw const ServerException(message: 'Someting went wrong');
+    throw const ServerException(message: 'oops someting went wrong');
   }
 
-  // String cookieHeader = cookies.join('; ');
-  String url =
-      // '$kBaseUrlNotification/notifications/update-notification-status?notificationId=$notificationId';
-      '$kBaseUrlNotification/notifications/update-notification-status';
+  String url = '$kBaseUrlNotification/notifications/update-notification-status';
 
   final response = await client.put(
     Uri.parse(url),
@@ -186,13 +153,16 @@ Future<void> updateNotificationStatus(List<String> notificationIds) async {
       'notificationIds': notificationIds,
     }),
   );
-
+  print('READ ALL NOTIFICATION RESPONSE:${response.body}');
   if (response.statusCode == 200 ||
       jsonDecode(response.body)['message'] ==
           "Notification not found or already read") {
     handleAuthHeaders(response.headers);
   } else {
-    final message = jsonDecode(response.body)['msg'] ?? 'Someting went wrong';
+    final message = jsonDecode(response.body)['message'] ??
+        jsonDecode(response.body)['msg'] ??
+        jsonDecode(response.body)['error'] ??
+        'oops someting went wrong';
 
     throw ServerException(message: message);
   }

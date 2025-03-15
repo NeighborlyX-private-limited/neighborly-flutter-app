@@ -147,7 +147,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       width: 10,
                     ),
                     Text(
-                      'Location',
+                      AppLocalizations.of(context)!.change_location,
+                      // 'Location',
                       // 'Set Radius',
                       style: blackonboardingBody1Style,
                     ),

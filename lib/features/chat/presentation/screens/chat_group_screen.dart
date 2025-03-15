@@ -24,7 +24,6 @@ import '../../../communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import '../../../upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import '../../data/model/chat_message_model.dart';
-import '../../data/model/chat_room_model.dart';
 import '../bloc/chat_group_cubit.dart';
 import '../bloc/pin_message_bloc.dart';
 import '../widgets/chat_messages_group_sheemer.dart';
@@ -33,13 +32,11 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../widgets/media_message_widget.dart';
 
 class ChatGroupScreen extends StatefulWidget {
-  //final ChatRoomModel chatRoom;
   final String roomId;
 
   const ChatGroupScreen({
     super.key,
     required this.roomId,
-    //required this.chatRoom,
   });
 
   @override
@@ -87,9 +84,27 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
     isJoined = communityDetailCubit.state.community?.isJoined ?? false;
     communityIcon = communityDetailCubit.state.community?.avatarUrl ?? '';
     communityName = communityDetailCubit.state.community?.name ?? '';
-    print('group chat data: ${isJoined}');
-    print('group chat data: ${communityIcon}');
-    print('group chat data: ${communityName}');
+
+    AppLifecycleListener(
+      // RESUME STATE
+      onResume: () {
+        if (mounted && ModalRoute.of(context)?.isCurrent == true) {
+          chatGroupCubit.init(widget.roomId);
+        }
+      },
+      // PAUSE STATE
+      onPause: () {
+        if (mounted) {
+          context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+        }
+      },
+      // INACTIVE STATE
+      onInactive: () {
+        if (mounted) {
+          context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+        }
+      },
+    );
 
     communityDetailCubit.getCommunityDetail(widget.roomId);
     chatGroupCubit.init(widget.roomId);
@@ -229,17 +244,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             appBar: AppBar(
               automaticallyImplyLeading: false,
               backgroundColor: AppColors.whiteColor,
-              title: GestureDetector(
-                child: GestureDetector(
-                  onTap: () {
-                    context
-                        .read<ChatGroupCubit>()
-                        .disconnectChat(widget.roomId);
-                    Navigator.pop(context);
-                  },
-                  child: appBarTitleArea(),
-                ),
-              ),
+              title: appBarTitleArea(),
               actions: [
                 IconButton(
                   onPressed: () {
@@ -595,32 +600,26 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             Icons.arrow_back_ios,
           ),
           onTap: () {
+            // context.pop();
             context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
-            Navigator.pop(context);
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
           },
         ),
         const SizedBox(
           width: 10,
         ),
         if (communityIcon != '')
-          // if (widget.chatRoom.avatarUrl != '')
-          GestureDetector(
-            onTap: () {
-              context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
-              Navigator.pop(context);
-            },
-            child: UserAvatarStyledWidget(
-              avatarUrl: communityIcon,
-              // avatarUrl: widget.chatRoom.avatarUrl,
-              avatarSize: 19,
-              avatarBorderSize: 0,
-            ),
+          UserAvatarStyledWidget(
+            avatarUrl: communityIcon,
+            avatarSize: 19,
+            avatarBorderSize: 0,
           ),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             communityName,
-            // widget.chatRoom.name,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(

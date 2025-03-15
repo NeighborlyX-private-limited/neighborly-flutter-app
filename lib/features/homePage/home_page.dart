@@ -31,29 +31,34 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     pageController = PageController();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    // });
     ShowUpdate();
   }
 
+  // Future<bool> isConnected() async {
+  //   var connectivityResult = await Connectivity().checkConnectivity();
+  //   return connectivityResult != ConnectivityResult.none;
+  // }
+
 // CHECK CAN UPDATE
   void ShowUpdate() async {
-    VersionStatus? status = await newVersionPlus.getVersionStatus();
-    print('before status:${status?.canUpdate}');
-    print('before status:${status?.localVersion}');
-    print('before status:${status?.storeVersion}');
-    if (status != null && status.canUpdate) {
-      Update();
+    try {
+      print('ok ');
+      VersionStatus? status = await newVersionPlus.getVersionStatus();
+      print('ok this');
+      if (status != null && status.canUpdate) {
+        Update();
+      }
+    } catch (e) {
+      print('this is error : $e');
     }
   }
 
 // UPDATE DIALOG
 
   void Update() async {
+    print('ok yes');
     final status = await newVersionPlus.getVersionStatus();
-    print('after status:${status?.canUpdate}');
-    print('after status:${status?.localVersion}');
-    print('after status:${status?.storeVersion}');
+
     newVersionPlus.showUpdateDialog(
       context: context,
       versionStatus: status!,

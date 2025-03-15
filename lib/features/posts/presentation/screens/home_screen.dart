@@ -101,6 +101,7 @@ class _HomeScreenState extends State<HomeScreen>
           .updateFCMTokenUsecase();
       result.fold(
         (failure) {
+          print('error: ${failure.message}');
           showSnackBar(context: context, message: failure.message);
         },
         (currentFCMtoken) {
@@ -261,20 +262,24 @@ class _HomeScreenState extends State<HomeScreen>
       print('Is location on:$isLocationOn');
       if (isLocationOn) {
         try {
+          print('try this');
           Position position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.high,
           );
+          print('now try this');
 
           List<Placemark> placemarks = await placemarkFromCoordinates(
             position.latitude,
             position.longitude,
           );
+          print('ok now try this');
           var city = placemarks[0].locality ?? '';
           await ShardPrefHelper.setLat(position.latitude);
           await ShardPrefHelper.setLng(position.longitude);
           await ShardPrefHelper.setCity(city);
           await ShardPrefHelper.setIsCurrentLocationOn(true);
 
+          print('and ok now try this');
           _fetchPosts();
         } catch (e) {
           bool isLocationOn = ShardPrefHelper.getIsCurrentLocationOn() ?? true;
@@ -288,6 +293,7 @@ class _HomeScreenState extends State<HomeScreen>
               isLocationDenied = true;
             });
             if (mounted) {
+              print('yes :${e.toString()}');
               showSnackBar(
                 context: context,
                 message: e.toString(),
@@ -545,19 +551,36 @@ class _HomeScreenState extends State<HomeScreen>
                       );
                     }
 
-                    return Center(child: Text('oops something went wrong'));
+                    return Center(
+                      child: Text('oops something went wrong'),
+                    );
                   } else {
                     bool isLocationOn =
                         ShardPrefHelper.getIsCurrentLocationOn() ?? true;
                     if (isLocationDenied && isLocationOn) {
-                      return SizedBox(
-                        child: Center(
-                          child: Text(
-                            'Please on your location from mobile.',
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: AppColors.greyColor,
-                            ),
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SizedBox(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Text(
+                                  'Oops! We can’t find you. Either your internet is taking a nap, or your location is off. Give it a nudge and try again!',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: AppColors.greyColor,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  _onRefresh();
+                                },
+                                child: Text('Try Again'),
+                              ),
+                            ],
                           ),
                         ),
                       );

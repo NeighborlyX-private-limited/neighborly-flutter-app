@@ -18,14 +18,18 @@ class NotificationListCubit extends Cubit<NotificationListState> {
     if (!hasMoreNotifications) return;
     emit(state.copyWith(status: Status.loading));
     try {
-      final result =
-          await getAllNotificationsUsecase(page: state.page.toString());
+      final result = await getAllNotificationsUsecase(
+        page: state.page.toString(),
+      );
       result.fold(
         (failure) {
-          emit(state.copyWith(
+          emit(
+            state.copyWith(
               status: Status.failure,
               failure: failure,
-              errorMessage: failure.message));
+              errorMessage: failure.message,
+            ),
+          );
         },
         (notificationsList) {
           if (notificationsList.isEmpty) {
@@ -34,19 +38,25 @@ class NotificationListCubit extends Cubit<NotificationListState> {
               ...state.notifications,
               ...notificationsList
             ];
-            emit(state.copyWith(
+            emit(
+              state.copyWith(
                 status: Status.success,
                 page: state.page + 1,
-                notifications: updatedNotifications));
+                notifications: updatedNotifications,
+              ),
+            );
           } else {
             List<NotificationModel> updatedNotifications = [
               ...state.notifications,
               ...notificationsList
             ];
-            emit(state.copyWith(
+            emit(
+              state.copyWith(
                 status: Status.success,
                 page: state.page + 1,
-                notifications: updatedNotifications));
+                notifications: updatedNotifications,
+              ),
+            );
           }
         },
       );
@@ -61,7 +71,12 @@ class NotificationListCubit extends Cubit<NotificationListState> {
   }
 
   void setPagetoDefault() {
-    emit(state.copyWith(page: 1, notifications: []));
+    emit(
+      state.copyWith(
+        page: 1,
+        notifications: [],
+      ),
+    );
     hasMoreNotifications = true;
   }
 }

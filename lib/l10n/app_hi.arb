@@ -351,8 +351,9 @@
   "groups":"ग्रुप्स ",
   "create_community":"समुदाय बनाना",
   "create_description":"विवरण बनाएं",
-  "upload_image":"इमेज अपलोड करो"
+  "upload_image":"इमेज अपलोड करो",
 
+  "change_location": "लोकेशन बदलें"
 }
 
 

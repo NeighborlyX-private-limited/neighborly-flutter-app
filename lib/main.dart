@@ -25,7 +25,6 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change
 import 'core/routes/routes.dart';
 import 'core/utils/app_initializers.dart';
 
-import 'core/utils/shared_preference.dart';
 import 'dependency_injection.dart' as di;
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source_impl.dart';
 import 'features/authentication/presentation/bloc/fogot_password_bloc/forgot_password_bloc.dart';
@@ -85,8 +84,6 @@ void main() async {
       await FirebaseMessaging.instance.getInitialMessage();
 
   if (message != null) {
-    print('message ka data: ${message.data}');
-    print('message ka data: ${message.data.runtimeType}');
     Future.delayed(Duration(seconds: 1), () {
       MessageHandlerHelper(messageData: message.data).doTheJump();
     });
@@ -112,24 +109,24 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void initState() {
     // setStatusBarColor();
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    // WidgetsBinding.instance.addObserver(this);
     _setDeepLinkListener();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached) {
-      print('1 here');
-      String? activeChatRoomId = ShardPrefHelper.getActiveChatRoomId();
-      if (activeChatRoomId == null) {
-        print('yes room id is null');
-      } else {
-        print('room id is : $activeChatRoomId');
-
-        // context.read<ChatGroupCubit>().disconnectChat(activeChatRoomId);
-      }
-    }
-  }
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.detached ||
+  //       state == AppLifecycleState.inactive) {
+  //     print('1 here');
+  //     String? activeChatRoomId = ShardPrefHelper.getActiveChatRoomId();
+  //     if (activeChatRoomId == null) {
+  //       print('yes room id is null');
+  //     } else {
+  //       print('room id is : $activeChatRoomId');
+  //       // context.read<ChatGroupCubit>().disconnectChat(activeChatRoomId);
+  //     }
+  //   }
+  // }
 
   Future<void> _setDeepLinkListener() async {
     // print("deep link received by vinay");
@@ -178,7 +175,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() {
     print('2 here');
     _sub?.cancel();
-    WidgetsBinding.instance.removeObserver(this);
+    // WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
