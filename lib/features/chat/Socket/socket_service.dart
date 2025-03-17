@@ -4,11 +4,16 @@ import '../../../core/utils/shared_preference.dart';
 
 class SocketService {
   io.Socket? _socket;
+  bool _isConnected = false;
 
   void connect({String groupId = ''}) {
     // CHECK IF ALREADY CONNECTED TO SOCKET SERVER.
     if (_socket != null && _socket!.connected) {
       print('ALREADY CONNECTED TO SOCKET SERVER.');
+      return;
+    }
+
+    if (_isConnected) {
       return;
     }
 
@@ -29,6 +34,10 @@ class SocketService {
 
     // SUCCESSFULL CONNECT LISTENER
     _socket?.on("connect", (_) {
+      _isConnected = true;
+      if (isSocketConnect != null) {
+        isSocketConnect!(true);
+      }
       print("SUCCESSFULLY CONNECTED TO SOCKET SERVER.");
 
       joinRoom(groupId);
@@ -73,7 +82,7 @@ class SocketService {
     });
   }
 
-// DELETE MESSAGE
+  // DELETE MESSAGE
   void deleteMessage({required String groupId, required String messageId}) {
     print('DELETE MESSAGE WITH GROUP ID:$groupId AND MESSAGE ID $messageId');
     _socket?.emit(
@@ -98,6 +107,7 @@ class SocketService {
   // CALL BACK FOR NEW MESSAGE RECEIVE
   Function(Map<String, dynamic>)? onNewMessageReceived;
   Function(String)? messageDeleted;
+  Function(bool)? isSocketConnect;
 
   // JOIN ROOM EMITTER
   void joinRoom(String groupId) async {
@@ -110,6 +120,7 @@ class SocketService {
 
   // DISPOSE
   void dispose(String roomId) async {
+    _isConnected = false;
     if (_socket == null) {
       print("SOCKET ALREADY DISPOSED.");
       return;

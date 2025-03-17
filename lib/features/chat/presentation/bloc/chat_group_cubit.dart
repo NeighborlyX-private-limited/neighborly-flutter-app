@@ -36,8 +36,14 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
       ),
     );
     // CONNECT SOCKET
-    socketService.connect(groupId: roomId);
+    // socketService.isSocketConnect = (value) {
+    //   print('value: $value');
+    //   if (value) {
+    //     socketService.connect(groupId: roomId);
+    //   }
+    // };
 
+    socketService.connect(groupId: roomId);
     // FEATCH GROUP MESSAGES
     await getGroupRoomMessages(roomId: roomId);
 

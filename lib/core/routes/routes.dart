@@ -20,7 +20,9 @@ import '../../features/chat/data/model/chat_room_model.dart';
 import '../../features/chat/presentation/screens/chat_group_screen.dart';
 import '../../features/chat/presentation/screens/chat_main_screen.dart';
 import '../../features/chat/presentation/screens/chat_private_screen.dart';
+import '../../features/chat/presentation/screens/discover_screen.dart';
 import '../../features/chat/presentation/screens/group_pinned_message_screen.dart';
+import '../../features/chat/presentation/screens/interest_selection_screen.dart';
 import '../../features/communities/presentation/screens/community_admin_set_block_screen.dart';
 import '../../features/communities/presentation/screens/community_admin_set_description_screen.dart';
 import '../../features/communities/presentation/screens/community_admin_set_icon_screen.dart';
@@ -47,6 +49,7 @@ import '../../features/posts/presentation/screens/post_detail_screen.dart';
 import '../../features/profile/presentation/screens/activity_and_stats_screen.dart';
 import '../../features/profile/presentation/screens/basic_information_screen.dart';
 import '../../features/profile/presentation/screens/communities_screen.dart';
+import '../../features/profile/presentation/screens/edit_interest_screen.dart';
 import '../../features/profile/presentation/screens/feedback_screen.dart';
 import '../../features/profile/presentation/screens/find_me_screen.dart';
 import '../../features/profile/presentation/screens/location_screen.dart';
@@ -313,6 +316,18 @@ final GoRouter router = GoRouter(
         roomId: state.pathParameters["roomId"] as String,
         room: state.extra as ChatRoomModel,
       ),
+    ),
+    GoRoute(
+      path: '/private-chat',
+      builder: (context, state) => InterestSelectionScreen(),
+    ),
+    GoRoute(
+      path: '/edit-interest',
+      builder: (context, state) => EditInterestScreen(),
+    ),
+    GoRoute(
+      path: '/discover',
+      builder: (context, state) => DiscoverScreen(),
     ),
     GoRoute(
       path: '/group-chat/:roomId',

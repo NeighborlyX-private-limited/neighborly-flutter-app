@@ -1,12 +1,16 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/constants/status.dart';
@@ -23,6 +27,7 @@ import '../../../communities/presentation/bloc/communities_main_cubit.dart';
 import '../../../communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../posts/presentation/bloc/report_post_bloc/report_post_bloc.dart';
 import '../../../upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
+import '../../Socket/socket_service.dart';
 import '../../data/model/chat_message_model.dart';
 import '../bloc/chat_group_cubit.dart';
 import '../bloc/pin_message_bloc.dart';
@@ -48,6 +53,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
   late ChatGroupCubit chatGroupCubit;
   late CommunityMainCubit communityMainCubit;
   late CommunityDetailsCubit communityDetailCubit;
+  // final SocketService socketService;
 
   List<UserSimpleModel> admins = [];
   List<UserSimpleModel> members = [];
@@ -89,25 +95,30 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       // RESUME STATE
       onResume: () {
         if (mounted && ModalRoute.of(context)?.isCurrent == true) {
+          print('background call');
           chatGroupCubit.init(widget.roomId);
         }
       },
       // PAUSE STATE
       onPause: () {
         if (mounted) {
-          context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+          chatGroupCubit.disconnectChat(widget.roomId);
         }
       },
       // INACTIVE STATE
       onInactive: () {
         if (mounted) {
-          context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
+          chatGroupCubit.disconnectChat(widget.roomId);
         }
       },
     );
 
     communityDetailCubit.getCommunityDetail(widget.roomId);
-    chatGroupCubit.init(widget.roomId);
+    print('always call');
+    Future.delayed(Duration(seconds: 5), () {
+      print("Executed after 5 second");
+      chatGroupCubit.init(widget.roomId);
+    });
     getCurrentUserId();
     _scrollController.addListener(_onScroll);
   }
@@ -205,6 +216,68 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       if (mounted) {
         showSnackBar(context: context, message: 'oops something went wrong');
       }
+    }
+  }
+
+  var random = Random();
+  // DOWNLOADE FILE
+  Future<void> _saveImage(BuildContext context, String url) async {
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    late String message;
+
+    try {
+      // Download image
+      final http.Response response = await http.get(Uri.parse(url));
+
+      // Get temporary directory
+      final dir = await getTemporaryDirectory();
+
+      // Create an image name
+      var filename = '${dir.path}/SaveImage${random.nextInt(100)}.png';
+      // var filename = '${dir.path}/SaveImage${random.nextInt(100)}.png';
+
+      // Save to filesystem
+      final file = File(filename);
+      await file.writeAsBytes(response.bodyBytes);
+
+      // Ask the user to save it
+      final params = SaveFileDialogParams(sourceFilePath: file.path);
+      final finalPath = await FlutterFileDialog.saveFile(params: params);
+
+      if (finalPath != null) {
+        message = 'Image saved to disk';
+      }
+    } catch (e) {
+      message = e.toString();
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: const Color(0xFFe91e63),
+        ),
+      );
+    }
+
+    if (message != null) {
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: const Color(0xFFe91e63),
+        ),
+      );
     }
   }
 
@@ -659,8 +732,8 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                 },
                 decoration: InputDecoration(
                   suffixIcon: GestureDetector(
-                    onTap: pickImage,
-                    // onTap: showMediaOption,
+                    // onTap: pickImage,
+                    onTap: showMediaOption,
                     child: Icon(
                       Icons.photo_camera_back_outlined,
                       color: Colors.grey[600],
@@ -1083,6 +1156,14 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                                 MediaMessageWidget(
                                   fileUrl: message.pictureUrl!,
                                 ),
+                              // GestureDetector(
+                              //   onTap: () {
+                              //     _saveImage(context, message.pictureUrl!);
+                              //   },
+                              //   child: MediaMessageWidget(
+                              //     fileUrl: message.pictureUrl!,
+                              //   ),
+                              // ),
                               // SHOW ACTUAL MESSAGE
                               if (message.text != '')
                                 Padding(

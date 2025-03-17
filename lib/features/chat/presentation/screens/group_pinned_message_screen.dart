@@ -14,6 +14,7 @@ import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/custom_sizedbox.dart';
 import '../bloc/chat_group_cubit.dart';
 import '../bloc/pin_message_bloc.dart';
+import '../widgets/media_message_widget.dart';
 
 class GroupPinnedMessagesScreen extends StatefulWidget {
   final String groupId;
@@ -96,150 +97,184 @@ class _GroupPinnedMessagesScreenState extends State<GroupPinnedMessagesScreen> {
         // SUCCESS STATE WITH PINNED MESSAGES
         if (state is FeatchPinnedMessagesSuccessState) {
           return Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  '${state.pinnedMessages.length} Pinned Messages',
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back_ios),
-                  onPressed: () => Navigator.pop(context),
+            appBar: AppBar(
+              title: Text(
+                '${state.pinnedMessages.length} Pinned Messages',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
-              body: RefreshIndicator(
-                onRefresh: _onRefresh,
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.symmetric(horizontal: 0),
-                        itemCount: state.pinnedMessages.length,
-                        itemBuilder: (context, index) {
-                          final List<PinnedMessageModel> pinnedMessage =
-                              state.pinnedMessages;
-                          final bool isNewDate = index == 0 ||
-                              DateUtilsHelper.simplifyISOtimeString(
-                                    pinnedMessage[index].sendAt.toString(),
-                                  ) !=
-                                  DateUtilsHelper.simplifyISOtimeString(
-                                    pinnedMessage[index - 1].sendAt.toString(),
-                                  );
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: RefreshIndicator(
+              onRefresh: _onRefresh,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 0),
+                      itemCount: state.pinnedMessages.length,
+                      itemBuilder: (context, index) {
+                        final List<PinnedMessageModel> pinnedMessage =
+                            state.pinnedMessages;
+                        final bool isNewDate = index == 0 ||
+                            DateUtilsHelper.simplifyISOtimeString(
+                                  pinnedMessage[index].sendAt.toString(),
+                                ) !=
+                                DateUtilsHelper.simplifyISOtimeString(
+                                  pinnedMessage[index - 1].sendAt.toString(),
+                                );
 
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (isNewDate)
-                                Center(
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor
-                                          .withOpacity(.1),
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    child: Text(
-                                      '${formatTimeDifference(
-                                        pinnedMessage[index].sendAt.toString(),
-                                      )} ',
-                                      style: TextStyle(
-                                        color: AppColors.primaryColor,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (isNewDate)
+                              Center(
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 2,
                                   ),
-                                ),
-                              ListTile(
-                                onTap: () {
-                                  if (widget.isAdmin) {
-                                    showOptionsBottomSheet(
-                                      context: context,
-                                      messageId: pinnedMessage[index].id,
-                                      onTap: () {
-                                        _onRefresh();
-                                      },
-                                    );
-                                  }
-                                },
-                                onLongPress: () {
-                                  if (widget.isAdmin) {
-                                    showOptionsBottomSheet(
-                                      context: context,
-                                      messageId: pinnedMessage[index].id,
-                                      onTap: () {
-                                        _onRefresh();
-                                      },
-                                    );
-                                  }
-                                },
-                                leading: CircleAvatar(
-                                  radius: 20,
-                                  onBackgroundImageError: (_, __) => SizedBox(),
-                                  backgroundImage: CachedNetworkImageProvider(
-                                    pinnedMessage[index].userpicture,
+                                  decoration: BoxDecoration(
+                                    color:
+                                        AppColors.primaryColor.withOpacity(.1),
+                                    borderRadius: BorderRadius.circular(16),
                                   ),
-                                ),
-                                title: Row(
-                                  children: [
-                                    Text(
-                                      pinnedMessage[index].name,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                                  child: Text(
+                                    '${formatTimeDifference(
+                                      pinnedMessage[index].sendAt.toString(),
+                                    )} ',
+                                    style: TextStyle(
+                                      color: AppColors.primaryColor,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.normal,
                                     ),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      convertToIndianTime(
-                                        pinnedMessage[index].sendAt.toString(),
-                                      ),
-                                      // formatTime(widget.message.date),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    SizedBox(width: 5),
-                                    Icon(
-                                      Icons.push_pin,
-                                      size: 16,
-                                      color: Colors.grey,
-                                    ),
-                                  ],
-                                ),
-                                subtitle: Linkify(
-                                  options: LinkifyOptions(
-                                    looseUrl: true,
-                                  ),
-                                  onOpen: (link) async {
-                                    if (await canLaunchUrl(
-                                        Uri.parse(link.url))) {
-                                      await launchUrl(Uri.parse(link.url),
-                                          mode: LaunchMode.externalApplication);
-                                    } else {
-                                      throw "Could not launch ${link.url}";
-                                    }
-                                  },
-                                  text: pinnedMessage[index].message,
-                                  style: const TextStyle(fontSize: 16),
-                                  linkStyle: const TextStyle(
-                                    color: AppColors.primaryColor,
                                   ),
                                 ),
                               ),
-                            ],
-                          );
-                        },
-                      ),
+                            ListTile(
+                              onTap: () {
+                                if (widget.isAdmin) {
+                                  showOptionsBottomSheet(
+                                    context: context,
+                                    messageId: pinnedMessage[index].id,
+                                    onTap: () {
+                                      _onRefresh();
+                                    },
+                                  );
+                                }
+                              },
+                              onLongPress: () {
+                                if (widget.isAdmin) {
+                                  showOptionsBottomSheet(
+                                    context: context,
+                                    messageId: pinnedMessage[index].id,
+                                    onTap: () {
+                                      _onRefresh();
+                                    },
+                                  );
+                                }
+                              },
+                              leading: CircleAvatar(
+                                radius: 20,
+                                onBackgroundImageError: (_, __) => SizedBox(),
+                                backgroundImage: CachedNetworkImageProvider(
+                                  pinnedMessage[index].userpicture,
+                                ),
+                              ),
+                              title: Row(
+                                children: [
+                                  Text(
+                                    pinnedMessage[index].name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    convertToIndianTime(
+                                      pinnedMessage[index].sendAt.toString(),
+                                    ),
+                                    // formatTime(widget.message.date),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                  SizedBox(width: 5),
+                                  Icon(
+                                    Icons.push_pin,
+                                    size: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ],
+                              ),
+                              subtitle: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (pinnedMessage[index].mediaLink != '' &&
+                                      pinnedMessage[index].mediaLink != null)
+                                    MediaMessageWidget(
+                                      fileUrl: pinnedMessage[index].mediaLink!,
+                                    ),
+                                  if (pinnedMessage[index].message != '')
+                                    Linkify(
+                                      options: LinkifyOptions(
+                                        looseUrl: true,
+                                      ),
+                                      onOpen: (link) async {
+                                        if (await canLaunchUrl(
+                                            Uri.parse(link.url))) {
+                                          await launchUrl(Uri.parse(link.url),
+                                              mode: LaunchMode
+                                                  .externalApplication);
+                                        } else {
+                                          throw "Could not launch ${link.url}";
+                                        }
+                                      },
+                                      text: pinnedMessage[index].message,
+                                      style: const TextStyle(fontSize: 16),
+                                      linkStyle: const TextStyle(
+                                        color: AppColors.primaryColor,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              // pinnedMessage[index]
+
+                              // subtitle: Linkify(
+                              //   options: LinkifyOptions(
+                              //     looseUrl: true,
+                              //   ),
+                              //   onOpen: (link) async {
+                              //     if (await canLaunchUrl(Uri.parse(link.url))) {
+                              //       await launchUrl(Uri.parse(link.url),
+                              //           mode: LaunchMode.externalApplication);
+                              //     } else {
+                              //       throw "Could not launch ${link.url}";
+                              //     }
+                              //   },
+                              //   text: pinnedMessage[index].message,
+                              //   style: const TextStyle(fontSize: 16),
+                              //   linkStyle: const TextStyle(
+                              //     color: AppColors.primaryColor,
+                              //   ),
+                              // ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                  ],
-                ),
-              ));
+                  ),
+                ],
+              ),
+            ),
+          );
         }
         return SizedBox();
       },

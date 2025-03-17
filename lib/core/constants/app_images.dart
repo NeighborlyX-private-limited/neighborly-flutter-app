@@ -18,6 +18,7 @@ class AppImages {
   static const String eventIcon = 'assets/icon/event.svg';
   static const String profileIcon = 'assets/icon/profile.svg';
   static const String chatIcon = 'assets/icon/chat.svg';
+  static const String blueChatIcon = 'assets/icon/blue_chat.svg';
   static const String searchIcon = 'assets/icon/search.svg';
   static const String closeIcon = 'assets/icon/close.svg';
   static const String leftIosArrowIcon = 'assets/icon/left_ios_arrow.svg';

@@ -111,7 +111,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    print('Pinned Message Response: ${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       return PinnedMessageModel.fromJsonList(jsonDecode(response.body));

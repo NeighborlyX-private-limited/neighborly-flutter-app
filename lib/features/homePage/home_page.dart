@@ -124,6 +124,8 @@ class _MainPageState extends State<MainPage> {
         break;
       case 3:
         context.go('/coming-soon');
+        // context.go('/discover');
+        // context.go('/private-chat');
         break;
       case 4:
         context.go('/profile');
