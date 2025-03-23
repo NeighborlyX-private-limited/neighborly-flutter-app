@@ -40,8 +40,8 @@ class AppInitializers {
 
     // SHARED PREFRENCE INITIALIZATION
     await ShardPrefHelper.init();
-
     var FCMtoken = await fcmConfig.getToken() ?? '';
     ShardPrefHelper.setFCMtoken(FCMtoken);
+    print('fcm token: $FCMtoken');
   }
 }

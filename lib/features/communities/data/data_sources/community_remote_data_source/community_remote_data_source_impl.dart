@@ -5,10 +5,12 @@ import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/models/community_model.dart';
+import '../../../../../core/models/post_model.dart';
 import '../../../../../core/utils/set_auth.dart';
 import '../../../../../core/utils/shared_preference.dart';
 import '../../model/group_join_request_model.dart';
 import '../../model/search_dash_model.dart';
+import '../../model/search_model.dart';
 import '../../model/search_result_model.dart';
 import 'community_remote_data_source.dart';
 
@@ -955,8 +957,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
                   "picture":"https://moacir.net/avatars/none.png",
                   "karma": 1
                 }
-              ]  
-            },     
+              ]
+            },
             {
               "id": "668164e760dbe07a2fd9df5b",
               "name": "Tech Crazy People Big Name",
@@ -988,8 +990,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
                   "picture":"https://moacir.net/avatars/none.png",
                   "karma": 1
                 }
-              ]  
-            }     
+              ]
+            }
           ],
           "people": [
                {
@@ -1019,32 +1021,174 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
           ]
       }
       ''';
+    String fakeApiData = '''{
+    "globalSearchData": [
+        {
+            "contentid": 197,
+            "userid": "67b5c24bb1aeede9dad88f69",
+            "username": "[deleted]",
+            "title": "Hi",
+            "body": "",
+            "multimedia": [],
+            "createdat": "2025-02-19T11:41:46.725Z",
+            "cheers": 4,
+            "boos": 0,
+            "postlocation": "0101000020E6100000B003E78C289D3C40E8D9ACFA5C4D5340",
+            "city": "New Delhi",
+            "type": "poll",
+            "poll_options": [
+                {
+                    "option": {
+                        "option": "Hello 👋"
+                    },
+                    "optionId": 1
+                },
+                {
+                    "option": {
+                        "option": "Hy👋"
+                    },
+                    "optionId": 2
+                }
+            ],
+            "allow_multiple_votes": false,
+            "thumbnail": null,
+            "quarantined": false
+        },
+        {
+            "contentid": 321,
+            "userid": "67b1e1551d776df4f3cc4cb0",
+            "username": "part-timeundergarment6862",
+            "title": "Hi",
+            "body": "",
+            "multimedia": [],
+            "createdat": "2025-03-10T13:25:30.518Z",
+            "cheers": 2,
+            "boos": 1,
+            "postlocation": "0101000020E6100000B003E78C289D3C40E8D9ACFA5C4D5340",
+            "city": "New Delhi",
+            "type": "post",
+            "poll_options": null,
+            "allow_multiple_votes": false,
+            "thumbnail": null,
+            "quarantined": false
+        }
+      
+    ],
+    "localSearchData": [
+        {
+            "contentid": 197,
+            "userid": "67b5c24bb1aeede9dad88f69",
+            "username": "[deleted]",
+            "title": "Hi",
+            "body": "",
+            "multimedia": [],
+            "createdat": "2025-02-19T11:41:46.725Z",
+            "cheers": 4,
+            "boos": 0,
+            "postlocation": "0101000020E6100000B003E78C289D3C40E8D9ACFA5C4D5340",
+            "city": "New Delhi",
+            "type": "poll",
+            "poll_options": [
+                {
+                    "option": {
+                        "option": "Hello 👋"
+                    },
+                    "optionId": 1
+                },
+                {
+                    "option": {
+                        "option": "Hy👋"
+                    },
+                    "optionId": 2
+                }
+            ],
+            "allow_multiple_votes": false,
+            "thumbnail": null,
+            "quarantined": false
+        },
+        {
+            "contentid": 321,
+            "userid": "67b1e1551d776df4f3cc4cb0",
+            "username": "part-timeundergarment6862",
+            "title": "Hi",
+            "body": "",
+            "multimedia": [],
+            "createdat": "2025-03-10T13:25:30.518Z",
+            "cheers": 2,
+            "boos": 1,
+            "postlocation": "0101000020E6100000B003E78C289D3C40E8D9ACFA5C4D5340",
+            "city": "New Delhi",
+            "type": "post",
+            "poll_options": null,
+            "allow_multiple_votes": false,
+            "thumbnail": null,
+            "quarantined": false
+        }
+        
+    ]
+}''';
 
-    final fakeJson = json.decode(fakeData);
-    return SearchResultModel.fromMap(fakeJson);
+    // final fakeJson = json.decode(fakeData);
 
-    // String? cookies = ShardPrefHelper.getCookie();
-    // if (cookies == null || cookies.isEmpty) {
-    //   throw const ServerException(message: 'oops omething went wrong');
-    // }
-    // //String cookieHeader = cookies.join('; ');
-    // String url = '$kBaseUrl/wall/fetch-posts';
-    // Map<String, dynamic> queryParameters = {'home': '$isHome'};
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'oops omething went wrong');
+    }
 
-    // final response = await client.get(
-    //   Uri.parse(url).replace(queryParameters: queryParameters),
-    //   headers: <String, String>{
-    //     'Cookie': cookieHeader,
-    //   },
-    // );
+    String url = '$kBaseSearchUrl/search/posts/$searchTem';
 
-    // if (response.statusCode == 200) {
-    //   final List<dynamic> jsonData = jsonDecode(response.body);
-    //   return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
-    // } else {
-    //   final message = jsonDecode(response.body)['msg'] ?? 'oops omething went wrong';
-    //   throw ServerException(message: message);
-    // }
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
+      },
+    );
+    print('Search res: ${response.body}');
+    if (response.statusCode == 200) {
+      // final List<dynamic> jsonPostData = jsonDecode(response.body);
+      // List<PostModel> data =
+      //     jsonPostData.map((data) => PostModel.fromJson(data)).toList();
+      // print('yes data: $data');
+      // final List<dynamic> jsonData = jsonDecode(response.body);
+      // final fakeJson = json.decode(fakeData);
+      final fakeNewApiJson = json.decode(fakeApiData);
+      print('before: $fakeNewApiJson');
+      // return js
+      // var res =
+      //     fakeNewApiJson.map((data) => SearchModel.fromJson(data)).toList();
+      // print('this si : $res');
+      var res = SearchResultModel.fromMap(fakeNewApiJson);
+      print('this si respo: $res');
+      print('userpic: ${res.trendingPost[0].proPic}');
+      print('username: ${res.trendingPost[0].userName}');
+      print('posttime: ${res.trendingPost[0].createdAt}');
+      print('cheer: ${res.trendingPost[0].cheers}');
+      print('comments: ${res.trendingPost[0].commentCount}');
+      print('awards: ${res.trendingPost[0].awardType.length}');
+      print('title: ${res.trendingPost[0].title}');
+      print('des: ${res.trendingPost[0].content}');
+      print('multi: ${res.trendingPost[0].multimedia}');
+      print('userpic: ${res.localPost[0].proPic}');
+      print('username: ${res.localPost[0].userName}');
+      print('posttime: ${res.localPost[0].createdAt}');
+      print('cheer: ${res.localPost[0].cheers}');
+      print('comments: ${res.localPost[0].commentCount}');
+      print('awards: ${res.localPost[0].awardType.length}');
+      print('title: ${res.localPost[0].title}');
+      print('des: ${res.localPost[0].content}');
+      print('multi: ${res.localPost[0].multimedia}');
+      return res;
+      // return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
+    } else {
+      final message = jsonDecode(response.body)['message'] ??
+          jsonDecode(response.body)['msg'] ??
+          jsonDecode(response.body)['error'] ??
+          'oops omething went wrong';
+      throw ServerException(message: message);
+    }
   }
 
   // @override
