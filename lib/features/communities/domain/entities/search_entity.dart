@@ -18,6 +18,9 @@ class PostEntity {
   final DateTime createdAt;
   final int cheers;
   final int boos;
+  // final int commentCount
+  // final int awardCount
+  // final String profilePic;
   final String postLocation;
   final String city;
   final String type;

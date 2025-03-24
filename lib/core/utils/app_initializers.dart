@@ -34,6 +34,7 @@ class AppInitializers {
     await Hive.openBox('commentReactions');
     await Hive.openBox('replyReactions');
     await Hive.openBox('pollVotes');
+    await Hive.openBox<String>('search_history');
 
     // DEPENDENCY INJECTION INITIALIZATION
     di.init();

@@ -5,6 +5,7 @@ class PostEntity extends Equatable {
   final num id;
   final String userId;
   final String userName;
+  final String awardCount;
   final String? title;
   final String? content;
   final List<String>? multimedia;
@@ -26,6 +27,7 @@ class PostEntity extends Equatable {
     required this.awardType,
     required this.pollOptions,
     required this.type,
+    required this.awardCount,
     this.allowMultipleVotes,
     required this.id,
     required this.userId,
@@ -53,6 +55,7 @@ class PostEntity extends Equatable {
     String? createdAt,
     num? cheers,
     num? bools,
+    String? awardCount,
     String? proPic,
     String? city,
     num? commentCount,
@@ -72,6 +75,7 @@ class PostEntity extends Equatable {
       multimedia: multimedia ?? this.multimedia,
       createdAt: createdAt ?? this.createdAt,
       cheers: cheers ?? this.cheers,
+      awardCount: awardCount ?? this.awardCount,
       bools: bools ?? this.bools,
       proPic: proPic ?? this.proPic,
       city: city ?? this.city,
@@ -95,6 +99,7 @@ class PostEntity extends Equatable {
         type,
         title,
         content,
+        awardCount,
         createdAt,
         cheers,
         city,

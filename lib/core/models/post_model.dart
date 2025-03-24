@@ -6,6 +6,7 @@ class PostModel extends PostEntity {
     required super.userId,
     required super.userName,
     required super.type,
+    required super.awardCount,
     super.title,
     super.thumbnail,
     super.content,
@@ -25,6 +26,7 @@ class PostModel extends PostEntity {
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
+      awardCount: json['award_count'] ?? '0',
       id: json['contentid'],
       awardType: (json['awards'] as List<dynamic>?) ?? [],
       type: json['type'] as String? ?? '',
@@ -47,7 +49,8 @@ class PostModel extends PostEntity {
           [],
       proPic: json['userProfilePicture'] as String? ?? '',
       city: json['city'] as String? ?? '',
-      commentCount: json['commentCount'] ?? 0,
+      commentCount:
+          json['commentCount'] ?? int.parse(json['comment_count']) ?? 0,
       allowMultipleVotes: json['allow_multiple_votes'] ?? true,
       userFeedback: json['userFeedback'] ?? '',
     );
@@ -55,6 +58,7 @@ class PostModel extends PostEntity {
 
   Map<String, dynamic> toJson() {
     return {
+      'awardCount': awardCount,
       'contentid': id,
       'userId': userId,
       'userName': userName,

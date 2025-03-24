@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/models/post_model.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
@@ -11,6 +12,7 @@ import '../../../../core/models/community_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/utils/date_utils.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../bloc/communities_search_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
@@ -28,14 +30,24 @@ class CommunitySearchScreen extends StatefulWidget {
 class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
   late var communitySearchCubit;
   bool showDashInfo = true;
-
+  List<String> searchHistory = [];
   final searchTermEC = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    searchHistory = Hive.box<String>('search_history').values.toList();
+    // searchHistory = getSearchHistory();
+    print('this is history: $searchHistory');
     communitySearchCubit = BlocProvider.of<CommunitySearchCubit>(context);
     communitySearchCubit.init();
+    setState(() {});
+  }
+
+  List<String> getSearchHistory() {
+    final box = Hive.box<String>('search_history');
+    // setState(() {});
+    return box.values.toList();
   }
 
   @override
@@ -151,34 +163,41 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
                   },
                 );
               }
-              return Container();
-              // return SingleChildScrollView(
-              //   child: Column(
-              //     children: [
-              //       if (showDashInfo && state.dashData?.history != null)
-              //         HistoryListArea(
-              //           terms: state.histories,
-              //           onDelete: (toDeleteTerm) {
-              //             communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
-              //           },
-              //           onSelect: (historyTerm) {
-              //             // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
-              //             handleSearchTermSelection(historyTerm);
-              //           },
-              //         ),
-              //       const SizedBox(height: 20),
-              //       if (showDashInfo && state.dashData?.trending != null)
-              //         TrendListArea(
-              //           communities: state.dashData!.trending,
-              //           onSelect: (communityId) {
-              //             // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
-              //             Navigator.of(context).pop();
-              //             // context.push('/groups/$communityId');
-              //           },
-              //         ),
-              //     ],
-              //   ),
-              // );
+
+              // return Container();
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    if (showDashInfo && searchHistory.isNotEmpty)
+                      HistoryListArea(
+                        terms: searchHistory,
+                        onDelete: (toDeleteTerm) async {
+                          await removeSearch(toDeleteTerm);
+                          // Future.delayed(Duration(seconds: 1));
+                          searchHistory = Hive.box<String>('search_history')
+                              .values
+                              .toList();
+                          setState(() {});
+                          // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
+                        },
+                        onSelect: (historyTerm) {
+                          // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
+                          handleSearchTermSelection(historyTerm);
+                        },
+                      ),
+                    // const SizedBox(height: 20),
+                    // if (showDashInfo && state.dashData?.trending != null)
+                    //   TrendListArea(
+                    //     communities: state.dashData!.trending,
+                    //     onSelect: (communityId) {
+                    //       // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
+                    //       Navigator.of(context).pop();
+                    //       // context.push('/groups/$communityId');
+                    //     },
+                    //   ),
+                  ],
+                ),
+              );
             },
           );
         },
@@ -245,7 +264,7 @@ class HistoryListArea extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        physics: AlwaysScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: terms.length,
         itemBuilder: (context, index) => historyTile(terms[index]),
@@ -532,6 +551,25 @@ class _ResultAreaState extends State<ResultArea>
             // ),
             // Description (if available)
             // if (post.content != '' || post.content != null)
+            // Row(
+            //   children: [
+            //     Column(
+            //       children: [
+            //         Expanded(
+            //             child: Text(
+            //                 'StrutStyle? strutStyle, TextAlign? textAlign, TextDirection? textDirection, Locale? locale, bool? softWrap, TextOverflow? overflow, double? textScaleFactor, TextScaler? textScaler, int? maxLines, String? semanticsLabel, ')),
+            //         Expanded(
+            //             child: Text(
+            //                 'StrutStyle? strutStyle, TextAlign? textAlign, TextDirection? textDirection, Locale? locale, bool? softWrap, TextOverflow? overflow, double? textScaleFactor, TextScaler? textScaler, int? maxLines, String? semanticsLabel, ')),
+            //       ],
+            //     ),
+            //     Container(
+            //       height: 100,
+            //       width: 180,
+            //       color: Colors.red,
+            //     ),
+            //   ],
+            // ),
             if (post.content != null || post.content != '') ...[
               SizedBox(height: 5),
               Padding(
@@ -567,7 +605,7 @@ class _ResultAreaState extends State<ResultArea>
 //                           ],
                   if (post.cheers > 0 &&
                       (post.commentCount! > 0 ||
-                          post.awardType.length > 0)) ...[
+                          int.parse(post.awardCount) > 0)) ...[
                     SizedBox(width: 6),
                     Container(
                       width: 6,
@@ -584,7 +622,8 @@ class _ResultAreaState extends State<ResultArea>
                   if (post.commentCount! > 0)
                     Text("${post.commentCount} comments"),
 
-                  if (post.commentCount! > 0 && post.awardType.length > 0) ...[
+                  if (post.commentCount! > 0 &&
+                      int.parse(post.awardCount) > 0) ...[
                     SizedBox(width: 6),
                     Container(
                       width: 6,
@@ -596,8 +635,8 @@ class _ResultAreaState extends State<ResultArea>
                     ),
                     SizedBox(width: 6),
                   ],
-                  if (post.awardType.length > 0)
-                    Text("${post.awardType.length} awards"),
+                  if (int.parse(post.awardCount) > 0)
+                    Text("${post.awardCount.toString()} awards"),
 
                   // if (post.cheers > 0 &&
                   //     (post.commentCount! > 0 || post.awardType.length > 0))
@@ -643,11 +682,7 @@ class _ResultAreaState extends State<ResultArea>
   }
 
   Widget listArea(List<dynamic> list) {
-    if (list.isEmpty)
-      return Text(
-        AppLocalizations.of(context)!.vazio,
-        // 'vazio'
-      );
+    if (list.isEmpty) return CommunitySearchEmptyWidget();
 
     return Container(
       color: Colors.white,

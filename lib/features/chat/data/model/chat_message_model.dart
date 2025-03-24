@@ -48,6 +48,7 @@ class ChatMessageModel extends ChatMessageEntity {
   /// Converts the current ChatMessageModel instance to a PostModel
   PostModel toPost() {
     return PostModel(
+      awardCount: '0',
       userId: author?.id ?? '',
       userName: author?.name ?? '',
       proPic: author?.avatarUrl ??

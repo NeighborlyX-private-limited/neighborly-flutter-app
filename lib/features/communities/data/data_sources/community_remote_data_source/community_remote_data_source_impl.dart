@@ -1,11 +1,13 @@
 // ignore_for_file: unused_local_variable
 import 'dart:convert';
+
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
 import '../../../../../core/models/community_model.dart';
 import '../../../../../core/models/post_model.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../core/utils/set_auth.dart';
 import '../../../../../core/utils/shared_preference.dart';
 import '../../model/group_join_request_model.dart';
@@ -923,6 +925,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String searchTem,
     required bool isPreview,
   }) async {
+    saveSearch(searchTem);
     String fakeData = '''
       {
           "communities": [
@@ -1132,54 +1135,61 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
 
     String? cookies = ShardPrefHelper.getCookie();
     String? accessToken = ShardPrefHelper.getAccessToken();
+    double? lat = ShardPrefHelper.getLat();
+    double? lng = ShardPrefHelper.getLng();
+    double? radius = ShardPrefHelper.getRadius();
     if (cookies == null || cookies.isEmpty) {
       throw const ServerException(message: 'oops omething went wrong');
     }
 
     String url = '$kBaseSearchUrl/search/posts/$searchTem';
 
-    final response = await client.get(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $accessToken',
-        'Cookie': cookies,
-      },
-    );
+    final response = await client.post(Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $accessToken',
+          'Cookie': cookies,
+        },
+        body: jsonEncode(<String, dynamic>{
+          "latitude": lat.toString(),
+          "longitude": lng.toString(),
+          "radius": radius.toString()
+        }));
     print('Search res: ${response.body}');
     if (response.statusCode == 200) {
-      // final List<dynamic> jsonPostData = jsonDecode(response.body);
+      final jsonPostData = jsonDecode(response.body);
       // List<PostModel> data =
       //     jsonPostData.map((data) => PostModel.fromJson(data)).toList();
       // print('yes data: $data');
       // final List<dynamic> jsonData = jsonDecode(response.body);
       // final fakeJson = json.decode(fakeData);
-      final fakeNewApiJson = json.decode(fakeApiData);
-      print('before: $fakeNewApiJson');
+      // final fakeNewApiJson = json.decode(fakeApiData);
+      // print('before: $fakeNewApiJson');
       // return js
       // var res =
       //     fakeNewApiJson.map((data) => SearchModel.fromJson(data)).toList();
       // print('this si : $res');
-      var res = SearchResultModel.fromMap(fakeNewApiJson);
-      print('this si respo: $res');
-      print('userpic: ${res.trendingPost[0].proPic}');
-      print('username: ${res.trendingPost[0].userName}');
-      print('posttime: ${res.trendingPost[0].createdAt}');
-      print('cheer: ${res.trendingPost[0].cheers}');
-      print('comments: ${res.trendingPost[0].commentCount}');
-      print('awards: ${res.trendingPost[0].awardType.length}');
-      print('title: ${res.trendingPost[0].title}');
-      print('des: ${res.trendingPost[0].content}');
-      print('multi: ${res.trendingPost[0].multimedia}');
-      print('userpic: ${res.localPost[0].proPic}');
-      print('username: ${res.localPost[0].userName}');
-      print('posttime: ${res.localPost[0].createdAt}');
-      print('cheer: ${res.localPost[0].cheers}');
-      print('comments: ${res.localPost[0].commentCount}');
-      print('awards: ${res.localPost[0].awardType.length}');
-      print('title: ${res.localPost[0].title}');
-      print('des: ${res.localPost[0].content}');
-      print('multi: ${res.localPost[0].multimedia}');
+      // var res = SearchResultModel.fromMap(j);
+      var res = SearchResultModel.fromMap(jsonPostData);
+      // print('this si respo: $res');
+      // print('userpic: ${res.trendingPost[0].proPic}');
+      // print('username: ${res.trendingPost[0].userName}');
+      // print('posttime: ${res.trendingPost[0].createdAt}');
+      // print('cheer: ${res.trendingPost[0].cheers}');
+      // print('comments: ${res.trendingPost[0].commentCount}');
+      // print('awards: ${res.trendingPost[0].awardType.length}');
+      // print('title: ${res.trendingPost[0].title}');
+      // print('des: ${res.trendingPost[0].content}');
+      // print('multi: ${res.trendingPost[0].multimedia}');
+      // print('userpic: ${res.localPost[0].proPic}');
+      // print('username: ${res.localPost[0].userName}');
+      // print('posttime: ${res.localPost[0].createdAt}');
+      // print('cheer: ${res.localPost[0].cheers}');
+      // print('comments: ${res.localPost[0].commentCount}');
+      // print('awards: ${res.localPost[0].awardType.length}');
+      // print('title: ${res.localPost[0].title}');
+      // print('des: ${res.localPost[0].content}');
+      // print('multi: ${res.localPost[0].multimedia}');
       return res;
       // return jsonData.map((data) => CommunityModel.fromJson(data)).toList();
     } else {
