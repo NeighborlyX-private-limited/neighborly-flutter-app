@@ -108,7 +108,10 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
           //   return results;
           // },
           onSubmit: (searchTerm) {
-            communitySearchCubit.getSearchResultBySumit(searchTerm);
+            print('searchTerm$searchTerm');
+            if (searchTerm.trim() != '') {
+              communitySearchCubit.getSearchResultBySumit(searchTerm);
+            }
           },
         ),
       ),
@@ -502,14 +505,18 @@ class _ResultAreaState extends State<ResultArea>
               child: Row(
                 children: [
                   // if (post.proPic != '' || post.proPic != null)
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundColor: AppColors.primaryColor,
-                    // backgroundImage: NetworkImage(post.proPic),
+                  // CircleAvatar(
+                  //   radius: 20,
+                  //   backgroundColor: AppColors.primaryColor,
+                  //   // backgroundImage: NetworkImage(post.proPic),
+                  // ),
+                  // SizedBox(width: 10),
+                  Text(
+                    post.userName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  SizedBox(width: 10),
-                  Text(post.userName,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(width: 4),
                   Container(
                     width: 6,
@@ -520,8 +527,13 @@ class _ResultAreaState extends State<ResultArea>
                     ),
                   ),
                   SizedBox(width: 4),
-                  Text(getTimeAgo(post.createdAt.toString()),
-                      style: TextStyle(color: Colors.grey, fontSize: 12)),
+                  Text(
+                    getTimeAgo(post.createdAt.toString()),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
                   // Column(
                   //   crossAxisAlignment: CrossAxisAlignment.start,
                   //   children: [
