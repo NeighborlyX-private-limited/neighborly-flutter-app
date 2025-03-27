@@ -34,14 +34,15 @@ class AppInitializers {
     await Hive.openBox('commentReactions');
     await Hive.openBox('replyReactions');
     await Hive.openBox('pollVotes');
+    await Hive.openBox<String>('search_history');
 
     // DEPENDENCY INJECTION INITIALIZATION
     di.init();
 
     // SHARED PREFRENCE INITIALIZATION
     await ShardPrefHelper.init();
-
     var FCMtoken = await fcmConfig.getToken() ?? '';
     ShardPrefHelper.setFCMtoken(FCMtoken);
+    print('fcm token: $FCMtoken');
   }
 }

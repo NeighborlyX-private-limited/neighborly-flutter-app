@@ -701,8 +701,11 @@ class _SettingScreenState extends State<SettingScreen> {
                         deleteUserCommentData(userId);
                         deleteUserReplyData(userId);
                         deleteUserVoteData(userId);
+                        ShardPrefHelper.removeCookie();
+                        ShardPrefHelper.removeAccessToken();
+                        ShardPrefHelper.removeUserID();
 
-                        ShardPrefHelper.clear();
+                        // ShardPrefHelper.clear();
                         context.pop();
                         context.go('/');
                       }

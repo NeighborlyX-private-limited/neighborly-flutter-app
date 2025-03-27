@@ -8,8 +8,10 @@ class CommunitySearchState extends Equatable {
   final SearchDashModel? dashData;
   final SearchResultModel? searchResult;
 
-  final List<CommunityModel> communities;
-  final List<UserSimpleModel> people;
+  final List<PostModel> trendingPost;
+  final List<PostModel> localPost;
+  // final List<CommunityModel> communities;
+  // final List<UserSimpleModel> people;
   final List<String> histories;
 
   const CommunitySearchState({
@@ -19,8 +21,10 @@ class CommunitySearchState extends Equatable {
     this.searchTerm = '',
     this.dashData,
     this.searchResult,
-    this.communities = const [],
-    this.people = const [],
+    this.trendingPost = const [],
+    this.localPost = const [],
+    // this.communities = const [],
+    // this.people = const [],
     this.histories = const [],
   });
 
@@ -32,8 +36,10 @@ class CommunitySearchState extends Equatable {
         dashData,
         searchResult,
         searchTerm,
-        communities,
-        people,
+        trendingPost,
+        localPost,
+        // communities,
+        // people,
         histories,
       ];
 
@@ -44,8 +50,10 @@ class CommunitySearchState extends Equatable {
     String? searchTerm,
     SearchDashModel? dashData,
     SearchResultModel? searchResult,
-    List<CommunityModel>? communities,
-    List<UserSimpleModel>? people,
+    List<PostModel>? trendingPost,
+    List<PostModel>? localPost,
+    // List<CommunityModel>? communities,
+    // List<UserSimpleModel>? people,
     List<String>? histories,
   }) {
     return CommunitySearchState(
@@ -55,8 +63,10 @@ class CommunitySearchState extends Equatable {
       searchTerm: searchTerm ?? this.searchTerm,
       dashData: dashData ?? this.dashData,
       searchResult: searchResult ?? this.searchResult,
-      communities: communities ?? this.communities,
-      people: people ?? this.people,
+      trendingPost: trendingPost ?? this.trendingPost,
+      localPost: localPost ?? this.localPost,
+      // communities: communities ?? this.communities,
+      // people: people ?? this.people,
       histories: histories ?? this.histories,
     );
   }

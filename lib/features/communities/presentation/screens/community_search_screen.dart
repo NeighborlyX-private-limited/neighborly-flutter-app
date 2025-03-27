@@ -1,12 +1,18 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/models/post_model.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../../../core/theme/colors.dart';
+import '../../../../core/utils/date_utils.dart';
+import '../../../../core/utils/helpers.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../bloc/communities_search_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
@@ -24,15 +30,24 @@ class CommunitySearchScreen extends StatefulWidget {
 class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
   late var communitySearchCubit;
   bool showDashInfo = true;
-
+  List<String> searchHistory = [];
   final searchTermEC = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
+    searchHistory = Hive.box<String>('search_history').values.toList();
+    // searchHistory = getSearchHistory();
+    print('this is history: $searchHistory');
     communitySearchCubit = BlocProvider.of<CommunitySearchCubit>(context);
     communitySearchCubit.init();
+    setState(() {});
+  }
+
+  List<String> getSearchHistory() {
+    final box = Hive.box<String>('search_history');
+    // setState(() {});
+    return box.values.toList();
   }
 
   @override
@@ -48,22 +63,21 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackgroundColor,
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
+        backgroundColor: AppColors.whiteColor,
         automaticallyImplyLeading: false,
         centerTitle: false,
         title: SearchAheadElement(
-          showTitle: true,
           isDarkmode: false,
+          showTitle: true,
           showBackButton: true,
           lintText: AppLocalizations.of(context)!.search,
           icon: Icons.search,
           onSearchTextChange: (currentStrSearchValue) {
-            // if (currentStrSearchValue == '') {
             setState(() {
               showDashInfo = currentStrSearchValue == '';
             });
-            // }
 
             if (currentStrSearchValue == '') {
               communitySearchCubit.cleanSearchTerm();
@@ -73,21 +87,31 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
           onSuggestionSelected: (selectedItem) {
             // widget.onSuggestionSelected(selectedItem);
           },
+
           suggestionCallback: (userSearchCriteria) async {
-            if (userSearchCriteria.trim().length < 3) return [];
-
-            var results = await communitySearchCubit
-                .suggestionCallback(userSearchCriteria);
-
-            if (results.length > 0) {
-              setState(() {
-                showDashInfo = false;
-              });
-            }
-            return results;
+            // print('this is :$userSearchCriteria');
+            return [];
           },
+          // suggestionCallback: (userSearchCriteria) async {
+          //   print('suggestionCallback called: $userSearchCriteria');
+          //   if (userSearchCriteria.trim().length < 3) return [];
+
+          //   var results = await communitySearchCubit
+          //       .suggestionCallback(userSearchCriteria);
+
+          //   if (results.length > 0) {
+          //     setState(() {
+          //       showDashInfo = false;
+          //     });
+          //   }
+          //   print('res:$results');
+          //   return results;
+          // },
           onSubmit: (searchTerm) {
-            communitySearchCubit.getSearchResultBySumit(searchTerm);
+            print('searchTerm$searchTerm');
+            if (searchTerm.trim() != '') {
+              communitySearchCubit.getSearchResultBySumit(searchTerm);
+            }
           },
         ),
       ),
@@ -97,17 +121,11 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
             case Status.loading:
               break;
             case Status.failure:
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    '${AppLocalizations.of(context)!.something_went_wrong} ${state.failure?.message ?? ''}',
-                  ),
-                ),
-                // SnackBar(
-                // content:
-                //     Text('oops something went wrong! ${state.failure?.message}'),
-                // ),
-              );
+              showSnackBar(
+                  context: context,
+                  message: state.failure?.message ??
+                      AppLocalizations.of(context)!.something_went_wrong);
+
               break;
             case Status.success:
               break;
@@ -119,74 +137,68 @@ class _CommunitySearchScreenState extends State<CommunitySearchScreen> {
           return BlocBuilder<CommunitySearchCubit, CommunitySearchState>(
             bloc: communitySearchCubit,
             builder: (context, state) {
-              //
-              //
               if (state.status == Status.loading) {
-                return const CommunityDetailsSheemer(); // CommunitySearchSheemer
+                return const CommunityDetailsSheemer();
               }
 
-              //
               // RESULTS by submit/enter
               if (state.searchTerm != '' && state.status != Status.loading) {
-                if (state.communities.isEmpty && state.people.isEmpty) {
+                if (state.trendingPost.isEmpty && state.localPost.isEmpty) {
                   return CommunitySearchEmptyWidget(
                     searchTem: state.searchTerm,
                   );
                 }
 
                 return ResultArea(
-                  communities: state.communities,
-                  people: state.people,
-                  onSelect: (selected) {
-                    if (selected is CommunityModel) {
-                      Navigator.of(context).pop();
-                      context.push('/groups/${selected.id}');
-                    } else {
-                      Navigator.of(context).pop();
-                      context.push('/userProfileScreen/${selected.id}');
-                    }
+                  trendingPost: state.trendingPost,
+                  localPost: state.localPost,
+                  onSelect: (postId) {
+                    context.push('/post-detail/${postId}');
+
+                    // if (selected is CommunityModel) {
+                    //   Navigator.of(context).pop();
+                    //   context.push('/groups/${selected.id}');
+                    // }
+                    // else if {
+                    //   Navigator.of(context).pop();
+                    //   context.push('/userProfileScreen/${selected.id}');
+                    // }
                   },
                 );
               }
 
-              //
-              //
-              return Container(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      //
-                      //
-                      if (showDashInfo && state.dashData?.history != null)
-                        HistoryListArea(
-                          terms: state.histories,
-                          onDelete: (toDeleteTerm) {
-                            communitySearchCubit
-                                .deleteHistoryTerm(toDeleteTerm);
-                          },
-                          onSelect: (historyTerm) {
-                            // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
-                            handleSearchTermSelection(historyTerm);
-                          },
-                        ),
-                      const SizedBox(height: 20),
-                      //
-                      //
-                      if (showDashInfo && state.dashData?.trending != null)
-                        TrendListArea(
-                          communities: state.dashData!.trending,
-                          onSelect: (communityId) {
-                            // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
-                            Navigator.of(context).pop();
-                            context.push('/groups/$communityId');
-                          },
-                        ),
-                      //
-                      //
-                      //
-                      //
-                    ],
-                  ),
+              // return Container();
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    if (showDashInfo && searchHistory.isNotEmpty)
+                      HistoryListArea(
+                        terms: searchHistory,
+                        onDelete: (toDeleteTerm) async {
+                          await removeSearch(toDeleteTerm);
+                          // Future.delayed(Duration(seconds: 1));
+                          searchHistory = Hive.box<String>('search_history')
+                              .values
+                              .toList();
+                          setState(() {});
+                          // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
+                        },
+                        onSelect: (historyTerm) {
+                          // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
+                          handleSearchTermSelection(historyTerm);
+                        },
+                      ),
+                    // const SizedBox(height: 20),
+                    // if (showDashInfo && state.dashData?.trending != null)
+                    //   TrendListArea(
+                    //     communities: state.dashData!.trending,
+                    //     onSelect: (communityId) {
+                    //       // communitySearchCubit.deleteHistoryTerm(toDeleteTerm);
+                    //       Navigator.of(context).pop();
+                    //       // context.push('/groups/$communityId');
+                    //     },
+                    //   ),
+                  ],
                 ),
               );
             },
@@ -255,7 +267,7 @@ class HistoryListArea extends StatelessWidget {
     return Container(
       color: Colors.white,
       child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        physics: AlwaysScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: terms.length,
         itemBuilder: (context, index) => historyTile(terms[index]),
@@ -354,18 +366,17 @@ class TrendListArea extends StatelessWidget {
   }
 }
 
-// ###############################################################
-// ###############################################################
-// ###############################################################
-
+// SEARCH RESULT
 class ResultArea extends StatefulWidget {
-  final List<CommunityModel> communities;
-  final List<UserSimpleModel> people;
-  final Function(dynamic) onSelect; // type is CommunityModel or UserSimpleModel
+  final List<PostModel> trendingPost;
+  final List<PostModel> localPost;
+  // final List<CommunityModel> communities;
+  // final List<UserSimpleModel> people;
+  final Function(dynamic) onSelect;
   const ResultArea({
     super.key,
-    required this.communities,
-    required this.people,
+    required this.trendingPost,
+    required this.localPost,
     required this.onSelect,
   });
 
@@ -400,13 +411,13 @@ class _ResultAreaState extends State<ResultArea>
         color: Colors.white,
         child: Row(
           children: [
-            UserAvatarStyledWidget(
-              avatarUrl: resultLine is CommunityModel
-                  ? resultLine.avatarUrl
-                  : (resultLine as UserSimpleModel).avatarUrl,
-              avatarSize: 22,
-              avatarBorderSize: 0,
-            ),
+            // UserAvatarStyledWidget(
+            //   avatarUrl: resultLine is CommunityModel
+            //       ? resultLine.avatarUrl
+            //       : (resultLine as UserSimpleModel).avatarUrl,
+            //   avatarSize: 22,
+            //   avatarBorderSize: 0,
+            // ),
             const SizedBox(width: 10),
             Expanded(
               child: Container(
@@ -462,6 +473,211 @@ class _ResultAreaState extends State<ResultArea>
     );
   }
 
+  final List<Color> colors = [
+    Colors.red,
+    Colors.green,
+    Colors.blue,
+    Colors.orange,
+    Colors.purple,
+    Colors.yellow,
+    Colors.cyan,
+    Colors.pink,
+  ];
+
+  Color getRandomColor() {
+    final random = Random();
+    return colors[random.nextInt(colors.length)];
+  }
+
+  Widget postArea(PostModel post) {
+    return InkWell(
+      onTap: () {
+        widget.onSelect(post.id);
+      },
+      child: Container(
+        // margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // User Info
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  // if (post.proPic != '' || post.proPic != null)
+                  // CircleAvatar(
+                  //   radius: 20,
+                  //   backgroundColor: AppColors.primaryColor,
+                  //   // backgroundImage: NetworkImage(post.proPic),
+                  // ),
+                  // SizedBox(width: 10),
+                  Text(
+                    post.userName,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.lightGreyColor,
+                    ),
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    getTimeAgo(post.createdAt.toString()),
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
+                  // Column(
+                  //   crossAxisAlignment: CrossAxisAlignment.start,
+                  //   children: [
+
+                  //   ],
+                  // ),
+                ],
+              ),
+            ),
+            SizedBox(height: 8),
+
+            // Title
+            if (post.title != '' || post.title != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(post.title ?? '',
+                    maxLines: 2, // Limits to one line
+                    overflow: TextOverflow.ellipsis,
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              ),
+            // SizedBox(height: 5),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 16),
+            //   child: Text('post.content!',
+            //       maxLines: 2, overflow: TextOverflow.ellipsis),
+            // ),
+            // Description (if available)
+            // if (post.content != '' || post.content != null)
+            // Row(
+            //   children: [
+            //     Column(
+            //       children: [
+            //         Expanded(
+            //             child: Text(
+            //                 'StrutStyle? strutStyle, TextAlign? textAlign, TextDirection? textDirection, Locale? locale, bool? softWrap, TextOverflow? overflow, double? textScaleFactor, TextScaler? textScaler, int? maxLines, String? semanticsLabel, ')),
+            //         Expanded(
+            //             child: Text(
+            //                 'StrutStyle? strutStyle, TextAlign? textAlign, TextDirection? textDirection, Locale? locale, bool? softWrap, TextOverflow? overflow, double? textScaleFactor, TextScaler? textScaler, int? maxLines, String? semanticsLabel, ')),
+            //       ],
+            //     ),
+            //     Container(
+            //       height: 100,
+            //       width: 180,
+            //       color: Colors.red,
+            //     ),
+            //   ],
+            // ),
+            if (post.content != null || post.content != '') ...[
+              SizedBox(height: 5),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(post.content!,
+                    maxLines: 2, overflow: TextOverflow.ellipsis),
+              ),
+            ],
+
+            // Media (if available)
+            // if (post.mediaUrl != null) ...[
+            //   SizedBox(height: 5),
+            //   ClipRRect(
+            //     borderRadius: BorderRadius.circular(8),
+            //     child: Image.network(post.mediaUrl!,
+            //         height: 150, width: double.infinity, fit: BoxFit.cover),
+            //   ),
+            // ],
+
+            SizedBox(height: 10),
+
+            // Engagement Metrics (shown only if > 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  if (post.cheers > 0) ...[
+                    Text("${post.cheers} cheers"),
+                  ],
+// if(post.commentCount! > 0 ||
+//                           post.awardType.length > 0)...[
+
+//                           ],
+                  if (post.cheers > 0 &&
+                      (post.commentCount! > 0 ||
+                          int.parse(post.awardCount) > 0)) ...[
+                    SizedBox(width: 6),
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.lightGreyColor,
+                      ),
+                    ),
+                    SizedBox(width: 6),
+
+                    // if(post)
+                  ],
+                  if (post.commentCount! > 0)
+                    Text("${post.commentCount} comments"),
+
+                  if (post.commentCount! > 0 &&
+                      int.parse(post.awardCount) > 0) ...[
+                    SizedBox(width: 6),
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.lightGreyColor,
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                  ],
+                  if (int.parse(post.awardCount) > 0)
+                    Text("${post.awardCount.toString()} awards"),
+
+                  // if (post.cheers > 0 &&
+                  //     (post.commentCount! > 0 || post.awardType.length > 0))
+
+                  // if (post.commentCount! > 0 && post.awardType.length > 0)
+                  // SizedBox(width: 6),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            Divider(
+              height: 1,
+              color: AppColors.lightGreyColor,
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // return Container(
+    //   color: getRandomColor(),
+    //   height: 200,
+    //   width: double.infinity,
+    //   child: Center(
+    //     child: Text('Hello Post'),
+    //   ),
+    // );
+  }
+
   Widget tabTitle(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18.0),
@@ -478,26 +694,23 @@ class _ResultAreaState extends State<ResultArea>
   }
 
   Widget listArea(List<dynamic> list) {
-    if (list.isEmpty)
-      return Text(
-        AppLocalizations.of(context)!.vazio,
-        // 'vazio'
-      );
+    if (list.isEmpty) return CommunitySearchEmptyWidget();
 
     return Container(
       color: Colors.white,
       child: ListView.builder(
-        physics: NeverScrollableScrollPhysics(),
+        physics: AlwaysScrollableScrollPhysics(),
         shrinkWrap: true,
         itemCount: list.length,
-        itemBuilder: (context, index) => resultTile(list[index]),
+        itemBuilder: (context, index) => postArea(list[index]),
+        // itemBuilder: (context, index) => resultTile(list[index]),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.communities.isEmpty) return SizedBox.shrink();
+    if (widget.trendingPost.isEmpty) return SizedBox.shrink();
 
     return Container(
       color: Colors.white,
@@ -506,15 +719,15 @@ class _ResultAreaState extends State<ResultArea>
         children: [
           //
           //
-          const SizedBox(height: 15),
+          const SizedBox(height: 8),
           Container(
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
+            // height: 60,
+            // decoration: BoxDecoration(
+            //   color: Colors.white,
+            //   borderRadius: BorderRadius.circular(10),
+            // ),
             child: Padding(
-              padding: const EdgeInsets.only(left: 0, right: 5),
+              padding: const EdgeInsets.only(left: 0, right: 0),
               child: TabBar(
                 indicatorColor: AppColors.primaryColor,
                 unselectedLabelColor: Colors.grey,
@@ -531,11 +744,13 @@ class _ResultAreaState extends State<ResultArea>
                 // labelPadding: EdgeInsets.only(left: 0, right: 20),
                 tabs: [
                   Tab(
-                      child: tabTitle(AppLocalizations.of(context)!.communities
+                      child: tabTitle('Trending post'
+                          // child: tabTitle(AppLocalizations.of(context)!.communities
                           // 'Communities'
                           )),
                   Tab(
-                      child: tabTitle(AppLocalizations.of(context)!.people
+                      child: tabTitle('Nearby post'
+                          // child: tabTitle(AppLocalizations.of(context)!.people
                           //  'People'
                           )),
                 ],
@@ -548,10 +763,15 @@ class _ResultAreaState extends State<ResultArea>
               children: [
                 //
                 //
-                listArea(widget.communities),
+                // listArea(widget.communities),
+                listArea(widget.trendingPost),
+                // listArea(widget.communities),
+                listArea(widget.localPost),
+                // listArea([1, 2, 3, 4, 5, 6]),
+                // listArea([1, 2, 3, 4, 5, 6]),
                 //
                 //
-                listArea(widget.people),
+                // listArea(widget.people),
                 //
                 //
               ],

@@ -1,5 +1,58 @@
+import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 import '../entities/option_entity.dart';
+
+void saveSearch(String query) async {
+  final box = Hive.box<String>('search_history');
+
+  // Retrieve existing history
+  List<String> history = box.values.toList();
+  print('Before saving: $history');
+
+  // Remove duplicate entry
+  history.remove(query);
+
+  // Insert at the start
+  history.insert(0, query);
+
+  // Keep only the last 6 searches
+  if (history.length > 6) {
+    history = history.sublist(0, 6);
+  }
+
+  print('After saving: $history');
+
+  // Update Hive storage correctly
+  await box.clear(); // Ensure the box is empty before adding new values
+  for (String item in history) {
+    await box.add(item); // Add one by one to avoid issues
+  }
+
+  // Verify saved history
+  List<String> newHistory = box.values.toList();
+  print('Final saved history: $newHistory');
+}
+
+Future<void> removeSearch(String query) async {
+  final box = Hive.box<String>('search_history');
+  List<String> history = box.values.toList();
+  print('search histroy: $history');
+
+  // Remove the specific search term
+  history.remove(query);
+  print('search histroy after: $history');
+
+  // Clear the box and update with the modified history list
+  await box.clear();
+  print('search histroy afterclear: $history');
+  for (String item in history) {
+    await box.add(item); // Add one by one to avoid issues
+  }
+  // box.addAll(history);
+  final newbox = Hive.box<String>('search_history');
+  List<String> newhistory = newbox.values.toList();
+  print('search histroy after new: $newhistory');
+}
 
 // AGO TIME
 String formatTimeDifference(String isoTimestamp) {

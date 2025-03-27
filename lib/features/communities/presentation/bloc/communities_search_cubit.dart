@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/community_model.dart';
+import '../../../../core/models/post_model.dart';
 import '../../../../core/models/user_simple_model.dart';
 import '../../data/model/search_dash_model.dart';
 import '../../data/model/search_result_model.dart';
@@ -30,10 +31,13 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
 
     result.fold(
       (failure) {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (dashData) {
         emit(state.copyWith(
@@ -75,16 +79,24 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   FutureOr<List<dynamic>?> suggestionCallback(String searchStr) async {
     if (searchStr == "") return <dynamic>[];
     var response = <dynamic>[];
-
     await Future.delayed(Duration(seconds: 1));
 
     final result = await getSearchResultsCommunitiesUsecase(
-        searchTerm: searchStr, isPreview: true);
+      searchTerm: searchStr,
+      isPreview: true,
+    );
 
     result.fold(
-      (failure) {},
+      (failure) {
+        print('fold error :$failure');
+      },
       (searchResultes) {
-        response = [...searchResultes.communities, ...searchResultes.people];
+        response = [
+          // ...searchResultes.communities,
+          // ...searchResultes.people,
+          ...searchResultes.trendingPost,
+          ...searchResultes.localPost,
+        ];
       },
     );
 
@@ -98,23 +110,31 @@ class CommunitySearchCubit extends Cubit<CommunitySearchState> {
   Future getSearchResultBySumit(String searchTerm) async {
     emit(state.copyWith(status: Status.loading));
     final result = await getSearchResultsCommunitiesUsecase(
-        searchTerm: searchTerm, isPreview: false);
+      searchTerm: searchTerm,
+      isPreview: false,
+    );
 
     result.fold(
       (failure) {
-        emit(state.copyWith(
+        emit(
+          state.copyWith(
             status: Status.failure,
             failure: failure,
-            errorMessage: failure.message));
+            errorMessage: failure.message,
+          ),
+        );
       },
       (searchresult) {
-        emit(state.copyWith(
-          status: Status.success,
-          searchTerm: searchTerm,
-          searchResult: searchresult,
-          communities: [...searchresult.communities],
-          people: [...searchresult.people],
-        ));
+        print('this is serahc rw: $searchresult');
+        emit(
+          state.copyWith(
+            status: Status.success,
+            searchTerm: searchTerm,
+            searchResult: searchresult,
+            trendingPost: [...searchresult.trendingPost],
+            localPost: [...searchresult.localPost],
+          ),
+        );
       },
     );
   }

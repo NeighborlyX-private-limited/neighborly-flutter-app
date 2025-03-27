@@ -39,6 +39,7 @@ class ShardPrefHelper {
   static Future setFCMtoken(String newFCMToken) async =>
       await _preferences.setString(_fcmToken, newFCMToken);
   static String? getFCMtoken() => _preferences.getString(_fcmToken);
+
   // SAVE REFRESH TOKEN AS COOKIE
   static Future setCookie(String cookie) async =>
       await _preferences.setString(_cookie, cookie);
