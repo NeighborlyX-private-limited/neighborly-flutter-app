@@ -30,6 +30,7 @@ class ShardPrefHelper {
   static const String _findMe = 'findMe';
   static const String _appVersion = 'appVersion';
   static const String _activeChatRoomId = 'activeChatRoomId';
+  static const String _userInterests = 'userInterests';
 
   // INIT
   static Future init() async =>
@@ -52,6 +53,15 @@ class ShardPrefHelper {
   static String? getAccessToken() => _preferences.getString(_accessToken);
   static Future removeAccessToken() async =>
       await _preferences.remove(_accessToken);
+
+  // SAVE USER INTERESTS
+  static Future<void> setUserInterests(List<String> interests) async {
+    await _preferences.setStringList(_userInterests, interests);
+  }
+
+  static Future<List<String>> getUserInterests() async {
+    return _preferences.getStringList(_userInterests) ?? [];
+  }
 
   // SAVE USER ID
   static Future setUserID(String userId) async =>

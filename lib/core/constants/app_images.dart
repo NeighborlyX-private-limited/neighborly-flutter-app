@@ -23,6 +23,8 @@ class AppImages {
   static const String closeIcon = 'assets/icon/close.svg';
   static const String leftIosArrowIcon = 'assets/icon/left_ios_arrow.svg';
   static const String muteIcon = 'assets/icon/mute.svg';
+  static const String discoverIcon = 'assets/icon/discover.svg';
+  static const String interestsIcon = 'assets/icon/interests.svg';
 
   // APP IMAGES
   static const String tute1 = 'assets/image/tute1.svg';

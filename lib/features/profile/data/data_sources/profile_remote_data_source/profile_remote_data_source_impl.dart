@@ -328,7 +328,7 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
         'Cookie': cookies,
       },
     );
-
+    print('comment res: ${jsonDecode(response.body)}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final List<dynamic> jsonData = jsonDecode(response.body)['comments'];

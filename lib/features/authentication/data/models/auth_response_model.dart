@@ -4,6 +4,7 @@ class AuthResponseModel extends AuthResponseEntity {
   const AuthResponseModel({
     required super.id,
     required super.username,
+    required super.interests,
     required super.token,
     required super.isVerified,
     required super.isSkippedTutorial,
@@ -18,6 +19,14 @@ class AuthResponseModel extends AuthResponseEntity {
   factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
     return AuthResponseModel(
       id: json['user']['_id'],
+      interests: (json['user']['interests'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+
+      // interests:
+      //     json['user']['interests'].map((e) => e.toString()).toList() ?? [],
+      // interests: json['user']['interests'].cost<List<String>>(),
       username: json['user']['username'],
       token: json['refreshToken'],
       isVerified: json['user']['isVerified'],
@@ -35,6 +44,7 @@ class AuthResponseModel extends AuthResponseEntity {
     return {
       'id': id,
       'username': username,
+      'interests': interests,
       'token': token,
       'isVerified': isVerified,
       'email': email,

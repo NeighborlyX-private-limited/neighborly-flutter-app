@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import '../../core/theme/colors.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../chat/presentation/bloc/bloc/interest_bloc.dart';
 
 ValueNotifier<bool> isBottomNavVisible = ValueNotifier<bool>(true);
 
@@ -25,15 +28,26 @@ class _MainPageState extends State<MainPage> {
   NewVersionPlus newVersionPlus = NewVersionPlus();
   int _lastIndex = 0;
   int currentIndex = 0;
-
+  List<String> interest = [];
+  var interestBloc;
   // INIT STATE
   @override
   void initState() {
     super.initState();
     pageController = PageController();
+    interestBloc = BlocProvider.of<InterestBloc>(context);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<InterestBloc>().add(FeatchInterestEvent());
+    });
+    // setUserInterest();
     ShowUpdate();
+    // isConnected();
   }
 
+  void setUserInterest() async {
+    interest = await ShardPrefHelper.getUserInterests();
+  }
   // Future<bool> isConnected() async {
   //   var connectivityResult = await Connectivity().checkConnectivity();
   //   return connectivityResult != ConnectivityResult.none;
@@ -90,7 +104,8 @@ class _MainPageState extends State<MainPage> {
         location.startsWith('/groups/create')) {
       return 2;
     }
-    if (location.startsWith('/coming-soon')) {
+    if (location.startsWith('/private-chat') ||
+        location.startsWith('/discover')) {
       return 3;
     }
     if (location.startsWith('/profile')) {
@@ -123,10 +138,16 @@ class _MainPageState extends State<MainPage> {
         context.go('/groups');
         break;
       case 3:
-        context.go('/coming-soon');
-        // context.go('/discover');
-        // context.go('/private-chat');
+        final state = context.read<InterestBloc>().state;
+        if (state is InterestSuccessState) {
+          if (state.interests.userInterests.isEmpty) {
+            context.go('/private-chat');
+          } else {
+            context.go('/discover');
+          }
+        }
         break;
+
       case 4:
         context.go('/profile');
         break;
@@ -165,8 +186,8 @@ class _MainPageState extends State<MainPage> {
                         label: '',
                       ),
                       BottomNavigationBarItem(
-                        icon: const Icon(Icons.calendar_month),
-                        label: AppLocalizations.of(context)!.events,
+                        icon: const Icon(Icons.explore),
+                        label: 'Discover',
                       ),
                       BottomNavigationBarItem(
                         icon: const Icon(Icons.person),

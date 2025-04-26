@@ -2,6 +2,11 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:neighborly_flutter_app/features/authentication/presentation/cubit/tutorial_cubit.dart';
+import 'package:neighborly_flutter_app/features/chat/domain/usecases/get_all_interests_usecase.dart';
+import 'package:neighborly_flutter_app/features/chat/domain/usecases/get_nearby_user_usecase.dart';
+import 'package:neighborly_flutter_app/features/chat/domain/usecases/save_user_interest_usecase.dart';
+import 'package:neighborly_flutter_app/features/chat/presentation/bloc/bloc/interest_bloc.dart';
+import 'package:neighborly_flutter_app/features/chat/presentation/bloc/bloc/save_interest_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/add_user_community_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/get_user_groups_usecase.dart';
 import 'package:neighborly_flutter_app/features/communities/domain/usecases/handle_join_request_usercase.dart';
@@ -52,6 +57,7 @@ import 'features/chat/data/repositories/chat_repositories_impl.dart';
 import 'features/chat/data/repositories/chat_repositories_impl_thread.dart';
 import 'features/chat/domain/repositories/chat_repositories.dart';
 import 'features/chat/domain/repositories/chat_repositories_thread.dart';
+import 'features/chat/domain/usecases/create_dm_usecase.dart';
 import 'features/chat/domain/usecases/featch_pinned_messages_usecase.dart';
 import 'features/chat/domain/usecases/get_all_chat_rooms_usecase.dart';
 import 'features/chat/domain/usecases/get_chat_group_room_messages_usecase .dart';
@@ -60,10 +66,12 @@ import 'features/chat/domain/usecases/get_all_chat_rooms_usecase_thread.dart';
 import 'features/chat/domain/usecases/get_chat_group_room_messages_usecase_thread.dart';
 import 'features/chat/domain/usecases/get_chat_room_messages_usecase_thread.dart';
 import 'features/chat/domain/usecases/pin_message_usecase.dart';
+import 'features/chat/presentation/bloc/bloc/nearby_user_bloc.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit_thread.dart';
 import 'features/chat/presentation/bloc/chat_main_cubit.dart';
 import 'features/chat/presentation/bloc/chat_private_cubit.dart';
+import 'features/chat/presentation/bloc/dm/create_dm_bloc.dart';
 import 'features/chat/presentation/bloc/featch_pinned_messages_bloc.dart';
 import 'features/chat/presentation/bloc/pin_message_bloc.dart';
 import 'features/communities/data/data_sources/community_remote_data_source/community_remote_data_source.dart';
@@ -342,6 +350,10 @@ void init() async {
 
   ///chat usecase
   sl.registerLazySingleton(() => FeatchPinnedMessagesUsecase(sl()));
+  sl.registerLazySingleton(() => CreateDmUsecase(sl()));
+  sl.registerLazySingleton(() => GetNearByUserUsecase(sl()));
+  sl.registerLazySingleton(() => GetAllInterestsUsecase(sl()));
+  sl.registerLazySingleton(() => SaveUserInterestsUsecase(sl()));
   sl.registerLazySingleton(() => PinnedMessagesUsecase(sl()));
   sl.registerLazySingleton(() => GetAllChatRoomsUsecase(sl()));
   sl.registerLazySingleton(() => GetAllChatRoomsUsecaseThread(sl()));
@@ -430,10 +442,14 @@ void init() async {
       () => UpdateMuteGroupBloc(updateMuteCommunityUsecase: sl()));
 
   ///chat bloc
+  sl.registerFactory(() => NearbyUserBloc(getNearByUserUsecase: sl()));
   sl.registerFactory(
       () => FeatchPinnedMessagesBloc(featchPinnedMessagesUsecase: sl()));
   sl.registerFactory(() => ChatMainCubit(sl()));
+  sl.registerFactory(() => CreateDmBloc(createDmUsecase: sl()));
   sl.registerFactory(() => PinMessageBloc(pinnedMessagesUsecase: sl()));
+  sl.registerFactory(() => InterestBloc(getAllInterestsUsecase: sl()));
+  sl.registerFactory(() => SaveInterestBloc(saveUserInterestsUsecase: sl()));
   sl.registerFactory(() => ChatPrivateCubit(sl()));
   sl.registerFactory(() => ChatGroupCubit(sl(), sl<SocketService>()));
   sl.registerFactory(() => ChatGroupCubitThread(sl(), sl<SocketService>()));

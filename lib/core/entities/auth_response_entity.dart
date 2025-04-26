@@ -8,6 +8,7 @@ class AuthResponseEntity extends Equatable {
   final String? email;
   final bool? findMe;
   final List<dynamic>? coordinates;
+  final List<String>? interests;
   final String picture;
   final num? awardsCount;
   final String? bio;
@@ -27,6 +28,7 @@ class AuthResponseEntity extends Equatable {
     this.findMe = true,
     this.coordinates,
     this.phoneNumber,
+    this.interests,
     this.karma,
     this.mostProminentAward,
     this.bio,
@@ -47,6 +49,7 @@ class AuthResponseEntity extends Equatable {
         username,
         token,
         isVerified,
+        interests,
         bio,
         awardsCount,
         isEmailVerified,

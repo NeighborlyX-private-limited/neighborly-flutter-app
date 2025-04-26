@@ -131,6 +131,7 @@ class _CommentSectionState extends State<CommentSection> {
                   style: TextStyle(color: AppColors.redColor),
                 ));
               }
+              print('this is error: ${state.error}');
               return Center(child: Text(state.error));
             } else {
               return Center(

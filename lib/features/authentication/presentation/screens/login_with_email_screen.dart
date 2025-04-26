@@ -154,6 +154,7 @@ class _LoginWithEmailScreenState extends State<LoginWithEmailScreen> {
                     // LOGIN FAILURE STATE
                     if (state is LoginFailureState) {
                       if (mounted) {
+                        print('this:${state.error}');
                         showSnackBar(context: context, message: state.error);
                       }
                     }

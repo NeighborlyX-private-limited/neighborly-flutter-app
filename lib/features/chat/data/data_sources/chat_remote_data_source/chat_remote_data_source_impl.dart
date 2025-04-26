@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:neighborly_flutter_app/features/chat/data/model/nearby_user_model.dart';
 import '../../../../../core/utils/set_auth.dart';
 import '../../model/chat_message_model.dart';
 import '../../model/chat_room_model.dart';
+import '../../model/interest_model.dart';
 import '../../model/pinned_message_model.dart';
 import 'chat_remote_data_source.dart';
 import '../../../../../core/constants/constants.dart';
@@ -158,13 +160,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<List<ChatMessageModel>> getRoomMessages({
-    required String roomId,
-    String? dateFrom,
+    required String chatId,
   }) async {
-    if (dateFrom == null || dateFrom == '') {
-      dateFrom = DateTime.now().toIso8601String();
-    }
-
     // FAKE example
     await Future.delayed(Duration(seconds: 2));
 
@@ -237,5 +234,190 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
     final fakeJson = json.decode(fakeData);
     return ChatMessageModel.fromJsonList(fakeJson);
+  }
+
+  @override
+  Future<InterestModel> getAllInterests() async {
+    // List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
+
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'oops something went wrong');
+    }
+    // String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/discover/interest-list';
+
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
+      final Map<String, dynamic> data = json.decode(response.body);
+      return InterestModel.fromJson(data);
+
+      // return InterestModel.fromJson
+      //     .fromJsonList(jsonDecode(response.body))
+      //     .toList();
+    } else {
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<List<NearbyUserModel>> getNearByUser() async {
+    // List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
+    double? radius = ShardPrefHelper.getRadius();
+    radius = 1000000000;
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'oops something went wrong');
+    }
+    // String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/discover/fetch-neighbors?radius=$radius';
+    print('url: $url');
+
+    final response = await client.get(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
+      },
+    );
+    print('nearby user : ${response.body}');
+    if (response.statusCode == 200) {
+      handleAuthHeaders(response.headers);
+      // final Map<String, dynamic> data = json.decode(response.body);
+      // return NearbyUserModel.fromJson(data);
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> usersJson = data['nearbyUsers'];
+
+      final List<NearbyUserModel> users =
+          usersJson.map((json) => NearbyUserModel.fromJson(json)).toList();
+
+      print('kuch: ${users}');
+
+      return users;
+
+      // return InterestModel.fromJson
+      //     .fromJsonList(jsonDecode(response.body))
+      //     .toList();
+    } else {
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<void> saveUserInterest({required List<String> userInterest}) async {
+    // List<String>? cookies = ShardPrefHelper.getCookie();
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
+
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'oops something went wrong');
+    }
+    // String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/discover/save-interests';
+
+    final response = await client.put(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
+      },
+      body: jsonEncode({"userInterests": userInterest}),
+    );
+
+    print('res:${response.body}');
+    if (response.statusCode == 200) {
+      ShardPrefHelper.setUserInterests(userInterest);
+      handleAuthHeaders(response.headers);
+      final Map<String, dynamic> data = json.decode(response.body);
+      print('data:$data');
+
+      return;
+
+      // return InterestModel.fromJson
+      //     .fromJsonList(jsonDecode(response.body))
+      //     .toList();
+    } else {
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
+      throw ServerException(message: message);
+    }
+  }
+
+  @override
+  Future<String> createDm({required String userId}) async {
+    String? cookies = ShardPrefHelper.getCookie();
+    String? accessToken = ShardPrefHelper.getAccessToken();
+
+    if (cookies == null || cookies.isEmpty) {
+      throw const ServerException(message: 'oops something went wrong');
+    }
+    // String cookieHeader = cookies.join('; ');
+
+    String url = '$kBaseUrl/dm/create-dm-chat';
+
+    final response = await client.post(
+      Uri.parse(url),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
+      },
+      body: jsonEncode({"user": userId}),
+    );
+
+    print('res chat cretae:${response.body}');
+    print('res chat cretae:${response.statusCode}');
+    if (response.statusCode == 200) {
+      // ShardPrefHelper.setUserInterests(userInterest);
+      handleAuthHeaders(response.headers);
+      final Map<String, dynamic> data = json.decode(response.body);
+      print('data:${data['chat']['_id']}');
+      String chatId = data['chat']['_id'];
+
+      return chatId;
+
+      // return InterestModel.fromJson
+      //     .fromJsonList(jsonDecode(response.body))
+      //     .toList();
+    } else if (response.statusCode == 400 &&
+        jsonDecode(response.body)['msg']
+            .toString()
+            .contains('Chat already exists')) {
+      // ShardPrefHelper.setUserInterests(userInterest);
+      // handleAuthHeaders(response.headers);
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      print('data:${data['existingChat']['_id']}');
+      String chatId = data['existingChat']['_id'];
+
+      return chatId;
+
+      // return InterestModel.fromJson
+      //     .fromJsonList(jsonDecode(response.body))
+      //     .toList();
+    } else {
+      final message =
+          jsonDecode(response.body)['msg'] ?? 'oops something went wrong';
+      throw ServerException(message: message);
+    }
   }
 }

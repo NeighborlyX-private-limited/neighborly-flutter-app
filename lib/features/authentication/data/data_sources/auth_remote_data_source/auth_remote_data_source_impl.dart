@@ -54,6 +54,11 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String userID = jsonDecode(response.body)['user']['_id'];
       String proPic = jsonDecode(response.body)['user']['picture'];
       String username = jsonDecode(response.body)['user']['username'];
+      List<dynamic> dynamicInterests =
+          jsonDecode(response.body)['user']['interests'];
+      List<String> interests =
+          dynamicInterests.map((e) => e.toString()).toList();
+      print('type OF: ${interests.runtimeType}');
       String? email = jsonDecode(response.body)['user']['email'];
       String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
       String karma = jsonDecode(response.body)['user']['karma'].toString();
@@ -68,6 +73,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       // SET DATA IN LOCAL
       ShardPrefHelper.setUserID(userID);
+      ShardPrefHelper.setUserInterests(interests);
       ShardPrefHelper.setUserProfilePicture(proPic);
       ShardPrefHelper.setUsername(username);
       ShardPrefHelper.setEmail(email ?? '');

@@ -1,5 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/constants/app_images.dart';
+import 'package:neighborly_flutter_app/core/routes/routes.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
+import 'package:neighborly_flutter_app/features/chat/presentation/bloc/bloc/nearby_user_bloc.dart';
+
+import '../../../../core/widgets/svg_icon.dart';
+import '../bloc/bloc/interest_bloc.dart';
+import '../bloc/dm/create_dm_bloc.dart';
 
 class DiscoverScreen extends StatefulWidget {
   const DiscoverScreen({super.key});
@@ -9,40 +21,14 @@ class DiscoverScreen extends StatefulWidget {
 }
 
 class DiscoverScreenState extends State<DiscoverScreen> {
-  final List<Map<String, dynamic>> users = [
-    {
-      "name": "Cameron Williamson",
-      "distance": "1 KM (Approx.)",
-      "image": "https://via.placeholder.com/50",
-      "interests": ["Music", "Cars", "Guitar", "Technology", "Movies"],
-    },
-    {
-      "name": "Angel",
-      "distance": "1 KM (Approx.)",
-      "image": "https://via.placeholder.com/50",
-      "interests": ["Nature", "Technology", "Movies"],
-    },
-    {
-      "name": "Mitchell",
-      "distance": "5 KM (Approx.)",
-      "image": "https://via.placeholder.com/50",
-      "interests": [
-        "Music",
-        "Guitar",
-        "Technology",
-        "Technology",
-        "Technology",
-        "Technology",
-        "Technology"
-      ],
-    },
-    {
-      "name": "tinyLeopard720",
-      "distance": "3 KM (Approx.)",
-      "image": "https://via.placeholder.com/50",
-      "interests": ["Gaming", "Coding", "AI", "Tech"],
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<NearbyUserBloc>().add(FeatchNearbyUserEvent());
+    });
+  }
 
   Map<String, bool> showMoreMap = {};
 
@@ -52,93 +38,134 @@ class DiscoverScreenState extends State<DiscoverScreen> {
       appBar: AppBar(
         title: Text("Connect with Neighbours"),
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        itemCount: users.length,
-        itemBuilder: (context, index) {
-          var user = users[index];
-          bool showMore = showMoreMap[user["name"]] ?? false;
-          int maxTags = 3;
+      body: BlocConsumer<NearbyUserBloc, NearbyUserState>(
+        listener: (BuildContext context, state) {},
+        builder: (BuildContext context, state) {
+          if (state is NearbyUserLoadingState) {
+            return CustomCircularIndicator();
+          }
+          if (state is NearbyUserSuccessState) {
+            print('state value: ${state.nearbyUser.length}');
 
-          return Container(
-            margin: EdgeInsets.only(bottom: 12),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: AppColors.lightGreyColor,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // User Details
-                ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(user["image"]),
-                    radius: 24,
-                  ),
-                  title: Text(
-                    user["name"],
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Text(
-                    user["distance"],
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.chat_bubble_outline, color: Colors.blue),
-                    onPressed: () {
-                      // Handle chat button click
-                    },
-                  ),
-                ),
+            return ListView.builder(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              itemCount: state.nearbyUser.length,
+              // itemCount: users.length,
+              itemBuilder: (context, index) {
+                var user = state.nearbyUser[index];
+                bool showMore = showMoreMap[user.username] ?? false;
+                int maxTags = 3;
 
-                SizedBox(height: 8),
-
-                // Interests
-                Padding(
-                  padding: const EdgeInsets.only(
-                    left: 12,
-                    right: 12,
-                    bottom: 12,
+                return Container(
+                  margin: EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: AppColors.lightGreyColor,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ...user["interests"]
-                          .take(showMore ? user["interests"].length : maxTags)
-                          .map((interest) => InterestChip(interest)),
-                      if (user["interests"].length > maxTags)
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              showMoreMap[user["name"]] = !showMore;
-                            });
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: AppColors.primaryColor),
-                            ),
-                            child: Text(
-                              showMore ? "Show less" : "Show more",
-                              style: TextStyle(
-                                color: AppColors.primaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                      // User Details
+                      ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(user.picture),
+                            radius: 24,
                           ),
+                          title: Text(
+                            user.username,
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            '${user.distance.toInt().toString()} KM (Approx.)',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          trailing: BlocConsumer<CreateDmBloc, CreateDmState>(
+                            listener: (context, state) {
+                              if (state is CreateDmSuccessState) {
+                                print('success state${state.chatId}');
+                                context.push('/chat-private/${state.chatId}');
+                              }
+                              if (state is CreateDmFailureState) {
+                                showSnackBar(
+                                  context: context,
+                                  message: state.error,
+                                );
+                              }
+                              // TODO: implement listener
+                            },
+                            builder: (context, state) {
+                              if (state is CreateDmLoadingState) {
+                                return CustomCircularIndicator();
+                              }
+
+                              return GestureDetector(
+                                onTap: () {
+                                  BlocProvider.of<CreateDmBloc>(context).add(
+                                    CreateNewDmEvent(userId: user.id),
+                                  );
+                                  // context.go('/chat-private/:chatId');
+                                  // /chat-private/:chatId
+                                },
+                                child: SvgPicture.asset(AppImages.blueChatIcon),
+                              );
+                            },
+                          )),
+
+                      SizedBox(height: 8),
+
+                      // Interests
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 12,
+                          right: 12,
+                          bottom: 12,
                         ),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            ...user.interests
+                                .take(
+                                    showMore ? user.interests.length : maxTags)
+                                .map((interest) => InterestChip(interest)),
+                            if (user.interests.length > maxTags)
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    showMoreMap[user.username] = !showMore;
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                        color: AppColors.primaryColor),
+                                  ),
+                                  child: Text(
+                                    showMore ? "Show less" : "Show more",
+                                    style: TextStyle(
+                                      color: AppColors.primaryColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          );
+                );
+              },
+            );
+          }
+          return SizedBox();
         },
       ),
     );

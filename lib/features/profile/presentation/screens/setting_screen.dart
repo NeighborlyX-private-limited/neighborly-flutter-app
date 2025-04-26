@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hive/hive.dart';
+import 'package:neighborly_flutter_app/core/constants/app_images.dart';
 import 'package:neighborly_flutter_app/core/widgets/award_buy_bottom_sheet.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
@@ -15,6 +16,7 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/google_auth_helper.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
+import '../../../../core/widgets/svg_icon.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/logout_bloc.dart/logout_bloc.dart';
 import '../widgets/button_widget.dart';
@@ -288,6 +290,35 @@ class _SettingScreenState extends State<SettingScreen> {
                     Text(
                       AppLocalizations.of(context)!.find_me,
                       // 'Find Me',
+                      style: blackonboardingBody1Style,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                onTap: () {
+                  context.push('/edit-interest');
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircularSvgImage(
+                      assetPath: AppImages.interestsIcon,
+                    ),
+                    // SvgPicture.asset(
+                    //   'assets/find-me.svg',
+                    //   height: 24,
+                    //   width: 24,
+                    // ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      // AppLocalizations.of(context)!.find_me,
+                      'Your interests',
                       style: blackonboardingBody1Style,
                     ),
                   ],

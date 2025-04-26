@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:neighborly_flutter_app/dependency_injection.dart';
+import 'package:neighborly_flutter_app/features/chat/presentation/bloc/bloc/save_interest_bloc.dart';
 import 'package:neighborly_flutter_app/features/chat/presentation/bloc/featch_pinned_messages_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/add_remove_user_in_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/get_join_group_request_bloc.dart';
@@ -33,10 +34,13 @@ import 'features/authentication/presentation/bloc/login_with_email_bloc/login_wi
 import 'features/authentication/presentation/bloc/register_bloc/register_bloc.dart';
 import 'features/authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import 'features/authentication/presentation/bloc/verify_otp_bloc/verify_otp_bloc.dart';
+import 'features/chat/presentation/bloc/bloc/interest_bloc.dart';
+import 'features/chat/presentation/bloc/bloc/nearby_user_bloc.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit.dart';
 import 'features/chat/presentation/bloc/chat_group_cubit_thread.dart';
 import 'features/chat/presentation/bloc/chat_main_cubit.dart';
 import 'features/chat/presentation/bloc/chat_private_cubit.dart';
+import 'features/chat/presentation/bloc/dm/create_dm_bloc.dart';
 import 'features/chat/presentation/bloc/pin_message_bloc.dart';
 import 'features/communities/presentation/bloc/communities_create_cubit.dart';
 import 'features/communities/presentation/bloc/communities_main_cubit.dart';
@@ -334,6 +338,18 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ///chat bloc
         BlocProvider<ChatMainCubit>(
           create: (context) => di.sl<ChatMainCubit>(),
+        ),
+        BlocProvider<NearbyUserBloc>(
+          create: (context) => di.sl<NearbyUserBloc>(),
+        ),
+        BlocProvider<InterestBloc>(
+          create: (context) => di.sl<InterestBloc>(),
+        ),
+        BlocProvider<CreateDmBloc>(
+          create: (context) => di.sl<CreateDmBloc>(),
+        ),
+        BlocProvider<SaveInterestBloc>(
+          create: (context) => di.sl<SaveInterestBloc>(),
         ),
         BlocProvider<FeatchPinnedMessagesBloc>(
           create: (context) => di.sl<FeatchPinnedMessagesBloc>(),

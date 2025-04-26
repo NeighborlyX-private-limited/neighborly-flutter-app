@@ -5,15 +5,19 @@ class ChatPrivateState extends Equatable {
   final Failure? failure;
   final String? errorMessage;
   final File? imageToUpload;
-  final String roomId;
+  final String chatId;
   final List<ChatMessageModel> messages;
+  final int page;
+  final bool hasReachedMax;
 
   const ChatPrivateState({
     this.status = Status.initial,
     this.failure,
     this.errorMessage = '',
-    this.roomId = '',
+    this.chatId = '',
     this.imageToUpload,
+    this.page = 1,
+    this.hasReachedMax = false,
     this.messages = const [],
   });
 
@@ -23,8 +27,10 @@ class ChatPrivateState extends Equatable {
         failure,
         errorMessage,
         imageToUpload,
-        roomId,
+        chatId,
         messages,
+        page,
+        hasReachedMax,
       ];
 
   ChatPrivateState copyWith({
@@ -32,16 +38,20 @@ class ChatPrivateState extends Equatable {
     Failure? failure,
     String? errorMessage,
     File? imageToUpload,
-    String? roomId,
+    String? chatId,
     List<ChatMessageModel>? messages,
+    int? page,
+    bool? hasReachedMax,
   }) {
     return ChatPrivateState(
       status: status ?? this.status,
       failure: failure ?? this.failure,
       errorMessage: errorMessage ?? this.errorMessage,
       imageToUpload: imageToUpload ?? this.imageToUpload,
-      roomId: roomId ?? this.roomId,
+      chatId: chatId ?? this.chatId,
       messages: messages ?? this.messages,
+      page: page ?? this.page,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     );
   }
 }

@@ -9,6 +9,7 @@ import '../../data/model/notification_model.dart';
 
 class NotificationTileWidget extends StatelessWidget {
   final NotificationModel notification;
+  final List<String> iconArray = [];
 
   NotificationTileWidget({
     super.key,
@@ -18,14 +19,49 @@ class NotificationTileWidget extends StatelessWidget {
   List<Widget> listWidgets = [];
 
   Widget leftAvatar() {
-    return UserAvatarStyledWidget(
-      avatarUrl: notification.notificationImage == null ||
-              notification.notificationImage == ''
-          ? "https://img.freepik.com/fotos-gratis/especialista-em-seguranca-cibernetica-a-trabalhar-com-tecnologia-em-luzes-de-neon_23-2151645661.jpg?t=st=1722573533~exp=1722577133~hmac=fc9a6c66bed1aef3fad7541423c49fa69ea858159e8d3d6903039c7edf5dde65&w=360"
-          : notification.notificationImage!,
-      avatarSize: 23,
-      avatarBorderSize: 0,
+    print('type: ${notification.triggerType}');
+    String assetPath;
+    switch (notification.triggerType) {
+      case 'CommentTrigger':
+        assetPath = 'assets/image/comment_notification.png';
+        break;
+      case 'GroupTrigger':
+        assetPath = 'assets/image/group_notification.png';
+        break;
+      case 'PostTrigger':
+        assetPath = 'assets/image/new_post_notification.png';
+        break;
+      case 'ReplyTrigger':
+        assetPath = 'assets/image/reply_notification.png';
+        break;
+
+      default:
+        assetPath = 'assets/image/comment_notification.png';
+    }
+    print('path: $assetPath');
+    return Container(
+      width: 25,
+      height: 25,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        //border: Border.all(color: AppColors.lightGreyColor),
+      ),
+      //clipBehavior: Clip.antiAlias, // Ensures smooth edges
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: Image.asset(
+          assetPath,
+          fit: BoxFit.cover, // Makes it fill the circle
+          alignment: Alignment.center, // Centers the image
+        ),
+      ),
     );
+
+    // return UserAvatarStyledWidget(
+    //   avatarUrl: assetPath,
+    //   avatarSize: 23,
+    //   avatarBorderSize: 0,
+    // );
   }
 
   void buildMainArea(BuildContext context) {
@@ -34,7 +70,7 @@ class NotificationTileWidget extends StatelessWidget {
         GestureDetector(
           onTap: () {},
           child: Text(
-            notification.userName ?? 'user',
+            '${notification.title} ',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),

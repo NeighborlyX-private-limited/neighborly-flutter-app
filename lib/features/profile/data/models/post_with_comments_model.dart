@@ -26,7 +26,7 @@ class PostWithCommentsModel extends PostWithCommentsEntity {
       cheers: json['cheers'],
       bools: json['boos'],
       commentText: json['text'],
-      commentId: json['commentid'],
+      commentId: json['commentid'] ?? 0,
     );
   }
 

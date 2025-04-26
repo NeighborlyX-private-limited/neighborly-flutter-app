@@ -21,6 +21,7 @@ import '../../features/chat/presentation/screens/chat_group_screen.dart';
 import '../../features/chat/presentation/screens/chat_main_screen.dart';
 import '../../features/chat/presentation/screens/chat_private_screen.dart';
 import '../../features/chat/presentation/screens/discover_screen.dart';
+import '../../features/chat/presentation/screens/dm_screen.dart';
 import '../../features/chat/presentation/screens/group_pinned_message_screen.dart';
 import '../../features/chat/presentation/screens/interest_selection_screen.dart';
 import '../../features/communities/presentation/screens/community_admin_set_block_screen.dart';
@@ -197,8 +198,16 @@ final GoRouter router = GoRouter(
           builder: (context, state) => const EventMainScreen(),
         ),
         GoRoute(
-          path: '/coming-soon',
-          builder: (context, state) => const CommingSoonScreen(),
+          path: '/private-chat',
+          builder: (context, state) => InterestSelectionScreen(),
+        ),
+        // GoRoute(
+        //   path: '/coming-soon',
+        //   builder: (context, state) => const CommingSoonScreen(),
+        // ),
+        GoRoute(
+          path: '/discover',
+          builder: (context, state) => DiscoverScreen(),
         ),
         GoRoute(
           path: '/profile',
@@ -311,24 +320,17 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const ChatMainScreen(),
     ),
     GoRoute(
-      path: '/chat/private/:roomId',
-      builder: (context, state) => ChatPrivateScreen(
-        roomId: state.pathParameters["roomId"] as String,
-        room: state.extra as ChatRoomModel,
+      path: '/chat-private/:chatId',
+      builder: (context, state) => DMScreen(
+        chatId: state.pathParameters["chatId"] as String,
       ),
     ),
-    GoRoute(
-      path: '/private-chat',
-      builder: (context, state) => InterestSelectionScreen(),
-    ),
+
     GoRoute(
       path: '/edit-interest',
       builder: (context, state) => EditInterestScreen(),
     ),
-    GoRoute(
-      path: '/discover',
-      builder: (context, state) => DiscoverScreen(),
-    ),
+
     GoRoute(
       path: '/group-chat/:roomId',
       builder: (context, state) {
