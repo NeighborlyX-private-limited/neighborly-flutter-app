@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/utils/shared_preference.dart';
+
+import '../../Socket/socket_service.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../domain/usecases/get_chat_room_messages_usecase.dart';
 
@@ -14,8 +16,10 @@ part 'chat_private_state.dart';
 
 class ChatPrivateCubit extends Cubit<ChatPrivateState> {
   final GetChatRoomMessagesUseCase getChatRoomMessagesUseCase;
+  final SocketService socketService;
   ChatPrivateCubit(
     this.getChatRoomMessagesUseCase,
+    this.socketService,
   ) : super(const ChatPrivateState());
   String? userName = ShardPrefHelper.getUsername();
   String? userImage = ShardPrefHelper.getUserProfilePicture();
@@ -36,6 +40,7 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
       ),
       // await getRoomMessages(chatId: chatId);
     );
+    socketService.connect(chatId: chatId);
     await getRoomMessages(chatId: chatId);
     // void init(String roomId) async {
     //   emit(state.copyWith(roomId: roomId));

@@ -117,7 +117,7 @@ class _DMScreenState extends State<DMScreen> {
         }
       },
     );
-
+    chatPrivateCubit.init(widget.chatId);
     //   communityDetailCubit.getCommunityDetail(widget.roomId);
     //   print('always call');
     //   Future.delayed(Duration(seconds: 5), () {
@@ -339,7 +339,7 @@ class _DMScreenState extends State<DMScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: AppColors.whiteColor,
-          // title: appBarTitleArea(),
+          title: appBarTitleArea(),
           // actions: [
           //   IconButton(
           //     onPressed: () {
@@ -422,12 +422,17 @@ class _DMScreenState extends State<DMScreen> {
                           child: ListView.builder(
                             controller: _scrollController,
                             reverse: true,
-                            itemCount: state.messages.length +
-                                (state.hasReachedMax ? 0 : 1),
+                            itemCount: state.messages.length,
+                            // +(state.hasReachedMax ? 0 : 1),
+                            // itemCount: state.messages.length +
+                            //     (state.hasReachedMax ? 0 : 1),
                             itemBuilder: (context, index) {
-                              if (index >= state.messages.length) {
-                                return CustomCircularIndicator();
-                              }
+                              // int x = state.hasReachedMax ? 0 : 1;
+                              // print('len: ${state.messages.length}');
+                              // print('len: ${state.messages.length + x}');
+                              // if (index >= state.messages.length) {
+                              //   return CustomCircularIndicator();
+                              // }
                               // CHECK IF THE CURRENT AND PRIVIOUS MESSAGE SENDER IS SAME OR NOT
                               var msg = state.messages[index];
 
@@ -633,7 +638,7 @@ class _DMScreenState extends State<DMScreen> {
                     ),
                   ),
 
-                // messageInputSection(),
+                messageInputSection(),
               ],
             );
           },
@@ -804,44 +809,45 @@ class _DMScreenState extends State<DMScreen> {
                     // if (!isJoined) {
                     //   if (!widget.chatRoom.isJoined) {
                     //   _showJoinGroupBottomSheet(context);
-                    // } else {
-                    //   if (imageToUpload != null) {
-                    //     context.read<UploadFileBloc>().add(
-                    //           UploadFilePressedEvent(file: imageToUpload!),
-                    //         );
-                    //   } else if (messageEC.text.trim() != "") {
-                    //     final payload = {
-                    //       'groupId': widget.roomId,
-                    //       'message': messageEC.text,
-                    //       'repliedTo': isReply
-                    //           ? {
-                    //               'messageId': _selectedMessageId,
-                    //               'userId': _selectedMessageUserId,
-                    //               'name': _messageToReplyUserName,
-                    //               'message': _messageToReply,
-                    //               'mediaLink': _mediaToReply,
-                    //             }
-                    //           : null,
-                    //       'file': null,
-                    //     };
-
-                    //     context
-                    //         .read<ChatGroupCubit>()
-                    //         .sendMessage(payload, true);
-                    //     isReply = false;
-
-                    //     messageEC.clear();
-                    //     _mediaToReply = null;
-                    //     _messageToReply = null;
-                    //     _selectedMessageId = null;
-                    //     _messageToReplyUserName = null;
-                    //     _selectedMessageUserId = null;
-
-                    //     imageToUpload = null;
-                    //     _videoFile = null;
-                    //     _pickedFile = null;
-                    //   }
                     // }
+                    // else {
+                    if (imageToUpload != null) {
+                      context.read<UploadFileBloc>().add(
+                            UploadFilePressedEvent(file: imageToUpload!),
+                          );
+                    } else if (messageEC.text.trim() != "") {
+                      final payload = {
+                        'groupId': widget.chatId,
+                        'message': messageEC.text,
+                        'replyTo': isReply
+                            ? {
+                                'messageId': _selectedMessageId,
+                                'userId': _selectedMessageUserId,
+                                'name': _messageToReplyUserName,
+                                'message': _messageToReply,
+                                'mediaLink': _mediaToReply,
+                              }
+                            : null,
+                        'file': null,
+                      };
+
+                      //     context
+                      //         .read<ChatGroupCubit>()
+                      //         .sendMessage(payload, true);
+                      isReply = false;
+
+                      messageEC.clear();
+                      _mediaToReply = null;
+                      _messageToReply = null;
+                      _selectedMessageId = null;
+                      _messageToReplyUserName = null;
+                      _selectedMessageUserId = null;
+
+                      imageToUpload = null;
+                      _videoFile = null;
+                      _pickedFile = null;
+                      //   }
+                    }
                   },
                   child: Opacity(
                     opacity: (isCommentFilled ||

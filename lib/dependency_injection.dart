@@ -450,7 +450,7 @@ void init() async {
   sl.registerFactory(() => PinMessageBloc(pinnedMessagesUsecase: sl()));
   sl.registerFactory(() => InterestBloc(getAllInterestsUsecase: sl()));
   sl.registerFactory(() => SaveInterestBloc(saveUserInterestsUsecase: sl()));
-  sl.registerFactory(() => ChatPrivateCubit(sl()));
+  sl.registerFactory(() => ChatPrivateCubit(sl(), sl<SocketService>()));
   sl.registerFactory(() => ChatGroupCubit(sl(), sl<SocketService>()));
   sl.registerFactory(() => ChatGroupCubitThread(sl(), sl<SocketService>()));
 

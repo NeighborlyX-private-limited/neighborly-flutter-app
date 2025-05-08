@@ -6,7 +6,8 @@ class SocketService {
   io.Socket? _socket;
   bool _isConnected = false;
 
-  void connect({String groupId = ''}) {
+  void connect({String? groupId, String? chatId}) {
+    // void connect({String groupId = '', }) {
     // CHECK IF ALREADY CONNECTED TO SOCKET SERVER.
     if (_socket != null && _socket!.connected) {
       print('ALREADY CONNECTED TO SOCKET SERVER.');
@@ -39,8 +40,12 @@ class SocketService {
         isSocketConnect!(true);
       }
       print("SUCCESSFULLY CONNECTED TO SOCKET SERVER.");
-
-      joinRoom(groupId);
+      if (groupId != null) {
+        joinRoom(groupId);
+      }
+      if (chatId != null) {
+        joinDm(chatId);
+      }
     });
 
     // USER JOINED ROOM LISTENER
@@ -74,6 +79,10 @@ class SocketService {
     // ON ERROR LISTENER
     _socket?.on("error", (err) {
       print("CONNECTION ERROR:  ${err['message']}");
+    });
+    // ON ERROR LISTENER
+    _socket?.on("active-users", (users) {
+      print("USER CONNECTED:  ${users}");
     });
 
     // ON ERROR-MESSAGE LISTENER
@@ -115,6 +124,51 @@ class SocketService {
     if (groupId.isNotEmpty) {
       final payload = {'groupId': groupId};
       _socket?.emit('join-room', payload);
+    }
+  }
+
+  // JOIN ROOM EMITTER
+  void joinDm(String chatId) async {
+    print('START JOINING DM ROOM WITH CHAT ID:$chatId');
+    if (chatId.isNotEmpty) {
+      final payload = {'chatId': chatId};
+      // Emit join request
+      _socket?.emitWithAck('dm-join', {'chatId': chatId}, ack: (data) {
+        print('data: $data');
+        // Handle callback response
+        if (data['success'] == true) {
+          // print('${data['message']}');
+          print('success');
+          leaveDm(chatId);
+        } else {
+          // print( ${data['message']}');
+          print('fail');
+        }
+      });
+
+      // _socket?.emit('dm-join', payload);
+    }
+  }
+
+  // JOIN ROOM EMITTER
+  void leaveDm(String chatId) async {
+    print('START Leaving DM ROOM WITH CHAT ID:$chatId');
+    if (chatId.isNotEmpty) {
+      final payload = {'chatId': chatId};
+      // Emit join request
+      _socket?.emitWithAck('dm-leave', {'chatId': chatId}, ack: (data) {
+        print('data: $data');
+        // Handle callback response
+        if (data['success'] == true) {
+          // print('${data['message']}');
+          print('success');
+        } else {
+          // print( ${data['message']}');
+          print('fail');
+        }
+      });
+
+      // _socket?.emit('dm-join', payload);
     }
   }
 

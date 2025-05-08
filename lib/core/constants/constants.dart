@@ -6,7 +6,6 @@ const kBaseSocketUrl = "http://35.154.40.61:3002";
 const kBaseSearchUrl = "https://dev.neighborly.in/scout";
 
 // PROD BASE URL
-
 // const kBaseUrl = "https://prod.neighborly.in/api";
 // const kBaseUrlNotification = "https://prod.neighborly.in/notification";
 // const kBaseSocketUrl = "http://35.154.40.61:3001";
