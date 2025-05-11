@@ -355,6 +355,32 @@ class _SettingScreenState extends State<SettingScreen> {
               ),
               InkWell(
                 onTap: () {
+                  context.push('/reward-details');
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SvgPicture.asset(
+                      'assets/support.svg',
+                      height: 24,
+                      width: 24,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      // AppLocalizations.of(context)!.support_and_feedback,
+                      'Refer and earn',
+                      style: blackonboardingBody1Style,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              InkWell(
+                onTap: () {
                   showVerifyUsernameBottomSheet();
                 },
                 child: Row(

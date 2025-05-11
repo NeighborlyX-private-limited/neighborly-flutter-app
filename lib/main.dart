@@ -17,6 +17,7 @@ import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bl
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_block_user_bloc.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/update_mute_group_bloc.dart';
 import 'package:neighborly_flutter_app/features/notification/config/message_handler_helper.dart';
+import 'package:neighborly_flutter_app/features/refer_and_earn/presentation/bloc/invite_bloc.dart';
 import 'package:neighborly_flutter_app/l10n/bloc/app_localization_bloc.dart';
 import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/screens/post_detail_screen.dart';
@@ -76,6 +77,9 @@ import 'features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dar
 import 'features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
+import 'features/refer_and_earn/presentation/bloc/request_history_bloc.dart';
+import 'features/refer_and_earn/presentation/bloc/reward_bloc.dart';
+import 'features/refer_and_earn/presentation/bloc/withdraw_bloc.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -362,6 +366,18 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         ),
         BlocProvider<ChatGroupCubit>(
           create: (context) => di.sl<ChatGroupCubit>(),
+        ),
+        BlocProvider<RewardBloc>(
+          create: (context) => di.sl<RewardBloc>(),
+        ),
+        BlocProvider<RequestHistoryBloc>(
+          create: (context) => di.sl<RequestHistoryBloc>(),
+        ),
+        BlocProvider<WithdrawBloc>(
+          create: (context) => di.sl<WithdrawBloc>(),
+        ),
+        BlocProvider<InviteBloc>(
+          create: (context) => di.sl<InviteBloc>(),
         ),
         BlocProvider<ChatGroupCubitThread>(
           create: (context) => di.sl<ChatGroupCubitThread>(),

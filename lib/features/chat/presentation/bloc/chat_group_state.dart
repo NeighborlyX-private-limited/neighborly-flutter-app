@@ -40,8 +40,8 @@ class ChatGroupState extends Equatable {
     File? imageToUpload,
     String? roomId,
     int? page,
-    List<ChatMessageModel>? messages,
     bool? hasReachedMax,
+    List<ChatMessageModel>? messages,
   }) {
     return ChatGroupState(
       status: status ?? this.status,

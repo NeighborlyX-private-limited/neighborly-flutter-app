@@ -67,6 +67,9 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
   //     },
   //   );
   // }
+  Future<void> disconnectChat(String chatId) async {
+    socketService.dispose(chatId: chatId);
+  }
 
   // GET GROUP MESSAGES
   Future getRoomMessages({

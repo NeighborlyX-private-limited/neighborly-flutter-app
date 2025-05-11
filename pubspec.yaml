@@ -97,6 +97,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^28.2.4
   google_maps_flutter: ^2.10.0
   google_places_flutter: ^2.0.9
+  device_info_plus: ^11.3.0
   # image_downloader: ^0.31.0
  
 

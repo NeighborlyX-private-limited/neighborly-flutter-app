@@ -102,7 +102,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ShardPrefHelper.getIsViewedTutorial();
 
                       if (!isSkippedTutorial && !isViewedTutorial) {
-                        context.go('/tutorialScreen');
+                        // here i have to add
+
+                        context.go('/invite');
+                        // context.go('/tutorialScreen');
                       } else {
                         context.go('/home');
                       }

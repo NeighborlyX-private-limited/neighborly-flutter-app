@@ -232,7 +232,7 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
 
   // LEAVE ROOM
   Future<void> disconnectChat(String roomId) async {
-    socketService.dispose(roomId);
+    socketService.dispose(groupId: roomId);
   }
 
   void setPagetoDefault() {

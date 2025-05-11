@@ -58,6 +58,9 @@ import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/security_screen.dart';
 import '../../features/profile/presentation/screens/setting_screen.dart';
 import '../../features/profile/presentation/screens/user_profile_screen.dart';
+import '../../features/refer_and_earn/presentation/screen/invite_screen.dart';
+import '../../features/refer_and_earn/presentation/screen/request_history_screen.dart';
+import '../../features/refer_and_earn/presentation/screen/reward_screen.dart';
 import '../../features/upload/presentation/screens/create_post_screen.dart';
 import '../constants/route_constants.dart';
 import '../models/community_model.dart';
@@ -411,6 +414,27 @@ final GoRouter router = GoRouter(
       name: RouteConstants.securityScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
         return const SecurityPage();
+      },
+    ),
+    GoRoute(
+      path: '/reward-details',
+      // name: RouteConstants.securityScreenRouteName,
+      builder: (BuildContext context, GoRouterState state) {
+        return const RewardScreen();
+      },
+    ),
+    GoRoute(
+      path: '/reward-history',
+      // name: RouteConstants.securityScreenRouteName,
+      builder: (BuildContext context, GoRouterState state) {
+        return const RewardHistoryScreen();
+      },
+    ),
+    GoRoute(
+      path: '/invite',
+      // name: RouteConstants.securityScreenRouteName,
+      builder: (BuildContext context, GoRouterState state) {
+        return const InviteScreen();
       },
     ),
     GoRoute(

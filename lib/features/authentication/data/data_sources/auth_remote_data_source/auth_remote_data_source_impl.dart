@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../../../core/constants/constants.dart';
 import '../../../../../core/error/exception.dart';
+import '../../../../../core/utils/device.dart';
 import '../../../../../core/utils/google_auth_helper.dart';
 import '../../../../../core/utils/set_auth.dart';
 import '../../../../../core/utils/shared_preference.dart';
@@ -63,6 +64,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
       String karma = jsonDecode(response.body)['user']['karma'].toString();
       bool findMe = jsonDecode(response.body)['user']['findMe'] ?? true;
+      String inviteCode = jsonDecode(response.body)['user']['inviteCode'] ?? '';
       bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
       bool isSkippedTutorial =
           jsonDecode(response.body)['user']['skippedTutorial'];
@@ -72,6 +74,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
 
       // SET DATA IN LOCAL
+      ShardPrefHelper.setInviteCode(inviteCode);
       ShardPrefHelper.setUserID(userID);
       ShardPrefHelper.setUserInterests(interests);
       ShardPrefHelper.setUserProfilePicture(proPic);
@@ -108,7 +111,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     String fcmToken = ShardPrefHelper.getFCMtoken() ?? '';
     print('FCM TOKEN IN SIGNUP:$fcmToken');
-
+    String deviceId = await getDeviceId();
     final response = await client.post(
       Uri.parse(url),
       headers: <String, String>{
@@ -123,6 +126,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           : jsonEncode(<String, String>{
               'phoneNumber': phone,
               'fcmToken': fcmToken,
+              'deviceId': deviceId,
             }),
     );
 
@@ -146,7 +150,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       bool isPhoneVerified =
           jsonDecode(response.body)['user']['isPhoneVerified'];
-
+      String inviteCode = jsonDecode(response.body)['user']['inviteCode'] ?? '';
+      ShardPrefHelper.setInviteCode(inviteCode);
       bool isVerified = jsonDecode(response.body)['user']['isVerified'];
       String authType = jsonDecode(response.body)['user']['auth_type'];
 
@@ -269,6 +274,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
         bool isVerified = jsonDecode(response.body)['user']['isVerified'];
         String authType = jsonDecode(response.body)['user']['auth_type'];
+        String inviteCode =
+            jsonDecode(response.body)['user']['inviteCode'] ?? '';
+        ShardPrefHelper.setInviteCode(inviteCode);
 
         // SET DATA IN LOCAL
         if (email != null) {
@@ -357,6 +365,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
       String tokenID = signInResult['idToken'];
       print('tokenID: $tokenID');
+      String deviceId = await getDeviceId();
 
       final response = await http.post(
         Uri.parse(url),
@@ -365,6 +374,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'token': tokenID,
           'device': 'android',
           'fcmToken': fcmToken,
+          'deviceId': deviceId,
         }),
       );
 
@@ -379,7 +389,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         String? email = jsonDecode(response.body)['user']['email'];
         bool isDobSet = jsonDecode(response.body)['user']['dobSet'];
         String gender = jsonDecode(response.body)['user']['gender'] ?? 'Male';
-
+        String inviteCode =
+            jsonDecode(response.body)['user']['inviteCode'] ?? '';
+        ShardPrefHelper.setInviteCode(inviteCode);
         bool isSkippedTutorial =
             jsonDecode(response.body)['user']['skippedTutorial'];
 

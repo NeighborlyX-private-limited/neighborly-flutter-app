@@ -32,6 +32,11 @@ import 'package:neighborly_flutter_app/features/posts/domain/usecases/get_commen
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comment_by_comment_id_bloc/get_comments_by_commentId_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/data/repositories/city_repositories.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/change_home_city_bloc/change_home_city_bloc.dart';
+import 'package:neighborly_flutter_app/features/refer_and_earn/data/repository/reward_repository_impl.dart';
+import 'package:neighborly_flutter_app/features/refer_and_earn/domain/usecase/invite_usecase.dart';
+import 'package:neighborly_flutter_app/features/refer_and_earn/domain/usecase/withdraw_usecase.dart';
+import 'package:neighborly_flutter_app/features/refer_and_earn/presentation/bloc/invite_bloc.dart';
+import 'package:neighborly_flutter_app/features/refer_and_earn/presentation/bloc/reward_bloc.dart';
 import 'core/network/network_info.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source.dart';
 import 'features/authentication/data/data_sources/auth_remote_data_source/auth_remote_data_source_impl.dart';
@@ -175,6 +180,13 @@ import 'features/profile/presentation/bloc/get_profile_bloc/get_profile_bloc.dar
 import 'features/profile/presentation/bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import 'features/profile/presentation/bloc/logout_bloc.dart/logout_bloc.dart';
 import 'features/profile/presentation/bloc/send_feedback_bloc/send_feedback_bloc.dart';
+import 'features/refer_and_earn/data/data_source/reward_remote_data_source.dart';
+import 'features/refer_and_earn/data/data_source/reward_remote_data_source_impl.dart';
+import 'features/refer_and_earn/domain/repository/reward_repository.dart';
+import 'features/refer_and_earn/domain/usecase/get_request_history_usecase.dart';
+import 'features/refer_and_earn/domain/usecase/get_reward_details_usecase.dart';
+import 'features/refer_and_earn/presentation/bloc/request_history_bloc.dart';
+import 'features/refer_and_earn/presentation/bloc/withdraw_bloc.dart';
 import 'features/upload/data/data_sources/upload_remote_data_source/upload_remote_data_source.dart';
 import 'features/upload/data/data_sources/upload_remote_data_source/upload_remote_data_source_impl.dart';
 import 'features/upload/data/repositories/upload_repositories_impl.dart';
@@ -201,6 +213,7 @@ void init() async {
   /// profile repository
   sl.registerLazySingleton<ProfileRepositories>(
       () => ProfileRepositoriesImpl(remoteDataSource: sl(), networkInfo: sl()));
+  sl.registerLazySingleton<RewardRepository>(() => RewardRepositoryImpl(sl()));
 
   /// post repository
   sl.registerLazySingleton<PostRepositories>(
@@ -243,8 +256,12 @@ void init() async {
       () => AuthRemoteDataSourceImpl(client: sl()));
 
   ///profile datasource
+  sl.registerLazySingleton<RewardRemoteDataSource>(
+      () => RewardRemoteDataSourceImpl(client: sl()));
   sl.registerLazySingleton<ProfileRemoteDataSource>(
       () => ProfileRemoteDataSourceImpl(client: sl()));
+  // sl.registerLazySingleton<ApiService>(
+  //     () => ApiService(baseUrl: 'https://dev.neighborly.in/api'));
 
   ///post datasource
   sl.registerLazySingleton<PostRemoteDataSource>(
@@ -280,6 +297,7 @@ void init() async {
   ///.................. register usecase
   ///auth usecase
   sl.registerLazySingleton(() => SignupUsecase(sl()));
+  sl.registerLazySingleton(() => GetRequestHistoryUseCase(sl()));
   sl.registerLazySingleton(() => LoginWithEmailUsecase(sl()));
   sl.registerLazySingleton(() => ResendOTPUsecase(sl()));
   sl.registerLazySingleton(() => ForgotPasswordUsecase(sl()));
@@ -370,11 +388,17 @@ void init() async {
   sl.registerLazySingleton(() => JoinEventUsecase(sl()));
 
   ///notification usecase
+  sl.registerLazySingleton(() => WithdrawUseCase(sl()));
   sl.registerLazySingleton(() => UpdateFCMTokenUsecase(sl()));
   sl.registerLazySingleton(() => GetAllNotificationsUsecase(sl()));
+  sl.registerLazySingleton(() => GetRewardDetailsUseCase(sl()));
+  sl.registerLazySingleton(() => InviteUseCase(sl()));
 
   ///........... register bloc
   ///auth bloc
+  sl.registerFactory(() => WithdrawBloc(sl()));
+  sl.registerFactory(() => InviteBloc(sl()));
+  sl.registerFactory(() => RequestHistoryBloc(sl()));
   sl.registerFactory(
       () => RegisterBloc(registerUseCase: sl(), googleLoginCase: sl()));
   sl.registerFactory(
@@ -388,6 +412,7 @@ void init() async {
   sl.registerFactory(() => LogoutBloc(logoutUsecase: sl()));
 
   ///post bloc
+  sl.registerFactory(() => RewardBloc(sl()));
   sl.registerFactory(() => UploadPostBloc(uploadPostUsecase: sl()));
   sl.registerFactory(() => UploadFileBloc(uploadFileUsecase: sl()));
   sl.registerFactory(() => GetAllPostsBloc(getAllPostsUsecase: sl()));

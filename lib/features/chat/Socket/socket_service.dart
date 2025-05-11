@@ -173,19 +173,25 @@ class SocketService {
   }
 
   // DISPOSE
-  void dispose(String roomId) async {
+  void dispose({String? groupId, String? chatId}) async {
     _isConnected = false;
     if (_socket == null) {
       print("SOCKET ALREADY DISPOSED.");
       return;
     }
 
-    print('DISPOSE SOCKET WITH GROUP ID:$roomId');
+    // print('DISPOSE SOCKET WITH GROUP ID:$roomId');
+    print('DISPOSE SOCKET WITH GROUP ID:$chatId');
 
-    if (roomId.isNotEmpty) {
-      final payload = {'groupId': roomId};
-      _socket?.emit('leave-room', payload);
-    }
+    // if (groupId.isNotEmpty) {
+    //   final payload = {'groupId': roomId};
+    //   _socket?.emit('leave-room', payload);
+    // }
+    // if (chatId.isNotEmpty) {
+    //   final payload = {'chatId': chatId};
+    //   leaveDm(String chatId);
+    //   // _socket?.emit('dm-leave', payload);
+    // }
 
     _socket?.disconnect();
     _socket?.dispose();

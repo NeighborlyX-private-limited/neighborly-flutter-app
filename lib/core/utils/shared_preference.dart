@@ -54,6 +54,13 @@ class ShardPrefHelper {
   static Future removeAccessToken() async =>
       await _preferences.remove(_accessToken);
 
+  // SAVE Invite code
+  static Future setInviteCode(String inviteCode) async =>
+      await _preferences.setString('inviteCode', inviteCode);
+  static String? getInviteCode() => _preferences.getString('inviteCode');
+  // static Future removeAccessToken() async =>
+  //     await _preferences.remove(_accessToken);
+
   // SAVE USER INTERESTS
   static Future<void> setUserInterests(List<String> interests) async {
     await _preferences.setStringList(_userInterests, interests);
