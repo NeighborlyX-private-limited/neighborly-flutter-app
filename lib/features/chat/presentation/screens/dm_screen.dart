@@ -30,6 +30,7 @@ import '../../../posts/presentation/bloc/report_post_bloc/report_post_bloc.dart'
 import '../../../upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import '../../Socket/socket_service.dart';
 import '../../data/model/chat_message_model.dart';
+import '../../data/model/dm_message_model.dart';
 import '../bloc/chat_group_cubit.dart';
 import '../bloc/pin_message_bloc.dart';
 import '../widgets/chat_messages_group_sheemer.dart';
@@ -39,10 +40,14 @@ import '../widgets/media_message_widget.dart';
 
 class DMScreen extends StatefulWidget {
   final String chatId;
+  final String profilePic;
+  final String userNmae;
 
   const DMScreen({
     super.key,
     required this.chatId,
+    required this.profilePic,
+    required this.userNmae,
   });
 
   @override
@@ -108,12 +113,13 @@ class _DMScreenState extends State<DMScreen> {
       onPause: () {
         if (mounted) {
           // chatGroupCubit.disconnectChat(widget.roomId);
+          chatPrivateCubit.disconnectChat(widget.chatId);
         }
       },
       // INACTIVE STATE
       onInactive: () {
         if (mounted) {
-          // chatGroupCubit.disconnectChat(widget.roomId);
+          chatPrivateCubit.disconnectChat(widget.chatId);
         }
       },
     );
@@ -124,7 +130,7 @@ class _DMScreenState extends State<DMScreen> {
     //     print("Executed after 5 second");
     //     chatGroupCubit.init(widget.roomId);
     //   });
-    //   getCurrentUserId();
+    getCurrentUserId();
     //   _scrollController.addListener(_onScroll);
     // }
 
@@ -137,9 +143,10 @@ class _DMScreenState extends State<DMScreen> {
   }
 
 // GET CURRENT USER ID
-  // void getCurrentUserId() {
-  //   cuurentUserId = ShardPrefHelper.getUserID() ?? '';
-  // }
+  void getCurrentUserId() {
+    cuurentUserId = ShardPrefHelper.getUserID() ?? '';
+    print('user id : $cuurentUserId');
+  }
 
 // CHECK IF CURRENT USER IS AN ADMIN
   // bool isCurrentUserAdmin() {
@@ -328,6 +335,7 @@ class _DMScreenState extends State<DMScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
+        chatPrivateCubit.disconnectChat(widget.chatId);
         // context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
         if (context.mounted) {
           Navigator.pop(context);
@@ -386,7 +394,9 @@ class _DMScreenState extends State<DMScreen> {
                   height: 2,
                 ),
 
-                state.status == Status.success && state.messages.isEmpty
+                state.status == Status.success &&
+                        (state.messages?.messages != null &&
+                            state.messages?.messages.length == 0)
                     // SHOW EMPTY MESSAGE SCREEN
                     ? Expanded(
                         child: SingleChildScrollView(
@@ -422,7 +432,7 @@ class _DMScreenState extends State<DMScreen> {
                           child: ListView.builder(
                             controller: _scrollController,
                             reverse: true,
-                            itemCount: state.messages.length,
+                            itemCount: state.messages?.messages.length ?? 0,
                             // +(state.hasReachedMax ? 0 : 1),
                             // itemCount: state.messages.length +
                             //     (state.hasReachedMax ? 0 : 1),
@@ -434,12 +444,13 @@ class _DMScreenState extends State<DMScreen> {
                               //   return CustomCircularIndicator();
                               // }
                               // CHECK IF THE CURRENT AND PRIVIOUS MESSAGE SENDER IS SAME OR NOT
-                              var msg = state.messages[index];
+                              var msg = state.messages?.messages[index];
 
-                              final bool isNewMsg =
-                                  index == state.messages.length - 1 ||
-                                      msg.author?.id !=
-                                          state.messages[index + 1].author?.id;
+                              final bool isNewMsg = index ==
+                                      state.messages!.messages.length - 1 ||
+                                  msg!.senderId !=
+                                      state.messages!.messages[index + 1]
+                                          .senderId;
 
                               // CHECK SENDER USER IS ADMIN OR NOT
                               // final bool isSenderAdmin =
@@ -454,14 +465,15 @@ class _DMScreenState extends State<DMScreen> {
 
                               // NEED TO THINK ABOUT THIS LINE
 
-                              final bool isNewDate =
-                                  index == state.messages.length - 1 ||
+                              final bool isNewDate = index ==
+                                      state.messages!.messages.length - 1 ||
+                                  DateUtilsHelper.simplifyISOtimeString(state
+                                          .messages!.messages[index].createdAt
+                                          .toString()) !=
                                       DateUtilsHelper.simplifyISOtimeString(
-                                              state.messages[index].date
-                                                  .toString()) !=
-                                          DateUtilsHelper.simplifyISOtimeString(
-                                              state.messages[index + 1].date
-                                                  .toString());
+                                          state.messages!.messages[index + 1]
+                                              .createdAt
+                                              .toString());
 
                               return Column(
                                 children: [
@@ -481,7 +493,9 @@ class _DMScreenState extends State<DMScreen> {
                                       ),
                                       child: Text(
                                         '${formatTimeDifference(
-                                          state.messages[index].date.toString(),
+                                          state.messages!.messages[index]
+                                              .createdAt
+                                              .toString(),
                                         )} ',
                                         style: TextStyle(
                                           color: AppColors.primaryColor,
@@ -490,15 +504,15 @@ class _DMScreenState extends State<DMScreen> {
                                         ),
                                       ),
                                     ),
-                                  // ChatMessageGroupWidget(
-                                  //   message: msg,
-                                  //   isCurrentUser:
-                                  //       (msg.author?.id == cuurentUserId),
-                                  //   isAdmin: isAdmin,
-                                  //   isNewMsg: isNewMsg,
-                                  //   isSenderAdmin: isSenderAdmin,
-                                  //   senderProfilePic: senderProfilePic,
-                                  // ),
+                                  ChatMessageGroupWidget(
+                                    message: msg!,
+                                    isCurrentUser:
+                                        (msg.senderId == cuurentUserId),
+                                    // isAdmin: isAdmin,
+                                    isNewMsg: isNewMsg,
+                                    // isSenderAdmin: isSenderAdmin,
+                                    senderProfilePic: widget.profilePic,
+                                  ),
                                 ],
                               );
                             },
@@ -660,32 +674,32 @@ class _DMScreenState extends State<DMScreen> {
           onTap: () {
             // context.pop();
             // context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
-            // if (context.mounted) {
-            //   Navigator.pop(context);
-            // }
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
           },
         ),
         const SizedBox(
           width: 10,
         ),
-        // if (communityIcon != '')
-        //   UserAvatarStyledWidget(
-        //     avatarUrl: communityIcon,
-        //     avatarSize: 19,
-        //     avatarBorderSize: 0,
-        //   ),
+        if (widget.profilePic != '')
+          UserAvatarStyledWidget(
+            avatarUrl: widget.profilePic,
+            avatarSize: 19,
+            avatarBorderSize: 0,
+          ),
         const SizedBox(width: 10),
-        // Expanded(
-        //   child: Text(
-        //     communityName,
-        //     maxLines: 1,
-        //     overflow: TextOverflow.ellipsis,
-        //     style: TextStyle(
-        //       fontWeight: FontWeight.w500,
-        //       fontSize: 16,
-        //     ),
-        //   ),
-        // ),
+        Expanded(
+          child: Text(
+            widget.userNmae,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 16,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -817,7 +831,7 @@ class _DMScreenState extends State<DMScreen> {
                           );
                     } else if (messageEC.text.trim() != "") {
                       final payload = {
-                        'groupId': widget.chatId,
+                        'chatId': widget.chatId,
                         'message': messageEC.text,
                         'replyTo': isReply
                             ? {
@@ -831,9 +845,9 @@ class _DMScreenState extends State<DMScreen> {
                         'file': null,
                       };
 
-                      //     context
-                      //         .read<ChatGroupCubit>()
-                      //         .sendMessage(payload, true);
+                      context
+                          .read<ChatPrivateCubit>()
+                          .sendDmMessage(payload, true);
                       isReply = false;
 
                       messageEC.clear();
@@ -900,39 +914,39 @@ class _DMScreenState extends State<DMScreen> {
   // CHAT MESSAGE CARD
   // NEED TO IMPROVE THE MESSAGE WIDGET
   Widget ChatMessageGroupWidget({
-    required ChatMessageModel message,
+    required ChatMessage message,
     required bool isCurrentUser,
-    required bool isAdmin,
-    required bool isSenderAdmin,
+    // required bool isAdmin,
+    // required bool isSenderAdmin,
     required String senderProfilePic,
     required bool isNewMsg,
   }) {
-    if (message.isDeleted) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          mainAxisAlignment:
-              message.isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                "This message was deleted",
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  color: Colors.grey,
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+    // if (false) {
+    //   return Padding(
+    //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    //     child: Row(
+    //       mainAxisAlignment:
+    //           message.isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
+    //       mainAxisSize: MainAxisSize.max,
+    //       children: [
+    //         Container(
+    //           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    //           decoration: BoxDecoration(
+    //             color: Colors.grey.shade300,
+    //             borderRadius: BorderRadius.circular(20),
+    //           ),
+    //           child: Text(
+    //             "This message was deleted",
+    //             style: TextStyle(
+    //               fontStyle: FontStyle.italic,
+    //               color: Colors.grey,
+    //             ),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   );
+    // }
     return GestureDetector(
       onLongPress: () {
         // showMessageOptions(
@@ -956,11 +970,11 @@ class _DMScreenState extends State<DMScreen> {
         onRightSwipe: (details) {
           setState(() {
             isReply = true;
-            _messageToReplyUserName = message.author!.name;
-            _selectedMessageUserId = message.author?.id;
-            _selectedMessageId = message.id;
-            _messageToReply = message.text;
-            _mediaToReply = message.pictureUrl;
+            // _messageToReplyUserName = message.author!.name;
+            // _selectedMessageUserId = message.author?.id;
+            // _selectedMessageId = message.id;
+            // _messageToReply = message.text;
+            // _mediaToReply = message.pictureUrl;
           });
 
           Future.delayed(Duration(milliseconds: 100), () {
@@ -992,7 +1006,7 @@ class _DMScreenState extends State<DMScreen> {
                       GestureDetector(
                         onTap: () {
                           context
-                              .push('/userProfileScreen/${message.author?.id}');
+                              .push('/userProfileScreen/${message.senderId}');
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -1057,13 +1071,13 @@ class _DMScreenState extends State<DMScreen> {
                                 GestureDetector(
                                   onTap: () {
                                     context.push(
-                                        '/userProfileScreen/${message.author?.id}');
+                                        '/userProfileScreen/${message.senderId}');
                                   },
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        message.author?.name ?? '',
+                                        widget.userNmae ?? '',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -1078,80 +1092,81 @@ class _DMScreenState extends State<DMScreen> {
                                 ),
 
                               // SHOW REPLIED MESSAGE
-                              if (message.reply != null)
-                                Container(
-                                  margin: const EdgeInsets.only(
-                                    top: 4,
-                                    bottom: 4,
-                                  ),
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border(
-                                      left: BorderSide(
-                                        color: AppColors.primaryColor,
-                                        width: 4,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        message.reply!.name,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.primaryColor,
-                                        ),
-                                      ),
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Flexible(
-                                            child: Text(
-                                              message.reply!.message!,
-                                              style:
-                                                  const TextStyle(fontSize: 12),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 8,
-                                          ),
-                                          if (message.reply!.mediaLink != '' &&
-                                              message.reply!.mediaLink != null)
-                                            SizedBox(
-                                              height: 50,
-                                              child: MediaMessageWidget(
-                                                fileUrl:
-                                                    message.reply!.mediaLink!,
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              // SHOW IMAGE MEDIA
-                              if (message.pictureUrl != '' &&
-                                  message.pictureUrl != null)
-                                MediaMessageWidget(
-                                  fileUrl: message.pictureUrl!,
-                                ),
-                              // GestureDetector(
-                              //   onTap: () {
-                              //     _saveImage(context, message.pictureUrl!);
-                              //   },
-                              //   child: MediaMessageWidget(
+                              // if (false)
+                              //   // if (message.reply != null)
+                              //   Container(
+                              //     margin: const EdgeInsets.only(
+                              //       top: 4,
+                              //       bottom: 4,
+                              //     ),
+                              //     padding: const EdgeInsets.all(8),
+                              //     decoration: BoxDecoration(
+                              //       color: Colors.grey.shade100,
+                              //       borderRadius: BorderRadius.circular(8),
+                              //       border: Border(
+                              //         left: BorderSide(
+                              //           color: AppColors.primaryColor,
+                              //           width: 4,
+                              //         ),
+                              //       ),
+                              //     ),
+                              //     child: Column(
+                              //       crossAxisAlignment:
+                              //           CrossAxisAlignment.start,
+                              //       children: [
+                              //         Text(
+                              //           message.reply!.name,
+                              //           style: TextStyle(
+                              //             fontSize: 14,
+                              //             fontWeight: FontWeight.bold,
+                              //             color: AppColors.primaryColor,
+                              //           ),
+                              //         ),
+                              //         Row(
+                              //           crossAxisAlignment:
+                              //               CrossAxisAlignment.start,
+                              //           mainAxisSize: MainAxisSize.min,
+                              //           children: [
+                              //             Flexible(
+                              //               child: Text(
+                              //                 message.reply!.message!,
+                              //                 style:
+                              //                     const TextStyle(fontSize: 12),
+                              //               ),
+                              //             ),
+                              //             SizedBox(
+                              //               width: 8,
+                              //             ),
+                              //             if (message.reply!.mediaLink != '' &&
+                              //                 message.reply!.mediaLink != null)
+                              //               SizedBox(
+                              //                 height: 50,
+                              //                 child: MediaMessageWidget(
+                              //                   fileUrl:
+                              //                       message.reply!.mediaLink!,
+                              //                 ),
+                              //               ),
+                              //           ],
+                              //         ),
+                              //       ],
+                              //     ),
+                              //   ),
+                              // // SHOW IMAGE MEDIA
+                              // if (message.pictureUrl != '' &&
+                              //     message.pictureUrl != null)
+                              //   MediaMessageWidget(
                               //     fileUrl: message.pictureUrl!,
                               //   ),
-                              // ),
+                              // // GestureDetector(
+                              // //   onTap: () {
+                              // //     _saveImage(context, message.pictureUrl!);
+                              // //   },
+                              // //   child: MediaMessageWidget(
+                              // //     fileUrl: message.pictureUrl!,
+                              // //   ),
+                              // // ),
                               // SHOW ACTUAL MESSAGE
-                              if (message.text != '')
+                              if (message.message != '')
                                 Padding(
                                   padding: const EdgeInsets.only(top: 0),
                                   child: Linkify(
@@ -1168,7 +1183,7 @@ class _DMScreenState extends State<DMScreen> {
                                         throw "Could not launch ${link.url}";
                                       }
                                     },
-                                    text: message.text,
+                                    text: message.message,
                                     style: const TextStyle(fontSize: 16),
                                     linkStyle: const TextStyle(
                                       color: AppColors.primaryColor,
@@ -1179,20 +1194,21 @@ class _DMScreenState extends State<DMScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    convertToIndianTime(message.date),
+                                    convertToIndianTime(
+                                        message.createdAt.toString()),
                                     style: TextStyle(
                                       fontSize: 12,
                                       color: Colors.grey,
                                     ),
                                   ),
                                   SizedBox(width: 5),
-                                  message.isPinned
-                                      ? Icon(
-                                          Icons.push_pin,
-                                          size: 16,
-                                          color: Colors.grey,
-                                        )
-                                      : SizedBox(),
+                                  // message.isPinned
+                                  //     ? Icon(
+                                  //         Icons.push_pin,
+                                  //         size: 16,
+                                  //         color: Colors.grey,
+                                  //       )
+                                  //     : SizedBox(),
                                 ],
                               ),
                             ],

@@ -10,6 +10,7 @@ import '../../../../core/utils/shared_preference.dart';
 
 import '../../Socket/socket_service.dart';
 import '../../data/model/chat_message_model.dart';
+import '../../data/model/dm_message_model.dart';
 import '../../domain/usecases/get_chat_room_messages_usecase.dart';
 
 part 'chat_private_state.dart';
@@ -34,7 +35,7 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     emit(
       state.copyWith(
         chatId: chatId,
-        messages: [],
+        messages: null,
         hasReachedMax: hasReachedMax,
         page: page,
       ),
@@ -71,6 +72,13 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     socketService.dispose(chatId: chatId);
   }
 
+  void sendDmMessage(
+    Map<String, dynamic> payload,
+    bool isMsg,
+  ) {
+    socketService.sendDmMessage(state.chatId, payload, isMsg);
+  }
+
   // GET GROUP MESSAGES
   Future getRoomMessages({
     required chatId,
@@ -91,7 +99,7 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
         );
       },
       (messageList) {
-        hasReachedMax = messageList.length < 20;
+        hasReachedMax = messageList.messages.length < 20;
 
         emit(
           state.copyWith(
@@ -105,48 +113,48 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     );
   }
 
-  void testReceivingMessage() {
-    final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+  // void testReceivingMessage() {
+  //   final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
-    var newMessage = ChatMessageModel(
-        id: '',
-        text: 'are you there?',
-        date: dateFormat.format(DateTime.now()),
-        isMine: false,
-        readByuser: false,
-        hasMore: false,
-        pictureUrl: '',
-        isAdmin: false,
-        isPinned: false,
-        isDeleted: false,
-        repliesCount: 0,
-        cheers: 0,
-        boos: 0,
-        booOrCheer: '');
-    emit(state.copyWith(
-        status: Status.success, messages: [newMessage, ...state.messages]));
-  }
+  //   var newMessage = ChatMessageModel(
+  //       id: '',
+  //       text: 'are you there?',
+  //       date: dateFormat.format(DateTime.now()),
+  //       isMine: false,
+  //       readByuser: false,
+  //       hasMore: false,
+  //       pictureUrl: '',
+  //       isAdmin: false,
+  //       isPinned: false,
+  //       isDeleted: false,
+  //       repliesCount: 0,
+  //       cheers: 0,
+  //       boos: 0,
+  //       booOrCheer: '');
+  //   emit(state.copyWith(
+  //       status: Status.success, messages: [newMessage, ...state.messages]));
+  // }
 
   //
   //
-  Future sendMessage({String? message, File? image}) async {
-    final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
-    var newMessage = ChatMessageModel(
-        id: '',
-        text: message ?? '',
-        date: dateFormat.format(DateTime.now()),
-        isMine: true,
-        readByuser: false,
-        hasMore: false,
-        pictureUrl: '',
-        isAdmin: false,
-        isPinned: false,
-        isDeleted: false,
-        repliesCount: 0,
-        cheers: 0,
-        boos: 0,
-        booOrCheer: '');
-    emit(state.copyWith(
-        status: Status.success, messages: [newMessage, ...state.messages]));
-  }
+  // Future sendMessage({String? message, File? image}) async {
+  //   final DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
+  //   var newMessage = ChatMessageModel(
+  //       id: '',
+  //       text: message ?? '',
+  //       date: dateFormat.format(DateTime.now()),
+  //       isMine: true,
+  //       readByuser: false,
+  //       hasMore: false,
+  //       pictureUrl: '',
+  //       isAdmin: false,
+  //       isPinned: false,
+  //       isDeleted: false,
+  //       repliesCount: 0,
+  //       cheers: 0,
+  //       boos: 0,
+  //       booOrCheer: '');
+  //   emit(state.copyWith(
+  //       status: Status.success, messages: [newMessage, ...state.messages]));
+  // }
 }

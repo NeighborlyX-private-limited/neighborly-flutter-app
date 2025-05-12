@@ -6,20 +6,19 @@ class ChatPrivateState extends Equatable {
   final String? errorMessage;
   final File? imageToUpload;
   final String chatId;
-  final List<ChatMessageModel> messages;
+  final ChatMessageResponse? messages;
   final int page;
   final bool hasReachedMax;
 
-  const ChatPrivateState({
-    this.status = Status.initial,
-    this.failure,
-    this.errorMessage = '',
-    this.chatId = '',
-    this.imageToUpload,
-    this.page = 1,
-    this.hasReachedMax = false,
-    this.messages = const [],
-  });
+  const ChatPrivateState(
+      {this.status = Status.initial,
+      this.failure,
+      this.errorMessage = '',
+      this.chatId = '',
+      this.imageToUpload,
+      this.page = 1,
+      this.hasReachedMax = false,
+      this.messages = null});
 
   @override
   List<Object?> get props => [
@@ -39,7 +38,7 @@ class ChatPrivateState extends Equatable {
     String? errorMessage,
     File? imageToUpload,
     String? chatId,
-    List<ChatMessageModel>? messages,
+    ChatMessageResponse? messages,
     int? page,
     bool? hasReachedMax,
   }) {

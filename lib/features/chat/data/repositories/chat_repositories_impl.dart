@@ -8,6 +8,7 @@ import '../../domain/repositories/chat_repositories.dart';
 import '../data_sources/chat_remote_data_source/chat_remote_data_source.dart';
 import '../model/chat_message_model.dart';
 import '../model/chat_room_model.dart';
+import '../model/dm_message_model.dart';
 import '../model/interest_model.dart';
 import '../model/nearby_user_model.dart';
 import '../model/pinned_message_model.dart';
@@ -38,7 +39,7 @@ class ChatRepositoriesImpl implements ChatRepositories {
   }
 
   @override
-  Future<Either<Failure, List<ChatMessageModel>>> getRoomMessages(
+  Future<Either<Failure, ChatMessageResponse>> getRoomMessages(
       {required String chatId}) async {
     if (await networkInfo.isConnected) {
       try {

@@ -5,6 +5,7 @@ import 'package:neighborly_flutter_app/features/chat/data/model/nearby_user_mode
 import '../../../../../core/utils/set_auth.dart';
 import '../../model/chat_message_model.dart';
 import '../../model/chat_room_model.dart';
+import '../../model/dm_message_model.dart';
 import '../../model/interest_model.dart';
 import '../../model/pinned_message_model.dart';
 import 'chat_remote_data_source.dart';
@@ -159,7 +160,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<List<ChatMessageModel>> getRoomMessages({
+  Future<ChatMessageResponse> getRoomMessages({
     required String chatId,
   }) async {
     // FAKE example
@@ -258,7 +259,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       handleAuthHeaders(response.headers);
       print('res of message : ${jsonDecode(response.body)}');
 
-      return ChatMessageModel.fromJsonList(jsonDecode(response.body)).toList();
+      return ChatMessageResponse.fromJson(jsonDecode(response.body));
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops something went wrong';

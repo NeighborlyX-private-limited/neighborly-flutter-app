@@ -84,6 +84,9 @@ class SocketService {
     _socket?.on("active-users", (users) {
       print("USER CONNECTED:  ${users}");
     });
+    _socket?.on("dm-new-message", (msg) {
+      print("new dm :  ${msg}");
+    });
 
     // ON ERROR-MESSAGE LISTENER
     _socket?.on("error-message", (data) {
@@ -113,6 +116,26 @@ class SocketService {
     _socket?.emit('send-message', payload);
   }
 
+  void sendDmMessage(
+    String chatId,
+    Map<String, dynamic> payload,
+    bool isMsg,
+  ) {
+    print('SEND DM MESSAGE WITH PAYLOAD:$payload');
+    _socket?.emitWithAck('dm-send-message', payload, ack: (data) {
+      print('data: $data');
+      // Handle callback response
+      if (data['success'] == true) {
+        // print('${data['message']}');
+        print('success dm');
+        // leaveDm(chatId);
+      } else {
+        // print( ${data['message']}');
+        print('fail dm');
+      }
+    });
+  }
+
   // CALL BACK FOR NEW MESSAGE RECEIVE
   Function(Map<String, dynamic>)? onNewMessageReceived;
   Function(String)? messageDeleted;
@@ -139,7 +162,7 @@ class SocketService {
         if (data['success'] == true) {
           // print('${data['message']}');
           print('success');
-          leaveDm(chatId);
+          // leaveDm(chatId);
         } else {
           // print( ${data['message']}');
           print('fail');
@@ -183,15 +206,15 @@ class SocketService {
     // print('DISPOSE SOCKET WITH GROUP ID:$roomId');
     print('DISPOSE SOCKET WITH GROUP ID:$chatId');
 
-    // if (groupId.isNotEmpty) {
-    //   final payload = {'groupId': roomId};
-    //   _socket?.emit('leave-room', payload);
-    // }
-    // if (chatId.isNotEmpty) {
-    //   final payload = {'chatId': chatId};
-    //   leaveDm(String chatId);
-    //   // _socket?.emit('dm-leave', payload);
-    // }
+    if (groupId != null) {
+      final payload = {'groupId': groupId};
+      _socket?.emit('leave-room', payload);
+    }
+    if (chatId != null) {
+      final payload = {'chatId': chatId};
+      leaveDm(chatId);
+      // _socket?.emit('dm-leave', payload);
+    }
 
     _socket?.disconnect();
     _socket?.dispose();

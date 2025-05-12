@@ -4,6 +4,7 @@ import 'package:neighborly_flutter_app/features/chat/presentation/bloc/bloc/near
 import '../../../../core/error/failures.dart';
 import '../../data/model/chat_message_model.dart';
 import '../../data/model/chat_room_model.dart';
+import '../../data/model/dm_message_model.dart';
 import '../../data/model/interest_model.dart';
 import '../../data/model/nearby_user_model.dart';
 import '../../data/model/pinned_message_model.dart';
@@ -12,7 +13,7 @@ abstract class ChatRepositories {
   Future<Either<Failure, List<PinnedMessageModel>>> featchPinnedMessages({
     required String groupId,
   });
-  Future<Either<Failure, List<ChatMessageModel>>> getRoomMessages({
+  Future<Either<Failure, ChatMessageResponse>> getRoomMessages({
     required String chatId,
   });
   Future<Either<Failure, String>> pinnedMessage({

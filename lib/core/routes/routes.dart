@@ -322,11 +322,27 @@ final GoRouter router = GoRouter(
       path: '/chat',
       builder: (context, state) => const ChatMainScreen(),
     ),
+    // GoRoute(
+    //   path: '/chat-private/:chatId',
+    //   builder: (context, state) => DMScreen(
+    //     chatId: state.pathParameters["chatId"] as String,
+    //   ),
+    // ),
     GoRoute(
       path: '/chat-private/:chatId',
-      builder: (context, state) => DMScreen(
-        chatId: state.pathParameters["chatId"] as String,
-      ),
+      builder: (context, state) {
+        final chatId = state.pathParameters['chatId'] as String;
+        final extra = state.extra as Map<String, dynamic>?;
+
+        final profilePic = extra?['profilePic'] ?? '';
+        final userName = extra?['userName'] ?? '';
+
+        return DMScreen(
+          chatId: chatId,
+          profilePic: profilePic,
+          userNmae: userName,
+        );
+      },
     ),
 
     GoRoute(
