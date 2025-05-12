@@ -86,6 +86,9 @@ class SocketService {
     });
     _socket?.on("dm-new-message", (msg) {
       print("new dm :  ${msg}");
+      if (onNewDmMessageReceived != null) {
+        onNewDmMessageReceived!(msg['message']);
+      }
     });
 
     // ON ERROR-MESSAGE LISTENER
@@ -138,6 +141,7 @@ class SocketService {
 
   // CALL BACK FOR NEW MESSAGE RECEIVE
   Function(Map<String, dynamic>)? onNewMessageReceived;
+  Function(Map<String, dynamic>)? onNewDmMessageReceived;
   Function(String)? messageDeleted;
   Function(bool)? isSocketConnect;
 

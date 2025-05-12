@@ -160,79 +160,9 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<ChatMessageResponse> getRoomMessages({
+  Future<List<ChatMessageResponse>> getRoomMessages({
     required String chatId,
   }) async {
-    // FAKE example
-    // await Future.delayed(Duration(seconds: 2));
-
-    // String fakeData = '''
-    //   [
-    //     {
-    //       "id": "668164e760dbe07a2fd9df5b",
-    //       "text": "1 Lorem  dor amet, consectetuer, Lorem  dor amet, consectetuer, Lorem  dor amet, consectetuer",
-    //       "date": "2024-08-02 11:34:00",
-    //       "isMine": true,
-    //       "hasMore": false,
-    //       "isReaded": true,
-    //       "unreadedCount": 12
-    //     },{
-    //       "id": "668164e760dbe07a2fd9df5b",
-    //       "text": "2 Lorem  dor amet, consectetuer, Lorem  dor amet, consectetuer, Lorem  dor amet, consectetuer",
-    //       "date": "2024-08-02 11:34:00",
-    //       "isMine": true,
-    //       "hasMore": false,
-    //       "isReaded": true,
-    //       "unreadedCount": 12
-    //     },{
-    //       "id": "3 668164e760dbe07a2fd9df5b",
-    //       "text": "Lorem ipsum amet, consectetuer",
-    //       "date": "2024-07-29 10:34:00",
-    //       "isMine": false,
-    //       "hasMore": false,
-    //       "isReaded": true
-    //     },{
-    //       "id": "4 668164e760dbe07a2fd9df5b",
-    //       "text": "Lorem ipsum, consectetuer orem ipsum am, orem ipsum am orem ipsum am orem ipsum am, orem ipsum am orem ipsum am, orem ipsum amorem ipsum am ? ",
-    //       "date": "2024-07-29 10:34:00",
-    //       "isMine": false,
-    //       "hasMore": false,
-    //       "isReaded": true
-    //     },{
-    //       "id": "5 668164e760dbe07a2fd9df5b",
-    //       "pictureUrl": "https://img.freepik.com/fotos-gratis/capivara-no-habitat-natural-do-norte-do-pantanal-maior-rondent-america-selvagem-da-vida-selvagem-sul-americana-beleza-da-natureza_475641-2161.jpg?t=st=1722531645~exp=1722535245~hmac=940000ad880443f24ddfc51afec3f77a0116cd23c80063e5caecaf8ce3ac7c49&w=596",
-    //       "text": "Lorem  dor amet, consectetuer, Lorem  dor amet, consectetuer, Lorem  dor amet, consectetuer",
-    //       "date": "2024-07-29 10:34:00",
-    //       "isMine": false,
-    //       "hasMore": false,
-    //       "isReaded": true
-    //     },{
-    //       "id": "6 668164e760dbe07a2fd9df5b",
-    //       "pictureUrl": "https://img.freepik.com/fotos-gratis/especialista-em-seguranca-cibernetica-a-trabalhar-com-tecnologia-em-luzes-de-neon_23-2151645661.jpg?t=st=1722573533~exp=1722577133~hmac=fc9a6c66bed1aef3fad7541423c49fa69ea858159e8d3d6903039c7edf5dde65&w=360",
-    //       "text": "Lorem  dor amet, consect rem  dor amet, consectetuer",
-    //       "date": "2024-07-28 10:34:00",
-    //       "isMine": true,
-    //       "hasMore": false,
-    //       "isReaded": true
-    //     },{
-    //       "id": "7 668164e760dbe07a2fd9df5b",
-    //       "text": "....",
-    //       "date": "2024-07-28 10:34:00",
-    //       "isMine": false,
-    //       "hasMore": false,
-    //       "isReaded": true
-    //     },{
-    //       "id": "8 668164e760dbe07a2fd9df5b",
-    //       "text": "Lorem  dor amet, consectetuer, Lorem  dor amet, consectetuer, Lorem  dor amet, consectetuer",
-    //       "date": "2024-07-28 11:34:00",
-    //       "isMine": true,
-    //       "hasMore": false,
-    //       "isReaded": true,
-    //       "unreadedCount": 12
-    //     }
-    //   ]
-    //   ''';
-
     // final fakeJson = json.decode(fakeData);
     // List<String>? cookies = ShardPrefHelper.getCookie();
     String? cookies = ShardPrefHelper.getCookie();
@@ -257,9 +187,13 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
-      print('res of message : ${jsonDecode(response.body)}');
-
-      return ChatMessageResponse.fromJson(jsonDecode(response.body));
+      print('res  of dm message : ${jsonDecode(response.body)}');
+// return ChatMessageModel.fromJsonList(jsonDecode(response.body)).toList();
+      List<ChatMessageResponse> data = ChatMessageResponse.fromJsonList(
+              jsonDecode(response.body)['messages'])
+          .toList();
+      print('data: $data');
+      return data;
     } else {
       final message =
           jsonDecode(response.body)['msg'] ?? 'oops something went wrong';

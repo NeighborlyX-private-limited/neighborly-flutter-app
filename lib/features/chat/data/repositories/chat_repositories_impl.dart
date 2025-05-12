@@ -39,7 +39,7 @@ class ChatRepositoriesImpl implements ChatRepositories {
   }
 
   @override
-  Future<Either<Failure, ChatMessageResponse>> getRoomMessages(
+  Future<Either<Failure, List<ChatMessageResponse>>> getRoomMessages(
       {required String chatId}) async {
     if (await networkInfo.isConnected) {
       try {

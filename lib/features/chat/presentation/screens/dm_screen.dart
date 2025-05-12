@@ -394,9 +394,7 @@ class _DMScreenState extends State<DMScreen> {
                   height: 2,
                 ),
 
-                state.status == Status.success &&
-                        (state.messages?.messages != null &&
-                            state.messages?.messages.length == 0)
+                state.status == Status.success && (state.messages.isEmpty)
                     // SHOW EMPTY MESSAGE SCREEN
                     ? Expanded(
                         child: SingleChildScrollView(
@@ -432,7 +430,7 @@ class _DMScreenState extends State<DMScreen> {
                           child: ListView.builder(
                             controller: _scrollController,
                             reverse: true,
-                            itemCount: state.messages?.messages.length ?? 0,
+                            itemCount: state.messages.length,
                             // +(state.hasReachedMax ? 0 : 1),
                             // itemCount: state.messages.length +
                             //     (state.hasReachedMax ? 0 : 1),
@@ -444,13 +442,12 @@ class _DMScreenState extends State<DMScreen> {
                               //   return CustomCircularIndicator();
                               // }
                               // CHECK IF THE CURRENT AND PRIVIOUS MESSAGE SENDER IS SAME OR NOT
-                              var msg = state.messages?.messages[index];
+                              var msg = state.messages[index];
 
-                              final bool isNewMsg = index ==
-                                      state.messages!.messages.length - 1 ||
-                                  msg!.senderId !=
-                                      state.messages!.messages[index + 1]
-                                          .senderId;
+                              final bool isNewMsg =
+                                  index == state.messages.length - 1 ||
+                                      msg.senderId !=
+                                          state.messages[index + 1].senderId;
 
                               // CHECK SENDER USER IS ADMIN OR NOT
                               // final bool isSenderAdmin =
@@ -466,13 +463,12 @@ class _DMScreenState extends State<DMScreen> {
                               // NEED TO THINK ABOUT THIS LINE
 
                               final bool isNewDate = index ==
-                                      state.messages!.messages.length - 1 ||
+                                      state.messages.length - 1 ||
                                   DateUtilsHelper.simplifyISOtimeString(state
-                                          .messages!.messages[index].createdAt
+                                          .messages[index].createdAt
                                           .toString()) !=
                                       DateUtilsHelper.simplifyISOtimeString(
-                                          state.messages!.messages[index + 1]
-                                              .createdAt
+                                          state.messages[index + 1].createdAt
                                               .toString());
 
                               return Column(
@@ -493,8 +489,7 @@ class _DMScreenState extends State<DMScreen> {
                                       ),
                                       child: Text(
                                         '${formatTimeDifference(
-                                          state.messages!.messages[index]
-                                              .createdAt
+                                          state.messages[index].createdAt
                                               .toString(),
                                         )} ',
                                         style: TextStyle(
@@ -505,7 +500,7 @@ class _DMScreenState extends State<DMScreen> {
                                       ),
                                     ),
                                   ChatMessageGroupWidget(
-                                    message: msg!,
+                                    message: msg,
                                     isCurrentUser:
                                         (msg.senderId == cuurentUserId),
                                     // isAdmin: isAdmin,
@@ -914,7 +909,7 @@ class _DMScreenState extends State<DMScreen> {
   // CHAT MESSAGE CARD
   // NEED TO IMPROVE THE MESSAGE WIDGET
   Widget ChatMessageGroupWidget({
-    required ChatMessage message,
+    required ChatMessageResponse message,
     required bool isCurrentUser,
     // required bool isAdmin,
     // required bool isSenderAdmin,

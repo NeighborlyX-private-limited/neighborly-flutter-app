@@ -13,7 +13,7 @@ abstract class ChatRepositories {
   Future<Either<Failure, List<PinnedMessageModel>>> featchPinnedMessages({
     required String groupId,
   });
-  Future<Either<Failure, ChatMessageResponse>> getRoomMessages({
+  Future<Either<Failure, List<ChatMessageResponse>>> getRoomMessages({
     required String chatId,
   });
   Future<Either<Failure, String>> pinnedMessage({

@@ -10,7 +10,7 @@ class GetChatRoomMessagesUseCase {
 
   GetChatRoomMessagesUseCase(this.repository);
 
-  Future<Either<Failure, ChatMessageResponse>> call({
+  Future<Either<Failure, List<ChatMessageResponse>>> call({
     required String chatId,
   }) async {
     return await repository.getRoomMessages(

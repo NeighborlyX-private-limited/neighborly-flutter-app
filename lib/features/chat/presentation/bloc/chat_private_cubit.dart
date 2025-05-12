@@ -35,7 +35,7 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     emit(
       state.copyWith(
         chatId: chatId,
-        messages: null,
+        messages: [],
         hasReachedMax: hasReachedMax,
         page: page,
       ),
@@ -43,6 +43,27 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     );
     socketService.connect(chatId: chatId);
     await getRoomMessages(chatId: chatId);
+    socketService.onNewDmMessageReceived = (message) {
+      print('this is new dm: $message');
+      ChatMessageResponse chatmodel = ChatMessageResponse.fromJsonList([
+        {
+          'id': message['_id'],
+          'chatId': message['chatId'],
+          'senderId': message['senderId'],
+          'message': message['message'],
+          // mediaLink: message['mediaLink'],
+          'isRead': message['isRead'],
+          'isDeletedBySender': message['isDeletedBySender'],
+          'isDeletedByReciever': message['isDeletedByReciever'],
+          // replyTo: message['replyTo'],
+          'createdAt': message['createdAt'],
+          // v: message['__v'],
+          'isSender': message['isSender'],
+        }
+      ])[0];
+
+      addMessage(chatmodel);
+    };
     // void init(String roomId) async {
     //   emit(state.copyWith(roomId: roomId));
     //   await getRoomMessages();
@@ -79,6 +100,19 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     socketService.sendDmMessage(state.chatId, payload, isMsg);
   }
 
+  addMessage(ChatMessageResponse newMessage) {
+    List<ChatMessageResponse> oldMessages =
+        List<ChatMessageResponse>.from(state.messages);
+    print('old: ${state.messages}');
+
+    final updatedMessageList = [
+      ...[newMessage],
+      ...oldMessages,
+    ];
+    emit(state.copyWith(status: Status.success, messages: updatedMessageList));
+    print('new: ${state.messages}');
+  }
+
   // GET GROUP MESSAGES
   Future getRoomMessages({
     required chatId,
@@ -99,7 +133,8 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
         );
       },
       (messageList) {
-        hasReachedMax = messageList.messages.length < 20;
+        hasReachedMax = messageList.length < 20;
+        // hasReachedMax = messageList.messages.length < 20;
 
         emit(
           state.copyWith(

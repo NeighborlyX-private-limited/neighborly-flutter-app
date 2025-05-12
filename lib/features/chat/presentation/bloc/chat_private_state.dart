@@ -6,7 +6,7 @@ class ChatPrivateState extends Equatable {
   final String? errorMessage;
   final File? imageToUpload;
   final String chatId;
-  final ChatMessageResponse? messages;
+  final List<ChatMessageResponse> messages;
   final int page;
   final bool hasReachedMax;
 
@@ -18,7 +18,7 @@ class ChatPrivateState extends Equatable {
       this.imageToUpload,
       this.page = 1,
       this.hasReachedMax = false,
-      this.messages = null});
+      this.messages = const []});
 
   @override
   List<Object?> get props => [
@@ -38,7 +38,7 @@ class ChatPrivateState extends Equatable {
     String? errorMessage,
     File? imageToUpload,
     String? chatId,
-    ChatMessageResponse? messages,
+    List<ChatMessageResponse>? messages,
     int? page,
     bool? hasReachedMax,
   }) {

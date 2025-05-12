@@ -6,7 +6,7 @@ import '../../model/nearby_user_model.dart';
 import '../../model/pinned_message_model.dart';
 
 abstract class ChatRemoteDataSource {
-  Future<ChatMessageResponse> getRoomMessages({
+  Future<List<ChatMessageResponse>> getRoomMessages({
     required String chatId,
   });
   Future<List<PinnedMessageModel>> featchPinnedMessages({
