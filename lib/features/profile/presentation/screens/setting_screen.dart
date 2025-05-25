@@ -360,11 +360,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SvgPicture.asset(
-                      'assets/support.svg',
-                      height: 24,
-                      width: 24,
-                    ),
+                    Icon(Icons.share),
                     const SizedBox(
                       width: 10,
                     ),

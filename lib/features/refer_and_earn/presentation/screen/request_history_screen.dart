@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/theme/colors.dart';
 import '../../data/model/request_history_model.dart';
 import '../bloc/request_history_bloc.dart';
 // import '../bloc/reward_history_bloc.dart';
@@ -46,17 +47,27 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
               separatorBuilder: (_, __) => const Divider(),
               itemBuilder: (context, index) {
                 final item = requests.requestsHistory[index];
-                return ListTile(
-                  leading: const Icon(Icons.monetization_on),
-                  title: Text('₹${item.amount} - ${item.status.toUpperCase()}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('UPI: ${item.upiId}'),
-                      Text('Created: ${_formatDate(item.createdAt)}'),
-                    ],
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                  child: ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          50), // Large value for circular feel
+                    ),
+                    tileColor: AppColors.lightBackgroundColor,
+                    leading: const Icon(Icons.monetization_on),
+                    title:
+                        Text('₹${item.amount} - ${item.status.toUpperCase()}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('UPI: ${item.upiId}'),
+                        Text('Created: ${_formatDate(item.createdAt)}'),
+                      ],
+                    ),
+                    trailing: const Icon(Icons.chevron_right),
                   ),
-                  trailing: const Icon(Icons.chevron_right),
                 );
               },
             );

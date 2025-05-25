@@ -1,9 +1,11 @@
 // lib/presentation/screens/reward_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/routes/routes.dart';
+import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/refer_and_earn/presentation/bloc/withdraw_bloc.dart';
 import 'package:neighborly_flutter_app/features/refer_and_earn/presentation/bloc/withdraw_state.dart';
 import 'package:share_it/share_it.dart';
@@ -45,6 +47,7 @@ Don't miss out — it's quick, easy, and totally worth it!
 
   void showRewardOptionsBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      showDragHandle: true,
       context: context,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
@@ -56,7 +59,7 @@ Don't miss out — it's quick, easy, and totally worth it!
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.history),
+                leading: const Icon(Icons.monetization_on),
                 title: const Text('Withdraw Your Reward ammount'),
                 onTap: () {
                   Navigator.pop(context);
@@ -155,6 +158,17 @@ Don't miss out — it's quick, easy, and totally worth it!
                         state is WithdrawLoading
                             ? const CircularProgressIndicator()
                             : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors
+                                      .primaryColor, // Button background color
+                                  foregroundColor:
+                                      Colors.white, // Text (and icon) color
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32),
+                                  ),
+                                ),
                                 onPressed: () {
                                   final amount =
                                       int.tryParse(amountController.text);
@@ -197,6 +211,12 @@ Don't miss out — it's quick, easy, and totally worth it!
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context); // Go back
+          },
+        ),
         title: Text("Reward & Referral Details"),
         actions: [
           IconButton(
@@ -219,41 +239,207 @@ Don't miss out — it's quick, easy, and totally worth it!
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Total Reward: ${data.totalRewardReceived}"),
-                  Text("Withdrawable: ${data.withdrawableReward}"),
-                  Text(
-                      "Eligible for Sign Up Reward: ${data.eligibleForSignUpReward}"),
-                  Text("Signup Reward Received: ${data.receivedSignupReward}"),
-                  Text("Post Status: ${data.validPostStatus}"),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      // ma
+                      // mainAxisSize: MainAxisSize.max,
                       children: [
-                        GestureDetector(
-                          onTap: () {
-                            ShareIt.text(
-                              content: message,
-                              androidSheetTitle: 'Share',
-                            );
-                          },
-                          child: Text(
-                            "Refer with your friends and earn",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                        // Text("Signup Reward Received: ${data.receivedSignupReward}"),
+                        // Text("Post Status: ${data.validPostStatus}"),
+                        Text(
+                          data.eligibleForSignUpReward
+                              ? "You are eligible for the sign-up reward."
+                              : "You are not eligible for the sign-up reward.",
+                          style: TextStyle(
+                            color: data.eligibleForSignUpReward
+                                ? Colors.green
+                                : Colors.red,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        IconButton(
+                        Text(
+                          data.eligibleForSignUpReward
+                              ? "Congratulations! You received the signup reward."
+                              : "Opps! You did not receive the signup reward till now.",
+                          style: TextStyle(
+                            color: data.eligibleForSignUpReward
+                                ? Colors.green
+                                : Colors.red,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        // Text(
+                        //     '${data.eligibleForSignUpReward ? "You are eligible for Sign Up reward" : "You are not eligible for Sign Up reward"}'),
+                        // Text(' ${hasProfile ? "true" : "false"}'),
+                        // Text(' ${isVerified ? "true" : "false"}'),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      'Invite friends',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Center(
+                    child: Text(
+                      'Copy your code, share it with your friends.',
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Text(
+                      'Your personal code',
+                      style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                          color: AppColors.primaryColor,
+                          width: 1,
+                          style: BorderStyle.solid),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text(
+                          referCode,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Spacer(),
+                        ElevatedButton(
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: referCode));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text('Code copied to clipboard')),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryColor,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: Text(
+                            'Copy',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.whiteColor,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
                           onPressed: () {
                             ShareIt.text(
                               content: message,
                               androidSheetTitle: 'Share',
                             );
+                            // Share.share('Use my referral code: $inviteCode');
                           },
-                          icon: const Icon(Icons.share),
-                        )
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey.shade200,
+                            foregroundColor: Colors.black87,
+                            padding: const EdgeInsets.symmetric(horizontal: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.share,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
                       ],
                     ),
+                  ),
+                  // Text("Total Reward: ${data.totalRewardReceived}"),
+                  // Text("Withdrawable: ${data.withdrawableReward}"),
+                  // Text(
+                  //     "Eligible for Sign Up Reward: ${data.eligibleForSignUpReward}"),
+
+                  // Padding(
+                  //   padding: const EdgeInsets.only(top: 10),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                  //       GestureDetector(
+                  //         onTap: () {
+                  //           ShareIt.text(
+                  //             content: message,
+                  //             androidSheetTitle: 'Share',
+                  //           );
+                  //         },
+                  //         child: Text(
+                  //           "Refer with your friends and earn",
+                  //           style: TextStyle(
+                  //               fontSize: 18, fontWeight: FontWeight.bold),
+                  //         ),
+                  //       ),
+                  //       IconButton(
+                  //         onPressed: () {
+                  //           ShareIt.text(
+                  //             content: message,
+                  //             androidSheetTitle: 'Share',
+                  //           );
+                  //         },
+                  //         icon: const Icon(Icons.share),
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
+                  SizedBox(height: 16),
+                  Text("Statistics",
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 8),
+                  ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          50), // Large value for circular feel
+                    ),
+                    tileColor: AppColors.lightBackgroundColor,
+                    title: Text('Total Rewards'),
+                    trailing: Text(data.totalRewardReceived.toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                  ),
+                  SizedBox(height: 2),
+                  ListTile(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          50), // Large value for circular feel
+                    ),
+                    tileColor: AppColors.lightBackgroundColor,
+                    title: Text('Withdrawable amount'),
+                    trailing: Text(data.withdrawableReward.toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                   SizedBox(height: 16),
                   if (data.referrer != null)
@@ -264,9 +450,14 @@ Don't miss out — it's quick, easy, and totally worth it!
                       title: Text("Referred by ${data.referrer!.username}"),
                     ),
                   Divider(),
-                  Text("Users You Referred:",
+                  Text("Users You Referred",
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   ...data.usersReferred.map((user) => ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              50), // Large value for circular feel
+                        ),
+                        tileColor: AppColors.lightBackgroundColor,
                         leading: CircleAvatar(
                             backgroundImage: NetworkImage(user.picture)),
                         title: Text(user.username),

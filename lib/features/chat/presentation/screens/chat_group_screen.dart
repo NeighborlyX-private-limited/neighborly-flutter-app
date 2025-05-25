@@ -115,10 +115,10 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
 
     communityDetailCubit.getCommunityDetail(widget.roomId);
     print('always call');
-    Future.delayed(Duration(seconds: 5), () {
-      print("Executed after 5 second");
-      chatGroupCubit.init(widget.roomId);
-    });
+    chatGroupCubit.init(widget.roomId);
+    // Future.delayed(Duration(seconds: 1), () {
+    //   print("Executed after 5 second");
+    // });
     getCurrentUserId();
     _scrollController.addListener(_onScroll);
   }

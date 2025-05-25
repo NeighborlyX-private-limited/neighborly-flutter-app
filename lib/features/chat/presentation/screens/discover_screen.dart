@@ -218,7 +218,33 @@ class DiscoverScreenState extends State<DiscoverScreen> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Connect with Neighbours"),
+          // leading: SvgPicture.asset(
+          //   'assets/logo.svg',
+          //   width: 24,
+          //   height: 24,
+          //   color: AppColors.blueColor,
+          // ),
+          automaticallyImplyLeading: false,
+          surfaceTintColor: AppColors.whiteColor,
+          elevation: 1, // Increase for deeper shadow
+          backgroundColor: AppColors.lightBackgroundColor,
+          shadowColor: AppColors.blackColor,
+          title: Row(
+            children: [
+              SvgPicture.asset(
+                'assets/logo.svg',
+                width: 24,
+                height: 24,
+              ),
+              SizedBox(
+                width: 16,
+              ),
+              Text(
+                "Connect with Neighbours",
+                style: TextStyle(fontSize: 18),
+              ),
+            ],
+          ),
         ),
         body: BlocBuilder<NearbyUserBloc, NearbyUserState>(
           builder: (BuildContext context, state) {
@@ -228,7 +254,8 @@ class DiscoverScreenState extends State<DiscoverScreen> {
 
             if (state is NearbyUserSuccessState) {
               return ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 itemCount: state.nearbyUser.length,
                 itemBuilder: (context, index) {
                   var user = state.nearbyUser[index];

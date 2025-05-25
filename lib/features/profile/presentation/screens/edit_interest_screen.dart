@@ -50,8 +50,19 @@ class EditInterestScreenState extends State<EditInterestScreen> {
     bool isButtonActive = selectedCategories.length >= 3;
 
     return Scaffold(
+      backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context); // Go back
+          },
+        ),
+        surfaceTintColor: AppColors.whiteColor,
+        elevation: 2, // Increase for deeper shadow
+        backgroundColor: AppColors.lightBackgroundColor,
+        shadowColor: AppColors.blackColor,
+        // foregroundColor: Colors.black,
         title: Text("Your Interests"),
         actions: [
           BlocConsumer<SaveInterestBloc, SaveInterestState>(
@@ -114,7 +125,8 @@ class EditInterestScreenState extends State<EditInterestScreen> {
               children: [
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Wrap(
                       spacing: 10,
                       runSpacing: 10,
