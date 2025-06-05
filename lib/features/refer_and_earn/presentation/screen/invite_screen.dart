@@ -71,15 +71,47 @@ class _InviteScreenState extends State<InviteScreen> {
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    context.go('/tutorialScreen');
-                    // context.go('/home');
-                    // Navigator.pop(context);
+                child: BlocConsumer<InviteBloc, InviteState>(
+                  listener: (context, state) {
+                    if (state is InviteSuccess) {
+                      context.go('/tutorialScreen');
+                      // ScaffoldMessenger.of(context).showSnackBar(
+                      //   const SnackBar(
+                      //       content:
+                      //           Text("Invite code submitted successfully")),
+                      // );
+                      // Navigator.pop(context);
+                    } else if (state is InviteError) {
+                      ScaffoldMessenger.of(context)
+                          .showSnackBar(SnackBar(content: Text(state.message)));
+                    }
+                    // },
                   },
-                  child: const Text("Skip"),
+                  builder: (context, state) {
+                    if (state is InviteLoading) {
+                      return Center(child: const CircularProgressIndicator());
+                    }
+                    return ElevatedButton(
+                      onPressed: () {
+                        context.read<InviteBloc>().add(
+                              SubmitInviteEvent(''),
+                            );
+                      },
+                      child: const Text("Skip"),
+                    );
+                  },
                 ),
               ),
+              // Expanded(
+              //   child: OutlinedButton(
+              //     onPressed: () {
+              //       context.go('/tutorialScreen');
+              //       // context.go('/home');
+              //       // Navigator.pop(context);
+              //     },
+              //     child: const Text("Skip"),
+              //   ),
+              // ),
             ],
           ),
         ]),

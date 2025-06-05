@@ -19,6 +19,7 @@ class SocketService {
     }
 
     String? accessToken = ShardPrefHelper.getAccessToken();
+    String? currentUserId = ShardPrefHelper.getUserID();
     print('ACCESS TOKEN IN SOCKET:$accessToken');
 
     // INIT SOCKET AND CONNECT TO SOCKET SERVER
@@ -65,6 +66,12 @@ class SocketService {
         onNewMessageReceived!(message);
       }
     });
+    _socket?.on("dm-message-read", (message) {
+      print(' MESSAGE Read:$message');
+      // if (onNewMessageReceived != null) {
+      //   onNewMessageReceived!(message);
+      // }
+    });
 
     // MESSAGE DELETED
     _socket?.on("message-deleted", (data) {
@@ -75,6 +82,24 @@ class SocketService {
         messageDeleted!(deletedMessageId);
       }
     });
+    // MESSAGE DELETED IN DM BY SENDER
+    _socket?.on("dm-message-deleted-by-sender", (data) {
+      print('dm-message-deleted-by-sender :$data');
+      String deletedMessageId = data["messageId"] ?? '';
+
+      if (DmMessageDeletedBySender != null) {
+        DmMessageDeletedBySender!(deletedMessageId);
+      }
+    });
+    // MESSAGE DELETED IN DM BY RECEIVER
+    _socket?.on("dm-message-deleted-by-receiver", (data) {
+      print('dm-message-deleted-by-receiver :$data');
+      String deletedMessageId = data["messageId"] ?? '';
+
+      // if (messageDeleted != null) {
+      //   messageDeleted!(deletedMessageId);
+      // }
+    });
 
     // ON ERROR LISTENER
     _socket?.on("error", (err) {
@@ -82,6 +107,16 @@ class SocketService {
     });
     // ON ERROR LISTENER
     _socket?.on("active-users", (users) {
+      final length = users["activeUsers"]?.length ?? 0;
+      if (activeUsersCount != null) {
+        activeUsersCount!(length);
+      }
+      // if (length != 2) {
+      //   if (activeUsersCount != null) {
+      //     activeUsersCount!(length);
+      //   }
+      // }
+      //if(currentUserId)
       print("USER CONNECTED:  ${users}");
     });
     _socket?.on("dm-new-message", (msg) {
@@ -139,10 +174,66 @@ class SocketService {
     });
   }
 
+  // DELETE DM  MESSAGE
+  void deleteDMMessage({required String chatId, required String messageId}) {
+    print('DELETE MESSAGE WITH CHAT ID:$chatId AND MESSAGE ID $messageId');
+
+    _socket?.emitWithAck('dm-delete-message', {
+      "chatId": chatId,
+      "messageId": messageId,
+    }, ack: (data) {
+      print('data: $data');
+      // Handle callback response
+      if (data['success'] == true) {
+        // print('${data['message']}');
+        print('success dm');
+        // leaveDm(chatId);
+      } else {
+        // print( ${data['message']}');
+        print('fail dm');
+      }
+    });
+  }
+  // delete dm msg
+  // void sendDmMessage(
+  //   String chatId,
+  //   Map<String, dynamic> payload,
+  //   bool isMsg,
+  // ) {
+  //   print('SEND DM MESSAGE WITH PAYLOAD:$payload');
+
+  // }
+
+//dm-mark-as-read
+  void DmMarkAsRead(
+    String chatId,
+    bool msgId,
+  ) {
+    print('Mark as read chatid:$chatId and $msgId');
+    _socket?.emitWithAck('dm-mark-as-read', {
+      "chatId": chatId,
+      "messageId": msgId,
+    }, ack: (data) {
+      print('data: $data');
+      // Handle callback response
+      if (data['success'] == true) {
+        // print('${data['message']}');
+        print('success markas read');
+        // leaveDm(chatId);
+      } else {
+        // print( ${data['message']}');
+        print('fail mark as read');
+      }
+    });
+  }
+
   // CALL BACK FOR NEW MESSAGE RECEIVE
   Function(Map<String, dynamic>)? onNewMessageReceived;
   Function(Map<String, dynamic>)? onNewDmMessageReceived;
+  Function(int)? activeUsersCount;
   Function(String)? messageDeleted;
+  Function(String)? DmMessageDeletedBySender;
+  Function(String)? DmMessageDeletedByReceiver;
   Function(bool)? isSocketConnect;
 
   // JOIN ROOM EMITTER

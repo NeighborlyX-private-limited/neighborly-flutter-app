@@ -62,7 +62,7 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('UPI: ${item.upiId}'),
+                        Text('UPI ID: ${item.upiId}'),
                         Text('Created: ${_formatDate(item.createdAt)}'),
                       ],
                     ),

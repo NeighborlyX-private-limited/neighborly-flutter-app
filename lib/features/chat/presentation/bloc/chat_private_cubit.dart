@@ -43,6 +43,13 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     );
     socketService.connect(chatId: chatId);
     await getRoomMessages(chatId: chatId);
+    socketService.activeUsersCount = (count) {
+      activeUserCount(count);
+    };
+    socketService.DmMessageDeletedBySender = (msgId) {
+      updateMessage(msgId);
+      // upda(count);
+    };
     socketService.onNewDmMessageReceived = (message) {
       print('this is new dm: $message');
       ChatMessageResponse chatmodel = ChatMessageResponse.fromJsonList([
@@ -51,11 +58,19 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
           'chatId': message['chatId'],
           'senderId': message['senderId'],
           'message': message['message'],
-          // mediaLink: message['mediaLink'],
+          'mediaLink': message['mediaLink'],
           'isRead': message['isRead'],
           'isDeletedBySender': message['isDeletedBySender'],
           'isDeletedByReciever': message['isDeletedByReciever'],
-          // replyTo: message['replyTo'],
+          'replyTo': message['replyTo'] != null
+              ? {
+                  "messageId": message['replyTo']["messageId"],
+                  "userId": message['replyTo']["userId"],
+                  "name": message['replyTo']["name"],
+                  "message": message['replyTo']["message"],
+                  "mediaLink": message['replyTo']["mediaLink"] ?? "",
+                }
+              : null,
           'createdAt': message['createdAt'],
           // v: message['__v'],
           'isSender': message['isSender'],
@@ -100,6 +115,34 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     socketService.sendDmMessage(state.chatId, payload, isMsg);
   }
 
+  activeUserCount(int count) {
+    emit(state.copyWith(
+      status: Status.success,
+      activeUser: count,
+    ));
+  }
+
+  // UPDATE MESSAGE LIST AFTER DELETING A MESSAGE
+  void updateMessage(String id) {
+    List<ChatMessageResponse> newMessages = state.messages
+        .map(
+            (msg) => msg.id == id ? msg.copyWith(isDeletedBySender: true) : msg)
+        .toList();
+    // List<ChatMessageResponse>.from(state.messages);
+
+    // List<ChatMessageModel> newMessages = state.messages
+    //     .map((message) =>
+    //         message.id == id ? message.copyWith(isDeleted: true) : message)
+    //     .toList();
+
+    emit(
+      state.copyWith(
+        status: Status.success,
+        messages: List.from(newMessages),
+      ),
+    );
+  }
+
   addMessage(ChatMessageResponse newMessage) {
     List<ChatMessageResponse> oldMessages =
         List<ChatMessageResponse>.from(state.messages);
@@ -111,6 +154,14 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     ];
     emit(state.copyWith(status: Status.success, messages: updatedMessageList));
     print('new: ${state.messages}');
+  }
+
+  // DELETE  MESSAGE
+  void deleteMessage({
+    required String chatId,
+    required String messageId,
+  }) {
+    socketService.deleteDMMessage(chatId: chatId, messageId: messageId);
   }
 
   // GET GROUP MESSAGES

@@ -55,11 +55,13 @@ class ChatTileWidget extends StatelessWidget {
         color: AppColors.whiteColor,
         child: Row(
           children: [
-            UserAvatarStyledWidget(
-              avatarUrl: room.avatarUrl,
-              avatarSize: 22,
-              avatarBorderSize: 0,
-            ),
+            room.avatarUrl != ''
+                ? UserAvatarStyledWidget(
+                    avatarUrl: room.avatarUrl,
+                    avatarSize: 22,
+                    avatarBorderSize: 0,
+                  )
+                : CircleAvatar(),
             const SizedBox(width: 10),
             Expanded(
               child: Column(

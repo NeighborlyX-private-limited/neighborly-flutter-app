@@ -8,10 +8,12 @@ class ChatPrivateState extends Equatable {
   final String chatId;
   final List<ChatMessageResponse> messages;
   final int page;
+  final int activeUser;
   final bool hasReachedMax;
 
   const ChatPrivateState(
-      {this.status = Status.initial,
+      {this.activeUser = 0,
+      this.status = Status.initial,
       this.failure,
       this.errorMessage = '',
       this.chatId = '',
@@ -22,6 +24,7 @@ class ChatPrivateState extends Equatable {
 
   @override
   List<Object?> get props => [
+        activeUser,
         status,
         failure,
         errorMessage,
@@ -40,6 +43,7 @@ class ChatPrivateState extends Equatable {
     String? chatId,
     List<ChatMessageResponse>? messages,
     int? page,
+    int? activeUser,
     bool? hasReachedMax,
   }) {
     return ChatPrivateState(
@@ -50,6 +54,7 @@ class ChatPrivateState extends Equatable {
       chatId: chatId ?? this.chatId,
       messages: messages ?? this.messages,
       page: page ?? this.page,
+      activeUser: activeUser ?? this.activeUser,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     );
   }

@@ -8,6 +8,7 @@ import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/chat/presentation/screens/chat_group_screen.dart';
 
+import '../../../../core/widgets/svg_icon.dart';
 import '../../../communities/presentation/bloc/community_detail_cubit.dart';
 import '../bloc/bloc/interest_bloc.dart';
 import '../bloc/bloc/save_interest_bloc.dart';
@@ -68,6 +69,20 @@ class InterestSelectionScreenState extends State<InterestSelectionScreen> {
             ],
           ),
         ),
+        actions: [
+          // CHAT BUTTON
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: InkWell(
+              onTap: () {
+                context.push('/chat');
+              },
+              child: CircularSvgImage(
+                assetPath: AppImages.chatIcon,
+              ),
+            ),
+          ),
+        ],
       ),
       body: BlocConsumer<InterestBloc, InterestState>(
         listener: (context, state) {
@@ -95,7 +110,7 @@ class InterestSelectionScreenState extends State<InterestSelectionScreen> {
                         Text(
                           "Choose Your Interests",
                           style: TextStyle(
-                            fontSize: 20,
+                            fontSize: 18,
                             color: AppColors.blackColor,
                             fontWeight: FontWeight.w600,
                           ),
@@ -103,7 +118,7 @@ class InterestSelectionScreenState extends State<InterestSelectionScreen> {
                         Text(
                           "Choose three or more options",
                           style: TextStyle(
-                            fontSize: 16,
+                            fontSize: 14,
                             color: AppColors.greyColor,
                           ),
                         ),
@@ -187,7 +202,7 @@ class InterestSelectionScreenState extends State<InterestSelectionScreen> {
                             backgroundColor: AppColors.primaryColor,
                             foregroundColor: Colors.white,
                             disabledBackgroundColor:
-                                AppColors.primaryColor.withOpacity(0.3),
+                                AppColors.primaryColor.withOpacity(0.2),
                             minimumSize: Size(double.infinity, 50),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(25),
@@ -196,6 +211,7 @@ class InterestSelectionScreenState extends State<InterestSelectionScreen> {
                           child: Text(
                             "Save Interest",
                             style: TextStyle(
+                              fontSize: 16,
                               color: AppColors.whiteColor,
                               fontWeight: FontWeight.bold,
                             ),

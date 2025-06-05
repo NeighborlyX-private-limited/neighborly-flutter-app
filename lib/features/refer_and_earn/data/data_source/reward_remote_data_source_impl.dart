@@ -145,7 +145,12 @@ class RewardRemoteDataSourceImpl implements RewardRemoteDataSource {
     // var city = ShardPrefHelper.getCurrentCity();
 
     // //String cookieHeader = cookies.join('; '); cookies.join('; ');
-    String url = '$kBaseUrl/invite?inviteCode=$inviteCode';
+    String url = '';
+    if (inviteCode == '') {
+      url = '$kBaseUrl/invite';
+    } else {
+      url = '$kBaseUrl/invite?inviteCode=$inviteCode';
+    }
     final response = await client.get(
       Uri.parse(url),
       headers: <String, String>{

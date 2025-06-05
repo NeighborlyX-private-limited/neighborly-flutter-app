@@ -51,6 +51,9 @@ class ChatGroupCubit extends Cubit<ChatGroupState> {
     socketService.messageDeleted = (messageId) {
       updateMessage(messageId);
     };
+    // socketService.DmMessageDeletedBySender = (messageId) {
+    //   updateMessage(messageId);
+    // };
 
     // UPDATE MESSAGE LIST AFTER RECEIVING A NEW MESSAGE
     socketService.onNewMessageReceived = (message) {

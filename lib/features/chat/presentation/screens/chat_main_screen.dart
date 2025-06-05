@@ -158,12 +158,18 @@ class _ChatMainScreenState extends State<ChatMainScreen> {
             child: ListView.builder(
               itemCount: state.rooms.length,
               itemBuilder: ((context, index) {
+                print(state.rooms.length);
                 return ChatTileWidget(
                   room: state.rooms[index],
                   onTap: (selectedRoom) {
-                    if (!selectedRoom.isGroup) {
+                    if (!selectedRoom.isGroup &&
+                        selectedRoom.name != '[deleted]') {
                       context.push(
-                        '/chat/private/${state.rooms[index].id}',
+                        '/chat-private/${state.rooms[index].id}',
+                        extra: {
+                          'profilePic': state.rooms[index].avatarUrl,
+                          'userName': state.rooms[index].name,
+                        },
                       );
                     } else {
                       context.push(

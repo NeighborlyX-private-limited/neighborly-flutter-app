@@ -103,12 +103,14 @@ class ChatMessageResponse extends ChatMessageResponseEntity {
     required super.isDeletedByReciever,
     required super.isSender,
     required super.createdAt,
+    required super.mediaLink,
+    super.replyTo,
   });
 
   @override
   @override
   String toString() {
-    return 'ChatMessageResponse(id: $id, chatId: $chatId, senderId: $senderId, message: $message, isRead: $isRead, isDeletedBySender: $isDeletedBySender, isDeletedByReciever: $isDeletedByReciever, isSender: $isSender)';
+    return 'ChatMessageResponse(id: $id, chatId: $chatId, senderId: $senderId, message: $message, isRead: $isRead, isDeletedBySender: $isDeletedBySender, isDeletedByReciever: $isDeletedByReciever, isSender: $isSender,replyTo:$replyTo,mediaLink:$mediaLink)';
   }
 
   /// Helper function to extract all numbers from a string and concatenate them into a single number
@@ -169,13 +171,13 @@ class ChatMessageResponse extends ChatMessageResponseEntity {
       chatId: chatId ?? this.chatId,
       senderId: senderId ?? this.senderId,
       message: message ?? this.message,
-      // mediaLink: mediaLink ?? this.mediaLink,
+      mediaLink: mediaLink ?? this.mediaLink,
       isRead: isRead ?? this.isRead,
       isDeletedBySender: isDeletedBySender ?? this.isDeletedBySender,
       isDeletedByReciever: isDeletedByReciever ?? this.isDeletedByReciever,
       isSender: isSender ?? this.isSender,
       createdAt: createdAt ?? this.createdAt,
-      // replyTo: replyTo ?? this.replyTo,
+      replyTo: replyTo ?? this.replyTo,
     );
   }
 
@@ -186,13 +188,13 @@ class ChatMessageResponse extends ChatMessageResponseEntity {
       'chatId': chatId,
       'senderId': senderId,
       'message': message,
-      // 'mediaLink': mediaLink,
+      'mediaLink': mediaLink,
       'isRead': isRead,
       'isDeletedBySender': isDeletedBySender,
       'isDeletedByReciever': isDeletedByReciever,
       'isSender': isSender,
       'createdAt': createdAt,
-      // 'replyTo': replyTo?.toMap(),
+      'replyTo': replyTo?.toMap(),
     };
   }
 
@@ -203,15 +205,15 @@ class ChatMessageResponse extends ChatMessageResponseEntity {
       chatId: map['chatId'] ?? '',
       senderId: map['senderId'] ?? '',
       message: map['message'] ?? '',
-      // mediaLink: map['mediaLink'],
+      mediaLink: map['mediaLink'],
       isRead: map['isRead'] ?? false,
       isDeletedBySender: map['isDeletedBySender'] ?? false,
       isDeletedByReciever: map['isDeletedByReciever'] ?? false,
       isSender: map['isSender'] ?? false,
       createdAt: map['createdAt'],
-      // replyTo: map['replyTo'] != null
-      //     ? MessageReplyModel.fromMap(map['replyTo'])
-      //     : null,
+      replyTo: map['replyTo'] != null
+          ? MessageReplyModel.fromMap(map['replyTo'])
+          : null,
     );
   }
 

@@ -63,7 +63,7 @@ class EditInterestScreenState extends State<EditInterestScreen> {
         backgroundColor: AppColors.lightBackgroundColor,
         shadowColor: AppColors.blackColor,
         // foregroundColor: Colors.black,
-        title: Text("Your Interests"),
+        title: Text("Your Interests,"),
         actions: [
           BlocConsumer<SaveInterestBloc, SaveInterestState>(
             listener: (context, state) {
@@ -77,29 +77,32 @@ class EditInterestScreenState extends State<EditInterestScreen> {
               if (state is SaveInterestLoadingState) {
                 return CustomCircularIndicator();
               }
-              return TextButton(
-                onPressed: isButtonActive
-                    ? () {
-                        context.read<SaveInterestBloc>().add(
-                              SaveUserInterestEvent(
-                                userInterests: selectedCategories.toList(),
-                              ),
-                            );
-
-                        print("Selected Categories: $selectedCategories");
-                      }
-                    // ? () {
-                    //     print('selectedCategories: $selectedCategories');
-                    //     // Navigator.pop(context, selectedCategories.toList());
-                    //   }
-                    : null,
-                child: Text(
-                  "Save",
-                  style: TextStyle(
-                    color: isButtonActive
-                        ? AppColors.primaryColor
-                        : AppColors.greyColor,
-                    fontWeight: FontWeight.bold,
+              return Builder(
+                builder: (context) => TextButton(
+                  onPressed: isButtonActive
+                      ? () {
+                          context.read<SaveInterestBloc>().add(
+                                SaveUserInterestEvent(
+                                  userInterests: selectedCategories.toList(),
+                                ),
+                              );
+                          print("Selected Categories: $selectedCategories");
+                        }
+                      : () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('Please select at least 3 category'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                  child: Text(
+                    "Save",
+                    style: TextStyle(
+                      color: AppColors.primaryColor,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               );

@@ -217,6 +217,7 @@ class DiscoverScreenState extends State<DiscoverScreen> {
         }
       },
       child: Scaffold(
+        backgroundColor: AppColors.whiteColor,
         appBar: AppBar(
           // leading: SvgPicture.asset(
           //   'assets/logo.svg',
@@ -225,10 +226,10 @@ class DiscoverScreenState extends State<DiscoverScreen> {
           //   color: AppColors.blueColor,
           // ),
           automaticallyImplyLeading: false,
-          surfaceTintColor: AppColors.whiteColor,
-          elevation: 1, // Increase for deeper shadow
-          backgroundColor: AppColors.lightBackgroundColor,
-          shadowColor: AppColors.blackColor,
+          //surfaceTintColor: AppColors.whiteColor,
+          //elevation: 0, // Increase for deeper shadow
+          backgroundColor: AppColors.whiteColor,
+          //shadowColor: AppColors.blackColor,
           title: Row(
             children: [
               SvgPicture.asset(
@@ -236,15 +237,22 @@ class DiscoverScreenState extends State<DiscoverScreen> {
                 width: 24,
                 height: 24,
               ),
-              SizedBox(
-                width: 16,
-              ),
-              Text(
-                "Connect with Neighbours",
-                style: TextStyle(fontSize: 18),
-              ),
             ],
           ),
+          actions: [
+            // CHAT BUTTON
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: InkWell(
+                onTap: () {
+                  context.push('/chat');
+                },
+                child: CircularSvgImage(
+                  assetPath: AppImages.chatIcon,
+                ),
+              ),
+            ),
+          ],
         ),
         body: BlocBuilder<NearbyUserBloc, NearbyUserState>(
           builder: (BuildContext context, state) {
@@ -253,104 +261,130 @@ class DiscoverScreenState extends State<DiscoverScreen> {
             }
 
             if (state is NearbyUserSuccessState) {
-              return ListView.builder(
+              return Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: state.nearbyUser.length,
-                itemBuilder: (context, index) {
-                  var user = state.nearbyUser[index];
-                  bool showMore = showMoreMap[user.username] ?? false;
-                  int maxTags = 3;
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: AppColors.lightGreyColor,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // User Info
-                        ListTile(
-                          leading: CircleAvatar(
-                            backgroundImage: NetworkImage(user.picture),
-                            radius: 24,
-                          ),
-                          title: Text(
-                            user.username,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Text(
-                            '${user.distance.toInt()} KM (Approx.)',
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                          trailing: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedUser = user;
-                              });
-                              context
-                                  .read<CreateDmBloc>()
-                                  .add(CreateNewDmEvent(userId: user.id));
-                            },
-                            child: SvgPicture.asset(AppImages.blueChatIcon),
-                          ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 10.0),
+                      child: Text(
+                        "Connect with Neighbours",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: state.nearbyUser.length,
+                        itemBuilder: (context, index) {
+                          var user = state.nearbyUser[index];
+                          bool showMore = showMoreMap[user.username] ?? false;
+                          int maxTags = 3;
 
-                        const SizedBox(height: 8),
-
-                        // Interests
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            left: 12,
-                            right: 12,
-                            bottom: 12,
-                          ),
-                          child: Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
-                            children: [
-                              ...user.interests
-                                  .take(showMore
-                                      ? user.interests.length
-                                      : maxTags)
-                                  .map((interest) => InterestChip(interest)),
-                              if (user.interests.length > maxTags)
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      showMoreMap[user.username] = !showMore;
-                                    });
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                          color: AppColors.primaryColor),
-                                    ),
-                                    child: Text(
-                                      showMore ? "Show less" : "Show more",
-                                      style: const TextStyle(
-                                        color: AppColors.primaryColor,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: AppColors.lightGreyColor,
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // User Info
+                                ListTile(
+                                  leading: CircleAvatar(
+                                    backgroundImage: NetworkImage(user.picture),
+                                    radius: 24,
+                                  ),
+                                  title: Text(
+                                    user.username,
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Text(
+                                    '${user.distance.toInt()} KM (Approx.)',
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                  trailing: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedUser = user;
+                                      });
+                                      context.read<CreateDmBloc>().add(
+                                          CreateNewDmEvent(userId: user.id));
+                                    },
+                                    child: SvgPicture.asset(
+                                        AppImages.blueChatIcon),
                                   ),
                                 ),
-                            ],
-                          ),
-                        ),
-                      ],
+
+                                const SizedBox(height: 8),
+
+                                // Interests
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                    left: 12,
+                                    right: 12,
+                                    bottom: 12,
+                                  ),
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      ...user.interests
+                                          .take(showMore
+                                              ? user.interests.length
+                                              : maxTags)
+                                          .map((interest) =>
+                                              InterestChip(interest)),
+                                      if (user.interests.length > maxTags)
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              showMoreMap[user.username] =
+                                                  !showMore;
+                                            });
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 6),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              border: Border.all(
+                                                  color:
+                                                      AppColors.primaryColor),
+                                            ),
+                                            child: Text(
+                                              showMore
+                                                  ? "Show less"
+                                                  : "Show more",
+                                              style: const TextStyle(
+                                                color: AppColors.primaryColor,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  );
-                },
+                  ],
+                ),
               );
             }
 
