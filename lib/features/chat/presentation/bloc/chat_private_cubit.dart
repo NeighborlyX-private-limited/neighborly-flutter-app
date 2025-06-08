@@ -52,9 +52,10 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     };
     socketService.onNewDmMessageReceived = (message) {
       print('this is new dm: $message');
+      print('this is new dm: ${message['_id']}');
       ChatMessageResponse chatmodel = ChatMessageResponse.fromJsonList([
         {
-          'id': message['_id'],
+          '_id': message['_id'],
           'chatId': message['chatId'],
           'senderId': message['senderId'],
           'message': message['message'],
@@ -147,6 +148,7 @@ class ChatPrivateCubit extends Cubit<ChatPrivateState> {
     List<ChatMessageResponse> oldMessages =
         List<ChatMessageResponse>.from(state.messages);
     print('old: ${state.messages}');
+    print('new one: ${newMessage}');
 
     final updatedMessageList = [
       ...[newMessage],

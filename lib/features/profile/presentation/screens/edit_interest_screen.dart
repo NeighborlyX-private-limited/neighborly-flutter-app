@@ -63,7 +63,7 @@ class EditInterestScreenState extends State<EditInterestScreen> {
         backgroundColor: AppColors.lightBackgroundColor,
         shadowColor: AppColors.blackColor,
         // foregroundColor: Colors.black,
-        title: Text("Your Interests,"),
+        title: Text("Your Interests"),
         actions: [
           BlocConsumer<SaveInterestBloc, SaveInterestState>(
             listener: (context, state) {

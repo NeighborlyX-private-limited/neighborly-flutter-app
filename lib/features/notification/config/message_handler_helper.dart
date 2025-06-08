@@ -8,6 +8,16 @@ class MessageHandlerHelper {
     required this.messageData,
   });
   void doTheJump() {
+    if (messageData['dmId'] != null) {
+      router.push(
+        '/chat-private/${messageData['dmId']}',
+        extra: {
+          'profilePic': messageData['dmUserName'] ?? '',
+          'userName': messageData['dmUserProfile'] ?? '',
+        },
+      );
+      return;
+    }
     // context.push
     print('message data: $messageData');
     String? cookies = ShardPrefHelper.getCookie();
