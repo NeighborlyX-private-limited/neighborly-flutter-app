@@ -724,6 +724,7 @@ class _DMScreenState extends State<DMScreen> {
               leading: Icon(Icons.delete),
               title: Text('Delete Message'),
               onTap: () {
+                print('this is msg id: $messageId');
                 // context.read<ChatGroupCubit>().deleteMessage(
                 //       groupId: widget.roomId,
                 //       messageId: messageId,

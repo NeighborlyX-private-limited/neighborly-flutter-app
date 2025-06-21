@@ -6,8 +6,11 @@ import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
 import 'package:share_it/share_it.dart';
 
+import '../../../../core/constants/app_images.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
+import '../../../../core/widgets/custom_snackbar.dart';
+import '../../../chat/presentation/bloc/dm/create_dm_bloc.dart';
 import '../bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import '../widgets/comments_section.dart';
 import '../widgets/posts_section.dart';
@@ -110,7 +113,12 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                         actions: [
                           IconButton(
                             onPressed: () {
-                              _showBottomSheet(context);
+                              _showBottomSheet(
+                                context,
+                                state.profile.username,
+                                state.profile.username,
+                                state.profile.username,
+                              );
                             },
                             icon: const Icon(
                               Icons.more_vert,
@@ -278,7 +286,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
     );
   }
 
-  void _showBottomSheet(BuildContext context) {
+  void _showBottomSheet(
+      BuildContext context, String userName, String userPic, String userId) {
     showModalBottomSheet(
       useRootNavigator: true,
       context: context,
@@ -328,18 +337,48 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 ),
               ),
               const SizedBox(height: 4),
-              InkWell(
-                onTap: () {},
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SvgPicture.asset('assets/block.svg'),
-                    const SizedBox(width: 10),
-                    Text(AppLocalizations.of(context)!.block,
-                        style: redOnboardingBody1Style),
-                    // Text('Block', style: redOnboardingBody1Style),
-                  ],
-                ),
+              // BlocListener<CreateDmBloc, CreateDmState>(
+
+              BlocConsumer<CreateDmBloc, CreateDmState>(
+                listener: (context, state) {
+                  if (state is CreateDmSuccessState) {
+                    context.push(
+                      '/chat-private/${state.chatId}',
+                      extra: {
+                        'profilePic': userPic,
+                        'userName': userName,
+                      },
+                    );
+                  } else if (state is CreateDmFailureState) {
+                    showSnackBar(context: context, message: state.error);
+                  }
+                },
+                builder: (context, state) {
+                  if (state is CreateDmLoadingState) {
+                    CircularProgressIndicator();
+                  }
+                  return InkWell(
+                    onTap: () {
+                      context
+                          .read<CreateDmBloc>()
+                          .add(CreateNewDmEvent(userId: userId));
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SvgPicture.asset(AppImages.chatIcon),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Message',
+                          style: TextStyle(
+                            color: AppColors.blackColor,
+                          ),
+                        ),
+                        // Text('Block', style: redOnboardingBody1Style),
+                      ],
+                    ),
+                  );
+                },
               ),
             ],
           ),
