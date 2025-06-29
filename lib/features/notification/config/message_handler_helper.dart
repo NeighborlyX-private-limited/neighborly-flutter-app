@@ -12,8 +12,8 @@ class MessageHandlerHelper {
       router.push(
         '/chat-private/${messageData['dmId']}',
         extra: {
-          'profilePic': messageData['dmUserName'] ?? '',
-          'userName': messageData['dmUserProfile'] ?? '',
+          'profilePic': messageData['dmUserProfile'] ?? '',
+          'userName': messageData['dmUserName'] ?? '',
         },
       );
       return;

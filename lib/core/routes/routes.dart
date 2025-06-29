@@ -81,6 +81,7 @@ String setInitialLocation() {
   print('authType:$authType');
   // IF COOKIE NOT FOUND
   if (cookies == null || cookies!.isEmpty) {
+    return '/invite';
     return '/';
   }
   // IS PHONE LOGIN

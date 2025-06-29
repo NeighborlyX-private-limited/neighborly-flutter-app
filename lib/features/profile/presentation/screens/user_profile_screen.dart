@@ -116,8 +116,8 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                               _showBottomSheet(
                                 context,
                                 state.profile.username,
-                                state.profile.username,
-                                state.profile.username,
+                                state.profile.picture,
+                                state.profile.id,
                               );
                             },
                             icon: const Icon(

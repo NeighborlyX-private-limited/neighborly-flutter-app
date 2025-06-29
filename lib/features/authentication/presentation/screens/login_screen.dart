@@ -102,7 +102,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       bool isViewedTutorial =
                           ShardPrefHelper.getIsViewedTutorial();
                       if (!isSkippedTutorial && !isViewedTutorial) {
-                        context.go('/tutorialScreen');
+                        context.go('/invite');
+                        //context.go('/tutorialScreen');
                       } else {
                         context.go('/home');
                       }

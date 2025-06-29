@@ -60,7 +60,7 @@ Don't miss out — it's quick, easy, and totally worth it!
             children: [
               ListTile(
                 leading: const Icon(Icons.monetization_on),
-                title: const Text('Withdraw Your Reward ammount'),
+                title: const Text('Withdraw Your Reward amount'),
                 onTap: () {
                   Navigator.pop(context);
                   showWithdrawBottomSheet(context); // Navigate

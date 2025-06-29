@@ -23,16 +23,11 @@ class EditInterestScreenState extends State<EditInterestScreen> {
 
   @override
   void initState() {
+    print('selectedCategories $selectedCategories');
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<InterestBloc>().add(FeatchInterestEvent());
     });
-    // setUserInterest();
-  }
-
-  setUserInterest() async {
-    List<String> interests = await ShardPrefHelper.getUserInterests();
-    selectedCategories = interests.toSet();
   }
 
   void toggleCategory(String category) {
@@ -47,22 +42,19 @@ class EditInterestScreenState extends State<EditInterestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isButtonActive = selectedCategories.length >= 3;
-
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context); // Go back
+            Navigator.pop(context);
           },
         ),
         surfaceTintColor: AppColors.whiteColor,
-        elevation: 2, // Increase for deeper shadow
+        elevation: 2,
         backgroundColor: AppColors.lightBackgroundColor,
         shadowColor: AppColors.blackColor,
-        // foregroundColor: Colors.black,
         title: Text("Your Interests"),
         actions: [
           BlocConsumer<SaveInterestBloc, SaveInterestState>(
@@ -79,7 +71,7 @@ class EditInterestScreenState extends State<EditInterestScreen> {
               }
               return Builder(
                 builder: (context) => TextButton(
-                  onPressed: isButtonActive
+                  onPressed: selectedCategories.length >= 3
                       ? () {
                           context.read<SaveInterestBloc>().add(
                                 SaveUserInterestEvent(
@@ -89,6 +81,9 @@ class EditInterestScreenState extends State<EditInterestScreen> {
                           print("Selected Categories: $selectedCategories");
                         }
                       : () {
+                          print(
+                              'selectedCategories ${selectedCategories.length}');
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content:
@@ -114,6 +109,8 @@ class EditInterestScreenState extends State<EditInterestScreen> {
         listener: (context, state) {
           if (state is InterestSuccessState) {
             selectedCategories.addAll(state.interests.userInterests.toList());
+            setState(() {});
+            print('selectedCategories $selectedCategories');
           }
         },
         builder: (context, state) {
