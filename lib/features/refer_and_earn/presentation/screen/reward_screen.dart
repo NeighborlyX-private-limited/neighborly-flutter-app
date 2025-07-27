@@ -13,6 +13,7 @@ import '../../../../core/utils/device.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/reward_bloc.dart';
 import '../bloc/withdraw_event.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RewardScreen extends StatefulWidget {
   const RewardScreen({super.key});
@@ -60,7 +61,9 @@ Don't miss out — it's quick, easy, and totally worth it!
             children: [
               ListTile(
                 leading: const Icon(Icons.monetization_on),
-                title: const Text('Withdraw Your Reward amount'),
+                title: Text(AppLocalizations.of(context)!.withdraw_reward_amount
+                    // 'Withdraw Your Reward amount'
+                    ),
                 onTap: () {
                   Navigator.pop(context);
                   showWithdrawBottomSheet(context); // Navigate
@@ -77,7 +80,10 @@ Don't miss out — it's quick, easy, and totally worth it!
               // ),
               ListTile(
                 leading: const Icon(Icons.history),
-                title: const Text('Withdrawal Request History'),
+                title: Text(
+                    AppLocalizations.of(context)!.withdrawal_request_history
+                    //'Withdrawal Request History'
+                    ),
                 onTap: () {
                   Navigator.pop(context);
                   context.push('/reward-history'); // Navigate
@@ -193,7 +199,10 @@ Don't miss out — it's quick, easy, and totally worth it!
                                         ),
                                       );
                                 },
-                                child: const Text('Withdraw'),
+                                child:
+                                    Text(AppLocalizations.of(context)!.withdraw
+                                        // 'Withdraw'
+                                        ),
                               ),
                       ],
                     );
@@ -217,7 +226,10 @@ Don't miss out — it's quick, easy, and totally worth it!
             Navigator.pop(context); // Go back
           },
         ),
-        title: Text("Reward & Referral Details"),
+        title: Text(
+          AppLocalizations.of(context)!.rewards_and_referral_details,
+          // "Reward & Referral Details"
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.more_vert),
@@ -284,7 +296,8 @@ Don't miss out — it's quick, easy, and totally worth it!
                   const SizedBox(height: 8),
                   Center(
                     child: Text(
-                      'Invite friends',
+                      AppLocalizations.of(context)!.invite_friends,
+                      //'Invite friends',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -294,14 +307,16 @@ Don't miss out — it's quick, easy, and totally worth it!
                   const SizedBox(height: 8),
                   Center(
                     child: Text(
-                      'Copy your code, share it with your friends.',
+                      ' ${AppLocalizations.of(context)!.copy_your_code}, ${AppLocalizations.of(context)!.share_with_friends}',
+                      // 'Copy your code, share it with your friends.',
                       style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                     ),
                   ),
                   const SizedBox(height: 16),
                   Center(
                     child: Text(
-                      'Your personal code',
+                      AppLocalizations.of(context)!.your_personal_code,
+                      //'Your personal code',
                       style: TextStyle(fontSize: 16, color: Colors.grey[700]),
                     ),
                   ),
@@ -346,7 +361,8 @@ Don't miss out — it's quick, easy, and totally worth it!
                             ),
                           ),
                           child: Text(
-                            'Copy',
+                            AppLocalizations.of(context)!.copy,
+                            // 'Copy',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
@@ -415,7 +431,8 @@ Don't miss out — it's quick, easy, and totally worth it!
                   //   ),
                   // ),
                   SizedBox(height: 16),
-                  Text("Statistics",
+                  Text(AppLocalizations.of(context)!.statistics,
+                      //"Statistics",
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 8),
                   ListTile(
@@ -424,7 +441,10 @@ Don't miss out — it's quick, easy, and totally worth it!
                           50), // Large value for circular feel
                     ),
                     tileColor: AppColors.lightBackgroundColor,
-                    title: Text('Total Rewards'),
+                    title: Text(
+                      AppLocalizations.of(context)!.total_rewards,
+                      //'Total Rewards'
+                    ),
                     trailing: Text(data.totalRewardReceived.toString(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
@@ -436,7 +456,10 @@ Don't miss out — it's quick, easy, and totally worth it!
                           50), // Large value for circular feel
                     ),
                     tileColor: AppColors.lightBackgroundColor,
-                    title: Text('Withdrawable amount'),
+                    title: Text(
+                      AppLocalizations.of(context)!.withdrawable_amount,
+                      //'Withdrawable amount'
+                    ),
                     trailing: Text(data.withdrawableReward.toString(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
@@ -450,7 +473,8 @@ Don't miss out — it's quick, easy, and totally worth it!
                       title: Text("Referred by ${data.referrer!.username}"),
                     ),
                   Divider(),
-                  Text("Users You Referred",
+                  Text(AppLocalizations.of(context)!.users_you_referred,
+                      //"Users You Referred",
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   ...data.usersReferred.map((user) => ListTile(
                         shape: RoundedRectangleBorder(

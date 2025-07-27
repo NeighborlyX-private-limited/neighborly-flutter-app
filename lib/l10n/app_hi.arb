@@ -353,7 +353,30 @@
   "create_description":"विवरण बनाएं",
   "upload_image":"इमेज अपलोड करो",
 
-  "change_location": "लोकेशन बदलें"
+  "change_location": "लोकेशन बदलें",
+
+
+   "refer_and_earn": "रेफ़र करें और कमाएं",
+  "your_interests": "आपकी रुचियां",
+  "save": "सेव करें",
+  "rewards_and_referral_details": "इनाम और रेफरल विवरण",
+  "invite_friends": "मित्रों को आमंत्रित करें",
+  "copy_your_code": "अपना कोड कॉपी करें",
+  "share_with_friends": "अपने दोस्तों के साथ साझा करें",
+  "your_personal_code": "आपका व्यक्तिगत कोड",
+  "statistics": "आँकड़े",
+  "total_rewards": "कुल इनाम",
+  "withdrawable_amount": "निकाली जा सकने वाली राशि",
+  "users_you_referred": "आपके द्वारा रेफ़र किए गए उपयोगकर्ता",
+  "copy": "कॉपी करें",
+  "withdraw_reward_amount": "अपनी इनाम राशि निकालें",
+  "withdrawal_request_history": "निकासी अनुरोध इतिहास",
+  "withdraw": "निकालें",
+  "no_reward_history": "कोई इनाम इतिहास उपलब्ध नहीं है",
+  "reward_history": "इनाम इतिहास",
+  "discover": "खोजें",
+  "connect_with_neighbors": "पड़ोसियों से जुड़ें",
+  "chat": "चैट"
 }
 
 

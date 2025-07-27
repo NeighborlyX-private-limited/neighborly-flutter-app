@@ -260,7 +260,7 @@ class SocketService {
           // leaveDm(chatId);
         } else {
           // print( ${data['message']}');
-          print('fail');
+          print('fail to join dm');
         }
       });
 

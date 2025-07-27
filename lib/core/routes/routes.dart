@@ -81,7 +81,7 @@ String setInitialLocation() {
   print('authType:$authType');
   // IF COOKIE NOT FOUND
   if (cookies == null || cookies!.isEmpty) {
-    return '/invite';
+    // return '/invite'
     return '/';
   }
   // IS PHONE LOGIN
@@ -233,18 +233,13 @@ final GoRouter router = GoRouter(
     ),
     GoRoute(
       path: '/post-detail/:postId',
-      // path: '/post-detail/:postId/:isPost/:userId/:commentId',
       name: RouteConstants.postDetailScreenRouteName,
       builder: (BuildContext context, GoRouterState state) {
+        print('ok this is called');
         final String postId = state.pathParameters['postId']!;
-        // final bool isPost = state.pathParameters['isPost'] == 'true';
-        // final String userId = state.pathParameters['userId']!;
-        final String commentId = state.pathParameters['commentId'] ?? '0';
+
         return PostDetailScreen(
           postId: postId,
-          //isPost: isPost,
-          //userId: userId,
-          // commentId: commentId,
         );
       },
     ),
@@ -337,11 +332,14 @@ final GoRouter router = GoRouter(
 
         final profilePic = extra?['profilePic'] ?? '';
         final userName = extra?['userName'] ?? '';
+        final isBack = extra?['isBack'] ?? false;
+        print('what is isback: $isBack');
 
         return DMScreen(
           chatId: chatId,
           profilePic: profilePic,
           userNmae: userName,
+          isBack: isBack, // Default if not passed
         );
       },
     ),
@@ -355,12 +353,16 @@ final GoRouter router = GoRouter(
       path: '/group-chat/:roomId',
       builder: (context, state) {
         String roomId = state.pathParameters["roomId"] as String;
+        final isBack =
+            state.uri.queryParameters['isBack'] == 'true'; // default is false
         // final extra = state.extra as Map?;
+        print('what is group os back: $isBack');
 
         // final ChatRoomModel chatRoom = extra!['chatModel'];
 
         return ChatGroupScreen(
           roomId: roomId,
+          isBack: isBack,
           //chatRoom: chatRoom,
         );
       },
@@ -531,6 +533,7 @@ final GoRouter router = GoRouter(
     ),
   ],
   errorPageBuilder: (context, state) {
+    print('this si called why ${state.error})');
     return MaterialPage(
       key: state.pageKey,
       child: NotFoundWidget(),

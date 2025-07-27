@@ -38,10 +38,12 @@ import '../widgets/media_message_widget.dart';
 
 class ChatGroupScreen extends StatefulWidget {
   final String roomId;
+  final bool isBack;
 
   const ChatGroupScreen({
     super.key,
     required this.roomId,
+    this.isBack = false,
   });
 
   @override
@@ -289,7 +291,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
       onPopInvokedWithResult: (didPop, result) {
         context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
         if (context.mounted) {
-          Navigator.pop(context);
+          if (widget.isBack) {
+            context.go('/home');
+          } else {
+            Navigator.pop(context);
+          }
         }
       },
       child: BlocConsumer<CommunityDetailsCubit, CommunityDetailsState>(
@@ -616,7 +622,7 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
                         ),
                       ),
 
-                    messageInputSection(),
+                    SafeArea(child: messageInputSection()),
                   ],
                 );
               },
@@ -676,7 +682,11 @@ class _ChatGroupScreenState extends State<ChatGroupScreen> {
             // context.pop();
             context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
             if (context.mounted) {
-              Navigator.pop(context);
+              if (widget.isBack) {
+                context.go('/home');
+              } else {
+                Navigator.pop(context);
+              }
             }
           },
         ),

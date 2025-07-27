@@ -81,6 +81,59 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     super.dispose();
   }
 
+  void _showImagePopup(BuildContext context, String imageUrl) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true, // Very important: allows outside tap to close
+      barrierLabel: "ImagePopup",
+      pageBuilder: (context, animation1, animation2) {
+        return GestureDetector(
+          onTap: () => Navigator.of(context).pop(), // Tap outside closes popup
+          child: Scaffold(
+            backgroundColor: Colors.black45,
+            body: Center(
+              child: GestureDetector(
+                onTap: () {}, // Prevent closing when tapping inside popup
+                child: Container(
+                  height: screenHeight * 0.5,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
+                      errorBuilder: (context, error, _) => const Center(
+                        child: Icon(Icons.broken_image),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return FadeTransition(
+          opacity: anim1,
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200),
+    );
+  }
+
   // FEATCH POST AND COMMENTS OF THAT POST
   void _fetchPostAndComments() {
     final postId = int.parse(widget.postId);
@@ -620,31 +673,36 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: CachedNetworkImage(
-                    imageUrl: postState.post.multimedia![0],
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    placeholder: (context, url) => Center(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 125),
-                        height: 300,
+                child: InkWell(
+                  onTap: () {
+                    _showImagePopup(context, postState.post.multimedia![0]);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: CachedNetworkImage(
+                      imageUrl: postState.post.multimedia![0],
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      placeholder: (context, url) => Center(
                         child: Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          padding: EdgeInsets.all(10),
-                          height: 50,
-                          width: 50,
-                          child: CircularProgressIndicator(
-                            color: AppColors.primaryColor,
-                            strokeWidth: 2,
+                          padding: EdgeInsets.symmetric(vertical: 125),
+                          height: 300,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            padding: EdgeInsets.all(10),
+                            height: 50,
+                            width: 50,
+                            child: CircularProgressIndicator(
+                              color: AppColors.primaryColor,
+                              strokeWidth: 2,
+                            ),
                           ),
                         ),
                       ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
               )
@@ -1413,23 +1471,28 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ? Container(
                 decoration:
                     BoxDecoration(borderRadius: BorderRadius.circular(8)),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
-                  child: CachedNetworkImage(
-                    imageUrl: post.multimedia![0],
-                    fit: BoxFit.contain,
-                    width: double.infinity,
-                    placeholder: (context, url) => Center(
-                      child: SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                          color: AppColors.primaryColor,
-                          strokeWidth: 2,
+                child: InkWell(
+                  onTap: () {
+                    _showImagePopup(context, post.multimedia![0]);
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: CachedNetworkImage(
+                      imageUrl: post.multimedia![0],
+                      fit: BoxFit.contain,
+                      width: double.infinity,
+                      placeholder: (context, url) => Center(
+                        child: SizedBox(
+                          height: 16,
+                          width: 16,
+                          child: CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                            strokeWidth: 2,
+                          ),
                         ),
                       ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
                     ),
-                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
               )

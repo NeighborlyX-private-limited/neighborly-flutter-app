@@ -317,8 +317,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       width: 10,
                     ),
                     Text(
-                      // AppLocalizations.of(context)!.find_me,
-                      'Your interests',
+                      AppLocalizations.of(context)!.your_interests,
+                      //'Your interests',
                       style: blackonboardingBody1Style,
                     ),
                   ],
@@ -365,8 +365,10 @@ class _SettingScreenState extends State<SettingScreen> {
                       width: 10,
                     ),
                     Text(
-                      // AppLocalizations.of(context)!.support_and_feedback,
-                      'Refer and earn',
+                      //'',
+                      //''AppLo
+                      AppLocalizations.of(context)!.refer_and_earn,
+                      // 'Refer and earn',
                       style: blackonboardingBody1Style,
                     ),
                   ],
@@ -550,70 +552,72 @@ class _SettingScreenState extends State<SettingScreen> {
       showDragHandle: true,
       useRootNavigator: true,
       builder: (BuildContext context) {
-        return Container(
-          height: 160,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                AppLocalizations.of(context)!
-                    .leaving_so_soon_confirm_if_you_want_to_logout,
-                style: blackonboardingBody1Style,
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  ButtonWidget(
-                    color: AppColors.lightBackgroundColor,
-                    text: AppLocalizations.of(context)!.cancel,
-                    textColor: AppColors.blackColor,
-                    onTapListener: () {
-                      context.pop();
-                    },
-                    isActive: true,
-                  ),
-                  BlocConsumer<LogoutBloc, LogoutState>(
-                    listener: (context, state) {
-                      // FAILURE STATE
-                      if (state is LogoutFailureState) {
-                        showSnackBar(context: context, message: state.error);
-                      }
-                      // SUCCESS STATE
-                      if (state is LogoutSuccessState) {
-                        ShardPrefHelper.removeCookie();
-                        context.go('/');
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state is LogoutLoadingState) {
-                        return const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CustomCircularIndicator(),
-                          ],
+        return SafeArea(
+          child: Container(
+            height: 160,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!
+                      .leaving_so_soon_confirm_if_you_want_to_logout,
+                  style: blackonboardingBody1Style,
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    ButtonWidget(
+                      color: AppColors.lightBackgroundColor,
+                      text: AppLocalizations.of(context)!.cancel,
+                      textColor: AppColors.blackColor,
+                      onTapListener: () {
+                        context.pop();
+                      },
+                      isActive: true,
+                    ),
+                    BlocConsumer<LogoutBloc, LogoutState>(
+                      listener: (context, state) {
+                        // FAILURE STATE
+                        if (state is LogoutFailureState) {
+                          showSnackBar(context: context, message: state.error);
+                        }
+                        // SUCCESS STATE
+                        if (state is LogoutSuccessState) {
+                          ShardPrefHelper.removeCookie();
+                          context.go('/');
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state is LogoutLoadingState) {
+                          return const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CustomCircularIndicator(),
+                            ],
+                          );
+                        }
+                        return ButtonWidget(
+                          color: AppColors.redColor,
+                          text: AppLocalizations.of(context)!.logout,
+                          textColor: AppColors.whiteColor,
+                          onTapListener: () {
+                            context.read<LogoutBloc>().add(
+                                  LogoutButtonPressedEvent(),
+                                );
+                          },
+                          isActive: true,
                         );
-                      }
-                      return ButtonWidget(
-                        color: AppColors.redColor,
-                        text: AppLocalizations.of(context)!.logout,
-                        textColor: AppColors.whiteColor,
-                        onTapListener: () {
-                          context.read<LogoutBloc>().add(
-                                LogoutButtonPressedEvent(),
-                              );
-                        },
-                        isActive: true,
-                      );
-                    },
-                  ),
-                ],
-              )
-            ],
+                      },
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         );
       },

@@ -12,6 +12,7 @@ import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_pr
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/homePage/home_page.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_general_cubit.dart';
+import 'package:neighborly_flutter_app/features/posts/presentation/screens/valuable_insite_screen.dart';
 import 'package:new_version_plus/new_version_plus.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/theme/colors.dart';
@@ -353,12 +354,12 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
                 actions: [
-                  // IconButton(
-                  //   onPressed: () {
-                  //     context.push('/googleMapScreen');
-                  //   },
-                  //   icon: Icon(Icons.location_on_outlined),
-                  // ),
+                  IconButton(
+                    onPressed: () {
+                      context.push('/googleMapScreen');
+                    },
+                    icon: Icon(Icons.location_on_outlined),
+                  ),
 
                   // SEARCH ICON
 
@@ -448,45 +449,46 @@ class _HomeScreenState extends State<HomeScreen>
                   if (state is GetAllPostsSuccessState) {
                     final posts = state.post;
                     return posts.isEmpty
+                        ? ValuableInsightsScreen()
                         // 0 POST
-                        ? Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/nothing.svg',
-                                  height: 200.0,
-                                  width: 200.0,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  AppLocalizations.of(context)!
-                                      .time_to_be_the_hero_this_wall_needs_start_the,
-                                  textAlign: TextAlign.center,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.primaryColor,
-                                  ),
-                                  onPressed: () {
-                                    context.push('/create');
-                                  },
-                                  child: Text(
-                                    AppLocalizations.of(context)!.create_a_post,
-                                    style: TextStyle(
-                                      color: AppColors.whiteColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
+                        // ? Center(
+                        //     child: Column(
+                        //       mainAxisAlignment: MainAxisAlignment.center,
+                        //       crossAxisAlignment: CrossAxisAlignment.center,
+                        //       children: [
+                        //         SvgPicture.asset(
+                        //           'assets/nothing.svg',
+                        //           height: 200.0,
+                        //           width: 200.0,
+                        //         ),
+                        //         SizedBox(
+                        //           height: 10,
+                        //         ),
+                        //         Text(
+                        //           AppLocalizations.of(context)!
+                        //               .time_to_be_the_hero_this_wall_needs_start_the,
+                        //           textAlign: TextAlign.center,
+                        //         ),
+                        //         SizedBox(
+                        //           height: 10,
+                        //         ),
+                        //         ElevatedButton(
+                        //           style: ElevatedButton.styleFrom(
+                        //             backgroundColor: AppColors.primaryColor,
+                        //           ),
+                        //           onPressed: () {
+                        //             context.push('/create');
+                        //           },
+                        //           child: Text(
+                        //             AppLocalizations.of(context)!.create_a_post,
+                        //             style: TextStyle(
+                        //               color: AppColors.whiteColor,
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   )
                         // HAVE SOME POST
                         : ListView.separated(
                             controller: _scrollController,

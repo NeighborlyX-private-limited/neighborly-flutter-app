@@ -42,12 +42,14 @@ class DMScreen extends StatefulWidget {
   final String chatId;
   final String profilePic;
   final String userNmae;
+  final bool isBack;
 
   const DMScreen({
     super.key,
     required this.chatId,
     required this.profilePic,
     required this.userNmae,
+    this.isBack = false,
   });
 
   @override
@@ -92,6 +94,7 @@ class _DMScreenState extends State<DMScreen> {
   @override
   void initState() {
     super.initState();
+    print('what is here i sback:${widget.isBack}');
 
     // communityDetailCubit = BlocProvider.of<CommunityDetailsCubit>(context);
     // communityMainCubit = BlocProvider.of<CommunityMainCubit>(context);
@@ -339,7 +342,11 @@ class _DMScreenState extends State<DMScreen> {
         chatPrivateCubit.disconnectChat(widget.chatId);
         // context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
         if (context.mounted) {
-          Navigator.pop(context);
+          if (widget.isBack) {
+            context.go('/home');
+          } else {
+            Navigator.pop(context);
+          }
         }
       },
       child: BlocBuilder<ChatPrivateCubit, ChatPrivateState>(
@@ -655,7 +662,7 @@ class _DMScreenState extends State<DMScreen> {
                         ),
                       ),
 
-                    messageInputSection(),
+                    SafeArea(child: messageInputSection()),
                   ],
                 );
               },
@@ -764,7 +771,11 @@ class _DMScreenState extends State<DMScreen> {
             // context.pop();
             // context.read<ChatGroupCubit>().disconnectChat(widget.roomId);
             if (context.mounted) {
-              Navigator.pop(context);
+              if (widget.isBack) {
+                context.go('/home');
+              } else {
+                Navigator.pop(context);
+              }
             }
           },
         ),

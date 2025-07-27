@@ -31,7 +31,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.neighborlyx.neighborlysocial"
-    compileSdkVersion 34
+    compileSdkVersion 35
     ndkVersion flutter.ndkVersion
 
 
@@ -51,7 +51,7 @@ android {
     defaultConfig {
         applicationId "com.neighborlyx.neighborlysocial"
         minSdkVersion  23 
-        targetSdkVersion 34
+        targetSdkVersion 35
         compileSdkVersion 34
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()

@@ -8,6 +8,7 @@ import '../../../../core/widgets/indicator/custom_circular_progress_indicator.da
 import '../../../chat/presentation/bloc/bloc/interest_bloc.dart';
 import '../../../chat/presentation/bloc/bloc/save_interest_bloc.dart';
 import '../../../chat/presentation/bloc/bloc/save_interest_event.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditInterestScreen extends StatefulWidget {
   // final List<String> selectedInterests; // Interests from previous screen
@@ -55,7 +56,9 @@ class EditInterestScreenState extends State<EditInterestScreen> {
         elevation: 2,
         backgroundColor: AppColors.lightBackgroundColor,
         shadowColor: AppColors.blackColor,
-        title: Text("Your Interests"),
+        title: Text(AppLocalizations.of(context)!.your_interests
+            //"Your Interests"
+            ),
         actions: [
           BlocConsumer<SaveInterestBloc, SaveInterestState>(
             listener: (context, state) {
@@ -93,7 +96,8 @@ class EditInterestScreenState extends State<EditInterestScreen> {
                           );
                         },
                   child: Text(
-                    "Save",
+                    AppLocalizations.of(context)!.save,
+                    //"Save",
                     style: TextStyle(
                       color: AppColors.primaryColor,
                       fontWeight: FontWeight.bold,

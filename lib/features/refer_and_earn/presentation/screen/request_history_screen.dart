@@ -7,6 +7,7 @@ import '../bloc/request_history_bloc.dart';
 // import '../bloc/reward_history_event.dart';
 // import '../bloc/reward_history_state.dart';
 // import '../model/reward_request_history_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RewardHistoryScreen extends StatefulWidget {
   const RewardHistoryScreen({super.key});
@@ -27,7 +28,10 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reward History'),
+        title: Text(
+          AppLocalizations.of(context)!.reward_history,
+          //'Reward History'
+        ),
       ),
       body: BlocBuilder<RequestHistoryBloc, RequestHistoryState>(
         builder: (context, state) {
@@ -39,7 +43,10 @@ class _RewardHistoryScreenState extends State<RewardHistoryScreen> {
                 state.data;
 
             if (requests.requestsHistory.isEmpty) {
-              return const Center(child: Text("No reward history available."));
+              return Center(
+                  child: Text(AppLocalizations.of(context)!.no_reward_history
+                      //"No reward history available."
+                      ));
             }
 
             return ListView.separated(

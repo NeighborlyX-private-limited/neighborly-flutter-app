@@ -356,5 +356,27 @@
   "upload_image":"Upload Image",
   "create_description":"create description",
   
-  "change_location": "Change Location"
+  "change_location": "Change Location",
+
+  "refer_and_earn": "Refer and earn",
+  "your_interests": "Your interests",
+  "save": "Save",
+  "rewards_and_referral_details": "Rewards and referral details",
+  "invite_friends": "Invite friends",
+  "copy_your_code": "Copy your code",
+  "share_with_friends": "Share it with your friends",
+  "your_personal_code": "Your personal code",
+  "statistics": "Statistics",
+  "total_rewards": "Total rewards",
+  "withdrawable_amount": "Withdrawable amount",
+  "users_you_referred": "Users you referred",
+  "copy": "Copy",
+  "withdraw_reward_amount": "Withdraw your reward amount",
+  "withdrawal_request_history": "Withdrawal request history",
+  "withdraw": "Withdraw",
+  "no_reward_history": "No reward history available",
+  "reward_history": "Reward history",
+  "discover": "Discover",
+  "connect_with_neighbors": "Connect with neighbors",
+  "chat": "Chat"
 }

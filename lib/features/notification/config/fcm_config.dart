@@ -60,7 +60,7 @@ class FCMConfig extends FCMConfigInterface<AndroidNotificationDetails,
     );
 
     Future<void> handleMessage(RemoteMessage message) async {
-      print('step 3');
+      print('step 3: ${message.data}');
       MessageHandlerHelper(messageData: message.data).doTheJump();
     }
 

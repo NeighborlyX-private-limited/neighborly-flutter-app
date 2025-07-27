@@ -187,7 +187,7 @@ class _MainPageState extends State<MainPage> {
                       ),
                       BottomNavigationBarItem(
                         icon: const Icon(Icons.explore),
-                        label: 'Discover',
+                        label: AppLocalizations.of(context)!.discover,
                       ),
                       BottomNavigationBarItem(
                         icon: const Icon(Icons.person),

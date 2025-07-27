@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
+import 'package:neighborly_flutter_app/features/profile/presentation/screens/image_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -68,6 +69,63 @@ class _ProfileScreenState extends State<ProfileScreen>
       default:
         return 'assets/react7.png';
     }
+  }
+
+  void _showImagePopup(BuildContext context, String imageUrl) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true, // Very important: allows outside tap to close
+      barrierLabel: "ImagePopup",
+      pageBuilder: (context, animation1, animation2) {
+        return GestureDetector(
+          onTap: () => Navigator.of(context).pop(), // Tap outside closes popup
+          child: Scaffold(
+            backgroundColor: Colors.black45,
+            body: Center(
+              child: GestureDetector(
+                onTap: () {}, // Prevent closing when tapping inside popup
+                child: Container(
+                  height: screenHeight * 0.5,
+                  width: double.infinity,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Center(
+                        child: SizedBox(
+                          height: 26,
+                          width: 26,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.primaryColor,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return FadeTransition(
+          opacity: anim1,
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200),
+    );
   }
 
   @override
@@ -134,31 +192,40 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 Center(
                                   child: Stack(
                                     children: [
-                                      ClipOval(
-                                        child: Container(
-                                          width: 90,
-                                          height: 90,
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: CachedNetworkImage(
-                                            imageUrl: state.profile.picture,
-                                            fit: BoxFit.cover,
-                                            placeholder: (context, url) =>
-                                                Center(
-                                              child: SizedBox(
-                                                height: 26,
-                                                width: 26,
-                                                child:
-                                                    CircularProgressIndicator(
-                                                  strokeWidth: 2,
-                                                  color: AppColors.primaryColor,
+                                      InkWell(
+                                        onTap: () {
+                                          const imageUrl =
+                                              'https://images.unsplash.com/photo-1516117172878-fd2c41f4a759';
+                                          _showImagePopup(
+                                              context, state.profile.picture);
+                                        },
+                                        child: ClipOval(
+                                          child: Container(
+                                            width: 90,
+                                            height: 90,
+                                            decoration: const BoxDecoration(
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: CachedNetworkImage(
+                                              imageUrl: state.profile.picture,
+                                              fit: BoxFit.cover,
+                                              placeholder: (context, url) =>
+                                                  Center(
+                                                child: SizedBox(
+                                                  height: 26,
+                                                  width: 26,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    strokeWidth: 2,
+                                                    color:
+                                                        AppColors.primaryColor,
+                                                  ),
                                                 ),
                                               ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Icon(Icons.error),
                                             ),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Icon(Icons.error),
                                           ),
                                         ),
                                       ),
