@@ -97,7 +97,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               child: GestureDetector(
                 onTap: () {}, // Prevent closing when tapping inside popup
                 child: Container(
-                  height: screenHeight * 0.5,
+                  height: screenHeight * 0.8,
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
@@ -106,15 +106,22 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (context, child, progress) {
-                        if (progress == null) return child;
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                      errorBuilder: (context, error, _) => const Center(
-                        child: Icon(Icons.broken_image),
+                    child: InteractiveViewer(
+                      panEnabled: true,
+                      scaleEnabled: true,
+                      minScale: 0.6,
+                      maxScale: 4.0,
+                      child: Image.network(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        },
+                        errorBuilder: (context, error, _) => const Center(
+                          child: Icon(Icons.broken_image),
+                        ),
                       ),
                     ),
                   ),
