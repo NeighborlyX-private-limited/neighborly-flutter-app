@@ -19,6 +19,7 @@ class NotificationTileWidget extends StatelessWidget {
   List<Widget> listWidgets = [];
 
   Widget leftAvatar() {
+    print('what is icon: ${notification.icon}');
     print('type: ${notification.triggerType}');
     String assetPath;
     switch (notification.triggerType) {
@@ -49,11 +50,13 @@ class NotificationTileWidget extends StatelessWidget {
       //clipBehavior: Clip.antiAlias, // Ensures smooth edges
       child: ClipRRect(
         borderRadius: BorderRadius.circular(15),
-        child: Image.asset(
-          assetPath,
-          fit: BoxFit.cover, // Makes it fill the circle
-          alignment: Alignment.center, // Centers the image
-        ),
+        child: notification.icon != null
+            ? Image.network(notification.icon!)
+            : Image.asset(
+                notification.icon ?? assetPath,
+                fit: BoxFit.cover, // Makes it fill the circle
+                alignment: Alignment.center, // Centers the image
+              ),
       ),
     );
 

@@ -1,0 +1,434 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
+import '../../../../core/constants/status.dart';
+import '../../../../core/theme/colors.dart';
+import '../../../../core/widgets/user_avatar_styled_widget.dart';
+import '../../data/model/chat_message_model.dart';
+import '../../data/model/chat_room_model.dart';
+import '../bloc/chat_group_cubit_thread.dart';
+import '../widgets/chat_message_group_widget.dart';
+import '../widgets/chat_messages_group_sheemer.dart';
+import '../../../../core/constants/imagepickercompress.dart';
+
+class ChatGroupThreadScreen extends StatefulWidget {
+  final String messageId;
+  final ChatRoomModel room;
+  final ChatMessageModel message;
+
+  const ChatGroupThreadScreen({
+    super.key,
+    required this.messageId,
+    required this.room,
+    required this.message,
+  });
+
+  @override
+  State<ChatGroupThreadScreen> createState() => _ChatGroupThreadScreenState();
+}
+
+class _ChatGroupThreadScreenState extends State<ChatGroupThreadScreen> {
+  late ChatGroupCubitThread chatGroupCubit;
+
+  final messageEC = TextEditingController();
+  final FocusNode messageFocusNode = FocusNode();
+  bool isCommentFilled = false;
+  File? fileToUpload;
+  final ScrollController _scrollController = ScrollController();
+
+  /// init method
+  @override
+  void initState() {
+    super.initState();
+
+    chatGroupCubit = BlocProvider.of<ChatGroupCubitThread>(context);
+    chatGroupCubit.init(widget.message.id);
+  }
+
+  /// end scroll
+  void _scrollToEnd() {
+    if (_scrollController.hasClients) {
+      Future.delayed(Duration(milliseconds: 300), () {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      });
+    }
+  }
+
+  /// dispose method
+  @override
+  void dispose() {
+    messageEC.dispose();
+    super.dispose();
+  }
+
+  Future<void> pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image =
+        await picker.pickImage(source: ImageSource.gallery).then((file) {
+      return compressImage(imageFileX: file);
+    });
+
+    if (image != null) {
+      setState(() {
+        fileToUpload = File(image.path);
+
+        // TODO: send image as message
+        //chatGroupCubit.sendMessage(message: '', image: fileToUpload);
+      });
+    }
+  }
+
+  /// app bar title area
+  Widget appBarTitleArea() {
+    return Row(
+      children: [
+        GestureDetector(
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+          ),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        const SizedBox(
+          width: 10,
+        ),
+        UserAvatarStyledWidget(
+          avatarUrl: widget.room.avatarUrl,
+          avatarSize: 19,
+          avatarBorderSize: 0,
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Reply thread',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 3),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.room.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black45,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget messageInputSection() {
+    // bool isReply = commentToReply != null; // Check if it's a reply
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: TextField(
+                textCapitalization: TextCapitalization.sentences,
+                controller: messageEC,
+                focusNode: messageFocusNode,
+                onChanged: (value) {
+                  setState(() {
+                    isCommentFilled = messageEC.text.isNotEmpty;
+                  });
+                },
+                decoration: InputDecoration(
+                    suffixIcon: GestureDetector(
+                      onTap: pickImage,
+                      child: Icon(
+                        Icons.photo_camera_back_outlined,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    hintText: 'Message',
+                    hintStyle: TextStyle(color: Colors.grey[500]),
+                    border: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(48)),
+                    ),
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20)),
+              ),
+            ),
+            const SizedBox(width: 10),
+            InkWell(
+              onTap: () {
+                // #send
+
+                final payload = {
+                  'groupId': widget.room.id,
+                  'message': messageEC.text,
+                  'parentMessageId': widget.message.id,
+                  'file': null,
+                };
+
+                chatGroupCubit.sendMessage(payload, true);
+
+                // fileToUpload = null;
+                messageEC.clear();
+              },
+              child: Opacity(
+                opacity: messageEC.text.isNotEmpty ? 1 : 0.3,
+                child: Container(
+                  height: 48,
+                  width: 48,
+                  decoration: BoxDecoration(
+                    color: isCommentFilled
+                        ? AppColors.primaryColor
+                        : Colors.grey[500],
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.arrow_upward,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String formatDate(String dateStr) {
+    try {
+      DateFormat format = DateFormat("yyyy-MM-dd"); //  HH:mm:ss
+      DateFormat dateFormat = DateFormat('d MMMM yyyy');
+      DateTime dateTime = format.parse(dateStr);
+
+      return dateFormat.format(dateTime);
+    } catch (e) {
+      return "";
+    }
+  }
+
+  String onlyDate(String dateStr) {
+    try {
+      DateFormat format = DateFormat("yyyy-MM-dd HH:mm:ss");
+      DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+      DateTime dateTime = format.parse(dateStr);
+
+      return dateFormat.format(dateTime);
+    } catch (e) {
+      return "";
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.grey[300],
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        title: appBarTitleArea(),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.more_vert_outlined,
+              size: 31,
+            ),
+          ),
+          const SizedBox(width: 10),
+        ],
+      ),
+      body: BlocConsumer<ChatGroupCubitThread, ChatGroupStateThread>(
+        listener: (context, state) {
+          if (state.status == Status.failure) {
+            showSnackBar(
+              context: context,
+              message: state.failure?.message ?? 'oops something went wrong',
+            );
+          }
+
+          if (state.status == Status.success) {
+            Future.delayed(Duration(milliseconds: 100), () {
+              if (_scrollController.hasClients) {
+                _scrollToEnd();
+              }
+            });
+          }
+        },
+        builder: (context, state) {
+          // int lineCount = 1;
+          // String lastDate = '';
+          return BlocBuilder<ChatGroupCubitThread, ChatGroupStateThread>(
+            builder: (context, state) {
+              if (state.status == Status.loading) {
+                return Container(
+                  color: Colors.white,
+                  child: ChatMessagesGroupSheemer(),
+                );
+              }
+
+              return Container(
+                width: double.infinity,
+                color: Colors.white,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ChatMessageGroupWidget(
+                        message: widget.message,
+                        showReply: false,
+                        showIsReaded: false,
+                        onTap: (msgSelected) {},
+                        onReply: (msgIdToSendReply, message) {},
+                        onTapReply: (chatMessageModel) {},
+                        onTapCheer: () {
+                          final payload = {
+                            'group_id': widget.room.id,
+                            'message_id': widget.message.id,
+                            'action': 'cheer'
+                          };
+                          context
+                              .read<ChatGroupCubitThread>()
+                              .sendMessage(payload);
+                        },
+                        onTapBool: () {
+                          final payload = {
+                            'group_id': widget.room.id,
+                            'message_id': widget.message.id,
+                            'action': 'boo'
+                          };
+                          context
+                              .read<ChatGroupCubitThread>()
+                              .sendMessage(payload);
+                        },
+                        onReact: (messageId, reactOrAward) {},
+                        onReport: (messageId, reason) {},
+                        onShare: (message) {},
+                        onPin: (messageToBePinned) {},
+                        onTapPinned: (messageId) {},
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Divider(color: Colors.grey, height: 2),
+                    ),
+                    Expanded(
+                      child: Container(
+                        color: Colors.white,
+                        width: double.infinity,
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          shrinkWrap: true,
+                          itemCount: state.messages.length,
+                          itemBuilder: (context, index) {
+                            var msg = state.messages[index];
+
+                            // var dateSummary =
+                            //     onlyDate(state.messages[index].date);
+
+                            var messageWidget = ChatMessageGroupWidget(
+                              message: msg,
+                              showReply: false,
+                              // showIsReaded:
+                              //     (lineCount == state.messages.length) &&
+                              //         msg.isMine,
+                              onTap: (msgSelected) {},
+                              onReply: (msgIdToSendReply, message) {},
+                              onTapReply: (chatMessageModel) {},
+                              onTapCheer: () {
+                                final payload = {
+                                  'group_id': widget.room.id,
+                                  'message_id': state.messages[index].id,
+                                  'action': 'cheer'
+                                };
+                                context
+                                    .read<ChatGroupCubitThread>()
+                                    .sendMessage(payload);
+                              },
+                              onTapBool: () {
+                                final payload = {
+                                  'group_id': widget.room.id,
+                                  'message_id': state.messages[index].id,
+                                  'action': 'boo'
+                                };
+                                context
+                                    .read<ChatGroupCubitThread>()
+                                    .sendMessage(payload);
+                              },
+                              onReact: (messageId, reactOrAward) {},
+                              onReport: (messageId, reason) {},
+                              onShare: (message) {},
+                              onPin: (messageToBePinned) {},
+                              onTapPinned: (messageId) {},
+                            );
+
+                            // if (lastDate != dateSummary) {
+                            //   lastDate = dateSummary;
+                            //   return Column(
+                            //     children: [
+                            //       if (lastDate != '')
+                            //         Text(
+                            //           formatDate(dateSummary),
+                            //           style:
+                            //               TextStyle(fontSize: 12, height: 2.5),
+                            //         ),
+                            //       messageWidget,
+                            //     ],
+                            //   );
+                            // }
+
+                            return messageWidget;
+                          },
+                        ),
+                      ),
+                    ),
+                    Divider(height: 1, color: Colors.grey[300]),
+                    messageInputSection(),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}

@@ -640,6 +640,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
             InkWell(
               onTap: () {
+                print('hellojlhsf');
                 showBottomSheet();
               },
               child: Icon(
@@ -817,85 +818,87 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
         return Container(
-          color: AppColors.whiteColor,
-          height: 96,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: userId != otherUserId
-              ? InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                    showReportReasonBottomSheet();
-                  },
-                  child: Row(
-                    children: [
-                      Image.asset('assets/report_flag.png'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.report,
-                        style: redOnboardingBody1Style,
-                      )
-                    ],
-                  ),
-                )
-              : BlocConsumer<DeletePostBloc, DeletePostState>(
-                  listener: (context, state) {
-                    // DELETE POST SUCCESS STATE
-                    if (state is DeletePostSuccessState) {
-                      showSnackBar(
-                        context: context,
-                        message: isPost
-                            // message: widget.isPost
-                            ? AppLocalizations.of(context)!.post_deleted
-                            : AppLocalizations.of(context)!.poll_deleted,
-                      );
-                      context.pop(context);
-                      context.pop(context);
-                    }
-
-                    // DELETE POST FAILURE STATE
-                    else if (state is DeletePostFailureState) {
-                      context.pop(context);
-                      showSnackBar(
-                        context: context,
-                        message: state.error,
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    // DELETE POST LOADING STATE
-                    if (state is DeletePostLoadingState) {
-                      return CustomCircularIndicator();
-                    }
-                    return InkWell(
+            color: AppColors.whiteColor,
+            height: 96,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Column(children: [
+              userId != otherUserId
+                  ? InkWell(
                       onTap: () {
-                        context.read<DeletePostBloc>().add(
-                              DeletePostButtonPressedEvent(
-                                postId: int.parse(widget.postId),
-                                type: 'post',
-                              ),
-                            );
+                        Navigator.pop(context);
+                        showReportReasonBottomSheet();
                       },
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.delete,
-                            color: AppColors.redColor,
-                          ),
+                          Image.asset('assets/report_flag.png'),
                           const SizedBox(
                             width: 10,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.delete_post,
+                            AppLocalizations.of(context)!.report,
                             style: redOnboardingBody1Style,
                           )
                         ],
                       ),
-                    );
-                  },
-                ),
-        );
+                    )
+                  : BlocConsumer<DeletePostBloc, DeletePostState>(
+                      listener: (context, state) {
+                        // DELETE POST SUCCESS STATE
+                        if (state is DeletePostSuccessState) {
+                          showSnackBar(
+                            context: context,
+                            message: isPost
+                                // message: widget.isPost
+                                ? AppLocalizations.of(context)!.post_deleted
+                                : AppLocalizations.of(context)!.poll_deleted,
+                          );
+                          context.pop(context);
+                          context.pop(context);
+                        }
+
+                        // DELETE POST FAILURE STATE
+                        else if (state is DeletePostFailureState) {
+                          context.pop(context);
+                          showSnackBar(
+                            context: context,
+                            message: state.error,
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        // DELETE POST LOADING STATE
+                        if (state is DeletePostLoadingState) {
+                          return CustomCircularIndicator();
+                        }
+                        return InkWell(
+                          onTap: () {
+                            context.read<DeletePostBloc>().add(
+                                  DeletePostButtonPressedEvent(
+                                    postId: int.parse(widget.postId),
+                                    type: 'post',
+                                  ),
+                                );
+                          },
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.delete,
+                                color: AppColors.redColor,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                AppLocalizations.of(context)!.delete_post,
+                                style: redOnboardingBody1Style,
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+              //userId != otherUserId ? Text('hello') : SizedBox()
+            ]));
       },
     );
   }
@@ -1423,6 +1426,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
             InkWell(
               onTap: () {
+                print('hiiRiii');
                 showBottomSheet();
               },
               child: Icon(

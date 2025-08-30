@@ -3,7 +3,7 @@ description: "A new Flutter project."
 publish_to: "none" 
 
 # Version of the app
-version: 3.0.1+33
+version: 3.0.3+37
 
 environment:
   sdk: ">=3.3.4 <4.0.0"
@@ -17,6 +17,7 @@ dependencies:
 
   #to check the internet connection
   internet_connection_checker: ^1.0.0+1
+  get: ^4.6.6
 
   #for app routing
   go_router: ^14.1.4

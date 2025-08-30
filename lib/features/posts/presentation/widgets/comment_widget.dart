@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:neighborly_flutter_app/core/constants/constants.dart';
+import 'package:neighborly_flutter_app/core/error/exception.dart';
 import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
@@ -14,6 +18,7 @@ import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'reaction_comment_widget.dart';
 import 'reply_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:http/http.dart' as http;
 
 class CommentWidget extends StatefulWidget {
   final CommentEntity comment;
@@ -39,11 +44,85 @@ class _CommentWidgetState extends State<CommentWidget> {
   bool _showReplies = false;
   List<ReplyEntity> _replies = [];
   late FetchCommentReplyBloc _fetchCommentReplyBloc;
+  bool isLoading = false;
+  String commentText = '';
+
+  /// update comment
+
+  Future<bool> editComment({
+    required String commentId,
+    required String newText,
+  }) async {
+    print('hello text: $newText');
+    isLoading = true;
+    try {
+      String? cookies = ShardPrefHelper.getCookie();
+      String? accessToken = ShardPrefHelper.getAccessToken();
+
+      if (cookies == null || cookies.isEmpty) {
+        throw const ServerException(message: 'Oops, something went wrong.');
+      }
+
+      final url = Uri.parse('$kBaseUrl/posts/edit-comment');
+      print('ur l $url');
+
+      final headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+        'Cookie': cookies,
+      };
+
+      final body = jsonEncode({
+        'commentId': commentId,
+        'text': newText,
+      });
+
+      final response = await http.put(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        print("✅ Comment updated successfully: ${response.body}");
+        return true;
+      } else {
+        print(
+          "❌ Failed to update comment. "
+          "Status: ${response.statusCode}, "
+          "Body: ${response.body}",
+        );
+        return false;
+      }
+    } catch (e) {
+      print("⚠️ Exception in editComment: $e");
+      return false;
+    } finally {
+      isLoading = false; // ✅ Always stop loading
+    }
+  }
+
+  Future<void> fetchComments({
+    required String baseUrl,
+    required String token,
+  }) async {
+    final url = Uri.parse('$baseUrl/post/fetch-comments');
+
+    final headers = {
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'application/json',
+    };
+
+    final response = await http.get(url, headers: headers);
+
+    if (response.statusCode == 200) {
+      print("✅ Fetched comments: ${response.body}");
+    } else {
+      print("❌ Failed to fetch comments. Status: ${response.statusCode}");
+    }
+  }
 
   ///init method
   @override
   void initState() {
     super.initState();
+    commentText = widget.comment.text;
     _fetchCommentReplyBloc = BlocProvider.of<FetchCommentReplyBloc>(context);
   }
 
@@ -67,6 +146,7 @@ class _CommentWidgetState extends State<CommentWidget> {
       bottomSheet(context);
     }
 
+    String? userId = ShardPrefHelper.getUserID();
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Column(
@@ -133,14 +213,40 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 ),
                         ),
                         const Spacer(),
-                        InkWell(
-                          onTap: () {
-                            showBottomSheet();
-                          },
-                          child: Icon(
-                            Icons.more_horiz,
-                            size: 30,
-                            color: Colors.grey[500],
+                        SizedBox(
+                          child: Row(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  showBottomSheet();
+                                },
+                                child: Icon(
+                                  Icons.more_horiz,
+                                  size: 30,
+                                  color: Colors.grey[500],
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              userId == widget.comment.userId
+                                  ? InkWell(
+                                      onTap: () async {
+                                        await showCommentBottomSheet(
+                                          context: context,
+                                          comment: commentText,
+                                          id: widget.comment.commentid
+                                              .toString(),
+                                        );
+                                      },
+                                      child: Icon(
+                                        Icons.edit,
+                                        size: 20,
+                                        color: Colors.grey[500],
+                                      ),
+                                    )
+                                  : SizedBox(),
+                            ],
                           ),
                         ),
                       ],
@@ -149,7 +255,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       height: 4,
                     ),
                     Text(
-                      widget.comment.text,
+                      commentText,
                       style: TextStyle(
                         color: Colors.grey[800],
                         fontSize: screenWidth * 0.04,
@@ -295,85 +401,165 @@ class _CommentWidgetState extends State<CommentWidget> {
         String? userId = ShardPrefHelper.getUserID();
         return Container(
           color: AppColors.whiteColor,
-          height: 90,
+          height: 100,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: userId != widget.comment.userId
-              ? InkWell(
-                  onTap: () {
-                    showReportReasonBottomSheet();
-                  },
-                  child: Row(
-                    children: [
-                      Image.asset('assets/report_flag.png'),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        AppLocalizations.of(context)!.report,
-                        style: redOnboardingBody1Style,
-                      )
-                    ],
-                  ),
-                )
-              : BlocConsumer<DeletePostBloc, DeletePostState>(
-                  listener: (context, state) {
-                    ///Delete Post Success State
-                    if (state is DeletePostSuccessState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              AppLocalizations.of(context)!.comment_deleted),
-                        ),
-                      );
-                      context.pop(context);
-                    }
-
-                    ///Delete Post Failure State
-                    else if (state is DeletePostFailureState) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.error),
-                        ),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    ///Delete Post Loading State
-                    if (state is DeletePostLoadingState) {
-                      return Center(
-                        child: BouncingLogoIndicator(
-                          logo: 'images/logo.svg',
-                        ),
-                      );
-                    }
-                    return InkWell(
+          child: Column(
+            children: [
+              userId != widget.comment.userId
+                  ? InkWell(
                       onTap: () {
-                        widget.onDelete();
-                        context.read<DeletePostBloc>().add(
-                              DeletePostButtonPressedEvent(
-                                postId: widget.comment.commentid,
-                                type: 'comment',
-                              ),
-                            );
+                        showReportReasonBottomSheet();
                       },
                       child: Row(
                         children: [
-                          const Icon(
-                            Icons.delete,
-                            color: AppColors.redColor,
-                          ),
+                          Image.asset('assets/report_flag.png'),
                           const SizedBox(
                             width: 10,
                           ),
                           Text(
-                            AppLocalizations.of(context)!.delete_comment,
+                            AppLocalizations.of(context)!.report,
                             style: redOnboardingBody1Style,
                           )
                         ],
                       ),
-                    );
-                  },
+                    )
+                  : BlocConsumer<DeletePostBloc, DeletePostState>(
+                      listener: (context, state) {
+                        ///Delete Post Success State
+                        if (state is DeletePostSuccessState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(AppLocalizations.of(context)!
+                                  .comment_deleted),
+                            ),
+                          );
+                          context.pop(context);
+                        }
+
+                        ///Delete Post Failure State
+                        else if (state is DeletePostFailureState) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(state.error),
+                            ),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        ///Delete Post Loading State
+                        if (state is DeletePostLoadingState) {
+                          return Center(
+                            child: BouncingLogoIndicator(
+                              logo: 'images/logo.svg',
+                            ),
+                          );
+                        }
+                        return InkWell(
+                          onTap: () {
+                            widget.onDelete();
+                            context.read<DeletePostBloc>().add(
+                                  DeletePostButtonPressedEvent(
+                                    postId: widget.comment.commentid,
+                                    type: 'comment',
+                                  ),
+                                );
+                          },
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.delete,
+                                color: AppColors.redColor,
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                AppLocalizations.of(context)!.delete_comment,
+                                style: redOnboardingBody1Style,
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+              SizedBox(
+                height: 20,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// comment edit
+  Future<String?> showCommentBottomSheet({
+    required BuildContext context,
+    required String comment,
+    required String id,
+  }) {
+    TextEditingController controller = TextEditingController(text: comment);
+
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: MediaQuery.of(context).viewInsets, // adjust for keyboard
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    labelText: "Edit Comment",
+                    border: OutlineInputBorder(),
+                  ),
                 ),
+                const SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context), // just close
+                      child: Text("Cancel"),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () async {
+                        bool success = await editComment(
+                          commentId: id,
+                          newText: controller.text.trim(),
+                        );
+                        print('successssssss": $success');
+                        if (success) {
+                          setState(() {
+                            commentText = controller.text.trim();
+                          });
+                          Navigator.pop(
+                            context,
+                            controller.text,
+                          ); // return updated comment
+                        } else {
+                          Navigator.pop(
+                            context,
+                            controller.text,
+                          ); // return updated comment
+                        }
+                      },
+                      child: Text("Submit"),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
         );
       },
     );

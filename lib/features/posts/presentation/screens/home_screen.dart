@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_drawer.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
@@ -20,6 +21,7 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/svg_icon.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
 import '../../../profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
+import '../../../valuable/valuable_screen.dart';
 import '../bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import '../widgets/poll_widget.dart';
 import '../widgets/post_sheemer_widget.dart';
@@ -354,11 +356,23 @@ class _HomeScreenState extends State<HomeScreen>
                   ],
                 ),
                 actions: [
+                  // IconButton(
+                  //   onPressed: () {
+                  //     context.push('/googleMapScreen');
+                  //   },
+                  //   icon: Icon(Icons.location_on_outlined),
+                  // ),
                   IconButton(
                     onPressed: () {
-                      context.push('/googleMapScreen');
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => InsightsScreen()),
+                      );
+
+                      //Get.to(() => InsightsScreen());
                     },
-                    icon: Icon(Icons.location_on_outlined),
+                    icon: Icon(Icons.bluetooth_disabled_sharp),
                   ),
 
                   // SEARCH ICON

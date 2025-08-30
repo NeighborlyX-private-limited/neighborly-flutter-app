@@ -250,9 +250,14 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       throw const ServerException(message: 'oops something went wrong');
     }
     // String cookieHeader = cookies.join('; ');
-
-    String url = '$kBaseUrl/discover/fetch-neighbors?radius=$radius';
-    print('url: $url');
+    double lat = ShardPrefHelper.getLat() ?? 0.0;
+    double long = ShardPrefHelper.getLng() ?? 0.0;
+    String url = '$kBaseUrl/discover/fetch-neighbors'
+        '?radius=$radius'
+        '&latitude=$lat'
+        '&longitude=$long';
+    // String url = '$kBaseUrl/discover/fetch-neighbors?radius=$radius';
+    print('url fetch-neighbors: $url');
 
     final response = await client.get(
       Uri.parse(url),
@@ -262,7 +267,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
         'Cookie': cookies,
       },
     );
-    print('nearby user : ${response.body}');
+    print('nearby user fetch-neighbors: ${response.body}');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       // final Map<String, dynamic> data = json.decode(response.body);

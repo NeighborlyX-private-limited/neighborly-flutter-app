@@ -10,6 +10,7 @@ class NotificationEntity extends Equatable {
   final String? messageId;
   final String? commentId;
   final String? groupId;
+  final String? icon;
   final String? notificationImage;
   final String? userId;
   final String? userName;
@@ -24,6 +25,7 @@ class NotificationEntity extends Equatable {
     required this.message,
     this.postId,
     this.eventId,
+    this.icon,
     this.messageId,
     this.commentId,
     this.groupId,
