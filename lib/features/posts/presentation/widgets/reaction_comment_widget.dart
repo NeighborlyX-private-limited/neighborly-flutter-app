@@ -4,8 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
-import 'package:share_it/share_it.dart';
+// import 'package:share_it/share_it.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../domain/entities/comment_entity.dart';
@@ -14,7 +15,7 @@ import '../bloc/give_award_bloc/give_award_bloc.dart';
 import 'overlapping_images_widget.dart';
 import '../../../profile/data/data_sources/profile_remote_data_source/profile_remote_data_source_impl.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ReactionCommentWidget extends StatefulWidget {
   final CommentEntity comment;
@@ -453,11 +454,16 @@ class _ReactionCommentWidgetState extends State<ReactionCommentWidget> {
             String link =
                 'https://prod.neighborly.in/post-detail/${widget.comment.postid}';
             // 'https://prod.neighborly.in/post-detail/${widget.comment.postid}/${widget.isPost}/${widget.comment.userId}/${widget.comment.commentid}';
+            SharePlus.instance.share(
+              ShareParams(
+                text: link,
 
-            ShareIt.text(
-              content: link,
-              androidSheetTitle: 'Share',
+              ),
             );
+            // ShareIt.text(
+            //   content: link,
+            //   androidSheetTitle: 'Share',
+            // );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),

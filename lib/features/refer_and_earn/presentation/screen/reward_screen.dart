@@ -8,12 +8,13 @@ import 'package:neighborly_flutter_app/core/routes/routes.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/refer_and_earn/presentation/bloc/withdraw_bloc.dart';
 import 'package:neighborly_flutter_app/features/refer_and_earn/presentation/bloc/withdraw_state.dart';
-import 'package:share_it/share_it.dart';
+import 'package:share_plus/share_plus.dart';
+// import 'package:share_it/share_it.dart';
 import '../../../../core/utils/device.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/reward_bloc.dart';
 import '../bloc/withdraw_event.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class RewardScreen extends StatefulWidget {
   const RewardScreen({super.key});
@@ -373,9 +374,15 @@ Don't miss out — it's quick, easy, and totally worth it!
                         const SizedBox(width: 8),
                         ElevatedButton(
                           onPressed: () {
-                            ShareIt.text(
-                              content: message,
-                              androidSheetTitle: 'Share',
+                            // ShareIt.text(
+                            //   content: message,
+                            //   androidSheetTitle: 'Share',
+                            // );
+                            SharePlus.instance.share(
+                              ShareParams(
+                                text: message,
+
+                              ),
                             );
                             // Share.share('Use my referral code: $inviteCode');
                           },

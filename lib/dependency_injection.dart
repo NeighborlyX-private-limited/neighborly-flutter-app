@@ -129,7 +129,9 @@ import 'features/notification/presentation/bloc/notification_general_cubit.dart'
 import 'features/notification/presentation/bloc/notification_list_cubit.dart';
 import 'features/posts/data/data_sources/post_remote_data_source/post_remote_data_source.dart';
 import 'features/posts/data/data_sources/post_remote_data_source/post_remote_data_source_impl.dart';
+
 import 'features/posts/data/repositories/post_repositories_impl.dart';
+
 import 'features/posts/domain/repositories/post_repositories.dart';
 import 'features/posts/domain/usecases/add_comment_usecase.dart';
 import 'features/posts/domain/usecases/delete_post_usecase.dart';
@@ -209,6 +211,9 @@ void init() async {
   /// auth repository
   sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
+
+  // sl.registerLazySingleton<CategoryRepository>(
+  //         () => CategoryRepositoryImpl(remoteDataSource: sl(), networkInfo: sl()));
 
   /// profile repository
   sl.registerLazySingleton<ProfileRepositories>(

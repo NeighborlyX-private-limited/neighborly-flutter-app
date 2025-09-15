@@ -6,7 +6,7 @@ import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/posts/presentation/bloc/get_comment_by_comment_id_bloc/get_comments_by_commentId_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/widgets/post_with_specific_comment_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PostDetailOfSpecificComment extends StatefulWidget {
   final String commentId;

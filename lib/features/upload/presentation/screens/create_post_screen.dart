@@ -21,7 +21,7 @@ import '../bloc/upload_post_bloc/upload_post_bloc.dart';
 import '../widgets/ban_user_popup.dart';
 import '../widgets/post_button_widget.dart';
 import '../../../../core/constants/imagepickercompress.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});

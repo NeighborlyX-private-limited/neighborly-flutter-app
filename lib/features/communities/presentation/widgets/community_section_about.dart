@@ -13,7 +13,7 @@ import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
 import '../../../../core/widgets/indicator/custom_circular_progress_indicator.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../bloc/bloc/add_remove_user_in_group_bloc.dart';
 import '../bloc/bloc/join_group_bloc.dart';

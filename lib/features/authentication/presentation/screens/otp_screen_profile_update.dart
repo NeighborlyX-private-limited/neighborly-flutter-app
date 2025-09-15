@@ -9,7 +9,7 @@ import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import '../bloc/verify_otp_bloc/verify_otp_bloc.dart';
 import '../widgets/button_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class OtpScreenProfileUpdate extends StatefulWidget {
   final String data;

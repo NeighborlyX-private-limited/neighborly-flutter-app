@@ -15,7 +15,7 @@ import '../bloc/register_bloc/register_bloc.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/or_divider_widget.dart';
 import '../widgets/register_option.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

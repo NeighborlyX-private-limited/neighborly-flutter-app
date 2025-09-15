@@ -13,7 +13,7 @@ import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_pr
 import 'package:neighborly_flutter_app/core/widgets/somthing_went_wrong.dart';
 import 'package:neighborly_flutter_app/features/homePage/home_page.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_general_cubit.dart';
-import 'package:neighborly_flutter_app/features/posts/presentation/screens/valuable_insite_screen.dart';
+
 import 'package:new_version_plus/new_version_plus.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/theme/colors.dart';
@@ -21,7 +21,8 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/svg_icon.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
 import '../../../profile/presentation/bloc/get_gender_and_DOB_bloc/get_gender_and_DOB_bloc.dart';
-import '../../../valuable/valuable_screen.dart';
+
+import '../../../valuable/insights_screen.dart';
 import '../bloc/get_all_posts_bloc/get_all_posts_bloc.dart';
 import '../widgets/poll_widget.dart';
 import '../widgets/post_sheemer_widget.dart';
@@ -31,7 +32,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../notification/data/data_sources/notification_remote_data_source/notification_remote_data_source_impl.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -353,6 +354,18 @@ class _HomeScreenState extends State<HomeScreen>
                       width: 24,
                       height: 24,
                     ),
+                    IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => InsightsScreen()),
+                        );
+
+                        //Get.to(() => InsightsScreen());
+                      },
+                      icon: Icon(Icons.lightbulb_outline, size: 30, color: AppColors.primaryColor),
+                    ),
                   ],
                 ),
                 actions: [
@@ -362,18 +375,7 @@ class _HomeScreenState extends State<HomeScreen>
                   //   },
                   //   icon: Icon(Icons.location_on_outlined),
                   // ),
-                  IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => InsightsScreen()),
-                      );
-
-                      //Get.to(() => InsightsScreen());
-                    },
-                    icon: Icon(Icons.bluetooth_disabled_sharp),
-                  ),
+                  //
 
                   // SEARCH ICON
 
@@ -463,7 +465,7 @@ class _HomeScreenState extends State<HomeScreen>
                   if (state is GetAllPostsSuccessState) {
                     final posts = state.post;
                     return posts.isEmpty
-                        ? ValuableInsightsScreen()
+                        ? InsightsScreen()
                         // 0 POST
                         // ? Center(
                         //     child: Column(

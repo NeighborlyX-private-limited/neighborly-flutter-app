@@ -7,7 +7,7 @@ import '../bloc/request_history_bloc.dart';
 // import '../bloc/reward_history_event.dart';
 // import '../bloc/reward_history_state.dart';
 // import '../model/reward_request_history_model.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class RewardHistoryScreen extends StatefulWidget {
   const RewardHistoryScreen({super.key});

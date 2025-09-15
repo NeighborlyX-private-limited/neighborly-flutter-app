@@ -10,7 +10,7 @@ import 'package:neighborly_flutter_app/features/communities/presentation/bloc/co
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
 import '../bloc/bloc/update_mute_group_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunityAdminSetScreen extends StatefulWidget {
   final CommunityModel community;

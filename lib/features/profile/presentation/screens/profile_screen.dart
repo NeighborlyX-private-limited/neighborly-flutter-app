@@ -16,7 +16,7 @@ import '../bloc/get_profile_bloc/get_profile_bloc.dart';
 import '../widgets/comments_section.dart';
 import '../widgets/posts_section.dart';
 import '../widgets/profile_sheemer_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

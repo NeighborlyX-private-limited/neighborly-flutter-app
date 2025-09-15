@@ -4,7 +4,7 @@ import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/dropdown_search_field.dart';
 import '../bloc/community_detail_cubit.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunityAdminLocationScreen extends StatefulWidget {
   const CommunityAdminLocationScreen({

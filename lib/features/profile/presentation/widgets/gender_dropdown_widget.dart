@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 
 class GenderDropdown extends StatelessWidget {

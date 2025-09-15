@@ -15,7 +15,7 @@ import '../../../../core/widgets/menu_icon_widget.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
 import '../bloc/communities_main_cubit.dart';
 import '../bloc/community_detail_cubit.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunityAdminMembersUsersScreen extends StatefulWidget {
   const CommunityAdminMembersUsersScreen({

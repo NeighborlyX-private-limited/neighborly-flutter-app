@@ -8,7 +8,7 @@ import '../../../../core/widgets/indicator/custom_circular_progress_indicator.da
 import '../../../chat/presentation/bloc/bloc/interest_bloc.dart';
 import '../../../chat/presentation/bloc/bloc/save_interest_bloc.dart';
 import '../../../chat/presentation/bloc/bloc/save_interest_event.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class EditInterestScreen extends StatefulWidget {
   // final List<String> selectedInterests; // Interests from previous screen

@@ -34,7 +34,7 @@ import '../widgets/comment_widget.dart';
 import '../widgets/option_card.dart';
 import '../widgets/post_detail_sheemer.dart';
 import '../widgets/reaction_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PostDetailScreen extends StatefulWidget {
   //final String userId;

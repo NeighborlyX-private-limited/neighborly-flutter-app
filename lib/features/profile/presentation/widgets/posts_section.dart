@@ -8,7 +8,7 @@ import '../../../posts/presentation/widgets/poll_widget.dart';
 import '../../../posts/presentation/widgets/post_sheemer_widget.dart';
 import '../../../posts/presentation/widgets/post_widget.dart';
 import '../bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PostSection extends StatefulWidget {
   final String? userId;

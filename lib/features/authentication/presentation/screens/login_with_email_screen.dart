@@ -11,7 +11,7 @@ import '../../../../core/widgets/custom_snackbar.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/login_with_email_bloc/login_with_email_bloc.dart';
 import '../widgets/button_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class LoginWithEmailScreen extends StatefulWidget {
   const LoginWithEmailScreen({super.key});

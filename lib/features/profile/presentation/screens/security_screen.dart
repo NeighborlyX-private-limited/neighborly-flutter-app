@@ -9,7 +9,7 @@ import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../../../authentication/presentation/widgets/button_widget.dart';
 import '../bloc/change_password_bloc/change_password_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class SecurityPage extends StatefulWidget {
   const SecurityPage({super.key});

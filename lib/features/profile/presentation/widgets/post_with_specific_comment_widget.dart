@@ -11,7 +11,7 @@ import '../../../../core/utils/shared_preference.dart';
 import '../../../posts/presentation/widgets/reaction_widget.dart';
 import '../../../posts/presentation/widgets/option_card.dart';
 import '../../../../core/entities/post_enitity.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PostWithSpecificCommentsWidget extends StatefulWidget {
   final SpecificCommentModel post;

@@ -4,13 +4,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/posts/data/model/specific_comment_model.dart';
-import 'package:share_it/share_it.dart';
+import 'package:share_plus/share_plus.dart';
+// import 'package:share_it/share_it.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import '../../../posts/presentation/bloc/give_award_bloc/give_award_bloc.dart';
 import '../../../posts/presentation/widgets/overlapping_images_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PostReactionSpecificCommentWidget extends StatefulWidget {
   final SpecificCommentModel postComment;
@@ -340,7 +341,13 @@ class _PostReactionSpecificCommentWidgetState
                 'https://prod.neighborly.in/post-detail/${widget.postId}';
             // String link =
             //     'https://prod.neighborly.in/post-detail/${widget.postId}/${widget.isPost}/${widget.postComment.userId}/${widget.postComment.commentId}';
-            ShareIt.text(content: link, androidSheetTitle: 'Cool Post');
+            // ShareIt.text(content: link, androidSheetTitle: 'Cool Post');
+            SharePlus.instance.share(
+              ShareParams(
+                text: link,
+
+              ),
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),

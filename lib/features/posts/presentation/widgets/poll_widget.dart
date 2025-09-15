@@ -19,7 +19,7 @@ import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'option_card.dart';
 import '../../../../core/entities/option_entity.dart';
 import 'reaction_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PollWidget extends StatefulWidget {
   final PostEntity post;

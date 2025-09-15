@@ -14,7 +14,7 @@ import '../../domain/entities/post_with_comments_entity.dart';
 import 'profile_comment_reaction_widget.dart';
 import '../../../posts/presentation/widgets/option_card.dart';
 import '../../../../core/entities/post_enitity.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PostWithCommentsWidget extends StatefulWidget {
   final PostWithCommentsEntity post;

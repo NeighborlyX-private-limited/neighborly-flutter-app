@@ -4,7 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
 import 'package:neighborly_flutter_app/features/profile/presentation/bloc/get_my_posts_bloc/get_my_posts_bloc.dart';
-import 'package:share_it/share_it.dart';
+import 'package:share_plus/share_plus.dart';
+// import 'package:share_it/share_it.dart';
 
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/theme/colors.dart';
@@ -15,8 +16,7 @@ import '../bloc/get_user_info_bloc/get_user_info_bloc.dart';
 import '../widgets/comments_section.dart';
 import '../widgets/posts_section.dart';
 import '../widgets/profile_sheemer_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
+import '../../../../l10n/app_localizations.dart';
 class UserProfileScreen extends StatefulWidget {
   final String userId;
   const UserProfileScreen({super.key, required this.userId});
@@ -318,7 +318,13 @@ class _UserProfileScreenState extends State<UserProfileScreen>
                 onTap: () {
                   String link =
                       'https://prod.neighborly.in/userProfileScreen/${widget.userId}';
-                  ShareIt.text(content: link, androidSheetTitle: 'Cool Person');
+                  // ShareIt.text(content: link, androidSheetTitle: 'Cool Person');
+                  SharePlus.instance.share(
+                    ShareParams(
+                      text: link,
+
+                    ),
+                  );
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,

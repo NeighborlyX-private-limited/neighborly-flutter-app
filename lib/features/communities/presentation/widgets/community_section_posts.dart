@@ -4,7 +4,7 @@ import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../posts/presentation/widgets/post_sheemer_widget.dart';
 import '../../../posts/presentation/widgets/post_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunitySectionPosts extends StatelessWidget {
   final bool isLoading;

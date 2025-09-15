@@ -1,6 +1,95 @@
+//plugins {
+//    id "com.android.application"
+//    id 'com.google.gms.google-services'
+//    id "kotlin-android"
+//    id "dev.flutter.flutter-gradle-plugin"
+//}
+//
+//def localProperties = new Properties()
+//def localPropertiesFile = rootProject.file('local.properties')
+//if (localPropertiesFile.exists()) {
+//    localPropertiesFile.withReader('UTF-8') { reader ->
+//        localProperties.load(reader)
+//    }
+//}
+//
+//def keystoreProperties = new Properties()
+//def keystorePropertiesFile = rootProject.file('app/keystore/keystore.properties')
+//if (keystorePropertiesFile.exists()) {
+//    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+//}
+//
+//def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+//if (flutterVersionCode == null) {
+//    flutterVersionCode = '1'
+//}
+//
+//def flutterVersionName = localProperties.getProperty('flutter.versionName')
+//if (flutterVersionName == null) {
+//    flutterVersionName = '1.0'
+//}
+//
+//android {
+//    namespace "com.neighborlyx.neighborlysocial"
+//    compileSdkVersion 36
+//    ndkVersion flutter.ndkVersion
+//
+//
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//        coreLibraryDesugaringEnabled true
+//    }
+//
+//    kotlinOptions {
+//        jvmTarget = '1.8'
+//    }
+//
+//    sourceSets {
+//        main.java.srcDirs += 'src/main/kotlin'
+//    }
+//
+//    defaultConfig {
+//        applicationId "com.neighborlyx.neighborlysocial"
+//        minSdkVersion flutter.minSdkVersion
+//        targetSdkVersion 36
+//        multiDexEnabled true
+//        versionCode flutterVersionCode.toInteger()
+//        versionName flutterVersionName
+//    }
+//
+//    signingConfigs {
+//        release {
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
+//            storePassword keystoreProperties['storePassword']
+//        }
+//    }
+//
+//    buildTypes {
+//        release {
+//             shrinkResources false
+//             minifyEnabled false
+//            signingConfig signingConfigs.release
+//        }
+//    }
+//}
+//
+//flutter {
+//    source '../..'
+//}
+//
+//dependencies {
+//
+//    implementation 'com.android.support:multidex:1.0.3'
+//    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4"
+//}
+
+
 plugins {
     id "com.android.application"
-    id 'com.google.gms.google-services'
+    id "com.google.gms.google-services"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -19,25 +108,18 @@ if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
-if (flutterVersionCode == null) {
-    flutterVersionCode = '1'
-}
-
-def flutterVersionName = localProperties.getProperty('flutter.versionName')
-if (flutterVersionName == null) {
-    flutterVersionName = '1.0'
-}
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: '1'
+def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '1.0'
 
 android {
     namespace "com.neighborlyx.neighborlysocial"
-    compileSdkVersion 35
+    compileSdkVersion 36   
     ndkVersion flutter.ndkVersion
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
@@ -50,9 +132,8 @@ android {
 
     defaultConfig {
         applicationId "com.neighborlyx.neighborlysocial"
-        minSdkVersion  23 
-        targetSdkVersion 35
-        compileSdkVersion 34
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion 36   // ✅ align with compileSdk
         multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -69,8 +150,8 @@ android {
 
     buildTypes {
         release {
-             shrinkResources false
-             minifyEnabled false
+            shrinkResources false
+            minifyEnabled false
             signingConfig signingConfigs.release
         }
     }
@@ -81,5 +162,6 @@ flutter {
 }
 
 dependencies {
-        implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.multidex:multidex:2.0.1'   // ✅ updated multidex
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4"
 }

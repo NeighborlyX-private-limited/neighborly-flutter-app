@@ -9,7 +9,7 @@ import 'package:neighborly_flutter_app/features/communities/presentation/bloc/co
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/community_detail_cubit.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/widgets/stacked_avatar_indicator_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/bloc/get_user_groups_bloc.dart';

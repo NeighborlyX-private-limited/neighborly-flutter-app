@@ -7,7 +7,7 @@ import 'package:neighborly_flutter_app/core/widgets/bouncing_logo_indicator.dart
 import '../bloc/get_my_comments_bloc/get_my_comments_bloc.dart';
 import 'post_with_comments_sheemer_widget.dart';
 import 'post_with_comments_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommentSection extends StatefulWidget {
   final String? userId;

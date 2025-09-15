@@ -25,7 +25,7 @@ import '../widgets/gender_dropdown_widget.dart';
 import '../../../authentication/presentation/screens/otp_screen_profile_update.dart';
 import '../../../authentication/presentation/bloc/resend_otp_bloc/resend_otp_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CropAspectRatioPresetCustom implements CropAspectRatioPresetData {
   @override

@@ -5,7 +5,7 @@ import 'package:neighborly_flutter_app/core/models/post_model.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/theme/colors.dart';
 import '../../../../core/widgets/user_avatar_styled_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 // e2Gw-Q9rSCqz6RYeMn1YvD:APA91bHpTNm3SoqdZ8mDy_L7YkJTTY-ynM_nt_Gidg7gh9QYfiLQHfySwyO2wSUcBtgT7RIAaDaKzvdTZnTid5_2G5vouxIRcxjh2tLHBgPQu6mi2ZtnQ1c
 // SEARCH TEXT FIELD WIDGET

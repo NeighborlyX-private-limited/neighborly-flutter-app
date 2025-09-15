@@ -17,7 +17,7 @@ import '../bloc/fetch_comment_reply_bloc/fetch_comment_reply_bloc.dart';
 import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'reaction_comment_widget.dart';
 import 'reply_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import 'package:http/http.dart' as http;
 
 class CommentWidget extends StatefulWidget {

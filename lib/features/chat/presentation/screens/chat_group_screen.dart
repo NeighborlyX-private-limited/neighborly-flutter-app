@@ -33,7 +33,7 @@ import '../bloc/chat_group_cubit.dart';
 import '../bloc/pin_message_bloc.dart';
 import '../widgets/chat_messages_group_sheemer.dart';
 import '../../../../core/constants/imagepickercompress.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../widgets/media_message_widget.dart';
 
 class ChatGroupScreen extends StatefulWidget {

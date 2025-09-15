@@ -9,7 +9,7 @@ import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_pr
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
 import '../../../../core/constants/imagepickercompress.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunityAdminIconScreen extends StatefulWidget {
   const CommunityAdminIconScreen({

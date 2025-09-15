@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:share_it/share_it.dart';
+// import 'package:share_it/share_it.dart';
 
 import '../../../../core/theme/colors.dart';
 import '../../data/model/event_model.dart';
@@ -146,8 +146,8 @@ class EventSuccessSuccessScreen extends StatelessWidget {
                   ''';
                   // Lógica ao clicar no botão
                   // context.go('/groups/create');
-                  ShareIt.text(
-                      content: message, androidSheetTitle: 'Look this event');
+                  // ShareIt.text(
+                  //     content: message, androidSheetTitle: 'Look this event');
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,

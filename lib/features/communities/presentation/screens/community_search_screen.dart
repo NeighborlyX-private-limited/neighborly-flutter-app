@@ -18,7 +18,7 @@ import '../bloc/communities_search_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
 import '../widgets/community_search_empty_widget.dart';
 import '../widgets/search_ahead_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunitySearchScreen extends StatefulWidget {
   const CommunitySearchScreen({super.key});

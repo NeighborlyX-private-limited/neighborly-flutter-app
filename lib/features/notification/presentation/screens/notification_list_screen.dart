@@ -8,7 +8,7 @@ import 'package:neighborly_flutter_app/features/notification/presentation/bloc/n
 import 'package:neighborly_flutter_app/features/notification/presentation/bloc/notification_list_state.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/widgets/notification_empty_widget.dart';
 import 'package:neighborly_flutter_app/features/notification/presentation/widgets/notification_tile_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class NotificationListScreen extends StatefulWidget {
   const NotificationListScreen({super.key});

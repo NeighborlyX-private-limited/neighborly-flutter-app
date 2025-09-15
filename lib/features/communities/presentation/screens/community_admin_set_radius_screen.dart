@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_xlider/flutter_xlider.dart';
+// import 'package:flutter_xlider/flutter_xlider.dart';
 import '../../../../core/constants/constants.dart';
 import '../../../../core/theme/colors.dart';
 import '../bloc/community_detail_cubit.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunityAdminRadiusScreen extends StatefulWidget {
   const CommunityAdminRadiusScreen({
@@ -99,16 +99,16 @@ class _CommunityAdminRadiusScreenState
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              FlutterSlider(
-                values: [double.parse(newRadiusEC.text)],
-                max: kMaxRadius,
-                min: kMinRadius,
-                onDragging: (handlerIndex, lowerValue, upperValue) {
-                  setState(() {
-                    newRadiusEC.text = '$lowerValue';
-                  });
-                },
-              ),
+              // FlutterSlider(
+              //   values: [double.parse(newRadiusEC.text)],
+              //   max: kMaxRadius,
+              //   min: kMinRadius,
+              //   onDragging: (handlerIndex, lowerValue, upperValue) {
+              //     setState(() {
+              //       newRadiusEC.text = '$lowerValue';
+              //     });
+              //   },
+              // ),
               Text(
                 AppLocalizations.of(context)!.miles.replaceFirst(
                       '{distance}', newRadiusEC.text,

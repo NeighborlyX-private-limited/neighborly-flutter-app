@@ -14,7 +14,7 @@ import '../../../refer_and_earn/data/model/reward_model.dart';
 import '../../data/model/nearby_user_model.dart';
 import '../bloc/bloc/interest_bloc.dart';
 import '../bloc/dm/create_dm_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 // class DiscoverScreen extends StatefulWidget {
 //   const DiscoverScreen({super.key});
 

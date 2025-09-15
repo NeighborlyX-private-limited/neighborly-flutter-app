@@ -20,7 +20,7 @@ import '../../../../core/widgets/svg_icon.dart';
 import '../../../../core/widgets/text_field_widget.dart';
 import '../bloc/logout_bloc.dart/logout_bloc.dart';
 import '../widgets/button_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class SettingScreen extends StatefulWidget {
   final String karma;

@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hive/hive.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
-import 'package:share_it/share_it.dart';
+// import 'package:share_it/share_it.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../core/entities/post_enitity.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
@@ -15,7 +16,7 @@ import '../bloc/give_award_bloc/give_award_bloc.dart';
 import 'overlapping_images_widget.dart';
 import '../../../profile/data/data_sources/profile_remote_data_source/profile_remote_data_source_impl.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class ReactionWidget extends StatefulWidget {
   final PostEntity post;
@@ -519,7 +520,13 @@ class _ReactionWidgetState extends State<ReactionWidget> {
                 'https://prod.neighborly.in/post-detail/${widget.post.id}/';
             // String link =
             //     'https://prod.neighborly.in/post-detail/${widget.post.id}/${widget.post.type == 'post' ? 'true' : 'false'}/${widget.post.userId}/0';
-            ShareIt.text(content: link, androidSheetTitle: 'Share');
+            // ShareIt.text(content: link, androidSheetTitle: 'Share');
+            SharePlus.instance.share(
+              ShareParams(
+                text: link,
+
+              ),
+            );
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8),

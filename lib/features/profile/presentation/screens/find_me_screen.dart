@@ -8,7 +8,7 @@ import '../../../../core/theme/text_style.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../bloc/edit_profile_bloc/edit_profile_bloc.dart';
 import '../bloc/get_profile_bloc/get_profile_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class FindMeScreen extends StatefulWidget {
   const FindMeScreen({super.key});

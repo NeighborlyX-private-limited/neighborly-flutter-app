@@ -16,7 +16,7 @@ import '../../../../core/widgets/svg_icon.dart';
 import '../bloc/communities_main_cubit.dart';
 import '../widgets/community_card_widget.dart';
 import '../widgets/community_sheemer.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({

@@ -12,7 +12,7 @@ import '../../../../core/theme/text_style.dart';
 import '../bloc/communities_create_cubit.dart';
 import '../widgets/community_sheemer.dart';
 import '../../../../core/constants/imagepickercompress.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunityCreateScreen extends StatefulWidget {
   const CommunityCreateScreen({super.key});

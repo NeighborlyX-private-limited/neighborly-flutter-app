@@ -6,7 +6,8 @@ import 'package:neighborly_flutter_app/core/utils/shared_preference.dart';
 import 'package:neighborly_flutter_app/core/widgets/custom_snackbar.dart';
 import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_progress_indicator.dart';
 import 'package:neighborly_flutter_app/features/communities/presentation/bloc/bloc/join_group_bloc.dart';
-import 'package:share_it/share_it.dart';
+// import 'package:share_it/share_it.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../../../core/constants/status.dart';
 import '../../../../core/models/community_model.dart';
 import '../../../../core/theme/colors.dart';
@@ -20,7 +21,7 @@ import '../bloc/community_detail_cubit.dart';
 import '../widgets/community_details_sheemer.dart';
 import '../widgets/community_section_about.dart';
 import '../widgets/community_section_chat.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   final String communityId;
@@ -134,10 +135,16 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen>
                           onTap: () {
                             String link =
                                 'Hey, check this community: https://prod.neighborly.in/group-details/${widget.communityId}';
-                            ShareIt.text(
-                              content: link,
-                              androidSheetTitle: 'Share',
+                            SharePlus.instance.share(
+                              ShareParams(
+                                text: link,
+
+                              ),
                             );
+                            // ShareIt.text(
+                            //   content: link,
+                            //   androidSheetTitle: 'Share',
+                            // );
                           },
                           icon: Icons.share,
                           iconSize: 24,

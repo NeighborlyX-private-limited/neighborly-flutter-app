@@ -6,9 +6,10 @@ import 'package:neighborly_flutter_app/core/widgets/indicator/custom_circular_pr
 import '../../../../core/theme/colors.dart';
 import '../../../../core/theme/text_style.dart';
 import '../../../../core/widgets/text_field_widget.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../bloc/fogot_password_bloc/forgot_password_bloc.dart';
 import '../widgets/button_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});

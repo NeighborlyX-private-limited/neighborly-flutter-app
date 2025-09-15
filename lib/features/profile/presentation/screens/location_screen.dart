@@ -8,7 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../../core/constants/app_images.dart';
 import '../../../../core/utils/shared_preference.dart';
 import '../../../../core/widgets/custom_snackbar.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../../../../core/widgets/svg_icon.dart';
 

@@ -4,8 +4,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../constants/razorpay_constants.dart';
 
 class BagBottomSheet extends StatefulWidget {

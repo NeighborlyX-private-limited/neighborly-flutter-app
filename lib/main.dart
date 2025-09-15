@@ -56,6 +56,7 @@ import 'features/homePage/bloc/update_location_bloc/update_location_bloc.dart';
 import 'features/notification/presentation/bloc/notification_general_cubit.dart';
 import 'features/notification/presentation/bloc/notification_list_cubit.dart';
 import 'features/posts/presentation/bloc/add_comment_bloc/add_comment_bloc.dart';
+
 import 'features/posts/presentation/bloc/delete_post_bloc/delete_post_bloc.dart';
 import 'features/posts/presentation/bloc/feedback_bloc/feedback_bloc.dart';
 import 'features/posts/presentation/bloc/fetch_comment_reply_bloc/fetch_comment_reply_bloc.dart';
@@ -82,7 +83,9 @@ import 'features/refer_and_earn/presentation/bloc/reward_bloc.dart';
 import 'features/refer_and_earn/presentation/bloc/withdraw_bloc.dart';
 import 'features/upload/presentation/bloc/upload_file_bloc/upload_file_bloc.dart';
 import 'features/upload/presentation/bloc/upload_post_bloc/upload_post_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'l10n/app_localizations.dart';
+final GlobalKey<ScaffoldMessengerState> rootScaffoldMessengerKey =
+GlobalKey<ScaffoldMessengerState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -96,6 +99,8 @@ void main() async {
       MessageHandlerHelper(messageData: message.data).doTheJump();
     });
   }
+
+
 
   runApp(const MyApp());
 }
@@ -224,6 +229,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         BlocProvider<LogoutBloc>(
           create: (context) => di.sl<LogoutBloc>(),
         ),
+
 
         ///community/group bloc
         BlocProvider<CommunityCreateCubit>(
@@ -413,11 +419,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
           create: (context) => CityBloc(sl<CityRepository>()),
         ),
       ],
+
       child: BlocBuilder<AppLocalizationBloc, AppLocalizationState>(
         buildWhen: (previous, current) =>
             previous.selectedLocale != current.selectedLocale,
         builder: (context, state) {
           return MaterialApp.router(
+            scaffoldMessengerKey: rootScaffoldMessengerKey,
             locale: state.selectedLocale,
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates,

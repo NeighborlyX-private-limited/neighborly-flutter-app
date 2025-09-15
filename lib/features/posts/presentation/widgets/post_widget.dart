@@ -18,7 +18,7 @@ import '../../../../core/widgets/svg_icon.dart';
 import '../bloc/delete_post_bloc/delete_post_bloc.dart';
 import '../bloc/report_post_bloc/report_post_bloc.dart';
 import 'reaction_widget.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class PostWidget extends StatefulWidget {
   final PostEntity post;

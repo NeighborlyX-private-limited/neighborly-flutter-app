@@ -15,7 +15,7 @@ import '../bloc/login_with_email_bloc/login_with_email_bloc.dart';
 import '../widgets/button_widget.dart';
 import '../widgets/or_divider_widget.dart';
 import '../widgets/register_option.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
