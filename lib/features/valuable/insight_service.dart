@@ -41,6 +41,7 @@ print('what is lat lng: $lat $lon');
     if (response.statusCode == 200) {
       handleAuthHeaders(response.headers);
       final Map<String, dynamic> data = json.decode(response.body);
+
       return InsightsResponse.fromJson(data);
     } else {
       String errorMessage = jsonDecode(response.body)['error'] ??

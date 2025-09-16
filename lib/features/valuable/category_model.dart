@@ -21,14 +21,32 @@ class CategoryModel {
   }
 }
 
+class UserVoteModel {
+  final bool hasVoted;
+  final String? voteType;
+
+  UserVoteModel({
+    required this.hasVoted,
+    this.voteType,
+  });
+
+  factory UserVoteModel.fromJson(Map<String, dynamic> json) {
+    return UserVoteModel(
+      hasVoted: json['hasVoted'] ?? false,
+      voteType: json['voteType'],
+    );
+  }
+}
+
 class InsightModel {
   final String id;
   final String title;
   final String summary;
-   int cheers;
-   int boos;
+  int cheers;
+  int boos;
   final String? statusTag;
   final String source;
+   UserVoteModel? userVote;
 
   InsightModel({
     required this.id,
@@ -38,6 +56,7 @@ class InsightModel {
     required this.boos,
     required this.source,
     this.statusTag,
+    this.userVote,
   });
 
   factory InsightModel.fromJson(Map<String, dynamic> json) {
@@ -49,16 +68,23 @@ class InsightModel {
       boos: json['boos'] ?? 0,
       source: json['source'] ?? '',
       statusTag: json['status_tag'],
+      userVote: json['userVote'] != null
+          ? UserVoteModel.fromJson(json['userVote'])
+          : null,
     );
   }
 }
 
 class InsightsResponse {
   final String locationSummary;
+  final String noInsight;
+  final bool insightsAvailable;
   final List<CategoryModel> categories;
   final Map<String, List<InsightModel>> insights;
 
   InsightsResponse({
+    required this.noInsight,
+    required this.insightsAvailable,
     required this.locationSummary,
     required this.categories,
     required this.insights,
@@ -77,6 +103,8 @@ class InsightsResponse {
 
     return InsightsResponse(
       locationSummary: json['location_summary'] ?? '',
+      noInsight: json['missing_insight_url'] ?? '',
+      insightsAvailable: json['insights_available'] ?? false,
       categories: categories,
       insights: insights,
     );

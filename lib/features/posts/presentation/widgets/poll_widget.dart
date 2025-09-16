@@ -373,83 +373,85 @@ class _PollWidgetState extends State<PollWidget> {
       isScrollControlled: true,
       builder: (BuildContext context) {
         String? userId = ShardPrefHelper.getUserID();
-        return SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              children: [
-                userId != widget.post.userId
-                    // REPORT POST OPTION
-                    ? ListTile(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          Future.delayed(Duration(milliseconds: 200), () {
-                            showReportReasonBottomSheet();
-                          });
-                        },
-                        leading: Image.asset(
-                          'assets/report_flag.png',
-                          height: 24,
-                          width: 24,
-                        ),
-                        title: Text(
-                          AppLocalizations.of(context)!.report,
-                          style: redOnboardingBody1Style,
-                        ),
-                        minTileHeight: 30,
-                      )
-                    // DELETE POST OPTION
-                    : BlocConsumer<DeletePostBloc, DeletePostState>(
-                        listener: (context, state) {
-                          // DELETE POST SUCCESS STATE
-                          if (state is DeletePostSuccessState) {
+        return SafeArea(
+          child: SingleChildScrollView(
+            physics: AlwaysScrollableScrollPhysics(),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Column(
+                children: [
+                  userId != widget.post.userId
+                      // REPORT POST OPTION
+                      ? ListTile(
+                          onTap: () {
                             Navigator.of(context).pop();
-                            widget.onDelete();
-                            showSnackBar(
-                              context: context,
-                              message:
-                                  AppLocalizations.of(context)!.post_deleted,
+                            Future.delayed(Duration(milliseconds: 200), () {
+                              showReportReasonBottomSheet();
+                            });
+                          },
+                          leading: Image.asset(
+                            'assets/report_flag.png',
+                            height: 24,
+                            width: 24,
+                          ),
+                          title: Text(
+                            AppLocalizations.of(context)!.report,
+                            style: redOnboardingBody1Style,
+                          ),
+                          minTileHeight: 30,
+                        )
+                      // DELETE POST OPTION
+                      : BlocConsumer<DeletePostBloc, DeletePostState>(
+                          listener: (context, state) {
+                            // DELETE POST SUCCESS STATE
+                            if (state is DeletePostSuccessState) {
+                              Navigator.of(context).pop();
+                              widget.onDelete();
+                              showSnackBar(
+                                context: context,
+                                message:
+                                    AppLocalizations.of(context)!.post_deleted,
+                              );
+                            }
+          
+                            // DELETE POST FAILURE STATE
+                            else if (state is DeletePostFailureState) {
+                              Navigator.of(context).pop();
+                              showSnackBar(
+                                context: context,
+                                message: state.error,
+                              );
+                            }
+                          },
+                          builder: (context, state) {
+                            // DELETE POST LOADING STATE
+                            if (state is DeletePostLoadingState) {
+                              return CustomCircularIndicator();
+                            }
+                            return ListTile(
+                              onTap: () {
+                                context.read<DeletePostBloc>().add(
+                                      DeletePostButtonPressedEvent(
+                                        postId: widget.post.id,
+                                        type: 'post',
+                                      ),
+                                    );
+                              },
+                              leading: Icon(
+                                Icons.delete_outline_outlined,
+                                color: AppColors.redColor,
+                                size: 26,
+                              ),
+                              title: Text(
+                                AppLocalizations.of(context)!.delete_post,
+                                style: redOnboardingBody1Style,
+                              ),
+                              minTileHeight: 30,
                             );
-                          }
-
-                          // DELETE POST FAILURE STATE
-                          else if (state is DeletePostFailureState) {
-                            Navigator.of(context).pop();
-                            showSnackBar(
-                              context: context,
-                              message: state.error,
-                            );
-                          }
-                        },
-                        builder: (context, state) {
-                          // DELETE POST LOADING STATE
-                          if (state is DeletePostLoadingState) {
-                            return CustomCircularIndicator();
-                          }
-                          return ListTile(
-                            onTap: () {
-                              context.read<DeletePostBloc>().add(
-                                    DeletePostButtonPressedEvent(
-                                      postId: widget.post.id,
-                                      type: 'post',
-                                    ),
-                                  );
-                            },
-                            leading: Icon(
-                              Icons.delete_outline_outlined,
-                              color: AppColors.redColor,
-                              size: 26,
-                            ),
-                            title: Text(
-                              AppLocalizations.of(context)!.delete_post,
-                              style: redOnboardingBody1Style,
-                            ),
-                            minTileHeight: 30,
-                          );
-                        },
-                      ),
-              ],
+                          },
+                        ),
+                ],
+              ),
             ),
           ),
         );
@@ -495,7 +497,7 @@ class _PollWidgetState extends State<PollWidget> {
             }
           },
           builder: (context, state) {
-            return SingleChildScrollView(
+            return SafeArea(child:  SingleChildScrollView(
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -507,23 +509,23 @@ class _PollWidgetState extends State<PollWidget> {
                     state is ReportPostLoadingState
                         ? const CustomCircularIndicator()
                         : Center(
-                            child: Text(
-                              AppLocalizations.of(context)!.reason_to_report,
-                              style: onboardingHeading2Style,
-                            ),
-                          ),
+                      child: Text(
+                        AppLocalizations.of(context)!.reason_to_report,
+                        style: onboardingHeading2Style,
+                      ),
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
                     ListTile(
                       onTap: () {
                         context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
-                                type: 'content',
-                                postId: widget.post.id.toString(),
-                                reason: reportReasons[0],
-                              ),
-                            );
+                          ReportButtonPressedEvent(
+                            type: 'content',
+                            postId: widget.post.id.toString(),
+                            reason: reportReasons[0],
+                          ),
+                        );
                       },
                       title: Text(
                         reportReasons[0],
@@ -539,12 +541,12 @@ class _PollWidgetState extends State<PollWidget> {
                     ListTile(
                       onTap: () {
                         context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
-                                type: 'content',
-                                postId: widget.post.id.toString(),
-                                reason: reportReasons[1],
-                              ),
-                            );
+                          ReportButtonPressedEvent(
+                            type: 'content',
+                            postId: widget.post.id.toString(),
+                            reason: reportReasons[1],
+                          ),
+                        );
                       },
                       title: Text(
                         reportReasons[1],
@@ -552,18 +554,18 @@ class _PollWidgetState extends State<PollWidget> {
                       ),
                       contentPadding: EdgeInsets.zero,
                       visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4),
+                      VisualDensity(horizontal: -4, vertical: -4),
                       minTileHeight: 30,
                     ),
                     ListTile(
                       onTap: () {
                         context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
-                                type: 'content',
-                                postId: widget.post.id.toString(),
-                                reason: reportReasons[2],
-                              ),
-                            );
+                          ReportButtonPressedEvent(
+                            type: 'content',
+                            postId: widget.post.id.toString(),
+                            reason: reportReasons[2],
+                          ),
+                        );
                       },
                       title: Text(
                         reportReasons[2],
@@ -571,18 +573,18 @@ class _PollWidgetState extends State<PollWidget> {
                       ),
                       contentPadding: EdgeInsets.zero,
                       visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4),
+                      VisualDensity(horizontal: -4, vertical: -4),
                       minTileHeight: 30,
                     ),
                     ListTile(
                       onTap: () {
                         context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
-                                type: 'content',
-                                postId: widget.post.id.toString(),
-                                reason: reportReasons[3],
-                              ),
-                            );
+                          ReportButtonPressedEvent(
+                            type: 'content',
+                            postId: widget.post.id.toString(),
+                            reason: reportReasons[3],
+                          ),
+                        );
                       },
                       title: Text(
                         reportReasons[3],
@@ -590,18 +592,18 @@ class _PollWidgetState extends State<PollWidget> {
                       ),
                       contentPadding: EdgeInsets.zero,
                       visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4),
+                      VisualDensity(horizontal: -4, vertical: -4),
                       minTileHeight: 30,
                     ),
                     ListTile(
                       onTap: () {
                         context.read<ReportPostBloc>().add(
-                              ReportButtonPressedEvent(
-                                type: 'content',
-                                postId: widget.post.id.toString(),
-                                reason: reportReasons[4],
-                              ),
-                            );
+                          ReportButtonPressedEvent(
+                            type: 'content',
+                            postId: widget.post.id.toString(),
+                            reason: reportReasons[4],
+                          ),
+                        );
                       },
                       title: Text(
                         reportReasons[4],
@@ -609,13 +611,13 @@ class _PollWidgetState extends State<PollWidget> {
                       ),
                       contentPadding: EdgeInsets.zero,
                       visualDensity:
-                          VisualDensity(horizontal: -4, vertical: -4),
+                      VisualDensity(horizontal: -4, vertical: -4),
                       minTileHeight: 30,
                     ),
                   ],
                 ),
               ),
-            );
+            ));
           },
         );
       },
@@ -638,7 +640,7 @@ class _PollWidgetState extends State<PollWidget> {
             }
           }
         });
-        return Container(
+        return SafeArea(child: Container(
           color: AppColors.whiteColor,
           height: 240,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -660,7 +662,7 @@ class _PollWidgetState extends State<PollWidget> {
               ),
             ],
           ),
-        );
+        ));
       },
     );
   }

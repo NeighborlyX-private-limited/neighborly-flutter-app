@@ -88,7 +88,34 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
         final data = controller.insightsResponse.value;
         if (data == null) {
-          return const Center(child: Text("No data available"));
+          return Center(
+              child:   ClipRRect(
+
+            child: Image.network(
+              'https://file-storage-bucket-mumbai.s3.ap-south-1.amazonaws.com/cb765fbc-183b-495a-a74b-3639ec1c9e3f-o%20%281%29.png',
+              width: 200,
+              height: 200,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Center(
+                  child: CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                        (loadingProgress.expectedTotalBytes ?? 1)
+                        : null,
+                  ),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) =>  Container(
+                width: 40,
+                height: 40,
+                color: Colors.grey[300],
+                child: const Icon(Icons.broken_image, color: Colors.grey),
+              ),
+            ),
+          ),
+          );
         }
 
         // Set initial icon from first category (only once)
@@ -201,13 +228,42 @@ class _InsightsScreenState extends State<InsightsScreen> {
               return const Center(child: CircularProgressIndicator());
             }
             if (insights.isEmpty) {
-              return const Center(child: Text("No insights available"));
+              return Center(child:
+              ClipRRect(
+
+                child: Image.network(
+                  'https://file-storage-bucket-mumbai.s3.ap-south-1.amazonaws.com/cb765fbc-183b-495a-a74b-3639ec1c9e3f-o%20%281%29.png',
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return  Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                            (loadingProgress.expectedTotalBytes ?? 1)
+                            : null,
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) =>   Container(
+                    width: 40,
+                    height: 40,
+                    color: Colors.grey[300],
+                    child:  Icon(Icons.broken_image, color: Colors.grey),
+                  ),
+                ),
+              )
+              );
             }
 
             return ListView.builder(
               itemCount: insights.length,
               itemBuilder: (context, index) {
                 final item = insights[index];
+print('this : ${item.userVote?.hasVoted??false}');
+print('this : ${item.userVote?.voteType}');
                 return _buildInsightCard(item);
               },
             );
@@ -284,11 +340,15 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 GestureDetector(
                   onTap: () =>
                       controller.voteOnInsight(item.id, 'cheer', context),
-                  child: const Icon(Icons.thumb_up_alt_outlined,
-                      size: 18, color: Colors.grey),
+                  child:  Icon(Icons.thumb_up_alt_outlined,
+                      size: 18, color:(item.userVote!.hasVoted && item.userVote!.voteType == 'cheer')? Colors.orange:Colors.grey),
                 ),
                 const SizedBox(width: 4),
                 Text("${item.cheers}"),
+                // if (item.userVote != null) ...[
+                //   Text("Has Voted: ${item.userVote!.hasVoted}"),
+                //   Text("Vote Type: ${item.userVote!.voteType ?? "No vote"}"),
+                // ],
 
                 const SizedBox(width: 12),
 
@@ -296,8 +356,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 GestureDetector(
                   onTap: () =>
                       controller.voteOnInsight(item.id, 'boo', context),
-                  child: const Icon(Icons.thumb_down_alt_outlined,
-                      size: 18, color: Colors.grey),
+                  child:  Icon(Icons.thumb_down_alt_outlined,
+                      size: 18, color: (item.userVote!.hasVoted && item.userVote!.voteType == 'boo')?AppColors.primaryColor:Colors.grey),
                 ),
                 const SizedBox(width: 4),
                 Text("${item.boos}"),
