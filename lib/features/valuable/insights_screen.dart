@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neighborly_flutter_app/core/theme/colors.dart';
 import 'package:neighborly_flutter_app/features/valuable/AddInsightScreen.dart';
-
-import '../../core/widgets/custom_snackbar.dart';
+import '../../core/utils/shared_preference.dart';
 import '../../main.dart';
 import 'category_model.dart';
 import 'insight_controller.dart';
@@ -18,7 +17,6 @@ class InsightsScreen extends StatefulWidget {
 class _InsightsScreenState extends State<InsightsScreen> {
   final InsightController controller = Get.put(InsightController());
 
-  /// reactive icon url (instead of using setState)
   String icons = '';
   String id = '';
 
@@ -39,7 +37,6 @@ class _InsightsScreenState extends State<InsightsScreen> {
           separatorBuilder: (_, __) => const Divider(),
           itemBuilder: (context, index) {
             final reason = reasons[index];
-
             return ListTile(
               leading: const Icon(Icons.flag_outlined),
               title: Text(reason.label),
@@ -69,18 +66,16 @@ class _InsightsScreenState extends State<InsightsScreen> {
       backgroundColor: AppColors.whiteColor,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // sending id = 101 as an example
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddInsightScreen(id: id), // pass id here
+              builder: (context) => AddInsightScreen(id: id),
             ),
           );
         },
         backgroundColor: AppColors.primaryColor,
         child: const Icon(Icons.add, color: Colors.white),
       ),
-
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -88,43 +83,25 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
         final data = controller.insightsResponse.value;
         if (data == null) {
-          return Center(
-              child:   ClipRRect(
-
-            child: Image.network(
-              'https://file-storage-bucket-mumbai.s3.ap-south-1.amazonaws.com/cb765fbc-183b-495a-a74b-3639ec1c9e3f-o%20%281%29.png',
-              width: 200,
-              height: 200,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                        (loadingProgress.expectedTotalBytes ?? 1)
-                        : null,
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) =>  Container(
-                width: 40,
-                height: 40,
-                color: Colors.grey[300],
-                child: const Icon(Icons.broken_image, color: Colors.grey),
-              ),
+          // 🔹 Empty State with RefreshIndicator
+          return RefreshIndicator(
+            onRefresh: controller.refreshInsights,
+            child: ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                _emptyStateImage(),
+              ],
             ),
-          ),
           );
         }
 
-        // Set initial icon from first category (only once)
+        // set default icon & id
         if (icons.isEmpty && data.categories.isNotEmpty) {
           icons = data.categories.first.iconUrl ?? '';
-          id = data.categories.first.id??'';
-
+          id = data.categories.first.id ?? '';
         }
 
+        // 🔹 Main Content
         return NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
@@ -144,8 +121,6 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 pinned: true,
                 floating: false,
               ),
-
-              // 🔹 Summary
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
@@ -158,8 +133,6 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   ),
                 ),
               ),
-
-              // 🔹 Sticky Category Tabs
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _TabHeaderDelegate(
@@ -168,7 +141,6 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Obx(() {
                       final selected = controller.selectedCategorySlug.value;
-
                       return SizedBox(
                         height: 40,
                         child: ListView.builder(
@@ -183,9 +155,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                 controller.selectCategory(cat.slug);
                                 setState(() {
                                   icons = cat.iconUrl ?? '';
-                                  id = cat.id ??'';
+                                  id = cat.id ?? '';
                                 });
-
                               },
                               child: Container(
                                 margin:
@@ -222,54 +193,68 @@ class _InsightsScreenState extends State<InsightsScreen> {
               ),
             ];
           },
-          body: Obx(() {
-            final insights = controller.currentInsights;
-            if (controller.isLoading.value) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (insights.isEmpty) {
-              return Center(child:
-              ClipRRect(
+          body: RefreshIndicator(
+            onRefresh: controller.refreshInsights,
+            child: Obx(() {
+              final insights = controller.currentInsights;
 
-                child: Image.network(
-                  'https://file-storage-bucket-mumbai.s3.ap-south-1.amazonaws.com/cb765fbc-183b-495a-a74b-3639ec1c9e3f-o%20%281%29.png',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return  Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                            (loadingProgress.expectedTotalBytes ?? 1)
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) =>   Container(
-                    width: 40,
-                    height: 40,
-                    color: Colors.grey[300],
-                    child:  Icon(Icons.broken_image, color: Colors.grey),
-                  ),
-                ),
-              )
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (insights.isEmpty) {
+                // 🔹 Empty State still refreshable
+                return ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  children: [
+                    const SizedBox(height: 240),
+                    _emptyStateImage(),
+                  ],
+                );
+              }
+
+              return ListView.builder(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: insights.length,
+                itemBuilder: (context, index) {
+                  final item = insights[index];
+                  return _buildInsightCard(item);
+                },
               );
-            }
-
-            return ListView.builder(
-              itemCount: insights.length,
-              itemBuilder: (context, index) {
-                final item = insights[index];
-print('this : ${item.userVote?.hasVoted??false}');
-print('this : ${item.userVote?.voteType}');
-                return _buildInsightCard(item);
-              },
-            );
-          }),
+            }),
+          ),
         );
       }),
+    );
+  }
+
+  Widget _emptyStateImage() {
+    return Center(
+      child: ClipRRect(
+        child: Image.network(
+          'https://file-storage-bucket-mumbai.s3.ap-south-1.amazonaws.com/cb765fbc-183b-495a-a74b-3639ec1c9e3f-o%20%281%29.png',
+          width: 200,
+          height: 200,
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                    (loadingProgress.expectedTotalBytes ?? 1)
+                    : null,
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) => Container(
+            width: 40,
+            height: 40,
+            color: Colors.grey[300],
+            child: const Icon(Icons.broken_image, color: Colors.grey),
+          ),
+        ),
+      ),
     );
   }
 
@@ -320,8 +305,8 @@ print('this : ${item.userVote?.voteType}');
               children: [
                 if (item.statusTag != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 8, vertical: 4),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.green.shade50,
                       borderRadius: BorderRadius.circular(12),
@@ -335,35 +320,32 @@ print('this : ${item.userVote?.voteType}');
                     ),
                   ),
                 const Spacer(),
-
-                // 👍 Like
                 GestureDetector(
                   onTap: () =>
                       controller.voteOnInsight(item.id, 'cheer', context),
-                  child:  Icon(Icons.thumb_up_alt_outlined,
-                      size: 18, color:(item.userVote!.hasVoted && item.userVote!.voteType == 'cheer')? Colors.orange:Colors.grey),
+                  child: Icon(Icons.thumb_up_alt_outlined,
+                      size: 18,
+                      color: (item.userVote!.hasVoted &&
+                          item.userVote!.voteType == 'cheer')
+                          ? Colors.orange
+                          : Colors.grey),
                 ),
                 const SizedBox(width: 4),
                 Text("${item.cheers}"),
-                // if (item.userVote != null) ...[
-                //   Text("Has Voted: ${item.userVote!.hasVoted}"),
-                //   Text("Vote Type: ${item.userVote!.voteType ?? "No vote"}"),
-                // ],
-
                 const SizedBox(width: 12),
-
-                // 👎 Dislike
                 GestureDetector(
                   onTap: () =>
                       controller.voteOnInsight(item.id, 'boo', context),
-                  child:  Icon(Icons.thumb_down_alt_outlined,
-                      size: 18, color: (item.userVote!.hasVoted && item.userVote!.voteType == 'boo')?AppColors.primaryColor:Colors.grey),
+                  child: Icon(Icons.thumb_down_alt_outlined,
+                      size: 18,
+                      color: (item.userVote!.hasVoted &&
+                          item.userVote!.voteType == 'boo')
+                          ? AppColors.primaryColor
+                          : Colors.grey),
                 ),
                 const SizedBox(width: 4),
                 Text("${item.boos}"),
                 const SizedBox(width: 12),
-
-                // 🛑 Report
                 GestureDetector(
                   onTap: () => _showReportSheet(item.id),
                   child: const Icon(Icons.flag_outlined,
@@ -378,15 +360,12 @@ print('this : ${item.userVote?.voteType}');
   }
 }
 
-/// 🔹 Helper to make category tabs sticky
 class _TabHeaderDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
-
   _TabHeaderDelegate({required this.child});
 
   @override
   double get minExtent => 50;
-
   @override
   double get maxExtent => 50;
 

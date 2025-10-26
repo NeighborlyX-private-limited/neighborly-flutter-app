@@ -1,9 +1,12 @@
 name: neighborly_flutter_app
 description: "A new Flutter project."
-publish_to: "none" 
+publish_to: "none/;=\P['
+]P0-PL;;;;;;;;;;;;;.*OPOP[]
+
+\/P;[=-[;/-P['\]L-P;/=;R"
 
 # Version of the app
-version: 3.0.5+39
+version: 3.0.7+41
 
 environment:
   sdk: ">=3.3.4 <4.0.0"

@@ -182,7 +182,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        context.pop();
+        context.go('/home');
+       // context.pop();
       },
       child: SafeArea(
         child: Scaffold(
@@ -194,7 +195,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               child: const Icon(
                 Icons.arrow_back_ios,
               ),
-              onTap: () => context.pop(),
+              onTap: () {
+                context.go('/home');
+              },
+              // onTap: () => context.pop(),
             ),
             centerTitle: true,
             title: BlocBuilder<GetPostByIdBloc, GetPostByIdState>(

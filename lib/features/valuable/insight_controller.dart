@@ -25,6 +25,11 @@ class InsightController extends GetxController {
     double lng = ShardPrefHelper.getLng() ?? 0.0;
     fetchInsights(lat: lat, lon: lng); // example coordinates
   }
+  Future<void> refreshInsights() async {
+    double lat = ShardPrefHelper.getLat() ?? 0.0;
+    double lng = ShardPrefHelper.getLng() ?? 0.0;
+     fetchInsights(lat: lat, lon: lng);
+  }
 
   void fetchInsights({required double lat, required double lon}) async {
     isLoading.value = true;
